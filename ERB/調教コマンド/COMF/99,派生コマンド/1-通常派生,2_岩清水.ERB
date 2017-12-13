@@ -1,0 +1,116 @@
+;-------------------------------------------------
+;岩清水
+;-------------------------------------------------
+@USERCOM_ABLE_岩清水, ARG
+#FUNCTION
+;岩清水実行判定
+;羞恥プレイ中じゃないとダメ
+SIF !TEQUIP:羞恥プレイ
+	RETURNF 0
+;猫舌の調教者の場合は技巧Lv2以上必要
+SIF TALENT:PLAYER:猫舌 && ABL:PLAYER:技巧 < 2
+	RETURNF 0
+;性器が汚れている場合（愛液、母乳の汚れ以外）
+REPEAT 8
+	IF GETBIT(STAIN:ヴァギナ, COUNT)
+		SELECTCASE COUNT
+			CASE 1, 2, 3, 5, 6, 7
+				;実行者
+				SELECTCASE PLAYER
+					;主人
+					CASE MASTER
+						;汚れ無視を持っていない場合はクンニできない
+						SIF !TALENT:MASTER:汚れ無視
+							RETURNF 0
+					;助手
+					CASE ASSI
+						;汚臭敏感で従順3以下の場合クンニはできない（汚れ無視なら可能）
+						SIF ABL:ASSI:従順 <= 3 && TALENT:ASSI:汚臭敏感 && !TALENT:ASSI:汚れ無視
+							RETURNF 0
+				ENDSELECT
+				BREAK
+		ENDSELECT
+	ENDIF
+REND
+
+;服着てるとダメ
+SIF !性器露出(TARGET)
+	RETURNF 0
+
+;ヴァギナ無いとダメ
+SIF !VAGINA(TARGET)
+	RETURNF 0
+;触手調教中はダメ
+SIF TEQUIP:触手
+	RETURNF 0
+
+COMRESULT = 1
+RETURNF 1
+
+@COM_岩清水
+PRINTL 岩清水
+SELECTCOMS = 岩清水
+SELECTCOM = 502
+CALL KOJO_MESSAGE_COM
+
+;-------------------------------------------------
+;ソース追加処理
+;-------------------------------------------------
+;消費体力、気力
+LOSEBASE:体力 += 30
+LOSEBASE:気力 += 90
+
+DOWNBASE:MASTER:体力 += 20
+DOWNBASE:MASTER:気力 += 40
+
+SOURCE:快C = 150
+SOURCE:恐怖 = 100
+SOURCE:液体 = 100
+SOURCE:露出 = 200
+SOURCE:逸脱 = 300
+SOURCE:反感 = 300
+
+;-------------------------------------------------
+;特殊ソース処理
+;-------------------------------------------------
+;抑圧、抵抗持ちには、抑鬱ソース追加
+SIF TALENT:抑圧 || TALENT:抵抗
+	SOURCE:鬱屈 += 300
+
+;舌を使う調教では、調教者の舌使いによって、快感のソース増加
+SIF TALENT:PLAYER:舌使い
+	TIMES SOURCE:快C , 1.50
+
+;-------------------------------------------------
+;絶頂チェック
+;-------------------------------------------------
+CALL SOURCE_CHECK_CVAB
+
+;-------------------------------------------------
+;射精チェック
+;-------------------------------------------------
+CALL SAMEN_CHECK_T, 0
+
+CALL SAMEN_SHOOT_T, 0, NOWEX:射精
+
+;-------------------------------------------------
+;汚れの処理
+;-------------------------------------------------
+;奴隷のヴァギナ汚れを舐め取る
+STAIN:ヴァギナ = 0
+
+;-------------------------------------------------
+;経験の処理
+;-------------------------------------------------
+CALL EXPUP, 2, 1
+
+;獣人、獣による催淫
+SELECTCASE CSTR:種族
+	CASE "獣人", "獣"
+		CFLAG:PLAYER:媚薬++
+		SIF CFLAG:PLAYER:媚薬%5 == 0
+			CFLAG:PLAYER:残数++
+ENDSELECT
+
+RETURN 1
+

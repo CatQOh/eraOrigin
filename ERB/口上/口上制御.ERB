@@ -1,0 +1,365 @@
+;調教時キャラ別口上を一括管理
+
+;-----------------------------------------------------------------------------------
+;口上表示ファイル
+;地の文、キャラ専用口上の表示をここで管理する
+;FLAG:6 = 地の文表示するかどうか FLAG:7 = 口上表示するかどうか
+;-----------------------------------------------------------------------------------
+
+;--------------------------------------------------
+;@KOJO_MESSAGE_COM
+;コマンド実行時に出力されます
+;--------------------------------------------------
+@KOJO_MESSAGE_COM
+IF FLAG:口上表示
+	;子供の場合はNO:父親×NO:母親の関数を呼び出す
+	IF NO:TARGET > 10000
+		TRYCCALLFORM CHILD_COM_K{CFLAG:血縁コード/10000}×{CFLAG:血縁コード%10000}
+		CATCH
+			GOTO NOTCHILD
+		ENDCATCH
+	ELSE
+		TRYCCALLFORM KOJO_COM_K{NO:TARGET}
+		CATCH
+			$NOTCHILD
+			TRYCCALLFORM MASTER_COM_K{NO:MASTER}
+			CATCH
+				GOTO ELSE
+			ENDCATCH
+		ENDCATCH
+	ENDIF
+ELSE
+	$ELSE
+	SIF FLAG:地の文表示
+		TRYCALLFORM MESSAGE_COM_%SELECTCOMS%
+ENDIF
+
+;--------------------------------------------------
+;@KOJO_MESSAGE_USERCOM
+;TRAIN外のコマンド実行時に出力されます
+;--------------------------------------------------
+@KOJO_MESSAGE_USERCOM, ARG
+IF FLAG:口上表示
+	;子供の場合はNO:父親×NO:母親の関数を呼び出す
+	IF NO:TARGET > 10000
+		TRYCCALLFORM CHILD_USERCOM_K{CFLAG:血縁コード/10000}×{CFLAG:血縁コード%10000}
+		CATCH
+			GOTO NOTCHILD
+		ENDCATCH
+	ELSE
+		TRYCCALLFORM KOJO_MESSAGE_USERCOM_K{NO:TARGET}, ARG
+		CATCH
+			$NOTCHILD
+			TRYCCALLFORM MASTER_USERCOM{ARG}_K{NO:MASTER}
+			CATCH
+				GOTO ELSE
+			ENDCATCH
+		ENDCATCH
+	ENDIF
+ELSE
+	$ELSE
+	SIF FLAG:地の文表示
+		TRYCALLFORM MESSAGE_USERCOM_{ARG}
+ENDIF
+
+;-------------------------------------------------
+;@KOJO_MESSAGE_SHOOT
+;調教者の射精をトリガーにした口上
+;-------------------------------------------------
+@KOJO_MESSAGE_SHOOT
+IF FLAG:口上表示
+	;子供の場合はNO:父親×NO:母親の関数を呼び出す
+	IF NO:TARGET > 10000
+		TRYCCALLFORM CHILD_SHOOT_K{CFLAG:血縁コード/10000}×{CFLAG:血縁コード%10000}
+		CATCH
+			GOTO NOTCHILD
+		ENDCATCH
+	ELSE
+		TRYCCALLFORM KOJO_MESSAGE_SHOOT_K{NO:TARGET}
+		CATCH
+			$NOTCHILD
+			TRYCCALLFORM MASTER_SHOOT_K{NO:MASTER}
+			CATCH
+				GOTO ELSE
+			ENDCATCH
+		ENDCATCH
+	ENDIF
+ELSE
+	$ELSE
+	SIF FLAG:地の文表示
+		CALL SHOOT_MESSAGE
+ENDIF
+
+;-------------------------------------------------
+;@KOJO_MESSAGE_EX
+;奴隷の絶頂をトリガーにした口上
+;-------------------------------------------------
+@KOJO_MESSAGE_EX
+LOCAL = 0
+IF FLAG:口上表示
+	;子供の場合はNO:父親×NO:母親の関数を呼び出す
+	IF NO:TARGET > 10000
+		TRYCCALLFORM CHILD_EX_K{CFLAG:血縁コード/10000}×{CFLAG:血縁コード%10000}
+			LOCAL = 1
+		CATCH
+			GOTO NOTCHILD
+		ENDCATCH
+	ELSE
+		TRYCCALLFORM KOJO_MESSAGE_EX_K{NO:TARGET}
+			LOCAL = 1
+		CATCH
+			$NOTCHILD
+			TRYCCALLFORM MASTER_EX_K{NO:MASTER}
+				LOCAL = 1
+			CATCH
+				GOTO ELSE
+			ENDCATCH
+		ENDCATCH
+	ENDIF
+ELSE
+	$ELSE
+	SIF FLAG:地の文表示
+		CALL EX_MESSAGE
+ENDIF
+
+;-------------------------------------------------
+;絶頂系地の文表示のウェイト
+;-------------------------------------------------
+IF NOWEX:Ｃ絶頂 || NOWEX:Ｖ絶頂 || NOWEX:Ａ絶頂 || NOWEX:Ｂ絶頂 || NOWEX:射精 || NOWEX:放尿 || NOWEX:噴乳 || NOWEX:潮噴き || NOWEX:MASTER:射精 || (ASSI > 0 && NOWEX:ASSI:射精) || NOWEX:MASTER:触手射精
+	SIF FLAG:地の文表示 && !LOCAL
+		WAIT
+ENDIF
+
+;-------------------------------------------------
+;@KOJO_MESSAGE_AFTER
+;コマンド実行後に表示する口上（処女喪失時など）
+;-------------------------------------------------
+@KOJO_MESSAGE_AFTER
+IF FLAG:口上表示
+	;子供の場合はNO:父親×NO:母親の関数を呼び出す
+	IF NO:TARGET > 10000
+		TRYCCALLFORM CHILD_AFTER_K{CFLAG:血縁コード/10000}×{CFLAG:血縁コード%10000}
+		CATCH
+			GOTO NOTCHILD
+		ENDCATCH
+	ELSE
+		TRYCCALLFORM KOJO_MESSAGE_AFTER_K{NO:TARGET}
+		CATCH
+			$NOTCHILD
+			TRYCCALLFORM MASTER_AFTER_K{NO:MASTER}
+			CATCH
+				GOTO ELSE
+			ENDCATCH
+		ENDCATCH
+	ENDIF
+ELSE
+	$ELSE
+	SIF FLAG:地の文表示
+		CALL AFTER_MESSAGE
+ENDIF
+
+;-------------------------------------------------
+;@KOJO_MESSAGE_PALAM
+;パラメータ変動をトリガーにした口上
+;-------------------------------------------------
+@KOJO_MESSAGE_PALAM
+IF FLAG:口上表示
+	;子供の場合はNO:父親×NO:母親の関数を呼び出す
+	IF NO:TARGET > 10000
+		TRYCCALLFORM CHILD_PALAM_K{CFLAG:血縁コード/10000}×{CFLAG:血縁コード%10000}
+		CATCH
+			GOTO NOTCHILD
+		ENDCATCH
+	ELSE
+		TRYCCALLFORM KOJO_MESSAGE_PALAM_K{NO:TARGET}
+		CATCH
+			$NOTCHILD
+			TRYCCALLFORM MASTER_PALAM_K{NO:MASTER}
+			CATCH
+				GOTO ELSE
+			ENDCATCH
+		ENDCATCH
+	ENDIF
+ELSE
+	$ELSE
+	SIF FLAG:地の文表示
+		CALL PALAM_MESSAGE
+ENDIF
+
+;-------------------------------------------------
+;@KOJO_MESSAGE_TSHOOT
+;触手の射精をトリガーにした口上
+;-------------------------------------------------
+@KOJO_MESSAGE_TSHOOT
+IF FLAG:口上表示
+	;子供の場合はNO:父親×NO:母親の関数を呼び出す
+	IF NO:TARGET > 10000
+		TRYCCALLFORM CHILD_TSHOOT_K{CFLAG:血縁コード/10000}×{CFLAG:血縁コード%10000}
+		CATCH
+			GOTO NOTCHILD
+		ENDCATCH
+	ELSE
+		TRYCCALLFORM KOJO_MESSAGE_TSHOOT_K{NO:TARGET}
+		CATCH
+			$NOTCHILD
+			TRYCCALLFORM MASTER_TSHOOT_K{NO:MASTER}
+			CATCH
+				GOTO ELSE
+			ENDCATCH
+		ENDCATCH
+	ENDIF
+ELSE
+	$ELSE
+	SIF FLAG:地の文表示
+		CALL TSHOOT_MESSAGE
+ENDIF
+
+;-------------------------------------------------
+;@KOJO_MESSAGE_MARK
+;刻印変動をトリガーにした口上
+;-------------------------------------------------
+@KOJO_MESSAGE_MARK, ARG
+;ARG
+;1=苦痛刻印
+;2=快楽刻印
+;3=快楽による屈服
+;4=苦痛、恐怖による屈服
+;5=屈服、恭順による屈服
+;10=反発刻印
+IF FLAG:口上表示
+	;子供の場合はNO:父親×NO:母親の関数を呼び出す
+	IF NO:TARGET > 10000
+		TRYCCALLFORM CHILD_MARK_K{CFLAG:血縁コード/10000}×{CFLAG:血縁コード%10000}, ARG
+		CATCH
+			GOTO NOTCHILD
+		ENDCATCH
+	ELSE
+		TRYCCALLFORM KOJO_MESSAGE_MARK_K{NO:TARGET}, ARG
+		CATCH
+			$NOTCHILD
+			TRYCCALLFORM MASTER_MARK{ARG}_K{NO:MASTER}
+			CATCH
+				GOTO ELSE
+			ENDCATCH
+		ENDCATCH
+	ENDIF
+ELSE
+	$ELSE
+	SIF FLAG:地の文表示
+		TRYCALLFORM MARK_MESSAGE_{ARG}
+ENDIF
+
+;-------------------------------------------------
+;@KOJO_MESSAGE_EVENT
+;イベント時の口上、イベント開始時に出力します
+;-------------------------------------------------
+@KOJO_MESSAGE_EVENT, ARGS, ARG = -1
+SIF ARG == -1
+	ARG = TARGET
+
+;口上呼び出す時のみ、対象をTARGETにする
+LOCAL = TARGET
+TARGET = ARG
+
+IF FLAG:口上表示
+	;子供の場合はNO:父親×NO:母親の関数を呼び出す
+	IF NO:TARGET > 10000
+		TRYCCALLFORM CHILD_EVENT_K{CFLAG:血縁コード/10000}×{CFLAG:血縁コード%10000}, ARGS
+		CATCH
+			GOTO NOTCHILD
+		ENDCATCH
+	ELSE
+		TRYCCALLFORM KOJO_EVENT_K{NO:ARG}, ARGS
+		CATCH
+			$NOTCHILD
+			TRYCCALLFORM MASTER_EVENT_K{NO:MASTER}, ARGS
+			CATCH
+				GOTO ELSE
+			ENDCATCH
+		ENDCATCH
+	ENDIF
+ELSE
+	$ELSE
+	SIF FLAG:地の文表示
+		TRYCALLFORM EVENT_MESSAGE_%ARGS%
+ENDIF
+
+TARGET = LOCAL
+
+;-------------------------------------------------
+;@KOJO_MASTER_EVENT
+;MASTER口上専用のイベント
+;-------------------------------------------------
+@KOJO_MASTER_EVENT, ARG
+IF FLAG:口上表示
+	TRYCCALLFORM KOJO_MASTER_EVENT_K{NO:MASTER}, ARG
+	CATCH
+		GOTO ELSE
+	ENDCATCH
+ELSE
+	$ELSE
+	SIF FLAG:地の文表示
+		TRYCALLFORM EVENT_MASTER_MESSAGE_{ARG}
+ENDIF
+
+TARGET = LOCAL
+
+;--------------------------------------------------
+;@KOJO_START
+;調教開始時に呼び出す
+;--------------------------------------------------
+@KOJO_START
+IF FLAG:口上表示
+	;子供の場合はNO:父親×NO:母親の関数を呼び出す
+	IF NO:TARGET > 10000
+		TRYCCALLFORM CHILD_START_K{CFLAG:血縁コード/10000}×{CFLAG:血縁コード%10000}
+			RETURN 0
+		CATCH
+			GOTO NOTCHILD
+		ENDCATCH
+	ELSE
+		TRYCCALLFORM KOJO_START_K{NO:TARGET}
+		CATCH
+			$NOTCHILD
+			TRYCALLFORM MASTER_START_K{NO:MASTER}
+		ENDCATCH
+	ENDIF
+ENDIF
+
+;--------------------------------------------------
+;@KOJO_TURNEND
+;調教終了時に呼び出す
+;--------------------------------------------------
+@KOJO_TURNEND
+IF FLAG:口上表示
+	;子供の場合はNO:父親×NO:母親の関数を呼び出す
+	IF NO:TARGET > 10000
+		TRYCCALLFORM CHILD_TURNEND_K{CFLAG:血縁コード/10000}×{CFLAG:血縁コード%10000}
+		CATCH
+			GOTO NOTCHILD
+		ENDCATCH
+	ELSE
+		TRYCCALLFORM KOJO_TURNEND_K{NO:TARGET}
+		CATCH
+			$NOTCHILD
+			TRYCALLFORM MASTER_TURNEND_K{NO:MASTER}
+		ENDCATCH
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;@KOJO_MESSAGE_ENDING
+;エンディング口上
+;-------------------------------------------------
+@KOJO_MESSAGE_ENDING, ARG
+
+TRYCALLFORM KOJO_MESSAGE_ENDING_K{NO:TARGET}, ARG
+
+;-------------------------------------------------
+;@KOJO_STRATEGY
+;経営用口上
+;-------------------------------------------------
+;@KOJO_STRATEGY, ARGS
+;SIF FLAG:口上表示
+;	TRYCALLFORM %ARGS%
+

@@ -1,0 +1,9 @@
+﻿*.config
+*.sav
+*.log
+*.lnk
+sav/
+debug/
+macro.txt
+*.dat
+

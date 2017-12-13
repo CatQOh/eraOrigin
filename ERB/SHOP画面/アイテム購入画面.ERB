@@ -1,0 +1,663 @@
+@SHOPITEM_BUY
+#DIM DYNAMIC 表示数
+#DIM DYNAMIC LCOUNT
+表示数 = 0
+VARSET LOCAL, 0
+VARSET ITEMSALES, 0
+
+;素質付与アイテム
+;汚れ無視
+SIF !TALENT:MASTER:汚れ無視
+	ITEMSALES:【汚れ無視】 = 1
+
+;ドラキュラの牙
+SIF !TALENT:MASTER:吸血鬼
+	ITEMSALES:【ドラキュラの牙】 = 1
+
+;ドラゴンの成体
+SIF !TALENT:MASTER:ドラゴン使い
+	ITEMSALES:【ドラゴンの成体】 = 1
+
+;奴隷を対象とした薬
+;元気になる薬・魔剤
+REPEAT CHARANUM
+	;使用不可
+	SIF CFLAG:COUNT:使用不可
+		CONTINUE
+	SIF BASE:COUNT:体力 < MAXBASE:COUNT:体力
+		ITEMSALES:怪しげな栄養剤 = 1
+	SIF !CFLAG:COUNT:魔剤
+		ITEMSALES:魔剤 = 1
+
+	;素質変化の薬
+	;無機物・機械には使えない
+	SIF TALENT:COUNT:無機物 || CSTR:COUNT:種族 == "機械"
+		CONTINUE
+	;ふたなり化できるか
+	SIF !TALENT:COUNT:ふたなり
+		ITEMSALES:ふたなり薬 = 1
+	;ふたなりを消去できるか
+	SIF TALENT:COUNT:ふたなり && !(SEX(COUNT) == 1 && TALENT:COUNT:妊娠)
+		ITEMSALES:ふたなり消去薬 = 1
+	;母乳体質にできるか 女性のみ 主人は使えない
+	SIF !TALENT:COUNT:母乳体質 && SEX(COUNT) == 1 && COUNT != MASTER
+		ITEMSALES:天使のミルク = 1
+	;処女膜再生できるか 処女および再生処女だとダメ
+	SIF !TALENT:COUNT:処女 && !TALENT:COUNT:再生処女 && VAGINA(COUNT)
+		ITEMSALES:ユニコーンテイル = 1
+	;豊胸できるか 爆乳以外でないとダメ
+	SIF TALENT:COUNT:バストサイズ != 5 && SEX(COUNT) == 2
+		ITEMSALES:豊胸剤 = 1
+	;縮胸できるか 絶壁以外でないとダメ
+	SIF TALENT:COUNT:バストサイズ != 1 && SEX(COUNT) == 2
+		ITEMSALES:縮胸剤 = 1
+	;母乳治療できるか 母乳体質じゃないとダメ 主人は使えない
+	SIF TALENT:COUNT:母乳体質 && SEX(COUNT) == 2 && COUNT != MASTER
+		ITEMSALES:止乳剤 = 1
+	;お漏らし治療できるか お漏らし癖じゃないとダメ 主人は使えない
+	SIF TALENT:COUNT:おもらし癖 && COUNT != MASTER
+		ITEMSALES:夜尿症改善薬 = 1
+	;ゾンビ化する。聖水で元にも戻せるがペナルティがある 主人は使えない
+	SIF !TALENT:COUNT:ゾンビ && COUNT != MASTER
+		ITEMSALES:ゾンビパウダー = 1
+	;ゾンビを消去する。しかし回復量低下などのペナルティがある 主人は使えない
+	SIF TALENT:COUNT:ゾンビ && COUNT != MASTER
+		ITEMSALES:聖水 = 1
+	;性転換する 一度使うと二度と元には戻せない
+	SIF !TALENT:COUNT:性転換済 && !TALENT:COUNT:妊娠
+		ITEMSALES:性転換薬 = 1
+	;大人化or子供化する 豊胸と縮胸の効果もあるのでそのアイテムより高い
+	SIF !TALENT:COUNT:小人体型
+		ITEMSALES:時の砂時計 = 1
+	;おもらしするようにする 主人は使えない
+	SIF !TALENT:COUNT:おもらし癖 && COUNT != MASTER
+		ITEMSALES:永続的利尿剤 = 1
+	;獣耳と尻尾を生やす
+	SIF (!TALENT:COUNT:動物耳 || !TALENT:COUNT:尻尾) && CSTR:COUNT:種族 != "獣" && !TALENT:COUNT:ファーリー
+		ITEMSALES:ビースティースターター = 1
+	;排卵誘発剤
+	;無機物・機械には使えない
+	SIF TALENT:COUNT:無機物 || CSTR:COUNT:種族 == "機械"
+		CONTINUE
+	SIF !CFLAG:COUNT:排卵誘発剤 && VAGINA(COUNT) && 生殖機能♀(COUNT)
+		ITEMSALES:排卵誘発剤 = 1
+	;リミッター解除 禁断の知識が必要
+	SIF !TALENT:COUNT:リミットバースト && CFLAG:COUNT:陥落
+		ITEMSALES:リミッター解除 = 1
+REND
+
+DRAWLINE
+
+REPEAT VARSIZE("ITEM")
+	SIF !ITEMSALES:COUNT || ITEMNAME:COUNT == ""
+		CONTINUE
+
+	;行頭ならスペースを設ける
+	SIF 表示数%4 == 0
+		PRINT 　
+	PRINTFORMLC [{COUNT}]%ITEMNAME:COUNT%
+	表示数++
+REND
+
+SIF !LINEISEMPTY()
+	PRINTL 
+
+DRAWLINE
+PRINTPLAIN 　ITEM　
+PRINTL [0] 戻る
+DO
+	INPUT
+	SELECTCASE RESULT
+		CASE 0
+			RETURN 1
+		CASEELSE
+			CALL ITEMBUY_DECIDE, RESULT
+			RESTART
+	ENDSELECT
+LOOP 1
+
+RETURN 0
+
+@ITEMBUY_DECIDE, ARG
+DRAWLINE
+;アイテムの効果を表示する
+PRINTFORM %ITEMNAME:ARG%:
+SELECTCASE ITEMNAME:ARG
+	CASE "【汚れ無視】"
+		PRINTL プレイヤーに「汚れ無視」が付く
+	CASE "【ドラキュラの牙】"
+		PRINTL プレイヤーに「吸血鬼」が付く
+	CASE "【ドラゴンの成体】"
+		PRINTL プレイヤーに「ドラゴン使い」が付く 人間より一回りほど大きい竜
+ENDSELECT
+
+;購入の意志を再確認するように
+SELECTCASE ARG
+	CASE 200 TO 299
+		PRINTFORML 本当に%ITEMNAME:ARG%を購入しますか？
+		PRINTL [0] 購入する
+		PRINTL [1] やめる
+		DO
+			INPUT
+			SIF RESULT == 1
+				RETURN 0
+		LOOP LOOPRES(0, 1)
+		PRINTFORMW ＜%ITEMNAME:ARG%を購入しました＞
+		ITEMSALES:ARG = 0
+		SELECTCASE ITEMNAME:ARG
+			CASE "【汚れ無視】"
+				TALENT:MASTER:汚れ無視 = 1
+			CASE "【ドラキュラの牙】"
+				TALENT:MASTER:吸血鬼 = 1
+			CASE "【ドラゴンの成体】"
+				TALENT:MASTER:ドラゴン使い = 1
+				DO
+					PRINTL ドラゴンの名前を入力してください(何も入力しない場合、「ドラゴン」になります)
+					PRINTBUTTON "[ランダムで命名する]", "ランダムで命名する"
+					PRINTL 
+					INPUTS
+					IF RESULTS == "ランダムで命名する"
+						;元ネタは分かる人だけ分かれば
+						SELECTCASE RAND:28
+							CASE 0
+								RESULTS = ローランド
+							CASE 1
+								RESULTS = スタン
+							CASE 2
+								RESULTS = クラッシュ
+							CASE 3
+								RESULTS = トレント
+							CASE 4
+								RESULTS = テッラ
+							CASE 5
+								RESULTS = プレツァル
+							CASE 6
+								RESULTS = スクォールン
+							CASE 7
+								RESULTS = ヴァス
+							CASE 8
+								RESULTS = ケルヴィン
+							CASE 9
+								RESULTS = リドリー
+							CASE 10
+								RESULTS = ノヴァ
+							CASE 11
+								RESULTS = アポロ
+							CASE 12
+								RESULTS = スピリッツ
+							CASE 13
+								RESULTS = フリント
+							CASE 14
+								RESULTS = ヴァージル
+							CASE 15
+								RESULTS = クレイトン
+							CASE 16
+								RESULTS = クラッカー
+							CASE 17
+								RESULTS = エルデン
+							CASE 18
+								RESULTS = デューク
+							CASE 19
+								RESULTS = ゼルクセス
+							CASE 20
+								RESULTS = ブルーザー
+							CASE 21
+								RESULTS = ノクターン
+							CASE 22
+								RESULTS = ブレイズ
+							CASE 23
+								RESULTS = ゼラタン
+							CASE 24
+								RESULTS = デクスター
+							CASE 25
+								RESULTS = グリフ
+							CASE 26
+								RESULTS = レネス
+							CASE 27
+								RESULTS = エリオット
+						ENDSELECT
+					ENDIF
+					SIF RESULTS == ""
+						RESULTS = ドラゴン
+					PRINTFORML %RESULTS%でよろしいですか？(後からオプション画面で変更できます)
+					PRINTL [0] - はい
+					PRINTL [1] - いいえ
+					INPUT
+					SELECTCASE RESULT
+						CASE 0
+							CSTR:MASTER:ドラゴン = %RESULTS%
+							SELECTCASE CSTR:MASTER:ドラゴン
+								CASE "ドラゴン"
+									PRINTFORMW ドラゴンは名前が欲しいと言わんばかりに寂しげな瞳で%CALLNAME:MASTER%を見つめている……
+								CASEELSE
+									PRINTFORMW %CSTR:MASTER:ドラゴン%は名前をつけてくれた%CALLNAME:MASTER%に懐いているようだ……
+							ENDSELECT
+						CASE 1
+							CONTINUE
+					ENDSELECT
+				LOOP LOOPRES(0)
+		ENDSELECT
+	CASE 300 TO 499
+		;奴隷に使用するタイプのアイテムも専用の関数で
+		CALL USE_ITEM, ARG
+ENDSELECT
+
+RETURN 0
+
+;アイテム使用
+@USE_ITEM, ARG
+VARSET LOCAL, 0
+SELECTCASE ITEMNAME:ARG
+	CASE "怪しげな栄養剤"
+		PRINTL 体力を回復します
+	CASE "ふたなり薬"
+		PRINTL ふたなりになります
+	CASE "ふたなり消去薬"
+		PRINTL ふたなりを消去します
+	CASE "天使のミルク"
+		PRINTL 母乳体質になります
+	CASE "ユニコーンテイル"
+		PRINTL 処女膜が戻ります
+	CASE "豊胸剤"
+		PRINTL 胸を大きくします
+	CASE "縮胸剤"
+		PRINTL 胸を小さくします
+	CASE "止乳剤"
+		PRINTL 母乳が出なくなります
+	CASE "夜尿症改善薬"
+		PRINTL お漏らし癖が治ります
+	CASE "ゾンビパウダー"
+		PRINTL ゾンビ化します
+	CASE "聖水"
+		PRINTL 素質「ゾンビ」を消去します
+	CASE "性転換薬"
+		PRINT 対象を性転換させます。
+		FONTBOLD
+		PRINTL 一度性転換させると二度と戻せないので注意
+		FONTREGULAR
+	CASE "時の砂時計"
+		PRINTL 大人になったり子供になったりします。女性ならバストサイズも変わります
+	CASE "永続的利尿剤"
+		PRINTL 尿を漏らしやすくなります
+	CASE "ビースティースターター"
+		PRINTL 獣耳と尻尾を生やします
+	CASE "魔剤"
+		PRINTL eraでモンエナ買えるって魔剤ンゴ！？
+	CASE "排卵誘発剤"
+		PRINTL 一日だけ妊娠確率を上昇させます
+	CASE "リミッター解除"
+		PRINTL 使用対象の能力上限を解除します
+ENDSELECT
+
+PRINTL 誰に使いますか？
+
+FOR PAGING, 0, CHARANUM
+	LOCAL = 1
+	SELECTCASE ARG
+		;薬品系と素質系で処理が異なる
+		CASE 300 TO 499
+			;無機物・機械は除外
+			SIF TALENT:PAGING:無機物 || CSTR:PAGING:種族 == "機械"
+				LOCAL = 0
+			;使用不可のキャラも除外
+			SIF CFLAG:PAGING:使用不可
+				LOCAL = 0
+			;主人は除外 ただしふたなり、処女再生、胸関連、性転換薬、時の砂時計、ビースティースターター、排卵誘発剤、バナナは可能
+			IF PAGING == MASTER
+				SELECTCASE ITEMNAME:ARG
+					CASE "ふたなり薬", "ユニコーンテイル", "豊胸剤", "縮胸剤", "性転換薬", "時の砂時計", "ビースティースターター", "排卵誘発剤", "バナナ"
+					CASEELSE
+						LOCAL = 0
+				ENDSELECT
+			ENDIF
+			SELECTCASE ITEMNAME:ARG
+				CASE "怪しげな栄養剤"
+					;体力がマックスだと使えない
+					SIF BASE:PAGING:体力 >= MAXBASE:PAGING:体力
+						LOCAL = 0
+				CASE "ふたなり薬"
+					SIF TALENT:PAGING:ふたなり
+						LOCAL = 0
+				CASE "ふたなり消去薬"
+					;男で妊娠中だとヴァギナ塞げない
+					SIF !TALENT:PAGING:ふたなり || (SEX(PAGING) == 1 && TALENT:PAGING:妊娠)
+						LOCAL = 0
+				CASE "天使のミルク"
+					SIF TALENT:PAGING:母乳体質 || (SEX(PAGING) == 1 && !TALENT:PAGING:ふたなり)
+						LOCAL = 0
+				CASE "ユニコーンテイル"
+					SIF TALENT:PAGING:処女 || TALENT:PAGING:再生処女 || (SEX(PAGING) == 1 && !TALENT:PAGING:ふたなり)
+						LOCAL = 0
+				CASE "豊胸剤"
+					SIF TALENT:PAGING:バストサイズ == 5 || SEX(PAGING) == 1
+						LOCAL = 0
+				CASE "縮胸剤"
+					SIF TALENT:PAGING:バストサイズ == 1 || SEX(PAGING) == 1
+						LOCAL = 0
+				CASE "止乳剤"
+					SIF !TALENT:PAGING:母乳体質 || SEX(PAGING) == 1
+						LOCAL = 0
+				CASE "夜尿症改善薬"
+					SIF !TALENT:PAGING:おもらし癖
+						LOCAL = 0
+				CASE "ゾンビパウダー"
+					SIF TALENT:PAGING:ゾンビ
+						LOCAL = 0
+				CASE "聖水"
+					SIF !TALENT:PAGING:ゾンビ
+						LOCAL = 0
+				CASE "性転換薬"
+					;妊娠時は使えない
+					SIF TALENT:PAGING:妊娠 || TALENT:PAGING:性転換済
+						LOCAL = 0
+				CASE "時の砂時計"
+					SIF TALENT:PAGING:小人体型
+						LOCAL = 0
+				CASE "永続的利尿剤"
+					;既におもらし癖ついてると使えない
+					SIF TALENT:PAGING:おもらし癖
+						LOCAL = 0
+				CASE "ビースティースターター"
+					;ケモミミ尻尾両方あったり、既に獣だったりファーリーだったりすると使えない
+					SIF (TALENT:PAGING:動物耳 && TALENT:PAGING:尻尾) || CSTR:PAGING:種族 == "獣" || TALENT:PAGING:ファーリー
+						LOCAL = 0
+				CASE "魔剤"
+					;既にキメてる場合は使えない
+					SIF CFLAG:PAGING:魔剤
+						LOCAL = 0
+				CASE "排卵誘発剤"
+					SIF CFLAG:PAGING:排卵誘発剤 || !VAGINA(PAGING)
+						LOCAL = 0
+				CASE "リミッター解除"
+					SIF TALENT:PAGING:リミットバースト || !CFLAG:PAGING:陥落
+						LOCAL = 0
+			ENDSELECT
+	ENDSELECT
+
+	LOCALS = 体力
+	LOCALS += @"({BASE:PAGING:体力}/{MAXBASE:PAGING:体力}) %BARSTR(BASE:PAGING:体力, MAXBASE:PAGING:体力, 16)% "
+	SIF TALENT:PAGING:処女
+		LOCALS += "処女 "
+	SIF TALENT:PAGING:再生処女
+		LOCALS += "再生処女 "
+	SIF TALENT:PAGING:童貞
+		LOCALS += "童貞 "
+	SIF TALENT:PAGING:恋慕
+		LOCALS += "恋慕 "
+	SIF TALENT:PAGING:淫乱
+		LOCALS += "淫乱 "
+	SIF TALENT:PAGING:服従
+		LOCALS += "服従 "
+	SIF TALENT:PAGING:親愛
+		LOCALS += "親愛 "
+	SIF TALENT:PAGING:娼婦
+		LOCALS += "娼婦 "
+	SIF TALENT:PAGING:隷属
+		LOCALS += "隷属 "
+	SIF TALENT:PAGING:崩壊
+		LOCALS += "崩壊 "
+	SIF TALENT:PAGING:リミットバースト
+		LOCALS += "超 "
+	SIF CFLAG:PAGING:状態 == 2
+		LOCALS += "助手可 "
+	CALL PAGING, LOCAL, @"%LOCALS%", "ITEM USE", "戻る"
+NEXT
+
+SIF RESULT == -1
+	RETURN 0
+
+LOCAL = RESULT
+CALL KOJO_MESSAGE_EVENT, ITEMNAME:ARG, LOCAL
+
+SELECTCASE ITEMNAME:ARG
+	;体力回復
+	CASE "怪しげな栄養剤"
+		PRINTFORMW ＜%CALLNAME:LOCAL%の体力が回復した＞
+		IF TALENT:LOCAL:回復早い
+			LOCAL:1 = 400
+		ELSEIF TALENT:LOCAL:回復遅い
+			LOCAL:1 = 200
+		ELSE
+			LOCAL:1 = 300
+		ENDIF
+		SIF TALENT:LOCAL:小柄体型
+			LOCAL:1 += 50
+		LOCAL:1 += ABL:MASTER:技巧*10
+		BASE:LOCAL:体力 += LOCAL:1
+		SIF BASE:LOCAL:体力 > MAXBASE:LOCAL:体力
+			BASE:LOCAL:体力 = MAXBASE:LOCAL:体力
+	;ふたなり化
+	CASE "ふたなり薬"
+		PRINTFORMW ＜%CALLNAME:LOCAL%はふたなりになった＞
+		TALENT:LOCAL:ふたなり = 1
+		CFLAG:LOCAL:ストレス値 += 5
+		SELECTCASE SEX(LOCAL)
+			;対象が男なら、常に処女になる Ｖ経験があれば再生処女
+			CASE 1
+				IF !EXP:LOCAL:Ｖ経験
+					TALENT:LOCAL:処女 = 1
+				ELSE
+					TALENT:LOCAL:再生処女 = 1
+				ENDIF
+			;対象が女で、挿入経験が無ければ童貞になる
+			CASE 2
+				IF VIRGIN:LOCAL:0 == "" && !TALENT:LOCAL:性転換済
+					TALENT:LOCAL:童貞 = 1
+				ELSEIF VIRGIN:LOCAL:10 == "" && TALENT:LOCAL:性転換済
+					TALENT:LOCAL:童貞 = 1
+				ENDIF
+		ENDSELECT
+	;ふたなりを消去
+	CASE "ふたなり消去薬"
+		PRINTFORMW ＜%CALLNAME:LOCAL%はふたなりではなくなった＞
+		TALENT:LOCAL:ふたなり = 0
+		CFLAG:LOCAL:ストレス値 += 3
+		SELECTCASE SEX(LOCAL)
+			CASE 1
+				TALENT:LOCAL:処女 = 0
+				TALENT:LOCAL:再生処女 = 0
+				CALL CLEAR_FLAG, LOCAL
+			CASE 2
+				TALENT:LOCAL:童貞 = 0
+		ENDSELECT
+	;母乳体質
+	CASE "天使のミルク"
+		PRINTFORMW ＜%CALLNAME:LOCAL%は母乳が出るようになった＞
+		TALENT:LOCAL:母乳体質 = 1
+		CFLAG:LOCAL:ストレス値 += 5
+	;処女膜再生
+	CASE "ユニコーンテイル"
+		PRINTFORMW ＜%CALLNAME:LOCAL%の処女膜が再生された＞
+		TALENT:LOCAL:再生処女 = 1
+		CFLAG:LOCAL:ストレス値 += 5
+	;豊乳化
+	CASE "豊胸剤"
+		SELECTCASE TALENT:LOCAL:バストサイズ
+			;絶壁→貧乳
+			CASE 1
+				PRINTFORMW ＜%CALLNAME:LOCAL%の胸がほんの少しだけ膨らんだ＞
+			;貧乳→普乳
+			CASE 2
+				PRINTFORMW ＜%CALLNAME:LOCAL%の胸が人並みに大きくなった＞
+			;普乳→巨乳
+			CASE 3
+				PRINTFORMW ＜%CALLNAME:LOCAL%の胸が豊満になった＞
+			;巨乳→爆乳
+			CASE 4
+				;小柄体型、小人体型
+				IF TALENT:LOCAL:小柄体型 || TALENT:LOCAL:小人体型
+					PRINTFORMW ＜%CALLNAME:LOCAL%の胸が体に不釣合いなまでに大きくなった＞
+				;それ以外
+				ELSE
+					PRINTFORMW ＜%CALLNAME:LOCAL%の胸が溢れんばかりの大きさになった＞
+				ENDIF
+		ENDSELECT
+		TALENT:LOCAL:バストサイズ++
+		CFLAG:LOCAL:ストレス値 += 7
+	;縮乳化
+	CASE "縮胸剤"
+		SELECTCASE TALENT:LOCAL:バストサイズ
+			;爆乳→巨乳
+			CASE 5
+				PRINTFORMW ＜%CALLNAME:LOCAL%の豊かすぎる胸が一回り小さくなった＞
+			;巨乳→普乳
+			CASE 4
+				PRINTFORMW ＜%CALLNAME:LOCAL%の胸が人並みに小さくなった＞
+			;普乳→貧乳
+			CASE 3
+				PRINTFORMW ＜%CALLNAME:LOCAL%の胸が小さくなった＞
+			;貧乳→絶壁
+			CASE 2
+				PRINTFORMW ＜%CALLNAME:LOCAL%の胸が極端に薄くなった＞
+				IF TALENT:LOCAL:母乳体質
+					PRINTFORMW ＜%CALLNAME:LOCAL%の母乳が出なくなった＞
+					TALENT:LOCAL:母乳体質 = 0
+					CFLAG:LOCAL:ストレス値++
+				ENDIF
+		ENDSELECT
+		TALENT:LOCAL:バストサイズ--
+		CFLAG:LOCAL:ストレス値 += 7
+	;母乳治療
+	CASE "止乳剤"
+		PRINTFORMW ＜%CALLNAME:LOCAL%は母乳が出なくなった＞
+		TALENT:LOCAL:母乳体質 = 0
+		CFLAG:LOCAL:ストレス値 += 3
+	;お漏らし治療
+	CASE "夜尿症改善薬"
+		PRINTFORMW ＜%CALLNAME:LOCAL%のお漏らし癖が治った＞
+		TALENT:LOCAL:おもらし癖 = 0
+		CFLAG:LOCAL:おもらし改善フラグ = 1
+		CFLAG:LOCAL:ストレス値 += 3
+	;ゾンビパウダー
+	CASE "ゾンビパウダー"
+		PRINTFORMW ＜%CALLNAME:LOCAL%はゾンビになった＞
+		TALENT:LOCAL:ゾンビ = 1
+		CFLAG:LOCAL:ストレス値 += 10
+	;聖水
+	CASE "聖水"
+		PRINTFORMW ＜%CALLNAME:LOCAL%はゾンビから蘇った＞
+		TALENT:LOCAL:ゾンビ = 0
+		IF !TALENT:LOCAL:回復遅い
+			PRINTW その反動で治癒力が低下しました
+			TALENT:LOCAL:回復遅い = 1
+		ENDIF
+		CFLAG:LOCAL:ストレス値 += 5
+	;性転換薬 ふたなり時に何があろうと無条件でバージンは復活する
+	CASE "性転換薬"
+		SELECTCASE SEX(LOCAL)
+			CASE 1
+				PRINTFORMW ＜%CALLNAME:LOCAL%は女になった＞
+				IF TALENT:LOCAL:童貞
+					VIRGIN:LOCAL:0 = NOTLOSTVIRGIN
+					TALENT:LOCAL:童貞 = 0
+				ENDIF
+				TALENT:LOCAL:性別 = 2
+				TALENT:LOCAL:処女 = 1
+				IF TALENT:LOCAL:小柄体型
+					TALENT:LOCAL:バストサイズ = 2
+				ELSE
+					TALENT:LOCAL:バストサイズ = 3
+				ENDIF
+			CASE 2
+				PRINTFORMW ＜%CALLNAME:LOCAL%は男になった＞
+				IF TALENT:LOCAL:処女
+					VIRGIN:LOCAL:1 = NOTLOSTVIRGIN
+					TALENT:LOCAL:処女 = 0
+				ENDIF
+				TALENT:LOCAL:性別 = 1
+				TALENT:LOCAL:童貞 = 1
+				TALENT:LOCAL:バストサイズ = 0
+		ENDSELECT
+		CALL CLEAR_FLAG, LOCAL
+		TALENT:LOCAL:性転換済 = 1
+		CFLAG:LOCAL:ストレス値 += 20
+	;時の砂時計
+	CASE "時の砂時計"
+		IF TALENT:LOCAL:小柄体型
+			PRINTFORMW ＜%CALLNAME:LOCAL%は立派な大人の体になった＞
+			TALENT:LOCAL:小柄体型 = 0
+			SIF SEX(LOCAL) == 2 && TALENT:LOCAL:バストサイズ != 5
+				TALENT:LOCAL:バストサイズ++
+			MAXBASE:LOCAL:体力 += 200
+			BASE:LOCAL:体力 += 200
+		ELSE
+			PRINTFORMW ＜%CALLNAME:LOCAL%は\@ SEX(LOCAL) == 1 ? 少年 # 幼女 \@のような小さな体になった＞
+			TALENT:LOCAL:小柄体型 = 1
+			SIF SEX(LOCAL) == 2 && TALENT:LOCAL:バストサイズ != 1
+				TALENT:LOCAL:バストサイズ--
+			MAXBASE:LOCAL:体力 -= 200
+			BASE:LOCAL:体力 -= 200
+		ENDIF
+		CFLAG:LOCAL:ストレス値 += 10
+	;永続的利尿剤
+	CASE "永続的利尿剤"
+		PRINTFORMW ＜%CALLNAME:LOCAL%は尿意を我慢できなくなった＞
+		TALENT:LOCAL:おもらし癖 = 1
+		CFLAG:LOCAL:ストレス値 += 10
+	;ビースティースターター
+	CASE "ビースティースターター"
+		PRINTFORM ＜%CALLNAME:LOCAL%に
+		SIF !TALENT:LOCAL:動物耳
+			PRINT 動物の耳
+		SIF !TALENT:LOCAL:動物耳 && !TALENT:LOCAL:尻尾
+			PRINT と
+		SIF !TALENT:LOCAL:尻尾
+			PRINT 動物の尻尾
+		PRINTW が生えた＞
+		TALENT:LOCAL:動物耳 = 1
+		TALENT:LOCAL:尻尾 = 1
+		IF TALENT:LOCAL:好奇心
+			CFLAG:LOCAL:依存度 += 50
+		ELSE
+			CFLAG:LOCAL:ストレス値 += 3
+		ENDIF
+	;魔剤
+	CASE "魔剤"
+		PRINTFORMW ＜%CALLNAME:LOCAL%のテンションが上がってきた！＞
+		CFLAG:LOCAL:魔剤 = 1
+		TIMES CFLAG:LOCAL:魔剤耐性, 1.1
+		CFLAG:LOCAL:魔剤耐性 = LIMIT(CFLAG:LOCAL:魔剤耐性, 1100, 2000)
+		CFLAG:LOCAL:回復量低下 += 5
+		CFLAG:LOCAL:ストレス値 += 10
+	;排卵誘発剤
+	CASE "排卵誘発剤"
+		IF LOCAL == MASTER
+			PRINTFORMW ＜%CALLNAME:MASTER%は排卵誘発剤を使用した＞
+		ELSE
+			PRINTFORMW ＜%CALLNAME:LOCAL%に排卵誘発剤を使った＞
+		ENDIF
+		CFLAG:LOCAL:排卵誘発剤 = 1
+		CFLAG:LOCAL:ストレス値 += 3
+	;リミットバースト
+	CASE "リミッター解除"
+		PRINTFORMW ＜%NAME:LOCAL%のリミッターを解除した＞
+		TALENT:LOCAL:リミットバースト = 1
+ENDSELECT
+
+RETURN 0
+
+;アイテムで【崩壊】を得た場合のイベント
+@COLLAPSE_MIND_ITEM, ARG
+PRINTFORMW %CALLNAME:ARG%の様子がおかしい
+PRINTFORMW 投薬の影響によって、%CALLNAME:ARG%の精神に異常をきたしてしまったようだ
+PRINTFORMW %NAME:ARG%は【崩壊】してしまった
+TALENT:ARG:崩壊 = 1
+SIF TALENT:ARG:恋慕
+	PRINTFORMW %CALLNAME:ARG%は[恋慕]を失った
+SIF TALENT:ARG:淫乱
+	PRINTFORMW %CALLNAME:ARG%は[淫乱]を失った
+SIF TALENT:ARG:服従
+	PRINTFORMW %CALLNAME:ARG%は[服従]を失った
+SIF TALENT:ARG:親愛
+	PRINTFORMW %CALLNAME:ARG%は[親愛]を失った
+SIF TALENT:ARG:娼婦
+	PRINTFORMW %CALLNAME:ARG%は[娼婦]を失った
+SIF TALENT:ARG:隷属
+	PRINTFORMW %CALLNAME:ARG%は[隷属]を失った
+TALENT:ARG:恋慕 = 0
+TALENT:ARG:淫乱 = 0
+TALENT:ARG:服従 = 0
+TALENT:ARG:親愛 = 0
+TALENT:ARG:娼婦 = 0
+TALENT:ARG:隷属 = 0
+

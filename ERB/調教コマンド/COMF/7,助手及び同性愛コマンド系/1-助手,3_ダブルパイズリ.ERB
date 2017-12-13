@@ -1,0 +1,367 @@
+;-------------------------------------------------
+;ダブルパイズリ
+;-------------------------------------------------
+@USERCOM_ABLE_ダブルパイズリ, ARG
+#FUNCTION
+;助手じゃないとダメ
+SIF PLAYER != ASSI
+	RETURNF 0
+;助手、奴隷共に女性じゃないとダメ
+SIF SEX(TARGET) == 1 || SEX(ASSI) == 1
+	RETURNF 0
+;主人がペニス無いとダメ
+SIF !PENIS(MASTER)
+	RETURNF 0
+;主人が[魅惑]か[謎の魅力]、もしくは奴隷と助手両方陥落してないとダメ
+SIF !TALENT:MASTER:魅惑 && !TALENT:MASTER:謎の魅力 && (!CFLAG:陥落 || !CFLAG:ASSI:陥落)
+	RETURNF 0
+;助手が奉仕精神LV3以上、技巧LV4以上じゃないとダメ
+SIF ABL:ASSI:技巧 < 4 || ABL:ASSI:奉仕精神 < 3
+	RETURNF 0
+;縄使用中は不可
+SIF TEQUIP:縄
+	RETURNF 0
+;触手調教中はダメ
+SIF TEQUIP:触手
+	RETURNF 0
+
+COMRESULT = 1
+RETURNF 1
+
+@実行判定_ダブルパイズリ
+;-------------------------------------------------
+;実行判定処理
+;-------------------------------------------------
+;すべての命令に共通の要素を考慮
+;(従順が高いと命令に従いやすいなど)
+CALL COM_ORDER
+
+VARSET LOCAL, 0
+LOCAL = RESULT
+
+;ABL:欲望
+IF ABL:欲望
+	LOCAL += ABL:欲望
+	PRINTFORM +欲望LV{ABL:欲望}({ABL:欲望})
+ENDIF
+;ABL:奉仕精神
+IF ABL:奉仕精神
+	LOCAL += ABL:奉仕精神*4
+	PRINTFORM +奉仕精神LV{ABL:奉仕精神}({ABL:奉仕精神*4})
+ENDIF
+;ABL:精液中毒
+IF ABL:精液中毒
+	LOCAL += ABL:精液中毒*3
+	PRINTFORM +精液中毒LV{ABL:精液中毒}({ABL:精液中毒*3})
+ENDIF
+;快楽刻印
+IF MARK:快楽刻印
+	LOCAL += MARK:快楽刻印
+	PRINTFORM +快楽刻印LV{MARK:快楽刻印}({MARK:快楽刻印})
+ENDIF
+
+CALL COM_ORDER_欲情, 1
+LOCAL += RESULT
+
+REPEAT VARSIZE("TALENT")
+	LOCAL:1 = 0
+	SIF !TALENT:COUNT
+		CONTINUE
+	SELECTCASE TALENTNAME:COUNT
+		CASE "娼婦"
+			LOCAL:1 = 10
+		CASE "淫乱"
+			LOCAL:1 = 5
+		CASE "恥じらい"
+			LOCAL:1 = -2
+		CASE "献身的"
+			LOCAL:1 = 6
+		CASE "汚臭敏感"
+			LOCAL:1 = -6
+		CASE "汚臭鈍感"
+			LOCAL:1 = 2
+		CASE "快感の否定"
+			SIF FALLTYPE(TARGET) != 2
+				LOCAL:1 = -2
+		CASE "男嫌い"
+			SIF SEX(PLAYER) == 1 && (FALLTYPE(TARGET) != 1 || PLAYER != MASTER)
+				LOCAL:1 = -12
+	ENDSELECT
+	IF LOCAL:1
+		PRINTFORM \@SIGN(LOCAL:1) == 1 ? + # - \@%TALENTNAME:COUNT%({ABS(LOCAL:1)})
+		LOCAL += LOCAL:1
+	ENDIF
+REND
+
+LOCAL:1 = 0
+;愛液の汚れ
+SIF GETBIT(STAIN:PLAYER:ペニス, 0)
+	LOCAL:1 += 1
+;精液の汚れ
+SIF GETBIT(STAIN:PLAYER:ペニス, 2)
+	LOCAL:1 += 4
+;アナルの汚れ
+SIF GETBIT(STAIN:PLAYER:ペニス, 3)
+	LOCAL:1 += 6
+;尿
+SIF GETBIT(STAIN:PLAYER:ペニス, 7)
+	LOCAL:1 += 6
+
+SIF TALENT:汚れ無視
+	LOCAL:1 /= 3
+SIF TALENT:潔癖症
+	LOCAL:1 *= 2
+
+;汚れあり
+IF LOCAL:1
+	LOCAL -= LOCAL:1
+	IF TALENT:汚れ無視
+		PRINT -汚れあり、汚れ無視
+	ELSEIF TALENT:潔癖症
+		PRINT -汚れあり、潔癖症
+	ELSE
+		PRINT -汚れあり
+	ENDIF
+	PRINTFORM ({LOCAL:1})
+ENDIF
+
+;合計を表示(38以上で実行)
+PRINTFORM  = {LOCAL}
+
+LOCAL:2 = 38
+SELECTCASE LOCAL
+	CASE IS < LOCAL:2
+		PRINT  < 
+	CASE IS > LOCAL:2
+		PRINT  > 
+	CASEELSE
+		PRINT  = 
+ENDSELECT
+PRINTFORM 実行値{LOCAL:2}
+WAIT
+;実行できない
+IF LOCAL < LOCAL:2
+		CALL KOJO_MESSAGE_EVENT, "コマンド拒否時"
+	RETURN 0
+ELSE
+	RETURN 1
+ENDIF
+
+@COM_ダブルパイズリ
+PRINTL ダブルパイズリ
+
+SIF !TFLAG:実行判定無視
+	CALLFORM 実行判定_%SELECTCOMS%
+SIF !RESULT && !TFLAG:実行判定無視
+	RETURN 0
+
+;-------------------------------------------------
+;実行決定
+;-------------------------------------------------
+CALL KOJO_MESSAGE_COM
+
+;実行者が奴隷であるフラグ
+TFLAG:奴隷実行 = 1
+
+;-------------------------------------------------
+;射精ゲージチェック
+;-------------------------------------------------
+LOCAL = 600
+
+;ABL:技巧をみる
+LOCAL += (LOCAL/5)*ABL:技巧
+
+;ABL:従順をみる
+LOCAL += (LOCAL/10)*ABL:従順 - (LOCAL/10)*2
+
+;ABL:奉仕精神をみる
+SELECTCASE ABL:奉仕精神
+	CASE 0
+		TIMES LOCAL , 0.50
+	CASE 1
+		TIMES LOCAL , 0.80
+	CASE 2
+		TIMES LOCAL , 1.20
+	CASE 3
+		TIMES LOCAL , 1.50
+	CASE 4
+		TIMES LOCAL , 1.80
+	CASEELSE
+		LOCAL += LOCAL/3*ABL:奉仕精神
+ENDSELECT
+
+;ABL:助手の技巧をみる
+LOCAL += (LOCAL/5)*ABL:ASSI:技巧
+
+;ABL:助手の従順をみる
+LOCAL += (LOCAL/10)*ABL:ASSI:従順 - (LOCAL/10)*2
+
+;ABL:助手の奉仕精神をみる
+SELECTCASE ABL:ASSI:奉仕精神
+	CASE 0
+		TIMES LOCAL , 0.50
+	CASE 1
+		TIMES LOCAL , 0.80
+	CASE 2
+		TIMES LOCAL , 1.20
+	CASE 3
+		TIMES LOCAL , 1.50
+	CASE 4
+		TIMES LOCAL , 1.80
+	CASEELSE
+		LOCAL += LOCAL/3*ABL:奉仕精神
+ENDSELECT
+
+;主人のABL:Ｃ感覚をみる
+SELECTCASE ABL:MASTER:Ｃ感覚
+	CASE 0
+		TIMES LOCAL , 1.00
+	CASE 1
+		TIMES LOCAL , 1.50
+	CASE 2
+		TIMES LOCAL , 2.00
+	CASE 3
+		TIMES LOCAL , 2.50
+	CASE 4
+		TIMES LOCAL , 3.50
+	CASEELSE
+		TIMES LOCAL , 5.00
+ENDSELECT
+
+;TALENT:バストサイズをみる
+SELECTCASE TALENT:バストサイズ
+	CASE 1
+		TIMES LOCAL , 0.70
+	CASE 2
+		TIMES LOCAL , 0.85
+	CASE 3
+		TIMES LOCAL , 1.00
+	CASE 4
+		TIMES LOCAL , 1.15
+	CASEELSE
+		TIMES LOCAL , 1.30
+ENDSELECT
+
+;機械・無機物の場合、ある程度減らす
+IF CSTR:種族 == "機械" && TALENT:無機物
+	TIMES LOCAL , 0.60
+ELSEIF CSTR:種族 == "機械" || TALENT:無機物
+	TIMES LOCAL , 0.80
+ENDIF
+
+;奴隷が小柄体型・小人体型なら身体が柔らかいので増やす
+SIF TALENT:小柄体型 || TALENT:小人体型
+	TIMES LOCAL , 1.25
+
+;TALENT:助手のバストサイズをみる
+SELECTCASE TALENT:ASSI:バストサイズ
+	CASE 1
+		TIMES LOCAL , 0.70
+	CASE 2
+		TIMES LOCAL , 0.85
+	CASE 3
+		TIMES LOCAL , 1.00
+	CASE 4
+		TIMES LOCAL , 1.15
+	CASEELSE
+		TIMES LOCAL , 1.30
+ENDSELECT
+
+;機械・無機物の場合、ある程度減らす
+IF CSTR:ASSI:種族 == "機械" && TALENT:ASSI:無機物
+	TIMES LOCAL , 0.60
+ELSEIF CSTR:ASSI:種族 == "機械" || TALENT:ASSI:無機物
+	TIMES LOCAL , 0.80
+ENDIF
+
+;助手が小柄体型・小人体型なら身体が柔らかいので増やす
+SIF TALENT:ASSI:小柄体型 || TALENT:ASSI:小人体型
+	TIMES LOCAL , 1.25
+
+;PLAYERが小柄体型・小人体型なら相対的に胸が大きくなるので少し増やす
+SIF TALENT:PLAYER:小柄体型 || TALENT:PLAYER:小人体型
+	TIMES LOCAL , 1.15
+
+CALL 射精ゲージ増加, LOCAL, MASTER
+
+;-------------------------------------------------
+;ソース追加処理
+;-------------------------------------------------
+;消費体力、気力
+LOSEBASE:体力 += 50
+LOSEBASE:気力 += 100
+
+SOURCE:快B = 200
+SOURCE:情愛 = 300
+SOURCE:性行動 = 600
+SOURCE:達成 = 450
+SOURCE:屈従 = 900
+SOURCE:逸脱 = 400
+SOURCE:反感 = 400
+
+;上のほうで計算した汚れデータ
+SOURCE:不潔 = LOCAL:1*50+100
+
+;-------------------------------------------------
+;特殊ソース処理
+;-------------------------------------------------
+;抑圧、抵抗持ちには、抑鬱ソース追加
+SIF TALENT:抑圧 || TALENT:抵抗
+	SOURCE:鬱屈 += 600
+
+;-------------------------------------------------
+;絶頂チェック
+;-------------------------------------------------
+CALL SOURCE_CHECK_CVAB
+
+;-------------------------------------------------
+;射精チェック
+;-------------------------------------------------
+;射精するのは主人なので専用の関数を呼ぶ
+CALL SAMEN_CHECK_M, 5
+CALL SAMEN_CHECK_T, 0
+
+CALL SAMEN_SHOOT, 5, NOWEX:MASTER:射精, MASTER
+CALL SAMEN_SHOOT_T, 0, NOWEX:射精
+
+;-------------------------------------------------
+;汚れの処理
+;-------------------------------------------------
+;奴隷の胸⇔調教者のペニスの汚れが移動
+STAIN:胸 |= STAIN:MASTER:ペニス
+STAIN:MASTER:ペニス |= STAIN:胸
+
+;助手の胸⇔調教者のペニスの汚れが移動
+STAIN:ASSI:胸 |= STAIN:MASTER:ペニス
+STAIN:MASTER:ペニス |= STAIN:ASSI:胸
+
+;-------------------------------------------------
+;経験の処理
+;-------------------------------------------------
+;同性愛経験
+;助手と奴隷が女性じゃないと実行できないのでレズ経験のみ
+IF SEX(MASTER) == 2
+	PRINTL レズ経験+7
+	EXP:レズ経験 += 7
+ELSE
+	PRINTL レズ経験+4
+	EXP:レズ経験 += 4
+ENDIF
+
+;調教経験
+PRINTL 主人調教経験+3
+EXP:主人調教経験 += 3
+PRINTL 助手調教経験+1
+EXP:助手調教経験 += 1
+
+;依存度補正値(相性100↑かつ淫乱で1、娼婦で2）
+IF TALENT:淫乱 && RELATION:(NO:PLAYER) > 100
+	TFLAG:依存度補正 += 1
+ELSEIF TALENT:娼婦 && RELATION:(NO:PLAYER) > 100
+	TFLAG:依存度補正 += 2
+ENDIF
+
+TFLAG:奉仕快楽 = 1
+
+RETURN 1
+

@@ -1,0 +1,631 @@
+;追加処理及びサブイベント
+;-------------------------------------------------
+;日付が変わった時のイベント
+;-------------------------------------------------
+@EVENT_NEXTDAY
+;奴隷の幼児退行イベント
+IF TARGET >= 0
+	;反発刻印3があり、かつ幼稚である時に
+	IF TALENT:幼稚 && MARK:反発刻印 == 3
+		;欲望が5かつ従順が5かつマゾっ気が5かつ異常経験が7以上になる
+		IF ABL:欲望 >= 5 && ABL:従順 >= 5 && ABL:マゾっ気 >= 5 && EXP:異常経験 >= 7
+			CALL KOJO_MESSAGE_EVENT, "幼児退行"
+			TALENT:幼稚 = 0
+			TALENT:幼児／幼児退行 = 1
+			MARK:反発刻印 = 0
+		ENDIF
+	;反発刻印3があり、かつ幼稚がない時
+	ELSEIF TALENT:幼稚 == 0 && MARK:反発刻印 == 3
+		;欲望が5かつ従順が5かつマゾっ気が5かつ異常経験が9以上に加え露出癖5とおもらし癖がある
+		IF ABL:欲望 >= 5 && ABL:従順 >= 5 && ABL:マゾっ気 >= 5 && ABL:露出癖 >= 5 && EXP:異常経験 >= 9 && TALENT:おもらし癖 == 1
+			CALL KOJO_MESSAGE_EVENT, "幼児退行"
+			TALENT:幼稚 = 0
+			TALENT:幼児／幼児退行 = 1
+			MARK:反発刻印 = 0
+		ENDIF
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;ターン終了時
+;-------------------------------------------------
+@EVENTTURNEND
+VARSET LOCAL, 0
+
+IF TARGET >= 0
+	;未陥落なら反発刻印に応じてストレス値増加
+	;未陥落じゃなくても上がるように
+	;SIF !CFLAG:陥落
+		CFLAG:ストレス値 += MARK:反発刻印
+	;ストレス値100以上で崩壊を得る
+	;撤廃しました
+	;SIF CFLAG:ストレス値 >= 100 && !TALENT:崩壊
+	;	CALL COLLAPSE_MIND_TRAIN
+	
+	;ストレス値が999より大きい場合999にする
+	SIF CFLAG:ストレス値 > 999
+		CFLAG:ストレス値 = 999
+	;依存度が-1000未満の場合、-1000にする
+	SIF CFLAG:依存度 < -1000
+		CFLAG:依存度 = -1000
+
+	;売却可能&助手可能判定 陥落系で無視できるって条件はほとんど意味無いか
+	;従順+欲望が6以上
+	SIF ABL:従順+ABL:欲望 >= 6
+		LOCAL = 1
+
+	;[反抗的][気丈]なら従順LV4以上必要 服従系陥落素質があれば無視できる
+	IF (TALENT:反抗的 || TALENT:気丈) && !TALENT:服従 && !TALENT:隷属
+		SIF ABL:従順 < 4
+			LOCAL = 0
+	ENDIF
+
+	;[自制心][無関心]なら欲望LV4以上必要 淫乱系陥落素質があれば無視できる
+	IF (TALENT:自制心 || TALENT:無関心) && !TALENT:淫乱 && !TALENT:娼婦
+		SIF ABL:欲望 < 4
+			LOCAL = 0
+	ENDIF
+
+	;[プライド高い][生意気]なら奉仕精神LV4以上必要
+	IF TALENT:プライド高い || TALENT:生意気
+		SIF ABL:奉仕精神 < 4
+			LOCAL = 0
+	ENDIF
+
+	IF LOCAL
+		;技巧3以上or奉仕精神3以上orマゾっ気3以上orCVAB感覚合計8以上or従順5以上or欲望5以上なら売却可能
+		;eraOriでは売却システム廃止
+		IF ABL:技巧 >= 3 || ABL:奉仕精神 >= 3 || ABL:マゾっ気 >= 3 || ABL:Ｃ感覚+ABL:Ｖ感覚+ABL:Ａ感覚+ABL:Ｂ感覚 >= 8 || ABL:従順 >= 5 || ABL:欲望 >= 5
+			;さらに従順+欲望+技巧が14以上なら助手可能
+			IF ABL:従順+ABL:欲望+ABL:技巧 >= 14
+				IF CFLAG:状態 <= 1
+					PRINTFORMW %NAME:TARGET%が助手可能になりました
+					CFLAG:状態 = 2
+				ENDIF
+			ENDIF
+		ENDIF
+	ENDIF
+ENDIF
+
+REPEAT CHARANUM
+	;気力の回復
+	BASE:COUNT:気力 = MAXBASE:COUNT:気力
+	
+	CFLAG:COUNT:二日酔い = 0
+	;酔が抜ける 必ずしも1ターンで全快するわけではない
+	SELECTCASE TIME
+		;昼→夜
+		CASE 0
+			IF TALENT:COUNT:酒豪
+				CFLAG:COUNT:酔 -= 20
+				CFLAG:COUNT:酔 -= TEQUIP:COUNT:ウォッカ/3
+			ELSEIF TALENT:COUNT:下戸
+				CFLAG:COUNT:酔 -= 5
+				CFLAG:COUNT:酔 -= TEQUIP:COUNT:ウォッカ/5
+			ELSE
+				CFLAG:COUNT:酔 -= 10
+				CFLAG:COUNT:酔 -= TEQUIP:COUNT:ウォッカ/4
+			ENDIF
+		;夜→昼
+		CASE 1
+			IF TALENT:COUNT:酒豪
+				CFLAG:COUNT:酔 -= 50
+				CFLAG:COUNT:酔 -= TEQUIP:COUNT:ウォッカ/2
+			ELSEIF TALENT:COUNT:下戸
+				CFLAG:COUNT:酔 -= 10
+				CFLAG:COUNT:酔 -= TEQUIP:COUNT:ウォッカ/4
+			ELSE
+				CFLAG:COUNT:酔 -= 30
+				CFLAG:COUNT:酔 -= TEQUIP:COUNT:ウォッカ/3
+			ENDIF
+			;これで酔いが残っていると二日酔いを引き起こす
+			IF CFLAG:COUNT:酔 > 0
+				CFLAG:COUNT:二日酔い = 1
+				CFLAG:COUNT:酔 = 0
+			ENDIF
+	ENDSELECT
+	TEQUIP:COUNT:ウォッカ = 0
+	SIF CFLAG:COUNT:酔 < 0
+		CFLAG:COUNT:酔 = 0
+	
+	;魔剤フラグ消去
+	CFLAG:COUNT:魔剤 = 0
+	;魔剤耐性減少
+	IF TALENT:COUNT:小人体型
+		CFLAG:COUNT:魔剤耐性 -= 5
+	ELSEIF TALENT:COUNT:小柄体型
+		CFLAG:COUNT:魔剤耐性 -= 6
+	ELSE
+		CFLAG:COUNT:魔剤耐性 -= 7
+	ENDIF
+	;魔剤耐性は1000～2000の間で変動する
+	SIF CFLAG:COUNT:魔剤耐性 < 1000
+		CFLAG:COUNT:魔剤耐性 = 1000
+
+	;体力の回復（午後の調教後は夜の休みが入るので回復大きい）
+	SELECTCASE TIME
+		CASE 0
+			LOCAL = MAXBASE:COUNT:体力 / 10
+		CASE 1
+			LOCAL = MAXBASE:COUNT:体力 / 4
+	ENDSELECT
+
+	;日光浴、月光浴、夢喰い
+	SELECTCASE TIME
+		CASE 0
+			SIF TALENT:COUNT:日光浴
+				LOCAL += 150
+		CASE 1
+			IF TALENT:COUNT:月光浴
+				SELECTCASE 月齢
+					CASE 0 TO 15
+						LOCAL += 月齢/10
+					CASE 16 TO 30
+						LOCAL += (3000-月齢)/10
+				ENDSELECT
+			ENDIF
+			;主人と当人引いて-2
+			SIF TALENT:COUNT:夢喰い && CHARANUM-2 > 0
+				LOCAL += (CHARANUM-2)*30
+			SIF TALENT:MASTER:夢喰い || (ASSI > 0 && TALENT:ASSI:夢喰い)
+				LOCAL += 50
+	ENDSELECT
+
+	;主人もしくは助手が治療持ち
+	SIF TALENT:MASTER:治療 || (ASSI >= 0 && TALENT:ASSI:治療)
+		LOCAL += 150
+
+	;使用不可のキャラは休憩フラグの影響を受けない
+	IF !CFLAG:COUNT:使用不可
+		;休憩フラグ（休憩フラグが経っている、もしくは調教対象でない）
+		IF FLAG:休憩フラグ || TARGET != COUNT
+			LOCAL += 100
+			CFLAG:COUNT:ストレス値--
+			SIF TALENT:COUNT:ハイテンション
+				CFLAG:COUNT:ストレス値--
+		ENDIF
+
+		;休憩コマンドで休んだ場合
+		IF FLAG:休憩フラグ == 2
+			TIMES LOCAL , 2.00
+			CFLAG:COUNT:ストレス値 -= 2
+			SIF TALENT:COUNT:ハイテンション
+				CFLAG:COUNT:ストレス値--
+		ENDIF
+	ENDIF
+
+	;吸血鬼
+	SIF TALENT:COUNT:吸血鬼 && TIME == 1
+		TIMES LOCAL , 1.20
+
+	;回復早い、回復遅い
+	IF TALENT:COUNT:回復早い
+		TIMES LOCAL , 1.50
+	ELSEIF TALENT:COUNT:回復遅い
+		TIMES LOCAL , 0.75
+	ENDIF
+	
+	;小柄体型 子供の回復力は高いうんぬん
+	SIF TALENT:COUNT:小柄体型
+		TIMES LOCAL , 1.20
+
+	;無機物、ゾンビ
+	SIF TALENT:COUNT:無機物
+		TIMES LOCAL , 0.80
+	SIF TALENT:COUNT:ゾンビ
+		TIMES LOCAL , 0.50
+
+	;ストレス値が0未満の場合は0にする
+	SIF CFLAG:COUNT:ストレス値 < 0
+		CFLAG:COUNT:ストレス値 = 0
+
+	;「暑さに弱い」「寒さに弱い」 最低100は保証
+	IF TALENT:COUNT:暑さに弱い
+		SIF FLAG:気温 >= 200
+			LOCAL -= FLAG:気温-200
+		SIF LOCAL < 100
+			LOCAL = 100
+	ENDIF
+	IF TALENT:COUNT:寒さに弱い
+		SIF FLAG:気温 <= 150
+			LOCAL -= 150-FLAG:気温
+		SIF LOCAL < 100
+			LOCAL = 100
+	ENDIF
+
+	;「回復量低下」と「ストレス値」によって回復量がさらに下がる
+	BASE:COUNT:体力 += 10 * LOCAL / (1 + CFLAG:COUNT:回復量低下) / CBRT(1000*(1+CFLAG:COUNT:ストレス値))
+	SIF BASE:COUNT:体力 > MAXBASE:COUNT:体力
+		BASE:COUNT:体力 = MAXBASE:COUNT:体力
+
+	;回復量低下処理
+	SIF CFLAG:COUNT:回復量低下 > 0
+		CFLAG:COUNT:回復量低下--
+	
+	;使用不可フラグ
+	IF CFLAG:COUNT:使用不可
+		CFLAG:COUNT:使用不可--
+		IF CFLAG:COUNT:使用不可 == 0
+			PRINTFORMW %CALLNAME:COUNT%が再び調教可能になりました
+		ENDIF
+	ENDIF
+REND
+
+CALL EVENTCHECK_ABL
+FLAG:休憩フラグ = 0
+
+;午後なら次の日、午前なら午後にする
+SELECTCASE TIME
+	CASE 0
+		PRINTW 夜になった……
+		TIME = 1
+	CASE 1
+		;日付変更時のイベント呼び出し
+		CALL EVENT_NEXTDAY
+		SIF !CFLAG:MASTER:使用不可
+			CALL EVENT_HONEYTRAP
+		;主人が使用不可の場合、期限的な日付加算は行わない
+		IF !CFLAG:MASTER:使用不可
+			DAY++
+			DAY:1 = DAY
+		;もし主人が妊娠で使用不可だった場合のために、妊娠フラグを進めるためのDAY:1はカウントする
+		ELSE
+			DAY:1++
+		ENDIF
+		PRINTW 一日が終わった……
+		TIME = 0
+		;朝になった時のイベント呼び出し
+		CALL EVENT_NEWDAY
+		CALL EVENT_NEWDAY_SELF
+ENDSELECT
+
+;天気の決定
+CALL WEATHER
+
+;主人が使用不可の場合はTARGETとASSIを外してSHOP画面表示し、収入と支出の一切を中断して時間だけ経過させる。DAYは増えないので期限には影響無し
+IF CFLAG:MASTER:使用不可
+	TARGET = -1
+	ASSI = -1
+
+	;曜日計算
+	FLAG:曜日 = ZELLER(YEAR,MONTH,DAYS)
+
+	;祝日・記念日の設定
+	CALL HOLIDAY
+
+	CALL SHOP_UI
+
+	PRINTFORMW %CALLNAME:MASTER%の都合により行動を終了します
+	TARGET = -1
+	ASSI = -1
+	FLAG:休憩フラグ = 1
+	RESTART
+ENDIF
+
+BEGIN SHOP
+
+;-------------------------------------------------
+;朝になった時のイベント
+;-------------------------------------------------
+@EVENT_NEWDAY
+#DIM LCOUNT
+VARSET LOCAL, 0
+
+;日付加算関数
+CALL NEXTDAY
+
+;祝日・記念日の処理はSHOPで行うようにしました
+
+;放尿経験100以上でおもらし癖がつく
+;[幼稚]なら放尿経験30以上でつく
+;アイテムで治した場合は発生しない
+IF TARGET >= 0
+	IF !TALENT:おもらし癖 && !CFLAG:おもらし改善フラグ
+		IF (TALENT:幼稚 && EXP:放尿経験 >= 30) || (!TALENT:幼稚 && EXP:放尿経験 >= 100)
+			DRAWLINE
+			CALL KOJO_MESSAGE_EVENT, "おもらし癖"
+			TALENT:おもらし癖 = 1
+		ENDIF
+	ENDIF
+ENDIF
+
+;調合知識習得イベント
+IF ASSI > 0 && !TALENT:MASTER:調合知識
+	;助手が調合知識持ちで陥落済み
+	IF TALENT:ASSI:調合知識 && CFLAG:ASSI:陥落
+		;技巧LV3以上 奉仕精神LV3以上
+		IF ABL:ASSI:技巧 >= 3 && ABL:ASSI:奉仕精神 >= 3
+			;主人の技巧LV4以上
+			IF ABL:MASTER:技巧 >= 4
+				DRAWLINE
+				CALL KOJO_MESSAGE_EVENT, "調合知識伝授", ASSI
+				TALENT:MASTER:調合知識 = 1
+				CFLAG:ASSI:主人に調合知識を伝授した経験++
+			ENDIF
+		ENDIF
+	ENDIF
+ENDIF
+
+;全体の妊娠発覚時のイベント
+CALL GET_CHILD
+
+;排卵誘発剤の効果終了
+REPEAT CHARANUM
+	IF CFLAG:COUNT:排卵誘発剤
+		PRINTFORMW %CALLNAME:COUNT%の排卵誘発剤の効果が切れたようだ
+		CFLAG:COUNT:排卵誘発剤 = 0
+	ENDIF
+REND
+
+CALL PREG_READY
+
+;-------------------------------------------------
+;女主人による色仕掛けイベント
+;-------------------------------------------------
+@EVENT_HONEYTRAP
+LOCAL = 0
+SIF !FLAG:色仕掛け
+	RETURN 0
+SIF TARGET < 0
+	RETURN 0
+SIF TALENT:MASTER:性別 != 2
+	RETURN 0
+
+SIF TALENT:生意気
+	LOCAL -= 1
+SIF TALENT:素直
+	LOCAL += 1
+SIF TALENT:反抗的
+	LOCAL -= 2
+SIF TALENT:衝動的
+	LOCAL += 1
+SIF TALENT:ツンデレ
+	LOCAL -= 2
+SIF TALENT:自制心
+	LOCAL -= 2
+SIF TALENT:無関心
+	LOCAL -= 1
+SIF TALENT:好奇心
+	LOCAL += 2
+SIF TALENT:一線越えない
+	LOCAL -= 2
+SIF TALENT:貞操観念
+	LOCAL -= 1
+SIF TALENT:貞操無頓着
+	LOCAL += 2
+SIF TALENT:抑圧
+	LOCAL -= 1
+SIF TALENT:解放
+	LOCAL += 2
+SIF TALENT:抵抗
+	LOCAL -= 1
+SIF TALENT:冷静
+	LOCAL -= 1
+SIF TALENT:弱味
+	LOCAL += 1
+SIF TALENT:強気
+	LOCAL -= 1
+SIF TALENT:弱気
+	LOCAL += 1
+SIF TALENT:献身的
+	LOCAL += 1
+SIF (TALENT:潔癖症 || TALENT:汚臭敏感) && TALENT:MASTER:ファーリー
+	LOCAL -= 2
+SIF TALENT:快感に素直
+	LOCAL += 2
+SIF TALENT:快感の否定
+	LOCAL -= 2
+IF TALENT:性別 == 2
+	IF TALENT:両刀
+		LOCAL += 1
+	ELSE
+		LOCAL -= 2
+	ENDIF
+ENDIF
+SIF TALENT:女好き
+	LOCAL += 2
+SIF TALENT:同族嫌悪 && CSTR:種族 == CSTR:MASTER:種族
+	LOCAL -= 2
+SIF TALENT:妄信
+	LOCAL += 1
+IF TALENT:恋心 
+	IF TALENT:恋心 != MASTER && !CFLAG:陥落
+		LOCAL -= 3
+	ELSEIF TALENT:恋心 == MASTER
+		LOCAL += 3
+	ENDIF
+ENDIF
+IF TALENT:既婚者
+	IF TALENT:既婚者 != MASTER && !CFLAG:陥落
+		LOCAL -= 5
+	ELSEIF TALENT:既婚者 == MASTER
+		LOCAL += 5
+	ENDIF
+ENDIF
+
+SIF TALENT:MASTER:魅力
+	LOCAL += 1
+SIF TALENT:MASTER:魅惑
+	LOCAL += 1
+SIF TALENT:MASTER:謎の魅力
+	LOCAL += 2
+SIF TALENT:MASTER:小柄体型
+	LOCAL -= 1
+
+LOCAL += ABL:従順
+LOCAL += ABL:欲望
+LOCAL += ABL:奉仕精神
+LOCAL -= MARK:反発刻印*2
+LOCAL -= MARK:苦痛刻印
+
+SIF CFLAG:陥落
+	LOCAL += 20
+
+;地の文分岐に使う
+TFLAG:誘惑ポイント = LOCAL
+
+DRAWLINE
+DO
+	PRINTFORML 就寝間際、寝付こうとしている%CALLNAME:TARGET%の姿を目撃した
+	PRINTL [0] 夜這いをかける
+	PRINTL [1] 誘惑する
+	PRINTL [2] 今日はやめとく
+	PRINTL [3] そんなつもりは無い(イベント非表示 オプションから再度表示出来ます)
+	INPUT
+	SELECTCASE RESULT
+		CASE 2
+			RETURN 0
+		CASE 3
+			FLAG:色仕掛け = 0
+			RETURN 0
+	ENDSELECT
+LOOP LOOPRES(0, 1)
+
+;夜這い
+SELECTCASE RESULT
+	CASE 0
+		IF TFLAG:誘惑ポイント >= 12
+			TFLAG:色仕掛け = 1
+			CALL KOJO_MESSAGE_EVENT, "色仕掛け"
+			;童貞喪失処理
+			IF PENIS(TARGET) && TALENT:童貞
+				TALENT:童貞 = 0
+				IF TALENT:性転換済
+					VIRGIN:10 = %NAME:MASTER%
+				ELSE
+					VIRGIN:0 = %NAME:MASTER%
+				ENDIF
+			ENDIF
+			;主人の処女喪失処理
+			IF TALENT:MASTER:処女
+				TALENT:MASTER:処女 = 0
+				IF TALENT:MASTER:性転換済
+					VIRGIN:MASTER:11 = %NAME:TARGET%
+				ELSE
+					VIRGIN:MASTER:1 = %NAME:TARGET%
+				ENDIF
+			ENDIF
+			IF PENIS(TARGET)
+				EXP:射精経験 += 2
+				EXP:MASTER:Ｖ経験 += 1
+				EXP:MASTER:膣射経験 += 1
+				PRINTL 射精経験+2
+				PRINTFORML %CALLNAME:MASTER%のＶ経験+1、膣内射精経験+1
+			ELSE
+				EXP:絶頂経験 += 3
+				PRINTL 絶頂経験+3
+			ENDIF
+			IF PENIS(MASTER)
+				EXP:MASTER:射精経験 += 1
+				EXP:精液経験 += 1
+				PRINTFORML %CALLNAME:MASTER%の射精経験+1
+				PRINTL 精液経験+1
+			ENDIF
+			IF TALENT:性別 == 2
+				EXP:レズ経験 += 3
+				PRINTL レズ経験+3
+			ELSE
+				EXP:MASTER:性交経験 += 1
+				EXP:性交経験 += 1
+				PRINTL お互いの性交経験+1
+			ENDIF
+			EXP:主人調教経験 += 2
+			PRINTL 主人調教経験+2
+			CFLAG:依存度 += TFLAG:誘惑ポイント
+			PRINTL 依存度増加
+			JUEL:快Ｃ += TFLAG:誘惑ポイント*50
+			JUEL:恭順 += TFLAG:誘惑ポイント*50
+			JUEL:欲情 += TFLAG:誘惑ポイント*70
+			JUEL:屈服 += TFLAG:誘惑ポイント*100
+			PRINTFORML 快Ｃの珠+{TFLAG:誘惑ポイント*50}
+			PRINTFORML 恭順の珠+{TFLAG:誘惑ポイント*50}
+			PRINTFORML 欲情の珠+{TFLAG:誘惑ポイント*70}
+			PRINTFORML 屈服の珠+{TFLAG:誘惑ポイント*100}
+		ELSE
+			TFLAG:色仕掛け = 2
+			CALL KOJO_MESSAGE_EVENT, "色仕掛け"
+			IF TFLAG:誘惑ポイント > 0
+				JUEL:恭順 += TFLAG:誘惑ポイント*10
+				JUEL:欲情 += TFLAG:誘惑ポイント*10
+				JUEL:恐怖 += TFLAG:誘惑ポイント*30
+				PRINTFORML 恭順の珠+{TFLAG:誘惑ポイント*10}
+				PRINTFORML 欲情の珠+{TFLAG:誘惑ポイント*10}
+				PRINTFORML 恐怖の珠+{TFLAG:誘惑ポイント*30}
+			ENDIF
+		ENDIF
+	CASE 1
+		IF TFLAG:誘惑ポイント >= 16
+			TFLAG:色仕掛け = 3
+			CALL KOJO_MESSAGE_EVENT, "色仕掛け"
+			;童貞喪失処理
+			IF PENIS(TARGET) && TALENT:童貞
+				TALENT:童貞 = 0
+				IF TALENT:性転換済
+					VIRGIN:10 = %NAME:MASTER%
+				ELSE
+					VIRGIN:0 = %NAME:MASTER%
+				ENDIF
+			ENDIF
+			;主人の処女喪失処理
+			IF TALENT:MASTER:処女
+				TALENT:MASTER:処女 = 0
+				IF TALENT:MASTER:性転換済
+					VIRGIN:MASTER:11 = %NAME:TARGET%
+				ELSE
+					VIRGIN:MASTER:1 = %NAME:TARGET%
+				ENDIF
+			ENDIF
+			IF PENIS(TARGET)
+				EXP:射精経験 += 2
+				EXP:MASTER:Ｖ経験 += 2
+				EXP:MASTER:膣射経験 += 2
+				PRINTL 射精経験+2
+				PRINTFORML %CALLNAME:MASTER%のＶ経験+2、膣内射精経験+2
+			ELSE
+				EXP:絶頂経験 += 3
+				PRINTL 絶頂経験+3
+			ENDIF
+			IF PENIS(MASTER)
+				EXP:MASTER:射精経験 += 2
+				EXP:精液経験 += 2
+				PRINTFORML %CALLNAME:MASTER%の射精経験+2
+				PRINTL 精液経験+2
+			ENDIF
+			IF TALENT:性別 == 2
+				EXP:レズ経験 += 5
+				PRINTL レズ経験+5
+			ELSE
+				EXP:MASTER:性交経験 += 2
+				EXP:性交経験 += 2
+				PRINTL お互いの性交経験+2
+			ENDIF
+			EXP:奉仕快楽経験 += 3
+			PRINTL 奉仕快楽経験+3
+			CFLAG:依存度 += TFLAG:誘惑ポイント*3/2
+			PRINTL 依存度増加
+			JUEL:快Ｃ += TFLAG:誘惑ポイント*70
+			JUEL:恭順 += TFLAG:誘惑ポイント*100
+			JUEL:欲情 += TFLAG:誘惑ポイント*150
+			JUEL:屈服 += TFLAG:誘惑ポイント*50
+			JUEL:習得 += TFLAG:誘惑ポイント*70
+			PRINTFORML 快Ｃの珠+{TFLAG:誘惑ポイント*70}
+			PRINTFORML 恭順の珠+{TFLAG:誘惑ポイント*100}
+			PRINTFORML 欲情の珠+{TFLAG:誘惑ポイント*150}
+			PRINTFORML 屈服の珠+{TFLAG:誘惑ポイント*50}
+			PRINTFORML 習得の珠+{TFLAG:誘惑ポイント*70}
+		ELSE
+			TFLAG:色仕掛け = 4
+			CALL KOJO_MESSAGE_EVENT, "色仕掛け"
+			IF TFLAG:誘惑ポイント > 0
+				JUEL:恭順 += TFLAG:誘惑ポイント*10
+				JUEL:欲情 += TFLAG:誘惑ポイント*10
+				JUEL:恥情 += TFLAG:誘惑ポイント*30
+				PRINTFORML 恭順の珠+{TFLAG:誘惑ポイント*10}
+				PRINTFORML 欲情の珠+{TFLAG:誘惑ポイント*10}
+				PRINTFORML 恥情の珠+{TFLAG:誘惑ポイント*30}
+			ENDIF
+		ENDIF
+ENDSELECT
+
+RETURN 0
+

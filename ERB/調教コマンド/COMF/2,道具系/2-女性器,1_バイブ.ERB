@@ -1,0 +1,275 @@
+;-------------------------------------------------
+;バイブ
+;-------------------------------------------------
+@USERCOM_ABLE_バイブ, ARG
+#FUNCTION
+;アイテムを持っていないとダメ
+SIF !ITEM:バイブ
+	RETURNF 0
+;触手調教中はダメ
+SIF TEQUIP:触手
+	RETURNF 0
+;性器が露出してないとダメ
+SIF !性器露出(TARGET)
+	RETURNF 0
+;解除はいつでも可能
+IF TEQUIP:バイブ
+	COMRESULT = 1
+	RETURNF 1
+ENDIF
+;アイテム使用中は不可
+SIF Ｖ使用中(TARGET)
+	RETURNF 0
+;ヴァギナ無いとダメ
+SIF !VAGINA(TARGET)
+	RETURNF 0
+;調教対象が小人体型の場合は主人が禁断の知識持ちじゃないとダメ
+SIF TALENT:小人体型 && !TALENT:MASTER:禁断の知識
+	RETURNF 0
+
+;処女で、従順4以下・レズっ気4以下の女性ASSIの場合バイブはできない（サドならＯＫ）
+IF TALENT:処女 && ASSIPLAY
+	SIF SEX(ASSI) == 2 && (ABL:ASSI:従順 <= 4 || ABL:ASSI:レズっ気 <= 4) && !TALENT:ASSI:サド
+		RETURNF 0
+ENDIF
+;潤滑不足で、従順3以下のASSIの場合バイブはできない（サドならＯＫ）
+IF PALAM:潤滑 < PALAMLV:2 && ASSIPLAY
+	SIF ABL:ASSI:従順 <= 3 && !TALENT:ASSI:サド
+		RETURNF 0
+ENDIF
+
+COMRESULT = 1
+RETURNF 1
+
+@COM_バイブ
+;-------------------------------------------------
+;特殊派生処理
+;-------------------------------------------------
+IF TEQUIP:触手
+	PRINTL 触手挿入
+	SELECTCOM = 161
+ELSE
+	PRINTL バイブ
+ENDIF
+CALL KOJO_MESSAGE_COM
+
+;V経験を伴うコマンドのフラグ(処女膜再生対応)
+TFLAG:膣コマンド = 1
+
+;着脱の処理
+INVERTBIT TEQUIP:バイブ, 0
+
+;-------------------------------------------------
+;射精ゲージチェック（奴隷）
+;-------------------------------------------------
+LOCAL = 150
+
+;ABL:調教者の技巧をみる
+LOCAL += (LOCAL/5)*ABL:PLAYER:技巧
+
+;ABL:自慰中毒をみる
+SELECTCASE ABL:自慰中毒
+	CASE 0
+		TIMES LOCAL , 1.00
+	CASE 1
+		TIMES LOCAL , 1.10
+	CASE 2
+		TIMES LOCAL , 1.30
+	CASE 3
+		TIMES LOCAL , 1.50
+	CASE 4
+		TIMES LOCAL , 2.00
+	CASEELSE
+		LOCAL += (LOCAL/3)*ABL:自慰中毒
+ENDSELECT
+
+;ABL:欲望をみる
+LOCAL += (LOCAL/10)*ABL:欲望
+
+;奴隷のABL:Ｖ感覚をみる
+SELECTCASE ABL:Ｖ感覚
+	CASE 0
+		TIMES LOCAL , 0.20
+	CASE 1
+		TIMES LOCAL , 0.50
+	CASE 2
+		TIMES LOCAL , 0.80
+	CASE 3
+		TIMES LOCAL , 1.00
+	CASE 4
+		TIMES LOCAL , 2.00
+	CASEELSE
+		LOCAL += LOCAL*(ABL:Ｖ感覚-2)
+ENDSELECT
+
+CALL 射精ゲージ増加, LOCAL, TARGET
+
+;-------------------------------------------------
+;ソース追加処理
+;-------------------------------------------------
+;消費体力、気力
+LOSEBASE:体力 += 40
+LOSEBASE:気力 += 100
+
+DOWNBASE:MASTER:体力 += 30
+DOWNBASE:MASTER:気力 += 20
+
+SOURCE:快V = 300
+SOURCE:苦痛 = 50
+SOURCE:露出 = 20
+SOURCE:逸脱 = 40
+SOURCE:反感 = 100
+
+;-------------------------------------------------
+;特殊ソース処理
+;-------------------------------------------------
+;抑圧、抵抗持ちには、抑鬱ソース追加
+SIF TALENT:抑圧 || TALENT:抵抗
+	SOURCE:鬱屈 += 40
+
+;処女だった場合は、苦痛のソースと反発のソースを追加する
+IF TALENT:処女
+	SOURCE:苦痛 += 2000
+	SOURCE:反感 += 3000
+ENDIF
+
+;再生処女だった場合は、苦痛のソースと反発のソースを追加する
+IF TALENT:再生処女
+	SOURCE:苦痛 += 500
+	SOURCE:反感 += 1000
+ENDIF
+
+CALL 特殊ソース処理_Ｖ
+
+;-------------------------------------------------
+;汚れの処理
+;-------------------------------------------------
+;触手挿入なら、触手体液が膣内に付く
+IF TEQUIP:触手
+	SETBIT STAIN:膣内, 5
+	SETBIT STAIN:ヴァギナ, 5
+ENDIF
+
+;-------------------------------------------------
+;絶頂チェック
+;-------------------------------------------------
+CALL SOURCE_CHECK_CVAB
+
+;-------------------------------------------------
+;射精チェック
+;-------------------------------------------------
+CALL SAMEN_CHECK_T, 4
+
+CALL SAMEN_SHOOT_T, 4, NOWEX:射精
+
+;-------------------------------------------------
+;経験の処理
+;-------------------------------------------------
+;異常経験
+IF TALENT:処女 && TEQUIP:触手
+	EXP:異常経験 += 2
+	PRINTFORML 異常経験+2
+ELSEIF TALENT:処女
+	EXP:異常経験 += 1
+	PRINTFORML 異常経験+1
+ENDIF
+
+CALL EXPUP, 2, 1
+
+RETURN 1
+
+;-------------------------------------------------
+;装着継続の処理
+;-------------------------------------------------
+@EQUIP_COM_バイブ
+;バイブ挿入中
+;V経験を伴うコマンドのフラグ(処女膜再生対応)
+TFLAG:膣コマンド = 1
+
+IF TEQUIP:触手
+	PRINTL ＜触手挿入中＞
+ELSE
+	PRINTL ＜バイブ挿入中＞
+ENDIF
+
+LOSEBASE:体力 += 15
+LOSEBASE:気力 += 30
+
+SOURCE:快V += 150
+SOURCE:露出 += 10
+SOURCE:逸脱 += 20
+SOURCE:反感 += 30
+
+;-------------------------------------------------
+;射精ゲージチェック（奴隷）
+;-------------------------------------------------
+LOCAL = 70
+
+;ABL:調教者の技巧をみる
+LOCAL += (LOCAL/5)*ABL:PLAYER:技巧
+
+;ABL:自慰中毒をみる
+SELECTCASE ABL:自慰中毒
+	CASE 0
+		TIMES LOCAL , 1.00
+	CASE 1
+		TIMES LOCAL , 1.10
+	CASE 2
+		TIMES LOCAL , 1.30
+	CASE 3
+		TIMES LOCAL , 1.50
+	CASE 4
+		TIMES LOCAL , 2.00
+	CASEELSE
+		LOCAL += (LOCAL/3)*ABL:自慰中毒
+ENDSELECT
+
+;ABL:欲望をみる
+LOCAL += (LOCAL/10)*ABL:欲望
+
+;奴隷のABL:Ｖ感覚をみる
+SELECTCASE ABL:Ｖ感覚
+	CASE 0
+		TIMES LOCAL , 0.20
+	CASE 1
+		TIMES LOCAL , 0.50
+	CASE 2
+		TIMES LOCAL , 0.80
+	CASE 3
+		TIMES LOCAL , 1.00
+	CASE 4
+		TIMES LOCAL , 2.00
+	CASEELSE
+		LOCAL += LOCAL*(ABL:Ｖ感覚-2)
+ENDSELECT
+
+CALL 射精ゲージ増加, LOCAL, TARGET
+
+;-------------------------------------------------
+;特殊ソース処理
+;-------------------------------------------------
+;抑圧、抵抗持ちには、抑鬱ソース追加
+SIF TALENT:抑圧 || TALENT:抵抗
+	SOURCE:鬱屈 += 20
+
+CALL 特殊ソース処理_Ｖ道具, 25, 20
+
+;-------------------------------------------------
+;経験の処理
+;-------------------------------------------------
+;自慰実行時は経験+1
+SELECTCASE SELECTCOMS
+	CASE "自慰", "指挿入れ", "バイブ", "触手挿入"
+		PRINTL Ｖ経験+2
+		EXP:Ｖ経験 += 2
+	CASEELSE
+		PRINTL Ｖ経験+1
+		EXP:Ｖ経験++
+ENDSELECT
+
+;触手経験加算
+SIF TEQUIP:触手
+	TENTACLE++
+
+RETURN 1
+

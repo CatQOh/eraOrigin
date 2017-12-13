@@ -1,0 +1,874 @@
+;-------------------------------------------------
+;お酒を飲ませる
+;-------------------------------------------------
+@USERCOM_ABLE_お酒を飲ませる, ARG
+#FUNCTION
+#DIM LCOUNT
+;拘束中はダメ
+SIF TEQUIP:アイマスク || TEQUIP:縄 || TEQUIP:ボールギャグ || TEQUIP:触手
+	RETURNF 0
+
+;妊娠中は飲ませされない
+SIF TALENT:妊娠
+	RETURNF 0
+
+;機械と無機物は飲めない
+SIF TALENT:無機物 || CSTR:種族 == "機械"
+	RETURNF 0
+
+;お酒持ってないとダメ ただしお正月はお屠蘇があるのでおｋ
+IF MONTH == 1 && DAYS == 1
+	COMRESULT = 1
+	RETURNF 1
+ELSE
+	LOCAL = 0
+	FOR LCOUNT, 150, 200
+		IF ITEM:LCOUNT > 0
+			LOCAL = 1
+			BREAK
+		ENDIF
+	NEXT
+ENDIF
+
+COMRESULT = LOCAL
+RETURNF LOCAL
+
+@COM_お酒を飲ませる
+#DIM DYNAMIC ALC
+#DIM DYNAMIC お酒
+#DIMS DYNAMIC 製法
+#DIM DYNAMIC 材料, 3
+#DIM DYNAMIC LCOUNT
+
+VARSET 材料, 0
+
+PRINTL 何を飲ませますか？
+
+SIF ITEM:スーパードライ || ITEM:一番搾り || ITEM:プレミアムモルツ || ITEM:ヱビス || ITEM:ほろよい
+	PRINTL [1] 缶飲料類
+SIF ITEM:皆伝
+	PRINTL [2] 皆伝(日本酒)
+SIF ITEM:アルパカ
+	PRINTL [3] アルパカ(ワイン)
+SIF ITEM:魔王
+	PRINTL [4] 魔王(焼酎)
+SIF ITEM:倉吉
+	PRINTL [5] 倉吉(ウイスキー)
+SIF ITEM:スペリオール
+	PRINTL [6] スペリオール(ラム)
+SIF ITEM:ビーフィーター
+	PRINTL [7] ビーフィーター(ジン)
+SIF ITEM:アブソルート
+	PRINTL [8] アブソルート(ウォッカ)
+SIF ITEM:カルーア
+	PRINTL [9] カルーア
+SIF MONTH == 1 && DAYS == 1
+	PRINTL [10] お屠蘇(Alc.2%)
+;SIF ITEM:スピリタス
+;	PRINTL [10] スピリタス
+PRINTL [100] やっぱりやめる
+
+DO
+	INPUT
+	SELECTCASE RESULT
+		CASE 1
+			SIF !ITEM:スーパードライ && !ITEM:一番搾り && !ITEM:プレミアムモルツ && !ITEM:ヱビス && !ITEM:ほろよい
+				CONTINUE
+			PRINTL 何を飲ませますか？
+			SIF ITEM:スーパードライ
+				PRINTL [0] スーパードライ(Alc.5%)
+			SIF ITEM:一番搾り
+				PRINTL [1] 一番搾り(Alc.5%)
+			SIF ITEM:プレミアムモルツ
+				PRINTL [2] プレミアムモルツ(Alc.5%)
+			SIF ITEM:ヱビス
+				PRINTL [3] ヱビス(Alc.5%)
+			SIF ITEM:ほろよい
+				PRINTL [4] ほろよい(Alc.3%)
+			SIF ITEM:ストロングゼロ
+				PRINTL [5] ストロングゼロ(Alc.9%)
+			DO
+				INPUT
+				SIF !ITEM:(RESULT+150)
+					CONTINUE
+				SELECTCASE RESULT
+					CASE 0 TO 3
+						お酒 = RESULT+150
+						IF ITEM:ジンジャーエール || ITEM:レモンジュース || ITEM:アルパカ
+							PRINTFORML %ITEMNAME:お酒%をどのように飲ませますか？
+							PRINTL [1] そのまま(Alc.5%)
+							SIF ITEM:ジンジャーエール
+								PRINTL [2] シャンディガフ(Alc.3%)
+							SIF ITEM:レモンジュース
+								PRINTL [3] パナシェ(Alc.3%)
+							SIF ITEM:アルパカ
+								PRINTL [4] ビアスプリッツァー(Alc.8%)
+							DO
+								INPUT
+								SELECTCASE RESULT
+									CASE 1
+										酒名 = ITEMNAME:(RESULT+150)
+										製法 = ビール
+										ALC = 5
+										BREAK
+									CASE 2
+										SIF !ITEM:ジンジャーエール
+											CONTINUE
+										製法 = ビール
+										酒名 = シャンディガフ
+										材料:0 = GETNUM(ITEM, "ジンジャーエール")
+										ALC = 3
+										BREAK
+									CASE 3
+										SIF !ITEM:レモンジュース
+											CONTINUE
+										製法 = ビール
+										酒名 = パナシェ
+										材料:0 = GETNUM(ITEM, "レモンジュース")
+										ALC = 3
+										BREAK
+									CASE 4
+										SIF !ITEM:アルパカ
+											CONTINUE
+										製法 = ビール
+										酒名 = ビアスプリッツァー
+										材料:0 = GETNUM(ITEM, "アルパカ")
+										ALC = 8
+										BREAK
+								ENDSELECT
+							LOOP 1
+						ELSE
+							酒名 = ITEMNAME:(RESULT+150)
+							製法 = ビール
+							ALC = 5
+						ENDIF
+						BREAK
+					CASE 4
+						お酒 = RESULT+150
+						酒名 = ほろよい
+						ALC = 3
+						BREAK
+					CASE 5
+						お酒 = RESULT+150
+						酒名 = ストロングゼロ
+						ALC = 9
+						BREAK
+				ENDSELECT
+			LOOP 1
+			BREAK
+		CASE 2
+			SIF !ITEM:皆伝
+				CONTINUE
+			お酒 = GETNUM(ITEM, "皆伝")
+			PRINTL 皆伝をどのように飲ませますか？
+			PRINTL [1] そのまま(Alc.12%)
+			PRINTL [2] 熱燗(Alc.12%)
+			SIF ITEM:ライムジュース
+				PRINTL [3] サムライロック(Alc.3～10%)
+			DO
+				INPUT
+				SELECTCASE RESULT
+					CASE 1
+						酒名 = 皆伝
+						ALC = 12
+						BREAK
+					CASE 2
+						製法 = 熱燗
+						酒名 = 皆伝の熱燗
+						ALC = 12
+					CASE 3
+						SIF !ITEM:ライムジュース
+							CONTINUE
+						製法 = ライム割り
+						酒名 = サムライロック
+						PRINTL アルコール度数を決めてください(3～10%)
+						CALL TWO_DIGIT, 10, "%", 3
+						ALC = RESULT
+						BREAK
+				ENDSELECT
+			LOOP 1
+			BREAK
+		CASE 3
+			SIF !ITEM:アルパカ
+				CONTINUE
+			お酒 = GETNUM(ITEM, "アルパカ")
+			酒名 = アルパカ
+			ALC = 12
+			BREAK
+		CASE 4
+			SIF !ITEM:魔王
+				CONTINUE
+			お酒 = GETNUM(ITEM, "魔王")
+			PRINTL 魔王をどのように飲ませますか？
+			PRINTL [1] 水割り(Alc.5～20%)
+			PRINTL [2] お湯割り(Alc.5～20%)
+			PRINTL [3] ロック(Alc.22%)
+			PRINTL [4] ストレート(Alc.25%)
+			SIF ITEM:炭酸水
+				PRINTL [5] 焼酎ハイボール(Alc.5～20%)
+			SIF ITEM:コーラ
+				PRINTL [6] 焼酎コーク
+			SIF ITEM:ジンジャーエール
+				PRINTL [7] 焼酎ジンジャー
+			DO
+				INPUT
+				SELECTCASE RESULT
+					CASE 1, 2, 5, 6, 7
+						SELECTCASE RESULT
+							CASE 1
+								製法 = 水割り
+								酒名 = 焼酎の水割り
+							CASE 2
+								製法 = お湯割り
+								酒名 = 焼酎のお湯割り
+							CASE 5
+								SIF !ITEM:炭酸水
+									CONTINUE
+								製法 = ハイボール
+								酒名 = 焼酎ハイボール
+							CASE 6
+								SIF !ITEM:コーラ
+									CONTINUE
+								製法 = コーラ割り
+								酒名 = 焼酎コーク
+							CASE 7
+								SIF !ITEM:ジンジャーエール
+									CONTINUE
+								製法 = ジンジャー割り
+								酒名 = 焼酎ジンジャー
+						ENDSELECT
+						PRINTL アルコール度数を決めてください(5～20%)
+						CALL TWO_DIGIT, 20, "%", 5
+						ALC = RESULT
+						BREAK
+					CASE 3
+						酒名 = 焼酎のロック
+						ALC = 22
+						BREAK
+					CASE 4
+						酒名 = 焼酎のストレート
+						ALC = 25
+						BREAK
+				ENDSELECT
+			LOOP 1
+			BREAK
+		CASE 5
+			SIF !ITEM:倉吉
+				CONTINUE
+			お酒 = GETNUM(ITEM, "倉吉")
+			PRINTL 倉吉をどのように飲ませますか？
+			PRINTL [1] 水割り(Alc.9～35%)
+			PRINTL [2] お湯割り(Alc.9～35%)
+			PRINTL [3] ロック(Alc.37%)
+			PRINTL [4] ストレート(Alc.40%)
+			SIF ITEM:炭酸水
+				PRINTL [5] ハイボール(Alc.9～35%)
+			SIF ITEM:コーラ
+				PRINTL [6] コークハイ(Alc.9～35%)
+			SIF ITEM:ジンジャーエール
+				PRINTL [7] ジンジャーハイ(Alc.9～35%)
+				
+			DO
+				INPUT
+				SELECTCASE RESULT
+					CASE 1, 2, 5, 6, 7
+						SELECTCASE RESULT
+							CASE 1
+								製法 = 水割り
+								酒名 = ウイスキーの水割り
+							CASE 2
+								製法 = お湯割り
+								酒名 = ウイスキーのお湯割り
+							CASE 5
+								SIF !ITEM:炭酸水
+									CONTINUE
+								製法 = ハイボール
+								酒名 = ハイボール
+							CASE 6
+								SIF !ITEM:コーラ
+									CONTINUE
+								製法 = コーラ割り
+								酒名 = コークハイ
+							CASE 7
+								SIF !ITEM:ジンジャーエール
+									CONTINUE
+								製法 = ジンジャー割り
+								酒名 = ジンジャーハイ
+						ENDSELECT
+						PRINTL アルコール度数を決めてください(9～35%)
+						CALL TWO_DIGIT, 35, "%", 9
+						ALC = RESULT
+						BREAK
+					CASE 3
+						酒名 = 倉吉のロック
+						ALC = 37
+						BREAK
+					CASE 4
+						酒名 = 倉吉のストレート
+						ALC = 40
+						BREAK
+				ENDSELECT
+			LOOP 1
+			BREAK
+		CASE 6
+			SIF !ITEM:スペリオール
+				CONTINUE
+			お酒 = GETNUM(ITEM, "スペリオール")
+			PRINTL スペリオールをどのように飲ませますか？
+			PRINTL [1] ストレート(Alc.40%)
+			PRINTL [2] ロック(Alc.37%)
+			SIF ITEM:コーラ
+				PRINTL [3] キューバリバー(Alc.9～35%)
+			SIF ITEM:ライムジュース
+				PRINTL [4] ダイキリ(Alc.20～35%)
+			SIF ITEM:トニックウォーター
+				PRINTL [5] ラムトニック(Alc.9～35%)
+			SIF ITEM:レモンジュース && ITEM:炭酸水
+				PRINTL [6] ラムフィズ(Alc.9～35%)
+			SIF ITEM:ライムジュース && ITEM:炭酸水
+				PRINTL [7] モヒート(Alc.9～35%)
+			DO
+				INPUT
+				SELECTCASE RESULT
+					CASE 1
+						酒名 = スペリオールのストレート
+						ALC = 40
+						BREAK
+					CASE 2
+						酒名 = スペリオールのロック
+						ALC = 37
+						BREAK
+					CASE 3, 4, 5, 6, 7
+						SELECTCASE RESULT
+							CASE 3
+								SIF !ITEM:コーラ
+									CONTINUE
+								製法 = コーラ割り
+								酒名 = キューバリバー
+							CASE 4
+								SIF !ITEM:ライムジュース
+									CONTINUE
+								製法 = ライム割り
+								酒名 = ダイキリ
+							CASE 5
+								SIF !ITEM:トニックウォーター
+									CONTINUE
+								製法 = トニック割り
+								酒名 = ラムトニック
+							CASE 6
+								SIF !ITEM:レモンジュース || !ITEM:炭酸水
+									CONTINUE
+								製法 = カクテル
+								酒名 = ラムフィズ
+								材料:0 = GETNUM(ITEM, "レモンジュース")
+								材料:1 = GETNUM(ITEM, "炭酸水")
+							CASE 7
+								SIF !ITEM:ライムジュース || !ITEM:炭酸水
+									CONTINUE
+								製法 = カクテル
+								酒名 = モヒート
+								材料:0 = GETNUM(ITEM, "ライムジュース")
+								材料:1 = GETNUM(ITEM, "炭酸水")
+						ENDSELECT
+						IF 酒名 == "ダイキリ"
+							PRINTL アルコール度数を決めてください(20～35%)
+							CALL TWO_DIGIT, 35, "%", 20
+						ELSE
+							PRINTL アルコール度数を決めてください(9～35%)
+							CALL TWO_DIGIT, 35, "%", 9
+						ENDIF
+						ALC = RESULT
+						BREAK
+				ENDSELECT
+			LOOP 1
+			BREAK
+		CASE 7
+			SIF !ITEM:ビーフィーター
+				CONTINUE
+			お酒 = GETNUM(ITEM, "ビーフィーター")
+			PRINTL ビーフィーターをどのように飲ませますか？
+			PRINTL [1] ストレート(Alc.47%)
+			PRINTL [2] ロック(Alc.44%)
+			SIF ITEM:トニックウォーター
+				PRINTL [3] ジントニック(Alc.9～42%)
+			SIF ITEM:炭酸水
+				PRINTL [4] ジンリッキー(Alc.9～42%)
+			SIF ITEM:ライムジュース
+				PRINTL [5] ギムレット(Alc.25～42%)
+			SIF ITEM:レモンジュース && ITEM:炭酸水
+				PRINTL [6] ジンフィズ(Alc.9～42%)
+			SIF ITEM:レモンジュース && ITEM:ジンジャーエール
+				PRINTL [7] ジンバック(Alc.9～42%)
+			DO
+				INPUT
+				SELECTCASE RESULT
+					CASE 1
+						酒名 = ビーフィーターのストレート
+						ALC = 47
+						BREAK
+					CASE 2
+						酒名 = ビーフィーターのロック
+						ALC = 44
+						BREAK
+					CASE 3, 4, 5, 6, 7
+						SELECTCASE RESULT
+							CASE 3
+								SIF !ITEM:トニックウォーター
+									CONTINUE
+								製法 = トニック割り
+								酒名 = ジントニック
+							CASE 4
+								SIF !ITEM:炭酸水
+									CONTINUE
+								製法 = ハイボール
+								酒名 = ジンリッキー
+							CASE 5
+								SIF !ITEM:ライムジュース
+									CONTINUE
+								製法 = ライム割り
+								酒名 = ギムレット
+							CASE 6
+								SIF !ITEM:レモンジュース || !ITEM:炭酸水
+									CONTINUE
+								製法 = カクテル
+								酒名 = ジンフィズ
+								材料:0 = GETNUM(ITEM, "レモンジュース")
+								材料:1 = GETNUM(ITEM, "炭酸水")
+							CASE 7
+								SIF !ITEM:レモンジュース || !ITEM:ジンジャーエール
+									CONTINUE
+								製法 = カクテル
+								酒名 = ジンバック
+								材料:0 = GETNUM(ITEM, "レモンジュース")
+								材料:1 = GETNUM(ITEM, "ジンジャーエール")
+						ENDSELECT
+						IF 酒名 == "ギムレット"
+							PRINTL アルコール度数を決めてください(25～42%)
+							CALL TWO_DIGIT, 42, "%", 25
+						ELSE
+							PRINTL アルコール度数を決めてください(9～42%)
+							CALL TWO_DIGIT, 42, "%", 9
+						ENDIF
+						ALC = RESULT
+						BREAK
+				ENDSELECT
+			LOOP 1
+			BREAK
+		CASE 8
+			SIF !ITEM:アブソルート
+				CONTINUE
+			お酒 = GETNUM(ITEM, "アブソルート")
+			PRINTL アブソルートをどのように飲ませますか？
+			PRINTL [1] ストレート(Alc.40%)
+			PRINTL [2] ロック(Alc.37%)
+			SIF ITEM:トニックウォーター
+				PRINTL [3] ウォッカトニック(Alc.9～35%)
+			SIF ITEM:炭酸水
+				PRINTL [4] ウォッカリッキー(Alc.9～35%)
+			SIF ITEM:カルーア
+				PRINTL [5] ブラックルシアン(Alc.25～37%)
+			SIF ITEM:ライムジュース && ITEM:ジンジャーエール
+				PRINTL [6] モスコミュール(Alc.9～35%)
+			DO
+				INPUT
+				SELECTCASE RESULT
+					CASE 1
+						酒名 = アブソルートのストレート
+						ALC = 40
+						BREAK
+					CASE 2
+						酒名 = アブソルートのロック
+						ALC = 37
+						BREAK
+					CASE 3, 4, 5, 6
+						SELECTCASE RESULT
+							CASE 3
+								SIF !ITEM:トニックウォーター
+									CONTINUE
+								製法 = トニック割り
+								酒名 = ウォッカトニック
+							CASE 4
+								SIF !ITEM:炭酸水
+									CONTINUE
+								製法 = ハイボール
+								酒名 = ウォッカリッキー
+							CASE 5
+								SIF !ITEM:カルーア
+									CONTINUE
+								製法 = カクテル
+								酒名 = ブラックルシアン
+								材料:0 = GETNUM(ITEM, "カルーア")
+							CASE 6
+								SIF !ITEM:ライムジュース || !ITEM:ジンジャーエール
+									CONTINUE
+								製法 = カクテル
+								酒名 = モスコミュール
+								材料:0 = GETNUM(ITEM, "ライムジュース")
+								材料:1 = GETNUM(ITEM, "ジンジャーエール")
+						ENDSELECT
+						IF 酒名 == "ブラックルシアン"
+							PRINTL アルコール度数を決めてください(25～37%)
+							CALL TWO_DIGIT, 37, "%", 25
+						ELSE
+							PRINTL アルコール度数を決めてください(9～35%)
+							CALL TWO_DIGIT, 35, "%", 9
+						ENDIF
+						ALC = RESULT
+						BREAK
+				ENDSELECT
+			LOOP 1
+			BREAK
+		CASE 9
+			SIF !ITEM:カルーア
+				CONTINUE
+			お酒 = GETNUM(ITEM, "カルーア")
+			PRINTL カルーアをどのように飲ませますか？
+			PRINTL [1] ストレート(Alc.20%)
+			PRINTL [2] ロック(Alc.18%)
+			;牛乳は生活必需品だから常にある（暴論）
+			PRINTL [3] カルーアミルク(Alc.5～15%)
+			SIF ITEM:炭酸水
+				PRINTL [4] カルーアソーダ(Alc.5～15%)
+			SIF ITEM:アブソルート
+				PRINTL [5] ブラックルシアン(Alc.25～37%)
+			DO
+				INPUT
+				SELECTCASE RESULT
+					CASE 1
+						酒名 = カルーアのストレート
+						ALC = 40
+						BREAK
+					CASE 2
+						酒名 = カルーアのロック
+						ALC = 37
+						BREAK
+					CASE 3, 4, 5
+						SELECTCASE RESULT
+							CASE 3
+								製法 = カクテル
+								酒名 = カルーアミルク
+							CASE 4
+								SIF !ITEM:炭酸水
+									CONTINUE
+								製法 = ハイボール
+								酒名 = カルーアソーダ
+							CASE 5
+								SIF !ITEM:アブソルート
+									CONTINUE
+								製法 = カクテル
+								酒名 = ブラックルシアン
+								材料:0 = GETNUM(ITEM, "アブソルート")
+						ENDSELECT
+						IF 酒名 == "ブラックルシアン"
+							PRINTL アルコール度数を決めてください(25～37%)
+							CALL TWO_DIGIT, 37, "%", 25
+						ELSE
+							PRINTL アルコール度数を決めてください(5～15%)
+							CALL TWO_DIGIT, 15, "%", 5
+						ENDIF
+						ALC = RESULT
+						BREAK
+				ENDSELECT
+			LOOP 1
+			BREAK
+		CASE 10
+			酒名 = お屠蘇
+			ALC = 2
+			BREAK
+		CASE 100
+			PRINTFORMW お酒を飲ませるのを止めました
+			RETURN 0
+	ENDSELECT
+LOOP 1
+
+CALL ALC_ORDER, ALC, 製法, お酒
+
+PRINTFORM  = {RESULT}
+SELECTCASE RESULT
+	CASE IS < 0
+		PRINT  < 
+	CASE IS > 0
+		PRINT  > 
+	CASEELSE
+		PRINT  = 
+ENDSELECT
+PRINT 実効値0
+WAIT
+
+TFLAG:お酒 = お酒
+TFLAG:アルコール度数 = ALC
+
+;実行できない お酒は特殊の地の文
+IF RESULT < 0
+	CALL KOJO_MESSAGE_EVENT, "飲酒拒否時"
+	RETURN 0
+ELSE
+	SIF 酒名 != "お屠蘇"
+		ITEM:お酒--
+	SELECTCASE 製法
+		CASE "ハイボール"
+			ITEM:炭酸水--
+		CASE "コーラ割り"
+			ITEM:コーラ--
+		CASE "ジンジャー割り"
+			ITEM:ジンジャーエール--
+		CASE "トニック割り"
+			ITEM:トニックウォーター--
+		CASE "レモン割り"
+			ITEM:レモンジュース--
+		CASE "ライム割り"
+			ITEM:ライムジュース--
+		CASE "カクテル"
+			FOR LCOUNT, 0, VARSIZE("材料")
+				SIF 材料:LCOUNT
+					ITEM:(材料:LCOUNT)--
+			NEXT
+	ENDSELECT
+ENDIF
+
+;-------------------------------------------------
+;実行決定
+;-------------------------------------------------
+CALL KOJO_MESSAGE_COM
+
+;-------------------------------------------------
+;ソース追加処理
+;-------------------------------------------------
+;消費体力、気力
+LOSEBASE:体力 += 20
+LOSEBASE:気力 += 50
+
+SOURCE:中毒 = 500
+SOURCE:露出 = 50
+SOURCE:欲情 = 100
+SOURCE:恭順 = 100
+SOURCE:逸脱 = 300
+SOURCE:反感 = 300
+
+;-------------------------------------------------
+;特殊ソース処理
+;-------------------------------------------------
+IF TALENT:下戸
+	CFLAG:酔 += ALC*2
+ELSEIF TALENT:酒豪
+	CFLAG:酔 += ALC/2
+ELSE
+	CFLAG:酔 += ALC
+ENDIF
+
+;各種メリットは酔い上限突き抜けてない場合にのみ発動
+IF CFLAG:酔 > 100
+	CFLAG:酔 = 100
+ELSE
+	SELECTCASE ITEMNAME:お酒
+		;皆伝は音ゲーマーが飲むとボーナス
+		;eraOriでは……
+		CASE "皆伝"
+		;魔王は悪魔か小悪魔が飲むとボーナス
+		CASE "魔王"
+			SIF CSTR:種族 == "悪魔" || TALENT:小悪魔
+				TEQUIP:お酒ボーナス++
+		;アルパカは獣、獣人、ファーリーが飲むとボーナス
+		CASE "アルパカ"
+			SIF CSTR:種族 == "獣" || CSTR:種族 == "獣人" || TALENT:ファーリー
+				TEQUIP:お酒ボーナス++
+		;倉吉はひなビタキャラが飲むとボーナス
+		;つまりeraOriでは……？
+		CASE "倉吉"
+			SELECTCASE CHARANAMEF(TARGET)
+				CASE "山形 まり花", "和泉 一舞", "春日 咲子", "霜月 凛", "芽兎 めう", "東雲 夏陽", "東雲 心菜", "星見 日向", "久領堤 纒"
+					TEQUIP:お酒ボーナス++
+			ENDSELECT
+		;スペリオールは人魚が飲むとボーナス
+		CASE "スペリオール"
+			SIF CSTR:種族 == "人魚"
+				TEQUIP:お酒ボーナス++
+		;ジンのボーナスが思いつかない 誰か助けて
+		CASE "ジン"
+		;アブソルートは特段ボーナスは無いが、ウォッカの特徴として二日酔いしにくい
+		CASE "アブソルート"
+			IF TALENT:下戸
+				TEQUIP:ウォッカ += ALC*2
+			ELSEIF TALENT:酒豪
+				TEQUIP:ウォッカ += ALC/2
+			ELSE
+				TEQUIP:ウォッカ += ALC
+			ENDIF
+		;カルーアは飲みやすいが獣人と獣に飲ませると大ダメージ
+		CASE "カルーア"
+			IF CSTR:種族 == "獣人"
+				LOSEBASE:体力 += 300
+				LOSEBASE:気力 += 300
+			ELSEIF CSTR:種族 == "獣"
+				LOSEBASE:体力 += 500
+				LOSEBASE:気力 += 500
+			ENDIF
+		;お屠蘇 アイテム必要無いので特にボーナスも無い
+		CASE "お屠蘇"
+	ENDSELECT
+ENDIF
+
+;-------------------------------------------------
+;絶頂チェック
+;-------------------------------------------------
+CALL SOURCE_CHECK_CVAB
+
+;-------------------------------------------------
+;射精チェック
+;-------------------------------------------------
+CALL SAMEN_CHECK_T, 0
+
+CALL SAMEN_SHOOT_T, 0, NOWEX:射精
+
+RETURN 1
+
+;-------------------------------------------------
+;お酒ボーナスの処理
+;-------------------------------------------------
+@EQUIP_COM_お酒を飲ませる
+SOURCE:欲情 += TEQUIP:お酒ボーナス*30
+SOURCE:恭順 += TEQUIP:お酒ボーナス*30
+
+;依存度補正がお酒ボーナス最大のメリット
+TFLAG:依存度補正 += TEQUIP:お酒ボーナス
+
+;-------------------------------------------------
+;お酒を飲ませるコマンドのCOM_ORDERは特殊
+;-------------------------------------------------
+@ALC_ORDER, ALC, 製法, お酒
+#DIM DYNAMIC ALC
+#DIMS DYNAMIC 製法
+#DIM DYNAMIC お酒
+#DIM DYNAMIC LCOUNT
+
+LOCAL = 0
+
+IF TALENT:下戸
+	PRINTFORM -アルコール度数{ALC}\%({ALC*2})
+	LOCAL -= ALC*2
+ELSEIF !TALENT:酒豪
+	PRINTFORM -アルコール度数{ALC}\%({ALC})
+	LOCAL -= ALC
+ENDIF
+
+LOCAL:1 = 0
+
+IF TALENT:快感に素直
+	LOCAL:1 = CFLAG:酔*3/2
+ELSEIF TALENT:快感の否定
+	LOCAL:1 = CFLAG:酔/2
+ELSE
+	LOCAL:1 = CFLAG:酔
+ENDIF
+
+IF LOCAL:1 >= 5 && TALENT:下戸
+	PRINTFORM +酒が回っている({LOCAL:1/5})
+	LOCAL += LOCAL:1/5
+ELSEIF LOCAL:1 >= 3
+	PRINTFORM +酒が回っている({LOCAL:1/3})
+	LOCAL += LOCAL:1/3
+ENDIF
+
+IF CFLAG:二日酔い
+	PRINT -二日酔い(5)
+	LOCAL -= 5
+ENDIF
+
+IF CFLAG:陥落
+	PRINT +陥落(5)
+	LOCAL += 5
+ENDIF
+
+IF GETPALAMLV(PALAM:恭順, 10)
+	PRINTFORM +恭順({GETPALAMLV(PALAM:恭順, 10)})
+	LOCAL += GETPALAMLV(PALAM:恭順, 10)
+ENDIF
+
+IF 製法 == "ビール" && !TALENT:酒豪 && (TALENT:小柄体型 || TALENT:下戸)
+	PRINT -ビールは苦くて無理(10)
+	LOCAL -= 10
+	SELECTCASE 酒名
+		CASE "シャンディガフ", "パナシェ", "ビアスプリッツァー"
+			PRINT +ビールの苦さを軽減(5)
+			LOCAL += 5
+	ENDSELECT
+ENDIF
+
+IF !TALENT:下戸
+	SELECTCASE 製法
+		CASE "ハイボール", "ビール", "コーラ割り", "ジンジャー割り", "レモン割り", "ライム割り", "トニック割り", "カクテル"
+			IF FLAG:気温 >= 200
+				PRINTFORM +高気温&冷飲料({(FLAG:気温-190)/10})
+				LOCAL += (FLAG:気温-190)/10
+			ENDIF
+		CASE "お湯割り", "熱燗"
+			IF FLAG:気温 <= 100
+				PRINTFORM +低気温&温飲料({(110-FLAG:気温)/10})
+				LOCAL += (110-FLAG:気温)/10
+			ENDIF
+	ENDSELECT
+ENDIF
+
+SELECTCASE 製法
+	CASE "ハイボール"
+		PRINT +ハイボールは美味しい(3)
+		LOCAL += 3
+	CASE "コーラ割り", "ジンジャー割り", "トニック割り", "レモン割り", "ライム割り"
+		PRINT +飲みやすいカクテル(5)
+		LOCAL += 5
+	CASE "カクテル"
+		PRINT +美味しいカクテル(7)
+		LOCAL += 7
+ENDSELECT
+
+IF TALENT:衝動的
+	PRINT +衝動的(3)
+	LOCAL += 3
+ENDIF
+
+IF TALENT:好奇心
+	PRINT +好奇心(3)
+	LOCAL += 3
+ENDIF
+
+IF TALENT:無関心
+	PRINT -無関心(2)
+	LOCAL -= 2
+ENDIF
+
+IF TALENT:自制心
+	PRINT -自制心(5)
+	LOCAL -= 5
+ENDIF
+
+IF TALENT:目立ちたがり
+	PRINT +目立ちたがり(3)
+	LOCAL += 3
+ENDIF
+
+SELECTCASE 製法
+	CASE "お湯割り", "熱燗"
+		IF TALENT:猫舌
+			PRINT -猫舌(3)
+			LOCAL -= 3
+		ENDIF
+ENDSELECT
+
+IF TALENT:小柄体型 && !TALENT:酒豪
+	PRINT -子供(3)
+	LOCAL -= 3
+ENDIF
+
+IF TALENT:MASTER:魅惑
+	PRINT +主人が魅惑持ち(2)
+	LOCAL += 2
+ENDIF
+
+IF ASSI > 0 && TALENT:ASSI:ハイテンション
+	PRINT +助手がハイテンション(2)
+	LOCAL += 2
+ENDIF
+
+
+RETURN LOCAL
+

@@ -1,0 +1,159 @@
+;-------------------------------------------------
+;縄
+;-------------------------------------------------
+@USERCOM_ABLE_縄, ARG
+#FUNCTION
+;触手調教中はダメ
+SIF TEQUIP:触手
+	RETURNF 0
+;解除はいつでも可能
+IF TEQUIP:縄
+	COMRESULT = 1
+	RETURNF 1
+ENDIF
+;アイテムを持っていないとダメ
+SIF !ITEM:縄
+	RETURNF 0
+;調教者の技巧が1無いとできない
+SIF ABL:PLAYER:技巧 < 1
+	RETURNF 0
+;助手は技巧3でないとダメ
+IF PLAYER == ASSI
+	SIF ABL:ASSI:技巧 < 3
+		RETURNF 0
+ENDIF
+
+COMRESULT = 1
+RETURNF 1
+
+@COM_縄
+IF TEQUIP:触手
+	PRINTL 触手緊縛
+	SELECTCOM = 166
+ELSE
+	PRINTL 縄
+ENDIF
+CALL KOJO_MESSAGE_COM
+
+;着脱の処理
+INVERTBIT TEQUIP:縄, 0
+;触手緊縛は触手の汚れを追加
+IF TEQUIP:触手
+	SETBIT STAIN:手, 5
+	SETBIT STAIN:胸, 5
+ENDIF
+
+;-------------------------------------------------
+;ソース追加処理
+;-------------------------------------------------
+;消費体力、気力
+LOSEBASE:体力 += 80
+LOSEBASE:気力 += 100
+
+DOWNBASE:MASTER:体力 += 50
+DOWNBASE:MASTER:気力 += 50
+
+SOURCE:苦痛 = 300
+SOURCE:恐怖 = 900
+SOURCE:露出 = 300
+SOURCE:屈従 = 250
+SOURCE:逸脱 = 300
+SOURCE:反感 = 700
+
+;-------------------------------------------------
+;特殊ソース処理
+;-------------------------------------------------
+;緊縛経験が高いと消費減少
+SELECTCASE GETEXPLV(EXP:緊縛経験, 4)
+	CASE IS <= 2
+		TIMES LOSEBASE:体力 , 1.00
+		TIMES LOSEBASE:気力 , 1.00
+	CASE 3
+		TIMES LOSEBASE:体力 , 0.90
+		TIMES LOSEBASE:気力 , 0.90
+	CASE 4
+		TIMES LOSEBASE:体力 , 0.70
+		TIMES LOSEBASE:気力 , 0.70
+ENDSELECT
+
+;-------------------------------------------------
+;絶頂チェック
+;-------------------------------------------------
+CALL SOURCE_CHECK_CVAB
+
+;-------------------------------------------------
+;射精チェック
+;-------------------------------------------------
+CALL SAMEN_CHECK_T, 0
+
+CALL SAMEN_SHOOT_T, 0, NOWEX:射精
+
+;-------------------------------------------------
+;経験の処理
+;-------------------------------------------------
+EXP:緊縛経験 += 5
+PRINTL 緊縛経験+5
+
+CALL EXPUP, 1, 4
+
+;依存度補正値(服従で1、隷属で2）
+IF TALENT:服従 && PLAYER == MASTER
+	TFLAG:依存度補正 += 1
+ELSEIF TALENT:隷属 && PLAYER == MASTER
+	TFLAG:依存度補正 += 2
+ENDIF
+
+RETURN 1
+
+;-------------------------------------------------
+;装着継続の処理
+;-------------------------------------------------
+@EQUIP_COM_縄
+IF TEQUIP:触手
+	PRINTL ＜触手緊縛中＞
+ELSE
+	PRINTL ＜緊縛中＞
+ENDIF
+
+;-------------------------------------------------
+;ソース追加処理
+;-------------------------------------------------
+;消費体力、気力
+LOSEBASE:体力 += 30
+
+SOURCE:苦痛 += 100
+SOURCE:恐怖 += 400
+SOURCE:露出 += 100
+SOURCE:屈従 += 150
+SOURCE:逸脱 += 150
+SOURCE:反感 += 300
+
+;-------------------------------------------------
+;特殊ソース処理
+;-------------------------------------------------
+;緊縛経験が高いと消費減少
+LOCAL = 60
+SELECTCASE GETEXPLV(EXP:緊縛経験, 4)
+	CASE IS <= 2
+		TIMES LOCAL , 1.00
+	CASE 3
+		TIMES LOCAL , 0.90
+	CASE 4
+		TIMES LOCAL , 0.70
+ENDSELECT
+LOSEBASE:気力 += LOCAL
+
+;-------------------------------------------------
+;経験の処理
+;-------------------------------------------------
+IF SELECTCOMS != "縄"
+	EXP:緊縛経験 += 1
+	PRINTL 緊縛経験+1
+ENDIF
+
+;触手経験加算
+SIF TEQUIP:触手
+	TENTACLE++
+
+RETURN 1
+

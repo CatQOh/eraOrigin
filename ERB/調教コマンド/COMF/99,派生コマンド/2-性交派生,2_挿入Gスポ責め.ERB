@@ -1,0 +1,205 @@
+;-------------------------------------------------
+;挿入Gスポ責め
+;-------------------------------------------------
+@USERCOM_ABLE_挿入Gスポ責め, ARG
+#FUNCTION
+;服着てるとダメ
+SIF !性器露出(TARGET)
+	RETURNF 0
+
+COMRESULT = 1
+RETURNF 1
+
+@COM_挿入Gスポ責め
+PRINTL 挿入Gスポ責め
+SELECTCOMS = 挿入Gスポ責め
+SELECTCOM = 506
+CALL KOJO_MESSAGE_COM
+
+;V経験を伴うコマンドのフラグ(処女膜再生対応)
+TFLAG:膣コマンド = 1
+
+;-------------------------------------------------
+;射精ゲージチェック
+;-------------------------------------------------
+LOCAL = 900
+
+;ABL:調教者の技巧をみる
+LOCAL += (LOCAL/5)*ABL:PLAYER:技巧
+
+;ABL:技巧をみる
+LOCAL += (LOCAL/10)*ABL:技巧
+
+;ABL:従順をみる
+LOCAL += (LOCAL/10)*ABL:従順 - (LOCAL/10)*2
+
+;ABL:欲望をみる
+LOCAL += (LOCAL/10)*ABL:欲望
+
+;PALAM:潤滑をみる
+LOCAL += (GETPALAMLV(PALAM:潤滑, 4)-2)*(LOCAL/5)
+
+;プレイヤーのABL:Ｃ感覚をみる
+SELECTCASE ABL:PLAYER:Ｃ感覚
+	CASE 0
+		TIMES LOCAL , 1.00
+	CASE 1
+		TIMES LOCAL , 1.50
+	CASE 2
+		TIMES LOCAL , 2.00
+	CASE 3
+		TIMES LOCAL , 2.50
+	CASE 4
+		TIMES LOCAL , 3.50
+	CASEELSE
+		LOCAL += LOCAL*(ABL:PLAYER:Ｃ感覚-1)
+ENDSELECT
+
+CALL 射精ゲージ増加, LOCAL, PLAYER
+
+;-------------------------------------------------
+;射精ゲージチェック（奴隷）
+;-------------------------------------------------
+LOCAL = 700
+
+;ABL:調教者の技巧をみる
+LOCAL += (LOCAL/5)*ABL:PLAYER:技巧
+
+;ABL:技巧をみる
+LOCAL += (LOCAL/10)*ABL:技巧
+
+;ABL:従順をみる
+LOCAL += (LOCAL/10)*ABL:従順
+
+;ABL:欲望をみる
+LOCAL += (LOCAL/5)*ABL:欲望
+
+;PALAM:潤滑をみる
+LOCAL += (GETPALAMLV(PALAM:潤滑, 4)-3)*(LOCAL/5)
+
+;奴隷のABL:Ｖ感覚をみる
+SELECTCASE ABL:Ｖ感覚
+	CASE 0
+		TIMES LOCAL , 1.00
+	CASE 1
+		TIMES LOCAL , 2.00
+	CASE 2
+		TIMES LOCAL , 4.00
+	CASE 3
+		TIMES LOCAL , 7.00
+	CASE 4
+		TIMES LOCAL , 10.00
+	CASEELSE
+		LOCAL *= ABL:Ｖ感覚*3
+ENDSELECT
+
+;奴隷のABL:マゾっ気をみる
+SELECTCASE ABL:マゾっ気
+	CASE 0
+		TIMES LOCAL , 1.00
+	CASE 1
+		TIMES LOCAL , 1.20
+	CASE 2
+		TIMES LOCAL , 1.40
+	CASE 3
+		TIMES LOCAL , 1.60
+	CASE 4
+		TIMES LOCAL , 1.80
+	CASEELSE
+		TIMES LOCAL , 2.00
+ENDSELECT
+
+CALL 射精ゲージ増加, LOCAL, TARGET
+
+;-------------------------------------------------
+;ソース追加処理
+;-------------------------------------------------
+;消費体力、気力
+LOSEBASE:体力 += 60
+LOSEBASE:気力 += 120
+
+DOWNBASE:MASTER:体力 += 80
+DOWNBASE:MASTER:気力 += 60
+
+SOURCE:快V = 800
+SOURCE:情愛 = 400
+SOURCE:苦痛 = 300
+SOURCE:中毒 = 300
+SOURCE:露出 = 100
+SOURCE:反感 = 500
+SOURCE:恭順 = 400
+
+;-------------------------------------------------
+;特殊ソース処理
+;-------------------------------------------------
+;抑圧、抵抗持ちには、抑鬱ソース追加
+SIF TALENT:抑圧 || TALENT:抵抗
+	SOURCE:鬱屈 += 500
+
+;貞操観念持ちで恋慕、親愛持ち以外には常に反発のソースを追加する（セックス系のみ）
+SIF TALENT:貞操観念 && (TALENT:恋慕 == 0 && TALENT:親愛 == 0)
+	SOURCE:反感 += 1000
+
+;処女だった場合は、苦痛のソースと反発のソースを追加する
+IF TALENT:恋慕
+	SOURCE:苦痛 += 2000
+	SOURCE:反感 += 3000
+ENDIF
+
+;再生処女だった場合は、苦痛のソースと反発のソースを追加する
+IF TALENT:再生処女
+	SOURCE:苦痛 += 500
+	SOURCE:反感 += 1000
+ENDIF
+
+CALL 特殊ソース処理_Ｖ
+CALL 特殊ソース処理_セックス
+
+;-------------------------------------------------
+;絶頂チェック
+;-------------------------------------------------
+CALL SOURCE_CHECK_CVAB
+
+;-------------------------------------------------
+;射精チェック
+;-------------------------------------------------
+CALL SAMEN_CHECK, 1
+CALL SAMEN_CHECK_T, 4
+
+CALL SAMEN_SHOOT, 1, NOWEX:PLAYER:射精
+CALL SAMEN_SHOOT_T, 4, NOWEX:射精
+
+;-------------------------------------------------
+;汚れの処理
+;-------------------------------------------------
+;射精に関係なく行われる処理はここから
+;奴隷の膣内⇔調教者のペニスの汚れが移動
+STAIN:膣内 |= STAIN:PLAYER:ペニス
+STAIN:PLAYER:ペニス |= STAIN:膣内
+
+;-------------------------------------------------
+;経験の処理
+;-------------------------------------------------
+PRINTL Ｖ経験+2
+EXP:Ｖ経験 += 2
+
+CALL EXPUP, 3, 1
+
+;愛情経験
+IF TALENT:恋慕 && PLAYER == MASTER
+	PRINTL 愛情経験+1
+	EXP:愛情経験 += 1
+ELSEIF TALENT:親愛 && PLAYER == MASTER
+	PRINTL 愛情経験+2
+	EXP:愛情経験 += 2
+ENDIF
+
+;依存度補正値(恋慕で1、親愛で2）
+IF TALENT:恋慕 && PLAYER == MASTER
+	TFLAG:依存度補正 += 1
+ELSEIF TALENT:親愛 && PLAYER == MASTER
+	TFLAG:依存度補正 += 2
+ENDIF
+
+RETURN 1
+

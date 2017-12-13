@@ -1,0 +1,234 @@
+;-------------------------------------------------
+;後背位アナル手淫
+;-------------------------------------------------
+@USERCOM_ABLE_後背位アナル手淫, ARG
+#FUNCTION
+;後背位アナル手淫
+;服着てるとダメ
+SIF !性器露出(TARGET)
+	RETURNF 0
+
+COMRESULT = 1
+RETURNF 1
+
+@COM_後背位アナル手淫
+PRINTL 後背位アナル手淫
+SELECTCOMS = 後背位アナル手淫
+SELECTCOM = 538
+CALL KOJO_MESSAGE_COM
+
+;-------------------------------------------------
+;射精ゲージチェック（主人）
+;-------------------------------------------------
+LOCAL = 900
+
+;ABL:調教者の技巧をみる
+LOCAL += (LOCAL/5)*ABL:PLAYER:技巧
+
+;ABL:技巧をみる
+LOCAL += (LOCAL/10)*ABL:技巧
+
+;ABL:従順をみる
+LOCAL += (LOCAL/10)*ABL:従順 - (LOCAL/10)*2
+
+;ABL:欲望をみる
+LOCAL += (LOCAL/10)*ABL:欲望
+
+;PALAM:潤滑をみる
+LOCAL += (GETPALAMLV(PALAM:潤滑, 4)-2)*(LOCAL/5)
+
+;プレイヤーのABL:Ｃ感覚をみる
+SELECTCASE ABL:PLAYER:Ｃ感覚
+	CASE 0
+		TIMES LOCAL , 1.00
+	CASE 1
+		TIMES LOCAL , 1.50
+	CASE 2
+		TIMES LOCAL , 2.00
+	CASE 3
+		TIMES LOCAL , 2.50
+	CASE 4
+		TIMES LOCAL , 3.50
+	CASEELSE
+		LOCAL += LOCAL*(ABL:PLAYER:Ｃ感覚-1)
+ENDSELECT
+
+CALL 射精ゲージ増加, LOCAL, PLAYER
+
+;-------------------------------------------------
+;射精ゲージチェック（奴隷）
+;-------------------------------------------------
+LOCAL = 300
+
+;ABL:調教者の技巧をみる
+LOCAL += (LOCAL/5)*ABL:PLAYER:技巧
+
+;ABL:技巧をみる
+LOCAL += (LOCAL/10)*ABL:技巧
+
+;ABL:従順をみる
+LOCAL += (LOCAL/10)*ABL:従順
+
+;ABL:欲望をみる
+LOCAL += (LOCAL/5)*ABL:欲望
+
+;PALAM:潤滑をみる
+SELECTCASE GETPALAMLV(PALAM:潤滑, 4)
+	CASE 0
+		TIMES LOCAL , 0.20
+	CASE 1
+		TIMES LOCAL , 0.50
+	CASE 2
+		TIMES LOCAL , 1.00
+	CASE 3
+		TIMES LOCAL , 1.50
+	CASE 4
+		TIMES LOCAL , 2.50
+ENDSELECT
+
+;奴隷のABL:Ａ感覚をみる
+SELECTCASE ABL:Ａ感覚
+	CASE 0
+		TIMES LOCAL , 0.50
+	CASE 1
+		TIMES LOCAL , 0.80
+	CASE 2
+		TIMES LOCAL , 1.00
+	CASE 3
+		TIMES LOCAL , 1.50
+	CASE 4
+		TIMES LOCAL , 2.00
+	CASEELSE
+		LOCAL += (LOCAL/2)*ABL:Ａ感覚
+ENDSELECT
+
+;奴隷のABL:Ａ感覚をみる
+SELECTCASE ABL:Ａ感覚
+	CASE 0
+		TIMES LOCAL , 0.20
+	CASE 1
+		TIMES LOCAL , 0.50
+	CASE 2
+		TIMES LOCAL , 0.80
+	CASE 3
+		TIMES LOCAL , 1.00
+	CASE 4
+		TIMES LOCAL , 1.50
+	CASE 5
+		TIMES LOCAL , 2.00
+	CASE 6
+		TIMES LOCAL , 3.00
+	CASE 7
+		TIMES LOCAL , 5.00
+	CASE 8
+		TIMES LOCAL , 7.00
+	CASE 9
+		TIMES LOCAL , 10.00
+	CASEELSE
+		LOCAL *= ABL:Ａ感覚*3/2
+ENDSELECT
+
+
+;奴隷のABL:マゾっ気をみる
+LOCAL += (LOCAL/5)*ABL:マゾっ気
+
+;奴隷が男の場合はホモっ気を見る
+IF SEX(TARGET) == 1
+	SELECTCASE ABL:ホモっ気
+		CASE 0
+			TIMES LOCAL , 0.15
+		CASE 1
+			TIMES LOCAL , 0.30
+		CASE 2
+			TIMES LOCAL , 0.50
+		CASE 3
+			TIMES LOCAL , 0.75
+		CASE 4
+			TIMES LOCAL , 1.00
+		CASEELSE
+			LOCAL += (LOCAL/10)*ABL:ホモっ気-3
+	ENDSELECT
+;女なら無条件で半減
+ELSE
+	TIMES LOCAL , 0.50
+ENDIF
+
+CALL 射精ゲージ増加, LOCAL, TARGET
+
+;-------------------------------------------------
+;ソース追加処理
+;-------------------------------------------------
+;消費体力、気力
+LOSEBASE:体力 += 150
+LOSEBASE:気力 += 200
+
+DOWNBASE:MASTER:体力 += 80
+DOWNBASE:MASTER:気力 += 70
+
+SOURCE:快C = 400
+SOURCE:快A = 400
+SOURCE:情愛 = 100
+SOURCE:苦痛 = 1000
+SOURCE:中毒 = 300
+SOURCE:露出 = 300
+SOURCE:逸脱 = 500
+SOURCE:反感 = 700
+SOURCE:恭順 = 300
+
+;-------------------------------------------------
+;特殊ソース処理
+;-------------------------------------------------
+;抑圧、抵抗持ちには、抑鬱ソース追加
+SIF TALENT:抑圧 || TALENT:抵抗
+	SOURCE:鬱屈 += 500
+
+CALL 特殊ソース処理_Ａ
+CALL 特殊ソース処理_セックス
+
+;-------------------------------------------------
+;絶頂チェック
+;-------------------------------------------------
+CALL SOURCE_CHECK_CVAB
+
+;-------------------------------------------------
+;射精チェック
+;-------------------------------------------------
+CALL SAMEN_CHECK, 2
+CALL SAMEN_CHECK_T, 5
+
+CALL SAMEN_SHOOT, 2, NOWEX:PLAYER:射精
+CALL SAMEN_SHOOT_T, 5, NOWEX:射精
+
+;-------------------------------------------------
+;汚れの処理
+;-------------------------------------------------
+;射精に関係なく行われる処理はここから
+;調教者のペニスにアナル汚れ
+SIF PENIS(PLAYER)
+	SETBIT STAIN:PLAYER:ペニス, 3
+;奴隷のアナル⇔調教者のペニスの汚れが移動
+STAIN:アナル |= STAIN:PLAYER:ペニス
+STAIN:PLAYER:ペニス |= STAIN:アナル
+
+;-------------------------------------------------
+;経験の処理
+;-------------------------------------------------
+;A経験
+EXP:Ａ経験 += 2
+PRINTL Ａ経験+2
+
+;性交経験
+EXP:性交経験 += 1
+PRINTL 性交経験+1
+
+CALL EXPUP, 3, 3
+
+;依存度補正値(服従で1、隷属で2）
+IF TALENT:服従 && !ASSIPLAY
+	TFLAG:依存度補正 += 1
+ELSEIF TALENT:隷属 && !ASSIPLAY
+	TFLAG:依存度補正 += 2
+ENDIF
+
+RETURN 1
+

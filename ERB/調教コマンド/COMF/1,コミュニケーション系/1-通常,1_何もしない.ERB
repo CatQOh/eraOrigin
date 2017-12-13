@@ -1,0 +1,101 @@
+;-------------------------------------------------
+;âΩÇ‡ÇµÇ»Ç¢
+;-------------------------------------------------
+@USERCOM_ABLE_âΩÇ‡ÇµÇ»Ç¢, ARG
+#FUNCTION
+;òAë±é¿çsÇÕÇ≈Ç´Ç»Ç¢
+SIF PREVCOMS == "âΩÇ‡ÇµÇ»Ç¢"
+	RETURNF 0
+
+;âΩÇ‡ÇµÇ»Ç¢é¿çsîªíË
+COMRESULT = 1
+RETURNF 1
+
+@COM_âΩÇ‡ÇµÇ»Ç¢
+PRINTL âΩÇ‡ÇµÇ»Ç¢
+CALL KOJO_MESSAGE_COM
+
+;-------------------------------------------------
+;É\Å[ÉXí«â¡èàóù
+;-------------------------------------------------
+;è¡îÔëÃóÕÅAãCóÕ
+LOSEBASE:ëÃóÕ += 0
+LOSEBASE:ãCóÕ += 0
+
+SOURCE:èÓà§ = 10
+SOURCE:òIèo = 10
+SOURCE:àÌíE = 10
+
+;-------------------------------------------------
+;ì¡éÍÉ\Å[ÉXèàóù
+;-------------------------------------------------
+;ãÍí…Çî∫ÇÌÇ»Ç¢É}É]Ç¡ãCãyÇ—É}É]ÇÃî∫Ç§èàóùÇÕêÊÇ…ÇµÇƒÇ®Ç≠
+;É}É]Ç¡ãCÇå©ÇÈ
+SELECTCASE ABL:É}É]Ç¡ãC
+	CASE 0
+		TIMES SOURCE:òIèo , 0.80
+		SOURCE:âtëÃ += 0
+		SOURCE:ó~èÓ += 0
+	CASE 1
+		TIMES SOURCE:òIèo , 1.00
+		SOURCE:âtëÃ += 20
+		SOURCE:ó~èÓ += 30
+	CASE 2
+		TIMES SOURCE:òIèo , 1.20
+		SOURCE:âtëÃ += 40
+		SOURCE:ó~èÓ += 70
+	CASE 3
+		TIMES SOURCE:òIèo , 1.40
+		SOURCE:âtëÃ += 70
+		SOURCE:ó~èÓ += 120
+	CASE 4
+		TIMES SOURCE:òIèo , 1.50
+		SOURCE:âtëÃ += 110
+		SOURCE:ó~èÓ += 180
+	CASE 5
+		TIMES SOURCE:òIèo , 1.70
+		SOURCE:âtëÃ += 150
+		SOURCE:ó~èÓ += 250
+	CASE 6
+		TIMES SOURCE:òIèo , 1.90
+		SOURCE:âtëÃ += 200
+		SOURCE:ó~èÓ += 300
+	CASE 7
+		TIMES SOURCE:òIèo , 2.10
+		SOURCE:âtëÃ += 250
+		SOURCE:ó~èÓ += 350
+	CASE 8
+		TIMES SOURCE:òIèo , 2.30
+		SOURCE:âtëÃ += 300
+		SOURCE:ó~èÓ += 400
+	CASE 9
+		TIMES SOURCE:òIèo , 2.50
+		SOURCE:âtëÃ += 350
+		SOURCE:ó~èÓ += 450
+	CASE IS >= 10
+		TIMES SOURCE:òIèo , 3.00
+		SOURCE:âtëÃ += 500
+		SOURCE:ó~èÓ += 500
+ENDSELECT
+
+;É}É]Çå©ÇÈ
+IF TALENT:É}É]
+	TIMES SOURCE:òIèo , 2.50
+	TIMES SOURCE:âtëÃ , 1.20
+	TIMES SOURCE:ó~èÓ , 1.20
+ENDIF
+
+;-------------------------------------------------
+;ê‚í∏É`ÉFÉbÉN
+;-------------------------------------------------
+CALL SOURCE_CHECK_CVAB
+
+;-------------------------------------------------
+;éÀê∏É`ÉFÉbÉN
+;-------------------------------------------------
+CALL SAMEN_CHECK_T, 0
+
+CALL SAMEN_SHOOT_T, 0, NOWEX:éÀê∏
+
+RETURN 1
+
