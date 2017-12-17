@@ -1,0 +1,205 @@
+;-------------------------------------------------
+;野外プレイ
+;-------------------------------------------------
+@COM_野外プレイ_KX1
+;装着時
+IF TEQUIP:野外プレイ == 0
+	;初めて
+	IF FCOM:SELECTCOM == 0
+		PRINTFORMW 
+		FCOM:SELECTCOM = 1
+	;二回目以降
+	ELSE
+		;陥落済み
+		IF CFLAG:陥落
+			PRINTFORMW 
+		;屈服刻印Lv3
+		ELSEIF MARK:屈服刻印 == 3
+			PRINTFORMW 
+		;それ以外
+		ELSE
+			PRINTFORMW 
+		ENDIF
+	ENDIF
+;解除時
+ELSEIF TEQUIP:野外プレイ
+	;初めて（の解除）
+	;解除時にしかフラグを処理しないため、野外プレイ時のまま調教終了すると解除経験は無いことになる
+	IF FCOM:SELECTCOM == 1
+		PRINTFORMW 
+		FCOM:SELECTCOM = 2
+	;2回目以降
+	ELSE
+		PRINTFORMW 
+	ENDIF
+ENDIF
+
+RETURN 0
+
+;-------------------------------------------------
+;羞恥プレイ
+;-------------------------------------------------
+@COM_羞恥プレイ_KX1
+;装着時
+IF TEQUIP:羞恥プレイ== 0
+	;初めて
+	IF FCOM:SELECTCOM == 0
+		PRINTFORMW 
+		FCOM:SELECTCOM = 1
+	;二回目以降
+	ELSE
+		;陥落済み
+		IF CFLAG:陥落
+			PRINTFORMW 
+		;屈服刻印Lv3
+		ELSEIF MARK:屈服刻印 == 3
+			PRINTFORMW 
+		;それ以外
+		ELSE
+			PRINTFORMW 
+		ENDIF
+	ENDIF
+;解除時
+ELSEIF TEQUIP:羞恥プレイ
+	;初めて（の解除）
+	;解除時にしかフラグを処理しないため、羞恥プレイ時のまま調教終了すると解除経験は無いことになる
+	IF FCOM:SELECTCOM == 1
+		PRINTFORMW 
+		FCOM:SELECTCOM = 2
+	;2回目以降
+	ELSE
+		PRINTFORMW 
+	ENDIF
+ENDIF
+
+RETURN 0
+
+;-------------------------------------------------
+;お風呂場プレイ
+;-------------------------------------------------
+@COM_お風呂場プレイ_KX1
+;装着時
+IF TEQUIP:お風呂場 == 0
+	;初めて
+	IF FCOM:SELECTCOM == 0
+		PRINTFORMW 
+		FCOM:SELECTCOM = 1
+	;二回目以降
+	ELSE
+		;陥落済み
+		IF CFLAG:陥落
+			PRINTFORMW 
+		;屈服刻印Lv3
+		ELSEIF MARK:屈服刻印 == 3
+			PRINTFORMW 
+		;それ以外
+		ELSE
+			PRINTFORMW 
+		ENDIF
+	ENDIF
+;解除時
+ELSEIF TEQUIP:お風呂場
+	;初めて（の解除）
+	;解除時にしかフラグを処理しないため、お風呂場プレイ時のまま調教終了すると解除経験は無いことになる
+	IF FCOM:SELECTCOM == 1
+		PRINTFORMW 
+		FCOM:SELECTCOM = 2
+	;2回目以降
+	ELSE
+		PRINTFORMW 
+	ENDIF
+ENDIF
+
+RETURN 0
+
+;-------------------------------------------------
+;シャワー
+;-------------------------------------------------
+@COM_シャワー_KX1
+;装着時
+IF TEQUIP:シャワー == 0
+	;初めて
+	IF FCOM:SELECTCOM == 0
+		PRINTFORMW 
+		FCOM:SELECTCOM = 1
+	;二回目以降
+	ELSE
+		;陥落済み
+		IF CFLAG:陥落
+			PRINTFORMW 
+		;屈服刻印Lv3
+		ELSEIF MARK:屈服刻印 == 3
+			PRINTFORMW 
+		;それ以外
+		ELSE
+			PRINTFORMW 
+		ENDIF
+	ENDIF
+;解除時
+ELSEIF TEQUIP:シャワー
+	;初めて（の解除）
+	;解除時にしかフラグを処理しないため、装着時のまま調教終了すると解除経験は無いことになる
+	IF FCOM:SELECTCOM == 1
+		PRINTFORMW 
+		FCOM:SELECTCOM = 2
+	;2回目以降
+	ELSE
+		PRINTFORMW 
+	ENDIF
+ENDIF
+
+RETURN 0
+
+;-------------------------------------------------
+;新妻プレイ 恋慕、親愛のみ
+;-------------------------------------------------
+@COM_新妻プレイ_KX1
+;装着時
+IF TEQUIP:エプロン == 0
+	;初めて
+	IF FCOM:SELECTCOM == 0
+		PRINTFORMW 
+		FCOM:SELECTCOM = 1
+	;二回目以降
+	ELSE
+		PRINTFORMW 
+	ENDIF
+;解除時
+ELSEIF TEQUIP:エプロン
+	;初めて（の解除）
+	;解除時にしかフラグを処理しないため、装着時のまま調教終了すると解除経験は無いことになる
+	IF FCOM:SELECTCOM == 1
+		PRINTFORMW 
+		FCOM:SELECTCOM = 2
+	;2回目以降
+	ELSE
+		PRINTFORMW 
+	ENDIF
+ENDIF
+
+RETURN 0
+
+;-------------------------------------------------
+;腸洗浄
+;-------------------------------------------------
+@COM_腸洗浄_KX1
+;初めて
+IF FCOM:SELECTCOM == 0
+	PRINTFORMW 
+	FCOM:SELECTCOM = 1
+;二回目以降
+ELSE
+	;陥落済み
+	IF CFLAG:陥落
+		PRINTFORMW 
+	;屈服刻印Lv3
+	ELSEIF MARK:屈服刻印 == 3
+		PRINTFORMW 
+	;それ以外
+	ELSE
+		PRINTFORMW 
+	ENDIF
+ENDIF
+
+RETURN 0
+
