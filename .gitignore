@@ -6,4 +6,6 @@ sav/
 debug/
 macro.txt
 *.dat
+CSV/Chara/*
+!CSV/Chara0_あなた.csv
 
