@@ -1,20 +1,20 @@
 ;-------------------------------------------------
-;キスする
+;�L�X����
 ;-------------------------------------------------
-@COM_キスする_KX1
-;初めて
+@COM_�L�X����_KX1
+;���߂�
 IF FCOM:SELECTCOM == 0
 	PRINTFORMW 
 	FCOM:SELECTCOM = 1
-;二回目以降
+;���ڈȍ~
 ELSE
-	;陥落済み
-	IF CFLAG:陥落
+	;�ח��ς�
+	IF CFLAG:�ח�
 		PRINTFORMW 
-	;屈服刻印Lv3
-	ELSEIF MARK:屈服刻印 == 3
+	;��������Lv3
+	ELSEIF MARK:�������� == 3
 		PRINTFORMW 
-	;それ以外
+	;����ȊO
 	ELSE
 		PRINTFORMW 
 	ENDIF
@@ -23,22 +23,22 @@ ENDIF
 RETURN 0
 
 ;-------------------------------------------------
-;何もしない
+;�������Ȃ�
 ;-------------------------------------------------
-@COM_何もしない_KX1
-;初めて
+@COM_�������Ȃ�_KX1
+;���߂�
 IF FCOM:SELECTCOM == 0
 	PRINTFORMW 
 	FCOM:SELECTCOM = 1
-;二回目以降
+;���ڈȍ~
 ELSE
-	;陥落済み
-	IF CFLAG:陥落
+	;�ח��ς�
+	IF CFLAG:�ח�
 		PRINTFORMW 
-	;屈服刻印Lv3
-	ELSEIF MARK:屈服刻印 == 3
+	;��������Lv3
+	ELSEIF MARK:�������� == 3
 		PRINTFORMW 
-	;それ以外
+	;����ȊO
 	ELSE
 		PRINTFORMW 
 	ENDIF
@@ -47,22 +47,22 @@ ENDIF
 RETURN 0
 
 ;-------------------------------------------------
-;罵倒
+;�l�|
 ;-------------------------------------------------
-@COM_罵倒_KX1
-;初めて
+@COM_�l�|_KX1
+;���߂�
 IF FCOM:SELECTCOM == 0
 	PRINTFORMW 
 	FCOM:SELECTCOM = 1
-;二回目以降
+;���ڈȍ~
 ELSE
-	;陥落済み
-	IF CFLAG:陥落
+	;�ח��ς�
+	IF CFLAG:�ח�
 		PRINTFORMW 
-	;屈服刻印Lv3
-	ELSEIF MARK:屈服刻印 == 3
+	;��������Lv3
+	ELSEIF MARK:�������� == 3
 		PRINTFORMW 
-	;それ以外
+	;����ȊO
 	ELSE
 		PRINTFORMW 
 	ENDIF
@@ -71,22 +71,22 @@ ENDIF
 RETURN 0
 
 ;-------------------------------------------------
-;お酒を飲ませる %酒名%で飲ませるお酒を取得
+;���������܂��� %��%�ň��܂��邨�����擾
 ;-------------------------------------------------
-@COM_お酒を飲ませる_KX1
-;初めて
+@COM_���������܂���_KX1
+;���߂�
 IF FCOM:SELECTCOM == 0
 	PRINTFORMW 
 	FCOM:SELECTCOM = 1
-;二回目以降
+;���ڈȍ~
 ELSE
-	;陥落済み
-	IF CFLAG:陥落
+	;�ח��ς�
+	IF CFLAG:�ח�
 		PRINTFORMW 
-	;屈服刻印Lv3
-	ELSEIF MARK:屈服刻印 == 3
+	;��������Lv3
+	ELSEIF MARK:�������� == 3
 		PRINTFORMW 
-	;それ以外
+	;����ȊO
 	ELSE
 		PRINTFORMW 
 	ENDIF
@@ -95,22 +95,22 @@ ENDIF
 RETURN 0
 
 ;-------------------------------------------------
-;キスしてもらう
+;�L�X���Ă��炤
 ;-------------------------------------------------
-@COM_キスしてもらう_KX1
-;初めて
+@COM_�L�X���Ă��炤_KX1
+;���߂�
 IF FCOM:SELECTCOM == 0
 	PRINTFORMW 
 	FCOM:SELECTCOM = 1
-;二回目以降
+;���ڈȍ~
 ELSE
-	;陥落済み
-	IF CFLAG:陥落
+	;�ח��ς�
+	IF CFLAG:�ח�
 		PRINTFORMW 
-	;屈服刻印Lv3
-	ELSEIF MARK:屈服刻印 == 3
+	;��������Lv3
+	ELSEIF MARK:�������� == 3
 		PRINTFORMW 
-	;それ以外
+	;����ȊO
 	ELSE
 		PRINTFORMW 
 	ENDIF
@@ -119,22 +119,22 @@ ENDIF
 RETURN 0
 
 ;-------------------------------------------------
-;情欲を煽る
+;��~�����
 ;-------------------------------------------------
-@COM_情欲を煽る_KX1
-;初めて
+@COM_��~�����_KX1
+;���߂�
 IF FCOM:SELECTCOM == 0
 	PRINTFORMW 
 	FCOM:SELECTCOM = 1
-;二回目以降
+;���ڈȍ~
 ELSE
-	;陥落済み
-	IF CFLAG:陥落
+	;�ח��ς�
+	IF CFLAG:�ח�
 		PRINTFORMW 
-	;屈服刻印Lv3
-	ELSEIF MARK:屈服刻印 == 3
+	;��������Lv3
+	ELSEIF MARK:�������� == 3
 		PRINTFORMW 
-	;それ以外
+	;����ȊO
 	ELSE
 		PRINTFORMW 
 	ENDIF
@@ -143,14 +143,14 @@ ENDIF
 RETURN 0
 
 ;-------------------------------------------------
-;会話 恋慕、親愛のみ
+;��b ����A�e���̂�
 ;-------------------------------------------------
-@COM_会話_KX1
-;初めて
+@COM_��b_KX1
+;���߂�
 IF FCOM:SELECTCOM == 0
 	PRINTFORMW 
 	FCOM:SELECTCOM = 1
-;二回目以降
+;���ڈȍ~
 ELSE
 	PRINTFORMW 
 ENDIF
@@ -158,14 +158,14 @@ ENDIF
 RETURN 0
 
 ;-------------------------------------------------
-;スキンシップ 恋慕、親愛のみ
+;�X�L���V�b�v ����A�e���̂�
 ;-------------------------------------------------
-@COM_スキンシップ_KX1
-;初めて
+@COM_�X�L���V�b�v_KX1
+;���߂�
 IF FCOM:SELECTCOM == 0
 	PRINTFORMW 
 	FCOM:SELECTCOM = 1
-;二回目以降
+;���ڈȍ~
 ELSE
 	PRINTFORMW 
 ENDIF
@@ -173,14 +173,14 @@ ENDIF
 RETURN 0
 
 ;-------------------------------------------------
-;まったりする 恋慕、親愛のみ
+;�܂����肷�� ����A�e���̂�
 ;-------------------------------------------------
-@COM_まったりする_KX1
-;初めて
+@COM_�܂����肷��_KX1
+;���߂�
 IF FCOM:SELECTCOM == 0
 	PRINTFORMW 
 	FCOM:SELECTCOM = 1
-;二回目以降
+;���ڈȍ~
 ELSE
 	PRINTFORMW 
 ENDIF
@@ -188,14 +188,14 @@ ENDIF
 RETURN 0
 
 ;-------------------------------------------------
-;ビデオ鑑賞 陥落済みのみ
+;�r�f�I�ӏ� �ח��ς݂̂�
 ;-------------------------------------------------
-@COM_ビデオ鑑賞_KX1
-;初めて
+@COM_�r�f�I�ӏ�_KX1
+;���߂�
 IF FCOM:SELECTCOM == 0
 	PRINTFORMW 
 	FCOM:SELECTCOM = 1
-;二回目以降
+;���ڈȍ~
 ELSE
 	PRINTFORMW 
 ENDIF
@@ -203,14 +203,14 @@ ENDIF
 RETURN 0
 
 ;-------------------------------------------------
-;吸血する 恋慕、親愛のみ
+;�z������ ����A�e���̂�
 ;-------------------------------------------------
-@COM_吸血する_KX1
-;初めて
+@COM_�z������_KX1
+;���߂�
 IF FCOM:SELECTCOM == 0
 	PRINTFORMW 
 	FCOM:SELECTCOM = 1
-;二回目以降
+;���ڈȍ~
 ELSE
 	PRINTFORMW 
 ENDIF
@@ -218,14 +218,14 @@ ENDIF
 RETURN 0
 
 ;-------------------------------------------------
-;吸血させる 恋慕、親愛のみ
+;�z�������� ����A�e���̂�
 ;-------------------------------------------------
-@COM_吸血させる_KX1
-;初めて
+@COM_�z��������_KX1
+;���߂�
 IF FCOM:SELECTCOM == 0
 	PRINTFORMW 
 	FCOM:SELECTCOM = 1
-;二回目以降
+;���ڈȍ~
 ELSE
 	PRINTFORMW 
 ENDIF
@@ -233,14 +233,14 @@ ENDIF
 RETURN 0
 
 ;-------------------------------------------------
-;母乳飲み 陥落済みのみ
+;������� �ח��ς݂̂�
 ;-------------------------------------------------
-@COM_母乳飲み_KX1
-;初めて
+@COM_�������_KX1
+;���߂�
 IF FCOM:SELECTCOM == 0
 	PRINTFORMW 
 	FCOM:SELECTCOM = 1
-;二回目以降
+;���ڈȍ~
 ELSE
 	PRINTFORMW 
 ENDIF

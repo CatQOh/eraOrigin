@@ -1,1032 +1,1032 @@
 ;-------------------------------------------------
-;ã‚¤ãƒ™ãƒ³ãƒˆå£ä¸Šé›†ï¼ˆX1ã‚’ã‚­ãƒ£ãƒ©ç•ªå·ã«ç½®æ›ã™ã‚‹ï¼‰ FEVEã‚’ä½¿ç”¨
+;ƒCƒxƒ“ƒgŒûãWiX1‚ðƒLƒƒƒ‰”Ô†‚É’uŠ·‚·‚éj FEVE‚ðŽg—p
 ;-------------------------------------------------
 @KOJO_EVENT_KX1, ARGS
 ;-------------------------------------------------
-;åœ°ã®æ–‡å‘¼ã³å‡ºã—åŠã³å£ä¸Šè¡¨ç¤ºè¨­å®šç¢ºèª
+;’n‚Ì•¶ŒÄ‚Ño‚µ‹y‚ÑŒûã•\Ž¦Ý’èŠm”F
 ;-------------------------------------------------
-;åœ°ã®æ–‡è¡¨ç¤ºé–¢æ•° åœ°ã®æ–‡è¡¨ç¤ºã•ã›ãŸããªã„å ´åˆã¯ã‚³ãƒ¡ãƒ³ãƒˆã‚¢ã‚¦ãƒˆ
+;’n‚Ì•¶•\Ž¦ŠÖ” ’n‚Ì•¶•\Ž¦‚³‚¹‚½‚­‚È‚¢ê‡‚ÍƒRƒƒ“ƒgƒAƒEƒg
 TRYCALLFORM EVENT_MESSAGE_%ARGS%
 
-SIF FLAG:å£ä¸Šè¡¨ç¤º == 0
+SIF FLAG:Œûã•\Ž¦ == 0
 	RETURN 0
 
 TRYCALLFORM EVENT_%ARGS%_KX1
 
 ;-------------------------------------------------
-;æœãƒ•ã‚§ãƒ© é™¥è½ã—ã¦ã„ãªã„ã¨ç™ºç”Ÿã—ãªã„
+;’©ƒtƒFƒ‰ Š×—Ž‚µ‚Ä‚¢‚È‚¢‚Æ”­¶‚µ‚È‚¢
 ;-------------------------------------------------
-@EVENT_æœãƒ•ã‚§ãƒ©_KX1
+@EVENT_’©ƒtƒFƒ‰_KX1
 SELECTCASE FALLTYPE(TARGET)
-	;æ‹æ…•ã€è¦ªæ„›
+	;—ö•çAeˆ¤
 	CASE 1
 		PRINTFORMW 
-	;æ·«ä¹±ã€å¨¼å©¦
+	;ˆú—A©•w
 	CASE 2
 		PRINTFORMW 
-	;æœå¾“ã€éš·å±ž
+	;•ž]A—ê‘®
 	CASE 3
 		PRINTFORMW 
 ENDSELECT
 
 ;-------------------------------------------------
-;æœãƒ‘ã‚¤ã‚ºãƒª é™¥è½ã—ã¦ã„ãªã„ã¨ç™ºç”Ÿã—ãªã„
+;’©ƒpƒCƒYƒŠ Š×—Ž‚µ‚Ä‚¢‚È‚¢‚Æ”­¶‚µ‚È‚¢
 ;-------------------------------------------------
-@EVENT_æœãƒ‘ã‚¤ã‚ºãƒª_KX1
+@EVENT_’©ƒpƒCƒYƒŠ_KX1
 SELECTCASE FALLTYPE(TARGET)
-	;æ‹æ…•ã€è¦ªæ„›
+	;—ö•çAeˆ¤
 	CASE 1
 		PRINTFORMW 
-	;æ·«ä¹±ã€å¨¼å©¦
+	;ˆú—A©•w
 	CASE 2
 		PRINTFORMW 
-	;æœå¾“ã€éš·å±ž
+	;•ž]A—ê‘®
 	CASE 3
 		PRINTFORMW 
 ENDSELECT
 
 ;-------------------------------------------------
-;æœé¨Žä¹—ä½ é™¥è½ã—ã¦ã„ãªã„ã¨ç™ºç”Ÿã—ãªã„
+;’©‹RæˆÊ Š×—Ž‚µ‚Ä‚¢‚È‚¢‚Æ”­¶‚µ‚È‚¢
 ;-------------------------------------------------
-@EVENT_æœé¨Žä¹—ä½_KX1
+@EVENT_’©‹RæˆÊ_KX1
 SELECTCASE FALLTYPE(TARGET)
-	;æ‹æ…•ã€è¦ªæ„›
+	;—ö•çAeˆ¤
 	CASE 1
 		PRINTFORMW 
-	;æ·«ä¹±ã€å¨¼å©¦
+	;ˆú—A©•w
 	CASE 2
 		PRINTFORMW 
-	;æœå¾“ã€éš·å±ž
+	;•ž]A—ê‘®
 	CASE 3
 		PRINTFORMW 
 ENDSELECT
 
 ;-------------------------------------------------
-;èª¿æ•™å¾Œ3P é™¥è½ã—ã¦ã„ãªã„ã¨ç™ºç”Ÿã—ãªã„
+;’²‹³Œã3P Š×—Ž‚µ‚Ä‚¢‚È‚¢‚Æ”­¶‚µ‚È‚¢
 ;-------------------------------------------------
-@EVENT_èª¿æ•™å¾Œ3P_KX1
+@EVENT_’²‹³Œã3P_KX1
 SELECTCASE FALLTYPE(TARGET)
-	;æ‹æ…•ã€è¦ªæ„›
+	;—ö•çAeˆ¤
 	CASE 1
 		PRINTFORMW 
-	;æ·«ä¹±ã€å¨¼å©¦
+	;ˆú—A©•w
 	CASE 2
 		PRINTFORMW 
-	;æœå¾“ã€éš·å±ž
+	;•ž]A—ê‘®
 	CASE 3
 		PRINTFORMW 
 ENDSELECT
 
 ;-------------------------------------------------
-;èª¿æ•™å¾Œã‚»ãƒƒã‚¯ã‚¹ é™¥è½ã—ã¦ã„ãªã„ã¨ç™ºç”Ÿã—ãªã„
+;’²‹³ŒãƒZƒbƒNƒX Š×—Ž‚µ‚Ä‚¢‚È‚¢‚Æ”­¶‚µ‚È‚¢
 ;-------------------------------------------------
-@EVENT_èª¿æ•™å¾Œã‚»ãƒƒã‚¯ã‚¹_KX1
-;ç”·åŒå£«ã§ï¼¡æ„Ÿè¦šãŒè¶³ã‚Šãªã„ã€ã‚‚ã—ãã¯å¥´éš·ãŒå¦Šå¨ ã—ã¦ã‚‹ã‹å‡¦å¥³ãªã‚‰å£æ·«ã‚„æ‰‹æ·«ã®ã‚½ãƒ•ãƒˆãªãƒ—ãƒ¬ã‚¤ã«
-IF (SEX(TARGET) == 1 && SEX(MASTER) == 1 && ABL:ï¼¡æ„Ÿè¦š <= 3) || (SEX(TARGET) == 2 && (TALENT:å¦Šå¨  || TALENT:å‡¦å¥³ || TALENT:å†ç”Ÿå‡¦å¥³))
+@EVENT_’²‹³ŒãƒZƒbƒNƒX_KX1
+;’j“¯Žm‚Å‚`Š´Šo‚ª‘«‚è‚È‚¢A‚à‚µ‚­‚Í“z—ê‚ª”DP‚µ‚Ä‚é‚©ˆ—‚È‚çŒûˆú‚âŽèˆú‚Ìƒ\ƒtƒg‚ÈƒvƒŒƒC‚É
+IF (SEX(TARGET) == 1 && SEX(MASTER) == 1 && ABL:‚`Š´Šo <= 3) || (SEX(TARGET) == 2 && (TALENT:”DP || TALENT:ˆ— || TALENT:Ä¶ˆ—))
 	SELECTCASE FALLTYPE(TARGET)
-		;æ‹æ…•ã€è¦ªæ„›
+		;—ö•çAeˆ¤
 		CASE 1
 			PRINTFORMW 
-		;æ·«ä¹±ã€å¨¼å©¦
+		;ˆú—A©•w
 		CASE 2
 			PRINTFORMW 
-		;æœå¾“ã€éš·å±ž
+		;•ž]A—ê‘®
 		CASE 3
 			PRINTFORMW 
 	ENDSELECT
 ELSE
 	SELECTCASE FALLTYPE(TARGET)
-		;æ‹æ…•ã€è¦ªæ„›
+		;—ö•çAeˆ¤
 		CASE 1
 			PRINTFORMW 
-		;æ·«ä¹±ã€å¨¼å©¦
+		;ˆú—A©•w
 		CASE 2
 			PRINTFORMW 
-		;æœå¾“ã€éš·å±ž
+		;•ž]A—ê‘®
 		CASE 3
 			PRINTFORMW 
 	ENDSELECT
 ENDIF
 
 ;-------------------------------------------------
-;å¼·ç²¾ç¥žè–¬ã®åå‹•
+;‹­¸_–ò‚Ì”½“®
 ;-------------------------------------------------
-@EVENT_å¼·ç²¾ç¥žè–¬ã®åå‹•_KX1
+@EVENT_‹­¸_–ò‚Ì”½“®_KX1
 SELECTCASE FALLTYPE(TARGET)
-	;æ‹æ…•ã€è¦ªæ„›
+	;—ö•çAeˆ¤
 	CASE 1
 		PRINTFORMW 
-	;æ·«ä¹±ã€å¨¼å©¦
+	;ˆú—A©•w
 	CASE 2
 		PRINTFORMW 
-	;æœå¾“ã€éš·å±ž
+	;•ž]A—ê‘®
 	CASE 3
 		PRINTFORMW 
-	;æœªé™¥è½
+	;–¢Š×—Ž
 	CASEELSE
 		PRINTFORMW 
 ENDSELECT
 
 ;-------------------------------------------------
-;èª¿æ•™å¾Œæ¾ä¹³
+;’²‹³Œãï“û
 ;-------------------------------------------------
-@EVENT_èª¿æ•™å¾Œæ¾ä¹³_KX1
+@EVENT_’²‹³Œãï“û_KX1
 SELECTCASE FALLTYPE(TARGET)
-	;æ‹æ…•ã€è¦ªæ„›
+	;—ö•çAeˆ¤
 	CASE 1
 		PRINTFORMW 
-	;æ·«ä¹±ã€å¨¼å©¦
+	;ˆú—A©•w
 	CASE 2
 		PRINTFORMW 
-	;æœå¾“ã€éš·å±ž
+	;•ž]A—ê‘®
 	CASE 3
 		PRINTFORMW 
-	;æœªé™¥è½
+	;–¢Š×—Ž
 	CASEELSE
 		PRINTFORMW 
 ENDSELECT
 
 ;-------------------------------------------------
-;èª¿æ•™å¾Œè‡ªæ…°
+;’²‹³ŒãŽ©ˆÔ
 ;-------------------------------------------------
-@EVENT_èª¿æ•™å¾Œè‡ªæ…°_KX1
+@EVENT_’²‹³ŒãŽ©ˆÔ_KX1
 SELECTCASE FALLTYPE(TARGET)
-	;æ‹æ…•ã€è¦ªæ„›
+	;—ö•çAeˆ¤
 	CASE 1
 		PRINTFORMW 
-	;æ·«ä¹±ã€å¨¼å©¦
+	;ˆú—A©•w
 	CASE 2
 		PRINTFORMW 
-	;æœå¾“ã€éš·å±ž
+	;•ž]A—ê‘®
 	CASE 3
 		PRINTFORMW 
-	;æœªé™¥è½
+	;–¢Š×—Ž
 	CASEELSE
 		PRINTFORMW 
 ENDSELECT
 
 ;-------------------------------------------------
-;èª¿æ•™å¾Œå¤œé€™ã„ é™¥è½ã—ã¦ã„ãªã„ã¨ç™ºç”Ÿã—ãªã„
+;’²‹³Œã–é”‡‚¢ Š×—Ž‚µ‚Ä‚¢‚È‚¢‚Æ”­¶‚µ‚È‚¢
 ;-------------------------------------------------
-@EVENT_èª¿æ•™å¾Œå¤œé€™ã„_KX1
-;å¯¾è±¡ãŒç”·orå¯¾è±¡ãŒå‡¦å¥³orä¸»äººã«ãƒšãƒ‹ã‚¹ãŒç„¡ã„orå°„ç²¾æ®‹æ•°ãŒç„¡ã„orä½“åŠ›500æœªæº€ãªã‚‰æ·»ã„å¯ã‚¤ãƒ™ãƒ³ãƒˆ
-IF SEX(TARGET) == 1 || TALENT:å‡¦å¥³ || TALENT:å†ç”Ÿå‡¦å¥³ || !PENIS(MASTER) || !CFLAG:MASTER:æ®‹æ•° || BASE:ä½“åŠ› < 500
+@EVENT_’²‹³Œã–é”‡‚¢_KX1
+;‘ÎÛ‚ª’jor‘ÎÛ‚ªˆ—orŽål‚ÉƒyƒjƒX‚ª–³‚¢orŽË¸Žc”‚ª–³‚¢or‘Ì—Í500–¢–ž‚È‚ç“Y‚¢QƒCƒxƒ“ƒg
+IF SEX(TARGET) == 1 || TALENT:ˆ— || TALENT:Ä¶ˆ— || !PENIS(MASTER) || !CFLAG:MASTER:Žc” || BASE:‘Ì—Í < 500
 	SELECTCASE FALLTYPE(TARGET)
-		;æ‹æ…•ã€è¦ªæ„›
+		;—ö•çAeˆ¤
 		CASE 1
 			PRINTFORMW 
-		;æ·«ä¹±ã€å¨¼å©¦
+		;ˆú—A©•w
 		CASE 2
 			PRINTFORMW 
-		;æœå¾“ã€éš·å±ž
+		;•ž]A—ê‘®
 		CASE 3
 			PRINTFORMW 
 	ENDSELECT
 ELSE
 	SELECTCASE FALLTYPE(TARGET)
-		;æ‹æ…•ã€è¦ªæ„›
+		;—ö•çAeˆ¤
 		CASE 1
 			PRINTFORMW 
-		;æ·«ä¹±ã€å¨¼å©¦
+		;ˆú—A©•w
 		CASE 2
 			PRINTFORMW 
-		;æœå¾“ã€éš·å±ž
+		;•ž]A—ê‘®
 		CASE 3
 			PRINTFORMW 
 	ENDSELECT
 ENDIF
 
 ;-------------------------------------------------
-;å¦Šå¨ ç™ºè¦šæ™‚
+;”DP”­ŠoŽž
 ;-------------------------------------------------
-@EVENT_å¦Šå¨ ç™ºè¦šæ™‚_KX1
+@EVENT_”DP”­ŠoŽž_KX1
 SELECTCASE FALLTYPE(TARGET)
-	;æ‹æ…•ã€è¦ªæ„›
+	;—ö•çAeˆ¤
 	CASE 1
 		PRINTFORMW 
-	;æ·«ä¹±ã€å¨¼å©¦
+	;ˆú—A©•w
 	CASE 2
 		PRINTFORMW 
-	;æœå¾“ã€éš·å±ž
+	;•ž]A—ê‘®
 	CASE 3
 		PRINTFORMW 
-	;æœªé™¥è½
+	;–¢Š×—Ž
 	CASEELSE
 		PRINTFORMW 
 ENDSELECT
 
 ;-------------------------------------------------
-;å‡ºç”£æ™‚
+;oŽYŽž
 ;-------------------------------------------------
-@EVENT_å‡ºç”£æ™‚_KX1
+@EVENT_oŽYŽž_KX1
 SELECTCASE FALLTYPE(TARGET)
-	;æ‹æ…•ã€è¦ªæ„›
+	;—ö•çAeˆ¤
 	CASE 1
 		PRINTFORMW 
-	;æ·«ä¹±ã€å¨¼å©¦
+	;ˆú—A©•w
 	CASE 2
 		PRINTFORMW 
-	;æœå¾“ã€éš·å±ž
+	;•ž]A—ê‘®
 	CASE 3
 		PRINTFORMW 
-	;æœªé™¥è½
+	;–¢Š×—Ž
 	CASEELSE
 		PRINTFORMW 
 ENDSELECT
 
 ;-------------------------------------------------
-;è‚²å…å®¤
+;ˆçŽ™Žº
 ;-------------------------------------------------
-@EVENT_è‚²å…å®¤_KX1
+@EVENT_ˆçŽ™Žº_KX1
 SELECTCASE FALLTYPE(TARGET)
-	;æ‹æ…•ã€è¦ªæ„›
+	;—ö•çAeˆ¤
 	CASE 1
 		PRINTFORMW 
-	;æ·«ä¹±ã€å¨¼å©¦
+	;ˆú—A©•w
 	CASE 2
 		PRINTFORMW 
-	;æœå¾“ã€éš·å±ž
+	;•ž]A—ê‘®
 	CASE 3
 		PRINTFORMW 
-	;æœªé™¥è½
+	;–¢Š×—Ž
 	CASEELSE
 		PRINTFORMW 
 ENDSELECT
 
 ;-------------------------------------------------
-;å­ä¾›ãŒè¦ªé›¢ã‚Œæ™‚
+;Žq‹Ÿ‚ªe—£‚êŽž
 ;-------------------------------------------------
-@EVENT_è¦ªé›¢ã‚Œ_KX1
+@EVENT_e—£‚ê_KX1
 SELECTCASE FALLTYPE(TARGET)
-	;æ‹æ…•ã€è¦ªæ„›
+	;—ö•çAeˆ¤
 	CASE 1
 		PRINTFORMW 
-	;æ·«ä¹±ã€å¨¼å©¦
+	;ˆú—A©•w
 	CASE 2
 		PRINTFORMW 
-	;æœå¾“ã€éš·å±ž
+	;•ž]A—ê‘®
 	CASE 3
 		PRINTFORMW 
-	;æœªé™¥è½
+	;–¢Š×—Ž
 	CASEELSE
 		PRINTFORMW 
 ENDSELECT
 
 ;-------------------------------------------------
-;å£²å´æ™‚
+;”„‹pŽž
 ;-------------------------------------------------
-@EVENT_å£²å´æ™‚_KX1
+@EVENT_”„‹pŽž_KX1
 SELECTCASE FALLTYPE(TARGET)
-	;æ‹æ…•ã€è¦ªæ„›
+	;—ö•çAeˆ¤
 	CASE 1
 		PRINTFORMW 
-	;æ·«ä¹±ã€å¨¼å©¦
+	;ˆú—A©•w
 	CASE 2
 		PRINTFORMW 
-	;æœå¾“ã€éš·å±ž
+	;•ž]A—ê‘®
 	CASE 3
 		PRINTFORMW 
-	;æœªé™¥è½
+	;–¢Š×—Ž
 	CASEELSE
 		PRINTFORMW 
 ENDSELECT
 
 ;-------------------------------------------------
-;ãƒ“ãƒ‡ã‚ªå£²å´æ™‚
+;ƒrƒfƒI”„‹pŽž
 ;-------------------------------------------------
-@EVENT_ãƒ“ãƒ‡ã‚ªå£²å´æ™‚_KX1
+@EVENT_ƒrƒfƒI”„‹pŽž_KX1
 SELECTCASE FALLTYPE(TARGET)
-	;æ‹æ…•ã€è¦ªæ„›
+	;—ö•çAeˆ¤
 	CASE 1
 		PRINTFORMW 
-	;æ·«ä¹±ã€å¨¼å©¦
+	;ˆú—A©•w
 	CASE 2
 		PRINTFORMW 
-	;æœå¾“ã€éš·å±ž
+	;•ž]A—ê‘®
 	CASE 3
 		PRINTFORMW 
-	;æœªé™¥è½
+	;–¢Š×—Ž
 	CASEELSE
 		PRINTFORMW 
 ENDSELECT
 
 ;-------------------------------------------------
-;å†™çœŸå£²å´æ™‚
+;ŽÊ^”„‹pŽž
 ;-------------------------------------------------
-@EVENT_å†™çœŸå£²å´æ™‚_KX1
+@EVENT_ŽÊ^”„‹pŽž_KX1
 SELECTCASE FALLTYPE(TARGET)
-	;æ‹æ…•ã€è¦ªæ„›
+	;—ö•çAeˆ¤
 	CASE 1
 		PRINTFORMW 
-	;æ·«ä¹±ã€å¨¼å©¦
+	;ˆú—A©•w
 	CASE 2
 		PRINTFORMW 
-	;æœå¾“ã€éš·å±ž
+	;•ž]A—ê‘®
 	CASE 3
 		PRINTFORMW 
-	;æœªé™¥è½
+	;–¢Š×—Ž
 	CASEELSE
 		PRINTFORMW 
 ENDSELECT
 
 ;-------------------------------------------------
-;ãƒ“ãƒ‡ã‚ªä¿ç®¡æ™‚ æ’®å½±ã—ãŸãƒ“ãƒ‡ã‚ªã‚’ä¿å­˜ã—ãŸæ™‚
+;ƒrƒfƒI•ÛŠÇŽž ŽB‰e‚µ‚½ƒrƒfƒI‚ð•Û‘¶‚µ‚½Žž
 ;-------------------------------------------------
-@EVENT_ãƒ“ãƒ‡ã‚ªä¿ç®¡æ™‚_KX1
+@EVENT_ƒrƒfƒI•ÛŠÇŽž_KX1
 SELECTCASE FALLTYPE(TARGET)
-	;æ‹æ…•ã€è¦ªæ„›
+	;—ö•çAeˆ¤
 	CASE 1
 		PRINTFORMW 
-	;æ·«ä¹±ã€å¨¼å©¦
+	;ˆú—A©•w
 	CASE 2
 		PRINTFORMW 
-	;æœå¾“ã€éš·å±ž
+	;•ž]A—ê‘®
 	CASE 3
 		PRINTFORMW 
-	;æœªé™¥è½
+	;–¢Š×—Ž
 	CASEELSE
 		PRINTFORMW 
 ENDSELECT
 
 ;-------------------------------------------------
-;èª¿æ•™å¯¾è±¡ã«é¸ã‚“ã æ™‚
+;’²‹³‘ÎÛ‚É‘I‚ñ‚¾Žž
 ;-------------------------------------------------
-@EVENT_èª¿æ•™å¯¾è±¡æŒ‡å®š_KX1
+@EVENT_’²‹³‘ÎÛŽw’è_KX1
 SELECTCASE FALLTYPE(TARGET)
-	;æ‹æ…•ã€è¦ªæ„›
+	;—ö•çAeˆ¤
 	CASE 1
 		PRINTFORMW 
-	;æ·«ä¹±ã€å¨¼å©¦
+	;ˆú—A©•w
 	CASE 2
 		PRINTFORMW 
-	;æœå¾“ã€éš·å±ž
+	;•ž]A—ê‘®
 	CASE 3
 		PRINTFORMW 
-	;æœªé™¥è½
+	;–¢Š×—Ž
 	CASEELSE
 		PRINTFORMW 
 ENDSELECT
 
 ;-------------------------------------------------
-;åŠ©æ‰‹ã«é¸ã‚“ã æ™‚
+;•Žè‚É‘I‚ñ‚¾Žž
 ;-------------------------------------------------
-@EVENT_åŠ©æ‰‹æŒ‡å®š_KX1
+@EVENT_•ŽèŽw’è_KX1
 SELECTCASE FALLTYPE(TARGET)
-	;æ‹æ…•ã€è¦ªæ„›
+	;—ö•çAeˆ¤
 	CASE 1
 		PRINTFORMW 
-	;æ·«ä¹±ã€å¨¼å©¦
+	;ˆú—A©•w
 	CASE 2
 		PRINTFORMW 
-	;æœå¾“ã€éš·å±ž
+	;•ž]A—ê‘®
 	CASE 3
 		PRINTFORMW 
-	;æœªé™¥è½
+	;–¢Š×—Ž
 	CASEELSE
 		PRINTFORMW 
 ENDSELECT
 
 ;-------------------------------------------------
-;ä¸»äººã«ã‚ˆã‚‹å¸è¡€ã‚¤ãƒ™ãƒ³ãƒˆ è²žæ“å®ˆã£ã¦ã‚‹ãªã‚‰å¸è¡€é¬¼ã«ã€ãã†ã§ãªã‘ã‚Œã°ã‚¾ãƒ³ãƒ“ã«ãªã‚‹
-;ã¡ãªã¿ã«TARGETãŒäººé–“ã˜ã‚ƒãªã„ã¨ç™ºç”Ÿã—ãªã„
+;Žål‚É‚æ‚é‹zŒŒƒCƒxƒ“ƒg ’å‘€Žç‚Á‚Ä‚é‚È‚ç‹zŒŒ‹S‚ÉA‚»‚¤‚Å‚È‚¯‚ê‚Îƒ]ƒ“ƒr‚É‚È‚é
+;‚¿‚È‚Ý‚ÉTARGET‚ªlŠÔ‚¶‚á‚È‚¢‚Æ”­¶‚µ‚È‚¢
 ;-------------------------------------------------
-@EVENT_ä¸»äººå¸è¡€_KX1
+@EVENT_Žål‹zŒŒ_KX1
 SELECTCASE FALLTYPE(TARGET)
-	;æ‹æ…•ã€è¦ªæ„›
+	;—ö•çAeˆ¤
 	CASE 1
 		PRINTFORMW 
-	;æ·«ä¹±ã€å¨¼å©¦
+	;ˆú—A©•w
 	CASE 2
 		PRINTFORMW 
-	;æœå¾“ã€éš·å±ž
+	;•ž]A—ê‘®
 	CASE 3
 		PRINTFORMW 
-	;æœªé™¥è½
+	;–¢Š×—Ž
 	CASEELSE
 		PRINTFORMW 
 ENDSELECT
 
 ;-------------------------------------------------
-;åŠ©æ‰‹ã«ã‚ˆã‚‹å¸è¡€ã‚¤ãƒ™ãƒ³ãƒˆ æ¡ä»¶ã¯åŒä¸Š
+;•Žè‚É‚æ‚é‹zŒŒƒCƒxƒ“ƒg ðŒ‚Í“¯ã
 ;-------------------------------------------------
-@EVENT_åŠ©æ‰‹å¸è¡€_KX1
+@EVENT_•Žè‹zŒŒ_KX1
 SELECTCASE FALLTYPE(TARGET)
-	;æ‹æ…•ã€è¦ªæ„›
+	;—ö•çAeˆ¤
 	CASE 1
 		PRINTFORMW 
-	;æ·«ä¹±ã€å¨¼å©¦
+	;ˆú—A©•w
 	CASE 2
 		PRINTFORMW 
-	;æœå¾“ã€éš·å±ž
+	;•ž]A—ê‘®
 	CASE 3
 		PRINTFORMW 
-	;æœªé™¥è½
+	;–¢Š×—Ž
 	CASEELSE
 		PRINTFORMW 
 ENDSELECT
 
 ;-------------------------------------------------
-;[æ‹æ…•]å–å¾—æ™‚
+;[—ö•ç]Žæ“¾Žž
 ;-------------------------------------------------
-@EVENT_æ‹æ…•_KX1
+@EVENT_—ö•ç_KX1
 PRINTFORMW 
 
 ;-------------------------------------------------
-;[æ·«ä¹±]å–å¾—æ™‚
+;[ˆú—]Žæ“¾Žž
 ;-------------------------------------------------
-@EVENT_æ·«ä¹±_KX1
+@EVENT_ˆú—_KX1
 PRINTFORMW 
 
 ;-------------------------------------------------
-;[æœå¾“]å–å¾—æ™‚
+;[•ž]]Žæ“¾Žž
 ;-------------------------------------------------
-@EVENT_æœå¾“_KX1
+@EVENT_•ž]_KX1
 PRINTFORMW 
 
 ;-------------------------------------------------
-;[è¦ªæ„›]å–å¾—æ™‚ å–å¾—ã™ã‚‹ã¨ãã¯å¿…ãš[æ‹æ…•]æŒã¡
+;[eˆ¤]Žæ“¾Žž Žæ“¾‚·‚é‚Æ‚«‚Í•K‚¸[—ö•ç]Ž‚¿
 ;-------------------------------------------------
-@EVENT_è¦ªæ„›_KX1
+@EVENT_eˆ¤_KX1
 PRINTFORMW 
 
 ;-------------------------------------------------
-;[å¨¼å©¦]å–å¾—æ™‚ å–å¾—ã™ã‚‹ã¨ãã¯å¿…ãš[æ·«ä¹±]æŒã¡
+;[©•w]Žæ“¾Žž Žæ“¾‚·‚é‚Æ‚«‚Í•K‚¸[ˆú—]Ž‚¿
 ;-------------------------------------------------
-@EVENT_å¨¼å©¦_KX1
+@EVENT_©•w_KX1
 PRINTFORMW 
 
 ;-------------------------------------------------
-;[éš·å±ž]å–å¾—æ™‚ å–å¾—ã™ã‚‹ã¨ãã¯å¿…ãš[æœå¾“]æŒã¡
+;[—ê‘®]Žæ“¾Žž Žæ“¾‚·‚é‚Æ‚«‚Í•K‚¸[•ž]]Ž‚¿
 ;-------------------------------------------------
-@EVENT_éš·å±ž_KX1
+@EVENT_—ê‘®_KX1
 PRINTFORMW 
 
 ;-------------------------------------------------
-;[è‡ªæ…°ç‹‚ã„]å–å¾—æ™‚
+;[Ž©ˆÔ‹¶‚¢]Žæ“¾Žž
 ;-------------------------------------------------
-@EVENT_è‡ªæ…°ç‹‚ã„_KX1
+@EVENT_Ž©ˆÔ‹¶‚¢_KX1
 SELECTCASE FALLTYPE(TARGET)
-	;æ‹æ…•ã€è¦ªæ„›
+	;—ö•çAeˆ¤
 	CASE 1
 		PRINTFORMW 
-	;æ·«ä¹±ã€å¨¼å©¦
+	;ˆú—A©•w
 	CASE 2
 		PRINTFORMW 
-	;æœå¾“ã€éš·å±ž
+	;•ž]A—ê‘®
 	CASE 3
 		PRINTFORMW 
-	;æœªé™¥è½
+	;–¢Š×—Ž
 	CASEELSE
 		PRINTFORMW 
 ENDSELECT
 
 ;-------------------------------------------------
-;[ã‚»ãƒƒã‚¯ã‚¹ç‹‚]å–å¾—æ™‚
+;[ƒZƒbƒNƒX‹¶]Žæ“¾Žž
 ;-------------------------------------------------
-@EVENT_ã‚»ãƒƒã‚¯ã‚¹ç‹‚_KX1
+@EVENT_ƒZƒbƒNƒX‹¶_KX1
 SELECTCASE FALLTYPE(TARGET)
-	;æ‹æ…•ã€è¦ªæ„›
+	;—ö•çAeˆ¤
 	CASE 1
 		PRINTFORMW 
-	;æ·«ä¹±ã€å¨¼å©¦
+	;ˆú—A©•w
 	CASE 2
 		PRINTFORMW 
-	;æœå¾“ã€éš·å±ž
+	;•ž]A—ê‘®
 	CASE 3
 		PRINTFORMW 
-	;æœªé™¥è½
+	;–¢Š×—Ž
 	CASEELSE
 		PRINTFORMW 
 ENDSELECT
 
 ;-------------------------------------------------
-;[å°»ç©´ç‹‚ã„]å–å¾—æ™‚
+;[KŒŠ‹¶‚¢]Žæ“¾Žž
 ;-------------------------------------------------
-@EVENT_å°»ç©´ç‹‚ã„_KX1
+@EVENT_KŒŠ‹¶‚¢_KX1
 SELECTCASE FALLTYPE(TARGET)
-	;æ‹æ…•ã€è¦ªæ„›
+	;—ö•çAeˆ¤
 	CASE 1
 		PRINTFORMW 
-	;æ·«ä¹±ã€å¨¼å©¦
+	;ˆú—A©•w
 	CASE 2
 		PRINTFORMW 
-	;æœå¾“ã€éš·å±ž
+	;•ž]A—ê‘®
 	CASE 3
 		PRINTFORMW 
-	;æœªé™¥è½
+	;–¢Š×—Ž
 	CASEELSE
 		PRINTFORMW 
 ENDSELECT
 
 ;-------------------------------------------------
-;[æ·«ä¹³]å–å¾—æ™‚
+;[ˆú“û]Žæ“¾Žž
 ;-------------------------------------------------
-@EVENT_æ·«ä¹³_KX1
+@EVENT_ˆú“û_KX1
 SELECTCASE FALLTYPE(TARGET)
-	;æ‹æ…•ã€è¦ªæ„›
+	;—ö•çAeˆ¤
 	CASE 1
 		PRINTFORMW 
-	;æ·«ä¹±ã€å¨¼å©¦
+	;ˆú—A©•w
 	CASE 2
 		PRINTFORMW 
-	;æœå¾“ã€éš·å±ž
+	;•ž]A—ê‘®
 	CASE 3
 		PRINTFORMW 
-	;æœªé™¥è½
+	;–¢Š×—Ž
 	CASEELSE
 		PRINTFORMW 
 ENDSELECT
 
 ;-------------------------------------------------
-;[çµ¶å€«]å–å¾—æ™‚
+;[â—Ï]Žæ“¾Žž
 ;-------------------------------------------------
-@EVENT_çµ¶å€«_KX1
+@EVENT_â—Ï_KX1
 SELECTCASE FALLTYPE(TARGET)
-	;æ‹æ…•ã€è¦ªæ„›
+	;—ö•çAeˆ¤
 	CASE 1
 		PRINTFORMW 
-	;æ·«ä¹±ã€å¨¼å©¦
+	;ˆú—A©•w
 	CASE 2
 		PRINTFORMW 
-	;æœå¾“ã€éš·å±ž
+	;•ž]A—ê‘®
 	CASE 3
 		PRINTFORMW 
-	;æœªé™¥è½
+	;–¢Š×—Ž
 	CASEELSE
 		PRINTFORMW 
 ENDSELECT
 
 ;-------------------------------------------------
-;[ã‚µãƒ‰]å–å¾—æ™‚
+;[ƒTƒh]Žæ“¾Žž
 ;-------------------------------------------------
-@EVENT_ã‚µãƒ‰_KX1
+@EVENT_ƒTƒh_KX1
 SELECTCASE FALLTYPE(TARGET)
-	;æ‹æ…•ã€è¦ªæ„›
+	;—ö•çAeˆ¤
 	CASE 1
 		PRINTFORMW 
-	;æ·«ä¹±ã€å¨¼å©¦
+	;ˆú—A©•w
 	CASE 2
 		PRINTFORMW 
-	;æœå¾“ã€éš·å±ž
+	;•ž]A—ê‘®
 	CASE 3
 		PRINTFORMW 
-	;æœªé™¥è½
+	;–¢Š×—Ž
 	CASEELSE
 		PRINTFORMW 
 ENDSELECT
 
 ;-------------------------------------------------
-;[ãƒžã‚¾]å–å¾—æ™‚
+;[ƒ}ƒ]]Žæ“¾Žž
 ;-------------------------------------------------
-@EVENT_ãƒžã‚¾_KX1
+@EVENT_ƒ}ƒ]_KX1
 SELECTCASE FALLTYPE(TARGET)
-	;æ‹æ…•ã€è¦ªæ„›
+	;—ö•çAeˆ¤
 	CASE 1
 		PRINTFORMW 
-	;æ·«ä¹±ã€å¨¼å©¦
+	;ˆú—A©•w
 	CASE 2
 		PRINTFORMW 
-	;æœå¾“ã€éš·å±ž
+	;•ž]A—ê‘®
 	CASE 3
 		PRINTFORMW 
-	;æœªé™¥è½
+	;–¢Š×—Ž
 	CASEELSE
 		PRINTFORMW 
 ENDSELECT
 
 ;-------------------------------------------------
-;æµç”£æ™‚ æµç”£ã—ãŸèª¿æ•™ãŒçµ‚äº†ã—ãŸå¾Œã«è¡¨ç¤º ã¤ã¾ã‚Šäº‹å¾Œ
+;—¬ŽYŽž —¬ŽY‚µ‚½’²‹³‚ªI—¹‚µ‚½Œã‚É•\Ž¦ ‚Â‚Ü‚èŽ–Œã
 ;-------------------------------------------------
-@EVENT_æµç”£_KX1
+@EVENT_—¬ŽY_KX1
 SELECTCASE FALLTYPE(TARGET)
-	;æ‹æ…•ã€è¦ªæ„›
+	;—ö•çAeˆ¤
 	CASE 1
 		PRINTFORMW 
-	;æ·«ä¹±ã€å¨¼å©¦
+	;ˆú—A©•w
 	CASE 2
 		PRINTFORMW 
-	;æœå¾“ã€éš·å±ž
+	;•ž]A—ê‘®
 	CASE 3
 		PRINTFORMW 
-	;æœªé™¥è½
+	;–¢Š×—Ž
 	CASEELSE
 		PRINTFORMW 
 ENDSELECT
 
 ;-------------------------------------------------
-;[ãŠã‚‚ã‚‰ã—ç™–]å–å¾—æ™‚
+;[‚¨‚à‚ç‚µ•È]Žæ“¾Žž
 ;-------------------------------------------------
-@EVENT_ãŠã‚‚ã‚‰ã—ç™–_KX1
+@EVENT_‚¨‚à‚ç‚µ•È_KX1
 SELECTCASE FALLTYPE(TARGET)
-	;æ‹æ…•ã€è¦ªæ„›
+	;—ö•çAeˆ¤
 	CASE 1
 		PRINTFORMW 
-	;æ·«ä¹±ã€å¨¼å©¦
+	;ˆú—A©•w
 	CASE 2
 		PRINTFORMW 
-	;æœå¾“ã€éš·å±ž
+	;•ž]A—ê‘®
 	CASE 3
 		PRINTFORMW 
-	;æœªé™¥è½
+	;–¢Š×—Ž
 	CASEELSE
 		PRINTFORMW 
 ENDSELECT
 
 ;-------------------------------------------------
-;å¹¼å…é€€è¡Œæ™‚
+;—cŽ™‘ÞsŽž
 ;-------------------------------------------------
-@EVENT_å¹¼å…é€€è¡Œ_KX1
+@EVENT_—cŽ™‘Þs_KX1
 SELECTCASE FALLTYPE(TARGET)
-	;æ‹æ…•ã€è¦ªæ„›
+	;—ö•çAeˆ¤
 	CASE 1
 		PRINTFORMW 
-	;æ·«ä¹±ã€å¨¼å©¦
+	;ˆú—A©•w
 	CASE 2
 		PRINTFORMW 
-	;æœå¾“ã€éš·å±ž
+	;•ž]A—ê‘®
 	CASE 3
 		PRINTFORMW 
-	;æœªé™¥è½
+	;–¢Š×—Ž
 	CASEELSE
 		PRINTFORMW 
 ENDSELECT
 
 ;-------------------------------------------------
-;ä½“åŠ›å›žå¾©è–¬ä½¿ç”¨æ™‚
+;‘Ì—Í‰ñ•œ–òŽg—pŽž
 ;-------------------------------------------------
-@EVENT_æ€ªã—ã’ãªæ „é¤Šå‰¤_KX1
+@EVENT_‰ö‚µ‚°‚È‰h—{Ü_KX1
 SELECTCASE FALLTYPE(TARGET)
-	;æ‹æ…•ã€è¦ªæ„›
+	;—ö•çAeˆ¤
 	CASE 1
 		PRINTFORMW 
-	;æ·«ä¹±ã€å¨¼å©¦
+	;ˆú—A©•w
 	CASE 2
 		PRINTFORMW 
-	;æœå¾“ã€éš·å±ž
+	;•ž]A—ê‘®
 	CASE 3
 		PRINTFORMW 
-	;æœªé™¥è½
+	;–¢Š×—Ž
 	CASEELSE
 		PRINTFORMW 
 ENDSELECT
 
 ;-------------------------------------------------
-;ãµãŸãªã‚Šè–¬ä½¿ç”¨æ™‚
+;‚Ó‚½‚È‚è–òŽg—pŽž
 ;-------------------------------------------------
-@EVENT_ãµãŸãªã‚Šè–¬_KX1
+@EVENT_‚Ó‚½‚È‚è–ò_KX1
 SELECTCASE FALLTYPE(TARGET)
-	;æ‹æ…•ã€è¦ªæ„›
+	;—ö•çAeˆ¤
 	CASE 1
 		PRINTFORMW 
-	;æ·«ä¹±ã€å¨¼å©¦
+	;ˆú—A©•w
 	CASE 2
 		PRINTFORMW 
-	;æœå¾“ã€éš·å±ž
+	;•ž]A—ê‘®
 	CASE 3
 		PRINTFORMW 
-	;æœªé™¥è½
+	;–¢Š×—Ž
 	CASEELSE
 		PRINTFORMW 
 ENDSELECT
 
 ;-------------------------------------------------
-;ãµãŸãªã‚Šæ¶ˆåŽ»è–¬ä½¿ç”¨æ™‚
+;‚Ó‚½‚È‚èÁ‹Ž–òŽg—pŽž
 ;-------------------------------------------------
-@EVENT_ãµãŸãªã‚Šæ¶ˆåŽ»è–¬_KX1
+@EVENT_‚Ó‚½‚È‚èÁ‹Ž–ò_KX1
 SELECTCASE FALLTYPE(TARGET)
-	;æ‹æ…•ã€è¦ªæ„›
+	;—ö•çAeˆ¤
 	CASE 1
 		PRINTFORMW 
-	;æ·«ä¹±ã€å¨¼å©¦
+	;ˆú—A©•w
 	CASE 2
 		PRINTFORMW 
-	;æœå¾“ã€éš·å±ž
+	;•ž]A—ê‘®
 	CASE 3
 		PRINTFORMW 
-	;æœªé™¥è½
+	;–¢Š×—Ž
 	CASEELSE
 		PRINTFORMW 
 ENDSELECT
 
 ;-------------------------------------------------
-;æ¯ä¹³ä½“è³ªã«ã™ã‚‹è–¬ä½¿ç”¨æ™‚
+;•ê“û‘ÌŽ¿‚É‚·‚é–òŽg—pŽž
 ;-------------------------------------------------
-@EVENT_å¤©ä½¿ã®ãƒŸãƒ«ã‚¯_KX1
+@EVENT_“VŽg‚Ìƒ~ƒ‹ƒN_KX1
 SELECTCASE FALLTYPE(TARGET)
-	;æ‹æ…•ã€è¦ªæ„›
+	;—ö•çAeˆ¤
 	CASE 1
 		PRINTFORMW 
-	;æ·«ä¹±ã€å¨¼å©¦
+	;ˆú—A©•w
 	CASE 2
 		PRINTFORMW 
-	;æœå¾“ã€éš·å±ž
+	;•ž]A—ê‘®
 	CASE 3
 		PRINTFORMW 
-	;æœªé™¥è½
+	;–¢Š×—Ž
 	CASEELSE
 		PRINTFORMW 
 ENDSELECT
 
 ;-------------------------------------------------
-;å‡¦å¥³è†œå†ç”Ÿæ™‚
+;ˆ—–ŒÄ¶Žž
 ;-------------------------------------------------
-@EVENT_ãƒ¦ãƒ‹ã‚³ãƒ¼ãƒ³ãƒ†ã‚¤ãƒ«_KX1
+@EVENT_ƒ†ƒjƒR[ƒ“ƒeƒCƒ‹_KX1
 SELECTCASE FALLTYPE(TARGET)
-	;æ‹æ…•ã€è¦ªæ„›
+	;—ö•çAeˆ¤
 	CASE 1
 		PRINTFORMW 
-	;æ·«ä¹±ã€å¨¼å©¦
+	;ˆú—A©•w
 	CASE 2
 		PRINTFORMW 
-	;æœå¾“ã€éš·å±ž
+	;•ž]A—ê‘®
 	CASE 3
 		PRINTFORMW 
-	;æœªé™¥è½
+	;–¢Š×—Ž
 	CASEELSE
 		PRINTFORMW 
 ENDSELECT
 
 ;-------------------------------------------------
-;è±Šä¹³åŒ–
+;–L“û‰»
 ;-------------------------------------------------
-@EVENT_è±Šèƒ¸å‰¤_KX1
+@EVENT_–L‹¹Ü_KX1
 SELECTCASE FALLTYPE(TARGET)
-	;æ‹æ…•ã€è¦ªæ„›
+	;—ö•çAeˆ¤
 	CASE 1
 		PRINTFORMW 
-	;æ·«ä¹±ã€å¨¼å©¦
+	;ˆú—A©•w
 	CASE 2
 		PRINTFORMW 
-	;æœå¾“ã€éš·å±ž
+	;•ž]A—ê‘®
 	CASE 3
 		PRINTFORMW 
-	;æœªé™¥è½
+	;–¢Š×—Ž
 	CASEELSE
 		PRINTFORMW 
 ENDSELECT
 
 ;-------------------------------------------------
-;ç¸®ä¹³åŒ–
+;k“û‰»
 ;-------------------------------------------------
-@EVENT_ç¸®èƒ¸å‰¤_KX1
+@EVENT_k‹¹Ü_KX1
 SELECTCASE FALLTYPE(TARGET)
-	;æ‹æ…•ã€è¦ªæ„›
+	;—ö•çAeˆ¤
 	CASE 1
 		PRINTFORMW 
-	;æ·«ä¹±ã€å¨¼å©¦
+	;ˆú—A©•w
 	CASE 2
 		PRINTFORMW 
-	;æœå¾“ã€éš·å±ž
+	;•ž]A—ê‘®
 	CASE 3
 		PRINTFORMW 
-	;æœªé™¥è½
+	;–¢Š×—Ž
 	CASEELSE
 		PRINTFORMW 
 ENDSELECT
 
 ;-------------------------------------------------
-;æ¯ä¹³ä½“è³ªæ²»ç™‚æ™‚
+;•ê“û‘ÌŽ¿Ž¡—ÃŽž
 ;-------------------------------------------------
-@EVENT_æ­¢ä¹³å‰¤_KX1
+@EVENT_Ž~“ûÜ_KX1
 SELECTCASE FALLTYPE(TARGET)
-	;æ‹æ…•ã€è¦ªæ„›
+	;—ö•çAeˆ¤
 	CASE 1
 		PRINTFORMW 
-	;æ·«ä¹±ã€å¨¼å©¦
+	;ˆú—A©•w
 	CASE 2
 		PRINTFORMW 
-	;æœå¾“ã€éš·å±ž
+	;•ž]A—ê‘®
 	CASE 3
 		PRINTFORMW 
-	;æœªé™¥è½
+	;–¢Š×—Ž
 	CASEELSE
 		PRINTFORMW 
 ENDSELECT
 
 ;-------------------------------------------------
-;ãŠã‚‚ã‚‰ã—ç™–æ²»ç™‚æ™‚
+;‚¨‚à‚ç‚µ•ÈŽ¡—ÃŽž
 ;-------------------------------------------------
-@EVENT_å¤œå°¿ç—‡æ”¹å–„è–¬_KX1
+@EVENT_–é”AÇ‰ü‘P–ò_KX1
 SELECTCASE FALLTYPE(TARGET)
-	;æ‹æ…•ã€è¦ªæ„›
+	;—ö•çAeˆ¤
 	CASE 1
 		PRINTFORMW 
-	;æ·«ä¹±ã€å¨¼å©¦
+	;ˆú—A©•w
 	CASE 2
 		PRINTFORMW 
-	;æœå¾“ã€éš·å±ž
+	;•ž]A—ê‘®
 	CASE 3
 		PRINTFORMW 
-	;æœªé™¥è½
+	;–¢Š×—Ž
 	CASEELSE
 		PRINTFORMW 
 ENDSELECT
 
 ;-------------------------------------------------
-;ã‚¾ãƒ³ãƒ“åŒ–æ™‚
+;ƒ]ƒ“ƒr‰»Žž
 ;-------------------------------------------------
-@EVENT_ã‚¾ãƒ³ãƒ“ãƒ‘ã‚¦ãƒ€ãƒ¼_KX1
+@EVENT_ƒ]ƒ“ƒrƒpƒEƒ_[_KX1
 SELECTCASE FALLTYPE(TARGET)
-	;æ‹æ…•ã€è¦ªæ„›
+	;—ö•çAeˆ¤
 	CASE 1
 		PRINTFORMW 
-	;æ·«ä¹±ã€å¨¼å©¦
+	;ˆú—A©•w
 	CASE 2
 		PRINTFORMW 
-	;æœå¾“ã€éš·å±ž
+	;•ž]A—ê‘®
 	CASE 3
 		PRINTFORMW 
-	;æœªé™¥è½
+	;–¢Š×—Ž
 	CASEELSE
 		PRINTFORMW 
 ENDSELECT
 
 ;-------------------------------------------------
-;ã‚¾ãƒ³ãƒ“æ²»ç™‚æ™‚
+;ƒ]ƒ“ƒrŽ¡—ÃŽž
 ;-------------------------------------------------
-@EVENT_è–æ°´_KX1
+@EVENT_¹…_KX1
 SELECTCASE FALLTYPE(TARGET)
-	;æ‹æ…•ã€è¦ªæ„›
+	;—ö•çAeˆ¤
 	CASE 1
 		PRINTFORMW 
-	;æ·«ä¹±ã€å¨¼å©¦
+	;ˆú—A©•w
 	CASE 2
 		PRINTFORMW 
-	;æœå¾“ã€éš·å±ž
+	;•ž]A—ê‘®
 	CASE 3
 		PRINTFORMW 
-	;æœªé™¥è½
+	;–¢Š×—Ž
 	CASEELSE
 		PRINTFORMW 
 ENDSELECT
 
 ;-------------------------------------------------
-;æ€§è»¢æ›æ™‚
+;«“]Š·Žž
 ;-------------------------------------------------
-@EVENT_æ€§è»¢æ›è–¬_KX1
+@EVENT_«“]Š·–ò_KX1
 SELECTCASE FALLTYPE(TARGET)
-	;æ‹æ…•ã€è¦ªæ„›
+	;—ö•çAeˆ¤
 	CASE 1
 		PRINTFORMW 
-	;æ·«ä¹±ã€å¨¼å©¦
+	;ˆú—A©•w
 	CASE 2
 		PRINTFORMW 
-	;æœå¾“ã€éš·å±ž
+	;•ž]A—ê‘®
 	CASE 3
 		PRINTFORMW 
-	;æœªé™¥è½
+	;–¢Š×—Ž
 	CASEELSE
 		PRINTFORMW 
 ENDSELECT
 
 ;-------------------------------------------------
-;ãƒ­ãƒªåŒ–ã€å¤§äººåŒ–æ™‚
+;ƒƒŠ‰»A‘ål‰»Žž
 ;-------------------------------------------------
-@EVENT_æ™‚ã®ç ‚æ™‚è¨ˆ_KX1
-;å¤§äººåŒ–
-IF TALENT:å°æŸ„ä½“åž‹
+@EVENT_Žž‚Ì»ŽžŒv_KX1
+;‘ål‰»
+IF TALENT:¬•¿‘ÌŒ^
 	SELECTCASE FALLTYPE(TARGET)
-		;æ‹æ…•ã€è¦ªæ„›
+		;—ö•çAeˆ¤
 		CASE 1
 			PRINTFORMW 
-		;æ·«ä¹±ã€å¨¼å©¦
+		;ˆú—A©•w
 		CASE 2
 			PRINTFORMW 
-		;æœå¾“ã€éš·å±ž
+		;•ž]A—ê‘®
 		CASE 3
 			PRINTFORMW 
-		;æœªé™¥è½
+		;–¢Š×—Ž
 		CASEELSE
 			PRINTFORMW 
 	ENDSELECT
-;å­ä¾›åŒ–
+;Žq‹Ÿ‰»
 ELSE
 	SELECTCASE FALLTYPE(TARGET)
-		;æ‹æ…•ã€è¦ªæ„›
+		;—ö•çAeˆ¤
 		CASE 1
 			PRINTFORMW 
-		;æ·«ä¹±ã€å¨¼å©¦
+		;ˆú—A©•w
 		CASE 2
 			PRINTFORMW 
-		;æœå¾“ã€éš·å±ž
+		;•ž]A—ê‘®
 		CASE 3
 			PRINTFORMW 
-		;æœªé™¥è½
+		;–¢Š×—Ž
 		CASEELSE
 			PRINTFORMW 
 	ENDSELECT
 ENDIF
 
 ;-------------------------------------------------
-;ãŠã‚‚ã‚‰ã—ç™–ä»˜åŠ æ™‚
+;‚¨‚à‚ç‚µ•È•t‰ÁŽž
 ;-------------------------------------------------
-@EVENT_æ°¸ç¶šçš„åˆ©å°¿å‰¤_KX1
+@EVENT_‰i‘±“I—˜”AÜ_KX1
 SELECTCASE FALLTYPE(TARGET)
-	;æ‹æ…•ã€è¦ªæ„›
+	;—ö•çAeˆ¤
 	CASE 1
 		PRINTFORMW 
-	;æ·«ä¹±ã€å¨¼å©¦
+	;ˆú—A©•w
 	CASE 2
 		PRINTFORMW 
-	;æœå¾“ã€éš·å±ž
+	;•ž]A—ê‘®
 	CASE 3
 		PRINTFORMW 
-	;æœªé™¥è½
+	;–¢Š×—Ž
 	CASEELSE
 		PRINTFORMW 
 ENDSELECT
 
 ;-------------------------------------------------
-;ãƒ“ãƒ¼ã‚¹ãƒ†ã‚£ãƒ¼ã‚¹ã‚¿ãƒ¼ã‚¿ãƒ¼ä½¿ç”¨æ™‚ ã‚±ãƒ¢ãƒŸãƒŸã¨å°»å°¾ãŒç”Ÿãˆã‚‹ ã©ã®å‹•ç‰©ã®ã‚‚ã®ã‹ã¯æƒ³åƒã«ãŠã¾ã‹ã›
+;ƒr[ƒXƒeƒB[ƒXƒ^[ƒ^[Žg—pŽž ƒPƒ‚ƒ~ƒ~‚ÆK”ö‚ª¶‚¦‚é ‚Ç‚Ì“®•¨‚Ì‚à‚Ì‚©‚Í‘z‘œ‚É‚¨‚Ü‚©‚¹
 ;-------------------------------------------------
-@EVENT_ãƒ“ãƒ¼ã‚¹ãƒ†ã‚£ãƒ¼ã‚¹ã‚¿ãƒ¼ã‚¿ãƒ¼_KX1
+@EVENT_ƒr[ƒXƒeƒB[ƒXƒ^[ƒ^[_KX1
 SELECTCASE FALLTYPE(TARGET)
-	;æ‹æ…•ã€è¦ªæ„›
+	;—ö•çAeˆ¤
 	CASE 1
 		PRINTFORMW 
-	;æ·«ä¹±ã€å¨¼å©¦
+	;ˆú—A©•w
 	CASE 2
 		PRINTFORMW 
-	;æœå¾“ã€éš·å±ž
+	;•ž]A—ê‘®
 	CASE 3
 		PRINTFORMW 
-	;æœªé™¥è½
+	;–¢Š×—Ž
 	CASEELSE
 		PRINTFORMW 
 ENDSELECT
 
 ;-------------------------------------------------
-;é­”å‰¤ä½¿ç”¨æ™‚
+;–‚ÜŽg—pŽž
 ;-------------------------------------------------
-@EVENT_é­”å‰¤_KX1
+@EVENT_–‚Ü_KX1
 SELECTCASE FALLTYPE(TARGET)
-	;æ‹æ…•ã€è¦ªæ„›
+	;—ö•çAeˆ¤
 	CASE 1
 		PRINTFORMW 
-	;æ·«ä¹±ã€å¨¼å©¦
+	;ˆú—A©•w
 	CASE 2
 		PRINTFORMW 
-	;æœå¾“ã€éš·å±ž
+	;•ž]A—ê‘®
 	CASE 3
 		PRINTFORMW 
-	;æœªé™¥è½
+	;–¢Š×—Ž
 	CASEELSE
 		PRINTFORMW 
 ENDSELECT
 
 ;-------------------------------------------------
-;æŽ’åµèª˜ç™ºå‰¤ä½¿ç”¨æ™‚
+;”r—‘—U”­ÜŽg—pŽž
 ;-------------------------------------------------
-@EVENT_æŽ’åµèª˜ç™ºå‰¤_KX1
+@EVENT_”r—‘—U”­Ü_KX1
 SELECTCASE FALLTYPE(TARGET)
-	;æ‹æ…•ã€è¦ªæ„›
+	;—ö•çAeˆ¤
 	CASE 1
 		PRINTFORMW 
-	;æ·«ä¹±ã€å¨¼å©¦
+	;ˆú—A©•w
 	CASE 2
 		PRINTFORMW 
-	;æœå¾“ã€éš·å±ž
+	;•ž]A—ê‘®
 	CASE 3
 		PRINTFORMW 
-	;æœªé™¥è½
+	;–¢Š×—Ž
 	CASEELSE
 		PRINTFORMW 
 ENDSELECT
 
 ;-------------------------------------------------
-;ã‚³ãƒžãƒ³ãƒ‰ã‚’æ‹’å¦ã—ãŸæ™‚
+;ƒRƒ}ƒ“ƒh‚ð‹‘”Û‚µ‚½Žž
 ;-------------------------------------------------
-@EVENT_ã‚³ãƒžãƒ³ãƒ‰æ‹’å¦æ™‚_KX1
+@EVENT_ƒRƒ}ƒ“ƒh‹‘”ÛŽž_KX1
 SELECTCASE FALLTYPE(TARGET)
-	;æ‹æ…•ã€è¦ªæ„›
+	;—ö•çAeˆ¤
 	CASE 1
 		PRINTFORMW 
-	;æ·«ä¹±ã€å¨¼å©¦
+	;ˆú—A©•w
 	CASE 2
 		PRINTFORMW 
-	;æœå¾“ã€éš·å±ž
+	;•ž]A—ê‘®
 	CASE 3
 		PRINTFORMW 
-	;æœªé™¥è½
+	;–¢Š×—Ž
 	CASEELSE
 		PRINTFORMW 
 ENDSELECT
 
 ;-------------------------------------------------
-;é£²é…’ã‚’æ‹’å¦ã—ãŸæ™‚ é…’è±ªãªã‚‰ã¾ãšé£²ã‚€ã¨è€ƒãˆã¦ã„ã„
+;ˆùŽð‚ð‹‘”Û‚µ‚½Žž Žð‹‚È‚ç‚Ü‚¸ˆù‚Þ‚Æl‚¦‚Ä‚¢‚¢
 ;-------------------------------------------------
-@EVENT_é£²é…’æ‹’å¦æ™‚_KX1
+@EVENT_ˆùŽð‹‘”ÛŽž_KX1
 SELECTCASE FALLTYPE(TARGET)
-	;æ‹æ…•ã€è¦ªæ„›
+	;—ö•çAeˆ¤
 	CASE 1
 		PRINTFORMW 
-	;æ·«ä¹±ã€å¨¼å©¦
+	;ˆú—A©•w
 	CASE 2
 		PRINTFORMW 
-	;æœå¾“ã€éš·å±ž
+	;•ž]A—ê‘®
 	CASE 3
 		PRINTFORMW 
-	;æœªé™¥è½
+	;–¢Š×—Ž
 	CASEELSE
 		PRINTFORMW 
 ENDSELECT
