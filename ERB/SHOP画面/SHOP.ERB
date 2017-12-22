@@ -105,7 +105,7 @@ IF CHARANUM > 1
 ELSE
 	LOCALS:2 = <font color='gray'><nonbutton title='調教可能なキャラが居ません'>[---] - 能力上昇 </nonbutton></font>
 ENDIF
-IF CHARANUM > 2
+IF 調教可能
 	LOCALS:3 = <button value='202' title='お相手を変更します'>[202] - 対象変更 </button>
 ELSE
 	IF TARGET > 0

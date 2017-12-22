@@ -35,7 +35,7 @@ ENDIF
 ;1,クンニ
 ;-------------------------------------------------
 @MESSAGE_COM_クンニ
-PRINTFORM %CALLNAME:PLAYER%はPRINTFORM %CALLNAME:TARGET%の
+PRINTFORM %CALLNAME:PLAYER%は%CALLNAME:TARGET%の
 ;着衣中
 IF TEQUIP:下半身上着 || (TEQUIP:全身上着 && CFLAG:着衣併用 != 1)
 	PRINTFORM %OVER_GENITAL(TARGET)%を
