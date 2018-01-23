@@ -3,9 +3,6 @@
 ;-------------------------------------------------
 @USERCOM_ABLE_泡踊り, ARG
 #FUNCTION
-;お風呂場プレイ中でプレイマットが無いとダメ
-SIF !TEQUIP:お風呂場 || !ITEM:プレイマット
-	RETURNF 0
 ;シャワー中はダメ
 SIF TEQUIP:シャワー
 	RETURNF 0

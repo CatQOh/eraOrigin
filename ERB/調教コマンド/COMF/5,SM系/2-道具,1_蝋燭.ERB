@@ -3,9 +3,6 @@
 ;-------------------------------------------------
 @USERCOM_ABLE_蝋燭, ARG
 #FUNCTION
-;アイテムを持っていないとダメ
-SIF !ITEM:低温蝋燭
-	RETURNF 0
 ;従順4未満のASSIの場合蝋燭はできない（サドならＯＫ）
 IF PLAYER == ASSI
 	SIF ABL:ASSI:従順 < 4 && !TALENT:ASSI:サド
@@ -30,8 +27,6 @@ RETURNF 1
 @COM_蝋燭
 PRINTL 蝋燭
 CALL KOJO_MESSAGE_COM
-
-ITEM:低温蝋燭--
 
 ;-------------------------------------------------
 ;ソース追加処理

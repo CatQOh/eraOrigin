@@ -6,10 +6,8 @@ TFLAG:ビデオ撮影回数 = 0
 @SELL_VIDEO
 ;撮影中のまま売却まで来た場合はテープの数を減らす
 ;テープの減数は撮影後処理のため、さらにビデオの値段および経験もここで処理をする
-IF TEQUIP:ビデオカメラ
-	ITEM:ビデオテープ--
+SIF TEQUIP:ビデオカメラ
 	CALL PRICE_VIDEO
-ENDIF
 
 ;録画してなければ終了
 SIF TFLAG:ビデオ価格 == 0

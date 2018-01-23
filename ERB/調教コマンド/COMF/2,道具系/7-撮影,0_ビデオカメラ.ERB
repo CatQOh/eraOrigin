@@ -8,9 +8,6 @@ IF TEQUIP:ビデオカメラ
 	COMRESULT = 1
 	RETURNF 1
 ENDIF
-;カメラとテープのアイテムを持っていないとダメ
-SIF !ITEM:ビデオカメラ || !ITEM:ビデオテープ
-	RETURNF 0
 
 COMRESULT = 1
 RETURNF 1
@@ -50,7 +47,6 @@ IF TEQUIP:ビデオカメラ
 	;ビデオ撮影がされていれば終了させる
 	;テープは終了時に数を減らす、さらにこれまでの値段と経験を加算する
 	TEQUIP:ビデオカメラ = 0
-	ITEM:ビデオテープ--
 	CALL PRICE_VIDEO
 	PRINTW ★★★ビデオ撮影を終了します★★★
 ELSE
@@ -182,7 +178,6 @@ TFLAG:ビデオ撮影回数++
 ;テープ残量がなくなると強制的にTEQUIPフラグを外す、さらにビデオの値段と経験の処理をする
 IF TFLAG:ビデオ撮影回数 >= 10
 	TEQUIP:ビデオカメラ = 0
-	ITEM:ビデオテープ--
 	CALL PRICE_VIDEO
 	PRINTL ＜テープの残量がなくなりました　ビデオ撮影を終了します＞
 ELSE

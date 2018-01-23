@@ -8,9 +8,6 @@ IF TEQUIP:羞恥プレイ
 	COMRESULT = 1
 	RETURNF 1
 ENDIF
-;アイテム｢大鏡｣を持っていないとダメ
-SIF !ITEM:大鏡
-	RETURNF 0
 ;従順が1以上ないとダメ
 SIF ABL:従順 < 1
 	RETURNF 0

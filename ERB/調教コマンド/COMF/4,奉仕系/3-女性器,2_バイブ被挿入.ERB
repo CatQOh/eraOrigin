@@ -3,9 +3,6 @@
 ;-------------------------------------------------
 @USERCOM_ABLE_バイブ被挿入, ARG
 #FUNCTION
-;アイテムを持っていないとダメ
-SIF !ITEM:バイブ
-	RETURNF 0
 ;調教者が膣無いとダメ
 SIF !VAGINA(PLAYER)
 	RETURNF 0

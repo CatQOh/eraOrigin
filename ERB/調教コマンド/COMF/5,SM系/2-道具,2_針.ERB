@@ -3,9 +3,6 @@
 ;-------------------------------------------------
 @USERCOM_ABLE_針, ARG
 #FUNCTION
-;アイテムを持っているか、アイテムなし設定でないとダメ
-SIF !ITEM:針
-	RETURNF 0
 ;助手の場合従順5未満だとでないとダメ（サド、針さばきならＯＫ）
 IF PLAYER == ASSI
 	SIF ABL:ASSI:従順 < 5 && !TALENT:ASSI:サド && !TALENT:ASSI:針さばき

@@ -27,9 +27,6 @@ SIF TALENT:無機物
 ;調教対象が小人体型の場合は主人が禁断の知識持ちじゃないとダメ
 SIF TALENT:小人体型 && !TALENT:MASTER:禁断の知識
 	RETURNF 0
-;アイテムを持っていないとダメ
-SIF !ITEM:浣腸器
-	RETURNF 0
 ;Ａ経験が100未満じゃできない
 SIF EXP:Ａ経験 < 100
 	RETURNF 0

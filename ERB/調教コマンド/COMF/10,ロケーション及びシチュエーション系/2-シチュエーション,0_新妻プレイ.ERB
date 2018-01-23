@@ -11,9 +11,6 @@ IF TEQUIP:エプロン
 	COMRESULT = 1
 	RETURNF 1
 ENDIF
-;アイテム｢エプロン｣を持っていないとダメ
-SIF !ITEM:エプロン
-	RETURNF 0
 ;助手じゃダメ
 SIF PLAYER != MASTER
 	RETURNF 0

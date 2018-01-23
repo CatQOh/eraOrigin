@@ -11,9 +11,6 @@ IF TEQUIP:縄
 	COMRESULT = 1
 	RETURNF 1
 ENDIF
-;アイテムを持っていないとダメ
-SIF !ITEM:縄
-	RETURNF 0
 ;調教者の技巧が1無いとできない
 SIF ABL:PLAYER:技巧 < 1
 	RETURNF 0

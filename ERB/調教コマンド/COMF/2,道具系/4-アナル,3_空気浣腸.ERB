@@ -16,9 +16,6 @@ SIF TEQUIP:触手
 ;調教対象が小人体型の場合は主人が禁断の知識持ちじゃないとダメ
 SIF TALENT:小人体型 && !TALENT:MASTER:禁断の知識
 	RETURNF 0
-;アイテムを持っていないとダメ
-SIF !ITEM:空気ポンプ
-	RETURNF 0
 ;アナル使用中はダメ
 SIF Ａ使用中(TARGET)
 	RETURNF 0

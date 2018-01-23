@@ -35,9 +35,6 @@ SIF TALENT:小人体型 && TALENT:MASTER:禁断の知識 == 0
 SIF !性器露出(TARGET)
 	RETURNF 0
 
-;お風呂場プレイ中はプレイマットが無いとダメ
-SIF TEQUIP:お風呂場 && !ITEM:プレイマット
-	RETURNF 0
 ;新妻プレイ中はダメ
 SIF TEQUIP:エプロン
 	RETURNF 0

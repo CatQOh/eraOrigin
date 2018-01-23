@@ -18,9 +18,6 @@ IF TEQUIP:乳房電極
 	COMRESULT = 1
 	RETURNF 1
 ENDIF
-;アイテムを持っていないとダメ
-SIF !ITEM:電極プラグ
-	RETURNF 0
 ;胸に道具ついてるとダメ
 SIF Ｂ使用中(TARGET)
 	RETURNF 0

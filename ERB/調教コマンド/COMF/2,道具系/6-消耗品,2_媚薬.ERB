@@ -3,9 +3,6 @@
 ;-------------------------------------------------
 @USERCOM_ABLE_›Z–ò, ARG
 #FUNCTION
-;ƒAƒCƒeƒ€‚ðŽ‚Á‚Ä‚¢‚é‚©AGŽè’²‹³’†‚Å‚È‚¢‚Æƒ_ƒ
-SIF !ITEM:›Z–ò && !TEQUIP:GŽè
-	RETURNF 0
 ;–ò“Å‘Ï«‚¾‚Æƒ_ƒ
 SIF TALENT:–ò“Å‘Ï«
 	RETURNF 0
@@ -19,9 +16,6 @@ RETURNF 1
 @COM_›Z–ò
 PRINTL ›Z–ò
 CALL KOJO_MESSAGE_COM
-
-SIF !TEQUIP:GŽè
-	ITEM:›Z–ò--
 
 CFLAG:›Z–ò += 10
 TEQUIP:›Z–ò = 1

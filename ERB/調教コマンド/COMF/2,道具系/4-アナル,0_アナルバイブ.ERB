@@ -17,9 +17,6 @@ ENDIF
 ;小人体型持ちは主人が禁断の知識持ちじゃないとダメ
 SIF TALENT:小人体型 && !TALENT:MASTER:禁断の知識
 	RETURNF 0
-;アイテムを持っていないとダメ
-SIF !ITEM:アナルバイブ
-	RETURNF 0
 ;潤滑不足で、従順3以下・レズっ気ホモっ気3以下のASSIの場合アナルバイブはできない（サドならＯＫ）
 IF PALAM:潤滑 < PALAMLV:2 && ASSIPLAY
 	SIF (ABL:ASSI:従順 <= 3 || (ABL:ASSI:レズっ気 <= 3 && ABL:ASSI:ホモっ気 <= 3)) && !TALENT:ASSI:サド

@@ -3,10 +3,6 @@
 ;-------------------------------------------------
 @USERCOM_ABLE_コンドーム, ARG
 #FUNCTION
-;アイテムを持っていないとダメ
-SIF !ITEM:コンドーム
-	RETURNF 0
-
 ;主人か助手が竿ありならOK
 IF PENIS(MASTER) || PENIS(ASSI)
 	COMRESULT = 1
@@ -63,24 +59,18 @@ DO
 		CASE 0
 			SIF !LOCAL
 				CONTINUE
-			SIF !TEQUIP:MASTER:コンドーム
-				ITEM:コンドーム--
 			INVERTBIT TEQUIP:MASTER:コンドーム, 0
 			TFLAG:避妊具着用者 = MASTER
 			BREAK
 		CASE 1
 			SIF !LOCAL:1
 				CONTINUE
-			SIF !TEQUIP:ASSI:コンドーム
-				ITEM:コンドーム--
 			INVERTBIT TEQUIP:ASSI:コンドーム, 0
 			TFLAG:避妊具着用者 = ASSI
 			BREAK
 		CASE 2
 			SIF !LOCAL:2
 				CONTINUE
-			SIF !TEQUIP:コンドーム
-				ITEM:コンドーム--
 			INVERTBIT TEQUIP:コンドーム, 0
 			TFLAG:避妊具着用者 = TARGET
 			BREAK

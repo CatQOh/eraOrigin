@@ -404,16 +404,8 @@ IF TEQUIP:コンドーム
 	TEQUIP:コンドーム = 0
 	SETBIT TFLAG:避妊具射精, 2
 	;コンドーム自動装着処理
-	IF GETBIT(FLAG:避妊具設定, 2)
-		IF ITEM:コンドーム > 0
-			ITEM:コンドーム--
-			TEQUIP:コンドーム = 1
-		ENDIF
-		IF ITEM:コンドーム == 0
-			PRINTL <コンドームが無くなったので、自動装着を解除します>
-			CLEARBIT FLAG:避妊具設定, 2
-		ENDIF
-	ENDIF
+	SIF GETBIT(FLAG:避妊具設定, 2)
+		TEQUIP:コンドーム = 1
 ENDIF
 
 ;-------------------------------------------------

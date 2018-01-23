@@ -27,9 +27,6 @@ SIF Ｖ使用中(TARGET)
 ;クリキャップ使用中はダメ
 SIF TEQUIP:クリキャップ
 	RETURNF 0
-;お風呂場プレイ中はプレイマットが無いとダメ
-SIF TEQUIP:お風呂場 && !ITEM:プレイマット
-	RETURNF 0
 
 COMRESULT = 1
 RETURNF 1

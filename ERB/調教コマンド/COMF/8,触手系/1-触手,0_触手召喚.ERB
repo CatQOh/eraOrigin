@@ -6,9 +6,6 @@
 ;全裸でないとダメ（足元、特殊は除く）
 SIF OVER_GENITAL(TARGET) != "" || OVER_BUST(TARGET) != ""
 	RETURNF 0
-;触手使役術をもっていないとダメ
-SIF !ITEM:触手使役術
-	RETURNF 0
 ;お風呂場プレイ中はダメ
 SIF TEQUIP:お風呂場
 	RETURNF 0

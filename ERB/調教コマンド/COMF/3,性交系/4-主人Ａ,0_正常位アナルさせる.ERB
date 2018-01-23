@@ -3,8 +3,8 @@
 ;-------------------------------------------------
 @USERCOM_ABLE_正常位アナルさせる, ARG
 #FUNCTION
-;対象がペニス有り、もしくはペニスバンドがないとダメ
-SIF !PENIS(TARGET) && !ITEM:ペニスバンド
+;調教者がペニスないとダメ
+SIF PENIS(PLAYER)
 	RETURNF 0
 ;調教者が小人体型のとき主人が禁断の知識持ちじゃないとダメ
 SIF TALENT:PLAYER:小人体型 && !TALENT:MASTER:禁断の知識 && !TALENT:小人体型
@@ -17,9 +17,6 @@ SIF TEQUIP:オナホール
 	RETURNF 0
 ;触手調教中はダメ
 SIF TEQUIP:触手
-	RETURNF 0
-;お風呂場プレイ中はプレイマットが無いとダメ
-SIF TEQUIP:お風呂場 && !ITEM:プレイマット
 	RETURNF 0
 ;新妻プレイ中はダメ
 SIF TEQUIP:エプロン

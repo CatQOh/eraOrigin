@@ -3,7 +3,6 @@
 ;-------------------------------------------------
 @USERCOM_ABLE_拡張バルーン, ARG
 #FUNCTION
-
 ;服着てるとダメ
 SIF !性器露出(TARGET)
 	RETURNF 0
@@ -18,9 +17,6 @@ IF TEQUIP:拡張バルーン
 ENDIF
 ;調教対象が小人体型の場合は主人が禁断の知識持ちじゃないとダメ
 SIF TALENT:小人体型 && !TALENT:MASTER:禁断の知識
-	RETURNF 0
-;アイテムを持っていないとダメ
-SIF !ITEM:拡張バルーン
 	RETURNF 0
 ;アナル使用中はダメ
 SIF Ａ使用中(TARGET)

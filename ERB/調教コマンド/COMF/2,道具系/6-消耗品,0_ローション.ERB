@@ -3,9 +3,6 @@
 ;-------------------------------------------------
 @USERCOM_ABLE_ローション, ARG
 #FUNCTION
-;アイテムを持っていないとダメ
-SIF !ITEM:ローション
-	RETURNF 0
 ;全裸じゃないとダメ
 SIF OVER_GENITAL(TARGET) != "" || OVER_BUST(TARGET) != ""
 	RETURNF 0
@@ -19,8 +16,6 @@ RETURNF 1
 @COM_ローション
 PRINTL ローション
 CALL KOJO_MESSAGE_COM
-
-ITEM:ローション--
 
 ;-------------------------------------------------
 ;ソース追加処理

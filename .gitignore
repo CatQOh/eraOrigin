@@ -1,4 +1,4 @@
-Ôªø*.config
+*.config
 *.sav
 *.log
 *.lnk
@@ -7,5 +7,5 @@ debug/
 macro.txt
 *.dat
 CSV/Chara/*
-!CSV/Chara0_„ÅÇ„Å™„Åü.csv
+!CSV/Chara0_Ç†Ç»ÇΩ.csv
 

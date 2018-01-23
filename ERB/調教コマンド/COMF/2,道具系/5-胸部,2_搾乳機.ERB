@@ -17,9 +17,6 @@ ENDIF
 ;小人体型持ちは主人が禁断の知識持ちじゃないとダメ
 SIF TALENT:小人体型 && !TALENT:MASTER:禁断の知識
 	RETURNF 0
-;アイテムを持っていないとダメ
-SIF !ITEM:搾乳器
-	RETURNF 0
 ;母乳体質でないと使えない
 SIF !TALENT:母乳体質
 	RETURNF 0

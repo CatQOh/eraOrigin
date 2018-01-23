@@ -133,7 +133,7 @@ ENDSELECT
 
 ;購入の意志を再確認するように
 SELECTCASE ARG
-	CASE 200 TO 299
+	CASE 0 TO 49
 		PRINTFORML 本当に%ITEMNAME:ARG%を購入しますか？
 		PRINTL [0] 購入する
 		PRINTL [1] やめる
@@ -237,7 +237,7 @@ SELECTCASE ARG
 					ENDSELECT
 				LOOP LOOPRES(0)
 		ENDSELECT
-	CASE 300 TO 499
+	CASE 50 TO 99
 		;奴隷に使用するタイプのアイテムも専用の関数で
 		CALL USE_ITEM, ARG
 ENDSELECT
@@ -293,85 +293,81 @@ PRINTL 誰に使いますか？
 
 FOR PAGING, 0, CHARANUM
 	LOCAL = 1
-	SELECTCASE ARG
-		;薬品系と素質系で処理が異なる
-		CASE 300 TO 499
-			;無機物・機械は除外
-			SIF TALENT:PAGING:無機物 || CSTR:PAGING:種族 == "機械"
+	;無機物・機械は除外
+	SIF TALENT:PAGING:無機物 || CSTR:PAGING:種族 == "機械"
+		LOCAL = 0
+	;使用不可のキャラも除外
+	SIF CFLAG:PAGING:使用不可
+		LOCAL = 0
+	;主人は除外 ただしふたなり、処女再生、胸関連、性転換薬、時の砂時計、ビースティースターター、排卵誘発剤、バナナは可能
+	IF PAGING == MASTER
+		SELECTCASE ITEMNAME:ARG
+			CASE "ふたなり薬", "ユニコーンテイル", "豊胸剤", "縮胸剤", "性転換薬", "時の砂時計", "ビースティースターター", "排卵誘発剤", "バナナ"
+			CASEELSE
 				LOCAL = 0
-			;使用不可のキャラも除外
-			SIF CFLAG:PAGING:使用不可
+		ENDSELECT
+	ENDIF
+	SELECTCASE ITEMNAME:ARG
+		CASE "怪しげな栄養剤"
+			;体力がマックスだと使えない
+			SIF BASE:PAGING:体力 >= MAXBASE:PAGING:体力
 				LOCAL = 0
-			;主人は除外 ただしふたなり、処女再生、胸関連、性転換薬、時の砂時計、ビースティースターター、排卵誘発剤、バナナは可能
-			IF PAGING == MASTER
-				SELECTCASE ITEMNAME:ARG
-					CASE "ふたなり薬", "ユニコーンテイル", "豊胸剤", "縮胸剤", "性転換薬", "時の砂時計", "ビースティースターター", "排卵誘発剤", "バナナ"
-					CASEELSE
-						LOCAL = 0
-				ENDSELECT
-			ENDIF
-			SELECTCASE ITEMNAME:ARG
-				CASE "怪しげな栄養剤"
-					;体力がマックスだと使えない
-					SIF BASE:PAGING:体力 >= MAXBASE:PAGING:体力
-						LOCAL = 0
-				CASE "ふたなり薬"
-					SIF TALENT:PAGING:ふたなり
-						LOCAL = 0
-				CASE "ふたなり消去薬"
-					;男で妊娠中だとヴァギナ塞げない
-					SIF !TALENT:PAGING:ふたなり || (SEX(PAGING) == 1 && TALENT:PAGING:妊娠)
-						LOCAL = 0
-				CASE "天使のミルク"
-					SIF TALENT:PAGING:母乳体質 || (SEX(PAGING) == 1 && !TALENT:PAGING:ふたなり)
-						LOCAL = 0
-				CASE "ユニコーンテイル"
-					SIF TALENT:PAGING:処女 || TALENT:PAGING:再生処女 || (SEX(PAGING) == 1 && !TALENT:PAGING:ふたなり)
-						LOCAL = 0
-				CASE "豊胸剤"
-					SIF TALENT:PAGING:バストサイズ == 5 || SEX(PAGING) == 1
-						LOCAL = 0
-				CASE "縮胸剤"
-					SIF TALENT:PAGING:バストサイズ == 1 || SEX(PAGING) == 1
-						LOCAL = 0
-				CASE "止乳剤"
-					SIF !TALENT:PAGING:母乳体質 || SEX(PAGING) == 1
-						LOCAL = 0
-				CASE "夜尿症改善薬"
-					SIF !TALENT:PAGING:おもらし癖
-						LOCAL = 0
-				CASE "ゾンビパウダー"
-					SIF TALENT:PAGING:ゾンビ
-						LOCAL = 0
-				CASE "聖水"
-					SIF !TALENT:PAGING:ゾンビ
-						LOCAL = 0
-				CASE "性転換薬"
-					;妊娠時は使えない
-					SIF TALENT:PAGING:妊娠 || TALENT:PAGING:性転換済
-						LOCAL = 0
-				CASE "時の砂時計"
-					SIF TALENT:PAGING:小人体型
-						LOCAL = 0
-				CASE "永続的利尿剤"
-					;既におもらし癖ついてると使えない
-					SIF TALENT:PAGING:おもらし癖
-						LOCAL = 0
-				CASE "ビースティースターター"
-					;ケモミミ尻尾両方あったり、既に獣だったりファーリーだったりすると使えない
-					SIF (TALENT:PAGING:動物耳 && TALENT:PAGING:尻尾) || CSTR:PAGING:種族 == "獣" || TALENT:PAGING:ファーリー
-						LOCAL = 0
-				CASE "魔剤"
-					;既にキメてる場合は使えない
-					SIF CFLAG:PAGING:魔剤
-						LOCAL = 0
-				CASE "排卵誘発剤"
-					SIF CFLAG:PAGING:排卵誘発剤 || !VAGINA(PAGING)
-						LOCAL = 0
-				CASE "リミッター解除"
-					SIF TALENT:PAGING:リミットバースト || !CFLAG:PAGING:陥落
-						LOCAL = 0
-			ENDSELECT
+		CASE "ふたなり薬"
+			SIF TALENT:PAGING:ふたなり
+				LOCAL = 0
+		CASE "ふたなり消去薬"
+			;男で妊娠中だとヴァギナ塞げない
+			SIF !TALENT:PAGING:ふたなり || (SEX(PAGING) == 1 && TALENT:PAGING:妊娠)
+				LOCAL = 0
+		CASE "天使のミルク"
+			SIF TALENT:PAGING:母乳体質 || (SEX(PAGING) == 1 && !TALENT:PAGING:ふたなり)
+				LOCAL = 0
+		CASE "ユニコーンテイル"
+			SIF TALENT:PAGING:処女 || TALENT:PAGING:再生処女 || (SEX(PAGING) == 1 && !TALENT:PAGING:ふたなり)
+				LOCAL = 0
+		CASE "豊胸剤"
+			SIF TALENT:PAGING:バストサイズ == 5 || SEX(PAGING) == 1
+				LOCAL = 0
+		CASE "縮胸剤"
+			SIF TALENT:PAGING:バストサイズ == 1 || SEX(PAGING) == 1
+				LOCAL = 0
+		CASE "止乳剤"
+			SIF !TALENT:PAGING:母乳体質 || SEX(PAGING) == 1
+				LOCAL = 0
+		CASE "夜尿症改善薬"
+			SIF !TALENT:PAGING:おもらし癖
+				LOCAL = 0
+		CASE "ゾンビパウダー"
+			SIF TALENT:PAGING:ゾンビ
+				LOCAL = 0
+		CASE "聖水"
+			SIF !TALENT:PAGING:ゾンビ
+				LOCAL = 0
+		CASE "性転換薬"
+			;妊娠時は使えない
+			SIF TALENT:PAGING:妊娠 || TALENT:PAGING:性転換済
+				LOCAL = 0
+		CASE "時の砂時計"
+			SIF TALENT:PAGING:小人体型
+				LOCAL = 0
+		CASE "永続的利尿剤"
+			;既におもらし癖ついてると使えない
+			SIF TALENT:PAGING:おもらし癖
+				LOCAL = 0
+		CASE "ビースティースターター"
+			;ケモミミ尻尾両方あったり、既に獣だったりファーリーだったりすると使えない
+			SIF (TALENT:PAGING:動物耳 && TALENT:PAGING:尻尾) || CSTR:PAGING:種族 == "獣" || TALENT:PAGING:ファーリー
+				LOCAL = 0
+		CASE "魔剤"
+			;既にキメてる場合は使えない
+			SIF CFLAG:PAGING:魔剤
+				LOCAL = 0
+		CASE "排卵誘発剤"
+			SIF CFLAG:PAGING:排卵誘発剤 || !VAGINA(PAGING)
+				LOCAL = 0
+		CASE "リミッター解除"
+			SIF TALENT:PAGING:リミットバースト || !CFLAG:PAGING:陥落
+				LOCAL = 0
 	ENDSELECT
 
 	LOCALS = 体力

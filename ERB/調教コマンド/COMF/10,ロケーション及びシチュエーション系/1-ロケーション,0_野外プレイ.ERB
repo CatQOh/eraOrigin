@@ -3,9 +3,6 @@
 ;-------------------------------------------------
 @USERCOM_ABLE_野外プレイ, ARG
 #FUNCTION
-;アイテム｢首輪｣を持っていないとダメ
-SIF !ITEM:首輪
-	RETURNF 0
 ;解除はいつでも可能
 IF TEQUIP:野外プレイ
 	COMRESULT = 1

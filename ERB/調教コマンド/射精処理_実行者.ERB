@@ -965,23 +965,9 @@ IF TEQUIP:射精したキャラ:コンドーム
 	ENDIF
 	;コンドーム自動装着処理
 	IF GETBIT(FLAG:避妊具設定, 0) && 射精したキャラ == MASTER
-		IF ITEM:コンドーム > 0
-			ITEM:コンドーム--
-			TEQUIP:MASTER:コンドーム = 1
-		ENDIF
-		IF ITEM:コンドーム == 0
-			PRINTL <コンドームが無くなったので、自動装着を解除します>
-			CLEARBIT FLAG:避妊具設定, 0
-		ENDIF
+		TEQUIP:MASTER:コンドーム = 1
 	ELSEIF GETBIT(FLAG:避妊具設定, 1) && 射精したキャラ == ASSI
-		IF ITEM:コンドーム > 0
-			ITEM:コンドーム--
-			TEQUIP:ASSI:コンドーム = 1
-		ENDIF
-		IF ITEM:コンドーム == 0
-			PRINTL <コンドームが無くなったので、自動装着を解除します>
-			CLEARBIT FLAG:避妊具設定, 1
-		ENDIF
+		TEQUIP:ASSI:コンドーム = 1
 	ENDIF
 ENDIF
 

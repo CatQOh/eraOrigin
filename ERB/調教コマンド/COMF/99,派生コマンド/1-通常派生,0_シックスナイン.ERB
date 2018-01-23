@@ -37,9 +37,6 @@ SIF TEQUIP:縄
 ;触手調教中はダメ
 SIF TEQUIP:触手
 	RETURNF 0
-;お風呂場プレイ中はプレイマットが無いとダメ
-SIF TEQUIP:お風呂場 && !ITEM:プレイマット
-	RETURNF 0
 
 COMRESULT = 1
 RETURNF 1

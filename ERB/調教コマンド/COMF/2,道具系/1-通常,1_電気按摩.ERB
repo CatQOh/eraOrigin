@@ -3,9 +3,6 @@
 ;-------------------------------------------------
 @USERCOM_ABLE_電気按摩, ARG
 #FUNCTION
-;アイテムを持っていないとダメ
-SIF !ITEM:電気按摩
-	RETURNF 0
 ;ASSIの場合、技巧3以上かサドじゃないと使えない。
 IF ASSIPLAY
 	SIF ABL:ASSI:技巧 < 3 && !TALENT:ASSI:サド

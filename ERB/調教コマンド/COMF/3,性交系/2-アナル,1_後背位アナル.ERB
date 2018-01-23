@@ -3,8 +3,8 @@
 ;-------------------------------------------------
 @USERCOM_ABLE_後背位アナル, ARG
 #FUNCTION
-;調教者がペニス有り、もしくはペニスバンドがないとダメ
-SIF PENIS(PLAYER) && !ITEM:ペニスバンド
+;調教者がペニスないとダメ
+SIF PENIS(PLAYER)
 	RETURNF 0
 ;アナル使用中はダメ
 SIF Ａ使用中(TARGET)
@@ -22,11 +22,6 @@ ENDIF
 ;触手調教中はダメ
 SIF TEQUIP:触手
 	RETURNF 0
-;お風呂場プレイ中はプレイマットが無いとダメ
-IF TEQUIP:お風呂場
-	SIF !ITEM:プレイマット
-		RETURNF 0
-ENDIF
 
 COMRESULT = 1
 RETURNF 1

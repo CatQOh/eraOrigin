@@ -3,8 +3,8 @@
 ;-------------------------------------------------
 @USERCOM_ABLE_正常位させる, ARG
 #FUNCTION
-;対象がペニス有り、もしくはペニスバンドがないとダメ
-SIF !PENIS(TARGET) && !ITEM:ペニスバンド
+;調教者がペニスないとダメ
+SIF PENIS(PLAYER)
 	RETURNF 0
 ;実行者がヴァギナ無いとダメ
 SIF !VAGINA(PLAYER)
@@ -20,9 +20,6 @@ SIF TEQUIP:オナホール
 	RETURNF 0
 ;触手調教中はダメ
 SIF TEQUIP:触手
-	RETURNF 0
-;お風呂場プレイ中はプレイマットが無いとダメ
-SIF TEQUIP:お風呂場 && !ITEM:プレイマット
 	RETURNF 0
 ;新妻プレイ中はダメ
 SIF TEQUIP:エプロン

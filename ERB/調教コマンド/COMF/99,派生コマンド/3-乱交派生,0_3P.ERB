@@ -29,8 +29,8 @@ SIF PENIS(MASTER)
 ;ASSIがペニス持ち
 SIF PENIS(ASSI)
 	LOCAL++
-;ペニスバンドとあわせて二本ないとだめ
-SIF LOCAL+ITEM:ペニスバンド < 2
+;ペニス二本ないとだめ
+SIF LOCAL < 2
 	RETURNF 0
 ;膣使用中はダメ
 SIF Ｖ使用中(TARGET)

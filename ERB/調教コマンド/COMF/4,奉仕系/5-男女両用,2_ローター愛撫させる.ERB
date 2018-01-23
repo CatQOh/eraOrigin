@@ -3,9 +3,6 @@
 ;-------------------------------------------------
 @USERCOM_ABLE_ローター愛撫させる, ARG
 #FUNCTION
-;アイテム無いとダメ
-SIF !ITEM:ローター
-	RETURNF 0
 ;縄使用中は不可
 SIF TEQUIP:縄
 	RETURNF 0

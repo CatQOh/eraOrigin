@@ -3,9 +3,6 @@
 ;-------------------------------------------------
 @USERCOM_ABLE_鞭, ARG
 #FUNCTION
-;アイテムを持っていないとダメ
-SIF !ITEM:鞭
-	RETURNF 0
 ;従順4未満のASSIの場合鞭はできない（サドならＯＫ）
 IF PLAYER == ASSI
 	SIF ABL:ASSI:従順 < 4 && !TALENT:ASSI:サド
