@@ -522,6 +522,24 @@ SELECTCASE RESULTS
 	CASEELSE
 		RESULTS = %REPLACE(RESULTS, " ", "")%
 		REPEAT VARSIZE("EXP")
+			SELECTCASE RESULTS
+				CASE "奉快経験"
+					RESULTS = 奉仕快楽経験
+				CASE "口淫経験"
+					RESULTS = フェラ経験
+				CASE "痛楽経験"
+					RESULTS = 苦痛快楽経験
+				CASE "虐快経験"
+					RESULTS = 嗜虐快楽経験
+				CASE "主調経験"
+					RESULTS = 主人調教経験
+				CASE "助調経験"
+					RESULTS = 助手調教経験
+				CASE "Ｖ拡経験"
+					RESULTS = Ｖ拡張経験
+				CASE "Ａ拡経験"
+					RESULTS = Ａ拡張経験
+			ENDSELECT
 			IF EXPNAME:COUNT == RESULTS
 				PRINTFORML %EXPNAME:COUNT%の数値を入力してください
 				INPUT
