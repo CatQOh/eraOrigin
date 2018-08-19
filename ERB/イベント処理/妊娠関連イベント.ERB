@@ -498,7 +498,7 @@ ENDIF
 
 EXP:ARG:出産経験++
 
-CHILDBIRTHDAY:ARG:0 = YEAR+10000+MONTH*100+DAYS
+CHILDBIRTHDAY:ARG:0 = YEAR*10000+MONTH*100+DAYS
 
 IF ARG == MASTER
 	IF PREG:MASTER:5
@@ -618,13 +618,7 @@ ELSE
 ENDIF
 
 ;血縁コードが同じ、もしくは親子間の交配なら近親交配フラグが立つ
-SIF CFLAG:母親:血縁コード >= 1 && CFLAG:母親:血縁コード == CFLAG:父親:血縁コード
-	PREG:母体:27 = 1
-
-SIF NO:母親 >= 10000 && (CFLAG:母親:血縁コード/100000 == NO:父親 || CFLAG:母親:血縁コード%100000 == NO:父親)
-	PREG:母体:27 = 1
-
-SIF NO:父親 >= 10000 && (CFLAG:父親:血縁コード/100000 == NO:母親 || CFLAG:父親:血縁コード%100000 == NO:母親)
+SIF 近親相姦(母親, 父親)
 	PREG:母体:27 = 1
 
 ;続いて素質の設定
