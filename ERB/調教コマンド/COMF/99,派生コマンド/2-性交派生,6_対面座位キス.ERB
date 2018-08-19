@@ -18,7 +18,7 @@ RETURNF 1
 @COM_対面座位キス
 PRINTL 対面座位キス
 SELECTCOMS = 対面座位キス
-SELECTCOM = 532
+SELECTCOM = GETNUM(TRAINNAME, "対面座位キス")
 CALL KOJO_MESSAGE_COM
 
 ;V経験を伴うコマンドのフラグ(処女膜再生対応)

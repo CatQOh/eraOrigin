@@ -399,7 +399,7 @@ RETURN LYEAR, LMONTH, LDAYS
 
 
 @HOLIDAY
-HOLIDAY =
+VARSET HOLIDAY
 
 ;プレミアムフライデーならまずプレミアムフライデーを入れる(下記祝日・記念日の表示が優先)
 SIF PREMIUM_FRIDAY(YEAR, MONTH, DAYS)
@@ -508,8 +508,10 @@ SELECTCASE MONTH
 			;15日以降
 			CASE IS >= 15
 				;満月なら十五夜
-				SIF INRANGE(月齢, 1500, 1599)
+				IF INRANGE(月齢, 1500, 1599)
+	                ARRAYSHIFT HOLIDAY, 1, ""
 					HOLIDAY = 十五夜
+				ENDIF
 		ENDSELECT
 	;10月
 	CASE 10
@@ -547,4 +549,10 @@ SELECTCASE MONTH
 				HOLIDAY = クリスマス
 		ENDSELECT
 ENDSELECT
+
+;プレミアムフライデー
+IF PREMIUM_FRIDAY(YEAR, MONTH, DAYS)
+	ARRAYSHIFT HOLIDAY, 1, ""
+	HOLIDAY = プレミアムフライデー
+ENDIF
 

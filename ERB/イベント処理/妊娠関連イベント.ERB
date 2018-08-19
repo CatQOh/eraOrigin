@@ -244,11 +244,11 @@ PREG:竿役:4 = 0
 @GET_CHILD
 #DIM DYNAMIC LCOUNT
 FOR LCOUNT, 0, CHARANUM
-    SIF PREG:LCOUNT:10 == 0
-        CONTINUE
-    ;出産予定日より20日前で妊娠発覚
-    SIF !TALENT:LCOUNT:妊娠 && !TALENT:LCOUNT:育児中 && DAY >= PREG:LCOUNT:10-20
-        CALL GET_CHILD_MESSAGE, LCOUNT
+	SIF PREG:LCOUNT:10 == 0
+		CONTINUE
+	;出産予定日より20日前で妊娠発覚
+	SIF !TALENT:LCOUNT:妊娠 && !TALENT:LCOUNT:育児中 && DAY >= PREG:LCOUNT:10-20
+		CALL GET_CHILD_MESSAGE, LCOUNT
 NEXT
 
 @GET_CHILD_MESSAGE, ARG
@@ -672,15 +672,19 @@ DO
 		CONTINUE
 	;素質の種類ごとにテーブルを置く
 	SELECTCASE テーブル
-		;生意気、臆病、ツンデレ
+		;生意気、臆病、ツンデレ、強気、弱気
 		CASE 1
-			SELECTCASE RAND:3
+			SELECTCASE RAND:5
 				CASE 0
 					CHILDTALENT:母体:TALENTF("生意気") = 1
 				CASE 1
 					CHILDTALENT:母体:TALENTF("臆病") = 1
 				CASE 2
 					CHILDTALENT:母体:TALENTF("ツンデレ") = 1
+				CASE 3
+					CHILDTALENT:母体:TALENTF("強気") = 1
+				CASE 4
+					CHILDTALENT:母体:TALENTF("弱気") = 1
 			ENDSELECT
 		;素直、反抗的、衝動的
 		CASE 2
@@ -855,13 +859,17 @@ DO
 				CASE 1
 					CHILDTALENT:母体:TALENTF("Ｂ鈍感") = 1
 			ENDSELECT
-		;回復早い、回復遅い
+		;回復早い、回復遅い、暑さに弱い、寒さに弱い
 		CASE 21
-			SELECTCASE RAND:2
+			SELECTCASE RAND:4
 				CASE 0
 					CHILDTALENT:母体:TALENTF("回復早い") = 1
 				CASE 1
 					CHILDTALENT:母体:TALENTF("回復遅い") = 1
+				CASE 2
+					CHILDTALENT:母体:TALENTF("暑さに弱い") = 1
+				CASE 3
+					CHILDTALENT:母体:TALENTF("寒さに弱い") = 1
 			ENDSELECT
 	ENDSELECT
 	LOCAL:テーブル = 1
@@ -1005,7 +1013,7 @@ SELECTCASE RESULT
 		ENDSELECT
 		BASE:体力 = MAXBASE:体力
 		BASE:気力 = MAXBASE:気力
-		;10000が恋心と既婚者のフラグに使われてるので、子供ののNOは10001から
+		;10000が恋心と既婚者のフラグに使われてるので、子供のNOは10001から
 		FLAG:子供の数++
 		NO:TARGET = FLAG:子供の数+10000
 		;NO-10000のCHILDNAMEに名前が記録される
