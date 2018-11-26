@@ -1,9 +1,11 @@
 タイトル：Emuera
-バージョン： 1.820
+バージョン： 1.822
 著作者：MinorShift, 妊）|дﾟ)の中の人
 頒布者：MinorShift
 連絡先：minorshift@hotmail.co.jp
+連絡先：https://twitter.com/MinorShift
 Webページ：http://osdn.jp/projects/emuera/
+投げ銭・寄付：https://emuera.booth.pm/items/933704
 ライセンス：[ライセンス]の項を参照。
 更新の詳細は上記Webページをご覧下さい。
 
@@ -14,10 +16,10 @@ eramaker.exeと同じフォルダにいれて起動することでeramaker.exe�
 
 
 [動作環境]
-.NET Framework 2.0環境が必要です。
+.NET Framework 4.5環境が必要です。
 
-「アプリケーションを正しく初期化できませんでした」というエラーが出て起動できない場合、.NET Framework 2.0が正しくインストールされていません。
-Microsoftダウンロードセンターから.NET Framework 2.0ランタイムをダウンロードしてインストールしてください。
+「アプリケーションを正しく初期化できませんでした」というエラーが出て起動できない場合、.NET Framework 4.5が正しくインストールされていません。
+Microsoftダウンロードセンターから.NET Framework 4.5ランタイムをダウンロードしてインストールしてください。
 
 
 [使用方法]
@@ -40,6 +42,11 @@ eramakerはサークル獏の佐藤敏氏が作成したソフトです。
 http://www.hakagi.com
 ※18歳未満の方は閲覧をご遠慮ください。
 
+[投げ銭・寄付]
+https://emuera.booth.pm/items/933704
+Emueraの作者の一人MinorShiftは上記サイトにて投げ銭を募っております。
+ご支援頂ければ幸いです。 
+
 [連絡先]
 minorshift@hotmail.co.jp
 
@@ -48,7 +55,7 @@ Emueraへの苦情やバグ報告などをサークル獏や佐藤氏宛てに�
 
 
 [ライセンス]（zlib/libpngライセンス）
-Copyright (C) 2008-2014 MinorShift, 妊）|дﾟ)の中の人
+Copyright (C) 2008- MinorShift, 妊）|дﾟ)の中の人
 
 本ソフトウェアは「現状のまま」で、明示であるか暗黙であるかを問わず、何らの保証もなく提供されます。 本ソフトウェアの使用によって生じるいかなる損害についても、作者は一切の責任を負わないものとします。 
 

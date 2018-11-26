@@ -1,4 +1,4 @@
-﻿eraOrigin Ver0.93(試作版) 作者:Enter◆jp5YHyRfi6 ベースバリアント:eraBEMANI+α
+﻿eraOrigin Ver0.94(試作版) 作者:Enter◆jp5YHyRfi6 ベースバリアント:eraBEMANI+α
 
 【ライセンス】
 当バリアントの改変&再配布→許可
@@ -28,7 +28,7 @@ CSVや口上等を作成した場合は、アップロードや配布する際�
 タイトル画面のCSVエディターを起動、いろいろ設定してログに出力してから拡張子をcsvに変更してCSVフォルダに突っ込んで再起動してください
 eratohoAをベースに作った拙作eraBEMANIをベースに作っているため、eraBEMANIやeratohoAで見覚えのある要素が多いです
 バニラ状態だと遊べません。キャラCSV作ったら公序良俗に反しない程度に配布したり、内輪ネタで盛り上がったりで遊んでみてください
-不具合などの報告は新バリアント作成を目指すスレでお願いします。不具合修正以外の機能追加などをする予定と専用スレを立てる予定はありません
+不具合などの報告はera板 私有地のeraBEMANIスレでお願いします
 
 【特徴】
 期限が無い
@@ -44,9 +44,12 @@ IRC([irc.friend-chat.jp] ほぼ年中無休で接続中)
 Skype
 └you-remember
 
-Twitter
-└@CatQOh(消えてる場合があります)
+Discordサーバー（eraBEMANI鯖と共用）
+└https://discord.gg/p5rb5uK
 
-新バリアント作成を目指すスレ（リンクが古い場合があります。その場合は次スレを追ってください）
-└http://jbbs.shitaraba.net/bbs/read.cgi/otaku/16783/1504243913/
+Twitter
+└@eraBEMANI
+
+eraBEMANIスレ（リンクが古い場合があります。その場合は次スレを追ってください）
+└http://jbbs.shitaraba.net/bbs/read.cgi/otaku/18072/1542303021/
 

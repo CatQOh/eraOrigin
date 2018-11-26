@@ -239,8 +239,10 @@ REND
 
 DRAWLINE
 PRINTBUTTON "　[0] CSVを出力する ", "0"
-PRINTBUTTON "[1] CSV作成をやめる ", "1"
-PRINTBUTTON "[2] 既存のCSVを呼び出す", "2"
+PRINTBUTTON "[1] CSVを全て数値で出力する", "1"
+PRINTBUTTON "[2] CSV作成をやめる ", "2"
+PRINTBUTTON "[3] 既存のCSVを呼び出す ", "3"
+PRINTBUTTON "[4] プロジェクトを初期化する", "4"
 
 $LOOP
 INPUTS
@@ -351,6 +353,110 @@ SELECTCASE RESULTS
 		LOOP LOOPRES(0, 1)
 		GOTO RESTART
 	CASE "1"
+		PRINTL 現在の作業状況のCSVを数値でログに出力します。よろしいですか？
+		PRINTL [0] - はい
+		PRINTL [1] - いいえ
+		INPUT
+		DO
+			SELECTCASE RESULT
+				CASE 0
+					CLEARLINE LINECOUNT
+					PRINTFORML 番号,{NO:TARGET}
+					PRINTFORML 名前,%NAME:TARGET%
+					IF CALLNAME:TARGET == ""
+						PRINTFORML 呼び名,%NAME:TARGET%
+					ELSE
+						PRINTFORML 呼び名,%CALLNAME:TARGET%
+					ENDIF
+					SIF CFLAG:誕生日
+						PRINTFORML フラグ,{GETNUM(CFLAG, "誕生日")},{CFLAG:誕生日}
+					;SIF CFLAG:血縁コード
+					;	PRINTFORML フラグ,血縁コード,{CFLAG:血縁コード}
+					;SIF CFLAG:続柄
+					;	PRINTFORML フラグ,続柄,{CFLAG:続柄}
+					;SIF CFLAG:兄弟
+					;	PRINTFORML フラグ,兄弟,{CFLAG:兄弟}
+					;SIF CFLAG:姉妹
+					;	PRINTFORML フラグ,姉妹,{CFLAG:姉妹}
+						
+					PRINTL 
+					PRINTFORML 基礎,0,{MAXBASE:体力}
+					PRINTFORML 基礎,1,{MAXBASE:気力}
+					REPEAT VARSIZE("EXP")
+						SIF EXP:COUNT != 0
+							PRINTFORML 経験,{COUNT},{EXP:COUNT}
+					REND
+					REPEAT VARSIZE("ABL")
+						SIF ABL:COUNT != 0
+							PRINTFORML 能力,{COUNT},{ABL:COUNT}
+					REND
+					PRINTFORML 素質,{GETNUM(TALENT, "性別")},{TALENT:性別}
+					SIF SEX(TARGET) == 2
+						PRINTFORML 素質,{GETNUM(TALENT, "バストサイズ")},{TALENT:バストサイズ}
+					IF TALENT:恋心 != 0
+						PRINTFORML 素質,{GETNUM(TALENT, "恋心")},{TALENT:恋心},;%CSVCALLNAME(TALENT:恋心)%
+						SIF EXISTCSV(TALENT:恋心)
+							PRINTFORML ;%CSVCALLNAME(TALENT:恋心)%
+					ENDIF
+					IF TALENT:既婚者 != 0
+						PRINTFORML 素質,{GETNUM(TALENT, "既婚者")},{TALENT:既婚者},;%CSVCALLNAME(TALENT:既婚者)%
+						SIF EXISTCSV(TALENT:既婚者)
+							PRINTFORML ;%CSVCALLNAME(TALENT:既婚者)%
+					ENDIF
+					REPEAT VARSIZE("TALENT")
+						SELECTCASE TALENTNAME:COUNT
+							CASE "性別", "バストサイズ", "恋心", "既婚者"
+							CASEELSE
+								SIF TALENT:COUNT != 0
+									PRINTFORML 素質,{COUNT}
+						ENDSELECT
+					REND
+					REPEAT 10000
+						SIF RELATION:COUNT != 100
+							PRINTFORML 相性,{COUNT},{RELATION:COUNT},;%CSVCALLNAME(COUNT)%
+					REND
+					
+					PRINTL 
+					
+					REPEAT 100
+						IF CSTR:COUNT != ""
+							PRINTFORML CSTR,{COUNT},%CSTR:COUNT%
+						ELSE
+							BREAK
+						ENDIF
+					REND
+					
+					PRINTL 
+					
+					PRINTL ;服装
+					REPEAT VARSIZE("CSTR")
+						SELECTCASE CSTRNAME:COUNT
+							CASE "特殊", "上半身上着", "下半身上着", "全身上着", "上半身下着", "下半身下着", "足元"
+								IF CFLAG:(CSTRNAME:COUNT) == 100
+									PRINTFORML フラグ,{COUNT},100
+								ELSEIF CSTR:COUNT != ""
+									PRINTFORML CSTR,{COUNT},%CSTR:COUNT%
+								ENDIF
+						ENDSELECT
+					REND
+					SIF CFLAG:挿入可
+						PRINTFORML フラグ,{GETNUM(CFLAG, "挿入可")},1
+					SIF CFLAG:着衣併用 != 0
+						PRINTFORML フラグ,{GETNUM(CFLAG, "着衣併用")},{CFLAG:着衣併用}
+					SIF CFLAG:上着パイズリ != 0
+						PRINTFORML フラグ,{GETNUM(CFLAG, "上着パイズリ")},{CFLAG:上着パイズリ}
+					SIF CFLAG:下着パイズリ != 0
+						PRINTFORML フラグ,{GETNUM(CFLAG, "下着パイズリ")},{CFLAG:下着パイズリ}
+
+					PRINTL 
+					PRINTFORML CSTR,{GETNUM(CSTR, "種族")},%CSTR:種族%
+					PRINTL 
+					OUTPUTLOG
+					PRINTW ログに出力しました。CSVとして利用する方法は同梱のread meをご覧ください
+			ENDSELECT
+		LOOP LOOPRES(0, 1)
+		GOTO RESTART
+	CASE "2"
 		PRINTL 現在の作業状況を破棄してタイトル画面に戻ります。よろしいですか？
 		PRINTL [0] - はい
 		PRINTL [1] - いいえ
@@ -364,7 +470,7 @@ SELECTCASE RESULTS
 					GOTO RESTART
 			ENDSELECT
 		LOOP 1
-	CASE "2"
+	CASE "3"
 		PRINTL 現在の作業状況を破棄して既存のCSVを呼び出します。よろしいですか？
 		PRINTL [0] - はい
 		PRINTL [1] - いいえ
@@ -380,6 +486,20 @@ SELECTCASE RESULTS
 					ADDCHARA RESULT
 					TARGET = 1
 					GOTO RESTART
+				CASE 1
+					GOTO RESTART
+			ENDSELECT
+		LOOP 1
+	CASE "4"
+		PRINTL 現在の作業状況を破棄してCSVを作り直します。よろしいですか？
+		PRINTL [0] - はい
+		PRINTL [1] - いいえ
+		INPUT
+		DO
+			SELECTCASE RESULT
+				CASE 0
+					RESETDATA
+					RESTART
 				CASE 1
 					GOTO RESTART
 			ENDSELECT
