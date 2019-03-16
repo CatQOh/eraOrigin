@@ -4,7 +4,7 @@
 @USERCOM_ABLE_アナルフィスト, ARG
 #FUNCTION
 ;奴隷が淫乱系陥落か服従系陥落じゃないとダメ
-SIF GROUPMATCH(FALLTYPE(TARGET), 2, 3)
+SIF !GROUPMATCH(FALLTYPE(TARGET), 2, 3)
 	RETURNF 0
 ;アナルに何か入ってるとダメ
 SIF Ａ使用中(TARGET)
