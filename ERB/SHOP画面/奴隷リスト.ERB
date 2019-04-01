@@ -32,7 +32,8 @@ ELSE
 	PRINTPLAIN                 
 ENDIF
 
-PRINTL [1010] キャラソート
+PRINT [1010] キャラソート 
+PRINTL [1011] 登場作品で絞る
 
 DO
 	INPUT
@@ -53,6 +54,10 @@ DO
 		CASE 1010
 			CALL CHARA_SORT
 			RESTART
+		CASE 1011
+			CALL 登場作品フィルタ設定
+			TFLAG:ページ数 = 0
+			BREAK
 		CASE 0 TO CHARANUM-1
 			SIF CHECK_CHILD_CARE(RESULT)
 				CONTINUE
@@ -100,7 +105,8 @@ ELSE
 	PRINTPLAIN                 
 ENDIF
 
-PRINTL [1010] キャラソート
+PRINT [1010] キャラソート 
+PRINTL [1011] 登場作品で絞る
 
 DO
 	INPUT
@@ -118,6 +124,10 @@ DO
 		CASE 1010
 			CALL CHARA_SORT
 			RESTART
+		CASE 1011
+			CALL 登場作品フィルタ設定
+			TFLAG:ページ数 = 0
+			BREAK
 		CASE 0
 			ASSI = -1
 			RETURN 0
@@ -147,6 +157,8 @@ LOOP LOOPRES(999, 1000, 1001)
 #DIM DYNAMIC 表示数
 #DIM DYNAMIC カウント数
 #DIM DYNAMIC 未表示キャラ
+#DIM DYNAMIC 対象表示
+#DIM DYNAMIC 助手表示
 VARSET LOCAL, 0
 DRAWLINE
 IF ARG == 1
@@ -157,6 +169,7 @@ ELSE
 	PRINTL □奴隷一覧
 ENDIF
 FOR LCOUNT, 0, CHARANUM
+	RESETCOLOR
 	;1巡目はMASTERとTARGET及びASSIの能力表示
 	IF LCOUNT == 0
 		IF ARG == 2
@@ -173,19 +186,27 @@ FOR LCOUNT, 0, CHARANUM
 				PRINT 双
 			PRINTL 
 		ENDIF
-		;TARGET指定もしくはASSI指定で1巡目ならMASTERの下に表示する
-		IF ARG == 1 && TARGET > 0
+		$表示用
+		;TARGETとASSIはMASTERの下に表示する
+		IF TARGET > 0 && !対象表示
 			LOCAL = TARGET
-		ELSEIF ARG == 2 && ASSI > 0
-			LOCAL = ASSI
-		ELSE
-			;表示するキャラが居なければDRAWLINEとCONTINUEして通常の表示処理に戻る
-			DRAWLINE
-			CONTINUE
+			対象表示 = 1
+			SIF ARG == 2 && CFLAG:状態 < 2
+				GOTO 表示用
+			GOTO 対象助手
 		ENDIF
-	ELSE
-		LOCAL = LCOUNT
+		IF ASSI > 0 && !助手表示
+			LOCAL = ASSI
+			助手表示 = 1
+			GOTO 対象助手
+		ENDIF
+		;表示するキャラが居なければDRAWLINE後にLCOUNTを1にして通常の表示処理に戻る
+		DRAWLINE
+		LCOUNT = 1
+		SIF CHARANUM == 1
+			BREAK
 	ENDIF
+	LOCAL = LCOUNT
 	;2巡目以降は通常のキャラ表示なので条件を指定
 	IF LCOUNT > 0
 		;キャラを10人表示したら終了
@@ -193,29 +214,37 @@ FOR LCOUNT, 0, CHARANUM
 			未表示キャラ = 1
 			BREAK
 		ENDIF
+		;助手の指定なら助手不可能なキャラは除外
+		SIF ARG == 2 && CFLAG:LOCAL:状態 < 2
+			CONTINUE
+		;登場作品フィルタが設定してあるならそれ以外のキャラは除外
+		SIF 登場作品フィルタ != "" && GROUPMATCH(登場作品フィルタ, CSTR:LOCAL:登場作品, CSTR:LOCAL:登場作品２, CSTR:LOCAL:登場作品３) == 0
+			CONTINUE
+		;調教対象の指定、もしくは助手の指定なら、育児部屋に移動しているキャラは灰色表示
+		SIF ARG && CHECK_CHILD_CARE(LOCAL)
+			SETCOLORBYNAME gray
+		;調教対象の指定、もしくは助手の指定なら、使用不可のキャラは灰色表示
+		SIF ARG && CFLAG:LOCAL:使用不可
+			SETCOLORBYNAME gray
+		;対象は主人の下に表示されるので除外
+		SIF TARGET == LOCAL
+			CONTINUE
+		;助手も同じく
+		SIF ASSI == LOCAL
+			CONTINUE
 		カウント数++
 		;ページ数×10まで表示を飛ばす
 		SIF TFLAG:ページ数*10 >= カウント数
 			CONTINUE
-		;調教対象の指定なら調教中のキャラは除外
-		SIF ARG == 1 && LOCAL == TARGET
-			CONTINUE
-		;助手の指定なら助手中のキャラは除外
-		SIF ARG == 2 && LOCAL == ASSI
-			CONTINUE
-		;助手の指定なら助手不可能なキャラは除外
-		SIF ARG == 2 && CFLAG:LOCAL:状態 < 2
-			CONTINUE
-		;調教対象の指定、もしくは助手の指定なら、育児部屋に移動しているキャラは除外
-		SIF ARG && CHECK_CHILD_CARE(LOCAL)
-			CONTINUE
-		;調教対象の指定、もしくは助手の指定なら、使用不可のキャラは除外
-		SIF ARG && CFLAG:LOCAL:使用不可
-			CONTINUE
 		表示数++
 	ENDIF
 
-	IF LOCAL == TARGET
+	$対象助手
+	IF CFLAG:LOCAL:使用不可
+		PRINT 不
+	ELSEIF CHECK_CHILD_CARE(LOCAL)
+		PRINT 妊
+	ELSEIF LOCAL == TARGET
 		PRINT ☆
 	ELSEIF LOCAL == ASSI
 		PRINT ★
@@ -227,7 +256,12 @@ FOR LCOUNT, 0, CHARANUM
 		PRINT 　
 	ENDIF
 
-	PRINTFORM [{LOCAL, 2}] %CALLNAME:LOCAL, 20, LEFT%
+	;調教対象の指定、もしくは助手の指定なら、育児部屋に移動しているキャラと使用不可キャラは選べない
+	IF ARG && (CHECK_CHILD_CARE(LOCAL) || CFLAG:LOCAL:使用不可)
+		PRINTFORM [--] %CALLNAME:LOCAL, 20, LEFT%
+	ELSE
+		PRINTFORM [{LOCAL, 2}] %CALLNAME:LOCAL, 20, LEFT%
+	ENDIF
 
 	;上記のキャラを表示したら詳細情報も表示
 	PRINT 体力
@@ -277,6 +311,10 @@ FOR LCOUNT, 0, CHARANUM
 			PRINT ふたなり
 	ENDIF
 	PRINTL 
+	RESETCOLOR
+	;対象及び助手が表示できるなら表示
+	SIF (TARGET > 0 && !対象表示) || (ASSI > 0 && !助手表示)
+		GOTO 表示用
 	;一巡目ならDRAWLINEしてCONTINUE
 	IF LCOUNT == 0
 		DRAWLINE
@@ -284,7 +322,9 @@ FOR LCOUNT, 0, CHARANUM
 	ENDIF
 NEXT
 DRAWLINE
-PRINTL 　☆：調教中　★：助手　○：助手可　●：元助手　を表しています
+PRINTL 　☆：調教中　★：助手　○：助手可　●：元助手　不：使用不可　妊：妊娠育児中　を表しています
+SIF 登場作品フィルタ != ""
+	PRINTFORML 　現在、「%登場作品フィルタ%」に登場するキャラのみ表示しています
 
 ;条件を満たしているにも関わらずまだリスト表示されてないキャラが居れば未表示キャラフラグは1になる
 RETURN RESULT, 未表示キャラ
@@ -316,7 +356,8 @@ ELSE
 	PRINTPLAIN                 
 ENDIF
 
-PRINTL [1010] キャラソート
+PRINT [1010] キャラソート 
+PRINTL [1011] 登場作品で絞る
 
 DO
 	INPUT
@@ -331,6 +372,10 @@ DO
 				TFLAG:ページ数++
 		CASE 1010
 			CALL CHARA_SORT
+			BREAK
+		CASE 1011
+			CALL 登場作品フィルタ設定
+			TFLAG:ページ数 = 0
 			BREAK
 		CASE 0 TO CHARANUM-1
 			CALL STATUS, RESULT
@@ -576,4 +621,96 @@ DO
 LOOP LOOPRES(0, 1, 2, 3, 4, 5, 6, 7)
 
 RETURN 0
+
+@登場作品フィルタ設定
+#DIMS DYNAMIC 原作, 300
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC 登場作品
+#DIM DYNAMIC 登場作品２
+#DIM DYNAMIC 登場作品３
+#DIM DYNAMIC 始点
+#DIM DYNAMIC 終点
+
+;動的変数だけど一応初期化しておく
+VARSET 原作
+
+;GETNUMの記述を省略
+登場作品 = GETNUM(CSTR, "登場作品")
+登場作品２ = GETNUM(CSTR, "登場作品２")
+登場作品３ = GETNUM(CSTR, "登場作品３")
+
+;過去のセーブデータのためにCSTRを代入する
+FOR LCOUNT, 1, CHARANUM
+	SIF CSTR:LCOUNT:登場作品 != CSVCSTR(NO:LCOUNT, 登場作品)
+		CSTR:LCOUNT:登場作品 = %CSVCSTR:(NO:LCOUNT, 登場作品)%
+	SIF CSTR:LCOUNT:登場作品２ != CSVCSTR(NO:LCOUNT, 登場作品２)
+		CSTR:LCOUNT:登場作品２ = %CSVCSTR:(NO:LCOUNT, 登場作品２)%
+	SIF CSTR:LCOUNT:登場作品３ != CSVCSTR(NO:LCOUNT, 登場作品３)
+		CSTR:LCOUNT:登場作品３ = %CSVCSTR:(NO:LCOUNT, 登場作品３)%
+NEXT
+
+FOR LCOUNT, 1, 10000
+	SIF !EXISTCSV(LCOUNT)
+		CONTINUE
+	;変数「原作」の配列に該当作品がまだ入ってない場合は入れる
+	IF CSVCSTR(LCOUNT, 登場作品) != ""
+		SIF FINDELEMENT(原作, ESCAPE(CSVCSTR(LCOUNT, 登場作品))) == -1
+			原作:FINDELEMENT(原作, "", 0, 99, 1) = %CSVCSTR(LCOUNT, 登場作品)%
+	ENDIF
+	;登場作品２は原作:100～199の範囲に入れる
+	IF CSVCSTR(LCOUNT, 登場作品２) != ""
+		SIF FINDELEMENT(原作, ESCAPE(CSVCSTR(LCOUNT, 登場作品２))) == -1
+			原作:FINDELEMENT(原作, "", 100, 199, 1) = %CSVCSTR(LCOUNT, 登場作品２)%
+	ENDIF
+	;登場作品３は原作:200～299の範囲に入れる
+	IF CSVCSTR(LCOUNT, 登場作品３) != ""
+		SIF FINDELEMENT(原作, ESCAPE(CSVCSTR(LCOUNT, 登場作品３))) == -1
+			原作:FINDELEMENT(原作, "", 200, 299, 1) = %CSVCSTR(LCOUNT, 登場作品３)%
+	ENDIF
+NEXT
+
+DO
+	;配列の使っていない範囲を検索してARRAYMOVEで前詰めする
+	始点 = FINDELEMENT(原作, "", 0, VARSIZE("原作"), 1)
+	FOR LCOUNT, 始点, VARSIZE("原作")
+		IF 原作:LCOUNT != ""
+			終点 = LCOUNT
+			BREAK
+		ENDIF
+		;配列の終端にたどり着いたら前詰め処理終了
+		SIF LCOUNT == VARSIZE("原作")-1
+			GOTO BREAK
+	NEXT
+	ARRAYREMOVE 原作, 始点, 終点-始点
+LOOP 1
+$BREAK
+
+PRINTL □表示したいキャラの登場作品を選んでください
+FOR LCOUNT, 0, VARSIZE("原作")
+	SIF 原作:LCOUNT == ""
+		BREAK
+	PRINTFORMLC [{LCOUNT}] %原作:LCOUNT%
+NEXT
+SIF !LINEISEMPTY()
+	PRINTL 
+DRAWLINE
+PRINTPLAIN 　原作別カテゴリ　
+PRINT [-1] 戻る 
+PRINT [-2] フィルタをリセットする
+
+DO
+	INPUT
+	SELECTCASE RESULT
+		CASE 0 TO VARSIZE("原作")
+			IF 原作:RESULT != ""
+				登場作品フィルタ = %原作:RESULT%
+				RETURN
+			ENDIF
+		CASE -1
+			RETURN
+		CASE -2
+			登場作品フィルタ = 
+			RETURN
+	ENDSELECT
+LOOP 1
 

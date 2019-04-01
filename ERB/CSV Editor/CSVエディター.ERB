@@ -238,6 +238,13 @@ REPEAT 100
 REND
 
 DRAWLINE
+PRINTL □ 登場作品
+PRINTBUTTON @"[1] %CSTR:登場作品% ", "登場作品"
+PRINTBUTTON @"[2] %CSTR:登場作品２% ", "登場作品２"
+PRINTBUTTON @"[3] %CSTR:登場作品３%", "登場作品３"
+PRINTL 
+
+DRAWLINE
 PRINTBUTTON "　[0] CSVを出力する ", "0"
 PRINTBUTTON "[1] CSVを全て数値で出力する", "1"
 PRINTBUTTON "[2] CSV作成をやめる ", "2"
@@ -346,6 +353,13 @@ SELECTCASE RESULTS
 
 					PRINTL 
 					PRINTFORML CSTR,種族,%CSTR:種族%
+					SIF CSTR:登場作品 != ""
+						PRINTFORML CSTR,登場作品,%CSTR:登場作品%
+					SIF CSTR:登場作品２ != ""
+						PRINTFORML CSTR,登場作品２,%CSTR:登場作品２%
+					SIF CSTR:登場作品３ != ""
+						PRINTFORML CSTR,登場作品３,%CSTR:登場作品３%
+					PRINTL 
 					PRINTL 
 					OUTPUTLOG
 					PRINTW ログに出力しました。CSVとして利用する方法は同梱のread meをご覧ください
@@ -450,6 +464,12 @@ SELECTCASE RESULTS
 
 					PRINTL 
 					PRINTFORML CSTR,{GETNUM(CSTR, "種族")},%CSTR:種族%
+					SIF CSTR:登場作品 != ""
+						PRINTFORML CSTR,登場作品,%CSTR:登場作品%
+					SIF CSTR:登場作品２ != ""
+						PRINTFORML CSTR,登場作品２,%CSTR:登場作品２%
+					SIF CSTR:登場作品３ != ""
+						PRINTFORML CSTR,登場作品３,%CSTR:登場作品３%
 					PRINTL 
 					OUTPUTLOG
 					PRINTW ログに出力しました。CSVとして利用する方法は同梱のread meをご覧ください
@@ -645,6 +665,21 @@ SELECTCASE RESULTS
 					ENDIF
 			ENDSELECT
 		LOOP 1
+	CASE "登場作品"
+		PRINTL 登場作品名を入力してください
+		INPUTS
+		CSTR:登場作品 = %RESULTS%
+		GOTO RESTART
+	CASE "登場作品２"
+		PRINTL 登場作品名を入力してください
+		INPUTS
+		CSTR:登場作品２ = %RESULTS%
+		GOTO RESTART
+	CASE "登場作品３"
+		PRINTL 登場作品名を入力してください
+		INPUTS
+		CSTR:登場作品３ = %RESULTS%
+		GOTO RESTART
 	CASEELSE
 		RESULTS = %REPLACE(RESULTS, " ", "")%
 		REPEAT VARSIZE("EXP")
