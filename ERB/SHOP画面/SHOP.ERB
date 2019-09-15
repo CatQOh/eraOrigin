@@ -1,9 +1,14 @@
 ﻿@SHOW_SHOP
 #DIM DYNAMIC 助手可能
 #DIM DYNAMIC 調教可能
+#DIM DYNAMIC LCOUNT
+#DIMS DYNAMIC コマンド表示用, 10
 VARSET LOCAL, 0
 
 VARLINE = 0
+
+SIF データID == 0
+	データID = GETSECOND()
 
 CALL CVAR_RESET
 
@@ -62,7 +67,7 @@ REPEAT CHARANUM
 	調教可能++
 REND
 
-VARSET LOCALS, 
+VARSET コマンド表示用
 
 ;コマンド名は現在全角4文字の範囲で統一
 ;100番台は行動のコマンド
@@ -71,61 +76,64 @@ LOCALS = 　
 IF TARGET > 0
 	SELECTCASE FALLTYPE(TARGET)
 		CASE 1
-			LOCALS:1 = %SET_TOOLTIP("[100] - 愛を育む ", @"%CALLNAME:TARGET%と幸せな時間を過ごします")%
+			コマンド表示用:1 = %SET_TOOLTIP("[100] - 愛を育む ", @"%CALLNAME:TARGET%と幸せな時間を過ごします")%
 		CASE 2
-			LOCALS:1 = %SET_TOOLTIP("[100] - 乱れ合う ", @"%CALLNAME:TARGET%と互いの欲望を満たし合います")%
+			コマンド表示用:1 = %SET_TOOLTIP("[100] - 乱れ合う ", @"%CALLNAME:TARGET%と互いの欲望を満たし合います")%
 		CASE 3
-			LOCALS:1 = %SET_TOOLTIP("[100] - 躾をする ", @"%CALLNAME:TARGET%に権威を示します")%
+			コマンド表示用:1 = %SET_TOOLTIP("[100] - 躾をする ", @"%CALLNAME:TARGET%に権威を示します")%
 		CASEELSE
-			LOCALS:1 = %SET_TOOLTIP("[100] - 調教開始 ", @"%CALLNAME:TARGET%を調教します")%
+			コマンド表示用:1 = %SET_TOOLTIP("[100] - 調教開始 ", @"%CALLNAME:TARGET%を調教します")%
 	ENDSELECT
 ELSE
-	LOCALS:1 = %SET_TOOLTIP("[---] - 調教開始 ", "[202] - 対象変更 から調教対象を選択してください", 0, "gray")%
+	コマンド表示用:1 = %SET_TOOLTIP("[---] - 調教開始 ", "[202] - 対象変更 から調教対象を選択してください", 0, "gray")%
 ENDIF
 ;無条件で表示
-LOCALS:2 = %SET_TOOLTIP("[101] - 休憩     ", @"\@ TIME == 0 ? 夜まで休憩します # 翌日まで休憩します \@")%
+コマンド表示用:2 = %SET_TOOLTIP("[101] - 休憩     ", @"\@ TIME == 0 ? 夜まで休憩します # 翌日まで休憩します \@")%
 
-HTML_PRINT LOCALS+LOCALS:1+LOCALS:2
+HTML_PRINT STRJOIN(コマンド表示用, "")
 
 ;200番台は奴隷関連のコマンド
-LOCALS = 　
+VARSET コマンド表示用
+コマンド表示用 = 　
 ;調教者含め誰かがいれば表示 現在は必ず表示される
-LOCALS:1 = %SET_TOOLTIP("[200] - 能力表示 ", @"キャラの様々な情報を表示します")%
+コマンド表示用:1 = %SET_TOOLTIP("[200] - 能力表示 ", @"キャラの様々な情報を表示します")%
 ;奴隷が一人でもいれば表示
 IF CHARANUM > 1
-	LOCALS:2 = %SET_TOOLTIP("[201] - 能力上昇 ", @"キャラの能力を上昇させます")%
+	コマンド表示用:2 = %SET_TOOLTIP("[201] - 能力上昇 ", @"キャラの能力を上昇させます")%
 ELSE
-	LOCALS:2 = %SET_TOOLTIP("[---] - 能力上昇 ", "調教可能なキャラが居ません", 0, "gray")%
+	コマンド表示用:2 = %SET_TOOLTIP("[---] - 能力上昇 ", "調教可能なキャラが居ません", 0, "gray")%
 ENDIF
 IF 調教可能
-	LOCALS:3 = %SET_TOOLTIP("[202] - 対象変更 ", "お相手を変更します")%
+	コマンド表示用:3 = %SET_TOOLTIP("[202] - 奴隷変更 ", "調教対象を変更します")%
 ELSE
-	IF TARGET > 0
-		LOCALS:3 = %SET_TOOLTIP("[---] - 対象変更 ", @"%CALLNAME:TARGET%以外にキャラが居ません", 0, "gray")%
-	ELSE
-		LOCALS:3 = %SET_TOOLTIP("[---] - 対象変更 ", "キャラが居ません", 0, "gray")%
-	ENDIF
+	SIF CHARANUM != 1 && TARGET >= 0
+		コマンド表示用:3 = %SET_TOOLTIP("[---] - 奴隷変更 ", @"%CALLNAME:TARGET%以外に調教可能なキャラが居ません", 0, "gray")%
 ENDIF
 ;助手可能キャラが一人でもいれば表示
 IF 助手可能
 	IF ASSI > 0
-		LOCALS:4 = %SET_TOOLTIP("[203] - 助手変更 ", "助手を変更します")%
+		コマンド表示用:4 = %SET_TOOLTIP("[203] - 助手変更 ", "助手を変更します")%
 	ELSE
-		LOCALS:4 = %SET_TOOLTIP("[203] - 助手変更 ", "助手を選出します")%
+		コマンド表示用:4 = %SET_TOOLTIP("[203] - 助手変更 ", "助手を選出します")%
 	ENDIF
 ELSE
-	LOCALS:4 = %SET_TOOLTIP("[---] - 助手変更 ", "助手に選べるキャラは居ません", 0, "gray")%
+	コマンド表示用:4 = %SET_TOOLTIP("[---] - 助手変更 ", "助手に選べるキャラは居ません", 0, "gray")%
 ENDIF
 
-HTML_PRINT LOCALS+LOCALS:1+LOCALS:2+LOCALS:3+LOCALS:4
+HTML_PRINT STRJOIN(コマンド表示用, "")
 
 ;300番台は購入・売却のコマンド
-LOCALS = 　
+コマンド表示用 = 　
 ;無条件で表示
-LOCALS:1 = %SET_TOOLTIP("[300] - アイテム ", "淫具や素質追加などのアイテムを購入します")%
+コマンド表示用:1 = %SET_TOOLTIP("[300] - アイテム ", "淫具や素質追加などのアイテムを購入します")%
 
-HTML_PRINT LOCALS+LOCALS:1
+;変化できるキャラが居れば表示
+SIF CMATCH(TALENT:変化, 1)
+	コマンド表示用:2 = %SET_TOOLTIP("[301] - 変化     ", "素質[変化]を持った陥落済みのキャラクターを動物の姿や人間の姿に変化させます")%
 
+HTML_PRINT STRJOIN(コマンド表示用, "")
+
+VARSET コマンド表示用
 ;400番台はセーブ・ロード・オプションのシステムコマンド
 ;セーブ・ロード・オプションは無条件で表示
 LOCALS = 　
@@ -133,7 +141,7 @@ LOCALS:1 = %SET_TOOLTIP("[400] - SAVE     ", "現在の状況をセーブしま�
 LOCALS:2 = %SET_TOOLTIP("[401] - LOAD     ", "セーブデータをロードします。保存していない進行状況は失われます")%
 LOCALS:3 = %SET_TOOLTIP("[402] - OPTION   ", "服装やテキスト表示など、様々な設定を変更します")%
 
-HTML_PRINT LOCALS+LOCALS:1+LOCALS:2+LOCALS:3
+HTML_PRINT STRJOIN(コマンド表示用, "")
 
 ;デバッグモードなら表示
 ;#;PRINTPLAIN 　
@@ -201,6 +209,10 @@ SELECTCASE RESULT
 	;アイテム
 	CASE 300
 		CALL SHOPITEM_BUY
+	;変化
+	CASE 301
+		SIF CMATCH(TALENT:変化, 1)
+			CALL 変化
 	;セーブ
 	CASE 400
 		CALL USERSAVE
@@ -221,15 +233,16 @@ ENDSELECT
 RETURN 0
 
 @SHOP_UI
+#DIM DYNAMIC 能力表示用
 ;ゲーム内で表示されるショップ画面
 ;□XXXX年XX月XX日(曜日) X日目(昼夜)
 ;　天気:XX 気温:XX.X℃ XXX(月齢.XXX) 
 ;　総奴隷数:X/陥落済み:X
 ;
-;□調教中
-;　No.X XXXXXX(♂♀)[ふたなり]【陥落素質】(依存度 ストレス値)
-;　従順:LVXX 欲望:LVXX 技巧:LVXX [BURST]
-;　Ｃ感:LVXX Ｖ感:LVXX Ａ感:LVXX Ｂ感:LVXX [部位陥落素質]
+;□調教中 [750]　前のキャラ [751] 次のキャラ
+;　No.X XXXXXX(♂♀)[ふたなり]【陥落素質等】依存度:XX ストレス値:XXX/999
+;　従順:LVXX 欲望:LVXX 技巧:LVXX
+;　Ｃ感:LVXX Ｖ感:LVXX Ａ感:LVXX Ｂ感:LVXX
 ;　苦痛刻印:LVX [XXX]　快楽刻印:LVX [XXX]　屈服刻印:LVX [XXX]　反発刻印:LVX [XXX]
 ;　体力[********************************](XXXX/XXXX)[排卵誘発中]
 ;
@@ -237,86 +250,16 @@ RETURN 0
 ;
 
 ;日数表示
-DRAWLINE
+CALL CHECKDRAWLINE
 PRINT □
-IF YEAR > 0
-	PRINTFORM {YEAR}
-ELSE
-	PRINTFORM BC{ABS(YEAR)+1}
-ENDIF
-PRINTFORM 年{MONTH}月{DAYS}日(%DOW(FLAG:曜日)%) 
+CALL 日付表示
 
-REPEAT 5
-	SIF HOLIDAY:COUNT == ""
-		BREAK
-	PRINTFORM %HOLIDAY:COUNT% 
-REND 
-
-PRINTFORM {DAY}日目
-
-IF TIME == 0
-	PRINT (昼) 
-ELSE
-	PRINT (夜) 
-ENDIF
-
+SIF FLAG:周回数 > 1
+	PRINTFORM  {FLAG:周回数}周目
+CALL ゲームモード表示
 PRINTL 
 
-PRINT 　天気:
-SELECTCASE FLAG:天気
-	CASE 1
-		PRINT 晴れ
-	CASE 2
-		PRINT 曇り
-	CASE 3
-		PRINT 雨
-	CASE 4
-		PRINT 大雨
-	CASE 5
-		PRINT 雷雨
-	CASE 6
-		PRINT 雪
-	CASE 7
-		PRINT 大雪
-ENDSELECT
-
-PRINTFORM  気温:{FLAG:気温/10}.{ABS(FLAG:気温)%10}℃ 
-
-SELECTCASE 月齢
-	CASE 0 TO 199
-		PRINT 新月
-	CASE 200 TO 299
-		PRINT 繊月
-	CASE 300 TO 699
-		PRINT 三日月
-	CASE 700 TO 999
-		PRINT 上弦の月
-	CASE 1000 TO 1399
-		PRINT 十日夜
-	CASE 1400 TO 1499
-		PRINT 小望月
-	CASE 1500 TO 1599
-		PRINT 満月
-	CASE 1600 TO 1699
-		PRINT 十六夜
-	CASE 1700 TO 1799 
-		PRINT 立待月
-	CASE 1800 TO 1899
-		PRINT 居待月
-	CASE 1900 TO 1999
-		PRINT 寝待月
-	CASE 2000 TO 2299
-		PRINT 二十日月
-	CASE 2300 TO 2599
-		PRINT 下弦の月
-	CASE 2600 TO 2899
-		PRINT 暁月
-	CASE 2900 TO 3000
-		PRINT 三十日月
-ENDSELECT
-
-PRINTFORM (月齢:{月齢/100}.\@月齢%100 < 10 ? 0 # \@{月齢%100})
-PRINTL 
+PRINTFORML 　天気:%天気()% 気温:%DIV10(FLAG:気温)%℃ %月齢()%(月齢:%DIV100(月齢)%)
 
 ;奴隷人数表示
 LOCAL = 0
@@ -330,100 +273,79 @@ PRINTFORML 　総奴隷数:{CHARANUM-1}\/陥落済み:{LOCAL}
 ;奴隷の状態
 IF TARGET > 0
 	PRINTL 
-	PRINTL □同棲中
-	PRINTFORM 　No.{TARGET} %NAME:TARGET%
-	IF TALENT:性転換済
-		SELECTCASE SEX(TARGET)
-			CASE 1
-				PRINT (元♀の♂)
-			CASE 2
-				PRINT (元♂の♀)
-		ENDSELECT
+	PRINTPLAIN □同棲中
+	IF TARGET > 1
+		PRINT [750] 前のキャラ 
 	ELSE
-		SELECTCASE SEX(TARGET)
-			CASE 1
-				PRINT (♂)
-			CASE 2
-				PRINT (♀)
-		ENDSELECT
+		PRINTPLAIN 　　　　　　　　  
 	ENDIF
+	IF TARGET < CHARANUM-1
+		PRINT [751] 次のキャラ
+	ELSE
+		PRINTPLAIN 　　　　　　　　
+	ENDIF
+	PRINTFORM 　No.{TARGET} %NAME:TARGET%
+	PRINTFORM %性別表示(TARGET)% 
 	SIF TALENT:ふたなり
 		PRINT [ふたなり]
-	SIF TALENT:妊娠
-		PRINT 【妊娠中】
-	SIF TALENT:恋慕
-		PRINT 【恋慕】
-	SIF TALENT:淫乱
-		PRINT 【淫乱】
-	SIF TALENT:服従
-		PRINT 【服従】
-	SIF TALENT:親愛
-		PRINT 【親愛】
-	SIF TALENT:娼婦
-		PRINT 【娼婦】
-	SIF TALENT:隷属
-		PRINT 【隷属】
-	SIF TALENT:崩壊
-		PRINT 【崩壊】
-	PRINTFORM (依存度:{CFLAG:依存度} ストレス値{CFLAG:ストレス値})
+	SIF TALENT:アニマル
+		PRINT [獣]
+	FOR LCOUNT, 0, VARSIZE("TALENT")
+		SIF !TALENT:LCOUNT
+			CONTINUE
+		SELECTCASE TALENTNAME:LCOUNT
+			CASE "恋慕", "淫乱", "服従", "親愛", "娼婦", "隷属", "崩壊", "淫核", "淫膣", "淫尻", "淫乳"
+				PRINTFORM 【%TALENTNAME:LCOUNT%】
+			CASE "妊娠"
+				PRINT 【妊娠中】
+			CASE "リミットバースト"
+				PRINT 【BURST】
+		ENDSELECT
+	NEXT
+	PRINTFORM 依存度:{CFLAG:依存度} 
+	PRINT ストレス値:
+	CALL ストレス表示, TARGET
 	PRINTL 
 	
-	PRINTFORM 　従順:LV{ABL:従順, 2, LEFT} 欲望:LV{ABL:欲望, 2, LEFT} 技巧:LV{ABL:技巧, 2, LEFT}
-	SIF TALENT:リミットバースト
-		PRINT 【BURST】
-	IF TALENT:淫核
-		PRINT 【淫核】
-	ELSEIF TALENT:淫膣
-		PRINT 【淫膣】
-	ELSEIF TALENT:淫尻
-		PRINT 【淫尻】
-	ELSEIF TALENT:淫乳
-		PRINT 【淫乳】
-	ENDIF
-	PRINTFORML (依存度:{CFLAG:依存度} ストレス値{CFLAG:ストレス値})
-	VARSET LOCALS
+	VARSET 能力表示用
+	
+	能力表示用 = %SET_TOOLTIP(@"　従順:LV{ABL:従順, 2, LEFT}", ABL_COMMENT("従順"))%
+	能力表示用:1 = %SET_TOOLTIP(@"欲望:LV{ABL:欲望, 2, LEFT}", ABL_COMMENT("欲望"))%
+	能力表示用:2 = %SET_TOOLTIP(@"技巧:LV{ABL:技巧, 2, LEFT}", ABL_COMMENT("技巧"))%
+	HTML_PRINT STRJOIN(能力表示用, "")
 
-	LOCALS = %SET_TOOLTIP(@"　従順:LV{ABL:従順, 2, LEFT}", ABL_COMMENT("従順"))%
-	LOCALS:1 = %SET_TOOLTIP(@"欲望:LV{ABL:欲望, 2, LEFT}", ABL_COMMENT("欲望"))%
-	LOCALS:2 = %SET_TOOLTIP(@"技巧:LV{ABL:技巧, 2, LEFT}", ABL_COMMENT("技巧"))%
-	HTML_PRINT LOCALS+LOCALS:1+LOCALS:2
-	;PRINTFORM 　従順:LV{ABL:従順, 2, LEFT} 欲望:LV{ABL:欲望, 2, LEFT} 技巧:LV{ABL:技巧, 2, LEFT}
-
-	VARSET LOCALS
-	LOCALS = %SET_TOOLTIP(@"　Ｃ感:LV{ABL:Ｃ感覚, 2, LEFT}", ABL_COMMENT("Ｃ感覚"))%
+	VARSET 能力表示用
+	能力表示用 = %SET_TOOLTIP(@"　Ｃ感:LV{ABL:Ｃ感覚, 2, LEFT}", ABL_COMMENT("Ｃ感覚"))%
 	SIF VAGINA(TARGET)
-		LOCALS:1 = %SET_TOOLTIP(@"Ｖ感:LV{ABL:Ｖ感覚, 2, LEFT}", ABL_COMMENT("Ｖ感覚"))%
-	LOCALS:2 = %SET_TOOLTIP(@"Ａ感:LV{ABL:Ａ感覚, 2, LEFT}", ABL_COMMENT("Ａ感覚"))%
-	LOCALS:3 = %SET_TOOLTIP(@"Ｂ感:LV{ABL:Ｂ感覚, 2, LEFT}", ABL_COMMENT("Ｂ感覚"))%
-	HTML_PRINT LOCALS+LOCALS:1+LOCALS:2+LOCALS:3
+		能力表示用:1 = %SET_TOOLTIP(@"Ｖ感:LV{ABL:Ｖ感覚, 2, LEFT}", ABL_COMMENT("Ｖ感覚"))%
+	能力表示用:2 = %SET_TOOLTIP(@"Ａ感:LV{ABL:Ａ感覚, 2, LEFT}", ABL_COMMENT("Ａ感覚"))%
+	能力表示用:3 = %SET_TOOLTIP(@"Ｂ感:LV{ABL:Ｂ感覚, 2, LEFT}", ABL_COMMENT("Ｂ感覚"))%
+	HTML_PRINT STRJOIN(能力表示用, "")
 	
 	CALL SHOW_INFO_MARK, TARGET
 	PRINTFORML 　体力%BARBASE("体力")%
+	PRINTFORML 　気力%BARBASE("気力")%
 ENDIF
 PRINTL 
 
-PRINTFORM 　主人:%NAME:MASTER%
-SELECTCASE SEX(MASTER)
-	CASE 1
-		PRINT (♂)
-	CASE 2
-		PRINT (♀)
-ENDSELECT
+PRINTFORM 　主人:%NAME:MASTER% %性別表示(MASTER)% 
 SIF TALENT:MASTER:ふたなり
 	PRINT [ふたなり]
+PRINTL 
 
 IF ASSI >= 0
-	PRINTFORM 　助手:%NAME:ASSI%
-	SELECTCASE SEX(ASSI)
-		CASE 1
-			PRINT (♂)
-		CASE 2
-			PRINT (♀)
-	ENDSELECT
+	IF TALENT:ASSI:アニマル
+		PRINTFORM 　ペット:%NAME:ASSI%
+	ELSE
+		PRINTFORM 　助手:%NAME:ASSI%
+	ENDIF
+	PRINTFORM %性別表示(ASSI)% 
 	SIF TALENT:ASSI:ふたなり
 		PRINT [ふたなり]
+	SIF TALENT:ASSI:アニマル
+		PRINT [獣]
+	PRINTL 
 ENDIF
-PRINTL 
 
 DRAWLINE
 
@@ -442,3 +364,83 @@ IF LOCAL
 ENDIF
 LOCAL = 0
 
+@変化
+#DIM DYNAMIC LCOUNT
+DRAWLINE
+PRINTL □変化させるキャラを選んでください
+FOR LCOUNT, 1, CHARANUM
+	IF TALENT:LCOUNT:変化
+		IF CFLAG:LCOUNT:陥落
+			PRINTFORML [{LCOUNT, 2}] %NAME:LCOUNT% 現在：\@ TALENT:LCOUNT:アニマル ? 獣の姿 # 人間の姿 \@
+		ELSE
+			SETCOLORBYNAME gray
+			PRINTFORML [--] %NAME:LCOUNT% 未陥落
+			RESETCOLOR
+		ENDIF
+	ENDIF
+NEXT
+DRAWLINE
+PRINTPLAIN 　変化　
+PRINTL [0] 戻る
+
+DO
+	INPUT
+	SELECTCASE RESULT
+		CASE 0
+			RETURN 0
+		CASEELSE
+			IF CFLAG:RESULT:陥落 && TALENT:RESULT:変化
+				LOCAL = RESULT
+				IF TALENT:RESULT:アニマル
+					;着衣フラグのリセット
+					FOR LCOUNT, 40, 47
+						CFLAG:LOCAL:LCOUNT = CSVCFLAG(NO:LOCAL, LCOUNT)
+					NEXT
+					FOR LCOUNT, 100, 107
+						CSTR:LOCAL:LCOUNT = %CSVCSTR(NO:LOCAL, LCOUNT)%
+					NEXT
+					PRINTFORMW %CALLNAME:RESULT%は人間の姿に変化した
+					TALENT:RESULT:アニマル = 0
+					IF !TRANCE:LOCAL:GETNUM(TALENT, "動物耳")
+						TALENT:LOCAL:動物耳 = 0
+						TRANCE:LOCAL:GETNUM(TALENT, "動物耳") = 0
+					ENDIF
+					IF !TRANCE:LOCAL:GETNUM(TALENT, "尻尾")
+						TALENT:LOCAL:尻尾 = 0
+						TRANCE:LOCAL:GETNUM(TALENT, "尻尾") = 0
+					ENDIF
+					IF TRANCE:LOCAL:GETNUM(TALENT, "ファーリー")
+						TALENT:LOCAL:ファーリー = 0
+						TRANCE:LOCAL:GETNUM(TALENT, "ファーリー") = 0
+					ENDIF
+					TALENT:LOCAL:バストサイズ = TRANCE:LOCAL:GETNUM(TALENT, "バストサイズ")
+					TRANCE:LOCAL:GETNUM(TALENT, "バストサイズ") = 0
+				ELSE
+					PRINTFORMW %CALLNAME:RESULT%は獣の姿に変化した
+					;着衣フラグの変更
+					FOR LCOUNT, 40, 47
+						CFLAG:LOCAL:LCOUNT = 100
+					NEXT
+					FOR LCOUNT, 100, 107
+						CSTR:LOCAL:LCOUNT = 
+					NEXT
+					TALENT:LOCAL:アニマル = 1
+					IF !TALENT:LOCAL:動物耳
+						TALENT:LOCAL:動物耳 = 1
+						TRANCE:LOCAL:GETNUM(TALENT, "動物耳") = 1
+					ENDIF
+					IF !TALENT:LOCAL:尻尾
+						TALENT:LOCAL:尻尾 = 1
+						TRANCE:LOCAL:GETNUM(TALENT, "尻尾") = 1
+					ENDIF
+					IF !TALENT:LOCAL:ファーリー
+						TALENT:LOCAL:ファーリー = 1
+						TRANCE:LOCAL:GETNUM(TALENT, "ファーリー") = 1
+					ENDIF
+					TRANCE:LOCAL:GETNUM(TALENT, "バストサイズ") = TALENT:LOCAL:バストサイズ
+					TALENT:LOCAL:バストサイズ = 0
+				ENDIF
+			ENDIF
+			RESTART
+	ENDSELECT
+LOOP 1
