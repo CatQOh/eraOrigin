@@ -1,0 +1,81 @@
+﻿;-------------------------------------------------
+;射精寸止め
+;-------------------------------------------------
+@USERCOM_ABLE_射精寸止め, ARG
+#FUNCTION
+;寸止め可能フラグが立ってないとダメ
+SIF TFLAG:寸止め != 1
+    RETURNF 0
+;対象がペニス無いとダメ
+SIF !PENIS(TARGET)
+	RETURNF 0
+;対象が賢者タイム中はダメ
+SIF CFLAG:賢者タイム
+    RETURNF 0
+;触手射精止め中はダメ
+SIF TEQUIP:射精止め
+    RETURNF 0
+
+COMRESULT = 1
+RETURNF 1
+
+@COM_射精寸止め
+PRINTL 射精寸止め
+CALL KOJO_MESSAGE_COM
+
+;道具は全て外す
+CALL Ｖ道具解除, TARGET
+CALL Ａ道具解除, TARGET
+CALL Ｂ道具解除, TARGET
+CALL Ｐ道具解除, TARGET
+
+;SELECTCOMSは寸止め(%コマンド名%)にする
+SELECTCOMS = 寸止め(%PREVCOMS%)
+;甘出し可能フラグを立てる
+TFLAG:寸止め = 2
+
+
+;-------------------------------------------------
+;射精ゲージチェック（奴隷）
+;寸止めなので強制的にMAXBASE:射精-1にする
+;-------------------------------------------------
+BASE:射精 = MAXBASE:射精-1
+
+;-------------------------------------------------
+;ソース追加処理
+;-------------------------------------------------
+;消費体力、気力
+LOSEBASE:体力 += 10
+LOSEBASE:気力 += 80
+
+DOWNBASE:MASTER:体力 += 5
+DOWNBASE:MASTER:気力 += 10
+
+SOURCE:液体 = 10
+SOURCE:欲情 = 100
+SOURCE:露出 = 200
+SOURCE:屈従 = 300
+SOURCE:逸脱 = 300
+SOURCE:反感 = 700
+SOURCE:不潔 = 30
+
+;生意気なキャラほど寸止めの効果は高い
+SIF TALENT:生意気
+    SOURCE:屈従 += 200
+SIF TALENT:反抗的
+    SOURCE:屈従 += 200
+SIF TALENT:衝動的
+    SOURCE:屈従 += 200
+SIF TALENT:プライド高い
+    SOURCE:屈従 += 200
+SIF TALENT:強気
+    SOURCE:屈従 += 200
+
+;-------------------------------------------------
+;経験の処理
+;-------------------------------------------------
+CALL EXPUP_BASE, 1, 3
+CALL EXPUP , "射精管理経験", 3
+
+RETURN 1
+

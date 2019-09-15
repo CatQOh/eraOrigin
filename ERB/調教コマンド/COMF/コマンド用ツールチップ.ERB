@@ -104,6 +104,12 @@ SELECTCASE ARGS
 		ELSE
 			LOCALS = 母乳を搾り取る器具を%CALLNAME:TARGET%の乳房に取り付けます
 		ENDIF
+	CASE "搾精コンドーム"
+		IF TEQUIP:搾精コンドーム
+			LOCALS = %CALLNAME:TARGET%のペニスから搾精用のコンドームを取り外します
+		ELSE
+			LOCALS = %CALLNAME:TARGET%のペニスに精液搾取用のコンドームを被せます
+		ENDIF
 	CASE "コンドーム"
 		LOCALS = 避妊具を付けたり外したりします
 	CASE "正常位"
@@ -316,11 +322,17 @@ SELECTCASE ARGS
 		ELSE
 			LOCALS = %CALLNAME:TARGET%の口を触手で塞ぎます
 		ENDIF
-	CASE "触手搾精"
+	CASE "触手ペニス責め"
 		IF TEQUIP:オナホール
 			LOCALS = %CALLNAME:TARGET%のペニスに吸い付く触手にやめるよう指示します
 		ELSE
 			LOCALS = 触手で%CALLNAME:TARGET%のペニスを咥え込みます
+		ENDIF
+	CASE "触手搾精"
+		IF TEQUIP:搾精コンドーム
+			LOCALS = %CALLNAME:TARGET%のペニスに吸い付く触手にやめるよう指示します
+		ELSE
+			LOCALS = 触手で%CALLNAME:TARGET%の精液を搾り取ります
 		ENDIF
 	CASE "ローション"
 		LOCALS = %CALLNAME:TARGET%の体にローションを塗りたくります
@@ -428,7 +440,103 @@ SELECTCASE ARGS
 		LOCALS = 細い触手で%CALLNAME:TARGET%の尿道から直接液体を流し込み、擬似的に放尿させます
 	CASE "腸洗浄"
 		LOCALS = %CALLNAME:TARGET%の腸内をぬるま湯で洗って綺麗にします
-	CASE "テンプレートとしてお使いください"
+	CASE "ゲームセンター"
+		IF TEQUIP:ゲームセンター
+			LOCALS = %GC店名%を後にして自宅に帰ります
+		ELSE
+			LOCALS = %CALLNAME:TARGET%と一緒に%GC店名%に行きます
+		ENDIF
+	CASE "トイレに行く"
+		IF TEQUIP:トイレ
+			LOCALS = トイレを出てフロアに戻ります
+		ELSE
+			LOCALS = %CALLNAME:TARGET%をトイレに連れ込みます
+		ENDIF
+	CASE "IIDXをプレイする"
+		LOCALS = %CALLNAME:TARGET%と一緒にbeatmaniaIIDXをプレイします
+	CASE "ポップンをプレイする"
+		LOCALS = %CALLNAME:TARGET%と一緒にポップンミュージックで遊びます
+	CASE "DDRをプレイする"
+		LOCALS = %CALLNAME:TARGET%と一緒にDance Dance Revolutionをプレイします
+	CASE "ギタドラをプレイする"
+		LOCALS = %CALLNAME:TARGET%\@ ASSI > 0 ? 、%CALLNAME:ASSI% #  \@と一緒にギタドラでセッションします
+	CASE "jubeatをプレイする"
+		LOCALS = %CALLNAME:TARGET%と一緒にjubeatで遊びます
+	CASE "リフレクをプレイする"
+		LOCALS = %CALLNAME:TARGET%と一緒にリフレクビートで遊びます
+	CASE "ボルテをプレイする"
+		LOCALS = %CALLNAME:TARGET%と一緒にSOUND VOLTEXで遊びます
+	CASE "ダンエボをプレイする"
+		LOCALS = %CALLNAME:TARGET%と一緒にDance Evolutionで踊ります
+	CASE "魔法の練習"
+		IF ABL:PLAYER:魔法技能 && ABL:魔法技能
+			LOCALS = %CALLNAME:TARGET%と一緒に魔法の練習をします
+		ELSEIF ABL:PLAYER:魔法技能
+			LOCALS = %CALLNAME:TARGET%を相手に魔法の練習をします
+		ELSEIF ABL:魔法技能
+			LOCALS = %CALLNAME:TARGET%に魔法の練習をさせます
+		ENDIF
+	CASE "魔法詠唱"
+		LOCALS = 魔力を消費して魔法を詠唱します
+	CASE "料理を作る"
+		LOCALS = %CALLNAME:TARGET%に料理を作らせます
+	CASE "お菓子を作る"
+		LOCALS = %CALLNAME:TARGET%にお菓子を作らせます
+	CASE "楽器の練習"
+		LOCALS = %CALLNAME:TARGET%に楽器演奏の練習をさせます
+	CASE "機械の勉強"
+		LOCALS = %CALLNAME:TARGET%に電子機械についての指導をします
+	CASE "プログラミング演習"
+		LOCALS = %CALLNAME:TARGET%に、さらに専門的な機械の指導をします
+	CASE "尻尾を撫でる"
+		LOCALS = %CALLNAME:TARGET%の尻尾をもふもふします
+	CASE "ハッキング"
+		LOCALS = %CALLNAME:TARGET%をハッキングして特殊な命令を送ります
+	CASE "アナル愛撫させる"
+		LOCALS = %CALLNAME:TARGET%に%CALLNAME:PLAYER%のアナルを愛撫させます
+	CASE "ペニスバンド"
+		LOCALS = ペニスバンドを装着します
+	CASE "電気按摩愛撫させる"
+		LOCALS = %CALLNAME:TARGET%に電気按摩で%CALLNAME:PLAYER%を愛撫させます
+	CASE "QMAをプレイする"
+		LOCALS = %CALLNAME:TARGET%と一緒にクイズマジックアカデミーで遊びます
+	CASE "maimaiをプレイする"
+		LOCALS = %CALLNAME:TARGET%と一緒にmaimaiで遊びます
+	CASE "CHUNITHMをプレイする"
+		LOCALS = %CALLNAME:TARGET%と一緒にCHUNITHMで遊びます
+	CASE "ビデオポーカーで遊ぶ"
+		LOCALS = ビデオポーカーで遊びます
+	CASE "ポーカーソリティアで遊ぶ"
+		LOCALS = ポーカーソリティアで遊びます
+	CASE "モンテカルロで遊ぶ"
+		LOCALS = モンテカルロで遊びます
+	CASE "ブラックジャックで遊ぶ"
+		LOCALS = ブラックジャックで遊びます
+	CASE "ミッドナイトスペシャル"
+		LOCALS = ミッドナイトスペシャル(精力剤)を使います
+	CASE "排卵マッサージ"
+		LOCALS = 子宮周辺などをマッサージして排卵や着床までの流れがスムーズに行えるようにします
+	CASE "電動エネマグラ"
+		IF TEQUIP:電動エネマグラ
+			LOCALS = アナルから電動エネマグラを引き抜きます
+		ELSE
+			LOCALS = 前立腺の刺激に特化したエネマグラをアナルに挿入します
+		ENDIF
+	CASE "搾精器"
+		IF TEQUIP:搾精器
+			LOCALS = ペニスから搾精器を取り外します
+		ELSE
+			LOCALS = 精液を搾り取るための搾精器をペニスに装着します
+		ENDIF
+	CASE "射精寸止め"
+		LOCALS = %CALLNAME:TARGET%が射精する寸前で止めます
+	CASE "貞操帯"
+		IF CFLAG:貞操帯
+			LOCALS = 貞操帯を外します
+		ELSE
+			LOCALS = 貞操帯を装着します
+		ENDIF
+	CASEELSE
 		LOCALS = 
 ENDSELECT
 

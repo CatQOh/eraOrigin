@@ -3,6 +3,9 @@
 ;-------------------------------------------------
 @USERCOM_ABLE_利尿剤, ARG
 #FUNCTION
+;アイテムを持っているか、触手調教中でないとダメ
+SIF !ITEM:利尿剤 && !TEQUIP:触手
+	RETURNF 0
 ;薬毒耐性の場合、直接注入以外ダメ
 SIF TALENT:薬毒耐性 && !TEQUIP:触手
 	RETURNF 0
@@ -11,6 +14,9 @@ SIF TALENT:無機物 || CSTR:種族 == "機械"
 	RETURNF 0
 ;新妻プレイ中はダメ
 SIF TEQUIP:エプロン
+	RETURNF 0
+;アニマルは無理
+SIF TALENT:アニマル
 	RETURNF 0
 
 COMRESULT = 1
@@ -55,7 +61,7 @@ CALL SAMEN_SHOOT_T, 0, NOWEX:射精
 ;-------------------------------------------------
 ;経験の処理
 ;-------------------------------------------------
-CALL EXPUP, 1, 1
+CALL EXPUP_BASE, 1, 1
 
 RETURN 1
 

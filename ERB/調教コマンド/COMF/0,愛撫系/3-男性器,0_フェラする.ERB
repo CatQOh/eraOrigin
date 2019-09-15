@@ -3,7 +3,7 @@
 ;-------------------------------------------------
 @USERCOM_ABLE_フェラする, ARG
 #FUNCTION
-#DIM LCOUNT
+#DIM DYNAMIC LCOUNT
 ;性器が汚れている場合（精液、アナル、粘液、血、尿）
 FOR LCOUNT, 0, 8
 	IF GETBIT(STAIN:ペニス, LCOUNT)
@@ -32,8 +32,8 @@ SIF TALENT:PLAYER:猫舌 && ABL:PLAYER:技巧 < 2
 ;対象がペニス無いとダメ
 SIF !PENIS(TARGET)
 	RETURNF 0
-;オナホール使用中はダメ
-SIF TEQUIP:オナホール
+;Ｐ使用中はダメ
+SIF Ｐ使用中(TARGET)
 	RETURNF 0
 
 COMRESULT = 1
@@ -60,34 +60,7 @@ CALL KOJO_MESSAGE_COM
 ;-------------------------------------------------
 ;射精ゲージチェック（奴隷）
 ;-------------------------------------------------
-LOCAL = 300
-
-;ABL:調教者の技巧をみる
-LOCAL += LOCAL*ABL:PLAYER:技巧/2
-
-;ABL:従順をみる
-LOCAL += (LOCAL/10)*ABL:従順 - (LOCAL/10)*2
-
-;ABL:欲望をみる
-LOCAL += (LOCAL/10)*ABL:欲望
-
-;奴隷のABL:Ｃ感覚をみる
-SELECTCASE ABL:Ｃ感覚
-	CASE 0
-		TIMES LOCAL , 0.50
-	CASE 1
-		TIMES LOCAL , 0.80
-	CASE 2
-		TIMES LOCAL , 1.00
-	CASE 3
-		TIMES LOCAL , 1.50
-	CASE 4
-		TIMES LOCAL , 2.00
-	CASEELSE
-		LOCAL += LOCAL*(ABL:Ｃ感覚-3)
-ENDSELECT
-
-CALL 射精ゲージ増加, LOCAL, TARGET
+CALL 射精ゲージ増加, 射精ゲージ計算_フェラチオ(300), TARGET
 
 ;-------------------------------------------------
 ;ソース追加処理
@@ -108,10 +81,6 @@ SOURCE:反感 = 25
 ;-------------------------------------------------
 ;特殊ソース処理
 ;-------------------------------------------------
-;抑圧、抵抗持ちには、抑鬱ソース追加
-SIF TALENT:抑圧 || TALENT:抵抗
-	SOURCE:鬱屈 += 20
-
 ;調教者のTALENT:舌使いをみる
 SIF TALENT:PLAYER:舌使い
 	TIMES SOURCE:快C , 1.50
@@ -141,24 +110,21 @@ STAIN:ペニス = 0
 ;-------------------------------------------------
 ;経験の処理
 ;-------------------------------------------------
-CALL EXPUP, 3, 1
+CALL EXPUP_BASE, 3, 1
 
-PRINTFORML フェラ経験+1(%CALLNAME:PLAYER%)
-EXP:PLAYER:フェラ経験++
+CALL EXPUP, "フェラ経験", 1, PLAYER
 
 ;調教者が猫舌持ちの場合は、調教者に嗜虐快楽経験を追加
-IF TALENT:PLAYER:猫舌
-	PRINTFORML 嗜虐快楽経験+1(%CALLNAME:PLAYER%)
-	EXP:PLAYER:嗜虐快楽経験++
+SIF TALENT:PLAYER:猫舌
+	CALL EXPUP, "嗜虐快楽経験", 1, PLAYER
+
+IF !避妊具(TARGET)
+		CALL 獣人催淫, 1, PLAYER
 ENDIF
 
-;獣人、獣による催淫
-SELECTCASE CSTR:種族
-	CASE "獣人", "獣"
-		CFLAG:PLAYER:媚薬++
-		SIF CFLAG:PLAYER:媚薬%5 == 0
-			CFLAG:PLAYER:残数++
-ENDSELECT
+;実績:山吹でフェラさせる。もしくは山吹でフェラをする
+SIF CHARANAMEF(PLAYER) == "山吹"
+	CALL 実績解除, "殿方の笛を鳴らすのもお得意で？"
 
 RETURN 1
 

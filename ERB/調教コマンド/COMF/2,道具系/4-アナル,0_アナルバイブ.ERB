@@ -36,7 +36,7 @@ RETURNF 1
 ;-------------------------------------------------
 IF TEQUIP:触手
 	PRINTL アナル触手
-	SELECTCOM = 162
+	SELECTCOM = GETNUM(TRAINNAME, "アナル触手")
 ELSE
 	PRINTL アナルバイブ
 ENDIF
@@ -48,27 +48,13 @@ INVERTBIT TEQUIP:アナルバイブ, 0
 ;-------------------------------------------------
 ;射精ゲージチェック（奴隷）
 ;-------------------------------------------------
-LOCAL = 80
+LOCAL = 射精ゲージ計算_Ａ挿入(80)
 
 ;ABL:調教者の技巧をみる
 LOCAL += (LOCAL/5)*ABL:PLAYER:技巧
 
-;ABL:欲望をみる
-LOCAL += (LOCAL/10)*ABL:欲望
-
-;PALAM:潤滑をみる
-SELECTCASE GETPALAMLV(PALAM:潤滑, 4)
-	CASE 0
-		TIMES LOCAL , 0.20
-	CASE 1
-		TIMES LOCAL , 0.50
-	CASE 2
-		TIMES LOCAL , 1.00
-	CASE 3
-		TIMES LOCAL , 1.50
-	CASE 4
-		TIMES LOCAL , 2.50
-ENDSELECT
+;ABL:技巧をみる
+LOCAL += (LOCAL/10)*ABL:技巧
 
 ;ABL:自慰中毒をみる
 SELECTCASE ABL:自慰中毒
@@ -86,46 +72,6 @@ SELECTCASE ABL:自慰中毒
 		LOCAL += (LOCAL/3)*ABL:自慰中毒
 ENDSELECT
 
-;奴隷のABL:Ａ感覚をみる
-SELECTCASE ABL:Ａ感覚
-	CASE 0
-		TIMES LOCAL , 0.50
-	CASE 1
-		TIMES LOCAL , 0.80
-	CASE 2
-		TIMES LOCAL , 1.00
-	CASE 3
-		TIMES LOCAL , 1.50
-	CASE 4
-		TIMES LOCAL , 2.00
-	CASEELSE
-		LOCAL += LOCAL*(ABL:Ａ感覚-3)
-ENDSELECT
-
-;奴隷のABL:マゾっ気をみる
-LOCAL += (LOCAL/5)*ABL:マゾっ気
-
-;奴隷が男の場合はホモっ気を見る
-IF SEX(TARGET) == 1
-	SELECTCASE ABL:ホモっ気
-		CASE 0
-			TIMES LOCAL , 0.15
-		CASE 1
-			TIMES LOCAL , 0.30
-		CASE 2
-			TIMES LOCAL , 0.50
-		CASE 3
-			TIMES LOCAL , 0.75
-		CASE 4
-			TIMES LOCAL , 1.00
-		CASEELSE
-			LOCAL += (LOCAL/10)*ABL:ホモっ気-3
-	ENDSELECT
-;女なら無条件で半減
-ELSE
-	TIMES LOCAL , 0.50
-ENDIF
-
 CALL 射精ゲージ増加, LOCAL, TARGET
 
 ;-------------------------------------------------
@@ -141,6 +87,7 @@ SOURCE:露出 = 50
 SOURCE:不潔 = 30
 SOURCE:屈従 = 50
 SOURCE:逸脱 = 50
+SOURCE:反感 = 150
 
 ;-------------------------------------------------
 ;特殊ソース処理
@@ -150,6 +97,8 @@ SIF TALENT:抑圧 || TALENT:抵抗
 	SOURCE:鬱屈 += 70
 
 CALL 特殊ソース処理_Ａ
+SIF SOURCE:A拡張
+	CALL 特殊ソース処理_Ａ拡張
 
 ;-------------------------------------------------
 ;汚れの処理
@@ -173,7 +122,7 @@ CALL SAMEN_SHOOT_T, 5, NOWEX:射精
 ;-------------------------------------------------
 ;経験の処理
 ;-------------------------------------------------
-CALL EXPUP, 2, 1
+CALL EXPUP_BASE, 2, 1
 
 RETURN 1
 
@@ -201,27 +150,7 @@ SOURCE:反感 += 40
 ;-------------------------------------------------
 ;射精ゲージチェック（奴隷）
 ;-------------------------------------------------
-LOCAL = 100
-
-;ABL:調教者の技巧をみる
-LOCAL += (LOCAL/5)*ABL:PLAYER:技巧
-
-;ABL:欲望をみる
-LOCAL += (LOCAL/10)*ABL:欲望
-
-;PALAM:潤滑をみる
-SELECTCASE GETPALAMLV(PALAM:潤滑, 4)
-	CASE 0
-		TIMES LOCAL , 0.20
-	CASE 1
-		TIMES LOCAL , 0.50
-	CASE 2
-		TIMES LOCAL , 1.00
-	CASE 3
-		TIMES LOCAL , 1.50
-	CASE 4
-		TIMES LOCAL , 2.50
-ENDSELECT
+LOCAL = 射精ゲージ計算_Ａ挿入(100)
 
 ;ABL:自慰中毒をみる
 SELECTCASE ABL:自慰中毒
@@ -239,46 +168,6 @@ SELECTCASE ABL:自慰中毒
 		LOCAL += (LOCAL/3)*ABL:自慰中毒
 ENDSELECT
 
-;奴隷のABL:Ａ感覚をみる
-SELECTCASE ABL:Ａ感覚
-	CASE 0
-		TIMES LOCAL , 0.50
-	CASE 1
-		TIMES LOCAL , 0.80
-	CASE 2
-		TIMES LOCAL , 1.00
-	CASE 3
-		TIMES LOCAL , 1.50
-	CASE 4
-		TIMES LOCAL , 2.00
-	CASEELSE
-		LOCAL += LOCAL*(ABL:Ａ感覚-3)
-ENDSELECT
-
-;奴隷のABL:マゾっ気をみる
-LOCAL += (LOCAL/5)*ABL:マゾっ気
-
-;奴隷が男の場合はホモっ気を見る
-IF SEX(TARGET) == 1
-	SELECTCASE ABL:ホモっ気
-		CASE 0
-			TIMES LOCAL , 0.15
-		CASE 1
-			TIMES LOCAL , 0.30
-		CASE 2
-			TIMES LOCAL , 0.50
-		CASE 3
-			TIMES LOCAL , 0.75
-		CASE 4
-			TIMES LOCAL , 1.00
-		CASEELSE
-			LOCAL += (LOCAL/10)*ABL:ホモっ気-3
-	ENDSELECT
-;女なら無条件で半減
-ELSE
-	TIMES LOCAL , 0.50
-ENDIF
-
 CALL 射精ゲージ増加, LOCAL, TARGET
 
 ;-------------------------------------------------
@@ -289,18 +178,18 @@ SIF TALENT:抑圧 || TALENT:抵抗
 	SOURCE:鬱屈 += 35
 
 CALL 特殊ソース処理_Ａ道具, 100, 40
+SIF SOURCE:A拡張
+	CALL 特殊ソース処理_Ａ道具拡張, 30, 20, 10
 
 ;-------------------------------------------------
 ;経験の処理
 ;-------------------------------------------------
-;自慰実行時は経験+1
+;出し入れ実行時は経験+1
 SELECTCASE SELECTCOMS
-	CASE "自慰", "アナル愛撫", "アナル触手"
-		PRINTL Ａ経験+2
-		EXP:Ａ経験 += 2
+	CASE "自慰", "アナル愛撫"
+		CALL EXPUP, "Ａ経験", 2
 	CASE IS != "アナルバイブ"
-		PRINTL Ａ経験+1
-		EXP:Ａ経験++
+		CALL EXPUP, "Ａ経験", 1
 ENDSELECT
 
 SIF TEQUIP:触手

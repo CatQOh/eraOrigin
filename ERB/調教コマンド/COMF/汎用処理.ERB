@@ -72,6 +72,57 @@ SELECTCASE GETPALAMLV(PALAM:潤滑, 4)
 		TIMES SOURCE:苦痛 , 1.00
 ENDSELECT
 
+@特殊ソース処理_Ｖ拡張
+#DIM DYNAMIC レベル
+;Ｖ拡張経験を見るが、Ｖ経験/10も加算して計算する
+レベル = GETEXPLV(EXP:Ｖ拡張経験+EXP:Ｖ経験/10, 10)
+
+;V拡張の値を加算する
+SOURCE:苦痛 += SOURCE:V拡張*5
+SOURCE:反感 += SOURCE:V拡張*10
+SOURCE:恐怖 += SOURCE:V拡張*3
+SOURCE:快V += SOURCE:V拡張
+
+SELECTCASE レベル
+	CASE 0 TO 9
+		;苦痛、反感は最大10倍、1レベルごとに1割減
+		SOURCE:苦痛 *= 10-レベル
+		SOURCE:反感 *= 10-レベル
+		;恐怖は最大3倍 1レベルごとに1割減
+		SOURCE:恐怖 -= SOURCE:恐怖/10*レベル
+		SOURCE:恐怖 *= 3
+		;快Vは0.2倍～2倍
+		SOURCE:快V = SOURCE:快V/5*レベル
+	CASE 10
+		;レベル10で苦痛、反感がソースより半減
+		SOURCE:苦痛 /= 2
+		SOURCE:反感 /= 2
+		;快Vは0.2倍～2倍
+		SOURCE:快V = SOURCE:快V/5*レベル
+		;ゼロ除算対策
+		レベル = 9
+ENDSELECT
+
+;PALAM:潤滑をみる
+SELECTCASE GETPALAMLV(PALAM:潤滑, 4)
+	CASE 0
+		TIMES SOURCE:苦痛 , 2.00
+		TIMES SOURCE:反感 , 1.50
+	CASE 1
+		TIMES SOURCE:苦痛 , 1.80
+		TIMES SOURCE:反感 , 1.20
+	CASE 2
+		TIMES SOURCE:苦痛 , 1.60
+	CASE 3
+		TIMES SOURCE:苦痛 , 1.40
+	CASE 4
+		TIMES SOURCE:苦痛 , 1.20
+ENDSELECT
+
+;体力気力消費量はV拡張の値をそのまま上乗せ 1レベルごとに1割減で、気力は消費2倍
+LOSEBASE:体力 += SOURCE:V拡張/(10-レベル)
+LOSEBASE:気力 += SOURCE:V拡張/(10-レベル)*2
+
 @特殊ソース処理_Ａ
 ;EXP:Ａ経験をみる
 SELECTCASE GETEXPLV(EXP:Ａ経験, 5)
@@ -147,6 +198,57 @@ SELECTCASE GETPALAMLV(PALAM:潤滑, 4)
 	CASE 4
 		TIMES SOURCE:苦痛 , 1.00
 ENDSELECT
+
+@特殊ソース処理_Ａ拡張
+#DIM DYNAMIC レベル
+;Ａ拡張経験を見るが、Ａ経験/10も加算して計算する
+レベル = GETEXPLV(EXP:Ａ拡張経験+EXP:Ａ経験/10, 10)
+
+;A拡張の値を加算する
+SOURCE:苦痛 += SOURCE:A拡張*5
+SOURCE:反感 += SOURCE:A拡張*10
+SOURCE:恐怖 += SOURCE:A拡張*3
+SOURCE:快A += SOURCE:A拡張
+
+SELECTCASE レベル
+	CASE 0 TO 9
+		;苦痛、反感は最大10倍、1レベルごとに1割減
+		SOURCE:苦痛 *= 10-レベル
+		SOURCE:反感 *= 10-レベル
+		;恐怖は最大3倍 1レベルごとに1割減
+		SOURCE:恐怖 -= SOURCE:恐怖/10*レベル
+		SOURCE:恐怖 *= 3
+		;快Aは0.2倍～2倍
+		SOURCE:快A = SOURCE:快A/5*レベル
+	CASE 10
+		;レベル10で苦痛、反感がソースより半減
+		SOURCE:苦痛 /= 2
+		SOURCE:反感 /= 2
+		;快Aは0.2倍～2倍
+		SOURCE:快A = SOURCE:快A/5*レベル
+		;ゼロ除算対策
+		レベル = 9
+ENDSELECT
+
+;PALAM:潤滑をみる
+SELECTCASE GETPALAMLV(PALAM:潤滑, 4)
+	CASE 0
+		TIMES SOURCE:苦痛 , 2.00
+		TIMES SOURCE:反感 , 1.50
+	CASE 1
+		TIMES SOURCE:苦痛 , 1.80
+		TIMES SOURCE:反感 , 1.20
+	CASE 2
+		TIMES SOURCE:苦痛 , 1.60
+	CASE 3
+		TIMES SOURCE:苦痛 , 1.40
+	CASE 4
+		TIMES SOURCE:苦痛 , 1.20
+ENDSELECT
+
+;体力気力消費量はA拡張の値をそのまま上乗せ 1レベルごとに1割減で、気力は消費2倍
+LOSEBASE:体力 += SOURCE:A拡張/(10-レベル)
+LOSEBASE:気力 += SOURCE:A拡張/(10-レベル)*2
 
 @特殊ソース処理_Ｖ道具, ARG, ARG:1
 SELECTCASE GETEXPLV(EXP:Ｖ経験, 4)
@@ -258,6 +360,116 @@ ENDSELECT
 SOURCE:苦痛 += ARG
 SOURCE:反感 += ARG:1
 
+@特殊ソース処理_Ｖ道具拡張, 苦痛上昇量, 反感上昇量, 体力気力消費量
+#DIM DYNAMIC レベル
+#DIM DYNAMIC 苦痛上昇量
+#DIM DYNAMIC 反感上昇量
+#DIM DYNAMIC 体力気力消費量
+
+;Ｖ拡張経験を見るが、Ｖ経験/10も加算して計算する
+レベル = GETEXPLV(EXP:Ｖ拡張経験+EXP:Ｖ経験/10, 10)
+
+;V拡張の値を加算する
+SOURCE:苦痛 += SOURCE:V拡張*5
+SOURCE:反感 += SOURCE:V拡張*10
+SOURCE:快V += SOURCE:V拡張
+
+SELECTCASE レベル
+	CASE 0 TO 9
+		;苦痛、反感は最大10倍、1レベルごとに1割減
+		苦痛上昇量 *= 10-レベル
+		反感上昇量 *= 10-レベル
+		;快Vは0.2倍～2倍
+		SOURCE:快V = SOURCE:快V/5*レベル
+	CASE 10
+		;レベル10で苦痛、反感がソースより半減
+		苦痛上昇量 /= 2
+		反感上昇量 /= 2
+		;快Vは0.2倍～2倍
+		SOURCE:快V = SOURCE:快V/5*レベル
+		;ゼロ除算対策
+		レベル = 9
+ENDSELECT
+
+;PALAM:潤滑をみる
+SELECTCASE GETPALAMLV(PALAM:潤滑, 4)
+	CASE 0
+		TIMES 苦痛上昇量 , 2.00
+		TIMES 反感上昇量 , 1.50
+	CASE 1
+		TIMES 苦痛上昇量 , 1.80
+		TIMES 反感上昇量 , 1.20
+	CASE 2
+		TIMES 苦痛上昇量 , 1.60
+	CASE 3
+		TIMES 苦痛上昇量 , 1.40
+	CASE 4
+		TIMES 苦痛上昇量 , 1.20
+ENDSELECT
+
+;体力気力消費量はV拡張の値をそのまま上乗せ 1レベルごとに1割減で、気力は消費2倍
+体力気力消費量 += SOURCE:V拡張/(10-レベル)
+
+SOURCE:苦痛 += 苦痛上昇量
+SOURCE:反感 += 反感上昇量
+LOSEBASE:体力 += 体力気力消費量
+LOSEBASE:気力 += 体力気力消費量*2
+
+@特殊ソース処理_Ａ道具拡張, 苦痛上昇量, 反感上昇量, 体力気力消費量
+#DIM DYNAMIC レベル
+#DIM DYNAMIC 苦痛上昇量
+#DIM DYNAMIC 反感上昇量
+#DIM DYNAMIC 体力気力消費量
+
+;Ａ拡張経験を見るが、Ａ経験/10も加算して計算する
+レベル = GETEXPLV(EXP:Ａ拡張経験+EXP:Ａ経験/10, 10)
+
+;V拡張の値を加算する
+SOURCE:苦痛 += SOURCE:A拡張*5
+SOURCE:反感 += SOURCE:A拡張*10
+SOURCE:快A += SOURCE:A拡張
+
+SELECTCASE レベル
+	CASE 0 TO 9
+		;苦痛、反感は最大10倍、1レベルごとに1割減
+		苦痛上昇量 *= 10-レベル
+		反感上昇量 *= 10-レベル
+		;快Vは0.2倍～2倍
+		SOURCE:快A = SOURCE:快A/5*レベル
+	CASE 10
+		;レベル10で苦痛、反感がソースより半減
+		苦痛上昇量 /= 2
+		反感上昇量 /= 2
+		;快Vは0.2倍～2倍
+		SOURCE:快A = SOURCE:快A/5*レベル
+		;ゼロ除算対策
+		レベル = 9
+ENDSELECT
+
+;PALAM:潤滑をみる
+SELECTCASE GETPALAMLV(PALAM:潤滑, 4)
+	CASE 0
+		TIMES 苦痛上昇量 , 2.00
+		TIMES 反感上昇量 , 1.50
+	CASE 1
+		TIMES 苦痛上昇量 , 1.80
+		TIMES 反感上昇量 , 1.20
+	CASE 2
+		TIMES 苦痛上昇量 , 1.60
+	CASE 3
+		TIMES 苦痛上昇量 , 1.40
+	CASE 4
+		TIMES 苦痛上昇量 , 1.20
+ENDSELECT
+
+;体力気力消費量はV拡張の値をそのまま上乗せ 1レベルごとに1割減で、気力は消費2倍
+体力気力消費量 += SOURCE:A拡張/(10-レベル)
+
+SOURCE:苦痛 += 苦痛上昇量
+SOURCE:反感 += 反感上昇量
+LOSEBASE:体力 += 体力気力消費量
+LOSEBASE:気力 += 体力気力消費量*2
+
 @特殊ソース処理_セックス
 ;セックス中毒を見る
 SELECTCASE ABL:性交中毒
@@ -283,14 +495,47 @@ SELECTCASE ABL:性交中毒
 		TIMES SOURCE:中毒 , 5.00
 ENDSELECT
 
-@射精ゲージ増加, ARG, ARG:1 = -1
-SIF ARG:1 == -1
-	ARG:1 = TARGET
+;対象の魔力を0.{回復率}%回復させる関数
+@魔力回復, 回復率, 対象 = -1
+#DIM DYNAMIC 回復率
+#DIM DYNAMIC 回復量
+#DIM DYNAMIC 対象
 
-;再装填処理中は射精ゲージは20分の1に
-SIF CFLAG:(ARG:1):賢者タイム > 0
-	ARG /= 20
+SIF 対象 == -1
+	対象 = TARGET
 
-SIF PENIS(ARG:1)
-	BASE:(ARG:1):射精 += ARG
+SIF !TALENT:対象:魔術師
+	RETURN
 
+回復量 = MAXBASE:対象:魔力*回復率/1000
+BASE:対象:魔力 = LIMIT(BASE:対象:魔力+回復量, 0, MAXBASE:対象:魔力)
+
+RETURN
+
+;獣人、獣のフェロモンによる催淫の関数
+@獣人催淫, 催淫強度 = 1, 対象 = -1, 催淫主 = -1
+#DIM DYNAMIC 催淫強度
+#DIM DYNAMIC 対象
+#DIM DYNAMIC 催淫主
+
+SIF 対象 == -1
+	対象 = TARGET
+
+IF 催淫主 == -1
+	SELECTCASE 対象
+		CASE TARGET
+			催淫主 = PLAYER
+		CASE PLAYER, MASTER, ASSI
+			催淫主 = TARGET
+	ENDSELECT
+ENDIF
+
+;獣人、獣による催淫
+SELECTCASE CSTR:催淫主:種族
+	CASE "獣人", "獣"
+		CFLAG:対象:媚薬++
+		SIF CFLAG:対象:媚薬%5 == 0
+			CFLAG:対象:残数++
+ENDSELECT
+
+RETURN

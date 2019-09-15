@@ -8,8 +8,8 @@ IF ASSIPLAY
 	SIF ABL:ASSI:技巧 < 3 && !TALENT:ASSI:サド
 		RETURNF 0
 ENDIF
-;シャワー中はダメ
-SIF TEQUIP:シャワー
+;ペニスバンド装着中はダメ
+SIF TEQUIP:ペニスバンド
 	RETURNF 0
 
 COMRESULT = 1
@@ -22,29 +22,7 @@ CALL KOJO_MESSAGE_COM
 ;-------------------------------------------------
 ;射精ゲージチェック（奴隷）
 ;-------------------------------------------------
-LOCAL = 250
-
-;ABL:調教者の技巧をみる
-LOCAL += (LOCAL/5)*ABL:PLAYER:技巧
-
-;ABL:自慰中毒をみる
-SELECTCASE ABL:自慰中毒
-	CASE 0
-		TIMES LOCAL , 1.00
-	CASE 1
-		TIMES LOCAL , 1.10
-	CASE 2
-		TIMES LOCAL , 1.30
-	CASE 3
-		TIMES LOCAL , 1.50
-	CASE 4
-		TIMES LOCAL , 2.00
-	CASEELSE
-		LOCAL += (LOCAL/3)*ABL:自慰中毒
-ENDSELECT
-
-;ABL:欲望をみる
-LOCAL += (LOCAL/10)*ABL:欲望
+LOCAL = 射精ゲージ計算_Ｐ道具(250)
 
 ;奴隷のABL:Ｃ感覚をみる
 LOCAL += (LOCAL/2)*ABL:Ｃ感覚
@@ -85,7 +63,7 @@ CALL SAMEN_SHOOT_T, 0, NOWEX:射精
 ;-------------------------------------------------
 ;経験の処理
 ;-------------------------------------------------
-CALL EXPUP, 1, 1
+CALL EXPUP_BASE, 1, 1
 
 RETURN 1
 

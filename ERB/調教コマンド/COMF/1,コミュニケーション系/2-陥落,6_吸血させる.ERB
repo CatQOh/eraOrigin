@@ -24,6 +24,9 @@ SIF !TALENT:吸血鬼
 ;拘束中はダメ
 SIF TEQUIP:アイマスク || TEQUIP:縄 || TEQUIP:ボールギャグ || TEQUIP:触手
 	RETURNF 0
+;アニマルは無理
+SIF TALENT:アニマル
+	RETURNF 0
 
 COMRESULT = 1
 RETURNF 1
@@ -63,30 +66,21 @@ CALL SAMEN_SHOOT_T, 0, NOWEX:射精
 ;経験の処理
 ;-------------------------------------------------
 ;愛情経験
-IF PLAYER == MASTER
-	PRINTL 愛情経験+1
-	EXP:愛情経験++
-ENDIF
-PRINTL 吸血経験+1
-EXP:吸血経験++
+SIF PLAYER == MASTER
+	CALL EXPUP, "愛情経験", 1
+
+CALL EXPUP, "吸血経験", 1
 
 ;吸血済みフラグ
 TFLAG:吸血済み = 1
 
-;獣人、獣による催淫
-SELECTCASE CSTR:PLAYER:種族
-	CASE "獣人", "獣"
-		CFLAG:媚薬++
-		SIF CFLAG:媚薬%5 == 0
-			CFLAG:残数++
-ENDSELECT
-
-;依存度補正値(恋慕で1、親愛で2）
-IF TALENT:恋慕
-	TFLAG:依存度補正 += 1
-ELSEIF TALENT:親愛
-	TFLAG:依存度補正 += 2
+;魔力2.0%回復 処女の血なら3倍の6.0%回復
+IF TALENT:PLAYER:処女
+	LOCAL = 60
+ELSE
+	LOCAL = 20
 ENDIF
+CALL 獣人催淫, 1
 
 RETURN 1
 

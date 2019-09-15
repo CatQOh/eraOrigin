@@ -37,10 +37,6 @@ IF TARGET >= 0
 	;未陥落じゃなくても上がるように
 	;SIF !CFLAG:陥落
 		CFLAG:ストレス値 += MARK:反発刻印
-	;ストレス値100以上で崩壊を得る
-	;撤廃しました
-	;SIF CFLAG:ストレス値 >= 100 && !TALENT:崩壊
-	;	CALL COLLAPSE_MIND_TRAIN
 	
 	;ストレス値が999より大きい場合999にする
 	SIF CFLAG:ストレス値 > 999

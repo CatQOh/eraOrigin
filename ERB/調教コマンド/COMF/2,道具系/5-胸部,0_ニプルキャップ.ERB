@@ -17,11 +17,6 @@ ENDIF
 ;胸を使ってる場合はダメ
 SIF Ｂ使用中(TARGET)
 	RETURNF 0
-;ASSIの場合、技巧3以上じゃないと使えない。
-IF ASSIPLAY
-	SIF ABL:ASSI:技巧 < 3
-		RETURNF 0
-ENDIF
 ;シャワー中はダメ
 SIF TEQUIP:シャワー
 	RETURNF 0
@@ -32,7 +27,7 @@ RETURNF 1
 @COM_ニプルキャップ
 IF TEQUIP:触手
 	PRINTL 触手乳首責め
-	SELECTCOM = 164
+	SELECTCOM = GETNUM(TRAINNAME, "触手乳首責め")
 ELSE
 	PRINTL ニプルキャップ
 ENDIF
@@ -82,7 +77,7 @@ SIF TEQUIP:触手
 ;-------------------------------------------------
 ;経験の処理
 ;-------------------------------------------------
-CALL EXPUP, 1, 1
+CALL EXPUP_BASE, 1, 1
 
 RETURN 1
 

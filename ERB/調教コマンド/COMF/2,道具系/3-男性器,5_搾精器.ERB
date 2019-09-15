@@ -1,7 +1,7 @@
 ﻿;-------------------------------------------------
-;オナホール
+;搾精器
 ;-------------------------------------------------
-@USERCOM_ABLE_オナホール, ARG
+@USERCOM_ABLE_搾精器, ARG
 #FUNCTION
 ;触手調教中はダメ
 SIF TEQUIP:触手
@@ -10,7 +10,7 @@ SIF TEQUIP:触手
 SIF !性器露出(TARGET)
 	RETURNF 0
 ;解除はいつでも可能
-IF TEQUIP:オナホール
+IF TEQUIP:搾精器
 	COMRESULT = 1
 	RETURNF 1
 ENDIF
@@ -20,22 +20,15 @@ IF TALENT:小人体型
 	SIF !TALENT:MASTER:禁断の知識 && !TALENT:PLAYER:小人体型
 		RETURNF 0
 ENDIF
+;Ｐ使用中はダメ
+SIF Ｐ使用中(TARGET) || TEQUIP:コンドーム || TEQUIP:搾精コンドーム
+	RETURNF 0
 ;ペニス無いとダメ
 SIF !PENIS(TARGET)
 	RETURNF 0
 ;少なくとも半立ち状態じゃないとダメ
 SIF PALAM:勃起 < PALAMLV:2
 	RETURNF 0
-
-;Ｐ使用中はダメ
-SIF Ｐ使用中(TARGET)
-	RETURNF 0
-
-;ASSIの場合、技巧3以上じゃないと使えない。
-IF ASSIPLAY
-	SIF ABL:ASSI:技巧 < 3
-		RETURNF 0
-ENDIF
 ;新妻プレイ中はダメ
 SIF TEQUIP:エプロン
 	RETURNF 0
@@ -43,45 +36,58 @@ SIF TEQUIP:エプロン
 COMRESULT = 1
 RETURNF 1
 
-@COM_オナホール
-;-------------------------------------------------
-;特殊派生処理
-;-------------------------------------------------
-IF TEQUIP:触手
-	PRINTL 触手搾精
-	SELECTCOM = GETNUM(TRAINNAME, "触手搾精")
-ELSE
-	PRINTL オナホール
-ENDIF
+@COM_搾精器
+PRINTL 搾精器
 CALL KOJO_MESSAGE_COM
 
 ;着脱の処理
-INVERTBIT TEQUIP:オナホール, 0
+INVERTBIT TEQUIP:搾精器, 0
 
 ;-------------------------------------------------
 ;射精ゲージチェック（奴隷）
 ;-------------------------------------------------
-CALL 射精ゲージ増加, 射精ゲージ計算_オナホール(500), TARGET
+LOCAL = 100
+
+;ABL:欲望をみる
+LOCAL += (LOCAL/10)*ABL:欲望
+
+;奴隷のABL:Ｃ感覚をみる
+SELECTCASE ABL:Ｃ感覚
+	CASE 0
+		TIMES LOCAL , 0.50
+	CASE 1
+		TIMES LOCAL , 1.00
+	CASE 2
+		TIMES LOCAL , 1.50
+	CASE 3
+		TIMES LOCAL , 2.00
+	CASE 4
+		TIMES LOCAL , 3.00
+	CASEELSE
+		LOCAL += LOCAL*ABL:Ｃ感覚
+ENDSELECT
+
+CALL 射精ゲージ増加, LOCAL, TARGET
 
 ;-------------------------------------------------
 ;ソース追加処理
 ;-------------------------------------------------
 ;消費体力、気力
-LOSEBASE:体力 += 30
-LOSEBASE:気力 += 80
+LOSEBASE:体力 += 50
+LOSEBASE:気力 += 100
 
-SOURCE:快C = 300
-SOURCE:露出 = 20
-SOURCE:不潔 = 50
-SOURCE:逸脱 = 30
-SOURCE:反感 = 30
+SOURCE:快C = 500
+SOURCE:露出 = 200
+SOURCE:不潔 = 100
+SOURCE:逸脱 = 200
+SOURCE:反感 = 1000
 
 ;-------------------------------------------------
 ;特殊ソース処理
 ;-------------------------------------------------
 ;抑圧、抵抗持ちには、抑鬱ソース追加
 SIF TALENT:抑圧 || TALENT:抵抗
-	SOURCE:鬱屈 += 30
+	SOURCE:鬱屈 += 200
 
 ;-------------------------------------------------
 ;絶頂チェック
@@ -96,13 +102,6 @@ CALL SAMEN_CHECK_T, 0
 CALL SAMEN_SHOOT_T, 0, NOWEX:射精
 
 ;-------------------------------------------------
-;汚れの処理
-;-------------------------------------------------
-;触手ペニス責めなら、触手体液がペニスに付く
-SIF TEQUIP:触手
-	SETBIT STAIN:ペニス, 5
-
-;-------------------------------------------------
 ;経験の処理
 ;-------------------------------------------------
 CALL EXPUP_BASE, 2, 1
@@ -112,39 +111,47 @@ RETURN 1
 ;-------------------------------------------------
 ;装着継続の処理
 ;-------------------------------------------------
-@EQUIP_COM_オナホール
-;オナホール装備中
-IF TEQUIP:触手
-	PRINTL ＜触手ペニス責め中＞
-ELSEIF TEQUIP:触手 && TEQUIP:搾精コンドーム
-	PRINTL ＜触手搾精中＞
-ELSE
-	PRINTL ＜オナホール装備中＞
-ENDIF
+@EQUIP_COM_搾精器
+;搾精器装備中
+PRINTL ＜搾精器装着中＞
 
 ;-------------------------------------------------
 ;ソース追加処理
 ;-------------------------------------------------
-LOSEBASE:体力 += 5
-LOSEBASE:気力 += 20
+LOSEBASE:体力 += 30
+LOSEBASE:気力 += 50
 
-SOURCE:快C += 50
-SOURCE:露出 += 10
-SOURCE:不潔 += 10
-SOURCE:逸脱 += 15
-SOURCE:反感 += 15
+SOURCE:快C += 100
+SOURCE:露出 += 100
+SOURCE:不潔 += 100
+SOURCE:逸脱 += 100
+SOURCE:反感 += 300
 
 ;-------------------------------------------------
 ;射精ゲージチェック（奴隷）
 ;-------------------------------------------------
-CALL 射精ゲージ増加, 射精ゲージ計算_オナホール(100), TARGET
+LOCAL = 500
 
-;-------------------------------------------------
-;経験の処理
-;-------------------------------------------------
-;触手経験加算
-SIF TEQUIP:触手
-	TENTACLE++
+;ABL:欲望をみる
+LOCAL += (LOCAL/10)*ABL:欲望
+
+;奴隷のABL:Ｃ感覚をみる
+SELECTCASE ABL:Ｃ感覚
+	CASE 0
+		TIMES LOCAL , 0.50
+	CASE 1
+		TIMES LOCAL , 1.00
+	CASE 2
+		TIMES LOCAL , 1.50
+	CASE 3
+		TIMES LOCAL , 2.00
+	CASE 4
+		TIMES LOCAL , 3.00
+	CASEELSE
+		LOCAL += LOCAL*ABL:Ｃ感覚
+ENDSELECT
+
+CALL 射精ゲージ増加, LOCAL, TARGET
 
 RETURN 1
 

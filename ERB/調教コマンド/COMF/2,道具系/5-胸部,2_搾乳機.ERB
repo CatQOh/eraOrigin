@@ -1,7 +1,7 @@
 ﻿;-------------------------------------------------
 ;搾乳器
 ;-------------------------------------------------
-@USERCOM_ABLE_搾乳機, ARG
+@USERCOM_ABLE_搾乳器, ARG
 #FUNCTION
 ;触手調教中はダメ
 SIF TEQUIP:触手
@@ -26,14 +26,6 @@ SIF Ｂ使用中(TARGET)
 ;Ｂ感覚2以下はダメ
 SIF ABL:TARGET:Ｂ感覚 <= 2
 	RETURNF 0
-;男だとダメ
-SIF SEX(TARGET) == 1
-	RETURNF 0
-;ASSIの場合、技巧3以上じゃないと使えない。
-IF ASSIPLAY
-	SIF ABL:ASSI:技巧 < 3
-		RETURNF 0
-ENDIF
 ;シャワー中はダメ
 SIF TEQUIP:シャワー
 	RETURNF 0
@@ -44,10 +36,10 @@ SIF TEQUIP:エプロン
 COMRESULT = 1
 RETURNF 1
 
-@COM_搾乳機
+@COM_搾乳器
 IF TEQUIP:触手
 	PRINTL 触手搾乳
-	SELECTCOM = 165
+	SELECTCOM = GETNUM(TRAINNAME, "触手搾乳")
 ELSE
 	PRINTL 搾乳器
 ENDIF
@@ -126,14 +118,14 @@ CALL SAMEN_SHOOT_T, 0, NOWEX:射精
 ;-------------------------------------------------
 ;経験の処理
 ;-------------------------------------------------
-CALL EXPUP, 1, 1
+CALL EXPUP_BASE, 1, 1
 
 RETURN 1
 
 ;-------------------------------------------------
 ;装着継続の処理
 ;-------------------------------------------------
-@EQUIP_COM_搾乳機
+@EQUIP_COM_搾乳器
 ;搾乳器装備中
 IF TEQUIP:触手
 	PRINTL ＜触手搾乳中＞

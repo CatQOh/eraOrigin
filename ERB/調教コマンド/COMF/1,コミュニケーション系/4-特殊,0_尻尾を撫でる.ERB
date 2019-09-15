@@ -1,41 +1,33 @@
 ﻿;-------------------------------------------------
-;ローション注入
+;尻尾を撫でる
 ;-------------------------------------------------
-@USERCOM_ABLE_ローション注入, ARG
+@USERCOM_ABLE_尻尾を撫でる, ARG
 #FUNCTION
-;男じゃないとダメ
-SIF TALENT:性別 == 2
-	RETURNF 0
-;下半身が開いてないとダメ
-SIF !性器露出(TARGET)
-	RETURNF 0
-;シャワー中はダメ
-SIF TEQUIP:シャワー
-	RETURNF 0
-;アナルが使用中だとダメ
-SIF Ａ使用中(TARGET)
+;尻尾無いとダメ
+SIF !TALENT:尻尾
 	RETURNF 0
 
 COMRESULT = 1
 RETURNF 1
 
-@COM_ローション注入
-PRINTL ローション注入
+@COM_尻尾を撫でる
+PRINTL 尻尾を撫でる
 CALL KOJO_MESSAGE_COM
 
 ;-------------------------------------------------
 ;ソース追加処理
 ;-------------------------------------------------
 ;消費体力、気力
-LOSEBASE:体力 += 10
-LOSEBASE:気力 += 10
+LOSEBASE:体力 += 5
+LOSEBASE:気力 += 15
 
-DOWNBASE:MASTER:体力 += 10
-DOWNBASE:MASTER:気力 += 10
-
-UP:潤滑 += 10000
-SOURCE:液体 = 5000
-SOURCE:露出 = 100
+SIF CFLAG:陥落
+	SOURCE:情愛 = 200
+SOURCE:恭順 = 50
+SOURCE:屈従 = 30
+SOURCE:恐怖 = 10
+SOURCE:不潔 = 30
+SOURCE:露出 = 10
 
 ;-------------------------------------------------
 ;絶頂チェック
@@ -53,6 +45,9 @@ CALL SAMEN_SHOOT_T, 0, NOWEX:射精
 ;経験の処理
 ;-------------------------------------------------
 CALL EXPUP_BASE, 1, 1
+
+SIF TALENT:親愛
+	CALL EXPUP, "愛情経験", 1
 
 RETURN 1
 

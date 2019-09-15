@@ -4,30 +4,34 @@
 @USERCOM_ABLE_コンドーム, ARG
 #FUNCTION
 ;主人か助手が竿ありならOK
-IF PENIS(MASTER) || PENIS(ASSI)
+IF (PENIS(MASTER) && Ｐ使用不可(MASTER)) || (PENIS(ASSI) && !Ｐ使用不可(ASSI))
 	COMRESULT = 1
 	RETURNF 1
 ENDIF
+
+;解除はいつでも可能
+SIF TEQUIP:コンドーム
+	COMRESULT = 1
+RETURNF 1
 
 ;奴隷は条件で判定する
 IF !TEQUIP:コンドーム
 	;触手調教中はダメ
 	SIF TEQUIP:触手
 		RETURNF 0
-	;解除はいつでも可能
-	SIF TEQUIP:コンドーム
-		COMRESULT = 1
-RETURNF 1
+	;少なくとも半立ち状態じゃないとダメ
+	SIF PALAM:勃起 < PALAMLV:2
+		RETURNF 0
 	;性器が露出してないとダメ
 	SIF !性器露出(TARGET)
 		RETURNF 0
 	;オナホール使用中は不可
-	SIF TEQUIP:オナホール
+	SIF Ｐ使用中(TARGET)
 		RETURNF 0
 	;上記条件を満たしてペニスあればOK
 	SIF PENIS(TARGET)
 		COMRESULT = 1
-RETURNF 1
+	RETURNF 1
 ENDIF
 
 RETURNF 0
@@ -43,7 +47,7 @@ IF PENIS(ASSI)
 	PRINTFORML [1] %CALLNAME:ASSI%
 	LOCAL:1++
 ENDIF
-IF PENIS(TARGET) && !TEQUIP:触手 && !TEQUIP:オナホール
+IF PENIS(TARGET) && !TEQUIP:触手 && !TEQUIP:搾精コンドーム && !TEQUIP:オナホール
 	;下半身下着穿いてる場合は不可
 	IF !TEQUIP:下半身下着
 		IF (!TEQUIP:下半身上着 && !TEQUIP:全身上着) || CFLAG:挿入可
@@ -59,18 +63,24 @@ DO
 		CASE 0
 			SIF !LOCAL
 				CONTINUE
+			SIF !TEQUIP:MASTER:コンドーム && !上級売春中
+				ITEM:コンドーム--
 			INVERTBIT TEQUIP:MASTER:コンドーム, 0
 			TFLAG:避妊具着用者 = MASTER
 			BREAK
 		CASE 1
 			SIF !LOCAL:1
 				CONTINUE
+			SIF !TEQUIP:ASSI:コンドーム && !上級売春中
+				ITEM:コンドーム--
 			INVERTBIT TEQUIP:ASSI:コンドーム, 0
 			TFLAG:避妊具着用者 = ASSI
 			BREAK
 		CASE 2
 			SIF !LOCAL:2
 				CONTINUE
+			SIF !TEQUIP:コンドーム && !上級売春中
+				ITEM:コンドーム--
 			INVERTBIT TEQUIP:コンドーム, 0
 			TFLAG:避妊具着用者 = TARGET
 			BREAK

@@ -3,11 +3,12 @@
 ;-------------------------------------------------
 @USERCOM_ABLE_お酒を飲ませる, ARG
 #FUNCTION
-#DIM LCOUNT
 ;拘束中はダメ
 SIF TEQUIP:アイマスク || TEQUIP:縄 || TEQUIP:ボールギャグ || TEQUIP:触手
 	RETURNF 0
-
+;アニマルだと無理
+SIF TALENT:アニマル
+	RETURNF 0
 ;妊娠中は飲ませされない
 SIF TALENT:妊娠
 	RETURNF 0
@@ -16,8 +17,8 @@ SIF TALENT:妊娠
 SIF TALENT:無機物 || CSTR:種族 == "機械"
 	RETURNF 0
 
-COMRESULT = LOCAL
-RETURNF LOCAL
+COMRESULT = 1
+RETURNF 1
 
 @COM_お酒を飲ませる
 #DIM DYNAMIC ALC

@@ -3,15 +3,28 @@
 ;-------------------------------------------------
 @USERCOM_ABLE_写真撮影, ARG
 #FUNCTION
+;ゲーセンに居る場合はできない
+SIF TEQUIP:ゲームセンター
+	RETURNF 0
+;上級売春中は不可
+SIF 上級売春中
+	RETURNF 0
+;カメラを持っていないとダメ
+SIF !ITEM:カメラ
+	RETURNF 0
 ;撮影上限突破してるとダメ
-SIF TFLAG:カメラ撮影回数 >= 10
+SIF TFLAG:カメラ撮影回数 > ABL:PLAYER:撮影技能+2 || TFLAG:カメラ撮影回数 >= 10
 	RETURNF 0
 ;調教の始めには実行できない
 SIF PREVCOMS == ""
 	RETURNF 0
 ;前回コマンドが撮影向きじゃないと実行できない
 SELECTCASE PREVCOMS
-	CASE "コンドーム", "触手召喚", "ローション", "媚薬", "利尿剤", "ビデオカメラ", "野外プレイ", "助手を犯す", "羞恥プレイ", "お風呂場プレイ", "シャワー", "新妻プレイ", "写真撮影", "強精神薬", "コンドーム精飲（助手）"
+	{
+	CASE "コンドーム", "触手召喚", "ローション", "媚薬", "利尿剤", "ビデオカメラ", "野外プレイ", "助手を犯す",
+		  "羞恥プレイ", "お風呂場プレイ", "シャワー", "新妻プレイ", "写真撮影", "強精神薬", "コンドーム精飲（助手）",
+		  "料理を作る", "お菓子を作る"
+	}
 		RETURNF 0
 ENDSELECT
 
@@ -117,12 +130,8 @@ CALL SAMEN_SHOOT_T, 0, NOWEX:射精
 写真内容:(TFLAG:カメラ撮影回数) = %写真内容記録用%
 TFLAG:カメラ撮影回数++
 
-;依存度補正値(服従で1、隷属で2）
-IF TALENT:服従 && PLAYER == MASTER
-	TFLAG:依存度補正 += 1
-ELSEIF TALENT:隷属 && PLAYER == MASTER
-	TFLAG:依存度補正 += 2
-ENDIF
+CALL EXPUP, "撮影経験", 1, PLAYER
+CALL EXPUP, "被写経験", 1
 
 RETURN 1
 

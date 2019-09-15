@@ -388,6 +388,17 @@ ELSEIF SEX(TARGET) == 2
 	PRINTFORMW 想いを遂げた二人は繋がったまま抱き合い、深い眠りに落ちた……
 ENDIF
 
+;ペット用朝イベント
+@EVENT_MESSAGE_アニマル
+SELECTCASE RAND:2
+	CASE 0
+		PRINTFORML 目が覚めると、%CALLNAME:TARGET%が飼い主の起床を待ちわびるかのように顔中を舐め回していた
+		PRINTFORMW 涎で汚れる顔を拭き、%CALLNAME:MASTER%の一日は始まった
+	CASE 1
+		PRINTFORML 朝起きると、足元に不思議な物体がある。どうやら丸くなって寝ている%CALLNAME:TARGET%のようだ
+		PRINTFORMW %CALLNAME:TARGET%を起こし、朝の食事を与えて一日は始まった
+ENDSELECT
+
 ;妊娠発覚時のイベント口上
 @EVENT_MESSAGE_妊娠発覚時
 ;妊娠が確定していた場合
@@ -457,7 +468,11 @@ IF TALENT:妊娠
 		PRINTFORMW %CALLNAME:MASTER%はこれも罰なのかもしれないと思いながら帰るほかなかった……
 	;それ以外
 	ELSE
-		PRINTFORMW %CALLNAME:TARGET%は%CALLNAME:MASTER%の顔を見ると、少し戸惑いながらも笑顔を向けてきた……
+		IF CFLAG:陥落
+			PRINTFORMW %CALLNAME:TARGET%は%CALLNAME:MASTER%の顔を見ると、少し戸惑いながらも笑顔を向けてきた……
+		ELSE
+			PRINTFORMW %CALLNAME:TARGET%は大きくなったお腹を撫でながら%CALLNAME:MASTER%を睨んでいる……
+		ENDIF
 	ENDIF
 ;恋慕か親愛で父親がMASTER
 ELSEIF FALLTYPE(TARGET) == 1 && PREG:20 == 1
@@ -470,8 +485,12 @@ ELSEIF FALLTYPE(TARGET) == 1 && PREG:20 == 1
 	ENDIF
 ;それ以外
 ELSE
-	PRINTFORML %CALLNAME:MASTER%が部屋に入ってくると、%CALLNAME:TARGET%は少しとまどいながらもそれを迎えた
-	PRINTW それから、子供の様子を見ながら二人の会話を楽しんだ
+	IF CFLAG:陥落
+		PRINTFORML %CALLNAME:MASTER%が部屋に入ってくると、%CALLNAME:TARGET%は少しとまどいながらもそれを迎えた
+		PRINTW それから、子供の様子を見ながら二人の会話を楽しんだ
+	ELSE
+		PRINTFORMW %CALLNAME:MASTER%が部屋に入ると、%CALLNAME:TARGET%は産まれたばかりの赤ん坊を庇いながら%CALLNAME:MASTER%を追い払った……
+	ENDIF
 ENDIF
 
 ;色仕掛けのイベント口上
@@ -681,6 +700,12 @@ PRINTFORMW %CALLNAME:TARGET%の様子がおかしい
 PRINTFORML 調教が終わった後にもかかわらず、%CALLNAME:TARGET%は乳首を弄りながら物欲しげな視線を%CALLNAME:MASTER%に送っている
 PRINTFORMW %NAME:TARGET%は【淫乳】を得た
 
+;男性キャラの胸が膨らんだとき
+@EVENT_MESSAGE_乳首開発
+PRINTFORMW %CALLNAME:TARGET%の様子がおかしい
+PRINTFORML %CALLNAME:TARGET%は度重なる乳首開発のおかげで胸が膨らんでしまったようだ
+PRINTFORMW %NAME:TARGET%は【貧乳】になった
+
 ;絶倫取得時
 @EVENT_MESSAGE_絶倫
 PRINTFORMW %CALLNAME:TARGET%の様子がおかしい
@@ -732,13 +757,21 @@ PRINTFORMW %NAME:MASTER%は【調合知識】を得た
 
 ;コマンド拒否時のイベント口上
 @EVENT_MESSAGE_コマンド拒否時
-PRINTFORMW %CALLNAME:TARGET%は言うことを聞いてくれない。どうやら調教が足りないようだ
+IF 上級売春中
+	PRINTFORMW %CALLNAME:TARGET%はその行為を望んでいないようだ……
+ELSE
+	IF FLAG:ゲームモード == 7
+		PRINTFORMW %CALLNAME:TARGET%は言うことを聞いてくれない。どうやらまだその気になっていないようだ
+	ELSE
+		PRINTFORMW %CALLNAME:TARGET%は言うことを聞いてくれない。どうやら調教が足りないようだ
+	ENDIF
+ENDIF
 
 ;飲酒拒否時の口上
 @EVENT_MESSAGE_飲酒拒否時
 SELECTCASE ITEMNAME:(TFLAG:お酒)
 	CASE "スーパードライ", "一番搾り", "プレミアムモルツ", "ヱビス"
-		IF TALENT:小柄体型 || TALENT:下戸
+		IF (TALENT:小柄体型 || TALENT:下戸) && !TALENT:酒豪
 			PRINTFORMW 酒を勧めたが断られてしまった。ビールは苦手らしい……
 		ELSE
 			IF CFLAG:陥落
@@ -758,4 +791,3 @@ SELECTCASE ITEMNAME:(TFLAG:お酒)
 			PRINTFORMW 酒を勧めたが断られてしまった。%CALLNAME:TARGET%にとっては少し強すぎるようだ……
 		ENDIF
 ENDSELECT
-

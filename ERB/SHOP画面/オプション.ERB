@@ -75,6 +75,8 @@ PRINTL 　[0] - 口上+地の文
 PRINTL 　[1] - 口上のみ
 PRINTL 　[2] - 地の文のみ
 PRINTL 　[3] - テキストを表示しない
+PRINTL 　[8] - ツールチップ(マウスカーソルを当てた時に表示されるポップアップ)の設定
+PRINTFORML 　[9] - 調教画面の数値表示の設定(現在:\@ 数値表示設定 == "" ? 設定無し # %数値表示設定% \@)
 DRAWLINE
 PRINTPLAIN 　TEXT　
 PRINTL [100] - 戻る
@@ -97,6 +99,67 @@ DO
 			PRINTL 【テキストを表示しない】に設定しました
 			FLAG:地の文表示 = 0
 			FLAG:口上表示 = 0
+		CASE 8
+			$TOOLTIP
+			PRINTL ツールチップ設定
+			PRINTFORML [0] - ツールチップ表示(現在:\@ ツールチップ非表示 ? オフ # オン \@)
+			PRINTFORML [1] - ツールチップ表示時間(現在:\@ ツールチップ表示時間 == 0 || ツールチップ表示時間 == 10000 ? 10秒(デフォルト) # {ツールチップ表示時間/1000}.{ツールチップ表示時間%1000}秒 \@)
+			PRINTFORML [2] - ツールチップ表示ディレイ(現在:\@ ツールチップディレイ == 0 ? 無し(デフォルト) # {ツールチップディレイ/1000}.{ツールチップディレイ%1000}秒 \@)
+			PRINTL [3] - 戻る
+			DO
+				INPUT
+				SELECTCASE RESULT
+					CASE 0
+						INVERTBIT ツールチップ非表示, 0
+						BREAK
+					CASE 1
+						PRINTL ツールチップ表示時間を入力してください(ミリ秒)
+						PRINTL 1000ミリ秒=1秒 最大30000ミリ秒=30秒 デフォルトは10000ミリ秒=10秒
+						DO
+							INPUT
+							ツールチップ表示時間 = LIMIT(RESULT, 1, 30000)
+							TOOLTIP_SETDURATION ツールチップ表示時間
+							BREAK
+						LOOP 1
+						BREAK
+					CASE 2
+						PRINTL ツールチップの表示ディレイ時間を入力してください(ミリ秒)
+						PRINT 1000ミリ秒=1秒 最低500ミリ秒=0.5秒 最大30000ミリ秒=30秒 デフォルトは0=ディレイ無し
+						DO
+							INPUT
+							IF RESULT == 0
+								ツールチップディレイ = 0
+							ELSE
+								ツールチップディレイ = LIMIT(RESULT, 500, 30000)
+							ENDIF
+							TOOLTIP_SETDELAY ツールチップディレイ
+							BREAK
+						LOOP 1
+						BREAK
+					CASE 3
+						RETURN
+				ENDSELECT
+			LOOP 1
+			SAVEGLOBAL
+			GOTO TOOLTIP
+		CASE 9
+			PRINTL 調教画面の数値表示の設定
+			PRINTL [0] - 通常表示
+			PRINTL [1] - 3桁区切りで表示
+			PRINTL [2] - 漢字で桁を表示する
+			DO
+				INPUT
+				SELECTCASE RESULT
+					CASE 0
+						数値表示設定 = 
+					CASE 1
+						数値表示設定 = 3桁区切り
+					CASE 2
+						数値表示設定 = 漢字桁表示
+				ENDSELECT
+			LOOP LOOPRES(0, 1, 2)
+			SAVEGLOBAL
+			RESTART
 		CASE 100
 			RETURN 0
 	ENDSELECT
