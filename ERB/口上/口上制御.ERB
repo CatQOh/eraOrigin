@@ -1,20 +1,20 @@
-;’²‹³ŽžƒLƒƒƒ‰•ÊŒûã‚ðˆêŠ‡ŠÇ—
+ï»¿;èª¿æ•™æ™‚ã‚­ãƒ£ãƒ©åˆ¥å£ä¸Šã‚’ä¸€æ‹¬ç®¡ç†
 
 ;-----------------------------------------------------------------------------------
-;Œûã•\Ž¦ƒtƒ@ƒCƒ‹
-;’n‚Ì•¶AƒLƒƒƒ‰ê—pŒûã‚Ì•\Ž¦‚ð‚±‚±‚ÅŠÇ—‚·‚é
-;FLAG:6 = ’n‚Ì•¶•\Ž¦‚·‚é‚©‚Ç‚¤‚© FLAG:7 = Œûã•\Ž¦‚·‚é‚©‚Ç‚¤‚©
+;å£ä¸Šè¡¨ç¤ºãƒ•ã‚¡ã‚¤ãƒ«
+;åœ°ã®æ–‡ã€ã‚­ãƒ£ãƒ©å°‚ç”¨å£ä¸Šã®è¡¨ç¤ºã‚’ã“ã“ã§ç®¡ç†ã™ã‚‹
+;FLAG:6 = åœ°ã®æ–‡è¡¨ç¤ºã™ã‚‹ã‹ã©ã†ã‹ FLAG:7 = å£ä¸Šè¡¨ç¤ºã™ã‚‹ã‹ã©ã†ã‹
 ;-----------------------------------------------------------------------------------
 
 ;--------------------------------------------------
 ;@KOJO_MESSAGE_COM
-;ƒRƒ}ƒ“ƒhŽÀsŽž‚Éo—Í‚³‚ê‚Ü‚·
+;ã‚³ãƒžãƒ³ãƒ‰å®Ÿè¡Œæ™‚ã«å‡ºåŠ›ã•ã‚Œã¾ã™
 ;--------------------------------------------------
 @KOJO_MESSAGE_COM
-IF FLAG:Œûã•\Ž¦
-	;Žq‹Ÿ‚Ìê‡‚ÍNO:•ƒe~NO:•êe‚ÌŠÖ”‚ðŒÄ‚Ño‚·
+IF FLAG:å£ä¸Šè¡¨ç¤º
+	;å­ä¾›ã®å ´åˆã¯NO:çˆ¶è¦ªÃ—NO:æ¯è¦ªã®é–¢æ•°ã‚’å‘¼ã³å‡ºã™
 	IF NO:TARGET > 10000
-		TRYCCALLFORM CHILD_COM_K{CFLAG:ŒŒ‰ƒR[ƒh/10000}~{CFLAG:ŒŒ‰ƒR[ƒh%10000}
+		TRYCCALLFORM CHILD_COM_K{CFLAG:è¡€ç¸ã‚³ãƒ¼ãƒ‰/10000}Ã—{CFLAG:è¡€ç¸ã‚³ãƒ¼ãƒ‰%10000}
 		CATCH
 			GOTO NOTCHILD
 		ENDCATCH
@@ -30,19 +30,19 @@ IF FLAG:Œûã•\Ž¦
 	ENDIF
 ELSE
 	$ELSE
-	SIF FLAG:’n‚Ì•¶•\Ž¦
+	SIF FLAG:åœ°ã®æ–‡è¡¨ç¤º
 		TRYCALLFORM MESSAGE_COM_%SELECTCOMS%
 ENDIF
 
 ;--------------------------------------------------
 ;@KOJO_MESSAGE_USERCOM
-;TRAINŠO‚ÌƒRƒ}ƒ“ƒhŽÀsŽž‚Éo—Í‚³‚ê‚Ü‚·
+;TRAINå¤–ã®ã‚³ãƒžãƒ³ãƒ‰å®Ÿè¡Œæ™‚ã«å‡ºåŠ›ã•ã‚Œã¾ã™
 ;--------------------------------------------------
 @KOJO_MESSAGE_USERCOM, ARG
-IF FLAG:Œûã•\Ž¦
-	;Žq‹Ÿ‚Ìê‡‚ÍNO:•ƒe~NO:•êe‚ÌŠÖ”‚ðŒÄ‚Ño‚·
+IF FLAG:å£ä¸Šè¡¨ç¤º
+	;å­ä¾›ã®å ´åˆã¯NO:çˆ¶è¦ªÃ—NO:æ¯è¦ªã®é–¢æ•°ã‚’å‘¼ã³å‡ºã™
 	IF NO:TARGET > 10000
-		TRYCCALLFORM CHILD_USERCOM_K{CFLAG:ŒŒ‰ƒR[ƒh/10000}~{CFLAG:ŒŒ‰ƒR[ƒh%10000}
+		TRYCCALLFORM CHILD_USERCOM_K{CFLAG:è¡€ç¸ã‚³ãƒ¼ãƒ‰/10000}Ã—{CFLAG:è¡€ç¸ã‚³ãƒ¼ãƒ‰%10000}
 		CATCH
 			GOTO NOTCHILD
 		ENDCATCH
@@ -58,19 +58,19 @@ IF FLAG:Œûã•\Ž¦
 	ENDIF
 ELSE
 	$ELSE
-	SIF FLAG:’n‚Ì•¶•\Ž¦
+	SIF FLAG:åœ°ã®æ–‡è¡¨ç¤º
 		TRYCALLFORM MESSAGE_USERCOM_{ARG}
 ENDIF
 
 ;-------------------------------------------------
 ;@KOJO_MESSAGE_SHOOT
-;’²‹³ŽÒ‚ÌŽË¸‚ðƒgƒŠƒK[‚É‚µ‚½Œûã
+;èª¿æ•™è€…ã®å°„ç²¾ã‚’ãƒˆãƒªã‚¬ãƒ¼ã«ã—ãŸå£ä¸Š
 ;-------------------------------------------------
 @KOJO_MESSAGE_SHOOT
-IF FLAG:Œûã•\Ž¦
-	;Žq‹Ÿ‚Ìê‡‚ÍNO:•ƒe~NO:•êe‚ÌŠÖ”‚ðŒÄ‚Ño‚·
+IF FLAG:å£ä¸Šè¡¨ç¤º
+	;å­ä¾›ã®å ´åˆã¯NO:çˆ¶è¦ªÃ—NO:æ¯è¦ªã®é–¢æ•°ã‚’å‘¼ã³å‡ºã™
 	IF NO:TARGET > 10000
-		TRYCCALLFORM CHILD_SHOOT_K{CFLAG:ŒŒ‰ƒR[ƒh/10000}~{CFLAG:ŒŒ‰ƒR[ƒh%10000}
+		TRYCCALLFORM CHILD_SHOOT_K{CFLAG:è¡€ç¸ã‚³ãƒ¼ãƒ‰/10000}Ã—{CFLAG:è¡€ç¸ã‚³ãƒ¼ãƒ‰%10000}
 		CATCH
 			GOTO NOTCHILD
 		ENDCATCH
@@ -86,20 +86,20 @@ IF FLAG:Œûã•\Ž¦
 	ENDIF
 ELSE
 	$ELSE
-	SIF FLAG:’n‚Ì•¶•\Ž¦
+	SIF FLAG:åœ°ã®æ–‡è¡¨ç¤º
 		CALL SHOOT_MESSAGE
 ENDIF
 
 ;-------------------------------------------------
 ;@KOJO_MESSAGE_EX
-;“z—ê‚Ìâ’¸‚ðƒgƒŠƒK[‚É‚µ‚½Œûã
+;å¥´éš·ã®çµ¶é ‚ã‚’ãƒˆãƒªã‚¬ãƒ¼ã«ã—ãŸå£ä¸Š
 ;-------------------------------------------------
 @KOJO_MESSAGE_EX
 LOCAL = 0
-IF FLAG:Œûã•\Ž¦
-	;Žq‹Ÿ‚Ìê‡‚ÍNO:•ƒe~NO:•êe‚ÌŠÖ”‚ðŒÄ‚Ño‚·
+IF FLAG:å£ä¸Šè¡¨ç¤º
+	;å­ä¾›ã®å ´åˆã¯NO:çˆ¶è¦ªÃ—NO:æ¯è¦ªã®é–¢æ•°ã‚’å‘¼ã³å‡ºã™
 	IF NO:TARGET > 10000
-		TRYCCALLFORM CHILD_EX_K{CFLAG:ŒŒ‰ƒR[ƒh/10000}~{CFLAG:ŒŒ‰ƒR[ƒh%10000}
+		TRYCCALLFORM CHILD_EX_K{CFLAG:è¡€ç¸ã‚³ãƒ¼ãƒ‰/10000}Ã—{CFLAG:è¡€ç¸ã‚³ãƒ¼ãƒ‰%10000}
 			LOCAL = 1
 		CATCH
 			GOTO NOTCHILD
@@ -118,27 +118,27 @@ IF FLAG:Œûã•\Ž¦
 	ENDIF
 ELSE
 	$ELSE
-	SIF FLAG:’n‚Ì•¶•\Ž¦
+	SIF FLAG:åœ°ã®æ–‡è¡¨ç¤º
 		CALL EX_MESSAGE
 ENDIF
 
 ;-------------------------------------------------
-;â’¸Œn’n‚Ì•¶•\Ž¦‚ÌƒEƒFƒCƒg
+;çµ¶é ‚ç³»åœ°ã®æ–‡è¡¨ç¤ºã®ã‚¦ã‚§ã‚¤ãƒˆ
 ;-------------------------------------------------
-IF NOWEX:‚bâ’¸ || NOWEX:‚uâ’¸ || NOWEX:‚`â’¸ || NOWEX:‚aâ’¸ || NOWEX:ŽË¸ || NOWEX:•ú”A || NOWEX:•¬“û || NOWEX:’ª•¬‚« || NOWEX:MASTER:ŽË¸ || (ASSI > 0 && NOWEX:ASSI:ŽË¸) || NOWEX:MASTER:GŽèŽË¸
-	SIF FLAG:’n‚Ì•¶•\Ž¦ && !LOCAL
+IF NOWEX:ï¼£çµ¶é ‚ || NOWEX:ï¼¶çµ¶é ‚ || NOWEX:ï¼¡çµ¶é ‚ || NOWEX:ï¼¢çµ¶é ‚ || NOWEX:å°„ç²¾ || NOWEX:æ”¾å°¿ || NOWEX:å™´ä¹³ || NOWEX:æ½®å™´ã || NOWEX:MASTER:å°„ç²¾ || (ASSI > 0 && NOWEX:ASSI:å°„ç²¾) || NOWEX:MASTER:è§¦æ‰‹å°„ç²¾
+	SIF FLAG:åœ°ã®æ–‡è¡¨ç¤º && !LOCAL
 		WAIT
 ENDIF
 
 ;-------------------------------------------------
 ;@KOJO_MESSAGE_AFTER
-;ƒRƒ}ƒ“ƒhŽÀsŒã‚É•\Ž¦‚·‚éŒûãiˆ—‘rŽ¸Žž‚È‚Çj
+;ã‚³ãƒžãƒ³ãƒ‰å®Ÿè¡Œå¾Œã«è¡¨ç¤ºã™ã‚‹å£ä¸Šï¼ˆå‡¦å¥³å–ªå¤±æ™‚ãªã©ï¼‰
 ;-------------------------------------------------
 @KOJO_MESSAGE_AFTER
-IF FLAG:Œûã•\Ž¦
-	;Žq‹Ÿ‚Ìê‡‚ÍNO:•ƒe~NO:•êe‚ÌŠÖ”‚ðŒÄ‚Ño‚·
+IF FLAG:å£ä¸Šè¡¨ç¤º
+	;å­ä¾›ã®å ´åˆã¯NO:çˆ¶è¦ªÃ—NO:æ¯è¦ªã®é–¢æ•°ã‚’å‘¼ã³å‡ºã™
 	IF NO:TARGET > 10000
-		TRYCCALLFORM CHILD_AFTER_K{CFLAG:ŒŒ‰ƒR[ƒh/10000}~{CFLAG:ŒŒ‰ƒR[ƒh%10000}
+		TRYCCALLFORM CHILD_AFTER_K{CFLAG:è¡€ç¸ã‚³ãƒ¼ãƒ‰/10000}Ã—{CFLAG:è¡€ç¸ã‚³ãƒ¼ãƒ‰%10000}
 		CATCH
 			GOTO NOTCHILD
 		ENDCATCH
@@ -154,19 +154,19 @@ IF FLAG:Œûã•\Ž¦
 	ENDIF
 ELSE
 	$ELSE
-	SIF FLAG:’n‚Ì•¶•\Ž¦
+	SIF FLAG:åœ°ã®æ–‡è¡¨ç¤º
 		CALL AFTER_MESSAGE
 ENDIF
 
 ;-------------------------------------------------
 ;@KOJO_MESSAGE_PALAM
-;ƒpƒ‰ƒ[ƒ^•Ï“®‚ðƒgƒŠƒK[‚É‚µ‚½Œûã
+;ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿å¤‰å‹•ã‚’ãƒˆãƒªã‚¬ãƒ¼ã«ã—ãŸå£ä¸Š
 ;-------------------------------------------------
 @KOJO_MESSAGE_PALAM
-IF FLAG:Œûã•\Ž¦
-	;Žq‹Ÿ‚Ìê‡‚ÍNO:•ƒe~NO:•êe‚ÌŠÖ”‚ðŒÄ‚Ño‚·
+IF FLAG:å£ä¸Šè¡¨ç¤º
+	;å­ä¾›ã®å ´åˆã¯NO:çˆ¶è¦ªÃ—NO:æ¯è¦ªã®é–¢æ•°ã‚’å‘¼ã³å‡ºã™
 	IF NO:TARGET > 10000
-		TRYCCALLFORM CHILD_PALAM_K{CFLAG:ŒŒ‰ƒR[ƒh/10000}~{CFLAG:ŒŒ‰ƒR[ƒh%10000}
+		TRYCCALLFORM CHILD_PALAM_K{CFLAG:è¡€ç¸ã‚³ãƒ¼ãƒ‰/10000}Ã—{CFLAG:è¡€ç¸ã‚³ãƒ¼ãƒ‰%10000}
 		CATCH
 			GOTO NOTCHILD
 		ENDCATCH
@@ -182,19 +182,19 @@ IF FLAG:Œûã•\Ž¦
 	ENDIF
 ELSE
 	$ELSE
-	SIF FLAG:’n‚Ì•¶•\Ž¦
+	SIF FLAG:åœ°ã®æ–‡è¡¨ç¤º
 		CALL PALAM_MESSAGE
 ENDIF
 
 ;-------------------------------------------------
 ;@KOJO_MESSAGE_TSHOOT
-;GŽè‚ÌŽË¸‚ðƒgƒŠƒK[‚É‚µ‚½Œûã
+;è§¦æ‰‹ã®å°„ç²¾ã‚’ãƒˆãƒªã‚¬ãƒ¼ã«ã—ãŸå£ä¸Š
 ;-------------------------------------------------
 @KOJO_MESSAGE_TSHOOT
-IF FLAG:Œûã•\Ž¦
-	;Žq‹Ÿ‚Ìê‡‚ÍNO:•ƒe~NO:•êe‚ÌŠÖ”‚ðŒÄ‚Ño‚·
+IF FLAG:å£ä¸Šè¡¨ç¤º
+	;å­ä¾›ã®å ´åˆã¯NO:çˆ¶è¦ªÃ—NO:æ¯è¦ªã®é–¢æ•°ã‚’å‘¼ã³å‡ºã™
 	IF NO:TARGET > 10000
-		TRYCCALLFORM CHILD_TSHOOT_K{CFLAG:ŒŒ‰ƒR[ƒh/10000}~{CFLAG:ŒŒ‰ƒR[ƒh%10000}
+		TRYCCALLFORM CHILD_TSHOOT_K{CFLAG:è¡€ç¸ã‚³ãƒ¼ãƒ‰/10000}Ã—{CFLAG:è¡€ç¸ã‚³ãƒ¼ãƒ‰%10000}
 		CATCH
 			GOTO NOTCHILD
 		ENDCATCH
@@ -210,26 +210,26 @@ IF FLAG:Œûã•\Ž¦
 	ENDIF
 ELSE
 	$ELSE
-	SIF FLAG:’n‚Ì•¶•\Ž¦
+	SIF FLAG:åœ°ã®æ–‡è¡¨ç¤º
 		CALL TSHOOT_MESSAGE
 ENDIF
 
 ;-------------------------------------------------
 ;@KOJO_MESSAGE_MARK
-;ˆó•Ï“®‚ðƒgƒŠƒK[‚É‚µ‚½Œûã
+;åˆ»å°å¤‰å‹•ã‚’ãƒˆãƒªã‚¬ãƒ¼ã«ã—ãŸå£ä¸Š
 ;-------------------------------------------------
 @KOJO_MESSAGE_MARK, ARG
 ;ARG
-;1=‹ê’Éˆó
-;2=‰õŠyˆó
-;3=‰õŠy‚É‚æ‚é‹ü•ž
-;4=‹ê’ÉA‹°•|‚É‚æ‚é‹ü•ž
-;5=‹ü•žA‹±‡‚É‚æ‚é‹ü•ž
-;10=”½”­ˆó
-IF FLAG:Œûã•\Ž¦
-	;Žq‹Ÿ‚Ìê‡‚ÍNO:•ƒe~NO:•êe‚ÌŠÖ”‚ðŒÄ‚Ño‚·
+;1=è‹¦ç—›åˆ»å°
+;2=å¿«æ¥½åˆ»å°
+;3=å¿«æ¥½ã«ã‚ˆã‚‹å±ˆæœ
+;4=è‹¦ç—›ã€ææ€–ã«ã‚ˆã‚‹å±ˆæœ
+;5=å±ˆæœã€æ­é †ã«ã‚ˆã‚‹å±ˆæœ
+;10=åç™ºåˆ»å°
+IF FLAG:å£ä¸Šè¡¨ç¤º
+	;å­ä¾›ã®å ´åˆã¯NO:çˆ¶è¦ªÃ—NO:æ¯è¦ªã®é–¢æ•°ã‚’å‘¼ã³å‡ºã™
 	IF NO:TARGET > 10000
-		TRYCCALLFORM CHILD_MARK_K{CFLAG:ŒŒ‰ƒR[ƒh/10000}~{CFLAG:ŒŒ‰ƒR[ƒh%10000}, ARG
+		TRYCCALLFORM CHILD_MARK_K{CFLAG:è¡€ç¸ã‚³ãƒ¼ãƒ‰/10000}Ã—{CFLAG:è¡€ç¸ã‚³ãƒ¼ãƒ‰%10000}, ARG
 		CATCH
 			GOTO NOTCHILD
 		ENDCATCH
@@ -245,26 +245,26 @@ IF FLAG:Œûã•\Ž¦
 	ENDIF
 ELSE
 	$ELSE
-	SIF FLAG:’n‚Ì•¶•\Ž¦
+	SIF FLAG:åœ°ã®æ–‡è¡¨ç¤º
 		TRYCALLFORM MARK_MESSAGE_{ARG}
 ENDIF
 
 ;-------------------------------------------------
 ;@KOJO_MESSAGE_EVENT
-;ƒCƒxƒ“ƒgŽž‚ÌŒûãAƒCƒxƒ“ƒgŠJŽnŽž‚Éo—Í‚µ‚Ü‚·
+;ã‚¤ãƒ™ãƒ³ãƒˆæ™‚ã®å£ä¸Šã€ã‚¤ãƒ™ãƒ³ãƒˆé–‹å§‹æ™‚ã«å‡ºåŠ›ã—ã¾ã™
 ;-------------------------------------------------
 @KOJO_MESSAGE_EVENT, ARGS, ARG = -1
 SIF ARG == -1
 	ARG = TARGET
 
-;ŒûãŒÄ‚Ño‚·Žž‚Ì‚ÝA‘ÎÛ‚ðTARGET‚É‚·‚é
+;å£ä¸Šå‘¼ã³å‡ºã™æ™‚ã®ã¿ã€å¯¾è±¡ã‚’TARGETã«ã™ã‚‹
 LOCAL = TARGET
 TARGET = ARG
 
-IF FLAG:Œûã•\Ž¦
-	;Žq‹Ÿ‚Ìê‡‚ÍNO:•ƒe~NO:•êe‚ÌŠÖ”‚ðŒÄ‚Ño‚·
+IF FLAG:å£ä¸Šè¡¨ç¤º
+	;å­ä¾›ã®å ´åˆã¯NO:çˆ¶è¦ªÃ—NO:æ¯è¦ªã®é–¢æ•°ã‚’å‘¼ã³å‡ºã™
 	IF NO:TARGET > 10000
-		TRYCCALLFORM CHILD_EVENT_K{CFLAG:ŒŒ‰ƒR[ƒh/10000}~{CFLAG:ŒŒ‰ƒR[ƒh%10000}, ARGS
+		TRYCCALLFORM CHILD_EVENT_K{CFLAG:è¡€ç¸ã‚³ãƒ¼ãƒ‰/10000}Ã—{CFLAG:è¡€ç¸ã‚³ãƒ¼ãƒ‰%10000}, ARGS
 		CATCH
 			GOTO NOTCHILD
 		ENDCATCH
@@ -280,7 +280,7 @@ IF FLAG:Œûã•\Ž¦
 	ENDIF
 ELSE
 	$ELSE
-	SIF FLAG:’n‚Ì•¶•\Ž¦
+	SIF FLAG:åœ°ã®æ–‡è¡¨ç¤º
 		TRYCALLFORM EVENT_MESSAGE_%ARGS%
 ENDIF
 
@@ -288,17 +288,17 @@ TARGET = LOCAL
 
 ;-------------------------------------------------
 ;@KOJO_MASTER_EVENT
-;MASTERŒûãê—p‚ÌƒCƒxƒ“ƒg
+;MASTERå£ä¸Šå°‚ç”¨ã®ã‚¤ãƒ™ãƒ³ãƒˆ
 ;-------------------------------------------------
 @KOJO_MASTER_EVENT, ARG
-IF FLAG:Œûã•\Ž¦
+IF FLAG:å£ä¸Šè¡¨ç¤º
 	TRYCCALLFORM KOJO_MASTER_EVENT_K{NO:MASTER}, ARG
 	CATCH
 		GOTO ELSE
 	ENDCATCH
 ELSE
 	$ELSE
-	SIF FLAG:’n‚Ì•¶•\Ž¦
+	SIF FLAG:åœ°ã®æ–‡è¡¨ç¤º
 		TRYCALLFORM EVENT_MASTER_MESSAGE_{ARG}
 ENDIF
 
@@ -306,13 +306,13 @@ TARGET = LOCAL
 
 ;--------------------------------------------------
 ;@KOJO_START
-;’²‹³ŠJŽnŽž‚ÉŒÄ‚Ño‚·
+;èª¿æ•™é–‹å§‹æ™‚ã«å‘¼ã³å‡ºã™
 ;--------------------------------------------------
 @KOJO_START
-IF FLAG:Œûã•\Ž¦
-	;Žq‹Ÿ‚Ìê‡‚ÍNO:•ƒe~NO:•êe‚ÌŠÖ”‚ðŒÄ‚Ño‚·
+IF FLAG:å£ä¸Šè¡¨ç¤º
+	;å­ä¾›ã®å ´åˆã¯NO:çˆ¶è¦ªÃ—NO:æ¯è¦ªã®é–¢æ•°ã‚’å‘¼ã³å‡ºã™
 	IF NO:TARGET > 10000
-		TRYCCALLFORM CHILD_START_K{CFLAG:ŒŒ‰ƒR[ƒh/10000}~{CFLAG:ŒŒ‰ƒR[ƒh%10000}
+		TRYCCALLFORM CHILD_START_K{CFLAG:è¡€ç¸ã‚³ãƒ¼ãƒ‰/10000}Ã—{CFLAG:è¡€ç¸ã‚³ãƒ¼ãƒ‰%10000}
 			RETURN 0
 		CATCH
 			GOTO NOTCHILD
@@ -328,13 +328,13 @@ ENDIF
 
 ;--------------------------------------------------
 ;@KOJO_TURNEND
-;’²‹³I—¹Žž‚ÉŒÄ‚Ño‚·
+;èª¿æ•™çµ‚äº†æ™‚ã«å‘¼ã³å‡ºã™
 ;--------------------------------------------------
 @KOJO_TURNEND
-IF FLAG:Œûã•\Ž¦
-	;Žq‹Ÿ‚Ìê‡‚ÍNO:•ƒe~NO:•êe‚ÌŠÖ”‚ðŒÄ‚Ño‚·
+IF FLAG:å£ä¸Šè¡¨ç¤º
+	;å­ä¾›ã®å ´åˆã¯NO:çˆ¶è¦ªÃ—NO:æ¯è¦ªã®é–¢æ•°ã‚’å‘¼ã³å‡ºã™
 	IF NO:TARGET > 10000
-		TRYCCALLFORM CHILD_TURNEND_K{CFLAG:ŒŒ‰ƒR[ƒh/10000}~{CFLAG:ŒŒ‰ƒR[ƒh%10000}
+		TRYCCALLFORM CHILD_TURNEND_K{CFLAG:è¡€ç¸ã‚³ãƒ¼ãƒ‰/10000}Ã—{CFLAG:è¡€ç¸ã‚³ãƒ¼ãƒ‰%10000}
 		CATCH
 			GOTO NOTCHILD
 		ENDCATCH
@@ -349,7 +349,7 @@ ENDIF
 
 ;-------------------------------------------------
 ;@KOJO_MESSAGE_ENDING
-;ƒGƒ“ƒfƒBƒ“ƒOŒûã
+;ã‚¨ãƒ³ãƒ‡ã‚£ãƒ³ã‚°å£ä¸Š
 ;-------------------------------------------------
 @KOJO_MESSAGE_ENDING, ARG
 
@@ -357,9 +357,9 @@ TRYCALLFORM KOJO_MESSAGE_ENDING_K{NO:TARGET}, ARG
 
 ;-------------------------------------------------
 ;@KOJO_STRATEGY
-;Œo‰c—pŒûã
+;çµŒå–¶ç”¨å£ä¸Š
 ;-------------------------------------------------
 ;@KOJO_STRATEGY, ARGS
-;SIF FLAG:Œûã•\Ž¦
+;SIF FLAG:å£ä¸Šè¡¨ç¤º
 ;	TRYCALLFORM %ARGS%
 

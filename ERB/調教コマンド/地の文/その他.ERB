@@ -1,207 +1,207 @@
-;-------------------------------------------
-;�R�}���h���s��̃e�L�X�g
+﻿;-------------------------------------------
+;コマンド実行後のテキスト
 ;-------------------------------------------
 @AFTER_MESSAGE
 LOCAL = 0
 
-;�����r���ŐG�肪�ː�
-IF NOWEX:MASTER:�G��ː� && TFLAG:�R�}���h�j�Z
-	PRINTFORML %CALLNAME:TARGET%�̔�O����A���t�ɍ��������j�Z�̌����X���G���`�������Ă������c�c
+;処女喪失で触手が射精
+IF NOWEX:MASTER:触手射精 && TFLAG:コマンド破瓜
+	PRINTFORML %CALLNAME:TARGET%の秘唇から、汚液に混ざった破瓜の血が醜い触手を伝い落ちていった……
 	LOCAL++
 ENDIF
 
-;�����r���Ŏː��Ȃ�
-IF !NOWEX:PLAYER:�ː� && !NOWEX:MASTER:�G��ː� && TFLAG:�R�}���h�j�Z
-	PRINTFORML %CALLNAME:TARGET%�̔�O����A�����̏؂ł���Ԃ��������ꗎ���Ă������c�c
+;処女喪失で射精なし
+IF !NOWEX:PLAYER:射精 && !NOWEX:MASTER:触手射精 && TFLAG:コマンド破瓜
+	PRINTFORML %CALLNAME:TARGET%の秘唇から、処女の証である赤い血が垂れ落ちていった……
 	LOCAL++
 ENDIF
 
-;�������Ȃ�
-IF SELECTCOMS == "�������Ȃ�"
-	SIF PALAM:�~�� >= PALAMLV:3
-		PRINTFORM %CALLNAME:TARGET%�͑����r��
-	SIF PALAM:�~�� >= PALAMLV:5
-		PRINT �M���ۂ����ł����������
-	SIF PALAM:�~�� >= PALAMLV:3 && TEQUIP:�Z��
-		PRINT �A�K�N�K�N�Ɛk����g�̂��������
-	SIF PALAM:�~�� >= PALAMLV:4
-		PRINT �Ȃ���A������ɑ��ڂ��C�肠�킹
-	SIF PALAM:�~�� >= PALAMLV:3
-		PRINTL �Ă���c�c
-	SIF PALAM:�~�� >= PALAMLV:3
+;何もしない
+IF SELECTCOMS == "何もしない"
+	SIF PALAM:欲情 >= PALAMLV:3
+		PRINTFORM %CALLNAME:TARGET%は息を荒げ
+	SIF PALAM:欲情 >= PALAMLV:5
+		PRINT 熱っぽい瞳でこちらを見つめ
+	SIF PALAM:欲情 >= PALAMLV:3 && TEQUIP:媚薬
+		PRINT 、ガクガクと震える身体を抱きしめ
+	SIF PALAM:欲情 >= PALAMLV:4
+		PRINT ながら、しきりに太腿を擦りあわせ
+	SIF PALAM:欲情 >= PALAMLV:3
+		PRINTL ている……
+	SIF PALAM:欲情 >= PALAMLV:3
 		LOCAL++
 ENDIF
 
-;���߃p�C�Y���Ŏː�������E��
+;着衣パイズリで射精したら脱ぐ
 SELECTCASE SELECTCOMS
-	CASE "�p�C�Y��", "�c�p�C�Y��", "�p�C�Y���t�F��", "69�p�C�Y��"
-		IF NOWEX:PLAYER:�ː� && OVER_BUST(TARGET) != "" && !TEQUIP:��
-			IF CFLAG:�ח�
-				PRINTFORML %CALLNAME:TARGET%��%CALLNAME:PLAYER%�̐��t�ŉ��ꂽ%OVER_BUST(TARGET)%��E���n�߂��c�c
+	CASE "パイズリ", "縦パイズリ", "パイズリフェラ", "69パイズリ"
+		IF NOWEX:PLAYER:射精 && OVER_BUST(TARGET) != "" && !TEQUIP:縄
+			IF CFLAG:陥落
+				PRINTFORML %CALLNAME:TARGET%は%CALLNAME:PLAYER%の精液で汚れた%OVER_BUST(TARGET)%を脱ぎ始めた……
 			ELSE
-				IF TALENT:�p���炢
-					PRINTFORML %CALLNAME:TARGET%��%CALLNAME:PLAYER%�̐��t�ŉ��ꂽ%OVER_BUST(TARGET)%�����R�Ƃ����\��Ō��߁A���^���Ԃɂ��Ȃ��炻���E�����c�c
+				IF TALENT:恥じらい
+					PRINTFORML %CALLNAME:TARGET%は%CALLNAME:PLAYER%の精液で汚れた%OVER_BUST(TARGET)%を唖然とした表情で見つめ、顔を真っ赤にしながらそれを脱いだ……
 				ELSE
-					PRINTFORML %CALLNAME:TARGET%��%CALLNAME:PLAYER%�̐��t�ŉ��ꂽ%OVER_BUST(TARGET)%��E���n�߂��c�c
+					PRINTFORML %CALLNAME:TARGET%は%CALLNAME:PLAYER%の精液で汚れた%OVER_BUST(TARGET)%を脱ぎ始めた……
 				ENDIF
 			ENDIF
 			LOCAL++
 		ENDIF
-	CASE "�_�u���p�C�Y��"
-		IF NOWEX:MASTER:�ː� && (OVER_BUST(TARGET) != "" || OVER_BUST(ASSI) != "") && !TEQUIP:��
+	CASE "ダブルパイズリ"
+		IF NOWEX:MASTER:射精 && (OVER_BUST(TARGET) != "" || OVER_BUST(ASSI) != "") && !TEQUIP:縄
 			SIF OVER_BUST(TARGET) != ""
 				PRINTFORM %CALLNAME:TARGET%
 			SIF OVER_BUST(TARGET) != "" && OVER_BUST(ASSI) != ""
-				PRINT ��
+				PRINT と
 			SIF OVER_BUST(ASSI) != ""
 				PRINTFORM %CALLNAME:ASSI%
-			PRINTFORML �́A%CALLNAME:MASTER%�̐��t�ŉ��ꂽ�ߕ���E���n�߂��c�c
+			PRINTFORML は、%CALLNAME:MASTER%の精液で汚れた衣服を脱ぎ始めた……
 			LOCAL++
 		ENDIF
 ENDSELECT
 
 ;-------------------------------------------------
-;��D��Ɏː��������͂����ŕ\������
+;避妊具に射精した時はここで表示する
 ;-------------------------------------------------
-IF GETBIT(TFLAG:��D��ː�, 0) || GETBIT(TFLAG:��D��ː�, 1)
-	PRINTFORML �ނт��y�j�X�����D��O��A��[�ɂ����Ղ�Ǝq��̗��܂����R���h�[����%CALLNAME:TARGET%�Ɍ����t�����c�c
-	;���ח�
-	IF !CFLAG:�ח�
-		PRINTFORML �����D�̂悤�ɖc��񂾃R���h�[�������āA%CALLNAME:TARGET%���S���ː���z�������߂Ă���c�c
-	;�ː������̂���l�Ŋח��ς�
-	ELSEIF NOWEX:MASTER:�ː� && CFLAG:�ח�
-		PRINTFORML %CALLNAME:TARGET%��%CALLNAME:MASTER%�̃y�j�X�ƃR���h�[�������݂Ɍ��߂�ƁA���Ԃ�߂�
+IF GETBIT(TFLAG:避妊具射精, 0) || GETBIT(TFLAG:避妊具射精, 1)
+	PRINTFORML 萎びたペニスから避妊具が外れ、先端にたっぷりと子種の溜まったコンドームを%CALLNAME:TARGET%に見せ付けた……
+	;未陥落
+	IF !CFLAG:陥落
+		PRINTFORML 水風船のように膨らんだコンドームを見て、%CALLNAME:TARGET%は膣内射精を想像し青ざめている……
+	;射精したのが主人で陥落済み
+	ELSEIF NOWEX:MASTER:射精 && CFLAG:陥落
+		PRINTFORML %CALLNAME:TARGET%は%CALLNAME:MASTER%のペニスとコンドームを交互に見つめると、顔を赤らめた
 	ENDIF
 	LOCAL++
 ENDIF
 
-;�t�F���Ŏː���
-IF TFLAG:���|���t�F��
-	PRINT ���̌�A
-	IF NOWEX:MASTER:�ː� && (ASSI > 0 && NOWEX:ASSI:�ː�)
-		PRINTFORML %CALLNAME:TARGET%��%CALLNAME:MASTER%��%CALLNAME:ASSI%�̃y�j�X�����݂ə����A������r�ߎ���Ă������c�c
+;フェラで射精後
+IF TFLAG:お掃除フェラ
+	PRINT その後、
+	IF NOWEX:MASTER:射精 && (ASSI > 0 && NOWEX:ASSI:射精)
+		PRINTFORML %CALLNAME:TARGET%は%CALLNAME:MASTER%と%CALLNAME:ASSI%のペニスを交互に咥え、汚れを舐め取っていった……
 	ELSE
-		SIF TFLAG:���|���t�F�� >= 2
-			PRINTFORM %CALLNAME:ASSI%��
-		PRINTFORML %CALLNAME:TARGET%�̓y�j�X�̉�����Y����r�߂Ƃ��Ă������c�c
+		SIF TFLAG:お掃除フェラ >= 2
+			PRINTFORM %CALLNAME:ASSI%と
+		PRINTFORML %CALLNAME:TARGET%はペニスの汚れを綺麗に舐めとっていった……
 	ENDIF
-	TFLAG:���|���t�F�� = 0
+	TFLAG:お掃除フェラ = 0
 	LOCAL++
 ENDIF
 
-;�����Ă���
-IF CFLAG:��
-	IF TALENT:����
-		SELECTCASE CFLAG:��
+;酔っている
+IF CFLAG:酔
+	IF TALENT:酒豪
+		SELECTCASE CFLAG:酔
 			CASE IS <= 20
-				PRINTFORML ���͉���Ă���悤�����A%CALLNAME:TARGET%�ɂƂ��Ă͂܂��܂�����Ȃ��炵���c�c
+				PRINTFORML 酒は回っているようだが、%CALLNAME:TARGET%にとってはまだまだ足りないらしい……
 			CASEELSE
-				PRINTFORML %CALLNAME:TARGET%�͂���������ċC�����ǂ��悤���c�c
+				PRINTFORML %CALLNAME:TARGET%はお酒が回って気分が良いようだ……
 		ENDSELECT
-	ELSEIF TALENT:����
-		SELECTCASE CFLAG:��
+	ELSEIF TALENT:下戸
+		SELECTCASE CFLAG:酔
 			CASE IS >= 20
-				PRINTFORML %CALLNAME:TARGET%�͏������݂������悤�ŋC���������ƌ����Ă���c�c
+				PRINTFORML %CALLNAME:TARGET%は少し飲みすぎたようで気分が悪いと言っている……
 			CASEELSE
-				PRINTFORML %CALLNAME:TARGET%�͂���������ċC�����ǂ��悤���c�c
+				PRINTFORML %CALLNAME:TARGET%はお酒が回って気分が良いようだ……
 		ENDSELECT
 	ELSE
-		SELECTCASE CFLAG:��
+		SELECTCASE CFLAG:酔
 			CASE IS >= 50
-				PRINTFORML %CALLNAME:TARGET%�͏������݂������悤�ŋC���������ƌ����Ă���c�c
+				PRINTFORML %CALLNAME:TARGET%は少し飲みすぎたようで気分が悪いと言っている……
 			CASEELSE
-				PRINTFORML %CALLNAME:TARGET%�͂���������ċC�����ǂ��悤���c�c
+				PRINTFORML %CALLNAME:TARGET%はお酒が回って気分が良いようだ……
 		ENDSELECT
 	ENDIF
 	LOCAL++
 ENDIF
 
-;�e�L�X�g��ǂނ��߂̃E�G�C�g
-;�\��������Ƃ��̂�
+;テキストを読むためのウエイト
+;表示があるときのみ
 SIF LOCAL
 	WAIT
 
 ;-------------------------------------------
-;�p�����[�^�ω����e�L�X�g�@�쐬��
+;パラメータ変化時テキスト　作成中
 ;-------------------------------------------
 @PALAM_MESSAGE
-;�~�LV2�ɂȂ����Ƃ��@�ȂǂȂ�
+;欲情がLV2になったとき　などなど
 
 ;-------------------------------------------
-;����擾���̃e�L�X�g
+;刻印取得時のテキスト
 ;-------------------------------------------
-;��ɍ���
+;苦痛刻印
 @MARK_MESSAGE_1
-SELECTCASE MARK:��ɍ���
+SELECTCASE MARK:苦痛刻印
 	CASE 1
-		PRINTFORML %CALLNAME:TARGET%�͊��c�܂��Ȃ����ɂ������Ă���c�c
+		PRINTFORML %CALLNAME:TARGET%は顔を歪ませながら苦痛を堪えている……
 	CASE 2
-		PRINTFORML %CALLNAME:TARGET%�͂��΂炭�̊ԁA���R�炵�����Ă����c�c
+		PRINTFORML %CALLNAME:TARGET%はしばらくの間、苦鳴を漏らし続けていた……
 	CASE 3
 		SELECTCASE SEX(TARGET)
 			CASE 1
-				PRINTFORML %CALLNAME:TARGET%�͗]��̋�ɂɐg���k���܂点�Ă���c�c
+				PRINTFORML %CALLNAME:TARGET%は余りの苦痛に身を縮こまらせている……
 			CASE 2
-				PRINTFORML %CALLNAME:TARGET%�͗]��̋�ɂɗ܂𗬂��Ă���c�c
+				PRINTFORML %CALLNAME:TARGET%は余りの苦痛に涙を流している……
 		ENDSELECT
 ENDSELECT
 
-;���y����
+;快楽刻印
 @MARK_MESSAGE_2
-SELECTCASE MARK:���y����
+SELECTCASE MARK:快楽刻印
 	CASE 1
-		PRINTFORML %CALLNAME:TARGET%�͌��������y�ɐg��ł��k�킹�Ă����c�c
+		PRINTFORML %CALLNAME:TARGET%は激しい快楽に身を打ち震わせていた……
 	CASE 2
-		PRINTFORML %CALLNAME:TARGET%�͉��y�̗]�C�Ɋ���ɂ܂��Ă����c�c
+		PRINTFORML %CALLNAME:TARGET%は快楽の余韻に顔を緩ませていた……
 	CASE 3
-		PRINTFORML %CALLNAME:TARGET%�͋���ȉ��y�ɐg���S���ł����Ă���悤���c�c
+		PRINTFORML %CALLNAME:TARGET%は強烈な快楽に身も心も焦がしているようだ……
 ENDSELECT
 
-;���y�ɂ���������
+;快楽による屈服刻印
 @MARK_MESSAGE_3
-SELECTCASE MARK:��������
+SELECTCASE MARK:屈服刻印
 	CASE 1
-		PRINTFORML %CALLNAME:TARGET%�͎v�킸���炵���g�����グ�����Ǝv���ƁA���Ԃ����Ă����炩��ڂ���炵���c�c
+		PRINTFORML %CALLNAME:TARGET%は思わず可愛らしい嬌声を上げたかと思うと、顔を赤くしてこちらから目を逸らした……
 	CASE 2
-		PRINTFORML %CALLNAME:TARGET%�͉��y�ɐk���Ȃ���A���~�����Ȏ����𑗂��Ă����c�c
+		PRINTFORML %CALLNAME:TARGET%は快楽に震えながら、物欲しげな視線を送っていた……
 	CASE 3
-		PRINTFORML %CALLNAME:TARGET%�͉��y�ɗ���Ȃ�����A����Ȃ�s�ׂ����肵�Ă����c�c
+		PRINTFORML %CALLNAME:TARGET%は快楽に乱れながらも、さらなる行為を懇願してきた……
 ENDSELECT
 
-;��Ƀ\�[�X�A���|�\�[�X�ɂ���������
+;苦痛ソース、恐怖ソースによる屈服刻印
 @MARK_MESSAGE_4
-SELECTCASE MARK:��������
+SELECTCASE MARK:屈服刻印
 	CASE 1
-		PRINTFORML %CALLNAME:TARGET%��%CALLNAME:PLAYER%������ƁA�����Ȕߖ������Ă����c�c
+		PRINTFORML %CALLNAME:TARGET%は%CALLNAME:PLAYER%を見ると、小さな悲鳴をあげていた……
 	CASE 2
-		PRINTFORML %CALLNAME:TARGET%�͑̂��k�܂��āA�����̘U���������𑗂��Ă���c�c
+		PRINTFORML %CALLNAME:TARGET%は体を縮ませて、怯えの篭った視線を送っている……
 	CASE 3
-		PRINTFORML %CALLNAME:TARGET%�͐k���Ȃ��牽�x�����x�������𐿂������Ă����c�c
+		PRINTFORML %CALLNAME:TARGET%は震えながら何度も何度も許しを請い続けていた……
 ENDSELECT
 
-;�����\�[�X�A�����\�[�X�ɂ���������
+;屈服ソース、恭順ソースによる屈服刻印
 @MARK_MESSAGE_5
-SELECTCASE MARK:��������
+SELECTCASE MARK:屈服刻印
 	CASE 1
-		PRINTFORML %CALLNAME:TARGET%�͋��J�Ɋ��c�߂Ă����c�c
+		PRINTFORML %CALLNAME:TARGET%は屈辱に顔を歪めていた……
 	CASE 2
-		PRINTFORML %CALLNAME:TARGET%�͖��炩�ɔ��R�̈ӎu����܂��Ă����c�c
+		PRINTFORML %CALLNAME:TARGET%は明らかに反抗の意志が弱まっていた……
 	CASE 3
-		PRINTFORML %CALLNAME:TARGET%�͂ǂ�������ȓ���������ɂ������Ă����c�c
+		PRINTFORML %CALLNAME:TARGET%はどこか虚ろな瞳をこちらにおくっていた……
 ENDSELECT
 
-;��������
+;反発刻印
 @MARK_MESSAGE_10
-SELECTCASE MARK:��������
+SELECTCASE MARK:反発刻印
 	CASE 1
-		IF TEQUIP:�A�C�}�X�N
-			PRINTFORML %CALLNAME:TARGET%�͕����ꂽ���E�̒��ł��肬��Ǝ�������𗧂ĂĂ���c�c
+		IF TEQUIP:アイマスク
+			PRINTFORML %CALLNAME:TARGET%は閉ざされた視界の中でぎりぎりと歯ぎしりを立てている……
 		ELSE
-			PRINTFORML %CALLNAME:TARGET%�͉s��������������Ɍ����Ă���c�c
+			PRINTFORML %CALLNAME:TARGET%は鋭い視線をこちらに向けている……
 		ENDIF
 	CASE 2
-		PRINTFORML %CALLNAME:TARGET%�͓{�����܂����\������Ă���c�c
+		PRINTFORML %CALLNAME:TARGET%は怒りを滲ませた表情をしている……
 	CASE 3
-		PRINTFORML %CALLNAME:TARGET%�͕��{�Ɋ��c�܂��āA���݌���ꂢ�Ă���c�c
+		PRINTFORML %CALLNAME:TARGET%は憤怒に顔を歪ませて、恨み言を呟いている……
 ENDSELECT
 

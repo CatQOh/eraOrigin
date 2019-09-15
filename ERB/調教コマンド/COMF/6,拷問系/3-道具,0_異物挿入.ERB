@@ -1,79 +1,79 @@
+ï»¿;-------------------------------------------------
+;ç•°ç‰©æŒ¿å…¥
 ;-------------------------------------------------
-;ˆÙ•¨‘}“ü
-;-------------------------------------------------
-@USERCOM_ABLE_ˆÙ•¨‘}“ü, ARG
+@USERCOM_ABLE_ç•°ç‰©æŒ¿å…¥, ARG
 #FUNCTION
-;GŽè¢Š«’†‚Íƒ_ƒ
-SIF TEQUIP:GŽè
+;è§¦æ‰‹å¬å–šä¸­ã¯ãƒ€ãƒ¡
+SIF TEQUIP:è§¦æ‰‹
 	RETURNF 0
-;VŠ´Šo‚à‚µ‚­‚ÍAŠ´Šo‚ª3–¢–ž‚¾‚ÆŽÀs‚Å‚«‚È‚¢
-SIF ABL:‚uŠ´Šo < 3 && ABL:‚`Š´Šo < 3
+;Væ„Ÿè¦šã‚‚ã—ãã¯Aæ„Ÿè¦šãŒ3æœªæº€ã ã¨å®Ÿè¡Œã§ããªã„
+SIF ABL:ï¼¶æ„Ÿè¦š < 3 && ABL:ï¼¡æ„Ÿè¦š < 3
 	RETURNF 0
-;—¼ŒŠ‚ª‚Ó‚³‚ª‚Á‚Ä‚é‚ÆŽÀs‚Å‚«‚È‚¢
-SIF ‚uŽg—p’†(TARGET) && ‚`Žg—p’†(TARGET)
+;ä¸¡ç©´ãŒãµã•ãŒã£ã¦ã‚‹ã¨å®Ÿè¡Œã§ããªã„
+SIF ï¼¶ä½¿ç”¨ä¸­(TARGET) && ï¼¡ä½¿ç”¨ä¸­(TARGET)
 	RETURNF 0
-;‘}“ü‚Å‚«‚éŒŠ‚ª‚Ó‚³‚ª‚Á‚Ä‚é‚ÆŽÀs‚Å‚«‚È‚¢
-IF ABL:‚uŠ´Šo >= 3
-	SIF ABL:‚`Š´Šo < 3 && ‚uŽg—p’†(TARGET)
+;æŒ¿å…¥ã§ãã‚‹ç©´ãŒãµã•ãŒã£ã¦ã‚‹ã¨å®Ÿè¡Œã§ããªã„
+IF ABL:ï¼¶æ„Ÿè¦š >= 3
+	SIF ABL:ï¼¡æ„Ÿè¦š < 3 && ï¼¶ä½¿ç”¨ä¸­(TARGET)
 		RETURNF 0
 ENDIF
-IF ABL:‚`Š´Šo >= 3
-	SIF ABL:‚`Š´Šo < 3 && ‚`Žg—p’†(TARGET)
+IF ABL:ï¼¡æ„Ÿè¦š >= 3
+	SIF ABL:ï¼¡æ„Ÿè¦š < 3 && ï¼¡ä½¿ç”¨ä¸­(TARGET)
 		RETURNF 0
 ENDIF
 
-;«Ší‚ª˜Io‚µ‚Ä‚È‚¢‚Æƒ_ƒ
-SIF !«Ší˜Io(TARGET)
+;æ€§å™¨ãŒéœ²å‡ºã—ã¦ãªã„ã¨ãƒ€ãƒ¡
+SIF !æ€§å™¨éœ²å‡º(TARGET)
 	RETURNF 0
 
 COMRESULT = 1
 RETURNF 1
 
-@COM_ˆÙ•¨‘}“ü
-PRINTL ˆÙ•¨‘}“ü
+@COM_ç•°ç‰©æŒ¿å…¥
+PRINTL ç•°ç‰©æŒ¿å…¥
 
 IF VAGINA(TARGET)
-	IF (ABL:‚uŠ´Šo >= 3 && ABL:‚`Š´Šo < 3) || TEQUIP:‚`ˆÙ•¨
-		LOCAL = GETNUM(ABL, "‚uŠ´Šo")
-	ELSEIF (ABL:‚uŠ´Šo < 3 && ABL:‚`Š´Šo >= 3) || TEQUIP:‚uˆÙ•¨
-		LOCAL = GETNUM(ABL, "‚`Š´Šo")
+	IF (ABL:ï¼¶æ„Ÿè¦š >= 3 && ABL:ï¼¡æ„Ÿè¦š < 3) || TEQUIP:ï¼¡ç•°ç‰©
+		LOCAL = GETNUM(ABL, "ï¼¶æ„Ÿè¦š")
+	ELSEIF (ABL:ï¼¶æ„Ÿè¦š < 3 && ABL:ï¼¡æ„Ÿè¦š >= 3) || TEQUIP:ï¼¶ç•°ç‰©
+		LOCAL = GETNUM(ABL, "ï¼¡æ„Ÿè¦š")
 	ELSE
-		PRINTL ‚Ç‚¿‚ç‚ÌŒŠ‚É‘}“ü‚µ‚Ü‚·‚©H
-		PRINTL [0] - äSŒŠ
-		PRINTL [1] - KŒŠ
-		PRINTL [2] - ‚â‚ß‚é
+		PRINTL ã©ã¡ã‚‰ã®ç©´ã«æŒ¿å…¥ã—ã¾ã™ã‹ï¼Ÿ
+		PRINTL [0] - è†£ç©´
+		PRINTL [1] - å°»ç©´
+		PRINTL [2] - ã‚„ã‚ã‚‹
 		DO
 			INPUT
 		LOOP LOOPRES(0, 1, 2)
 		
 		SELECTCASE RESULT
 			CASE 0
-				LOCAL = GETNUM(ABL, "‚uŠ´Šo")
+				LOCAL = GETNUM(ABL, "ï¼¶æ„Ÿè¦š")
 			CASE 1
-				LOCAL = GETNUM(ABL, "‚`Š´Šo")
+				LOCAL = GETNUM(ABL, "ï¼¡æ„Ÿè¦š")
 			CASE 2
 				RETURN 0
 		ENDSELECT
 	ENDIF
 ELSE
-	LOCAL = GETNUM(ABL, "‚`Š´Šo")
+	LOCAL = GETNUM(ABL, "ï¼¡æ„Ÿè¦š")
 ENDIF
 
-IF LOCAL == GETNUM(ABL, "‚uŠ´Šo")
-	PRINT äSŒŠ
-ELSEIF LOCAL == GETNUM(ABL, "‚`Š´Šo")
-	PRINT KŒŠ
+IF LOCAL == GETNUM(ABL, "ï¼¶æ„Ÿè¦š")
+	PRINT è†£ç©´
+ELSEIF LOCAL == GETNUM(ABL, "ï¼¡æ„Ÿè¦š")
+	PRINT å°»ç©´
 ENDIF
-PRINTL ‚É‰½‚ð‘}“ü‚µ‚Ü‚·‚©H
+PRINTL ã«ä½•ã‚’æŒ¿å…¥ã—ã¾ã™ã‹ï¼Ÿ
 SIF ABL:LOCAL >= 3
-	PRINTL [1] - ƒR[ƒq[ŠÊ
+	PRINTL [1] - ã‚³ãƒ¼ãƒ’ãƒ¼ç¼¶
 SIF ABL:LOCAL >= 4
-	PRINTL [2] - ƒyƒbƒgƒ{ƒgƒ‹
+	PRINTL [2] - ãƒšãƒƒãƒˆãƒœãƒˆãƒ«
 SIF ABL:LOCAL >= 5
-	PRINTL [3] - ‹ó‚«ƒrƒ“
-PRINTL [4] - ‚â‚ß‚é
+	PRINTL [3] - ç©ºããƒ“ãƒ³
+PRINTL [4] - ã‚„ã‚ã‚‹
 ;SIF ABL:LOCAL >= 6
-;	PRINTL [4] - Á‰ÎŠí
+;	PRINTL [4] - æ¶ˆç«å™¨
 
 DO
 	INPUT
@@ -87,28 +87,28 @@ DO
 LOOP LOOPRES(1, 2, 3)
 
 SELECTCASE LOCAL
-	CASE GETNUM(ABL, "‚uŠ´Šo")
-		TEQUIP:‚uˆÙ•¨ = RESULT
-		TFLAG:äSƒRƒ}ƒ“ƒh = 1
-	CASE GETNUM(ABL, "‚`Š´Šo")
-		TEQUIP:‚`ˆÙ•¨ = RESULT
+	CASE GETNUM(ABL, "ï¼¶æ„Ÿè¦š")
+		TEQUIP:ï¼¶ç•°ç‰© = RESULT
+		TFLAG:è†£ã‚³ãƒžãƒ³ãƒ‰ = 1
+	CASE GETNUM(ABL, "ï¼¡æ„Ÿè¦š")
+		TEQUIP:ï¼¡ç•°ç‰© = RESULT
 ENDSELECT
 
-TFLAG:ˆÙ•¨‘}“ü = LOCAL
+TFLAG:ç•°ç‰©æŒ¿å…¥ = LOCAL
 LOCAL:1 = RESULT
 
 CALL KOJO_MESSAGE_COM
 
 ;-------------------------------------------------
-;ŽË¸ƒQ[ƒWƒ`ƒFƒbƒNi“z—êj
+;å°„ç²¾ã‚²ãƒ¼ã‚¸ãƒã‚§ãƒƒã‚¯ï¼ˆå¥´éš·ï¼‰
 ;-------------------------------------------------
 LOCAL = 50
 
-;ABL:’²‹³ŽÒ‚Ì‹ZI‚ð‚Ý‚é
-LOCAL += (LOCAL/5)*ABL:PLAYER:‹ZI
+;ABL:èª¿æ•™è€…ã®æŠ€å·§ã‚’ã¿ã‚‹
+LOCAL += (LOCAL/5)*ABL:PLAYER:æŠ€å·§
 
-;ABL:Ž©ˆÔ’†“Å‚ð‚Ý‚é
-SELECTCASE ABL:Ž©ˆÔ’†“Å
+;ABL:è‡ªæ…°ä¸­æ¯’ã‚’ã¿ã‚‹
+SELECTCASE ABL:è‡ªæ…°ä¸­æ¯’
 	CASE 0
 		TIMES LOCAL , 1.00
 	CASE 1
@@ -120,18 +120,18 @@ SELECTCASE ABL:Ž©ˆÔ’†“Å
 	CASE 4
 		TIMES LOCAL , 2.00
 	CASEELSE
-		LOCAL += (LOCAL/3)*ABL:Ž©ˆÔ’†“Å
+		LOCAL += (LOCAL/3)*ABL:è‡ªæ…°ä¸­æ¯’
 ENDSELECT
 
-;ABL:—~–]‚ð‚Ý‚é
-LOCAL += (LOCAL/10)*ABL:—~–]
+;ABL:æ¬²æœ›ã‚’ã¿ã‚‹
+LOCAL += (LOCAL/10)*ABL:æ¬²æœ›
 
-IF TEQUIP:‚uˆÙ•¨
-	;PALAM:ŠŠ‚ð‚Ý‚é
-	LOCAL += (GETPALAMLV(PALAM:ŠŠ, 4)-3)*(LOCAL/5)
+IF TEQUIP:ï¼¶ç•°ç‰©
+	;PALAM:æ½¤æ»‘ã‚’ã¿ã‚‹
+	LOCAL += (GETPALAMLV(PALAM:æ½¤æ»‘, 4)-3)*(LOCAL/5)
 
-	;“z—ê‚ÌABL:Š´Šo‚ð‚Ý‚é
-	SELECTCASE ABL:‚uŠ´Šo
+	;å¥´éš·ã®ABL:æ„Ÿè¦šã‚’ã¿ã‚‹
+	SELECTCASE ABL:ï¼¶æ„Ÿè¦š
 		CASE 0
 			TIMES LOCAL , 0.50
 		CASE 1
@@ -143,13 +143,13 @@ IF TEQUIP:‚uˆÙ•¨
 		CASE 4
 			TIMES LOCAL , 2.00
 		CASEELSE
-			LOCAL += LOCAL*(ABL:‚uŠ´Šo-2)
+			LOCAL += LOCAL*(ABL:ï¼¶æ„Ÿè¦š-2)
 	ENDSELECT
 ENDIF
 
-IF TEQUIP:‚`ˆÙ•¨
-	;PALAM:ŠŠ‚ð‚Ý‚é
-	SELECTCASE GETPALAMLV(PALAM:ŠŠ, 4)
+IF TEQUIP:ï¼¡ç•°ç‰©
+	;PALAM:æ½¤æ»‘ã‚’ã¿ã‚‹
+	SELECTCASE GETPALAMLV(PALAM:æ½¤æ»‘, 4)
 		CASE 0
 			TIMES LOCAL , 0.20
 		CASE 1
@@ -162,7 +162,7 @@ IF TEQUIP:‚`ˆÙ•¨
 			TIMES LOCAL , 2.50
 	ENDSELECT
 
-	SELECTCASE ABL:‚`Š´Šo
+	SELECTCASE ABL:ï¼¡æ„Ÿè¦š
 		CASE 0
 			TIMES LOCAL , 0.50
 		CASE 1
@@ -174,12 +174,12 @@ IF TEQUIP:‚`ˆÙ•¨
 		CASE 4
 			TIMES LOCAL , 2.00
 		CASEELSE
-			LOCAL += LOCAL*(ABL:‚`Š´Šo-2)
+			LOCAL += LOCAL*(ABL:ï¼¡æ„Ÿè¦š-2)
 	ENDSELECT
 
-	;“z—ê‚ª’j‚Ìê‡‚Íƒzƒ‚‚Á‹C‚ðŒ©‚é
+	;å¥´éš·ãŒç”·ã®å ´åˆã¯ãƒ›ãƒ¢ã£æ°—ã‚’è¦‹ã‚‹
 	IF SEX(TARGET) == 1
-		SELECTCASE ABL:ƒzƒ‚‚Á‹C
+		SELECTCASE ABL:ãƒ›ãƒ¢ã£æ°—
 			CASE 0
 				TIMES LOCAL , 0.15
 			CASE 1
@@ -191,166 +191,166 @@ IF TEQUIP:‚`ˆÙ•¨
 			CASE 4
 				TIMES LOCAL , 1.00
 			CASEELSE
-				LOCAL += (LOCAL/10)*ABL:ƒzƒ‚‚Á‹C-3
+				LOCAL += (LOCAL/10)*ABL:ãƒ›ãƒ¢ã£æ°—-3
 		ENDSELECT
-	;—‚È‚ç–³ðŒ‚Å”¼Œ¸
+	;å¥³ãªã‚‰ç„¡æ¡ä»¶ã§åŠæ¸›
 	ELSE
 		TIMES LOCAL , 0.50
 	ENDIF
 ENDIF
 
-;“z—ê‚ÌABL:ƒ}ƒ]‚Á‹C‚ð‚Ý‚é
-LOCAL += (LOCAL/5)*ABL:ƒ}ƒ]‚Á‹C
+;å¥´éš·ã®ABL:ãƒžã‚¾ã£æ°—ã‚’ã¿ã‚‹
+LOCAL += (LOCAL/5)*ABL:ãƒžã‚¾ã£æ°—
 
-CALL ŽË¸ƒQ[ƒW‘‰Á, LOCAL, TARGET
+CALL å°„ç²¾ã‚²ãƒ¼ã‚¸å¢—åŠ , LOCAL, TARGET
 
 ;-------------------------------------------------
-;ƒ\[ƒX’Ç‰Áˆ—
+;ã‚½ãƒ¼ã‚¹è¿½åŠ å‡¦ç†
 ;-------------------------------------------------
 SELECTCASE LOCAL:1
 	CASE 1
-		;Á”ï‘Ì—ÍA‹C—Í
-		LOSEBASE:‘Ì—Í += 50
-		LOSEBASE:‹C—Í += 150
+		;æ¶ˆè²»ä½“åŠ›ã€æ°—åŠ›
+		LOSEBASE:ä½“åŠ› += 50
+		LOSEBASE:æ°—åŠ› += 150
 
-		SELECTCASE TFLAG:ˆÙ•¨‘}“ü
-			CASE GETNUM(ABL, "‚uŠ´Šo")
-				SOURCE:‰õV = 100
-			CASE GETNUM(ABL, "‚`Š´Šo")
-				SOURCE:‰õA = 100
+		SELECTCASE TFLAG:ç•°ç‰©æŒ¿å…¥
+			CASE GETNUM(ABL, "ï¼¶æ„Ÿè¦š")
+				SOURCE:å¿«V = 100
+			CASE GETNUM(ABL, "ï¼¡æ„Ÿè¦š")
+				SOURCE:å¿«A = 100
 		ENDSELECT
-		SOURCE:‹ê’É = 500
-		SOURCE:‹°•| = 200
-		SOURCE:˜Io = 50
-		SOURCE:ˆí’E = 100
-		SOURCE:”½Š´ = 70
+		SOURCE:è‹¦ç—› = 500
+		SOURCE:ææ€– = 200
+		SOURCE:éœ²å‡º = 50
+		SOURCE:é€¸è„± = 100
+		SOURCE:åæ„Ÿ = 70
 	CASE 2
-		;Á”ï‘Ì—ÍA‹C—Í
-		LOSEBASE:‘Ì—Í += 100
-		LOSEBASE:‹C—Í += 200
+		;æ¶ˆè²»ä½“åŠ›ã€æ°—åŠ›
+		LOSEBASE:ä½“åŠ› += 100
+		LOSEBASE:æ°—åŠ› += 200
 
-		SELECTCASE TFLAG:ˆÙ•¨‘}“ü
-			CASE GETNUM(ABL, "‚uŠ´Šo")
-				SOURCE:‰õV = 200
-			CASE GETNUM(ABL, "‚`Š´Šo")
-				SOURCE:‰õA = 200
+		SELECTCASE TFLAG:ç•°ç‰©æŒ¿å…¥
+			CASE GETNUM(ABL, "ï¼¶æ„Ÿè¦š")
+				SOURCE:å¿«V = 200
+			CASE GETNUM(ABL, "ï¼¡æ„Ÿè¦š")
+				SOURCE:å¿«A = 200
 		ENDSELECT
-		SOURCE:‹ê’É = 1000
-		SOURCE:‹°•| = 400
-		SOURCE:˜Io = 50
-		SOURCE:ˆí’E = 150
-		SOURCE:”½Š´ = 100
+		SOURCE:è‹¦ç—› = 1000
+		SOURCE:ææ€– = 400
+		SOURCE:éœ²å‡º = 50
+		SOURCE:é€¸è„± = 150
+		SOURCE:åæ„Ÿ = 100
 	CASE 3
-		;Á”ï‘Ì—ÍA‹C—Í
-		LOSEBASE:‘Ì—Í += 200
-		LOSEBASE:‹C—Í += 400
+		;æ¶ˆè²»ä½“åŠ›ã€æ°—åŠ›
+		LOSEBASE:ä½“åŠ› += 200
+		LOSEBASE:æ°—åŠ› += 400
 
-		SELECTCASE TFLAG:ˆÙ•¨‘}“ü
-			CASE GETNUM(ABL, "‚uŠ´Šo")
-				SOURCE:‰õV = 300
-			CASE GETNUM(ABL, "‚`Š´Šo")
-				SOURCE:‰õA = 300
+		SELECTCASE TFLAG:ç•°ç‰©æŒ¿å…¥
+			CASE GETNUM(ABL, "ï¼¶æ„Ÿè¦š")
+				SOURCE:å¿«V = 300
+			CASE GETNUM(ABL, "ï¼¡æ„Ÿè¦š")
+				SOURCE:å¿«A = 300
 		ENDSELECT
-		SOURCE:‹ê’É = 1500
-		SOURCE:‹°•| = 800
-		SOURCE:˜Io = 50
-		SOURCE:ˆí’E = 200
-		SOURCE:”½Š´ = 100
+		SOURCE:è‹¦ç—› = 1500
+		SOURCE:ææ€– = 800
+		SOURCE:éœ²å‡º = 50
+		SOURCE:é€¸è„± = 200
+		SOURCE:åæ„Ÿ = 100
 	CASE 4
-		;Á”ï‘Ì—ÍA‹C—Í
-		LOSEBASE:‘Ì—Í += 300
-		LOSEBASE:‹C—Í += 500
+		;æ¶ˆè²»ä½“åŠ›ã€æ°—åŠ›
+		LOSEBASE:ä½“åŠ› += 300
+		LOSEBASE:æ°—åŠ› += 500
 
-		SELECTCASE TFLAG:ˆÙ•¨‘}“ü
-			CASE GETNUM(ABL, "‚uŠ´Šo")
-				SOURCE:‰õV = 400
-			CASE GETNUM(ABL, "‚`Š´Šo")
-				SOURCE:‰õA = 400
+		SELECTCASE TFLAG:ç•°ç‰©æŒ¿å…¥
+			CASE GETNUM(ABL, "ï¼¶æ„Ÿè¦š")
+				SOURCE:å¿«V = 400
+			CASE GETNUM(ABL, "ï¼¡æ„Ÿè¦š")
+				SOURCE:å¿«A = 400
 		ENDSELECT
-		SOURCE:‹ê’É = 2000
-		SOURCE:‹°•| = 1000
-		SOURCE:˜Io = 50
-		SOURCE:ˆí’E = 250
-		SOURCE:”½Š´ = 100
+		SOURCE:è‹¦ç—› = 2000
+		SOURCE:ææ€– = 1000
+		SOURCE:éœ²å‡º = 50
+		SOURCE:é€¸è„± = 250
+		SOURCE:åæ„Ÿ = 100
 ENDSELECT
 
-DOWNBASE:MASTER:‘Ì—Í += 30
-DOWNBASE:MASTER:‹C—Í += 30
+DOWNBASE:MASTER:ä½“åŠ› += 30
+DOWNBASE:MASTER:æ°—åŠ› += 30
 
 ;-------------------------------------------------
-;“ÁŽêƒ\[ƒXˆ—
+;ç‰¹æ®Šã‚½ãƒ¼ã‚¹å‡¦ç†
 ;-------------------------------------------------
-;—}ˆ³A’ïRŽ‚¿‚É‚ÍA—}ŸTƒ\[ƒX’Ç‰Á
-SIF TALENT:—}ˆ³ || TALENT:’ïR
-	SOURCE:ŸT‹ü += 200
+;æŠ‘åœ§ã€æŠµæŠ—æŒã¡ã«ã¯ã€æŠ‘é¬±ã‚½ãƒ¼ã‚¹è¿½åŠ 
+SIF TALENT:æŠ‘åœ§ || TALENT:æŠµæŠ—
+	SOURCE:é¬±å±ˆ += 200
 
-;ˆ—‚¾‚Á‚½ê‡‚ÍA‹ê’É‚Ìƒ\[ƒX‚Æ”½”­‚Ìƒ\[ƒX‚ð’Ç‰Á‚·‚é
-IF TALENT:ˆ—
-	SOURCE:‹ê’É += 2000
-	SOURCE:”½Š´ += 3000
+;å‡¦å¥³ã ã£ãŸå ´åˆã¯ã€è‹¦ç—›ã®ã‚½ãƒ¼ã‚¹ã¨åç™ºã®ã‚½ãƒ¼ã‚¹ã‚’è¿½åŠ ã™ã‚‹
+IF TALENT:å‡¦å¥³
+	SOURCE:è‹¦ç—› += 2000
+	SOURCE:åæ„Ÿ += 3000
 ENDIF
 
-;Ä¶ˆ—‚¾‚Á‚½ê‡‚ÍA‹ê’É‚Ìƒ\[ƒX‚Æ”½”­‚Ìƒ\[ƒX‚ð’Ç‰Á‚·‚é
-IF TALENT:Ä¶ˆ—
-	SOURCE:‹ê’É += 500
-	SOURCE:”½Š´ += 1000
+;å†ç”Ÿå‡¦å¥³ã ã£ãŸå ´åˆã¯ã€è‹¦ç—›ã®ã‚½ãƒ¼ã‚¹ã¨åç™ºã®ã‚½ãƒ¼ã‚¹ã‚’è¿½åŠ ã™ã‚‹
+IF TALENT:å†ç”Ÿå‡¦å¥³
+	SOURCE:è‹¦ç—› += 500
+	SOURCE:åæ„Ÿ += 1000
 ENDIF
 
-;‹ê’É‚Ìƒpƒ‰ƒ[ƒ^‚É‚æ‚é‹ê’É‚Ìƒ\[ƒX‘‰Á‚Íæ‚Éˆ—‚µ‚Ä‚¨‚­
-SOURCE:‹ê’É += GETPALAMLV(PALAM:‹ê’É, 4)*(SOURCE:‹ê’É/2)
+;è‹¦ç—›ã®ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ã«ã‚ˆã‚‹è‹¦ç—›ã®ã‚½ãƒ¼ã‚¹å¢—åŠ ã¯å…ˆã«å‡¦ç†ã—ã¦ãŠã
+SOURCE:è‹¦ç—› += GETPALAMLV(PALAM:è‹¦ç—›, 4)*(SOURCE:è‹¦ç—›/2)
 
-;V‹y‚ÑA‚Ö‚Ì‹ê’É‚Íæ‚Éˆ—‚µ‚Ä‚¨‚­
-;ABL:Š´Šo‚ð‚Ý‚éiˆ—‚Ì”½Š´‚Í•Ê“rˆ—Ï‚Ý‚È‚Ì‚ÅÈ—ªj
-SELECTCASE ABL:(TFLAG:ˆÙ•¨‘}“ü)
+;VåŠã³Aã¸ã®è‹¦ç—›ã¯å…ˆã«å‡¦ç†ã—ã¦ãŠã
+;ABL:æ„Ÿè¦šã‚’ã¿ã‚‹ï¼ˆå‡¦å¥³ã®åæ„Ÿã¯åˆ¥é€”å‡¦ç†æ¸ˆã¿ãªã®ã§çœç•¥ï¼‰
+SELECTCASE ABL:(TFLAG:ç•°ç‰©æŒ¿å…¥)
 	CASE IS <= 3
-		TIMES SOURCE:‹ê’É , 2.00
-		TIMES SOURCE:”½Š´ , 1.50
+		TIMES SOURCE:è‹¦ç—› , 2.00
+		TIMES SOURCE:åæ„Ÿ , 1.50
 	CASE IS <= 4
-		TIMES SOURCE:‹ê’É , 1.50
-		TIMES SOURCE:”½Š´ , 1.20
+		TIMES SOURCE:è‹¦ç—› , 1.50
+		TIMES SOURCE:åæ„Ÿ , 1.20
 	CASE IS <= 5
-		TIMES SOURCE:‹ê’É , 1.00
+		TIMES SOURCE:è‹¦ç—› , 1.00
 	CASE IS >= 6
-		TIMES SOURCE:‹ê’É , 0.50
+		TIMES SOURCE:è‹¦ç—› , 0.50
 ENDSELECT
 
-;PALAM:ŠŠ‚ð‚Ý‚é
-SELECTCASE GETPALAMLV(PALAM:ŠŠ, 4)
+;PALAM:æ½¤æ»‘ã‚’ã¿ã‚‹
+SELECTCASE GETPALAMLV(PALAM:æ½¤æ»‘, 4)
 	CASE 0
-		TIMES SOURCE:‹ê’É , 2.00
-		TIMES SOURCE:”½Š´ , 1.50
+		TIMES SOURCE:è‹¦ç—› , 2.00
+		TIMES SOURCE:åæ„Ÿ , 1.50
 	CASE 1
-		TIMES SOURCE:‹ê’É , 1.80
-		TIMES SOURCE:”½Š´ , 1.20
+		TIMES SOURCE:è‹¦ç—› , 1.80
+		TIMES SOURCE:åæ„Ÿ , 1.20
 	CASE 2
-		TIMES SOURCE:‹ê’É , 1.60
+		TIMES SOURCE:è‹¦ç—› , 1.60
 	CASE 3
-		TIMES SOURCE:‹ê’É , 1.40
+		TIMES SOURCE:è‹¦ç—› , 1.40
 	CASE 4
-		TIMES SOURCE:‹ê’É , 1.20
+		TIMES SOURCE:è‹¦ç—› , 1.20
 ENDSELECT
 
 ;-------------------------------------------------
-;â’¸ƒ`ƒFƒbƒN
+;çµ¶é ‚ãƒã‚§ãƒƒã‚¯
 ;-------------------------------------------------
 CALL SOURCE_CHECK_CVAB
 
 ;-------------------------------------------------
-;ŽË¸ƒ`ƒFƒbƒN
+;å°„ç²¾ãƒã‚§ãƒƒã‚¯
 ;-------------------------------------------------
-IF TEQUIP:‚uˆÙ•¨
-	LOCAL = GETNUM(ABL, "‚uŠ´Šo")
-ELSEIF TEQUIP:‚`ˆÙ•¨
-	LOCAL = GETNUM(ABL, "‚`Š´Šo")
+IF TEQUIP:ï¼¶ç•°ç‰©
+	LOCAL = GETNUM(ABL, "ï¼¶æ„Ÿè¦š")
+ELSEIF TEQUIP:ï¼¡ç•°ç‰©
+	LOCAL = GETNUM(ABL, "ï¼¡æ„Ÿè¦š")
 ENDIF
 
-IF TEQUIP:‚uˆÙ•¨ && TEQUIP:‚`ˆÙ•¨
-	IF ABL:‚uŠ´Šo > ABL:‚`Š´Šo
-		LOCAL = GETNUM(ABL, "‚uŠ´Šo")
-	ELSEIF ABL:‚`Š´Šo > ABL:‚uŠ´Šo
-		LOCAL = GETNUM(ABL, "‚`Š´Šo")
+IF TEQUIP:ï¼¶ç•°ç‰© && TEQUIP:ï¼¡ç•°ç‰©
+	IF ABL:ï¼¶æ„Ÿè¦š > ABL:ï¼¡æ„Ÿè¦š
+		LOCAL = GETNUM(ABL, "ï¼¶æ„Ÿè¦š")
+	ELSEIF ABL:ï¼¡æ„Ÿè¦š > ABL:ï¼¶æ„Ÿè¦š
+		LOCAL = GETNUM(ABL, "ï¼¡æ„Ÿè¦š")
 	ELSE
-		LOCAL = GETNUM(ABL, "‚uŠ´Šo")
+		LOCAL = GETNUM(ABL, "ï¼¶æ„Ÿè¦š")
 	ENDIF
 ENDIF
 
@@ -358,15 +358,15 @@ CALL SAMEN_CHECK_T, LOCAL
 CALL SAMEN_SHOOT_T, LOCAL, RESULT
 
 ;-------------------------------------------------
-;ŒoŒ±‚Ìˆ—
+;çµŒé¨“ã®å‡¦ç†
 ;-------------------------------------------------
-SELECTCASE TFLAG:ˆÙ•¨‘}“ü
+SELECTCASE TFLAG:ç•°ç‰©æŒ¿å…¥
 	CASE 4
-		PRINTFORML ‚uŠg’£ŒoŒ±+{TEQUIP:‚uˆÙ•¨}
-		EXP:‚uŠg’£ŒoŒ± += TEQUIP:‚uˆÙ•¨
+		PRINTFORML ï¼¶æ‹¡å¼µçµŒé¨“+{TEQUIP:ï¼¶ç•°ç‰©}
+		EXP:ï¼¶æ‹¡å¼µçµŒé¨“ += TEQUIP:ï¼¶ç•°ç‰©
 	CASE 5
-		PRINTFORML ‚`Šg’£ŒoŒ±+{TEQUIP:‚`ˆÙ•¨}
-		EXP:‚`Šg’£ŒoŒ± += TEQUIP:‚`ˆÙ•¨
+		PRINTFORML ï¼¡æ‹¡å¼µçµŒé¨“+{TEQUIP:ï¼¡ç•°ç‰©}
+		EXP:ï¼¡æ‹¡å¼µçµŒé¨“ += TEQUIP:ï¼¡ç•°ç‰©
 ENDSELECT
 
 CALL EXPUP, 1, 4
@@ -374,45 +374,45 @@ CALL EXPUP, 1, 4
 RETURN 1
 
 ;-------------------------------------------------
-;‘•’…Œp‘±‚Ìˆ—
+;è£…ç€ç¶™ç¶šã®å‡¦ç†
 ;-------------------------------------------------
-@EQUIP_COM_ˆÙ•¨‘}“ü
-;ˆÙ•¨‘}“ü’†
+@EQUIP_COM_ç•°ç‰©æŒ¿å…¥
+;ç•°ç‰©æŒ¿å…¥ä¸­
 
-;VŒoŒ±‚ð”º‚¤ƒRƒ}ƒ“ƒh‚Ìƒtƒ‰ƒO(ˆ—–ŒÄ¶‘Î‰ž)
-IF TEQUIP:‚uˆÙ•¨
-	PRINTL ƒƒ”ƒ@ƒMƒiˆÙ•¨‘}“ü’†„
-	TFLAG:äSƒRƒ}ƒ“ƒh = 1
+;VçµŒé¨“ã‚’ä¼´ã†ã‚³ãƒžãƒ³ãƒ‰ã®ãƒ•ãƒ©ã‚°(å‡¦å¥³è†œå†ç”Ÿå¯¾å¿œ)
+IF TEQUIP:ï¼¶ç•°ç‰©
+	PRINTL ï¼œãƒ´ã‚¡ã‚®ãƒŠç•°ç‰©æŒ¿å…¥ä¸­ï¼ž
+	TFLAG:è†£ã‚³ãƒžãƒ³ãƒ‰ = 1
 ENDIF
-SIF TEQUIP:‚`ˆÙ•¨
-	PRINTL ƒƒAƒiƒ‹ˆÙ•¨‘}“ü’†„
+SIF TEQUIP:ï¼¡ç•°ç‰©
+	PRINTL ï¼œã‚¢ãƒŠãƒ«ç•°ç‰©æŒ¿å…¥ä¸­ï¼ž
 
-IF TEQUIP:‚uˆÙ•¨
-	LOSEBASE:‘Ì—Í += (TEQUIP:‚uˆÙ•¨*30)
-	LOSEBASE:‹C—Í += (TEQUIP:‚uˆÙ•¨*50)
+IF TEQUIP:ï¼¶ç•°ç‰©
+	LOSEBASE:ä½“åŠ› += (TEQUIP:ï¼¶ç•°ç‰©*30)
+	LOSEBASE:æ°—åŠ› += (TEQUIP:ï¼¶ç•°ç‰©*50)
 
-	SOURCE:‰õV += (TEQUIP:‚uˆÙ•¨*170)
-	SOURCE:‹ê’É += (TEQUIP:‚uˆÙ•¨*50)
-	SOURCE:˜Io += 30
-	SOURCE:ˆí’E += (TEQUIP:‚uˆÙ•¨*20)
+	SOURCE:å¿«V += (TEQUIP:ï¼¶ç•°ç‰©*170)
+	SOURCE:è‹¦ç—› += (TEQUIP:ï¼¶ç•°ç‰©*50)
+	SOURCE:éœ²å‡º += 30
+	SOURCE:é€¸è„± += (TEQUIP:ï¼¶ç•°ç‰©*20)
 ENDIF
-IF TEQUIP:‚`ˆÙ•¨
-	LOSEBASE:‘Ì—Í += (TEQUIP:‚`ˆÙ•¨*30)
-	LOSEBASE:‹C—Í += (TEQUIP:‚`ˆÙ•¨*50)
+IF TEQUIP:ï¼¡ç•°ç‰©
+	LOSEBASE:ä½“åŠ› += (TEQUIP:ï¼¡ç•°ç‰©*30)
+	LOSEBASE:æ°—åŠ› += (TEQUIP:ï¼¡ç•°ç‰©*50)
 
-	SOURCE:‰õA += (TEQUIP:‚`ˆÙ•¨*170)
-	SOURCE:‹ê’É += (TEQUIP:‚`ˆÙ•¨*50)
-	SOURCE:˜Io += 30
-	SOURCE:ˆí’E += (TEQUIP:‚`ˆÙ•¨*20)
+	SOURCE:å¿«A += (TEQUIP:ï¼¡ç•°ç‰©*170)
+	SOURCE:è‹¦ç—› += (TEQUIP:ï¼¡ç•°ç‰©*50)
+	SOURCE:éœ²å‡º += 30
+	SOURCE:é€¸è„± += (TEQUIP:ï¼¡ç•°ç‰©*20)
 ENDIF
 
 ;-------------------------------------------------
-;ŽË¸ƒQ[ƒWƒ`ƒFƒbƒNi“z—êj
+;å°„ç²¾ã‚²ãƒ¼ã‚¸ãƒã‚§ãƒƒã‚¯ï¼ˆå¥´éš·ï¼‰
 ;-------------------------------------------------
 LOCAL = 20
 
-;ABL:’²‹³ŽÒ‚Ì‹ZI‚ð‚Ý‚é
-SELECTCASE ABL:PLAYER:‹ZI
+;ABL:èª¿æ•™è€…ã®æŠ€å·§ã‚’ã¿ã‚‹
+SELECTCASE ABL:PLAYER:æŠ€å·§
 	CASE 0
 		TIMES LOCAL , 1.00
 	CASE 1
@@ -427,8 +427,8 @@ SELECTCASE ABL:PLAYER:‹ZI
 		TIMES LOCAL , 2.00
 ENDSELECT
 
-;ABL:]‡‚ð‚Ý‚é
-SELECTCASE ABL:]‡
+;ABL:å¾“é †ã‚’ã¿ã‚‹
+SELECTCASE ABL:å¾“é †
 	CASE 0
 		TIMES LOCAL , 0.80
 	CASE 1
@@ -443,8 +443,8 @@ SELECTCASE ABL:]‡
 		TIMES LOCAL , 1.30
 ENDSELECT
 
-;ABL:—~–]‚ð‚Ý‚é
-SELECTCASE ABL:—~–]
+;ABL:æ¬²æœ›ã‚’ã¿ã‚‹
+SELECTCASE ABL:æ¬²æœ›
 	CASE 0
 		TIMES LOCAL , 1.00
 	CASE 1
@@ -459,12 +459,12 @@ SELECTCASE ABL:—~–]
 		TIMES LOCAL , 1.50
 ENDSELECT
 
-;PALAM:ŠŠ‚ð‚Ý‚é
-LOCAL += (GETPALAMLV(PALAM:ŠŠ, 4)-3)*(LOCAL/5)
+;PALAM:æ½¤æ»‘ã‚’ã¿ã‚‹
+LOCAL += (GETPALAMLV(PALAM:æ½¤æ»‘, 4)-3)*(LOCAL/5)
 
-;“z—ê‚ÌABL:Š´Šo‚ð‚Ý‚é
-IF TEQUIP:‚uˆÙ•¨
-	SELECTCASE ABL:‚uŠ´Šo
+;å¥´éš·ã®ABL:æ„Ÿè¦šã‚’ã¿ã‚‹
+IF TEQUIP:ï¼¶ç•°ç‰©
+	SELECTCASE ABL:ï¼¶æ„Ÿè¦š
 		CASE 0
 			TIMES LOCAL , 0.50
 		CASE 1
@@ -479,8 +479,8 @@ IF TEQUIP:‚uˆÙ•¨
 			TIMES LOCAL , 3.00
 	ENDSELECT
 ENDIF
-IF TEQUIP:‚`ˆÙ•¨
-	SELECTCASE ABL:‚`Š´Šo
+IF TEQUIP:ï¼¡ç•°ç‰©
+	SELECTCASE ABL:ï¼¡æ„Ÿè¦š
 		CASE 0
 			TIMES LOCAL , 0.50
 		CASE 1
@@ -496,8 +496,8 @@ IF TEQUIP:‚`ˆÙ•¨
 	ENDSELECT
 ENDIF
 
-;“z—ê‚ÌABL:ƒ}ƒ]‚Á‹C‚ð‚Ý‚é
-SELECTCASE ABL:ƒ}ƒ]‚Á‹C
+;å¥´éš·ã®ABL:ãƒžã‚¾ã£æ°—ã‚’ã¿ã‚‹
+SELECTCASE ABL:ãƒžã‚¾ã£æ°—
 	CASE 0
 		TIMES LOCAL , 1.00
 	CASE 1
@@ -512,43 +512,43 @@ SELECTCASE ABL:ƒ}ƒ]‚Á‹C
 		TIMES LOCAL , 2.00
 ENDSELECT
 
-;Ä‘•“Uˆ—’†‚ÍŽË¸ƒQ[ƒW‚Í20•ª‚Ì1‚É
-SIF CFLAG:Œ«ŽÒƒ^ƒCƒ€ > 0
+;å†è£…å¡«å‡¦ç†ä¸­ã¯å°„ç²¾ã‚²ãƒ¼ã‚¸ã¯20åˆ†ã®1ã«
+SIF CFLAG:è³¢è€…ã‚¿ã‚¤ãƒ  > 0
 	LOCAL /= 20
 
-CALL ŽË¸ƒQ[ƒW‘‰Á, LOCAL, TARGET
+CALL å°„ç²¾ã‚²ãƒ¼ã‚¸å¢—åŠ , LOCAL, TARGET
 
 ;-------------------------------------------------
-;ŒoŒ±‚Ìˆ—
+;çµŒé¨“ã®å‡¦ç†
 ;-------------------------------------------------
-;Ž©ˆÔŽÀsŽž‚ÍŒoŒ±+1
+;è‡ªæ…°å®Ÿè¡Œæ™‚ã¯çµŒé¨“+1
 SELECTCASE SELECTCOMS
-	CASE "Ž©ˆÔ"
-		IF TEQUIP:‚uˆÙ•¨
-			PRINTL ‚uŒoŒ±+2
-			EXP:‚uŒoŒ± += 2
+	CASE "è‡ªæ…°"
+		IF TEQUIP:ï¼¶ç•°ç‰©
+			PRINTL ï¼¶çµŒé¨“+2
+			EXP:ï¼¶çµŒé¨“ += 2
 		ENDIF
-		IF TEQUIP:‚`ˆÙ•¨
-			PRINTL ‚`ŒoŒ±+2
-			EXP:‚`ŒoŒ± += 2
+		IF TEQUIP:ï¼¡ç•°ç‰©
+			PRINTL ï¼¡çµŒé¨“+2
+			EXP:ï¼¡çµŒé¨“ += 2
 		ENDIF
-	CASE "ˆÙ•¨‘}“ü"
-		SELECTCASE TFLAG:ˆÙ•¨‘}“ü
-			CASE GETNUM(ABL, "‚uŠ´Šo")
-				PRINTFORML ‚uŒoŒ±+{TEQUIP:‚uˆÙ•¨*2}
-				EXP:‚uŒoŒ± += (TEQUIP:‚uˆÙ•¨*2)
-			CASE GETNUM(ABL, "‚`Š´Šo")
-				PRINTFORML ‚`ŒoŒ±+{TEQUIP:‚`ˆÙ•¨*2}
-				EXP:‚`ŒoŒ± += (TEQUIP:‚`ˆÙ•¨*2)
+	CASE "ç•°ç‰©æŒ¿å…¥"
+		SELECTCASE TFLAG:ç•°ç‰©æŒ¿å…¥
+			CASE GETNUM(ABL, "ï¼¶æ„Ÿè¦š")
+				PRINTFORML ï¼¶çµŒé¨“+{TEQUIP:ï¼¶ç•°ç‰©*2}
+				EXP:ï¼¶çµŒé¨“ += (TEQUIP:ï¼¶ç•°ç‰©*2)
+			CASE GETNUM(ABL, "ï¼¡æ„Ÿè¦š")
+				PRINTFORML ï¼¡çµŒé¨“+{TEQUIP:ï¼¡ç•°ç‰©*2}
+				EXP:ï¼¡çµŒé¨“ += (TEQUIP:ï¼¡ç•°ç‰©*2)
 		ENDSELECT
 	CASEELSE
-		IF TEQUIP:‚uˆÙ•¨
-			PRINTL ‚uŒoŒ±+1
-			EXP:‚uŒoŒ±++
+		IF TEQUIP:ï¼¶ç•°ç‰©
+			PRINTL ï¼¶çµŒé¨“+1
+			EXP:ï¼¶çµŒé¨“++
 		ENDIF
-		IF TEQUIP:‚`ˆÙ•¨
-			PRINTL ‚`ŒoŒ±+1
-			EXP:‚`ŒoŒ±++
+		IF TEQUIP:ï¼¡ç•°ç‰©
+			PRINTL ï¼¡çµŒé¨“+1
+			EXP:ï¼¡çµŒé¨“++
 		ENDIF
 ENDSELECT
 

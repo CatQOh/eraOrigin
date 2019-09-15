@@ -1,85 +1,85 @@
-@SOURCE_CHECK_CVAB
-;SELECTCOMS‚ÉƒRƒ}ƒ“ƒh–¼‚ð‘ã“ü
+ï»¿@SOURCE_CHECK_CVAB
+;SELECTCOMSã«ã‚³ãƒžãƒ³ãƒ‰åã‚’ä»£å…¥
 SIF TRAINNAME:SELECTCOM != ""
 	SELECTCOMS = %TRAINNAME:SELECTCOM%
 
 ;-------------------------------------------------
-;ƒoƒCƒu‚È‚Ç•t‚¯‚Á‚Ï‚È‚µƒAƒCƒeƒ€‚Ìƒ`ƒFƒbƒN
+;ãƒã‚¤ãƒ–ãªã©ä»˜ã‘ã£ã±ãªã—ã‚¢ã‚¤ãƒ†ãƒ ã®ãƒã‚§ãƒƒã‚¯
 ;-------------------------------------------------
 CALL EQUIP_CHECK
 
 ;-------------------------------------------------
-;“¯«‚Ìê‡‚Ìˆ—
+;åŒæ€§ã®å ´åˆã®å‡¦ç†
 ;-------------------------------------------------
 CALL SOURCE_SEX_CHECK
 
 ;-------------------------------------------------
-;ŽÀsŽÒ‚Ì‘fŽ¿•â³
+;å®Ÿè¡Œè€…ã®ç´ è³ªè£œæ­£
 ;-------------------------------------------------
 CALL PLAYER_SKILL_CHECK
 
 ;-------------------------------------------------
-;ˆ—‘rŽ¸‚Ìˆ—
+;å‡¦å¥³å–ªå¤±ã®å‡¦ç†
 ;-------------------------------------------------
 CALL LOST_VIRGIN_FEMALE
 
 ;-------------------------------------------------
-;“¶’å‘rŽ¸‚Ìˆ—
+;ç«¥è²žå–ªå¤±ã®å‡¦ç†
 ;-------------------------------------------------
 CALL LOST_VIRGIN_MALE
 
 ;-------------------------------------------------
-;‹ZI‚Ìƒ`ƒFƒbƒN
+;æŠ€å·§ã®ãƒã‚§ãƒƒã‚¯
 ;-------------------------------------------------
 CALL TECHNIQUE_CHECK
 
 ;-------------------------------------------------
-;Œ‚Ìƒ`ƒFƒbƒN
+;é…”ã®ãƒã‚§ãƒƒã‚¯
 ;-------------------------------------------------
 CALL ALC_CHECK
 
 ;-------------------------------------------------
-;‰õ‚b‚Ìƒ\[ƒX
+;å¿«ï¼£ã®ã‚½ãƒ¼ã‚¹
 ;-------------------------------------------------
 VARSET LOCAL, 0
-;‚b•qŠ´‚Æ‚b“ÝŠ´‚Æƒ]ƒ“ƒr‚Í‚±‚±‚Åˆ—
-SIF TALENT:‚b“ÝŠ´
-	TIMES SOURCE:‰õC , 0.50
-SIF TALENT:‚b•qŠ´
-	TIMES SOURCE:‰õC , 2.00
-SIF TALENT:ƒ]ƒ“ƒr && !TALENT:PLAYER:ƒlƒNƒƒ}ƒ“ƒT[
-	TIMES SOURCE:‰õC , 0.70
+;ï¼£æ•æ„Ÿã¨ï¼£éˆæ„Ÿã¨ã‚¾ãƒ³ãƒ“ã¯ã“ã“ã§å‡¦ç†
+SIF TALENT:ï¼£éˆæ„Ÿ
+	TIMES SOURCE:å¿«C , 0.50
+SIF TALENT:ï¼£æ•æ„Ÿ
+	TIMES SOURCE:å¿«C , 2.00
+SIF TALENT:ã‚¾ãƒ³ãƒ“ && !TALENT:PLAYER:ãƒã‚¯ãƒ­ãƒžãƒ³ã‚µãƒ¼
+	TIMES SOURCE:å¿«C , 0.70
 
-;CŠ´Šo
-SELECTCASE ABL:‚bŠ´Šo
+;Cæ„Ÿè¦š
+SELECTCASE ABL:ï¼£æ„Ÿè¦š
 	CASE 0
-		TIMES SOURCE:‰õC , 0.50
+		TIMES SOURCE:å¿«C , 0.50
 	CASE 1
-		TIMES SOURCE:‰õC , 1.80
+		TIMES SOURCE:å¿«C , 1.80
 	CASE 2
-		TIMES SOURCE:‰õC , 3.00
+		TIMES SOURCE:å¿«C , 3.00
 	CASE 3
-		TIMES SOURCE:‰õC , 5.00
+		TIMES SOURCE:å¿«C , 5.00
 	CASE 4
-		TIMES SOURCE:‰õC , 7.00
+		TIMES SOURCE:å¿«C , 7.00
 	CASE 5
-		TIMES SOURCE:‰õC , 9.00
+		TIMES SOURCE:å¿«C , 9.00
 	CASE 6
-		TIMES SOURCE:‰õC , 11.00
+		TIMES SOURCE:å¿«C , 11.00
 	CASE 7
-		TIMES SOURCE:‰õC , 13.00
+		TIMES SOURCE:å¿«C , 13.00
 	CASE 8
-		TIMES SOURCE:‰õC , 15.00
+		TIMES SOURCE:å¿«C , 15.00
 	CASE 9
-		TIMES SOURCE:‰õC , 17.00
+		TIMES SOURCE:å¿«C , 17.00
 	CASE IS >= 10
-		SOURCE:‰õC *= (ABL:‚bŠ´Šo*2)
+		SOURCE:å¿«C *= (ABL:ï¼£æ„Ÿè¦š*2)
 ENDSELECT
 
-LOCAL = SOURCE:‰õC
+LOCAL = SOURCE:å¿«C
 
-;PALAM:—~î‚ð‚Ý‚é
-SELECTCASE GETPALAMLV(PALAM:—~î, 4)
+;PALAM:æ¬²æƒ…ã‚’ã¿ã‚‹
+SELECTCASE GETPALAMLV(PALAM:æ¬²æƒ…, 4)
 	CASE 0
 		TIMES LOCAL , 0.80
 	CASE 1
@@ -92,12 +92,12 @@ SELECTCASE GETPALAMLV(PALAM:—~î, 4)
 		TIMES LOCAL , 2.00
 ENDSELECT
 
-UP:‰õ‚b += LOCAL
+UP:å¿«ï¼£ += LOCAL
 
-LOCAL = SOURCE:‰õC
+LOCAL = SOURCE:å¿«C
 
-;ABL:—~–]‚ð‚Ý‚é
-SELECTCASE ABL:—~–]
+;ABL:æ¬²æœ›ã‚’ã¿ã‚‹
+SELECTCASE ABL:æ¬²æœ›
 	CASE 0
 		TIMES LOCAL , 0.50
 	CASE 1
@@ -119,83 +119,83 @@ SELECTCASE ABL:—~–]
 	CASE 9
 		TIMES LOCAL , 1.20
 	CASE IS >= 10
-		LOCAL += (LOCAL/10) * (ABL:—~–]-7)
+		LOCAL += (LOCAL/10) * (ABL:æ¬²æœ›-7)
 ENDSELECT
 
-UP:—~î += LOCAL
+UP:æ¬²æƒ… += LOCAL
 
 ;-------------------------------------------------
-;‰õ‚u‚Ìƒ\[ƒX
+;å¿«ï¼¶ã®ã‚½ãƒ¼ã‚¹
 ;-------------------------------------------------
 VARSET LOCAL, 0
-;‚u•qŠ´‚Æ‚u“ÝŠ´‚Æƒ]ƒ“ƒr‚Í‚±‚±‚Åˆ—
-SIF TALENT:‚u“ÝŠ´
-	TIMES SOURCE:‰õV , 0.50
-SIF TALENT:‚u•qŠ´
-	TIMES SOURCE:‰õV , 2.00
-SIF TALENT:ƒ]ƒ“ƒr && !TALENT:PLAYER:ƒlƒNƒƒ}ƒ“ƒT[
-	TIMES SOURCE:‰õV , 0.70
+;ï¼¶æ•æ„Ÿã¨ï¼¶éˆæ„Ÿã¨ã‚¾ãƒ³ãƒ“ã¯ã“ã“ã§å‡¦ç†
+SIF TALENT:ï¼¶éˆæ„Ÿ
+	TIMES SOURCE:å¿«V , 0.50
+SIF TALENT:ï¼¶æ•æ„Ÿ
+	TIMES SOURCE:å¿«V , 2.00
+SIF TALENT:ã‚¾ãƒ³ãƒ“ && !TALENT:PLAYER:ãƒã‚¯ãƒ­ãƒžãƒ³ã‚µãƒ¼
+	TIMES SOURCE:å¿«V , 0.70
 
-;VŠ´Šo
-SELECTCASE ABL:‚uŠ´Šo
+;Væ„Ÿè¦š
+SELECTCASE ABL:ï¼¶æ„Ÿè¦š
 	CASE 0
-		TIMES SOURCE:‰õV , 0.50
+		TIMES SOURCE:å¿«V , 0.50
 	CASE 1
-		TIMES SOURCE:‰õV , 1.80
+		TIMES SOURCE:å¿«V , 1.80
 	CASE 2
-		TIMES SOURCE:‰õV , 3.00
+		TIMES SOURCE:å¿«V , 3.00
 	CASE 3
-		TIMES SOURCE:‰õV , 5.00
+		TIMES SOURCE:å¿«V , 5.00
 	CASE 4
-		TIMES SOURCE:‰õV , 7.00
+		TIMES SOURCE:å¿«V , 7.00
 	CASE 5
-		TIMES SOURCE:‰õV , 9.00
+		TIMES SOURCE:å¿«V , 9.00
 	CASE 6
-		TIMES SOURCE:‰õV , 11.00
+		TIMES SOURCE:å¿«V , 11.00
 	CASE 7
-		TIMES SOURCE:‰õV , 13.00
+		TIMES SOURCE:å¿«V , 13.00
 	CASE 8
-		TIMES SOURCE:‰õV , 15.00
+		TIMES SOURCE:å¿«V , 15.00
 	CASE 9
-		TIMES SOURCE:‰õV , 17.00
+		TIMES SOURCE:å¿«V , 17.00
 	CASE IS >= 10
-		SOURCE:‰õV *= (ABL:‚uŠ´Šo*2)
+		SOURCE:å¿«V *= (ABL:ï¼¶æ„Ÿè¦š*2)
 ENDSELECT
 
-;EXP:‚uŒoŒ±‚ð‚Ý‚é
-SELECTCASE GETEXPLV(EXP:‚uŒoŒ±, 5)
+;EXP:ï¼¶çµŒé¨“ã‚’ã¿ã‚‹
+SELECTCASE GETEXPLV(EXP:ï¼¶çµŒé¨“, 5)
 	CASE 0
-		TIMES SOURCE:‰õV , 0.40
+		TIMES SOURCE:å¿«V , 0.40
 	CASE 1
-		TIMES SOURCE:‰õV , 0.80
+		TIMES SOURCE:å¿«V , 0.80
 	CASE 2
-		TIMES SOURCE:‰õV , 1.20
+		TIMES SOURCE:å¿«V , 1.20
 	CASE 3
-		TIMES SOURCE:‰õV , 1.60
+		TIMES SOURCE:å¿«V , 1.60
 	CASE 4
-		TIMES SOURCE:‰õV , 2.00
+		TIMES SOURCE:å¿«V , 2.00
 	CASE 5
-		TIMES SOURCE:‰õV , 2.40
+		TIMES SOURCE:å¿«V , 2.40
 ENDSELECT
 
-;PALAM:ŠŠ‚ð‚Ý‚é
-SELECTCASE GETPALAMLV(PALAM:ŠŠ, 4)
+;PALAM:æ½¤æ»‘ã‚’ã¿ã‚‹
+SELECTCASE GETPALAMLV(PALAM:æ½¤æ»‘, 4)
 	CASE 0
-		TIMES SOURCE:‰õV , 0.20
+		TIMES SOURCE:å¿«V , 0.20
 	CASE 1
-		TIMES SOURCE:‰õV , 0.50
+		TIMES SOURCE:å¿«V , 0.50
 	CASE 2
-		TIMES SOURCE:‰õV , 0.80
+		TIMES SOURCE:å¿«V , 0.80
 	CASE 3
-		TIMES SOURCE:‰õV , 1.00
+		TIMES SOURCE:å¿«V , 1.00
 	CASE 4
-		TIMES SOURCE:‰õV , 1.20
+		TIMES SOURCE:å¿«V , 1.20
 ENDSELECT
 
-LOCAL = SOURCE:‰õV
+LOCAL = SOURCE:å¿«V
 
-;PALAM:—~î‚ð‚Ý‚é
-SELECTCASE GETPALAMLV(PALAM:—~î, 4)
+;PALAM:æ¬²æƒ…ã‚’ã¿ã‚‹
+SELECTCASE GETPALAMLV(PALAM:æ¬²æƒ…, 4)
 	CASE 0
 		TIMES LOCAL , 0.80
 	CASE 1
@@ -208,10 +208,10 @@ SELECTCASE GETPALAMLV(PALAM:—~î, 4)
 		TIMES LOCAL , 2.40
 ENDSELECT
 
-LOCAL:1 = SOURCE:‰õV
+LOCAL:1 = SOURCE:å¿«V
 
-;ABL:—~–]‚ð‚Ý‚é
-SELECTCASE ABL:—~–]
+;ABL:æ¬²æœ›ã‚’ã¿ã‚‹
+SELECTCASE ABL:æ¬²æœ›
 	CASE 0
 		TIMES LOCAL:1 , 0.50
 	CASE 1
@@ -233,96 +233,96 @@ SELECTCASE ABL:—~–]
 	CASE 9
 		TIMES LOCAL:1 , 1.20
 	CASE IS >= 10
-		LOCAL:1 += (LOCAL:1/10) * (ABL:—~–]-7)
+		LOCAL:1 += (LOCAL:1/10) * (ABL:æ¬²æœ›-7)
 ENDSELECT
 
-;¬l‘ÌŒ^
-IF TALENT:¬l‘ÌŒ^
+;å°äººä½“åž‹
+IF TALENT:å°äººä½“åž‹
 	TIMES LOCAL , 0.80
 	TIMES LOCAL:1 , 1.20
-	UP:K“¾ += LOCAL:1/2
+	UP:ç¿’å¾— += LOCAL:1/2
 ENDIF
 
-UP:‰õ‚u += LOCAL
-UP:—~î += LOCAL:1
-UP:‹±‡ += (LOCAL+LOCAL:1)/10
+UP:å¿«ï¼¶ += LOCAL
+UP:æ¬²æƒ… += LOCAL:1
+UP:æ­é † += (LOCAL+LOCAL:1)/10
 
 ;-------------------------------------------------
-;‰õ‚`‚Ìƒ\[ƒX
+;å¿«ï¼¡ã®ã‚½ãƒ¼ã‚¹
 ;-------------------------------------------------
 VARSET LOCAL, 0
-;‚`•qŠ´‚Æ‚`“ÝŠ´‚Æƒ]ƒ“ƒr‚Í‚±‚±‚Åˆ—
-SIF TALENT:‚`“ÝŠ´
-	TIMES SOURCE:‰õA , 0.50
-SIF TALENT:‚`•qŠ´
-	TIMES SOURCE:‰õA , 2.00
-SIF TALENT:ƒ]ƒ“ƒr && !TALENT:PLAYER:ƒlƒNƒƒ}ƒ“ƒT[
-	TIMES SOURCE:‰õA , 0.70
-;’°ôòÏ‚Ý‚¾‚ÆŠ´“xã‚ª‚é
-SIF TFLAG:’°ôòÏ‚Ý
-	TIMES SOURCE:‰õA , 1.20
+;ï¼¡æ•æ„Ÿã¨ï¼¡éˆæ„Ÿã¨ã‚¾ãƒ³ãƒ“ã¯ã“ã“ã§å‡¦ç†
+SIF TALENT:ï¼¡éˆæ„Ÿ
+	TIMES SOURCE:å¿«A , 0.50
+SIF TALENT:ï¼¡æ•æ„Ÿ
+	TIMES SOURCE:å¿«A , 2.00
+SIF TALENT:ã‚¾ãƒ³ãƒ“ && !TALENT:PLAYER:ãƒã‚¯ãƒ­ãƒžãƒ³ã‚µãƒ¼
+	TIMES SOURCE:å¿«A , 0.70
+;è…¸æ´—æµ„æ¸ˆã¿ã ã¨æ„Ÿåº¦ä¸ŠãŒã‚‹
+SIF TFLAG:è…¸æ´—æµ„æ¸ˆã¿
+	TIMES SOURCE:å¿«A , 1.20
 
-;AŠ´Šo
-SELECTCASE ABL:‚`Š´Šo
+;Aæ„Ÿè¦š
+SELECTCASE ABL:ï¼¡æ„Ÿè¦š
 	CASE 0
-		TIMES SOURCE:‰õA , 0.50
+		TIMES SOURCE:å¿«A , 0.50
 	CASE 1
-		TIMES SOURCE:‰õA , 1.80
+		TIMES SOURCE:å¿«A , 1.80
 	CASE 2
-		TIMES SOURCE:‰õA , 3.00
+		TIMES SOURCE:å¿«A , 3.00
 	CASE 3
-		TIMES SOURCE:‰õA , 5.00
+		TIMES SOURCE:å¿«A , 5.00
 	CASE 4
-		TIMES SOURCE:‰õA , 7.00
+		TIMES SOURCE:å¿«A , 7.00
 	CASE 5
-		TIMES SOURCE:‰õA , 9.00
+		TIMES SOURCE:å¿«A , 9.00
 	CASE 6
-		TIMES SOURCE:‰õA , 11.00
+		TIMES SOURCE:å¿«A , 11.00
 	CASE 7
-		TIMES SOURCE:‰õA , 13.00
+		TIMES SOURCE:å¿«A , 13.00
 	CASE 8
-		TIMES SOURCE:‰õA , 15.00
+		TIMES SOURCE:å¿«A , 15.00
 	CASE 9
-		TIMES SOURCE:‰õA , 17.00
+		TIMES SOURCE:å¿«A , 17.00
 	CASE IS >= 10
-		SOURCE:‰õA *= (ABL:‚`Š´Šo*2)
+		SOURCE:å¿«A *= (ABL:ï¼¡æ„Ÿè¦š*2)
 ENDSELECT
 
-;EXP:‚`ŒoŒ±‚ð‚Ý‚é
-SELECTCASE GETEXPLV(EXP:‚`ŒoŒ±, 5)
+;EXP:ï¼¡çµŒé¨“ã‚’ã¿ã‚‹
+SELECTCASE GETEXPLV(EXP:ï¼¡çµŒé¨“, 5)
 	CASE 0
-		TIMES SOURCE:‰õA , 0.30
+		TIMES SOURCE:å¿«A , 0.30
 	CASE 1
-		TIMES SOURCE:‰õA , 0.60
+		TIMES SOURCE:å¿«A , 0.60
 	CASE 2
-		TIMES SOURCE:‰õA , 0.90
+		TIMES SOURCE:å¿«A , 0.90
 	CASE 3
-		TIMES SOURCE:‰õA , 1.20
+		TIMES SOURCE:å¿«A , 1.20
 	CASE 4
-		TIMES SOURCE:‰õA , 1.50
+		TIMES SOURCE:å¿«A , 1.50
 	CASE 5
-		TIMES SOURCE:‰õA , 2.00
+		TIMES SOURCE:å¿«A , 2.00
 ENDSELECT
 
-;PALAM:ŠŠ‚ð‚Ý‚é
-SELECTCASE GETPALAMLV(PALAM:ŠŠ, 4)
+;PALAM:æ½¤æ»‘ã‚’ã¿ã‚‹
+SELECTCASE GETPALAMLV(PALAM:æ½¤æ»‘, 4)
 	CASE 0
-		TIMES SOURCE:‰õA , 0.20
+		TIMES SOURCE:å¿«A , 0.20
 	CASE 1
-		TIMES SOURCE:‰õA , 0.50
+		TIMES SOURCE:å¿«A , 0.50
 	CASE 2
-		TIMES SOURCE:‰õA , 0.80
+		TIMES SOURCE:å¿«A , 0.80
 	CASE 3
-		TIMES SOURCE:‰õA , 1.00
+		TIMES SOURCE:å¿«A , 1.00
 	CASE 4
-		TIMES SOURCE:‰õA , 1.20
+		TIMES SOURCE:å¿«A , 1.20
 ENDSELECT
 
-LOCAL = SOURCE:‰õA
+LOCAL = SOURCE:å¿«A
 
-;PALAM:—~î‚ð‚Ý‚é
-;‰õ‚`‚Í‚ ‚Ü‚èPALAM:—~î‚Å‚Í·‚ªo‚È‚¢
-SELECTCASE GETPALAMLV(PALAM:—~î, 4)
+;PALAM:æ¬²æƒ…ã‚’ã¿ã‚‹
+;å¿«ï¼¡ã¯ã‚ã¾ã‚ŠPALAM:æ¬²æƒ…ã§ã¯å·®ãŒå‡ºãªã„
+SELECTCASE GETPALAMLV(PALAM:æ¬²æƒ…, 4)
 	CASE 0
 		TIMES LOCAL , 1.00
 	CASE 1
@@ -335,10 +335,10 @@ SELECTCASE GETPALAMLV(PALAM:—~î, 4)
 		TIMES LOCAL , 1.40
 ENDSELECT
 
-LOCAL:1 = SOURCE:‰õA
+LOCAL:1 = SOURCE:å¿«A
 
-;ABL:—~–]‚ð‚Ý‚é
-SELECTCASE ABL:—~–]
+;ABL:æ¬²æœ›ã‚’ã¿ã‚‹
+SELECTCASE ABL:æ¬²æœ›
 	CASE 0
 		TIMES LOCAL:1 , 0.50
 	CASE 1
@@ -360,65 +360,65 @@ SELECTCASE ABL:—~–]
 	CASE 9
 		TIMES LOCAL:1 , 1.20
 	CASE IS >= 10
-		LOCAL:1 += (LOCAL:1/10) * (ABL:—~–]-7)
+		LOCAL:1 += (LOCAL:1/10) * (ABL:æ¬²æœ›-7)
 ENDSELECT
 
-;¬l‘ÌŒ^
-IF TALENT:¬l‘ÌŒ^
+;å°äººä½“åž‹
+IF TALENT:å°äººä½“åž‹
 	TIMES LOCAL , 0.50
 	TIMES LOCAL:1 , 1.50
 ENDIF
 
-;‰õA‚Ìƒ\[ƒX‚ª1ˆÈã‚ÅƒAƒiƒ‹–¢ŒoŒ±‚Å’å‘€ŠÏ”O‚Ì‚Æ‚«A‹ü•ž‚Ìƒ\[ƒX‚ðŽO•ª‚Ìˆê‚É‚·‚é
-SIF !EXP:‚`ŒoŒ± && TALENT:’å‘€ŠÏ”O && SOURCE:‰õA > 0
-	SOURCE:‹ü] /= 3
+;å¿«Aã®ã‚½ãƒ¼ã‚¹ãŒ1ä»¥ä¸Šã§ã‚¢ãƒŠãƒ«æœªçµŒé¨“ã§è²žæ“è¦³å¿µã®ã¨ãã€å±ˆæœã®ã‚½ãƒ¼ã‚¹ã‚’ä¸‰åˆ†ã®ä¸€ã«ã™ã‚‹
+SIF !EXP:ï¼¡çµŒé¨“ && TALENT:è²žæ“è¦³å¿µ && SOURCE:å¿«A > 0
+	SOURCE:å±ˆå¾“ /= 3
 
-UP:‰õ‚` += LOCAL
-UP:—~î += LOCAL:1
-UP:‹±‡ += (LOCAL+LOCAL:1)/10
+UP:å¿«ï¼¡ += LOCAL
+UP:æ¬²æƒ… += LOCAL:1
+UP:æ­é † += (LOCAL+LOCAL:1)/10
 
 ;-------------------------------------------------
-;‰õ‚a‚Ìƒ\[ƒX
+;å¿«ï¼¢ã®ã‚½ãƒ¼ã‚¹
 ;-------------------------------------------------
 VARSET LOCAL, 0
-;‚a•qŠ´‚Æ‚a“ÝŠ´‚Æƒ]ƒ“ƒr‚Í‚±‚±‚Åˆ—
-SIF TALENT:‚a“ÝŠ´
-	TIMES SOURCE:‰õB , 0.50
-SIF TALENT:‚a•qŠ´
-	TIMES SOURCE:‰õB , 2.00
-SIF TALENT:ƒ]ƒ“ƒr && !TALENT:PLAYER:ƒlƒNƒƒ}ƒ“ƒT[
-	TIMES SOURCE:‰õB , 0.70
+;ï¼¢æ•æ„Ÿã¨ï¼¢éˆæ„Ÿã¨ã‚¾ãƒ³ãƒ“ã¯ã“ã“ã§å‡¦ç†
+SIF TALENT:ï¼¢éˆæ„Ÿ
+	TIMES SOURCE:å¿«B , 0.50
+SIF TALENT:ï¼¢æ•æ„Ÿ
+	TIMES SOURCE:å¿«B , 2.00
+SIF TALENT:ã‚¾ãƒ³ãƒ“ && !TALENT:PLAYER:ãƒã‚¯ãƒ­ãƒžãƒ³ã‚µãƒ¼
+	TIMES SOURCE:å¿«B , 0.70
 
-;BŠ´Šo
-SELECTCASE ABL:‚aŠ´Šo
+;Bæ„Ÿè¦š
+SELECTCASE ABL:ï¼¢æ„Ÿè¦š
 	CASE 0
-		TIMES SOURCE:‰õB , 0.50
+		TIMES SOURCE:å¿«B , 0.50
 	CASE 1
-		TIMES SOURCE:‰õB , 1.80
+		TIMES SOURCE:å¿«B , 1.80
 	CASE 2
-		TIMES SOURCE:‰õB , 3.00
+		TIMES SOURCE:å¿«B , 3.00
 	CASE 3
-		TIMES SOURCE:‰õB , 5.00
+		TIMES SOURCE:å¿«B , 5.00
 	CASE 4
-		TIMES SOURCE:‰õB , 7.00
+		TIMES SOURCE:å¿«B , 7.00
 	CASE 5
-		TIMES SOURCE:‰õB , 9.00
+		TIMES SOURCE:å¿«B , 9.00
 	CASE 6
-		TIMES SOURCE:‰õB , 11.00
+		TIMES SOURCE:å¿«B , 11.00
 	CASE 7
-		TIMES SOURCE:‰õB , 13.00
+		TIMES SOURCE:å¿«B , 13.00
 	CASE 8
-		TIMES SOURCE:‰õB , 15.00
+		TIMES SOURCE:å¿«B , 15.00
 	CASE 9
-		TIMES SOURCE:‰õB , 17.00
+		TIMES SOURCE:å¿«B , 17.00
 	CASE IS >= 10
-		SOURCE:‰õB *= (ABL:‚aŠ´Šo*2)
+		SOURCE:å¿«B *= (ABL:ï¼¢æ„Ÿè¦š*2)
 ENDSELECT
 
-LOCAL = SOURCE:‰õB
+LOCAL = SOURCE:å¿«B
 
-;PALAM:—~î‚ð‚Ý‚é
-SELECTCASE GETPALAMLV(PALAM:—~î, 4)
+;PALAM:æ¬²æƒ…ã‚’ã¿ã‚‹
+SELECTCASE GETPALAMLV(PALAM:æ¬²æƒ…, 4)
 	CASE 0
 		TIMES LOCAL , 0.80
 	CASE 1
@@ -431,10 +431,10 @@ SELECTCASE GETPALAMLV(PALAM:—~î, 4)
 		TIMES LOCAL , 2.00
 ENDSELECT
 
-LOCAL:1 = SOURCE:‰õB
+LOCAL:1 = SOURCE:å¿«B
 
-;ABL:—~–]‚ð‚Ý‚é
-SELECTCASE ABL:—~–]
+;ABL:æ¬²æœ›ã‚’ã¿ã‚‹
+SELECTCASE ABL:æ¬²æœ›
 	CASE 0
 		TIMES LOCAL:1 , 0.50
 	CASE 1
@@ -456,214 +456,214 @@ SELECTCASE ABL:—~–]
 	CASE 9
 		TIMES LOCAL:1 , 1.20
 	CASE IS >= 10
-		LOCAL:1 += (LOCAL:1/10) * (ABL:—~–]-7)
+		LOCAL:1 += (LOCAL:1/10) * (ABL:æ¬²æœ›-7)
 ENDSELECT
 
-;¬l‘ÌŒ^
-IF TALENT:¬l‘ÌŒ^
+;å°äººä½“åž‹
+IF TALENT:å°äººä½“åž‹
 	TIMES LOCAL , 1.50
 	TIMES LOCAL:1 , 1.20
-	UP:ŠŠ += LOCAL:1/2
+	UP:æ½¤æ»‘ += LOCAL:1/2
 ENDIF
 
-UP:‰õ‚a += LOCAL
-UP:—~î += LOCAL:1
+UP:å¿«ï¼¢ += LOCAL
+UP:æ¬²æƒ… += LOCAL:1
 
 ;-------------------------------------------------
-;“¯‚¶ƒRƒ}ƒ“ƒh‚Ì˜A‘±ŽÀs‚É‚æ‚éŒ¸­i‰õŠyŒnj
+;åŒã˜ã‚³ãƒžãƒ³ãƒ‰ã®é€£ç¶šå®Ÿè¡Œã«ã‚ˆã‚‹æ¸›å°‘ï¼ˆå¿«æ¥½ç³»ï¼‰
 ;-------------------------------------------------
 IF SELECTCOM == PREVCOM
-	UP:‰õ‚b /= 2
-	UP:‰õ‚u /= 2
-	UP:‰õ‚` /= 2
-	UP:‰õ‚a /= 2
+	UP:å¿«ï¼£ /= 2
+	UP:å¿«ï¼¶ /= 2
+	UP:å¿«ï¼¡ /= 2
+	UP:å¿«ï¼¢ /= 2
 ENDIF
 
 ;-------------------------------------------------
-;‹C—Í‚O‚É‚æ‚éŒ¸­i‰õŠyŒnj
+;æ°—åŠ›ï¼ã«ã‚ˆã‚‹æ¸›å°‘ï¼ˆå¿«æ¥½ç³»ï¼‰
 ;-------------------------------------------------
-IF BASE:‹C—Í <= 0
-	TIMES UP:‰õ‚b , 0.70
-	TIMES UP:‰õ‚u , 0.70
-	TIMES UP:‰õ‚` , 0.70
-	TIMES UP:‰õ‚a , 0.70
+IF BASE:æ°—åŠ› <= 0
+	TIMES UP:å¿«ï¼£ , 0.70
+	TIMES UP:å¿«ï¼¶ , 0.70
+	TIMES UP:å¿«ï¼¡ , 0.70
+	TIMES UP:å¿«ï¼¢ , 0.70
 ENDIF
 
 ;-------------------------------------------------
-;‘Š«‚É‚æ‚é•â³i‰õŠyŒnj
+;ç›¸æ€§ã«ã‚ˆã‚‹è£œæ­£ï¼ˆå¿«æ¥½ç³»ï¼‰
 ;-------------------------------------------------
 LOCAL = (RELATION:(NO:PLAYER)-100)/10
 IF RELATION:(NO:PLAYER) != 100
-	UP:‰õ‚b += (UP:‰õ‚b/100)*LOCAL
-	UP:‰õ‚u += (UP:‰õ‚u/100)*LOCAL
-	UP:‰õ‚` += (UP:‰õ‚`/100)*LOCAL
-	UP:‰õ‚a += (UP:‰õ‚a/100)*LOCAL
+	UP:å¿«ï¼£ += (UP:å¿«ï¼£/100)*LOCAL
+	UP:å¿«ï¼¶ += (UP:å¿«ï¼¶/100)*LOCAL
+	UP:å¿«ï¼¡ += (UP:å¿«ï¼¡/100)*LOCAL
+	UP:å¿«ï¼¢ += (UP:å¿«ï¼¢/100)*LOCAL
 ENDIF
 
 ;-------------------------------------------------
-;‰õŠ´‚Ì”Û’è‚ÍA‰õƒ\[ƒX‚Ì”’l‚É‰ž‚¶‚ÄA—}ŸTA”½Š´‘‰Áiˆú—A©•w‚Å–³Œøj
+;å¿«æ„Ÿã®å¦å®šã¯ã€å¿«ã‚½ãƒ¼ã‚¹ã®æ•°å€¤ã«å¿œã˜ã¦ã€æŠ‘é¬±ã€åæ„Ÿå¢—åŠ ï¼ˆæ·«ä¹±ã€å¨¼å©¦ã§ç„¡åŠ¹ï¼‰
 ;-------------------------------------------------
-IF TALENT:‰õŠ´‚Ì”Û’è && (!TALENT:ˆú— && !TALENT:©•w)
-	LOCAL = ABL:]‡+ABL:—~–]+ABL:•òŽd¸_
-	SIF CFLAG:ˆË‘¶“x > 0
-		LOCAL += CFLAG:ˆË‘¶“x/100
+IF TALENT:å¿«æ„Ÿã®å¦å®š && (!TALENT:æ·«ä¹± && !TALENT:å¨¼å©¦)
+	LOCAL = ABL:å¾“é †+ABL:æ¬²æœ›+ABL:å¥‰ä»•ç²¾ç¥ž
+	SIF CFLAG:ä¾å­˜åº¦ > 0
+		LOCAL += CFLAG:ä¾å­˜åº¦/100
 	LOCAL += 10
-	SOURCE:ŸT‹ü += (UP:‰õ‚b+UP:‰õ‚u+UP:‰õ‚`+UP:‰õ‚a)/LOCAL
-	SOURCE:”½Š´ += (UP:‰õ‚b+UP:‰õ‚u+UP:‰õ‚`+UP:‰õ‚a)/LOCAL
+	SOURCE:é¬±å±ˆ += (UP:å¿«ï¼£+UP:å¿«ï¼¶+UP:å¿«ï¼¡+UP:å¿«ï¼¢)/LOCAL
+	SOURCE:åæ„Ÿ += (UP:å¿«ï¼£+UP:å¿«ï¼¶+UP:å¿«ï¼¡+UP:å¿«ï¼¢)/LOCAL
 ENDIF
 
 ;-------------------------------------------------
-;ƒAƒCƒeƒ€E‘fŽ¿‚È‚Ç‚É‚æ‚éã‰º‚Ìˆ—i‰õŠyŒnj
+;ã‚¢ã‚¤ãƒ†ãƒ ãƒ»ç´ è³ªãªã©ã«ã‚ˆã‚‹ä¸Šä¸‹ã®å‡¦ç†ï¼ˆå¿«æ¥½ç³»ï¼‰
 ;-------------------------------------------------
-;›Z–ò
-IF CFLAG:›Z–ò
-	UP:‰õ‚b += UP:‰õ‚b/10*CFLAG:›Z–ò
-	UP:‰õ‚u += UP:‰õ‚u/10*CFLAG:›Z–ò
-	UP:‰õ‚` += UP:‰õ‚`/10*CFLAG:›Z–ò
-	UP:‰õ‚a += UP:‰õ‚a/10*CFLAG:›Z–ò
+;åªšè–¬
+IF CFLAG:åªšè–¬
+	UP:å¿«ï¼£ += UP:å¿«ï¼£/10*CFLAG:åªšè–¬
+	UP:å¿«ï¼¶ += UP:å¿«ï¼¶/10*CFLAG:åªšè–¬
+	UP:å¿«ï¼¡ += UP:å¿«ï¼¡/10*CFLAG:åªšè–¬
+	UP:å¿«ï¼¢ += UP:å¿«ï¼¢/10*CFLAG:åªšè–¬
 ENDIF
 
-;—˜”AÜ
-IF TEQUIP:—˜”AÜ
-	TIMES UP:‰õ‚b , 1.50
-	TIMES UP:‰õ‚u , 0.70
-	TIMES UP:‰õ‚` , 0.70
-	TIMES UP:‰õ‚a , 0.70
-ENDIF
-
-;-------------------------------------------------
-;Š×—Ž‘fŽ¿
-;-------------------------------------------------
-;ˆú—
-IF TALENT:ˆú—
-	TIMES UP:‰õ‚b , 1.20
-	TIMES UP:‰õ‚u , 1.20
-	TIMES UP:‰õ‚` , 1.20
-	TIMES UP:‰õ‚a , 1.20
-ENDIF
-
-;©•w
-IF TALENT:©•w
-	TIMES UP:‰õ‚b , 1.50
-	TIMES UP:‰õ‚u , 1.50
-	TIMES UP:‰õ‚` , 1.50
-	TIMES UP:‰õ‚a , 1.50
+;åˆ©å°¿å‰¤
+IF TEQUIP:åˆ©å°¿å‰¤
+	TIMES UP:å¿«ï¼£ , 1.50
+	TIMES UP:å¿«ï¼¶ , 0.70
+	TIMES UP:å¿«ï¼¡ , 0.70
+	TIMES UP:å¿«ï¼¢ , 0.70
 ENDIF
 
 ;-------------------------------------------------
-;‘fŽ¿
+;é™¥è½ç´ è³ª
 ;-------------------------------------------------
-;Ž©§S
-IF TALENT:Ž©§S
-	TIMES UP:‰õ‚b , 0.70
-	TIMES UP:‰õ‚u , 0.90
-	TIMES UP:‰õ‚` , 1.00
-	TIMES UP:‰õ‚a , 0.70
+;æ·«ä¹±
+IF TALENT:æ·«ä¹±
+	TIMES UP:å¿«ï¼£ , 1.20
+	TIMES UP:å¿«ï¼¶ , 1.20
+	TIMES UP:å¿«ï¼¡ , 1.20
+	TIMES UP:å¿«ï¼¢ , 1.20
 ENDIF
 
-;‘¦—Ž‚¿
-IF TALENT:‘¦—Ž‚¿
-	TIMES UP:‰õ‚b , 5.00
-	TIMES UP:‰õ‚u , 5.00
-	TIMES UP:‰õ‚` , 5.00
-	TIMES UP:‰õ‚a , 5.00
+;å¨¼å©¦
+IF TALENT:å¨¼å©¦
+	TIMES UP:å¿«ï¼£ , 1.50
+	TIMES UP:å¿«ï¼¶ , 1.50
+	TIMES UP:å¿«ï¼¡ , 1.50
+	TIMES UP:å¿«ï¼¢ , 1.50
 ENDIF
-;ˆúŠj
-SIF TALENT:ˆúŠj
-	TIMES UP:‰õ‚b , 2.00
-;ˆúäS‚¢
-SIF TALENT:ˆúäS
-	TIMES UP:‰õ‚u , 2.00
-;ˆúK
-SIF TALENT:ˆúK
-	TIMES UP:‰õ‚` , 2.00
-;ˆú“û
-SIF TALENT:ˆú“û
-	TIMES UP:‰õ‚a , 2.00
+
+;-------------------------------------------------
+;ç´ è³ª
+;-------------------------------------------------
+;è‡ªåˆ¶å¿ƒ
+IF TALENT:è‡ªåˆ¶å¿ƒ
+	TIMES UP:å¿«ï¼£ , 0.70
+	TIMES UP:å¿«ï¼¶ , 0.90
+	TIMES UP:å¿«ï¼¡ , 1.00
+	TIMES UP:å¿«ï¼¢ , 0.70
+ENDIF
+
+;å³è½ã¡
+IF TALENT:å³è½ã¡
+	TIMES UP:å¿«ï¼£ , 5.00
+	TIMES UP:å¿«ï¼¶ , 5.00
+	TIMES UP:å¿«ï¼¡ , 5.00
+	TIMES UP:å¿«ï¼¢ , 5.00
+ENDIF
+;æ·«æ ¸
+SIF TALENT:æ·«æ ¸
+	TIMES UP:å¿«ï¼£ , 2.00
+;æ·«è†£ã„
+SIF TALENT:æ·«è†£
+	TIMES UP:å¿«ï¼¶ , 2.00
+;æ·«å°»
+SIF TALENT:æ·«å°»
+	TIMES UP:å¿«ï¼¡ , 2.00
+;æ·«ä¹³
+SIF TALENT:æ·«ä¹³
+	TIMES UP:å¿«ï¼¢ , 2.00
 
 
 SELECTCASE SEX(TARGET)
-	;’j
+	;ç”·
 	CASE 1
-		TIMES UP:‰õ‚` , 1.30
-		SIF TALENT:‚Ó‚½‚È‚è
-			TIMES UP:‰õ‚u , 1.20
-	;—
+		TIMES UP:å¿«ï¼¡ , 1.30
+		SIF TALENT:ãµãŸãªã‚Š
+			TIMES UP:å¿«ï¼¶ , 1.20
+	;å¥³
 	CASE 2
-		;‚Ó‚½‚È‚è
-		SIF TALENT:‚Ó‚½‚È‚è
-			TIMES UP:‰õ‚b , 1.30
+		;ãµãŸãªã‚Š
+		SIF TALENT:ãµãŸãªã‚Š
+			TIMES UP:å¿«ï¼£ , 1.30
 ENDSELECT
 
-;«Ší”j‘¹
-IF TALENT:«Ší”j‘¹
-	UP:‹ê’É += UP:‰õ‚u/5*3
-	TIMES UP:‰õ‚u , 0.40
+;æ€§å™¨ç ´æ
+IF TALENT:æ€§å™¨ç ´æ
+	UP:è‹¦ç—› += UP:å¿«ï¼¶/5*3
+	TIMES UP:å¿«ï¼¶ , 0.40
 ENDIF
 
-;Žw‘}“ü‚ê‚ÌŠµ‚ç‚µƒMƒ~ƒbƒN—pˆ—Aˆ—‚à‚µ‚­‚ÍÄ¶ˆ—‚ÌŽž‚Í‰õV‚Í99‚ÅÅ‘å‚É‚·‚é
-IF (UP:‰õ‚u+PALAM:‰õ‚u) >= 100 && (TALENT:ˆ— || TALENT:Ä¶ˆ—)
-	UP:‰õ‚u = 0
-	PALAM:‰õ‚u = 99
+;æŒ‡æŒ¿å…¥ã‚Œã®æ…£ã‚‰ã—ã‚®ãƒŸãƒƒã‚¯ç”¨å‡¦ç†ã€å‡¦å¥³ã‚‚ã—ãã¯å†ç”Ÿå‡¦å¥³ã®æ™‚ã¯å¿«Vã¯99ã§æœ€å¤§ã«ã™ã‚‹
+IF (UP:å¿«ï¼¶+PALAM:å¿«ï¼¶) >= 100 && (TALENT:å‡¦å¥³ || TALENT:å†ç”Ÿå‡¦å¥³)
+	UP:å¿«ï¼¶ = 0
+	PALAM:å¿«ï¼¶ = 99
 ENDIF
 
-;ƒyƒjƒXŽ‚¿‚Í‰õ‚b‚ª20%
+;ãƒšãƒ‹ã‚¹æŒã¡ã¯å¿«ï¼£ãŒ20%
 SIF PENIS(TARGET)
-	UP:‰õ‚b /= 5
+	UP:å¿«ï¼£ /= 5
 
-;ƒyƒjƒX‚ª‚ ‚éê‡‚ÍŒ«ŽÒƒ^ƒCƒ€’†‚¶‚á‚È‚¢‚Æ‰õ‚b3000ˆÈã‚É‚Í‚È‚ç‚È‚¢
-IF (UP:‰õ‚b+PALAM:‰õ‚b) >= 3000 && PENIS(TARGET) && (CFLAG:Œ«ŽÒƒ^ƒCƒ€ == 0 || NOWEX:ŽË¸)
-	IF UP:‰õ‚b+PALAM:‰õ‚b > 3000
-		PALAM:‰õ‚b = 3000
-		UP:‰õ‚b = 0
+;ãƒšãƒ‹ã‚¹ãŒã‚ã‚‹å ´åˆã¯è³¢è€…ã‚¿ã‚¤ãƒ ä¸­ã˜ã‚ƒãªã„ã¨å¿«ï¼£3000ä»¥ä¸Šã«ã¯ãªã‚‰ãªã„
+IF (UP:å¿«ï¼£+PALAM:å¿«ï¼£) >= 3000 && PENIS(TARGET) && (CFLAG:è³¢è€…ã‚¿ã‚¤ãƒ  == 0 || NOWEX:å°„ç²¾)
+	IF UP:å¿«ï¼£+PALAM:å¿«ï¼£ > 3000
+		PALAM:å¿«ï¼£ = 3000
+		UP:å¿«ï¼£ = 0
 	ENDIF
 ENDIF
 
 ;-------------------------------------------------
-;ˆ¤‰tˆ—
+;æ„›æ¶²å‡¦ç†
 ;-------------------------------------------------
-LOCAL = UP:‰õ‚b+UP:‰õ‚u+UP:‰õ‚`+UP:‰õ‚a
-;‰õ‚b{‰õ‚u{‰õ‚`{‰õ‚a‚ª‡‚í‚¹‚Ä100ˆÈãã¸‚È‚ç‚»‚Ì20%‚Ì‰t‘Ì‚Ìƒ\[ƒX‚ª‰Á‚í‚é
+LOCAL = UP:å¿«ï¼£+UP:å¿«ï¼¶+UP:å¿«ï¼¡+UP:å¿«ï¼¢
+;å¿«ï¼£ï¼‹å¿«ï¼¶ï¼‹å¿«ï¼¡ï¼‹å¿«ï¼¢ãŒåˆã‚ã›ã¦100ä»¥ä¸Šä¸Šæ˜‡ãªã‚‰ãã®20%ã®æ¶²ä½“ã®ã‚½ãƒ¼ã‚¹ãŒåŠ ã‚ã‚‹
 IF LOCAL > 100 && VAGINA(TARGET)
-	;”G‚ê‚â‚·‚¢‚Æ”G‚ê‚É‚­‚¢‚Í‚±‚±‚Åˆ—
-	SIF TALENT:”G‚ê‚â‚·‚¢
+	;æ¿¡ã‚Œã‚„ã™ã„ã¨æ¿¡ã‚Œã«ãã„ã¯ã“ã“ã§å‡¦ç†
+	SIF TALENT:æ¿¡ã‚Œã‚„ã™ã„
 		TIMES LOCAL , 3.00
-	SIF TALENT:”G‚ê‚É‚­‚¢
+	SIF TALENT:æ¿¡ã‚Œã«ãã„
 		TIMES LOCAL , 0.40
-	;Ží‘°‚ª¸—ì‚Å‰J‚ª~‚Á‚Ä‚é‚Æ”G‚ê‚â‚·‚­‚È‚é
-	SELECTCASE FLAG:“V‹C
+	;ç¨®æ—ãŒç²¾éœŠã§é›¨ãŒé™ã£ã¦ã‚‹ã¨æ¿¡ã‚Œã‚„ã™ããªã‚‹
+	SELECTCASE FLAG:å¤©æ°—
 		CASE 3 TO 5
-			SIF CSTR:Ží‘° == "¸—ì"
+			SIF CSTR:ç¨®æ— == "ç²¾éœŠ"
 				LOCAL *= 2
 	ENDSELECT
-	SOURCE:‰t‘Ì += LOCAL / 5
+	SOURCE:æ¶²ä½“ += LOCAL / 5
 ENDIF
 
 ;-------------------------------------------------
-;’ª•¬‚«ˆ—
+;æ½®å™´ãå‡¦ç†
 ;-------------------------------------------------
-SIF CFLAG:Œ«ŽÒƒ^ƒCƒ€ > 0 && !NOWEX:ŽË¸
+SIF CFLAG:è³¢è€…ã‚¿ã‚¤ãƒ  > 0 && !NOWEX:å°„ç²¾
 	CALL SQUIRT_CHECK
 
 ;-------------------------------------------------
-;‹­¸_–ò‚É‚æ‚éâ’¸ƒLƒƒƒ“ƒZƒ‹
+;å¼·ç²¾ç¥žè–¬ã«ã‚ˆã‚‹çµ¶é ‚ã‚­ãƒ£ãƒ³ã‚»ãƒ«
 ;-------------------------------------------------
-SIF TEQUIP:‹­¸_–ò > 1
+SIF TEQUIP:å¼·ç²¾ç¥žè–¬ > 1
 	CALL ECST_CANCEL
 
 ;-------------------------------------------------
-;â’¸ˆ—
+;çµ¶é ‚å‡¦ç†
 ;-------------------------------------------------
-SIF TEQUIP:‹­¸_–ò <= 1
+SIF TEQUIP:å¼·ç²¾ç¥žè–¬ <= 1
 	CALL ORGASM_ADD
 
 ;-------------------------------------------------
-;â’¸Žž‚Ì•ú”Aˆ—
+;çµ¶é ‚æ™‚ã®æ”¾å°¿å‡¦ç†
 ;-------------------------------------------------
 CALL ORGASM_ADD_URINE
 
 ;-------------------------------------------------
-;’²‹³‘ÎÛ‚Ì•¬“ûƒ`ƒFƒbƒN
+;èª¿æ•™å¯¾è±¡ã®å™´ä¹³ãƒã‚§ãƒƒã‚¯
 ;-------------------------------------------------
 CALL TARGET_MILK_CHECK
 

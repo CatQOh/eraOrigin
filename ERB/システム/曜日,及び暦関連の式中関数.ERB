@@ -1,55 +1,55 @@
-@ZELLER(”N, ŒŽ, “ú)
+ï»¿@ZELLER(å¹´, æœˆ, æ—¥)
 #FUNCTION
-#DIM DYNAMIC ”N
-#DIM DYNAMIC ŒŽ
-#DIM DYNAMIC “ú
-;—j“ú‚ð‹‚ß‚éŒöŽ®(ƒcƒFƒ‰[‚ÌŒöŽ®)
-;ARG=”N ARG:1=ŒŽ ARG:2=“ú  ‚É‘Î‚µ‚Äu1:“ú,2:ŒŽ,3:‰Î,4:…,5:–Ø,6:‹à,0:“yv‚Å•Ô‚·
-;Enter:ARG•Ï”‚ðu”NvuŒŽvu“úv‚É’u‚«Š·‚¦
+#DIM DYNAMIC å¹´
+#DIM DYNAMIC æœˆ
+#DIM DYNAMIC æ—¥
+;æ›œæ—¥ã‚’æ±‚ã‚ã‚‹å…¬å¼(ãƒ„ã‚§ãƒ©ãƒ¼ã®å…¬å¼)
+;ARG=å¹´ ARG:1=æœˆ ARG:2=æ—¥  ã«å¯¾ã—ã¦ã€Œ1:æ—¥,2:æœˆ,3:ç«,4:æ°´,5:æœ¨,6:é‡‘,0:åœŸã€ã§è¿”ã™
+;Enter:ARGå¤‰æ•°ã‚’ã€Œå¹´ã€ã€Œæœˆã€ã€Œæ—¥ã€ã«ç½®ãæ›ãˆ
 
-;1ŒŽ‚Æ2ŒŽ‚Í‘O”N‚Ì13ŒŽ‚Æ14ŒŽ‚Æ‚µ‚Äˆµ‚¤
-IF ŒŽ < 3
-	”N--
-	ŒŽ += 12
+;1æœˆã¨2æœˆã¯å‰å¹´ã®13æœˆã¨14æœˆã¨ã—ã¦æ‰±ã†
+IF æœˆ < 3
+	å¹´--
+	æœˆ += 12
 ENDIF
 
-;”N/100‚É°ŠÖ”‚ð’Ê‚µ‚½‚à‚Ì‚ðLOCAL:1‚Æ‚·‚é
-;•‰‚Ì”‚Ì°ŠÖ”‚Í–Ê“|
-LOCAL:1 = ”N/100
-SIF ”N < 0 && ”N%100 != 0
+;å¹´/100ã«åºŠé–¢æ•°ã‚’é€šã—ãŸã‚‚ã®ã‚’LOCAL:1ã¨ã™ã‚‹
+;è² ã®æ•°ã®åºŠé–¢æ•°ã¯é¢å€’
+LOCAL:1 = å¹´/100
+SIF å¹´ < 0 && å¹´%100 != 0
 	LOCAL:1--
 
-;”N‚Æ100‚ð–@‚Æ‚µ‚Ä‡“¯‚Å‚ ‚é’l‚ðLOCAL:2‚Æ‚·‚é
-;•‰‚Ì”‚Ìè—]‚à–Ê“|
-;(-34)%10 ‚Í -4‚Æo‚é
-LOCAL:2 = ”N%100
-SIF ”N < 0 && ”N%100 != 0
+;å¹´ã¨100ã‚’æ³•ã¨ã—ã¦åˆåŒã§ã‚ã‚‹å€¤ã‚’LOCAL:2ã¨ã™ã‚‹
+;è² ã®æ•°ã®å‰°ä½™ã‚‚é¢å€’
+;(-34)%10 ã¯ -4ã¨å‡ºã‚‹
+LOCAL:2 = å¹´%100
+SIF å¹´ < 0 && å¹´%100 != 0
 	LOCAL:2 = 100 + LOCAL:2
 
-;ƒOƒŒƒSƒŠƒI—ï‚©ƒ†ƒŠƒEƒX—ï‚©‚É‚æ‚é•â³‚ðLOCAL:3‚Æ‚·‚é
-IF GREGORIAN(”N, ŒŽ, “ú)
+;ã‚°ãƒ¬ã‚´ãƒªã‚ªæš¦ã‹ãƒ¦ãƒªã‚¦ã‚¹æš¦ã‹ã«ã‚ˆã‚‹è£œæ­£ã‚’LOCAL:3ã¨ã™ã‚‹
+IF GREGORIAN(å¹´, æœˆ, æ—¥)
 	LOCAL:3 = 5* LOCAL:1 + LOCAL:1 /4
 ELSE
 	LOCAL:3 = 6* LOCAL:1 +5
 ENDIF
 
-;ƒ†ƒŠƒEƒX—ï‚ðŠÔˆá‚Á‚½‰^—p‚ð‚µ‚Ä‚¢‚½ŠúŠÔ‚Ì•â³‚ðLOCAL:4‚Æ‚·‚é
-;AD1”N`AD3”N‚Í‘¶Ý‚µ‚È‚¢(‚¯‚ÇŒvŽZã‚Í‘¶Ý‚·‚é)AD4”N2ŒŽ29“ú‚Ì‚¹‚¢‚Å+1‚ð•â³‚·‚é
-IF ”N == 1 || ”N == 2 || ”N == 3
+;ãƒ¦ãƒªã‚¦ã‚¹æš¦ã‚’é–“é•ã£ãŸé‹ç”¨ã‚’ã—ã¦ã„ãŸæœŸé–“ã®è£œæ­£ã‚’LOCAL:4ã¨ã™ã‚‹
+;AD1å¹´ï½žAD3å¹´ã¯å­˜åœ¨ã—ãªã„(ã‘ã©è¨ˆç®—ä¸Šã¯å­˜åœ¨ã™ã‚‹)AD4å¹´2æœˆ29æ—¥ã®ã›ã„ã§+1ã‚’è£œæ­£ã™ã‚‹
+IF å¹´ == 1 || å¹´ == 2 || å¹´ == 3
 	LOCAL:4 = 1
-;‚±‚±‚©‚ç‹IŒ³‘O
-;“¯—l‚É‚¸‚ê‚½•ª‚Ì•â³‚ð‚¢‚ê‚é
-;—á‚¦‚ÎABC45”N2ŒŽ29“ú‚ÍŒvŽZã‚Í‘¶Ý‚·‚é‚×‚«‚È‚Ì‚ÉAŽÀÛ‚Í‚È‚©‚Á‚½‚Ì‚Å-1“ú•ª‚¸‚ç‚·
-ELSEIF ”N <= 0
-	;0”N‚ð‹IŒ³‘O1”NA-1”N‚ð‹IŒ³‘O2”NA-2”N‚ð‹IŒ³‘O3”Ncc‚Æ‚¨‚¢‚ÄŒ©‚½–Ú‚ð•ª‚©‚è‚â‚·‚­‚·‚é
-	SELECTCASE ABS(”N)+1
+;ã“ã“ã‹ã‚‰ç´€å…ƒå‰
+;åŒæ§˜ã«ãšã‚ŒãŸåˆ†ã®è£œæ­£ã‚’ã„ã‚Œã‚‹
+;ä¾‹ãˆã°ã€BC45å¹´2æœˆ29æ—¥ã¯è¨ˆç®—ä¸Šã¯å­˜åœ¨ã™ã‚‹ã¹ããªã®ã«ã€å®Ÿéš›ã¯ãªã‹ã£ãŸã®ã§-1æ—¥åˆ†ãšã‚‰ã™
+ELSEIF å¹´ <= 0
+	;0å¹´ã‚’ç´€å…ƒå‰1å¹´ã€-1å¹´ã‚’ç´€å…ƒå‰2å¹´ã€-2å¹´ã‚’ç´€å…ƒå‰3å¹´â€¦â€¦ã¨ãŠã„ã¦è¦‹ãŸç›®ã‚’åˆ†ã‹ã‚Šã‚„ã™ãã™ã‚‹
+	SELECTCASE ABS(å¹´)+1
 		CASE 1, 21, 24, 25, 27 TO 32, 34, 35, 38
 			LOCAL:4 = 1
 		CASE 2 TO 5, 9, 12, 13, 15 TO 20, 22, 23, 26
 			LOCAL:4 = 2
 		CASE 6 TO 8, 10, 11, 14
 			LOCAL:4 = 3
-		;7“úƒ‹[ƒv‚Å-1“ú‚Í+6“ú‚Æ“¯‚¶
+		;7æ—¥ãƒ«ãƒ¼ãƒ—ã§-1æ—¥ã¯+6æ—¥ã¨åŒã˜
 		CASE 45
 			LOCAL:4 = 6
 		CASEELSE
@@ -57,31 +57,31 @@ ELSEIF ”N <= 0
 	ENDSELECT
 ENDIF
 
-;‹‚ß‚é’l‚ðLOCAL‚Æ‚¨‚­
-;Enter:ƒEƒBƒLƒyƒfƒBƒA•—‚ÉŠ‡ŒÊ•Â‚¶
-LOCAL = LOCAL:2 + (LOCAL:2 /4) + (26*(1+ŒŽ)/10) + “ú + LOCAL:3 + LOCAL:4
+;æ±‚ã‚ã‚‹å€¤ã‚’LOCALã¨ãŠã
+;Enter:ã‚¦ã‚£ã‚­ãƒšãƒ‡ã‚£ã‚¢é¢¨ã«æ‹¬å¼§é–‰ã˜
+LOCAL = LOCAL:2 + (LOCAL:2 /4) + (26*(1+æœˆ)/10) + æ—¥ + LOCAL:3 + LOCAL:4
 LOCAL %= 7
 
 RETURNF LOCAL
 
 
-@GREGORIAN(”N, ŒŽ, “ú)
+@GREGORIAN(å¹´, æœˆ, æ—¥)
 #FUNCTION
-#DIM ”N
-#DIM ŒŽ
-#DIM “ú
-;ARG”N ARG:1ŒŽ ARG:2“ú  ‚ÉƒOƒŒƒSƒŠƒI—ï‚ªŽg‚í‚ê‚Ä‚¢‚é‚©
-;Žg‚í‚ê‚Ä‚¢‚é‚È‚ç1A‚»‚¤‚Å‚È‚¢‚È‚ç0
-;ƒOƒŒƒSƒŠƒI—ï‚Í1582”N10ŒŽ15“ú‚©‚çŽ{s
-;‚±‚Á‚¿‚àARG‚ð”NŒŽ“ú‚Å’u‚«Š·‚¦
+#DIM å¹´
+#DIM æœˆ
+#DIM æ—¥
+;ARGå¹´ ARG:1æœˆ ARG:2æ—¥  ã«ã‚°ãƒ¬ã‚´ãƒªã‚ªæš¦ãŒä½¿ã‚ã‚Œã¦ã„ã‚‹ã‹
+;ä½¿ã‚ã‚Œã¦ã„ã‚‹ãªã‚‰1ã€ãã†ã§ãªã„ãªã‚‰0
+;ã‚°ãƒ¬ã‚´ãƒªã‚ªæš¦ã¯1582å¹´10æœˆ15æ—¥ã‹ã‚‰æ–½è¡Œ
+;ã“ã£ã¡ã‚‚ARGã‚’å¹´æœˆæ—¥ã§ç½®ãæ›ãˆ
 
-IF ”N > 1582
+IF å¹´ > 1582
 	RETURNF 1
-ELSEIF ”N == 1582
-	IF ŒŽ > 10
+ELSEIF å¹´ == 1582
+	IF æœˆ > 10
 		RETURNF 1
-	ELSEIF ŒŽ == 10
-		IF “ú >= 15
+	ELSEIF æœˆ == 10
+		IF æ—¥ >= 15
 			RETURNF 1
 		ELSE
 			RETURNF 0
@@ -96,42 +96,42 @@ ENDIF
 
 @DOW(ARG)
 #FUNCTIONS
-;DOW‚Íday of week(—j“ú)‚Ì—ª
-;u1:“ú,2:ŒŽ,3:‰Î,4:…,5:–Ø,6:‹à,0:“yv‚ðo—Í‚·‚é
+;DOWã¯day of week(æ›œæ—¥)ã®ç•¥
+;ã€Œ1:æ—¥,2:æœˆ,3:ç«,4:æ°´,5:æœ¨,6:é‡‘,0:åœŸã€ã‚’å‡ºåŠ›ã™ã‚‹
 SELECTCASE ARG
 	CASE 1
-		RETURNF "“ú"
+		RETURNF "æ—¥"
 	CASE 2
-		RETURNF "ŒŽ"
+		RETURNF "æœˆ"
 	CASE 3
-		RETURNF "‰Î"
+		RETURNF "ç«"
 	CASE 4
-		RETURNF "…"
+		RETURNF "æ°´"
 	CASE 5
-		RETURNF "–Ø"
+		RETURNF "æœ¨"
 	CASE 6
-		RETURNF "‹à"
+		RETURNF "é‡‘"
 	CASE 0
-		RETURNF "“y"
+		RETURNF "åœŸ"
 ENDSELECT
 
-@NO_WEEK, ”N = -1, ŒŽ = -1, “ú = -1
+@NO_WEEK, å¹´ = -1, æœˆ = -1, æ—¥ = -1
 #FUNCTION
-#DIM “ú
-#DIM ŒŽ
-#DIM ”N
-SIF ”N == -1
-	”N = YEAR
-SIF ŒŽ == -1
-	ŒŽ = MONTH
-SIF “ú == -1
-	“ú = DAYS
+#DIM æ—¥
+#DIM æœˆ
+#DIM å¹´
+SIF å¹´ == -1
+	å¹´ = YEAR
+SIF æœˆ == -1
+	æœˆ = MONTH
+SIF æ—¥ == -1
+	æ—¥ = DAYS
 
-;Ž®’†ŠÖ”uNO_WEEKv
-;‚»‚Ì“ú‚ªŒŽ‚Ì‰½T–Ú‚©‚ð•Ô‚· TŽn‚ß‚Í“ú—j“ú
-;ˆø”‚ðÈ—ª‚µ‚½ê‡‚Í¡“úA¡ŒŽA¡”N‚ÅŒvŽZ‚³‚ê‚é
+;å¼ä¸­é–¢æ•°ã€ŒNO_WEEKã€
+;ãã®æ—¥ãŒæœˆã®ä½•é€±ç›®ã‹ã‚’è¿”ã™ é€±å§‹ã‚ã¯æ—¥æ›œæ—¥
+;å¼•æ•°ã‚’çœç•¥ã—ãŸå ´åˆã¯ä»Šæ—¥ã€ä»Šæœˆã€ä»Šå¹´ã§è¨ˆç®—ã•ã‚Œã‚‹
 
-LOCAL = ZELLER(”N, ŒŽ, 1)
+LOCAL = ZELLER(å¹´, æœˆ, 1)
 
 SELECTCASE LOCAL
 	CASE 0
@@ -140,41 +140,41 @@ SELECTCASE LOCAL
 		LOCAL -= 2
 ENDSELECT
 
-RETURNF (“ú+LOCAL)/7
+RETURNF (æ—¥+LOCAL)/7
 
-@NO_DOW, T, —j“ú, ŒŽ = -1 , ”N = -1
+@NO_DOW, é€±, æ›œæ—¥, æœˆ = -1 , å¹´ = -1
 #FUNCTION
-#DIMS —j“ú
-#DIM T
-#DIM ŒŽ
-#DIM ”N
-SIF ”N == -1
-	”N = YEAR
-SIF ŒŽ == -1
-	ŒŽ = MONTH
+#DIMS æ›œæ—¥
+#DIM é€±
+#DIM æœˆ
+#DIM å¹´
+SIF å¹´ == -1
+	å¹´ = YEAR
+SIF æœˆ == -1
+	æœˆ = MONTH
 
-;Ž®’†ŠÖ”uNO_DOWv
-;“–ŒŽ‚ÌŽw’è‚µ‚½‘æ‰½‰½—j“ú‚ª‰½“ú‚©‚ð•Ô‚·Ž®’†ŠÖ”
-;‘æŽOˆø”ˆÈ~‚ðÈ—ª‚µ‚½ê‡‚Í¡ŒŽA¡”N‚ÅŒvŽZ‚³‚ê‚é
+;å¼ä¸­é–¢æ•°ã€ŒNO_DOWã€
+;å½“æœˆã®æŒ‡å®šã—ãŸç¬¬ä½•ä½•æ›œæ—¥ãŒä½•æ—¥ã‹ã‚’è¿”ã™å¼ä¸­é–¢æ•°
+;ç¬¬ä¸‰å¼•æ•°ä»¥é™ã‚’çœç•¥ã—ãŸå ´åˆã¯ä»Šæœˆã€ä»Šå¹´ã§è¨ˆç®—ã•ã‚Œã‚‹
 
-SELECTCASE —j“ú
-	CASE "“ú"
+SELECTCASE æ›œæ—¥
+	CASE "æ—¥"
 		LOCAL = 1
-	CASE "ŒŽ"
+	CASE "æœˆ"
 		LOCAL = 2
-	CASE "‰Î"
+	CASE "ç«"
 		LOCAL = 3
-	CASE "…"
+	CASE "æ°´"
 		LOCAL = 4
-	CASE "–Ø"
+	CASE "æœ¨"
 		LOCAL = 5
-	CASE "‹à"
+	CASE "é‡‘"
 		LOCAL = 6
-	CASE "“y"
+	CASE "åœŸ"
 		LOCAL = 7
 ENDSELECT
 
-LOCAL:1 = ZELLER(”N, ŒŽ, 1)
+LOCAL:1 = ZELLER(å¹´, æœˆ, 1)
 
 SELECTCASE LOCAL:1
 	CASE 0
@@ -184,53 +184,53 @@ SELECTCASE LOCAL:1
 ENDSELECT
 
 IF LOCAL < LOCAL:1+1
-	RETURNF LOCAL-LOCAL:1+T*7
+	RETURNF LOCAL-LOCAL:1+é€±*7
 ELSE
-	RETURNF LOCAL-LOCAL:1+(T-1)*7
+	RETURNF LOCAL-LOCAL:1+(é€±-1)*7
 ENDIF
 
-@PREMIUM_FRIDAY, ”N, ŒŽ, “ú
+@PREMIUM_FRIDAY, å¹´, æœˆ, æ—¥
 #FUNCTION
-#DIM DYNAMIC ”N
-#DIM DYNAMIC ŒŽ
-#DIM DYNAMIC “ú
-#DIM DYNAMIC “ú”
+#DIM DYNAMIC å¹´
+#DIM DYNAMIC æœˆ
+#DIM DYNAMIC æ—¥
+#DIM DYNAMIC æ—¥æ•°
 
-;Ž®’†ŠÖ”uPREMIUM_FRIDAYv ƒvƒŒƒ~ƒAƒ€ƒtƒ‰ƒCƒf[A‚»‚ê‚Í‚»‚ÌŒŽ‚ÌÅI‹à—j“ú‚És‚í‚ê‚éƒnƒbƒs[ƒCƒxƒ“ƒg‚ç‚µ‚¢
-;ˆø”‚ÅŽw’è‚µ‚½“ú‚ªƒvƒŒƒ~ƒAƒ€ƒtƒ‰ƒCƒf[‚©‚Ç‚¤‚©‚ð”»•Ê
-;ƒvƒŒƒ~ƒAƒ€ƒtƒ‰ƒCƒf[‚È‚ç1‚ð•Ô‚· ˆø”‚ÌÈ—ª‚Í”ñ„§
+;å¼ä¸­é–¢æ•°ã€ŒPREMIUM_FRIDAYã€ ãƒ—ãƒ¬ãƒŸã‚¢ãƒ ãƒ•ãƒ©ã‚¤ãƒ‡ãƒ¼ã€ãã‚Œã¯ãã®æœˆã®æœ€çµ‚é‡‘æ›œæ—¥ã«è¡Œã‚ã‚Œã‚‹ãƒãƒƒãƒ”ãƒ¼ã‚¤ãƒ™ãƒ³ãƒˆã‚‰ã—ã„
+;å¼•æ•°ã§æŒ‡å®šã—ãŸæ—¥ãŒãƒ—ãƒ¬ãƒŸã‚¢ãƒ ãƒ•ãƒ©ã‚¤ãƒ‡ãƒ¼ã‹ã©ã†ã‹ã‚’åˆ¤åˆ¥
+;ãƒ—ãƒ¬ãƒŸã‚¢ãƒ ãƒ•ãƒ©ã‚¤ãƒ‡ãƒ¼ãªã‚‰1ã‚’è¿”ã™ å¼•æ•°ã®çœç•¥ã¯éžæŽ¨å¥¨
 
-;‚»‚à‚»‚à‹à—j“ú‚¶‚á‚È‚¯‚ê‚ÎI—¹
-SIF DOW(ZELLER(”N, ŒŽ, “ú)) != "‹à"
+;ãã‚‚ãã‚‚é‡‘æ›œæ—¥ã˜ã‚ƒãªã‘ã‚Œã°çµ‚äº†
+SIF DOW(ZELLER(å¹´, æœˆ, æ—¥)) != "é‡‘"
 	RETURNF 0
 
-;21“úˆÈ‘O‚È‚çŽŸT‚ª•K‚¸‚ ‚é‚Ì‚ÅI—¹
-SIF “ú <= 21
+;21æ—¥ä»¥å‰ãªã‚‰æ¬¡é€±ãŒå¿…ãšã‚ã‚‹ã®ã§çµ‚äº†
+SIF æ—¥ <= 21
 	RETURNF 0
 
-;ƒvƒŒƒ~ƒAƒ€ƒtƒ‰ƒCƒf[‚ÌŽ{s“ú‚Í2017”N2ŒŽ24“ú‚È‚Ì‚Å‚»‚êˆÈ‘O‚È‚çI—¹
-SIF ”N < 2017 || (”N == 2017 && ŒŽ < 2) || (”N == 2017 && ŒŽ == 2 && “ú < 24)
+;ãƒ—ãƒ¬ãƒŸã‚¢ãƒ ãƒ•ãƒ©ã‚¤ãƒ‡ãƒ¼ã®æ–½è¡Œæ—¥ã¯2017å¹´2æœˆ24æ—¥ãªã®ã§ãã‚Œä»¥å‰ãªã‚‰çµ‚äº†
+SIF å¹´ < 2017 || (å¹´ == 2017 && æœˆ < 2) || (å¹´ == 2017 && æœˆ == 2 && æ—¥ < 24)
 	RETURNF 0
 
-;‚»‚ÌŒŽ‚Ì“ú”‚ðŒvŽZ
+;ãã®æœˆã®æ—¥æ•°ã‚’è¨ˆç®—
 SELECTCASE MONTH
 	CASE 1, 3, 5, 7, 8, 10, 12
-		“ú” = 31
+		æ—¥æ•° = 31
 	CASE 4, 6, 9, 11
-		“ú” = 30
+		æ—¥æ•° = 30
 	CASE 2
-		;‚¤‚é‚¤”N‚©‚Ç‚¤‚©‚Åê‡•ª‚¯
+		;ã†ã‚‹ã†å¹´ã‹ã©ã†ã‹ã§å ´åˆåˆ†ã‘
 		IF (YEAR%4 == 0 && YEAR%100 != 0) || YEAR%400 == 0
-			“ú” = 29
+			æ—¥æ•° = 29
 		ELSE
-			“ú” = 28
+			æ—¥æ•° = 28
 		ENDIF
 ENDSELECT
 
-;‚±‚±‚Ü‚Å—ˆ‚½‚Æ‚¢‚¤‚±‚Æ‚Í‹à—j“ú‚ªŠm’è‚µ‚Ä‚é‚Ì‚ÅA“ú”-Žw’è“ú‚ª7ˆÈã‚È‚çŽŸT‚ª‚ ‚é‚Ì‚ÅƒvƒŒƒ~ƒAƒ€ƒtƒ‰ƒCƒf[‚Å‚Í‚È‚¢
-SIF “ú” - “ú >= 7
+;ã“ã“ã¾ã§æ¥ãŸã¨ã„ã†ã“ã¨ã¯é‡‘æ›œæ—¥ãŒç¢ºå®šã—ã¦ã‚‹ã®ã§ã€æ—¥æ•°-æŒ‡å®šæ—¥ãŒ7ä»¥ä¸Šãªã‚‰æ¬¡é€±ãŒã‚ã‚‹ã®ã§ãƒ—ãƒ¬ãƒŸã‚¢ãƒ ãƒ•ãƒ©ã‚¤ãƒ‡ãƒ¼ã§ã¯ãªã„
+SIF æ—¥æ•° - æ—¥ >= 7
 	RETURNF 0
 
-;ã‚Ìˆ—‚ð”²‚¯‚Ä‚«‚½‚È‚çƒvƒŒƒ~ƒAƒ€ƒtƒ‰ƒCƒf[
+;ä¸Šã®å‡¦ç†ã‚’æŠœã‘ã¦ããŸãªã‚‰ãƒ—ãƒ¬ãƒŸã‚¢ãƒ ãƒ•ãƒ©ã‚¤ãƒ‡ãƒ¼
 RETURNF 1
 

@@ -1,73 +1,73 @@
+﻿;-------------------------------------------------
+;腸洗浄
 ;-------------------------------------------------
-;�����
-;-------------------------------------------------
-@USERCOM_ABLE_�����, ARG
+@USERCOM_ABLE_腸洗浄, ARG
 #FUNCTION
-;���̒����Ŋ��ɔr�֍ς݂Ȃ�o���Ȃ�
-SIF TFLAG:�����ς�
+;その調教で既に排便済みなら出来ない
+SIF TFLAG:腸洗浄済み
 	RETURNF 0
-;�����C�ꂶ��Ȃ��ƃ_��
-SIF !TEQUIP:�����C��
+;お風呂場じゃないとダメ
+SIF !TEQUIP:お風呂場
 	RETURNF 0
-;�A�i���g�p���̓_��
-SIF �`�g�p��(TARGET)
+;アナル使用中はダメ
+SIF Ａ使用中(TARGET)
 	RETURNF 0
 
 COMRESULT = 1
 RETURNF 1
 
-@COM_�����
-PRINTL �����
+@COM_腸洗浄
+PRINTL 腸洗浄
 CALL KOJO_MESSAGE_COM
 
-TFLAG:�����ς� = 1
+TFLAG:腸洗浄済み = 1
 
 ;-------------------------------------------------
-;�\�[�X�ǉ�����
+;ソース追加処理
 ;-------------------------------------------------
-;����̗́A�C��
-LOSEBASE:�̗� += 50
-LOSEBASE:�C�� += 100
+;消費体力、気力
+LOSEBASE:体力 += 50
+LOSEBASE:気力 += 100
 
-SOURCE:��A = 100
-SOURCE:��� = 300
-SOURCE:�I�o = 1500
-SOURCE:���] = 300
-SOURCE:�s�� = 300
-SOURCE:��E = 500
-SOURCE:���� = 3000
-
-;-------------------------------------------------
-;����\�[�X����
-;-------------------------------------------------
-;�}���A��R�����ɂ́A�}�T�\�[�X�ǉ�
-SIF TALENT:�}�� || TALENT:��R
-	SOURCE:�T�� += 500
-
-CALL ����\�[�X����_�`
+SOURCE:快A = 100
+SOURCE:苦痛 = 300
+SOURCE:露出 = 1500
+SOURCE:屈従 = 300
+SOURCE:不潔 = 300
+SOURCE:逸脱 = 500
+SOURCE:反感 = 3000
 
 ;-------------------------------------------------
-;�Ⓒ�`�F�b�N
+;特殊ソース処理
+;-------------------------------------------------
+;抑圧、抵抗持ちには、抑鬱ソース追加
+SIF TALENT:抑圧 || TALENT:抵抗
+	SOURCE:鬱屈 += 500
+
+CALL 特殊ソース処理_Ａ
+
+;-------------------------------------------------
+;絶頂チェック
 ;-------------------------------------------------
 CALL SOURCE_CHECK_CVAB
 
 ;-------------------------------------------------
-;�ː��`�F�b�N
+;射精チェック
 ;-------------------------------------------------
 CALL SAMEN_CHECK_T, 0
 
-CALL SAMEN_SHOOT_T, 0, NOWEX:�ː�
+CALL SAMEN_SHOOT_T, 0, NOWEX:射精
 
 ;-------------------------------------------------
-;�o���̏���
+;経験の処理
 ;-------------------------------------------------
 CALL EXPUP, 1, 3
 
-;�ˑ��x�␳�l(���]��1�A�ꑮ��2�j
-IF TALENT:���] && PLAYER == MASTER
-	TFLAG:�ˑ��x�␳ += 1
-ELSEIF TALENT:�ꑮ && PLAYER == MASTER
-	TFLAG:�ˑ��x�␳ += 2
+;依存度補正値(服従で1、隷属で2）
+IF TALENT:服従 && PLAYER == MASTER
+	TFLAG:依存度補正 += 1
+ELSEIF TALENT:隷属 && PLAYER == MASTER
+	TFLAG:依存度補正 += 2
 ENDIF
 
 RETURN 1

@@ -1,89 +1,89 @@
-@SHOPITEM_BUY
-#DIM DYNAMIC •\Ž¦”
+ï»¿@SHOPITEM_BUY
+#DIM DYNAMIC è¡¨ç¤ºæ•°
 #DIM DYNAMIC LCOUNT
-•\Ž¦” = 0
+è¡¨ç¤ºæ•° = 0
 VARSET LOCAL, 0
 VARSET ITEMSALES, 0
 
-;‘fŽ¿•t—^ƒAƒCƒeƒ€
-;‰˜‚ê–³Ž‹
-SIF !TALENT:MASTER:‰˜‚ê–³Ž‹
-	ITEMSALES:y‰˜‚ê–³Ž‹z = 1
+;ç´ è³ªä»˜ä¸Žã‚¢ã‚¤ãƒ†ãƒ 
+;æ±šã‚Œç„¡è¦–
+SIF !TALENT:MASTER:æ±šã‚Œç„¡è¦–
+	ITEMSALES:ã€æ±šã‚Œç„¡è¦–ã€‘ = 1
 
-;ƒhƒ‰ƒLƒ…ƒ‰‚Ì‰å
-SIF !TALENT:MASTER:‹zŒŒ‹S
-	ITEMSALES:yƒhƒ‰ƒLƒ…ƒ‰‚Ì‰åz = 1
+;ãƒ‰ãƒ©ã‚­ãƒ¥ãƒ©ã®ç‰™
+SIF !TALENT:MASTER:å¸è¡€é¬¼
+	ITEMSALES:ã€ãƒ‰ãƒ©ã‚­ãƒ¥ãƒ©ã®ç‰™ã€‘ = 1
 
-;ƒhƒ‰ƒSƒ“‚Ì¬‘Ì
-SIF !TALENT:MASTER:ƒhƒ‰ƒSƒ“Žg‚¢
-	ITEMSALES:yƒhƒ‰ƒSƒ“‚Ì¬‘Ìz = 1
+;ãƒ‰ãƒ©ã‚´ãƒ³ã®æˆä½“
+SIF !TALENT:MASTER:ãƒ‰ãƒ©ã‚´ãƒ³ä½¿ã„
+	ITEMSALES:ã€ãƒ‰ãƒ©ã‚´ãƒ³ã®æˆä½“ã€‘ = 1
 
-;“z—ê‚ð‘ÎÛ‚Æ‚µ‚½–ò
-;Œ³‹C‚É‚È‚é–òE–‚Ü
+;å¥´éš·ã‚’å¯¾è±¡ã¨ã—ãŸè–¬
+;å…ƒæ°—ã«ãªã‚‹è–¬ãƒ»é­”å‰¤
 REPEAT CHARANUM
-	;Žg—p•s‰Â
-	SIF CFLAG:COUNT:Žg—p•s‰Â
+	;ä½¿ç”¨ä¸å¯
+	SIF CFLAG:COUNT:ä½¿ç”¨ä¸å¯
 		CONTINUE
-	SIF BASE:COUNT:‘Ì—Í < MAXBASE:COUNT:‘Ì—Í
-		ITEMSALES:‰ö‚µ‚°‚È‰h—{Ü = 1
-	SIF !CFLAG:COUNT:–‚Ü
-		ITEMSALES:–‚Ü = 1
+	SIF BASE:COUNT:ä½“åŠ› < MAXBASE:COUNT:ä½“åŠ›
+		ITEMSALES:æ€ªã—ã’ãªæ „é¤Šå‰¤ = 1
+	SIF !CFLAG:COUNT:é­”å‰¤
+		ITEMSALES:é­”å‰¤ = 1
 
-	;‘fŽ¿•Ï‰»‚Ì–ò
-	;–³‹@•¨E‹@ŠB‚É‚ÍŽg‚¦‚È‚¢
-	SIF TALENT:COUNT:–³‹@•¨ || CSTR:COUNT:Ží‘° == "‹@ŠB"
+	;ç´ è³ªå¤‰åŒ–ã®è–¬
+	;ç„¡æ©Ÿç‰©ãƒ»æ©Ÿæ¢°ã«ã¯ä½¿ãˆãªã„
+	SIF TALENT:COUNT:ç„¡æ©Ÿç‰© || CSTR:COUNT:ç¨®æ— == "æ©Ÿæ¢°"
 		CONTINUE
-	;‚Ó‚½‚È‚è‰»‚Å‚«‚é‚©
-	SIF !TALENT:COUNT:‚Ó‚½‚È‚è
-		ITEMSALES:‚Ó‚½‚È‚è–ò = 1
-	;‚Ó‚½‚È‚è‚ðÁ‹Ž‚Å‚«‚é‚©
-	SIF TALENT:COUNT:‚Ó‚½‚È‚è && !(SEX(COUNT) == 1 && TALENT:COUNT:”DP)
-		ITEMSALES:‚Ó‚½‚È‚èÁ‹Ž–ò = 1
-	;•ê“û‘ÌŽ¿‚É‚Å‚«‚é‚© —«‚Ì‚Ý Žål‚ÍŽg‚¦‚È‚¢
-	SIF !TALENT:COUNT:•ê“û‘ÌŽ¿ && SEX(COUNT) == 1 && COUNT != MASTER
-		ITEMSALES:“VŽg‚Ìƒ~ƒ‹ƒN = 1
-	;ˆ—–ŒÄ¶‚Å‚«‚é‚© ˆ—‚¨‚æ‚ÑÄ¶ˆ—‚¾‚Æƒ_ƒ
-	SIF !TALENT:COUNT:ˆ— && !TALENT:COUNT:Ä¶ˆ— && VAGINA(COUNT)
-		ITEMSALES:ƒ†ƒjƒR[ƒ“ƒeƒCƒ‹ = 1
-	;–L‹¹‚Å‚«‚é‚© ”š“ûˆÈŠO‚Å‚È‚¢‚Æƒ_ƒ
-	SIF TALENT:COUNT:ƒoƒXƒgƒTƒCƒY != 5 && SEX(COUNT) == 2
-		ITEMSALES:–L‹¹Ü = 1
-	;k‹¹‚Å‚«‚é‚© â•ÇˆÈŠO‚Å‚È‚¢‚Æƒ_ƒ
-	SIF TALENT:COUNT:ƒoƒXƒgƒTƒCƒY != 1 && SEX(COUNT) == 2
-		ITEMSALES:k‹¹Ü = 1
-	;•ê“ûŽ¡—Ã‚Å‚«‚é‚© •ê“û‘ÌŽ¿‚¶‚á‚È‚¢‚Æƒ_ƒ Žål‚ÍŽg‚¦‚È‚¢
-	SIF TALENT:COUNT:•ê“û‘ÌŽ¿ && SEX(COUNT) == 2 && COUNT != MASTER
-		ITEMSALES:Ž~“ûÜ = 1
-	;‚¨˜R‚ç‚µŽ¡—Ã‚Å‚«‚é‚© ‚¨˜R‚ç‚µ•È‚¶‚á‚È‚¢‚Æƒ_ƒ Žål‚ÍŽg‚¦‚È‚¢
-	SIF TALENT:COUNT:‚¨‚à‚ç‚µ•È && COUNT != MASTER
-		ITEMSALES:–é”AÇ‰ü‘P–ò = 1
-	;ƒ]ƒ“ƒr‰»‚·‚éB¹…‚ÅŒ³‚É‚à–ß‚¹‚é‚ªƒyƒiƒ‹ƒeƒB‚ª‚ ‚é Žål‚ÍŽg‚¦‚È‚¢
-	SIF !TALENT:COUNT:ƒ]ƒ“ƒr && COUNT != MASTER
-		ITEMSALES:ƒ]ƒ“ƒrƒpƒEƒ_[ = 1
-	;ƒ]ƒ“ƒr‚ðÁ‹Ž‚·‚éB‚µ‚©‚µ‰ñ•œ—Ê’á‰º‚È‚Ç‚Ìƒyƒiƒ‹ƒeƒB‚ª‚ ‚é Žål‚ÍŽg‚¦‚È‚¢
-	SIF TALENT:COUNT:ƒ]ƒ“ƒr && COUNT != MASTER
-		ITEMSALES:¹… = 1
-	;«“]Š·‚·‚é ˆê“xŽg‚¤‚Æ“ñ“x‚ÆŒ³‚É‚Í–ß‚¹‚È‚¢
-	SIF !TALENT:COUNT:«“]Š·Ï && !TALENT:COUNT:”DP
-		ITEMSALES:«“]Š·–ò = 1
-	;‘ål‰»orŽq‹Ÿ‰»‚·‚é –L‹¹‚Æk‹¹‚ÌŒø‰Ê‚à‚ ‚é‚Ì‚Å‚»‚ÌƒAƒCƒeƒ€‚æ‚è‚‚¢
-	SIF !TALENT:COUNT:¬l‘ÌŒ^
-		ITEMSALES:Žž‚Ì»ŽžŒv = 1
-	;‚¨‚à‚ç‚µ‚·‚é‚æ‚¤‚É‚·‚é Žål‚ÍŽg‚¦‚È‚¢
-	SIF !TALENT:COUNT:‚¨‚à‚ç‚µ•È && COUNT != MASTER
-		ITEMSALES:‰i‘±“I—˜”AÜ = 1
-	;bŽ¨‚ÆK”ö‚ð¶‚â‚·
-	SIF (!TALENT:COUNT:“®•¨Ž¨ || !TALENT:COUNT:K”ö) && CSTR:COUNT:Ží‘° != "b" && !TALENT:COUNT:ƒtƒ@[ƒŠ[
-		ITEMSALES:ƒr[ƒXƒeƒB[ƒXƒ^[ƒ^[ = 1
-	;”r—‘—U”­Ü
-	;–³‹@•¨E‹@ŠB‚É‚ÍŽg‚¦‚È‚¢
-	SIF TALENT:COUNT:–³‹@•¨ || CSTR:COUNT:Ží‘° == "‹@ŠB"
+	;ãµãŸãªã‚ŠåŒ–ã§ãã‚‹ã‹
+	SIF !TALENT:COUNT:ãµãŸãªã‚Š
+		ITEMSALES:ãµãŸãªã‚Šè–¬ = 1
+	;ãµãŸãªã‚Šã‚’æ¶ˆåŽ»ã§ãã‚‹ã‹
+	SIF TALENT:COUNT:ãµãŸãªã‚Š && !(SEX(COUNT) == 1 && TALENT:COUNT:å¦Šå¨ )
+		ITEMSALES:ãµãŸãªã‚Šæ¶ˆåŽ»è–¬ = 1
+	;æ¯ä¹³ä½“è³ªã«ã§ãã‚‹ã‹ å¥³æ€§ã®ã¿ ä¸»äººã¯ä½¿ãˆãªã„
+	SIF !TALENT:COUNT:æ¯ä¹³ä½“è³ª && SEX(COUNT) == 1 && COUNT != MASTER
+		ITEMSALES:å¤©ä½¿ã®ãƒŸãƒ«ã‚¯ = 1
+	;å‡¦å¥³è†œå†ç”Ÿã§ãã‚‹ã‹ å‡¦å¥³ãŠã‚ˆã³å†ç”Ÿå‡¦å¥³ã ã¨ãƒ€ãƒ¡
+	SIF !TALENT:COUNT:å‡¦å¥³ && !TALENT:COUNT:å†ç”Ÿå‡¦å¥³ && VAGINA(COUNT)
+		ITEMSALES:ãƒ¦ãƒ‹ã‚³ãƒ¼ãƒ³ãƒ†ã‚¤ãƒ« = 1
+	;è±Šèƒ¸ã§ãã‚‹ã‹ çˆ†ä¹³ä»¥å¤–ã§ãªã„ã¨ãƒ€ãƒ¡
+	SIF TALENT:COUNT:ãƒã‚¹ãƒˆã‚µã‚¤ã‚º != 5 && SEX(COUNT) == 2
+		ITEMSALES:è±Šèƒ¸å‰¤ = 1
+	;ç¸®èƒ¸ã§ãã‚‹ã‹ çµ¶å£ä»¥å¤–ã§ãªã„ã¨ãƒ€ãƒ¡
+	SIF TALENT:COUNT:ãƒã‚¹ãƒˆã‚µã‚¤ã‚º != 1 && SEX(COUNT) == 2
+		ITEMSALES:ç¸®èƒ¸å‰¤ = 1
+	;æ¯ä¹³æ²»ç™‚ã§ãã‚‹ã‹ æ¯ä¹³ä½“è³ªã˜ã‚ƒãªã„ã¨ãƒ€ãƒ¡ ä¸»äººã¯ä½¿ãˆãªã„
+	SIF TALENT:COUNT:æ¯ä¹³ä½“è³ª && SEX(COUNT) == 2 && COUNT != MASTER
+		ITEMSALES:æ­¢ä¹³å‰¤ = 1
+	;ãŠæ¼ã‚‰ã—æ²»ç™‚ã§ãã‚‹ã‹ ãŠæ¼ã‚‰ã—ç™–ã˜ã‚ƒãªã„ã¨ãƒ€ãƒ¡ ä¸»äººã¯ä½¿ãˆãªã„
+	SIF TALENT:COUNT:ãŠã‚‚ã‚‰ã—ç™– && COUNT != MASTER
+		ITEMSALES:å¤œå°¿ç—‡æ”¹å–„è–¬ = 1
+	;ã‚¾ãƒ³ãƒ“åŒ–ã™ã‚‹ã€‚è–æ°´ã§å…ƒã«ã‚‚æˆ»ã›ã‚‹ãŒãƒšãƒŠãƒ«ãƒ†ã‚£ãŒã‚ã‚‹ ä¸»äººã¯ä½¿ãˆãªã„
+	SIF !TALENT:COUNT:ã‚¾ãƒ³ãƒ“ && COUNT != MASTER
+		ITEMSALES:ã‚¾ãƒ³ãƒ“ãƒ‘ã‚¦ãƒ€ãƒ¼ = 1
+	;ã‚¾ãƒ³ãƒ“ã‚’æ¶ˆåŽ»ã™ã‚‹ã€‚ã—ã‹ã—å›žå¾©é‡ä½Žä¸‹ãªã©ã®ãƒšãƒŠãƒ«ãƒ†ã‚£ãŒã‚ã‚‹ ä¸»äººã¯ä½¿ãˆãªã„
+	SIF TALENT:COUNT:ã‚¾ãƒ³ãƒ“ && COUNT != MASTER
+		ITEMSALES:è–æ°´ = 1
+	;æ€§è»¢æ›ã™ã‚‹ ä¸€åº¦ä½¿ã†ã¨äºŒåº¦ã¨å…ƒã«ã¯æˆ»ã›ãªã„
+	SIF !TALENT:COUNT:æ€§è»¢æ›æ¸ˆ && !TALENT:COUNT:å¦Šå¨ 
+		ITEMSALES:æ€§è»¢æ›è–¬ = 1
+	;å¤§äººåŒ–orå­ä¾›åŒ–ã™ã‚‹ è±Šèƒ¸ã¨ç¸®èƒ¸ã®åŠ¹æžœã‚‚ã‚ã‚‹ã®ã§ãã®ã‚¢ã‚¤ãƒ†ãƒ ã‚ˆã‚Šé«˜ã„
+	SIF !TALENT:COUNT:å°äººä½“åž‹
+		ITEMSALES:æ™‚ã®ç ‚æ™‚è¨ˆ = 1
+	;ãŠã‚‚ã‚‰ã—ã™ã‚‹ã‚ˆã†ã«ã™ã‚‹ ä¸»äººã¯ä½¿ãˆãªã„
+	SIF !TALENT:COUNT:ãŠã‚‚ã‚‰ã—ç™– && COUNT != MASTER
+		ITEMSALES:æ°¸ç¶šçš„åˆ©å°¿å‰¤ = 1
+	;ç£è€³ã¨å°»å°¾ã‚’ç”Ÿã‚„ã™
+	SIF (!TALENT:COUNT:å‹•ç‰©è€³ || !TALENT:COUNT:å°»å°¾) && CSTR:COUNT:ç¨®æ— != "ç£" && !TALENT:COUNT:ãƒ•ã‚¡ãƒ¼ãƒªãƒ¼
+		ITEMSALES:ãƒ“ãƒ¼ã‚¹ãƒ†ã‚£ãƒ¼ã‚¹ã‚¿ãƒ¼ã‚¿ãƒ¼ = 1
+	;æŽ’åµèª˜ç™ºå‰¤
+	;ç„¡æ©Ÿç‰©ãƒ»æ©Ÿæ¢°ã«ã¯ä½¿ãˆãªã„
+	SIF TALENT:COUNT:ç„¡æ©Ÿç‰© || CSTR:COUNT:ç¨®æ— == "æ©Ÿæ¢°"
 		CONTINUE
-	SIF !CFLAG:COUNT:”r—‘—U”­Ü && VAGINA(COUNT) && ¶B‹@”\Š(COUNT)
-		ITEMSALES:”r—‘—U”­Ü = 1
-	;ƒŠƒ~ƒbƒ^[‰ðœ ‹Ö’f‚Ì’mŽ¯‚ª•K—v
-	SIF !TALENT:COUNT:ƒŠƒ~ƒbƒgƒo[ƒXƒg && CFLAG:COUNT:Š×—Ž
-		ITEMSALES:ƒŠƒ~ƒbƒ^[‰ðœ = 1
+	SIF !CFLAG:COUNT:æŽ’åµèª˜ç™ºå‰¤ && VAGINA(COUNT) && ç”Ÿæ®–æ©Ÿèƒ½â™€(COUNT)
+		ITEMSALES:æŽ’åµèª˜ç™ºå‰¤ = 1
+	;ãƒªãƒŸãƒƒã‚¿ãƒ¼è§£é™¤ ç¦æ–­ã®çŸ¥è­˜ãŒå¿…è¦
+	SIF !TALENT:COUNT:ãƒªãƒŸãƒƒãƒˆãƒãƒ¼ã‚¹ãƒˆ && CFLAG:COUNT:é™¥è½
+		ITEMSALES:ãƒªãƒŸãƒƒã‚¿ãƒ¼è§£é™¤ = 1
 REND
 
 DRAWLINE
@@ -92,19 +92,19 @@ REPEAT VARSIZE("ITEM")
 	SIF !ITEMSALES:COUNT || ITEMNAME:COUNT == ""
 		CONTINUE
 
-	;s“ª‚È‚çƒXƒy[ƒX‚ðÝ‚¯‚é
-	SIF •\Ž¦”%4 == 0
-		PRINT @
+	;è¡Œé ­ãªã‚‰ã‚¹ãƒšãƒ¼ã‚¹ã‚’è¨­ã‘ã‚‹
+	SIF è¡¨ç¤ºæ•°%4 == 0
+		PRINT ã€€
 	PRINTFORMLC [{COUNT}]%ITEMNAME:COUNT%
-	•\Ž¦”++
+	è¡¨ç¤ºæ•°++
 REND
 
 SIF !LINEISEMPTY()
 	PRINTL 
 
 DRAWLINE
-PRINTPLAIN @ITEM@
-PRINTL [0] –ß‚é
+PRINTPLAIN ã€€ITEMã€€
+PRINTL [0] æˆ»ã‚‹
 DO
 	INPUT
 	SELECTCASE RESULT
@@ -120,117 +120,117 @@ RETURN 0
 
 @ITEMBUY_DECIDE, ARG
 DRAWLINE
-;ƒAƒCƒeƒ€‚ÌŒø‰Ê‚ð•\Ž¦‚·‚é
+;ã‚¢ã‚¤ãƒ†ãƒ ã®åŠ¹æžœã‚’è¡¨ç¤ºã™ã‚‹
 PRINTFORM %ITEMNAME:ARG%:
 SELECTCASE ITEMNAME:ARG
-	CASE "y‰˜‚ê–³Ž‹z"
-		PRINTL ƒvƒŒƒCƒ„[‚Éu‰˜‚ê–³Ž‹v‚ª•t‚­
-	CASE "yƒhƒ‰ƒLƒ…ƒ‰‚Ì‰åz"
-		PRINTL ƒvƒŒƒCƒ„[‚Éu‹zŒŒ‹Sv‚ª•t‚­
-	CASE "yƒhƒ‰ƒSƒ“‚Ì¬‘Ìz"
-		PRINTL ƒvƒŒƒCƒ„[‚Éuƒhƒ‰ƒSƒ“Žg‚¢v‚ª•t‚­ lŠÔ‚æ‚èˆê‰ñ‚è‚Ù‚Ç‘å‚«‚¢—³
+	CASE "ã€æ±šã‚Œç„¡è¦–ã€‘"
+		PRINTL ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã«ã€Œæ±šã‚Œç„¡è¦–ã€ãŒä»˜ã
+	CASE "ã€ãƒ‰ãƒ©ã‚­ãƒ¥ãƒ©ã®ç‰™ã€‘"
+		PRINTL ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã«ã€Œå¸è¡€é¬¼ã€ãŒä»˜ã
+	CASE "ã€ãƒ‰ãƒ©ã‚´ãƒ³ã®æˆä½“ã€‘"
+		PRINTL ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã«ã€Œãƒ‰ãƒ©ã‚´ãƒ³ä½¿ã„ã€ãŒä»˜ã äººé–“ã‚ˆã‚Šä¸€å›žã‚Šã»ã©å¤§ãã„ç«œ
 ENDSELECT
 
-;w“ü‚ÌˆÓŽu‚ðÄŠm”F‚·‚é‚æ‚¤‚É
+;è³¼å…¥ã®æ„å¿—ã‚’å†ç¢ºèªã™ã‚‹ã‚ˆã†ã«
 SELECTCASE ARG
 	CASE 0 TO 49
-		PRINTFORML –{“–‚É%ITEMNAME:ARG%‚ðw“ü‚µ‚Ü‚·‚©H
-		PRINTL [0] w“ü‚·‚é
-		PRINTL [1] ‚â‚ß‚é
+		PRINTFORML æœ¬å½“ã«%ITEMNAME:ARG%ã‚’è³¼å…¥ã—ã¾ã™ã‹ï¼Ÿ
+		PRINTL [0] è³¼å…¥ã™ã‚‹
+		PRINTL [1] ã‚„ã‚ã‚‹
 		DO
 			INPUT
 			SIF RESULT == 1
 				RETURN 0
 		LOOP LOOPRES(0, 1)
-		PRINTFORMW ƒ%ITEMNAME:ARG%‚ðw“ü‚µ‚Ü‚µ‚½„
+		PRINTFORMW ï¼œ%ITEMNAME:ARG%ã‚’è³¼å…¥ã—ã¾ã—ãŸï¼ž
 		ITEMSALES:ARG = 0
 		SELECTCASE ITEMNAME:ARG
-			CASE "y‰˜‚ê–³Ž‹z"
-				TALENT:MASTER:‰˜‚ê–³Ž‹ = 1
-			CASE "yƒhƒ‰ƒLƒ…ƒ‰‚Ì‰åz"
-				TALENT:MASTER:‹zŒŒ‹S = 1
-			CASE "yƒhƒ‰ƒSƒ“‚Ì¬‘Ìz"
-				TALENT:MASTER:ƒhƒ‰ƒSƒ“Žg‚¢ = 1
+			CASE "ã€æ±šã‚Œç„¡è¦–ã€‘"
+				TALENT:MASTER:æ±šã‚Œç„¡è¦– = 1
+			CASE "ã€ãƒ‰ãƒ©ã‚­ãƒ¥ãƒ©ã®ç‰™ã€‘"
+				TALENT:MASTER:å¸è¡€é¬¼ = 1
+			CASE "ã€ãƒ‰ãƒ©ã‚´ãƒ³ã®æˆä½“ã€‘"
+				TALENT:MASTER:ãƒ‰ãƒ©ã‚´ãƒ³ä½¿ã„ = 1
 				DO
-					PRINTL ƒhƒ‰ƒSƒ“‚Ì–¼‘O‚ð“ü—Í‚µ‚Ä‚­‚¾‚³‚¢(‰½‚à“ü—Í‚µ‚È‚¢ê‡Auƒhƒ‰ƒSƒ“v‚É‚È‚è‚Ü‚·)
-					PRINTBUTTON "[ƒ‰ƒ“ƒ_ƒ€‚Å–½–¼‚·‚é]", "ƒ‰ƒ“ƒ_ƒ€‚Å–½–¼‚·‚é"
+					PRINTL ãƒ‰ãƒ©ã‚´ãƒ³ã®åå‰ã‚’å…¥åŠ›ã—ã¦ãã ã•ã„(ä½•ã‚‚å…¥åŠ›ã—ãªã„å ´åˆã€ã€Œãƒ‰ãƒ©ã‚´ãƒ³ã€ã«ãªã‚Šã¾ã™)
+					PRINTBUTTON "[ãƒ©ãƒ³ãƒ€ãƒ ã§å‘½åã™ã‚‹]", "ãƒ©ãƒ³ãƒ€ãƒ ã§å‘½åã™ã‚‹"
 					PRINTL 
 					INPUTS
-					IF RESULTS == "ƒ‰ƒ“ƒ_ƒ€‚Å–½–¼‚·‚é"
-						;Œ³ƒlƒ^‚Í•ª‚©‚él‚¾‚¯•ª‚©‚ê‚Î
+					IF RESULTS == "ãƒ©ãƒ³ãƒ€ãƒ ã§å‘½åã™ã‚‹"
+						;å…ƒãƒã‚¿ã¯åˆ†ã‹ã‚‹äººã ã‘åˆ†ã‹ã‚Œã°
 						SELECTCASE RAND:28
 							CASE 0
-								RESULTS = ƒ[ƒ‰ƒ“ƒh
+								RESULTS = ãƒ­ãƒ¼ãƒ©ãƒ³ãƒ‰
 							CASE 1
-								RESULTS = ƒXƒ^ƒ“
+								RESULTS = ã‚¹ã‚¿ãƒ³
 							CASE 2
-								RESULTS = ƒNƒ‰ƒbƒVƒ…
+								RESULTS = ã‚¯ãƒ©ãƒƒã‚·ãƒ¥
 							CASE 3
-								RESULTS = ƒgƒŒƒ“ƒg
+								RESULTS = ãƒˆãƒ¬ãƒ³ãƒˆ
 							CASE 4
-								RESULTS = ƒeƒbƒ‰
+								RESULTS = ãƒ†ãƒƒãƒ©
 							CASE 5
-								RESULTS = ƒvƒŒƒcƒ@ƒ‹
+								RESULTS = ãƒ—ãƒ¬ãƒ„ã‚¡ãƒ«
 							CASE 6
-								RESULTS = ƒXƒNƒH[ƒ‹ƒ“
+								RESULTS = ã‚¹ã‚¯ã‚©ãƒ¼ãƒ«ãƒ³
 							CASE 7
-								RESULTS = ƒ”ƒ@ƒX
+								RESULTS = ãƒ´ã‚¡ã‚¹
 							CASE 8
-								RESULTS = ƒPƒ‹ƒ”ƒBƒ“
+								RESULTS = ã‚±ãƒ«ãƒ´ã‚£ãƒ³
 							CASE 9
-								RESULTS = ƒŠƒhƒŠ[
+								RESULTS = ãƒªãƒ‰ãƒªãƒ¼
 							CASE 10
-								RESULTS = ƒmƒ”ƒ@
+								RESULTS = ãƒŽãƒ´ã‚¡
 							CASE 11
-								RESULTS = ƒAƒ|ƒ
+								RESULTS = ã‚¢ãƒãƒ­
 							CASE 12
-								RESULTS = ƒXƒsƒŠƒbƒc
+								RESULTS = ã‚¹ãƒ”ãƒªãƒƒãƒ„
 							CASE 13
-								RESULTS = ƒtƒŠƒ“ƒg
+								RESULTS = ãƒ•ãƒªãƒ³ãƒˆ
 							CASE 14
-								RESULTS = ƒ”ƒ@[ƒWƒ‹
+								RESULTS = ãƒ´ã‚¡ãƒ¼ã‚¸ãƒ«
 							CASE 15
-								RESULTS = ƒNƒŒƒCƒgƒ“
+								RESULTS = ã‚¯ãƒ¬ã‚¤ãƒˆãƒ³
 							CASE 16
-								RESULTS = ƒNƒ‰ƒbƒJ[
+								RESULTS = ã‚¯ãƒ©ãƒƒã‚«ãƒ¼
 							CASE 17
-								RESULTS = ƒGƒ‹ƒfƒ“
+								RESULTS = ã‚¨ãƒ«ãƒ‡ãƒ³
 							CASE 18
-								RESULTS = ƒfƒ…[ƒN
+								RESULTS = ãƒ‡ãƒ¥ãƒ¼ã‚¯
 							CASE 19
-								RESULTS = ƒ[ƒ‹ƒNƒZƒX
+								RESULTS = ã‚¼ãƒ«ã‚¯ã‚»ã‚¹
 							CASE 20
-								RESULTS = ƒuƒ‹[ƒU[
+								RESULTS = ãƒ–ãƒ«ãƒ¼ã‚¶ãƒ¼
 							CASE 21
-								RESULTS = ƒmƒNƒ^[ƒ“
+								RESULTS = ãƒŽã‚¯ã‚¿ãƒ¼ãƒ³
 							CASE 22
-								RESULTS = ƒuƒŒƒCƒY
+								RESULTS = ãƒ–ãƒ¬ã‚¤ã‚º
 							CASE 23
-								RESULTS = ƒ[ƒ‰ƒ^ƒ“
+								RESULTS = ã‚¼ãƒ©ã‚¿ãƒ³
 							CASE 24
-								RESULTS = ƒfƒNƒXƒ^[
+								RESULTS = ãƒ‡ã‚¯ã‚¹ã‚¿ãƒ¼
 							CASE 25
-								RESULTS = ƒOƒŠƒt
+								RESULTS = ã‚°ãƒªãƒ•
 							CASE 26
-								RESULTS = ƒŒƒlƒX
+								RESULTS = ãƒ¬ãƒã‚¹
 							CASE 27
-								RESULTS = ƒGƒŠƒIƒbƒg
+								RESULTS = ã‚¨ãƒªã‚ªãƒƒãƒˆ
 						ENDSELECT
 					ENDIF
 					SIF RESULTS == ""
-						RESULTS = ƒhƒ‰ƒSƒ“
-					PRINTFORML %RESULTS%‚Å‚æ‚ë‚µ‚¢‚Å‚·‚©H(Œã‚©‚çƒIƒvƒVƒ‡ƒ“‰æ–Ê‚Å•ÏX‚Å‚«‚Ü‚·)
-					PRINTL [0] - ‚Í‚¢
-					PRINTL [1] - ‚¢‚¢‚¦
+						RESULTS = ãƒ‰ãƒ©ã‚´ãƒ³
+					PRINTFORML %RESULTS%ã§ã‚ˆã‚ã—ã„ã§ã™ã‹ï¼Ÿ(å¾Œã‹ã‚‰ã‚ªãƒ—ã‚·ãƒ§ãƒ³ç”»é¢ã§å¤‰æ›´ã§ãã¾ã™)
+					PRINTL [0] - ã¯ã„
+					PRINTL [1] - ã„ã„ãˆ
 					INPUT
 					SELECTCASE RESULT
 						CASE 0
-							CSTR:MASTER:ƒhƒ‰ƒSƒ“ = %RESULTS%
-							SELECTCASE CSTR:MASTER:ƒhƒ‰ƒSƒ“
-								CASE "ƒhƒ‰ƒSƒ“"
-									PRINTFORMW ƒhƒ‰ƒSƒ“‚Í–¼‘O‚ª—~‚µ‚¢‚ÆŒ¾‚í‚ñ‚Î‚©‚è‚ÉŽâ‚µ‚°‚È“µ‚Å%CALLNAME:MASTER%‚ðŒ©‚Â‚ß‚Ä‚¢‚écc
+							CSTR:MASTER:ãƒ‰ãƒ©ã‚´ãƒ³ = %RESULTS%
+							SELECTCASE CSTR:MASTER:ãƒ‰ãƒ©ã‚´ãƒ³
+								CASE "ãƒ‰ãƒ©ã‚´ãƒ³"
+									PRINTFORMW ãƒ‰ãƒ©ã‚´ãƒ³ã¯åå‰ãŒæ¬²ã—ã„ã¨è¨€ã‚ã‚“ã°ã‹ã‚Šã«å¯‚ã—ã’ãªçž³ã§%CALLNAME:MASTER%ã‚’è¦‹ã¤ã‚ã¦ã„ã‚‹â€¦â€¦
 								CASEELSE
-									PRINTFORMW %CSTR:MASTER:ƒhƒ‰ƒSƒ“%‚Í–¼‘O‚ð‚Â‚¯‚Ä‚­‚ê‚½%CALLNAME:MASTER%‚É‰ù‚¢‚Ä‚¢‚é‚æ‚¤‚¾cc
+									PRINTFORMW %CSTR:MASTER:ãƒ‰ãƒ©ã‚´ãƒ³%ã¯åå‰ã‚’ã¤ã‘ã¦ãã‚ŒãŸ%CALLNAME:MASTER%ã«æ‡ã„ã¦ã„ã‚‹ã‚ˆã†ã â€¦â€¦
 							ENDSELECT
 						CASE 1
 							CONTINUE
@@ -238,165 +238,165 @@ SELECTCASE ARG
 				LOOP LOOPRES(0)
 		ENDSELECT
 	CASE 50 TO 99
-		;“z—ê‚ÉŽg—p‚·‚éƒ^ƒCƒv‚ÌƒAƒCƒeƒ€‚àê—p‚ÌŠÖ”‚Å
+		;å¥´éš·ã«ä½¿ç”¨ã™ã‚‹ã‚¿ã‚¤ãƒ—ã®ã‚¢ã‚¤ãƒ†ãƒ ã‚‚å°‚ç”¨ã®é–¢æ•°ã§
 		CALL USE_ITEM, ARG
 ENDSELECT
 
 RETURN 0
 
-;ƒAƒCƒeƒ€Žg—p
+;ã‚¢ã‚¤ãƒ†ãƒ ä½¿ç”¨
 @USE_ITEM, ARG
 VARSET LOCAL, 0
 SELECTCASE ITEMNAME:ARG
-	CASE "‰ö‚µ‚°‚È‰h—{Ü"
-		PRINTL ‘Ì—Í‚ð‰ñ•œ‚µ‚Ü‚·
-	CASE "‚Ó‚½‚È‚è–ò"
-		PRINTL ‚Ó‚½‚È‚è‚É‚È‚è‚Ü‚·
-	CASE "‚Ó‚½‚È‚èÁ‹Ž–ò"
-		PRINTL ‚Ó‚½‚È‚è‚ðÁ‹Ž‚µ‚Ü‚·
-	CASE "“VŽg‚Ìƒ~ƒ‹ƒN"
-		PRINTL •ê“û‘ÌŽ¿‚É‚È‚è‚Ü‚·
-	CASE "ƒ†ƒjƒR[ƒ“ƒeƒCƒ‹"
-		PRINTL ˆ—–Œ‚ª–ß‚è‚Ü‚·
-	CASE "–L‹¹Ü"
-		PRINTL ‹¹‚ð‘å‚«‚­‚µ‚Ü‚·
-	CASE "k‹¹Ü"
-		PRINTL ‹¹‚ð¬‚³‚­‚µ‚Ü‚·
-	CASE "Ž~“ûÜ"
-		PRINTL •ê“û‚ªo‚È‚­‚È‚è‚Ü‚·
-	CASE "–é”AÇ‰ü‘P–ò"
-		PRINTL ‚¨˜R‚ç‚µ•È‚ªŽ¡‚è‚Ü‚·
-	CASE "ƒ]ƒ“ƒrƒpƒEƒ_["
-		PRINTL ƒ]ƒ“ƒr‰»‚µ‚Ü‚·
-	CASE "¹…"
-		PRINTL ‘fŽ¿uƒ]ƒ“ƒrv‚ðÁ‹Ž‚µ‚Ü‚·
-	CASE "«“]Š·–ò"
-		PRINT ‘ÎÛ‚ð«“]Š·‚³‚¹‚Ü‚·B
+	CASE "æ€ªã—ã’ãªæ „é¤Šå‰¤"
+		PRINTL ä½“åŠ›ã‚’å›žå¾©ã—ã¾ã™
+	CASE "ãµãŸãªã‚Šè–¬"
+		PRINTL ãµãŸãªã‚Šã«ãªã‚Šã¾ã™
+	CASE "ãµãŸãªã‚Šæ¶ˆåŽ»è–¬"
+		PRINTL ãµãŸãªã‚Šã‚’æ¶ˆåŽ»ã—ã¾ã™
+	CASE "å¤©ä½¿ã®ãƒŸãƒ«ã‚¯"
+		PRINTL æ¯ä¹³ä½“è³ªã«ãªã‚Šã¾ã™
+	CASE "ãƒ¦ãƒ‹ã‚³ãƒ¼ãƒ³ãƒ†ã‚¤ãƒ«"
+		PRINTL å‡¦å¥³è†œãŒæˆ»ã‚Šã¾ã™
+	CASE "è±Šèƒ¸å‰¤"
+		PRINTL èƒ¸ã‚’å¤§ããã—ã¾ã™
+	CASE "ç¸®èƒ¸å‰¤"
+		PRINTL èƒ¸ã‚’å°ã•ãã—ã¾ã™
+	CASE "æ­¢ä¹³å‰¤"
+		PRINTL æ¯ä¹³ãŒå‡ºãªããªã‚Šã¾ã™
+	CASE "å¤œå°¿ç—‡æ”¹å–„è–¬"
+		PRINTL ãŠæ¼ã‚‰ã—ç™–ãŒæ²»ã‚Šã¾ã™
+	CASE "ã‚¾ãƒ³ãƒ“ãƒ‘ã‚¦ãƒ€ãƒ¼"
+		PRINTL ã‚¾ãƒ³ãƒ“åŒ–ã—ã¾ã™
+	CASE "è–æ°´"
+		PRINTL ç´ è³ªã€Œã‚¾ãƒ³ãƒ“ã€ã‚’æ¶ˆåŽ»ã—ã¾ã™
+	CASE "æ€§è»¢æ›è–¬"
+		PRINT å¯¾è±¡ã‚’æ€§è»¢æ›ã•ã›ã¾ã™ã€‚
 		FONTBOLD
-		PRINTL ˆê“x«“]Š·‚³‚¹‚é‚Æ“ñ“x‚Æ–ß‚¹‚È‚¢‚Ì‚Å’ˆÓ
+		PRINTL ä¸€åº¦æ€§è»¢æ›ã•ã›ã‚‹ã¨äºŒåº¦ã¨æˆ»ã›ãªã„ã®ã§æ³¨æ„
 		FONTREGULAR
-	CASE "Žž‚Ì»ŽžŒv"
-		PRINTL ‘ål‚É‚È‚Á‚½‚èŽq‹Ÿ‚É‚È‚Á‚½‚è‚µ‚Ü‚·B—«‚È‚çƒoƒXƒgƒTƒCƒY‚à•Ï‚í‚è‚Ü‚·
-	CASE "‰i‘±“I—˜”AÜ"
-		PRINTL ”A‚ð˜R‚ç‚µ‚â‚·‚­‚È‚è‚Ü‚·
-	CASE "ƒr[ƒXƒeƒB[ƒXƒ^[ƒ^["
-		PRINTL bŽ¨‚ÆK”ö‚ð¶‚â‚µ‚Ü‚·
-	CASE "–‚Ü"
-		PRINTL era‚Åƒ‚ƒ“ƒGƒi”ƒ‚¦‚é‚Á‚Ä–‚Üƒ“ƒSIH
-	CASE "”r—‘—U”­Ü"
-		PRINTL ˆê“ú‚¾‚¯”DPŠm—¦‚ðã¸‚³‚¹‚Ü‚·
-	CASE "ƒŠƒ~ƒbƒ^[‰ðœ"
-		PRINTL Žg—p‘ÎÛ‚Ì”\—ÍãŒÀ‚ð‰ðœ‚µ‚Ü‚·
+	CASE "æ™‚ã®ç ‚æ™‚è¨ˆ"
+		PRINTL å¤§äººã«ãªã£ãŸã‚Šå­ä¾›ã«ãªã£ãŸã‚Šã—ã¾ã™ã€‚å¥³æ€§ãªã‚‰ãƒã‚¹ãƒˆã‚µã‚¤ã‚ºã‚‚å¤‰ã‚ã‚Šã¾ã™
+	CASE "æ°¸ç¶šçš„åˆ©å°¿å‰¤"
+		PRINTL å°¿ã‚’æ¼ã‚‰ã—ã‚„ã™ããªã‚Šã¾ã™
+	CASE "ãƒ“ãƒ¼ã‚¹ãƒ†ã‚£ãƒ¼ã‚¹ã‚¿ãƒ¼ã‚¿ãƒ¼"
+		PRINTL ç£è€³ã¨å°»å°¾ã‚’ç”Ÿã‚„ã—ã¾ã™
+	CASE "é­”å‰¤"
+		PRINTL eraã§ãƒ¢ãƒ³ã‚¨ãƒŠè²·ãˆã‚‹ã£ã¦é­”å‰¤ãƒ³ã‚´ï¼ï¼Ÿ
+	CASE "æŽ’åµèª˜ç™ºå‰¤"
+		PRINTL ä¸€æ—¥ã ã‘å¦Šå¨ ç¢ºçŽ‡ã‚’ä¸Šæ˜‡ã•ã›ã¾ã™
+	CASE "ãƒªãƒŸãƒƒã‚¿ãƒ¼è§£é™¤"
+		PRINTL ä½¿ç”¨å¯¾è±¡ã®èƒ½åŠ›ä¸Šé™ã‚’è§£é™¤ã—ã¾ã™
 ENDSELECT
 
-PRINTL ’N‚ÉŽg‚¢‚Ü‚·‚©H
+PRINTL èª°ã«ä½¿ã„ã¾ã™ã‹ï¼Ÿ
 
 FOR PAGING, 0, CHARANUM
 	LOCAL = 1
-	;–³‹@•¨E‹@ŠB‚ÍœŠO
-	SIF TALENT:PAGING:–³‹@•¨ || CSTR:PAGING:Ží‘° == "‹@ŠB"
+	;ç„¡æ©Ÿç‰©ãƒ»æ©Ÿæ¢°ã¯é™¤å¤–
+	SIF TALENT:PAGING:ç„¡æ©Ÿç‰© || CSTR:PAGING:ç¨®æ— == "æ©Ÿæ¢°"
 		LOCAL = 0
-	;Žg—p•s‰Â‚ÌƒLƒƒƒ‰‚àœŠO
-	SIF CFLAG:PAGING:Žg—p•s‰Â
+	;ä½¿ç”¨ä¸å¯ã®ã‚­ãƒ£ãƒ©ã‚‚é™¤å¤–
+	SIF CFLAG:PAGING:ä½¿ç”¨ä¸å¯
 		LOCAL = 0
-	;Žål‚ÍœŠO ‚½‚¾‚µ‚Ó‚½‚È‚èAˆ—Ä¶A‹¹ŠÖ˜AA«“]Š·–òAŽž‚Ì»ŽžŒvAƒr[ƒXƒeƒB[ƒXƒ^[ƒ^[A”r—‘—U”­ÜAƒoƒiƒi‚Í‰Â”\
+	;ä¸»äººã¯é™¤å¤– ãŸã ã—ãµãŸãªã‚Šã€å‡¦å¥³å†ç”Ÿã€èƒ¸é–¢é€£ã€æ€§è»¢æ›è–¬ã€æ™‚ã®ç ‚æ™‚è¨ˆã€ãƒ“ãƒ¼ã‚¹ãƒ†ã‚£ãƒ¼ã‚¹ã‚¿ãƒ¼ã‚¿ãƒ¼ã€æŽ’åµèª˜ç™ºå‰¤ã€ãƒãƒŠãƒŠã¯å¯èƒ½
 	IF PAGING == MASTER
 		SELECTCASE ITEMNAME:ARG
-			CASE "‚Ó‚½‚È‚è–ò", "ƒ†ƒjƒR[ƒ“ƒeƒCƒ‹", "–L‹¹Ü", "k‹¹Ü", "«“]Š·–ò", "Žž‚Ì»ŽžŒv", "ƒr[ƒXƒeƒB[ƒXƒ^[ƒ^[", "”r—‘—U”­Ü", "ƒoƒiƒi"
+			CASE "ãµãŸãªã‚Šè–¬", "ãƒ¦ãƒ‹ã‚³ãƒ¼ãƒ³ãƒ†ã‚¤ãƒ«", "è±Šèƒ¸å‰¤", "ç¸®èƒ¸å‰¤", "æ€§è»¢æ›è–¬", "æ™‚ã®ç ‚æ™‚è¨ˆ", "ãƒ“ãƒ¼ã‚¹ãƒ†ã‚£ãƒ¼ã‚¹ã‚¿ãƒ¼ã‚¿ãƒ¼", "æŽ’åµèª˜ç™ºå‰¤", "ãƒãƒŠãƒŠ"
 			CASEELSE
 				LOCAL = 0
 		ENDSELECT
 	ENDIF
 	SELECTCASE ITEMNAME:ARG
-		CASE "‰ö‚µ‚°‚È‰h—{Ü"
-			;‘Ì—Í‚ªƒ}ƒbƒNƒX‚¾‚ÆŽg‚¦‚È‚¢
-			SIF BASE:PAGING:‘Ì—Í >= MAXBASE:PAGING:‘Ì—Í
+		CASE "æ€ªã—ã’ãªæ „é¤Šå‰¤"
+			;ä½“åŠ›ãŒãƒžãƒƒã‚¯ã‚¹ã ã¨ä½¿ãˆãªã„
+			SIF BASE:PAGING:ä½“åŠ› >= MAXBASE:PAGING:ä½“åŠ›
 				LOCAL = 0
-		CASE "‚Ó‚½‚È‚è–ò"
-			SIF TALENT:PAGING:‚Ó‚½‚È‚è
+		CASE "ãµãŸãªã‚Šè–¬"
+			SIF TALENT:PAGING:ãµãŸãªã‚Š
 				LOCAL = 0
-		CASE "‚Ó‚½‚È‚èÁ‹Ž–ò"
-			;’j‚Å”DP’†‚¾‚Æƒ”ƒ@ƒMƒiÇ‚°‚È‚¢
-			SIF !TALENT:PAGING:‚Ó‚½‚È‚è || (SEX(PAGING) == 1 && TALENT:PAGING:”DP)
+		CASE "ãµãŸãªã‚Šæ¶ˆåŽ»è–¬"
+			;ç”·ã§å¦Šå¨ ä¸­ã ã¨ãƒ´ã‚¡ã‚®ãƒŠå¡žã’ãªã„
+			SIF !TALENT:PAGING:ãµãŸãªã‚Š || (SEX(PAGING) == 1 && TALENT:PAGING:å¦Šå¨ )
 				LOCAL = 0
-		CASE "“VŽg‚Ìƒ~ƒ‹ƒN"
-			SIF TALENT:PAGING:•ê“û‘ÌŽ¿ || (SEX(PAGING) == 1 && !TALENT:PAGING:‚Ó‚½‚È‚è)
+		CASE "å¤©ä½¿ã®ãƒŸãƒ«ã‚¯"
+			SIF TALENT:PAGING:æ¯ä¹³ä½“è³ª || (SEX(PAGING) == 1 && !TALENT:PAGING:ãµãŸãªã‚Š)
 				LOCAL = 0
-		CASE "ƒ†ƒjƒR[ƒ“ƒeƒCƒ‹"
-			SIF TALENT:PAGING:ˆ— || TALENT:PAGING:Ä¶ˆ— || (SEX(PAGING) == 1 && !TALENT:PAGING:‚Ó‚½‚È‚è)
+		CASE "ãƒ¦ãƒ‹ã‚³ãƒ¼ãƒ³ãƒ†ã‚¤ãƒ«"
+			SIF TALENT:PAGING:å‡¦å¥³ || TALENT:PAGING:å†ç”Ÿå‡¦å¥³ || (SEX(PAGING) == 1 && !TALENT:PAGING:ãµãŸãªã‚Š)
 				LOCAL = 0
-		CASE "–L‹¹Ü"
-			SIF TALENT:PAGING:ƒoƒXƒgƒTƒCƒY == 5 || SEX(PAGING) == 1
+		CASE "è±Šèƒ¸å‰¤"
+			SIF TALENT:PAGING:ãƒã‚¹ãƒˆã‚µã‚¤ã‚º == 5 || SEX(PAGING) == 1
 				LOCAL = 0
-		CASE "k‹¹Ü"
-			SIF TALENT:PAGING:ƒoƒXƒgƒTƒCƒY == 1 || SEX(PAGING) == 1
+		CASE "ç¸®èƒ¸å‰¤"
+			SIF TALENT:PAGING:ãƒã‚¹ãƒˆã‚µã‚¤ã‚º == 1 || SEX(PAGING) == 1
 				LOCAL = 0
-		CASE "Ž~“ûÜ"
-			SIF !TALENT:PAGING:•ê“û‘ÌŽ¿ || SEX(PAGING) == 1
+		CASE "æ­¢ä¹³å‰¤"
+			SIF !TALENT:PAGING:æ¯ä¹³ä½“è³ª || SEX(PAGING) == 1
 				LOCAL = 0
-		CASE "–é”AÇ‰ü‘P–ò"
-			SIF !TALENT:PAGING:‚¨‚à‚ç‚µ•È
+		CASE "å¤œå°¿ç—‡æ”¹å–„è–¬"
+			SIF !TALENT:PAGING:ãŠã‚‚ã‚‰ã—ç™–
 				LOCAL = 0
-		CASE "ƒ]ƒ“ƒrƒpƒEƒ_["
-			SIF TALENT:PAGING:ƒ]ƒ“ƒr
+		CASE "ã‚¾ãƒ³ãƒ“ãƒ‘ã‚¦ãƒ€ãƒ¼"
+			SIF TALENT:PAGING:ã‚¾ãƒ³ãƒ“
 				LOCAL = 0
-		CASE "¹…"
-			SIF !TALENT:PAGING:ƒ]ƒ“ƒr
+		CASE "è–æ°´"
+			SIF !TALENT:PAGING:ã‚¾ãƒ³ãƒ“
 				LOCAL = 0
-		CASE "«“]Š·–ò"
-			;”DPŽž‚ÍŽg‚¦‚È‚¢
-			SIF TALENT:PAGING:”DP || TALENT:PAGING:«“]Š·Ï
+		CASE "æ€§è»¢æ›è–¬"
+			;å¦Šå¨ æ™‚ã¯ä½¿ãˆãªã„
+			SIF TALENT:PAGING:å¦Šå¨  || TALENT:PAGING:æ€§è»¢æ›æ¸ˆ
 				LOCAL = 0
-		CASE "Žž‚Ì»ŽžŒv"
-			SIF TALENT:PAGING:¬l‘ÌŒ^
+		CASE "æ™‚ã®ç ‚æ™‚è¨ˆ"
+			SIF TALENT:PAGING:å°äººä½“åž‹
 				LOCAL = 0
-		CASE "‰i‘±“I—˜”AÜ"
-			;Šù‚É‚¨‚à‚ç‚µ•È‚Â‚¢‚Ä‚é‚ÆŽg‚¦‚È‚¢
-			SIF TALENT:PAGING:‚¨‚à‚ç‚µ•È
+		CASE "æ°¸ç¶šçš„åˆ©å°¿å‰¤"
+			;æ—¢ã«ãŠã‚‚ã‚‰ã—ç™–ã¤ã„ã¦ã‚‹ã¨ä½¿ãˆãªã„
+			SIF TALENT:PAGING:ãŠã‚‚ã‚‰ã—ç™–
 				LOCAL = 0
-		CASE "ƒr[ƒXƒeƒB[ƒXƒ^[ƒ^["
-			;ƒPƒ‚ƒ~ƒ~K”ö—¼•û‚ ‚Á‚½‚èAŠù‚Éb‚¾‚Á‚½‚èƒtƒ@[ƒŠ[‚¾‚Á‚½‚è‚·‚é‚ÆŽg‚¦‚È‚¢
-			SIF (TALENT:PAGING:“®•¨Ž¨ && TALENT:PAGING:K”ö) || CSTR:PAGING:Ží‘° == "b" || TALENT:PAGING:ƒtƒ@[ƒŠ[
+		CASE "ãƒ“ãƒ¼ã‚¹ãƒ†ã‚£ãƒ¼ã‚¹ã‚¿ãƒ¼ã‚¿ãƒ¼"
+			;ã‚±ãƒ¢ãƒŸãƒŸå°»å°¾ä¸¡æ–¹ã‚ã£ãŸã‚Šã€æ—¢ã«ç£ã ã£ãŸã‚Šãƒ•ã‚¡ãƒ¼ãƒªãƒ¼ã ã£ãŸã‚Šã™ã‚‹ã¨ä½¿ãˆãªã„
+			SIF (TALENT:PAGING:å‹•ç‰©è€³ && TALENT:PAGING:å°»å°¾) || CSTR:PAGING:ç¨®æ— == "ç£" || TALENT:PAGING:ãƒ•ã‚¡ãƒ¼ãƒªãƒ¼
 				LOCAL = 0
-		CASE "–‚Ü"
-			;Šù‚ÉƒLƒ‚Ä‚éê‡‚ÍŽg‚¦‚È‚¢
-			SIF CFLAG:PAGING:–‚Ü
+		CASE "é­”å‰¤"
+			;æ—¢ã«ã‚­ãƒ¡ã¦ã‚‹å ´åˆã¯ä½¿ãˆãªã„
+			SIF CFLAG:PAGING:é­”å‰¤
 				LOCAL = 0
-		CASE "”r—‘—U”­Ü"
-			SIF CFLAG:PAGING:”r—‘—U”­Ü || !VAGINA(PAGING)
+		CASE "æŽ’åµèª˜ç™ºå‰¤"
+			SIF CFLAG:PAGING:æŽ’åµèª˜ç™ºå‰¤ || !VAGINA(PAGING)
 				LOCAL = 0
-		CASE "ƒŠƒ~ƒbƒ^[‰ðœ"
-			SIF TALENT:PAGING:ƒŠƒ~ƒbƒgƒo[ƒXƒg || !CFLAG:PAGING:Š×—Ž
+		CASE "ãƒªãƒŸãƒƒã‚¿ãƒ¼è§£é™¤"
+			SIF TALENT:PAGING:ãƒªãƒŸãƒƒãƒˆãƒãƒ¼ã‚¹ãƒˆ || !CFLAG:PAGING:é™¥è½
 				LOCAL = 0
 	ENDSELECT
 
-	LOCALS = ‘Ì—Í
-	LOCALS += @"({BASE:PAGING:‘Ì—Í}/{MAXBASE:PAGING:‘Ì—Í}) %BARSTR(BASE:PAGING:‘Ì—Í, MAXBASE:PAGING:‘Ì—Í, 16)% "
-	SIF TALENT:PAGING:ˆ—
-		LOCALS += "ˆ— "
-	SIF TALENT:PAGING:Ä¶ˆ—
-		LOCALS += "Ä¶ˆ— "
-	SIF TALENT:PAGING:“¶’å
-		LOCALS += "“¶’å "
-	SIF TALENT:PAGING:—ö•ç
-		LOCALS += "—ö•ç "
-	SIF TALENT:PAGING:ˆú—
-		LOCALS += "ˆú— "
-	SIF TALENT:PAGING:•ž]
-		LOCALS += "•ž] "
-	SIF TALENT:PAGING:eˆ¤
-		LOCALS += "eˆ¤ "
-	SIF TALENT:PAGING:©•w
-		LOCALS += "©•w "
-	SIF TALENT:PAGING:—ê‘®
-		LOCALS += "—ê‘® "
-	SIF TALENT:PAGING:•ö‰ó
-		LOCALS += "•ö‰ó "
-	SIF TALENT:PAGING:ƒŠƒ~ƒbƒgƒo[ƒXƒg
-		LOCALS += "’´ "
-	SIF CFLAG:PAGING:ó‘Ô == 2
-		LOCALS += "•Žè‰Â "
-	CALL PAGING, LOCAL, @"%LOCALS%", "ITEM USE", "–ß‚é"
+	LOCALS = ä½“åŠ›
+	LOCALS += @"({BASE:PAGING:ä½“åŠ›}/{MAXBASE:PAGING:ä½“åŠ›}) %BARSTR(BASE:PAGING:ä½“åŠ›, MAXBASE:PAGING:ä½“åŠ›, 16)% "
+	SIF TALENT:PAGING:å‡¦å¥³
+		LOCALS += "å‡¦å¥³ "
+	SIF TALENT:PAGING:å†ç”Ÿå‡¦å¥³
+		LOCALS += "å†ç”Ÿå‡¦å¥³ "
+	SIF TALENT:PAGING:ç«¥è²ž
+		LOCALS += "ç«¥è²ž "
+	SIF TALENT:PAGING:æ‹æ…•
+		LOCALS += "æ‹æ…• "
+	SIF TALENT:PAGING:æ·«ä¹±
+		LOCALS += "æ·«ä¹± "
+	SIF TALENT:PAGING:æœå¾“
+		LOCALS += "æœå¾“ "
+	SIF TALENT:PAGING:è¦ªæ„›
+		LOCALS += "è¦ªæ„› "
+	SIF TALENT:PAGING:å¨¼å©¦
+		LOCALS += "å¨¼å©¦ "
+	SIF TALENT:PAGING:éš·å±ž
+		LOCALS += "éš·å±ž "
+	SIF TALENT:PAGING:å´©å£Š
+		LOCALS += "å´©å£Š "
+	SIF TALENT:PAGING:ãƒªãƒŸãƒƒãƒˆãƒãƒ¼ã‚¹ãƒˆ
+		LOCALS += "è¶… "
+	SIF CFLAG:PAGING:çŠ¶æ…‹ == 2
+		LOCALS += "åŠ©æ‰‹å¯ "
+	CALL PAGING, LOCAL, @"%LOCALS%", "ITEM USE", "æˆ»ã‚‹"
 NEXT
 
 SIF RESULT == -1
@@ -406,254 +406,254 @@ LOCAL = RESULT
 CALL KOJO_MESSAGE_EVENT, ITEMNAME:ARG, LOCAL
 
 SELECTCASE ITEMNAME:ARG
-	;‘Ì—Í‰ñ•œ
-	CASE "‰ö‚µ‚°‚È‰h—{Ü"
-		PRINTFORMW ƒ%CALLNAME:LOCAL%‚Ì‘Ì—Í‚ª‰ñ•œ‚µ‚½„
-		IF TALENT:LOCAL:‰ñ•œ‘‚¢
+	;ä½“åŠ›å›žå¾©
+	CASE "æ€ªã—ã’ãªæ „é¤Šå‰¤"
+		PRINTFORMW ï¼œ%CALLNAME:LOCAL%ã®ä½“åŠ›ãŒå›žå¾©ã—ãŸï¼ž
+		IF TALENT:LOCAL:å›žå¾©æ—©ã„
 			LOCAL:1 = 400
-		ELSEIF TALENT:LOCAL:‰ñ•œ’x‚¢
+		ELSEIF TALENT:LOCAL:å›žå¾©é…ã„
 			LOCAL:1 = 200
 		ELSE
 			LOCAL:1 = 300
 		ENDIF
-		SIF TALENT:LOCAL:¬•¿‘ÌŒ^
+		SIF TALENT:LOCAL:å°æŸ„ä½“åž‹
 			LOCAL:1 += 50
-		LOCAL:1 += ABL:MASTER:‹ZI*10
-		BASE:LOCAL:‘Ì—Í += LOCAL:1
-		SIF BASE:LOCAL:‘Ì—Í > MAXBASE:LOCAL:‘Ì—Í
-			BASE:LOCAL:‘Ì—Í = MAXBASE:LOCAL:‘Ì—Í
-	;‚Ó‚½‚È‚è‰»
-	CASE "‚Ó‚½‚È‚è–ò"
-		PRINTFORMW ƒ%CALLNAME:LOCAL%‚Í‚Ó‚½‚È‚è‚É‚È‚Á‚½„
-		TALENT:LOCAL:‚Ó‚½‚È‚è = 1
-		CFLAG:LOCAL:ƒXƒgƒŒƒX’l += 5
+		LOCAL:1 += ABL:MASTER:æŠ€å·§*10
+		BASE:LOCAL:ä½“åŠ› += LOCAL:1
+		SIF BASE:LOCAL:ä½“åŠ› > MAXBASE:LOCAL:ä½“åŠ›
+			BASE:LOCAL:ä½“åŠ› = MAXBASE:LOCAL:ä½“åŠ›
+	;ãµãŸãªã‚ŠåŒ–
+	CASE "ãµãŸãªã‚Šè–¬"
+		PRINTFORMW ï¼œ%CALLNAME:LOCAL%ã¯ãµãŸãªã‚Šã«ãªã£ãŸï¼ž
+		TALENT:LOCAL:ãµãŸãªã‚Š = 1
+		CFLAG:LOCAL:ã‚¹ãƒˆãƒ¬ã‚¹å€¤ += 5
 		SELECTCASE SEX(LOCAL)
-			;‘ÎÛ‚ª’j‚È‚çAí‚Éˆ—‚É‚È‚é ‚uŒoŒ±‚ª‚ ‚ê‚ÎÄ¶ˆ—
+			;å¯¾è±¡ãŒç”·ãªã‚‰ã€å¸¸ã«å‡¦å¥³ã«ãªã‚‹ ï¼¶çµŒé¨“ãŒã‚ã‚Œã°å†ç”Ÿå‡¦å¥³
 			CASE 1
-				IF !EXP:LOCAL:‚uŒoŒ±
-					TALENT:LOCAL:ˆ— = 1
+				IF !EXP:LOCAL:ï¼¶çµŒé¨“
+					TALENT:LOCAL:å‡¦å¥³ = 1
 				ELSE
-					TALENT:LOCAL:Ä¶ˆ— = 1
+					TALENT:LOCAL:å†ç”Ÿå‡¦å¥³ = 1
 				ENDIF
-			;‘ÎÛ‚ª—‚ÅA‘}“üŒoŒ±‚ª–³‚¯‚ê‚Î“¶’å‚É‚È‚é
+			;å¯¾è±¡ãŒå¥³ã§ã€æŒ¿å…¥çµŒé¨“ãŒç„¡ã‘ã‚Œã°ç«¥è²žã«ãªã‚‹
 			CASE 2
-				IF VIRGIN:LOCAL:0 == "" && !TALENT:LOCAL:«“]Š·Ï
-					TALENT:LOCAL:“¶’å = 1
-				ELSEIF VIRGIN:LOCAL:10 == "" && TALENT:LOCAL:«“]Š·Ï
-					TALENT:LOCAL:“¶’å = 1
+				IF VIRGIN:LOCAL:0 == "" && !TALENT:LOCAL:æ€§è»¢æ›æ¸ˆ
+					TALENT:LOCAL:ç«¥è²ž = 1
+				ELSEIF VIRGIN:LOCAL:10 == "" && TALENT:LOCAL:æ€§è»¢æ›æ¸ˆ
+					TALENT:LOCAL:ç«¥è²ž = 1
 				ENDIF
 		ENDSELECT
-	;‚Ó‚½‚È‚è‚ðÁ‹Ž
-	CASE "‚Ó‚½‚È‚èÁ‹Ž–ò"
-		PRINTFORMW ƒ%CALLNAME:LOCAL%‚Í‚Ó‚½‚È‚è‚Å‚Í‚È‚­‚È‚Á‚½„
-		TALENT:LOCAL:‚Ó‚½‚È‚è = 0
-		CFLAG:LOCAL:ƒXƒgƒŒƒX’l += 3
+	;ãµãŸãªã‚Šã‚’æ¶ˆåŽ»
+	CASE "ãµãŸãªã‚Šæ¶ˆåŽ»è–¬"
+		PRINTFORMW ï¼œ%CALLNAME:LOCAL%ã¯ãµãŸãªã‚Šã§ã¯ãªããªã£ãŸï¼ž
+		TALENT:LOCAL:ãµãŸãªã‚Š = 0
+		CFLAG:LOCAL:ã‚¹ãƒˆãƒ¬ã‚¹å€¤ += 3
 		SELECTCASE SEX(LOCAL)
 			CASE 1
-				TALENT:LOCAL:ˆ— = 0
-				TALENT:LOCAL:Ä¶ˆ— = 0
+				TALENT:LOCAL:å‡¦å¥³ = 0
+				TALENT:LOCAL:å†ç”Ÿå‡¦å¥³ = 0
 				CALL CLEAR_FLAG, LOCAL
 			CASE 2
-				TALENT:LOCAL:“¶’å = 0
+				TALENT:LOCAL:ç«¥è²ž = 0
 		ENDSELECT
-	;•ê“û‘ÌŽ¿
-	CASE "“VŽg‚Ìƒ~ƒ‹ƒN"
-		PRINTFORMW ƒ%CALLNAME:LOCAL%‚Í•ê“û‚ªo‚é‚æ‚¤‚É‚È‚Á‚½„
-		TALENT:LOCAL:•ê“û‘ÌŽ¿ = 1
-		CFLAG:LOCAL:ƒXƒgƒŒƒX’l += 5
-	;ˆ—–ŒÄ¶
-	CASE "ƒ†ƒjƒR[ƒ“ƒeƒCƒ‹"
-		PRINTFORMW ƒ%CALLNAME:LOCAL%‚Ìˆ—–Œ‚ªÄ¶‚³‚ê‚½„
-		TALENT:LOCAL:Ä¶ˆ— = 1
-		CFLAG:LOCAL:ƒXƒgƒŒƒX’l += 5
-	;–L“û‰»
-	CASE "–L‹¹Ü"
-		SELECTCASE TALENT:LOCAL:ƒoƒXƒgƒTƒCƒY
-			;â•Ç¨•n“û
+	;æ¯ä¹³ä½“è³ª
+	CASE "å¤©ä½¿ã®ãƒŸãƒ«ã‚¯"
+		PRINTFORMW ï¼œ%CALLNAME:LOCAL%ã¯æ¯ä¹³ãŒå‡ºã‚‹ã‚ˆã†ã«ãªã£ãŸï¼ž
+		TALENT:LOCAL:æ¯ä¹³ä½“è³ª = 1
+		CFLAG:LOCAL:ã‚¹ãƒˆãƒ¬ã‚¹å€¤ += 5
+	;å‡¦å¥³è†œå†ç”Ÿ
+	CASE "ãƒ¦ãƒ‹ã‚³ãƒ¼ãƒ³ãƒ†ã‚¤ãƒ«"
+		PRINTFORMW ï¼œ%CALLNAME:LOCAL%ã®å‡¦å¥³è†œãŒå†ç”Ÿã•ã‚ŒãŸï¼ž
+		TALENT:LOCAL:å†ç”Ÿå‡¦å¥³ = 1
+		CFLAG:LOCAL:ã‚¹ãƒˆãƒ¬ã‚¹å€¤ += 5
+	;è±Šä¹³åŒ–
+	CASE "è±Šèƒ¸å‰¤"
+		SELECTCASE TALENT:LOCAL:ãƒã‚¹ãƒˆã‚µã‚¤ã‚º
+			;çµ¶å£â†’è²§ä¹³
 			CASE 1
-				PRINTFORMW ƒ%CALLNAME:LOCAL%‚Ì‹¹‚ª‚Ù‚ñ‚Ì­‚µ‚¾‚¯–c‚ç‚ñ‚¾„
-			;•n“û¨•“û
+				PRINTFORMW ï¼œ%CALLNAME:LOCAL%ã®èƒ¸ãŒã»ã‚“ã®å°‘ã—ã ã‘è†¨ã‚‰ã‚“ã ï¼ž
+			;è²§ä¹³â†’æ™®ä¹³
 			CASE 2
-				PRINTFORMW ƒ%CALLNAME:LOCAL%‚Ì‹¹‚ªl•À‚Ý‚É‘å‚«‚­‚È‚Á‚½„
-			;•“û¨‹“û
+				PRINTFORMW ï¼œ%CALLNAME:LOCAL%ã®èƒ¸ãŒäººä¸¦ã¿ã«å¤§ãããªã£ãŸï¼ž
+			;æ™®ä¹³â†’å·¨ä¹³
 			CASE 3
-				PRINTFORMW ƒ%CALLNAME:LOCAL%‚Ì‹¹‚ª–L–ž‚É‚È‚Á‚½„
-			;‹“û¨”š“û
+				PRINTFORMW ï¼œ%CALLNAME:LOCAL%ã®èƒ¸ãŒè±Šæº€ã«ãªã£ãŸï¼ž
+			;å·¨ä¹³â†’çˆ†ä¹³
 			CASE 4
-				;¬•¿‘ÌŒ^A¬l‘ÌŒ^
-				IF TALENT:LOCAL:¬•¿‘ÌŒ^ || TALENT:LOCAL:¬l‘ÌŒ^
-					PRINTFORMW ƒ%CALLNAME:LOCAL%‚Ì‹¹‚ª‘Ì‚É•s’Þ‡‚¢‚È‚Ü‚Å‚É‘å‚«‚­‚È‚Á‚½„
-				;‚»‚êˆÈŠO
+				;å°æŸ„ä½“åž‹ã€å°äººä½“åž‹
+				IF TALENT:LOCAL:å°æŸ„ä½“åž‹ || TALENT:LOCAL:å°äººä½“åž‹
+					PRINTFORMW ï¼œ%CALLNAME:LOCAL%ã®èƒ¸ãŒä½“ã«ä¸é‡£åˆã„ãªã¾ã§ã«å¤§ãããªã£ãŸï¼ž
+				;ãã‚Œä»¥å¤–
 				ELSE
-					PRINTFORMW ƒ%CALLNAME:LOCAL%‚Ì‹¹‚ªˆì‚ê‚ñ‚Î‚©‚è‚Ì‘å‚«‚³‚É‚È‚Á‚½„
+					PRINTFORMW ï¼œ%CALLNAME:LOCAL%ã®èƒ¸ãŒæº¢ã‚Œã‚“ã°ã‹ã‚Šã®å¤§ãã•ã«ãªã£ãŸï¼ž
 				ENDIF
 		ENDSELECT
-		TALENT:LOCAL:ƒoƒXƒgƒTƒCƒY++
-		CFLAG:LOCAL:ƒXƒgƒŒƒX’l += 7
-	;k“û‰»
-	CASE "k‹¹Ü"
-		SELECTCASE TALENT:LOCAL:ƒoƒXƒgƒTƒCƒY
-			;”š“û¨‹“û
+		TALENT:LOCAL:ãƒã‚¹ãƒˆã‚µã‚¤ã‚º++
+		CFLAG:LOCAL:ã‚¹ãƒˆãƒ¬ã‚¹å€¤ += 7
+	;ç¸®ä¹³åŒ–
+	CASE "ç¸®èƒ¸å‰¤"
+		SELECTCASE TALENT:LOCAL:ãƒã‚¹ãƒˆã‚µã‚¤ã‚º
+			;çˆ†ä¹³â†’å·¨ä¹³
 			CASE 5
-				PRINTFORMW ƒ%CALLNAME:LOCAL%‚Ì–L‚©‚·‚¬‚é‹¹‚ªˆê‰ñ‚è¬‚³‚­‚È‚Á‚½„
-			;‹“û¨•“û
+				PRINTFORMW ï¼œ%CALLNAME:LOCAL%ã®è±Šã‹ã™ãŽã‚‹èƒ¸ãŒä¸€å›žã‚Šå°ã•ããªã£ãŸï¼ž
+			;å·¨ä¹³â†’æ™®ä¹³
 			CASE 4
-				PRINTFORMW ƒ%CALLNAME:LOCAL%‚Ì‹¹‚ªl•À‚Ý‚É¬‚³‚­‚È‚Á‚½„
-			;•“û¨•n“û
+				PRINTFORMW ï¼œ%CALLNAME:LOCAL%ã®èƒ¸ãŒäººä¸¦ã¿ã«å°ã•ããªã£ãŸï¼ž
+			;æ™®ä¹³â†’è²§ä¹³
 			CASE 3
-				PRINTFORMW ƒ%CALLNAME:LOCAL%‚Ì‹¹‚ª¬‚³‚­‚È‚Á‚½„
-			;•n“û¨â•Ç
+				PRINTFORMW ï¼œ%CALLNAME:LOCAL%ã®èƒ¸ãŒå°ã•ããªã£ãŸï¼ž
+			;è²§ä¹³â†’çµ¶å£
 			CASE 2
-				PRINTFORMW ƒ%CALLNAME:LOCAL%‚Ì‹¹‚ª‹É’[‚É”–‚­‚È‚Á‚½„
-				IF TALENT:LOCAL:•ê“û‘ÌŽ¿
-					PRINTFORMW ƒ%CALLNAME:LOCAL%‚Ì•ê“û‚ªo‚È‚­‚È‚Á‚½„
-					TALENT:LOCAL:•ê“û‘ÌŽ¿ = 0
-					CFLAG:LOCAL:ƒXƒgƒŒƒX’l++
+				PRINTFORMW ï¼œ%CALLNAME:LOCAL%ã®èƒ¸ãŒæ¥µç«¯ã«è–„ããªã£ãŸï¼ž
+				IF TALENT:LOCAL:æ¯ä¹³ä½“è³ª
+					PRINTFORMW ï¼œ%CALLNAME:LOCAL%ã®æ¯ä¹³ãŒå‡ºãªããªã£ãŸï¼ž
+					TALENT:LOCAL:æ¯ä¹³ä½“è³ª = 0
+					CFLAG:LOCAL:ã‚¹ãƒˆãƒ¬ã‚¹å€¤++
 				ENDIF
 		ENDSELECT
-		TALENT:LOCAL:ƒoƒXƒgƒTƒCƒY--
-		CFLAG:LOCAL:ƒXƒgƒŒƒX’l += 7
-	;•ê“ûŽ¡—Ã
-	CASE "Ž~“ûÜ"
-		PRINTFORMW ƒ%CALLNAME:LOCAL%‚Í•ê“û‚ªo‚È‚­‚È‚Á‚½„
-		TALENT:LOCAL:•ê“û‘ÌŽ¿ = 0
-		CFLAG:LOCAL:ƒXƒgƒŒƒX’l += 3
-	;‚¨˜R‚ç‚µŽ¡—Ã
-	CASE "–é”AÇ‰ü‘P–ò"
-		PRINTFORMW ƒ%CALLNAME:LOCAL%‚Ì‚¨˜R‚ç‚µ•È‚ªŽ¡‚Á‚½„
-		TALENT:LOCAL:‚¨‚à‚ç‚µ•È = 0
-		CFLAG:LOCAL:‚¨‚à‚ç‚µ‰ü‘Pƒtƒ‰ƒO = 1
-		CFLAG:LOCAL:ƒXƒgƒŒƒX’l += 3
-	;ƒ]ƒ“ƒrƒpƒEƒ_[
-	CASE "ƒ]ƒ“ƒrƒpƒEƒ_["
-		PRINTFORMW ƒ%CALLNAME:LOCAL%‚Íƒ]ƒ“ƒr‚É‚È‚Á‚½„
-		TALENT:LOCAL:ƒ]ƒ“ƒr = 1
-		CFLAG:LOCAL:ƒXƒgƒŒƒX’l += 10
-	;¹…
-	CASE "¹…"
-		PRINTFORMW ƒ%CALLNAME:LOCAL%‚Íƒ]ƒ“ƒr‚©‚ç‘h‚Á‚½„
-		TALENT:LOCAL:ƒ]ƒ“ƒr = 0
-		IF !TALENT:LOCAL:‰ñ•œ’x‚¢
-			PRINTW ‚»‚Ì”½“®‚ÅŽ¡–ü—Í‚ª’á‰º‚µ‚Ü‚µ‚½
-			TALENT:LOCAL:‰ñ•œ’x‚¢ = 1
+		TALENT:LOCAL:ãƒã‚¹ãƒˆã‚µã‚¤ã‚º--
+		CFLAG:LOCAL:ã‚¹ãƒˆãƒ¬ã‚¹å€¤ += 7
+	;æ¯ä¹³æ²»ç™‚
+	CASE "æ­¢ä¹³å‰¤"
+		PRINTFORMW ï¼œ%CALLNAME:LOCAL%ã¯æ¯ä¹³ãŒå‡ºãªããªã£ãŸï¼ž
+		TALENT:LOCAL:æ¯ä¹³ä½“è³ª = 0
+		CFLAG:LOCAL:ã‚¹ãƒˆãƒ¬ã‚¹å€¤ += 3
+	;ãŠæ¼ã‚‰ã—æ²»ç™‚
+	CASE "å¤œå°¿ç—‡æ”¹å–„è–¬"
+		PRINTFORMW ï¼œ%CALLNAME:LOCAL%ã®ãŠæ¼ã‚‰ã—ç™–ãŒæ²»ã£ãŸï¼ž
+		TALENT:LOCAL:ãŠã‚‚ã‚‰ã—ç™– = 0
+		CFLAG:LOCAL:ãŠã‚‚ã‚‰ã—æ”¹å–„ãƒ•ãƒ©ã‚° = 1
+		CFLAG:LOCAL:ã‚¹ãƒˆãƒ¬ã‚¹å€¤ += 3
+	;ã‚¾ãƒ³ãƒ“ãƒ‘ã‚¦ãƒ€ãƒ¼
+	CASE "ã‚¾ãƒ³ãƒ“ãƒ‘ã‚¦ãƒ€ãƒ¼"
+		PRINTFORMW ï¼œ%CALLNAME:LOCAL%ã¯ã‚¾ãƒ³ãƒ“ã«ãªã£ãŸï¼ž
+		TALENT:LOCAL:ã‚¾ãƒ³ãƒ“ = 1
+		CFLAG:LOCAL:ã‚¹ãƒˆãƒ¬ã‚¹å€¤ += 10
+	;è–æ°´
+	CASE "è–æ°´"
+		PRINTFORMW ï¼œ%CALLNAME:LOCAL%ã¯ã‚¾ãƒ³ãƒ“ã‹ã‚‰è˜‡ã£ãŸï¼ž
+		TALENT:LOCAL:ã‚¾ãƒ³ãƒ“ = 0
+		IF !TALENT:LOCAL:å›žå¾©é…ã„
+			PRINTW ãã®åå‹•ã§æ²»ç™’åŠ›ãŒä½Žä¸‹ã—ã¾ã—ãŸ
+			TALENT:LOCAL:å›žå¾©é…ã„ = 1
 		ENDIF
-		CFLAG:LOCAL:ƒXƒgƒŒƒX’l += 5
-	;«“]Š·–ò ‚Ó‚½‚È‚èŽž‚É‰½‚ª‚ ‚ë‚¤‚Æ–³ðŒ‚Åƒo[ƒWƒ“‚Í•œŠˆ‚·‚é
-	CASE "«“]Š·–ò"
+		CFLAG:LOCAL:ã‚¹ãƒˆãƒ¬ã‚¹å€¤ += 5
+	;æ€§è»¢æ›è–¬ ãµãŸãªã‚Šæ™‚ã«ä½•ãŒã‚ã‚ã†ã¨ç„¡æ¡ä»¶ã§ãƒãƒ¼ã‚¸ãƒ³ã¯å¾©æ´»ã™ã‚‹
+	CASE "æ€§è»¢æ›è–¬"
 		SELECTCASE SEX(LOCAL)
 			CASE 1
-				PRINTFORMW ƒ%CALLNAME:LOCAL%‚Í—‚É‚È‚Á‚½„
-				IF TALENT:LOCAL:“¶’å
+				PRINTFORMW ï¼œ%CALLNAME:LOCAL%ã¯å¥³ã«ãªã£ãŸï¼ž
+				IF TALENT:LOCAL:ç«¥è²ž
 					VIRGIN:LOCAL:0 = NOTLOSTVIRGIN
-					TALENT:LOCAL:“¶’å = 0
+					TALENT:LOCAL:ç«¥è²ž = 0
 				ENDIF
-				TALENT:LOCAL:«•Ê = 2
-				TALENT:LOCAL:ˆ— = 1
-				IF TALENT:LOCAL:¬•¿‘ÌŒ^
-					TALENT:LOCAL:ƒoƒXƒgƒTƒCƒY = 2
+				TALENT:LOCAL:æ€§åˆ¥ = 2
+				TALENT:LOCAL:å‡¦å¥³ = 1
+				IF TALENT:LOCAL:å°æŸ„ä½“åž‹
+					TALENT:LOCAL:ãƒã‚¹ãƒˆã‚µã‚¤ã‚º = 2
 				ELSE
-					TALENT:LOCAL:ƒoƒXƒgƒTƒCƒY = 3
+					TALENT:LOCAL:ãƒã‚¹ãƒˆã‚µã‚¤ã‚º = 3
 				ENDIF
 			CASE 2
-				PRINTFORMW ƒ%CALLNAME:LOCAL%‚Í’j‚É‚È‚Á‚½„
-				IF TALENT:LOCAL:ˆ—
+				PRINTFORMW ï¼œ%CALLNAME:LOCAL%ã¯ç”·ã«ãªã£ãŸï¼ž
+				IF TALENT:LOCAL:å‡¦å¥³
 					VIRGIN:LOCAL:1 = NOTLOSTVIRGIN
-					TALENT:LOCAL:ˆ— = 0
+					TALENT:LOCAL:å‡¦å¥³ = 0
 				ENDIF
-				TALENT:LOCAL:«•Ê = 1
-				TALENT:LOCAL:“¶’å = 1
-				TALENT:LOCAL:ƒoƒXƒgƒTƒCƒY = 0
+				TALENT:LOCAL:æ€§åˆ¥ = 1
+				TALENT:LOCAL:ç«¥è²ž = 1
+				TALENT:LOCAL:ãƒã‚¹ãƒˆã‚µã‚¤ã‚º = 0
 		ENDSELECT
 		CALL CLEAR_FLAG, LOCAL
-		TALENT:LOCAL:«“]Š·Ï = 1
-		CFLAG:LOCAL:ƒXƒgƒŒƒX’l += 20
-	;Žž‚Ì»ŽžŒv
-	CASE "Žž‚Ì»ŽžŒv"
-		IF TALENT:LOCAL:¬•¿‘ÌŒ^
-			PRINTFORMW ƒ%CALLNAME:LOCAL%‚Í—§”h‚È‘ål‚Ì‘Ì‚É‚È‚Á‚½„
-			TALENT:LOCAL:¬•¿‘ÌŒ^ = 0
-			SIF SEX(LOCAL) == 2 && TALENT:LOCAL:ƒoƒXƒgƒTƒCƒY != 5
-				TALENT:LOCAL:ƒoƒXƒgƒTƒCƒY++
-			MAXBASE:LOCAL:‘Ì—Í += 200
-			BASE:LOCAL:‘Ì—Í += 200
+		TALENT:LOCAL:æ€§è»¢æ›æ¸ˆ = 1
+		CFLAG:LOCAL:ã‚¹ãƒˆãƒ¬ã‚¹å€¤ += 20
+	;æ™‚ã®ç ‚æ™‚è¨ˆ
+	CASE "æ™‚ã®ç ‚æ™‚è¨ˆ"
+		IF TALENT:LOCAL:å°æŸ„ä½“åž‹
+			PRINTFORMW ï¼œ%CALLNAME:LOCAL%ã¯ç«‹æ´¾ãªå¤§äººã®ä½“ã«ãªã£ãŸï¼ž
+			TALENT:LOCAL:å°æŸ„ä½“åž‹ = 0
+			SIF SEX(LOCAL) == 2 && TALENT:LOCAL:ãƒã‚¹ãƒˆã‚µã‚¤ã‚º != 5
+				TALENT:LOCAL:ãƒã‚¹ãƒˆã‚µã‚¤ã‚º++
+			MAXBASE:LOCAL:ä½“åŠ› += 200
+			BASE:LOCAL:ä½“åŠ› += 200
 		ELSE
-			PRINTFORMW ƒ%CALLNAME:LOCAL%‚Í\@ SEX(LOCAL) == 1 ? ­”N # —c— \@‚Ì‚æ‚¤‚È¬‚³‚È‘Ì‚É‚È‚Á‚½„
-			TALENT:LOCAL:¬•¿‘ÌŒ^ = 1
-			SIF SEX(LOCAL) == 2 && TALENT:LOCAL:ƒoƒXƒgƒTƒCƒY != 1
-				TALENT:LOCAL:ƒoƒXƒgƒTƒCƒY--
-			MAXBASE:LOCAL:‘Ì—Í -= 200
-			BASE:LOCAL:‘Ì—Í -= 200
+			PRINTFORMW ï¼œ%CALLNAME:LOCAL%ã¯\@ SEX(LOCAL) == 1 ? å°‘å¹´ # å¹¼å¥³ \@ã®ã‚ˆã†ãªå°ã•ãªä½“ã«ãªã£ãŸï¼ž
+			TALENT:LOCAL:å°æŸ„ä½“åž‹ = 1
+			SIF SEX(LOCAL) == 2 && TALENT:LOCAL:ãƒã‚¹ãƒˆã‚µã‚¤ã‚º != 1
+				TALENT:LOCAL:ãƒã‚¹ãƒˆã‚µã‚¤ã‚º--
+			MAXBASE:LOCAL:ä½“åŠ› -= 200
+			BASE:LOCAL:ä½“åŠ› -= 200
 		ENDIF
-		CFLAG:LOCAL:ƒXƒgƒŒƒX’l += 10
-	;‰i‘±“I—˜”AÜ
-	CASE "‰i‘±“I—˜”AÜ"
-		PRINTFORMW ƒ%CALLNAME:LOCAL%‚Í”AˆÓ‚ð‰ä–‚Å‚«‚È‚­‚È‚Á‚½„
-		TALENT:LOCAL:‚¨‚à‚ç‚µ•È = 1
-		CFLAG:LOCAL:ƒXƒgƒŒƒX’l += 10
-	;ƒr[ƒXƒeƒB[ƒXƒ^[ƒ^[
-	CASE "ƒr[ƒXƒeƒB[ƒXƒ^[ƒ^["
-		PRINTFORM ƒ%CALLNAME:LOCAL%‚É
-		SIF !TALENT:LOCAL:“®•¨Ž¨
-			PRINT “®•¨‚ÌŽ¨
-		SIF !TALENT:LOCAL:“®•¨Ž¨ && !TALENT:LOCAL:K”ö
-			PRINT ‚Æ
-		SIF !TALENT:LOCAL:K”ö
-			PRINT “®•¨‚ÌK”ö
-		PRINTW ‚ª¶‚¦‚½„
-		TALENT:LOCAL:“®•¨Ž¨ = 1
-		TALENT:LOCAL:K”ö = 1
-		IF TALENT:LOCAL:DŠïS
-			CFLAG:LOCAL:ˆË‘¶“x += 50
+		CFLAG:LOCAL:ã‚¹ãƒˆãƒ¬ã‚¹å€¤ += 10
+	;æ°¸ç¶šçš„åˆ©å°¿å‰¤
+	CASE "æ°¸ç¶šçš„åˆ©å°¿å‰¤"
+		PRINTFORMW ï¼œ%CALLNAME:LOCAL%ã¯å°¿æ„ã‚’æˆ‘æ…¢ã§ããªããªã£ãŸï¼ž
+		TALENT:LOCAL:ãŠã‚‚ã‚‰ã—ç™– = 1
+		CFLAG:LOCAL:ã‚¹ãƒˆãƒ¬ã‚¹å€¤ += 10
+	;ãƒ“ãƒ¼ã‚¹ãƒ†ã‚£ãƒ¼ã‚¹ã‚¿ãƒ¼ã‚¿ãƒ¼
+	CASE "ãƒ“ãƒ¼ã‚¹ãƒ†ã‚£ãƒ¼ã‚¹ã‚¿ãƒ¼ã‚¿ãƒ¼"
+		PRINTFORM ï¼œ%CALLNAME:LOCAL%ã«
+		SIF !TALENT:LOCAL:å‹•ç‰©è€³
+			PRINT å‹•ç‰©ã®è€³
+		SIF !TALENT:LOCAL:å‹•ç‰©è€³ && !TALENT:LOCAL:å°»å°¾
+			PRINT ã¨
+		SIF !TALENT:LOCAL:å°»å°¾
+			PRINT å‹•ç‰©ã®å°»å°¾
+		PRINTW ãŒç”ŸãˆãŸï¼ž
+		TALENT:LOCAL:å‹•ç‰©è€³ = 1
+		TALENT:LOCAL:å°»å°¾ = 1
+		IF TALENT:LOCAL:å¥½å¥‡å¿ƒ
+			CFLAG:LOCAL:ä¾å­˜åº¦ += 50
 		ELSE
-			CFLAG:LOCAL:ƒXƒgƒŒƒX’l += 3
+			CFLAG:LOCAL:ã‚¹ãƒˆãƒ¬ã‚¹å€¤ += 3
 		ENDIF
-	;–‚Ü
-	CASE "–‚Ü"
-		PRINTFORMW ƒ%CALLNAME:LOCAL%‚Ìƒeƒ“ƒVƒ‡ƒ“‚ªã‚ª‚Á‚Ä‚«‚½I„
-		CFLAG:LOCAL:–‚Ü = 1
-		TIMES CFLAG:LOCAL:–‚Ü‘Ï«, 1.1
-		CFLAG:LOCAL:–‚Ü‘Ï« = LIMIT(CFLAG:LOCAL:–‚Ü‘Ï«, 1100, 2000)
-		CFLAG:LOCAL:‰ñ•œ—Ê’á‰º += 5
-		CFLAG:LOCAL:ƒXƒgƒŒƒX’l += 10
-	;”r—‘—U”­Ü
-	CASE "”r—‘—U”­Ü"
+	;é­”å‰¤
+	CASE "é­”å‰¤"
+		PRINTFORMW ï¼œ%CALLNAME:LOCAL%ã®ãƒ†ãƒ³ã‚·ãƒ§ãƒ³ãŒä¸ŠãŒã£ã¦ããŸï¼ï¼ž
+		CFLAG:LOCAL:é­”å‰¤ = 1
+		TIMES CFLAG:LOCAL:é­”å‰¤è€æ€§, 1.1
+		CFLAG:LOCAL:é­”å‰¤è€æ€§ = LIMIT(CFLAG:LOCAL:é­”å‰¤è€æ€§, 1100, 2000)
+		CFLAG:LOCAL:å›žå¾©é‡ä½Žä¸‹ += 5
+		CFLAG:LOCAL:ã‚¹ãƒˆãƒ¬ã‚¹å€¤ += 10
+	;æŽ’åµèª˜ç™ºå‰¤
+	CASE "æŽ’åµèª˜ç™ºå‰¤"
 		IF LOCAL == MASTER
-			PRINTFORMW ƒ%CALLNAME:MASTER%‚Í”r—‘—U”­Ü‚ðŽg—p‚µ‚½„
+			PRINTFORMW ï¼œ%CALLNAME:MASTER%ã¯æŽ’åµèª˜ç™ºå‰¤ã‚’ä½¿ç”¨ã—ãŸï¼ž
 		ELSE
-			PRINTFORMW ƒ%CALLNAME:LOCAL%‚É”r—‘—U”­Ü‚ðŽg‚Á‚½„
+			PRINTFORMW ï¼œ%CALLNAME:LOCAL%ã«æŽ’åµèª˜ç™ºå‰¤ã‚’ä½¿ã£ãŸï¼ž
 		ENDIF
-		CFLAG:LOCAL:”r—‘—U”­Ü = 1
-		CFLAG:LOCAL:ƒXƒgƒŒƒX’l += 3
-	;ƒŠƒ~ƒbƒgƒo[ƒXƒg
-	CASE "ƒŠƒ~ƒbƒ^[‰ðœ"
-		PRINTFORMW ƒ%NAME:LOCAL%‚ÌƒŠƒ~ƒbƒ^[‚ð‰ðœ‚µ‚½„
-		TALENT:LOCAL:ƒŠƒ~ƒbƒgƒo[ƒXƒg = 1
+		CFLAG:LOCAL:æŽ’åµèª˜ç™ºå‰¤ = 1
+		CFLAG:LOCAL:ã‚¹ãƒˆãƒ¬ã‚¹å€¤ += 3
+	;ãƒªãƒŸãƒƒãƒˆãƒãƒ¼ã‚¹ãƒˆ
+	CASE "ãƒªãƒŸãƒƒã‚¿ãƒ¼è§£é™¤"
+		PRINTFORMW ï¼œ%NAME:LOCAL%ã®ãƒªãƒŸãƒƒã‚¿ãƒ¼ã‚’è§£é™¤ã—ãŸï¼ž
+		TALENT:LOCAL:ãƒªãƒŸãƒƒãƒˆãƒãƒ¼ã‚¹ãƒˆ = 1
 ENDSELECT
 
 RETURN 0
 
-;ƒAƒCƒeƒ€‚Åy•ö‰óz‚ð“¾‚½ê‡‚ÌƒCƒxƒ“ƒg
+;ã‚¢ã‚¤ãƒ†ãƒ ã§ã€å´©å£Šã€‘ã‚’å¾—ãŸå ´åˆã®ã‚¤ãƒ™ãƒ³ãƒˆ
 @COLLAPSE_MIND_ITEM, ARG
-PRINTFORMW %CALLNAME:ARG%‚Ì—lŽq‚ª‚¨‚©‚µ‚¢
-PRINTFORMW “Š–ò‚Ì‰e‹¿‚É‚æ‚Á‚ÄA%CALLNAME:ARG%‚Ì¸_‚ÉˆÙí‚ð‚«‚½‚µ‚Ä‚µ‚Ü‚Á‚½‚æ‚¤‚¾
-PRINTFORMW %NAME:ARG%‚Íy•ö‰óz‚µ‚Ä‚µ‚Ü‚Á‚½
-TALENT:ARG:•ö‰ó = 1
-SIF TALENT:ARG:—ö•ç
-	PRINTFORMW %CALLNAME:ARG%‚Í[—ö•ç]‚ðŽ¸‚Á‚½
-SIF TALENT:ARG:ˆú—
-	PRINTFORMW %CALLNAME:ARG%‚Í[ˆú—]‚ðŽ¸‚Á‚½
-SIF TALENT:ARG:•ž]
-	PRINTFORMW %CALLNAME:ARG%‚Í[•ž]]‚ðŽ¸‚Á‚½
-SIF TALENT:ARG:eˆ¤
-	PRINTFORMW %CALLNAME:ARG%‚Í[eˆ¤]‚ðŽ¸‚Á‚½
-SIF TALENT:ARG:©•w
-	PRINTFORMW %CALLNAME:ARG%‚Í[©•w]‚ðŽ¸‚Á‚½
-SIF TALENT:ARG:—ê‘®
-	PRINTFORMW %CALLNAME:ARG%‚Í[—ê‘®]‚ðŽ¸‚Á‚½
-TALENT:ARG:—ö•ç = 0
-TALENT:ARG:ˆú— = 0
-TALENT:ARG:•ž] = 0
-TALENT:ARG:eˆ¤ = 0
-TALENT:ARG:©•w = 0
-TALENT:ARG:—ê‘® = 0
+PRINTFORMW %CALLNAME:ARG%ã®æ§˜å­ãŒãŠã‹ã—ã„
+PRINTFORMW æŠ•è–¬ã®å½±éŸ¿ã«ã‚ˆã£ã¦ã€%CALLNAME:ARG%ã®ç²¾ç¥žã«ç•°å¸¸ã‚’ããŸã—ã¦ã—ã¾ã£ãŸã‚ˆã†ã 
+PRINTFORMW %NAME:ARG%ã¯ã€å´©å£Šã€‘ã—ã¦ã—ã¾ã£ãŸ
+TALENT:ARG:å´©å£Š = 1
+SIF TALENT:ARG:æ‹æ…•
+	PRINTFORMW %CALLNAME:ARG%ã¯[æ‹æ…•]ã‚’å¤±ã£ãŸ
+SIF TALENT:ARG:æ·«ä¹±
+	PRINTFORMW %CALLNAME:ARG%ã¯[æ·«ä¹±]ã‚’å¤±ã£ãŸ
+SIF TALENT:ARG:æœå¾“
+	PRINTFORMW %CALLNAME:ARG%ã¯[æœå¾“]ã‚’å¤±ã£ãŸ
+SIF TALENT:ARG:è¦ªæ„›
+	PRINTFORMW %CALLNAME:ARG%ã¯[è¦ªæ„›]ã‚’å¤±ã£ãŸ
+SIF TALENT:ARG:å¨¼å©¦
+	PRINTFORMW %CALLNAME:ARG%ã¯[å¨¼å©¦]ã‚’å¤±ã£ãŸ
+SIF TALENT:ARG:éš·å±ž
+	PRINTFORMW %CALLNAME:ARG%ã¯[éš·å±ž]ã‚’å¤±ã£ãŸ
+TALENT:ARG:æ‹æ…• = 0
+TALENT:ARG:æ·«ä¹± = 0
+TALENT:ARG:æœå¾“ = 0
+TALENT:ARG:è¦ªæ„› = 0
+TALENT:ARG:å¨¼å©¦ = 0
+TALENT:ARG:éš·å±ž = 0
 

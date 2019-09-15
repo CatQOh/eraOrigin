@@ -1,129 +1,129 @@
+﻿;-------------------------------------------------
+;乳房電極
 ;-------------------------------------------------
-;���[�d��
-;-------------------------------------------------
-@USERCOM_ABLE_���[�d��, ARG
+@USERCOM_ABLE_乳房電極, ARG
 #FUNCTION
-;�z�ꂪ���]���ꑮ�łȂ��ƃ_��
-SIF !TALENT:���] && !TALENT:�ꑮ
+;奴隷が服従か隷属でないとダメ
+SIF !TALENT:服従 && !TALENT:隷属
 	RETURNF 0
 
-;�����I�o���ĂȂ��ƃ_��
+;胸が露出してないとダメ
 SIF OVER_BUST(TARGET) != ""
 	RETURNF 0
-;�G�蒲�����̓_��
-SIF TEQUIP:�G��
+;触手調教中はダメ
+SIF TEQUIP:触手
 	RETURNF 0
-;�����͂��ł��\
-IF TEQUIP:���[�d��
+;解除はいつでも可能
+IF TEQUIP:乳房電極
 	COMRESULT = 1
 	RETURNF 1
 ENDIF
-;���ɓ�����Ă�ƃ_��
-SIF �a�g�p��(TARGET)
+;胸に道具ついてるとダメ
+SIF Ｂ使用中(TARGET)
 	RETURNF 0
-;�����g�p���͕s��
-SIF TEQUIP:�����
+;搾乳器使用中は不可
+SIF TEQUIP:搾乳器
 	RETURNF 0
-;�����C��v���C���̓_��
-SIF TEQUIP:�����C��
+;お風呂場プレイ中はダメ
+SIF TEQUIP:お風呂場
 	RETURNF 0
-;ASSI�̏ꍇ�A�Z�I3�ȏザ��Ȃ��Ǝg���Ȃ��B
+;ASSIの場合、技巧3以上じゃないと使えない。
 IF PLAYER == ASSI
-	SIF ABL:ASSI:�Z�I < 3
+	SIF ABL:ASSI:技巧 < 3
 		RETURNF 0
 ENDIF
 
 COMRESULT = 1
 RETURNF 1
 
-@COM_���[�d��
-PRINTL ���[�d��
+@COM_乳房電極
+PRINTL 乳房電極
 CALL KOJO_MESSAGE_COM
 
-;���E�̏���
-INVERTBIT TEQUIP:���[�d��, 0
+;着脱の処理
+INVERTBIT TEQUIP:乳房電極, 0
 
 ;-------------------------------------------------
-;�\�[�X�ǉ�����
+;ソース追加処理
 ;-------------------------------------------------
-;����̗́A�C��
-LOSEBASE:�̗� += 120
-LOSEBASE:�C�� += 180
+;消費体力、気力
+LOSEBASE:体力 += 120
+LOSEBASE:気力 += 180
 
-SOURCE:��B = 500
-SOURCE:��� = 1500
-SOURCE:�I�o = 300
-SOURCE:���] = 800
-SOURCE:��E = 1200
-SOURCE:���� = 1200
-
-;-------------------------------------------------
-;����\�[�X����
-;-------------------------------------------------
-;�}���A��R�����ɂ́A�}�T�\�[�X�ǉ�
-SIF TALENT:�}�� || TALENT:��R
-	SOURCE:�T�� += 1200
-
-;�@�B�ɂ͌��ʂ�����
-SIF CSTR:�푰 == "�@�B"
-	TIMES SOURCE:��� , 4.00
+SOURCE:快B = 500
+SOURCE:苦痛 = 1500
+SOURCE:露出 = 300
+SOURCE:屈従 = 800
+SOURCE:逸脱 = 1200
+SOURCE:反感 = 1200
 
 ;-------------------------------------------------
-;�Ⓒ�`�F�b�N
+;特殊ソース処理
+;-------------------------------------------------
+;抑圧、抵抗持ちには、抑鬱ソース追加
+SIF TALENT:抑圧 || TALENT:抵抗
+	SOURCE:鬱屈 += 1200
+
+;機械には効果が高い
+SIF CSTR:種族 == "機械"
+	TIMES SOURCE:苦痛 , 4.00
+
+;-------------------------------------------------
+;絶頂チェック
 ;-------------------------------------------------
 CALL SOURCE_CHECK_CVAB
 
 ;-------------------------------------------------
-;�ː��`�F�b�N
+;射精チェック
 ;-------------------------------------------------
 CALL SAMEN_CHECK_T, 0
 
-CALL SAMEN_SHOOT_T, 0, NOWEX:�ː�
+CALL SAMEN_SHOOT_T, 0, NOWEX:射精
 
 ;-------------------------------------------------
-;�o���̏���
+;経験の処理
 ;-------------------------------------------------
-;�ُ�o����5�����̂Ƃ��A�ُ�o���ǉ�
-IF EXP:�ُ�o�� < 5
-	EXP:�ُ�o�� += 1
-	PRINTL �ُ�o��+1
+;異常経験が5未満のとき、異常経験追加
+IF EXP:異常経験 < 5
+	EXP:異常経験 += 1
+	PRINTL 異常経験+1
 ENDIF
 
 CALL EXPUP, 1, 5
 
-;�ˑ��x�␳�l(���]��1�A�ꑮ��2�j
-IF TALENT:���] && PLAYER == MASTER
-	TFLAG:�ˑ��x�␳ += 1
-ELSEIF TALENT:�ꑮ && PLAYER == MASTER
-	TFLAG:�ˑ��x�␳ += 2
+;依存度補正値(服従で1、隷属で2）
+IF TALENT:服従 && PLAYER == MASTER
+	TFLAG:依存度補正 += 1
+ELSEIF TALENT:隷属 && PLAYER == MASTER
+	TFLAG:依存度補正 += 2
 ENDIF
 
 RETURN 1
 
 ;-------------------------------------------------
-;�����p���̏���
+;装着継続の処理
 ;-------------------------------------------------
-@EQUIP_COM_���[�d��
-PRINTL �����[�d�ɑ�������
+@EQUIP_COM_乳房電極
+PRINTL ＜乳房電極装着中＞
 
-LOSEBASE:�̗� += 70
-LOSEBASE:�C�� += 100
+LOSEBASE:体力 += 70
+LOSEBASE:気力 += 100
 
-SOURCE:��B += 250
-SOURCE:��� += 750
-SOURCE:���] += 400
-SOURCE:��E += 600
-SOURCE:���� += 600
+SOURCE:快B += 250
+SOURCE:苦痛 += 750
+SOURCE:屈従 += 400
+SOURCE:逸脱 += 600
+SOURCE:反感 += 600
 
 ;-------------------------------------------------
-;����\�[�X����
+;特殊ソース処理
 ;-------------------------------------------------
-;�}���A��R�����ɂ́A�}�T�\�[�X�ǉ�
-SIF TALENT:�}�� || TALENT:��R
-	SOURCE:�T�� += 600
+;抑圧、抵抗持ちには、抑鬱ソース追加
+SIF TALENT:抑圧 || TALENT:抵抗
+	SOURCE:鬱屈 += 600
 
-;�@�B�ɂ͌��ʂ�����
-SIF CSTR:�푰 == "�@�B"
-	TIMES SOURCE:��� , 4.00
+;機械には効果が高い
+SIF CSTR:種族 == "機械"
+	TIMES SOURCE:苦痛 , 4.00
 
 RETURN 1

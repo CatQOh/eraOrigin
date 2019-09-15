@@ -1,9 +1,9 @@
-@LOOPRES(ARG:0 = -1, ARG:1 = -1, ARG:2 = -1, ARG:3 = -1, ARG:4 = -1, ARG:5 = -1, ARG:6 = -1, ARG:7 = -1, ARG:8 = -1, ARG:9 = -1)
+﻿@LOOPRES(ARG:0 = -1, ARG:1 = -1, ARG:2 = -1, ARG:3 = -1, ARG:4 = -1, ARG:5 = -1, ARG:6 = -1, ARG:7 = -1, ARG:8 = -1, ARG:9 = -1)
 #FUNCTION
-;�����֐��uLOOPRES(LOOP RESULT)�v
-;DO�`LOOP�\���̋L�q���ȗ������邽�߂̊֐�
-;�����Ŏw�肳�ꂽ������RESULT���Q�Ƃ��A��v���Ă����0��Ԃ�(�܂�LOOP�𔲂���)
-;���ݓ����Ɏw��ł���̂�10�܂�
+;式中関数「LOOPRES(LOOP RESULT)」
+;DO～LOOP構文の記述を簡略化するための関数
+;引数で指定された数字とRESULTを参照し、一致していれば0を返す(つまりLOOPを抜ける)
+;現在同時に指定できるのは10個まで
 REPEAT 10
 	SIF RESULT == ARG:COUNT
 		RETURNF 0
@@ -13,81 +13,81 @@ RETURNF 1
 
 @SEX, ARG
 #FUNCTION
-;�����֐��uSEX�v
-;���ʂ𔻕ʂ��邽�߂̊֐�
-;�����Ŏw�肳�ꂽ�Ώۂ̐��ʂ��A�j�Ȃ�1�A���Ȃ�2��Ԃ�
-RETURNF TALENT:ARG:����
+;式中関数「SEX」
+;性別を判別するための関数
+;引数で指定された対象の性別が、男なら1、女なら2を返す
+RETURNF TALENT:ARG:性別
 
 @CHECK_CHILD_CARE, ARG
 #FUNCTION
-;�����֐��uCHECK_CHILD_CARE�v
-;�玙���ɋ��邩�ǂ������ʂ��邽�߂̊֐�
-;�����Ŏw�肳�ꂽ�L������Ώۂɔ��ʂ���
-SIF (TALENT:ARG:�D�P && PREG:ARG:10-5 <= DAY) || TALENT:ARG:�玙��
+;式中関数「CHECK_CHILD_CARE」
+;育児室に居るかどうか判別するための関数
+;引数で指定されたキャラを対象に判別する
+SIF (TALENT:ARG:妊娠 && PREG:ARG:10-5 <= DAY) || TALENT:ARG:育児中
 	RETURNF 1
 
 RETURNF 0
 
 @PENIS, ARG
 #FUNCTION
-;�����֐��uPENIS�v
-;�Ώۂɂ��񂱐����Ă邩�ǂ��� �ς񂭂����ɂ���������
-;ARG��-1����0��Ԃ��̂ŁA�Ώۂ⏕�肪���Ȃ��̂ɎQ�Ƃ��ăG���[�ɂȂ邱�Ƃ͂Ȃ�
+;式中関数「PENIS」
+;対象にちんこ生えてるかどうか ぱんくしょんにもあったな
+;ARGが-1だと0を返すので、対象や助手が居ないのに参照してエラーになることはない
 SIF ARG == -1
 	RETURNF 0
-SIF SEX(ARG) == 1 || TALENT:ARG:�ӂ��Ȃ�
+SIF SEX(ARG) == 1 || TALENT:ARG:ふたなり
 	RETURNF 1
 
 RETURNF 0
 
 @VAGINA, ARG
 #FUNCTION
-;�����֐��uVAGINA�v
-;�Ώۂɂ܂񂱂��邩�ǂ��� �ς񂭂����ɂ����������ǂ����͒m���
-;ARG��-1����0��Ԃ��̂ŁA�Ώۂ⏕�肪���Ȃ��̂ɎQ�Ƃ��ăG���[�ɂȂ邱�Ƃ͂Ȃ�
+;式中関数「VAGINA」
+;対象にまんこあるかどうか ぱんくしょんにもあったかどうかは知らん
+;ARGが-1だと0を返すので、対象や助手が居ないのに参照してエラーになることはない
 SIF ARG == -1
 	RETURNF 0
-SIF SEX(ARG) == 2 || TALENT:ARG:�ӂ��Ȃ�
+SIF SEX(ARG) == 2 || TALENT:ARG:ふたなり
 	RETURNF 1
 
 RETURNF 0
 
 @OVER_GENITAL, ARG
 #FUNCTIONS
-;�����֐��uOVER_GENITAL�v
-;�Ώۂ̐���𕢂��B���Ă��镞�͉��� ��ԏ�̕����Ԃ���� �����g�㒅���S�g�㒅�������g����
-SIF TEQUIP:ARG:�S�g�㒅 && CFLAG:ARG:���ߕ��p != 1
-	RETURNF CSTR:ARG:�S�g�㒅
+;式中関数「OVER_GENITAL」
+;対象の性器を覆い隠している服は何か 一番上の服が返される 下半身上着＝全身上着＞下半身下着
+SIF TEQUIP:ARG:全身上着 && CFLAG:ARG:着衣併用 != 1
+	RETURNF CSTR:ARG:全身上着
 
-SIF TEQUIP:ARG:�����g�㒅
-	RETURNF CSTR:ARG:�����g�㒅
+SIF TEQUIP:ARG:下半身上着
+	RETURNF CSTR:ARG:下半身上着
 
-SIF TEQUIP:ARG:�����g����
-	RETURNF CSTR:ARG:�����g����
+SIF TEQUIP:ARG:下半身下着
+	RETURNF CSTR:ARG:下半身下着
 
 @OVER_BUST, ARG
 #FUNCTIONS
-;�����֐��uOVER_BUST�v
-;�Ώۂ̓��[�𕢂��B���Ă��镞�͉��� ��ԏ�̕����Ԃ���� �㔼�g�㒅���S�g�㒅���㔼�g����
-SIF TEQUIP:ARG:�S�g�㒅 && CFLAG:ARG:���ߕ��p != 1
-	RETURNF CSTR:ARG:�S�g�㒅
+;式中関数「OVER_BUST」
+;対象の乳房を覆い隠している服は何か 一番上の服が返される 上半身上着＝全身上着＞上半身下着
+SIF TEQUIP:ARG:全身上着 && CFLAG:ARG:着衣併用 != 1
+	RETURNF CSTR:ARG:全身上着
 
-SIF TEQUIP:ARG:�㔼�g�㒅
-	RETURNF CSTR:ARG:�㔼�g�㒅
+SIF TEQUIP:ARG:上半身上着
+	RETURNF CSTR:ARG:上半身上着
 
-SIF TEQUIP:ARG:�㔼�g����
-	RETURNF CSTR:ARG:�㔼�g����
+SIF TEQUIP:ARG:上半身下着
+	RETURNF CSTR:ARG:上半身下着
 
-@�Y�������, ARG, ARG:1
+@ズリ穴作り, ARG, ARG:1
 #FUNCTION
-;�����֐��u�Y�������v
-;�Ώ�ARG�̕�������I�ɕ��Ɍ��Ȃǂ���邱�Ƃɂ��p�C�Y���ł����Ԃ��𔻕ʂ���
-;ARG:1 = 0 �Ȃ�ʏ�̃p�C�Y�� ARG:1 = 1 �Ȃ�c�p�C�Y��
-;�ł���ꍇ�A1��Ԃ�
-IF TEQUIP:ARG:�㔼�g�㒅 || (TEQUIP:ARG:�S�g�㒅 && CFLAG:ARG:���ߕ��p!=1)
-	IF CFLAG:ARG:�㒅�p�C�Y�� == 5
-		IF TEQUIP:ARG:�㔼�g����
-			SELECTCASE CFLAG:ARG:�����p�C�Y��
+;式中関数「ズリ穴作り」
+;対象ARGの服が自主的に服に穴などを作ることによりパイズリできる状態かを判別する
+;ARG:1 = 0 なら通常のパイズリ ARG:1 = 1 なら縦パイズリ
+;できる場合、1を返す
+IF TEQUIP:ARG:上半身上着 || (TEQUIP:ARG:全身上着 && CFLAG:ARG:着衣併用!=1)
+	IF CFLAG:ARG:上着パイズリ == 5
+		IF TEQUIP:ARG:上半身下着
+			SELECTCASE CFLAG:ARG:下着パイズリ
 				CASE 1
 					SIF ARG:1 == 0
 						RETURNF 1
@@ -106,57 +106,57 @@ RETURNF 0
 
 @FALLTYPE, ARG
 #FUNCTION
-;�����֐��uFALLTYPE�v
-;�ח��f���̃^�C�v eraBEMANI�ł͗���n�A�����n�A���]�n�̂ǂꂩ������擾�ł��Ȃ��̂ŁA
-;����or�e������1 ����or���w����2 ���]or�ꑮ����3��Ԃ� ���ח���0
-IF TALENT:ARG:���� || TALENT:ARG:�e��
+;式中関数「FALLTYPE」
+;陥落素質のタイプ eraBEMANIでは恋慕系、淫乱系、服従系のどれか一つしか取得できないので、
+;恋慕or親愛だと1 淫乱or娼婦だと2 服従or隷属だと3を返す 未陥落は0
+IF TALENT:ARG:恋慕 || TALENT:ARG:親愛
 	RETURNF 1
-ELSEIF TALENT:ARG:���� || TALENT:ARG:���w
+ELSEIF TALENT:ARG:淫乱 || TALENT:ARG:娼婦
 	RETURNF 2
-ELSEIF TALENT:ARG:���] || TALENT:ARG:�ꑮ
+ELSEIF TALENT:ARG:服従 || TALENT:ARG:隷属
 	RETURNF 3
 ELSE
 	RETURNF 0
 ENDIF
 
-@����I�o, ARG
+@性器露出, ARG
 #FUNCTION
-;�����֐��u����I�o�v
-;�P�ɐ��킪�I�o���Ă����Ԃ��ǂ����𔻕� OVER_GENITAL�Ƃ͏����Ⴄ(�X�J�[�g�n���ΏۂɂȂ�Ȃ�)
+;式中関数「性器露出」
+;単に性器が露出している状態かどうかを判別 OVER_GENITALとは少し違う(スカート系が対象にならない)
 SELECTCASE OVER_GENITAL(ARG)
 	CASE ""
 		RETURNF 1
-	CASE CSTR:ARG:�����g�㒅, CSTR:ARG:�S�g�㒅
-		IF TEQUIP:ARG:�����g����
+	CASE CSTR:ARG:下半身上着, CSTR:ARG:全身上着
+		IF TEQUIP:ARG:下半身下着
 			RETURNF 0
-		ELSEIF CFLAG:ARG:�}����
+		ELSEIF CFLAG:ARG:挿入可
 			RETURNF 1
 		ELSE
 			RETURNF 0
 		ENDIF
-	CASE CSTR:ARG:�����g����
+	CASE CSTR:ARG:下半身下着
 		RETURNF 0
 ENDSELECT
 
 RETURNF 0
 
-@���B�@�\��, ARG = -1
+@生殖機能♂, ARG = -1
 #FUNCTION
 SIF ARG == -1
 	ARG = TARGET
 
-SIF TALENT:ARG:���@��
+SIF TALENT:ARG:無機物
 	RETURNF 0
 
-SIF CSTR:ARG:�푰 == "�@�B"
+SIF CSTR:ARG:種族 == "機械"
 	RETURNF 0
 
-SIF TALENT:ARG:�]���r
+SIF TALENT:ARG:ゾンビ
 	RETURNF 0
 
 RETURNF 1
 
-@���B�@�\��, ARG = -1
+@生殖機能♀, ARG = -1
 #FUNCTION
 SIF ARG == -1
 	ARG = TARGET
@@ -164,15 +164,15 @@ SIF ARG == -1
 SIF !VAGINA(ARG)
 	RETURNF 0
 
-SIF TALENT:ARG:���@��
+SIF TALENT:ARG:無機物
 	RETURNF 0
 
-SIF CSTR:ARG:�푰 == "�@�B"
+SIF CSTR:ARG:種族 == "機械"
 	RETURNF 0
 
 RETURNF 1
 
-;�����Ŏw�肵���f�����̔ԍ���Ԃ������֐�
+;引数で指定した素質名の番号を返す式中関数
 @TALENTF, ARGS
 #FUNCTION
 #DIM DYNAMIC LCOUNT
@@ -182,7 +182,7 @@ FOR LCOUNT, 0, VARSIZE("TALENT")
 		RETURNF LCOUNT
 NEXT
 
-;�����̃L������NAME��Ԃ����ANO�͈̔͂�1�`9999����Ȃ��ƕԂ��Ȃ� �v���C���[�̖��O���͂ɂ��\�����ʋ�����h������
+;引数のキャラのNAMEを返すが、NOの範囲が1～9999じゃないと返さない プレイヤーの名前入力による予期せぬ挙動を防ぐため
 @CHARANAMEF, ARG
 #FUNCTIONS
 
@@ -197,7 +197,7 @@ SELECTCASE NO:ARG
 ENDSELECT
 
 ;
-;�����̃L�����ԍ���NAME��Ԃ��BCSV�������q���̏ꍇ�͂��炩���ߋL�^���Ă�����CHILDNAME��Ԃ�
+;引数のキャラ番号のNAMEを返す。CSVが無い子供の場合はあらかじめ記録しておいたCHILDNAMEを返す
 @CSVNAMEF, ARG
 #FUNCTIONS
 
@@ -209,7 +209,7 @@ SELECTCASE ARG
 		RETURNF CHILDNAME:(ARG-10000)
 ENDSELECT
 
-;�����̃L�����ԍ���CALLNAME��Ԃ��BCSV�������q���̏ꍇ�͂��炩���ߋL�^���Ă�����CHILDNAME��Ԃ�
+;引数のキャラ番号のCALLNAMEを返す。CSVが無い子供の場合はあらかじめ記録しておいたCHILDNAMEを返す
 @CSVCALLNAMEF, ARG
 #FUNCTIONS
 
@@ -221,80 +221,80 @@ SELECTCASE ARG
 		RETURNF CHILDNAME:(ARG-10000)
 ENDSELECT
 
-;2���̐��l�𒼐ړ��͂��邽�߂̊֐�
-;ARG�͍ő�l
-;ARGS�͒P��
-;ARG:1�͍Œ�l
-@TWO_DIGIT, �ő�l, �P��, �Œ�l
-#DIM �ő�l
-#DIMS �P��
-#DIM �Œ�l
+;2桁の数値を直接入力するための関数
+;ARGは最大値
+;ARGSは単位
+;ARG:1は最低値
+@TWO_DIGIT, 最大値, 単位, 最低値
+#DIM 最大値
+#DIMS 単位
+#DIM 最低値
 #DIM DYNAMIC LCOUNT
 
 VARSET LOCAL, 0
 
-PRINTL �L�[�{�[�h�ɂ�钼�ړ��͂��ł��܂�
+PRINTL キーボードによる直接入力もできます
 
 DO
 	PRINTL
 	IF LOCAL >= 10
-		PRINTFORM �y %TOFULL(TOSTR(LOCAL/10))%
+		PRINTFORM 【 %TOFULL(TOSTR(LOCAL/10))%
 	ELSE
-		PRINT �y �@
+		PRINT 【 　
 	ENDIF
-	PRINTFORML %TOFULL(TOSTR(LOCAL%10))% �z%�P��%
+	PRINTFORML %TOFULL(TOSTR(LOCAL%10))% 】%単位%
 
 	
-	;��̈ʂ�100�`109����͂����ƌ��܂� RESULT-100�Ƃ�RESULT%100�Ƃ�
-	;�\�̈ʂ�200�`290����͂����ƌ��܂� (RESULT-200)/10�Ƃ��H
+	;一の位は100～109を入力されると決まる RESULT-100とかRESULT%100とか
+	;十の位は200～290を入力されると決まる (RESULT-200)/10とか？
 	FOR LCOUNT, 0, 10
 		VARSET LOCALS, 
-		IF �ő�l >= LCOUNT*10 && �Œ�l <= LCOUNT*10
+		IF 最大値 >= LCOUNT*10 && 最低値 <= LCOUNT*10
 			LOCALS = <font color='#c0c0c0'><button value='{200+LCOUNT*10}'>[ {LCOUNT} ]</button></font>
 		ELSE
 			LOCALS = <font color='#c0c0c0'>     </font>
 		ENDIF
-		IF �ő�l >= LCOUNT
+		IF 最大値 >= LCOUNT
 			LOCALS:1 = <font color='#c0c0c0'><button value='{100+LCOUNT}'>[ {LCOUNT} ]</button></font>
 		ENDIF
 		HTML_PRINT LOCALS+LOCALS:1
 	NEXT
-	PRINTBUTTON "[  ����  ]", 999
-	PRINTBUTTON "[ �ő�l ]", �ő�l
-	PRINTBUTTON "[ �Œ�l ]", �Œ�l
+	PRINTBUTTON "[  決定  ]", 999
+	PRINTBUTTON "[ 最大値 ]", 最大値
+	PRINTBUTTON "[ 最低値 ]", 最低値
 	PRINTL 
 	INPUT
 	
-	;�L�[�{�[�h���͂ōŒ�l�`�ő�l�͈̔͊O�Ȃ炻���Ԃ�
-	SIF INRANGE(RESULT, �Œ�l, �ő�l)
+	;キーボード入力で最低値～最大値の範囲外ならそれを返す
+	SIF INRANGE(RESULT, 最低値, 最大値)
 		RETURN RESULT
 
-	;���肪��������LOCAL�̒l��Ԃ�
+	;決定が押されればLOCALの値を返す
 	IF RESULT == 999
 		CLEARLINE 1
 		RETURN LOCAL
 	ENDIF
 
 	SELECTCASE RESULT
-		;��̈ʂ̏��� ��̈ʂ�0�ɂ��Ă�����Z����
+		;一の位の処理 一の位を0にしてから加算する
 		CASE 100 TO 109
 			LOCAL = (LOCAL/10)*10+(RESULT-100)
-		;�\�̈ʂ̏��� �\�̈ʂ�0�ɂ��Ă�����Z����
+		;十の位の処理 十の位を0にしてから加算する
 		CASE 200 TO 290
-			;�v���C���[���ςȂ̓��͂������p�Ɉ�̈ʂ𖕏�����
+			;プレイヤーが変なの入力した時用に一の位を抹消する
 			RESULT -= RESULT%10
 			LOCAL = (LOCAL%10)+(RESULT-200)
 	ENDSELECT
-	;�Œ�l�`�ő�l�𒴂��Ă��炻�ꂼ��Œ�l���ō��l�ɒu��������
-	SIF LOCAL > �ő�l
-	LOCAL = LIMIT(LOCAL, �Œ�l, �ő�l)
+	;最低値～最大値を超えてたらそれぞれ最低値か最高値に置き換える
+	SIF LOCAL > 最大値
+	LOCAL = LIMIT(LOCAL, 最低値, 最大値)
 	CLEARLINE 14
 LOOP 1
 
-;����ARG��4/3���Ԃ��֐�
-;���̐��ł��G���[�͓f���Ȃ��悤�ɂȂ��Ă���
-;�܂��A���ʂ�ARG:1�{�ɂ��ł���(3�捪�̒��Ōv�Z����̂Ō덷�����܂�傫���Ȃ�Ȃ�)
-;�W���ɂ��2^63�G���[�̑΍�͂Ƃ��Ă��Ȃ��̂Œ���
+;整数ARGの4/3乗を返す関数
+;負の数でもエラーは吐かないようになっている
+;また、結果をARG:1倍にもできる(3乗根の中で計算するので誤差があまり大きくならない)
+;係数による2^63エラーの対策はとっていないので注意
 @POW4V3(ARG, ARG:1=1)
 #FUNCTION
 #DIM DYNAMIC LCL
@@ -305,247 +305,247 @@ ELSE
 ENDIF
 RETURNF LCL
 
-;�ߐe�����̔���p�֐�
-;1�Ȃ�Z��ԁA2�Ȃ�e�q�ԁA����ȊO�Ȃ�0
-@�ߐe����, ARG, ARG:1
+;近親相姦の判定用関数
+;1なら兄弟間、2なら親子間、それ以外なら0
+@近親相姦, ARG, ARG:1
 #FUNCTION
 
-IF CFLAG:ARG:�����R�[�h >= 1 && CFLAG:ARG:�����R�[�h == CFLAG:(ARG:1):�����R�[�h
+IF CFLAG:ARG:血縁コード >= 1 && CFLAG:ARG:血縁コード == CFLAG:(ARG:1):血縁コード
 	RETURNF 1
 ELSE
-	SIF NO:ARG >= 10000 && (CFLAG:ARG:�����R�[�h/100000 == NO:(ARG:1) || CFLAG:ARG:�����R�[�h%100000 == NO:(ARG:1))
+	SIF NO:ARG >= 10000 && (CFLAG:ARG:血縁コード/100000 == NO:(ARG:1) || CFLAG:ARG:血縁コード%100000 == NO:(ARG:1))
 		RETURNF 2
-	SIF NO:(ARG:1) >= 10000 && (CFLAG:(ARG:1):�����R�[�h/100000 == NO:ARG || CFLAG:(ARG:1):�����R�[�h%100000 == NO:ARG)
+	SIF NO:(ARG:1) >= 10000 && (CFLAG:(ARG:1):血縁コード/100000 == NO:ARG || CFLAG:(ARG:1):血縁コード%100000 == NO:ARG)
 		RETURNF 2
 ENDIF
 
 RETURNF 0
 
-;�S�ɓ�������Ă邩�ǂ����̎����֐�
-@�u�g�p��, ARG = -1
+;膣に道具入ってるかどうかの式中関数
+@Ｖ使用中, ARG = -1
 #FUNCTION
 SIF ARG == -1
 	ARG = TARGET
 
-SIF TEQUIP:ARG:�o�C�u
+SIF TEQUIP:ARG:バイブ
 	RETURNF 1
-SIF TEQUIP:ARG:�u�ٕ�
+SIF TEQUIP:ARG:Ｖ異物
 	RETURNF 1
 
 RETURNF 0
 
-;�\�L���i���p�j�ɂ��Ή�
-@V�g�p��, ARG = -1
+;表記ゆれ（半角）にも対応
+@V使用中, ARG = -1
 #FUNCTION
-RETURNF �u�g�p��(ARG)
+RETURNF Ｖ使用中(ARG)
 
-;�A�i���ɓ�������Ă邩�ǂ����̎����֐�
-@�`�g�p��, ARG = -1
+;アナルに道具入ってるかどうかの式中関数
+@Ａ使用中, ARG = -1
 #FUNCTION
 SIF ARG == -1
 	ARG = TARGET
 
-SIF TEQUIP:ARG:�A�i���o�C�u
+SIF TEQUIP:ARG:アナルバイブ
 	RETURNF 1
-SIF TEQUIP:ARG:�A�i���r�[�Y
+SIF TEQUIP:ARG:アナルビーズ
 	RETURNF 1
-SIF TEQUIP:ARG:������
+SIF TEQUIP:ARG:浣腸器
 	RETURNF 1
-SIF TEQUIP:ARG:�g���o���[��
+SIF TEQUIP:ARG:拡張バルーン
 	RETURNF 1
-SIF TEQUIP:ARG:�A�i���d��
+SIF TEQUIP:ARG:アナル電極
 	RETURNF 1
-SIF TEQUIP:ARG:�`�ٕ�
+SIF TEQUIP:ARG:Ａ異物
 	RETURNF 1
 
 RETURNF 0
 
-;�\�L���i���p�j�ɂ��Ή�
-@A�g�p��, ARG = -1
+;表記ゆれ（半角）にも対応
+@A使用中, ARG = -1
 #FUNCTION
-RETURNF �`�g�p��(ARG)
+RETURNF Ａ使用中(ARG)
 
-;���œ���g���Ă邩�ǂ����̎����֐�
-@�a�g�p��, ARG = -1
+;胸で道具使ってるかどうかの式中関数
+@Ｂ使用中, ARG = -1
 #FUNCTION
 SIF ARG == -1
 	ARG = TARGET
 
-SIF TEQUIP:ARG:�j�v���L���b�v
+SIF TEQUIP:ARG:ニプルキャップ
 	RETURNF 1
-SIF TEQUIP:ARG:�����
+SIF TEQUIP:ARG:搾乳器
 	RETURNF 1
-SIF TEQUIP:ARG:���[�d��
+SIF TEQUIP:ARG:乳房電極
 	RETURNF 1
 
 RETURNF 0
 
-;�\�L���i���p�j�ɂ��Ή�
-@B�g�p��, ARG = -1
+;表記ゆれ（半角）にも対応
+@B使用中, ARG = -1
 #FUNCTION
-RETURNF �a�g�p��(ARG)
+RETURNF Ｂ使用中(ARG)
 
-;GETNUM(PALAM, "STR")������Ɋȗ����������́BABL�㏸�����ŕp�ɂɎg�p���Ă���̂�PALAM�p�ɍ����
-;GETPALAMLV�ł͂Ȃ�
+;GETNUM(PALAM, "STR")をさらに簡略化したもの。ABL上昇処理で頻繁に使用しているのでPALAM用に作った
+;GETPALAMLVではない
 @GETPALAM, ARGS
 #FUNCTION
 RETURNF GETNUM(PALAM, ARGS)
 
-;GETNUM(EXP, "STR")������Ɋȗ����������́BABL�㏸�����ŕp�ɂɎg�p���Ă���̂�EXP�p�ɍ����
-;GETEXPLV�ł͂Ȃ�
+;GETNUM(EXP, "STR")をさらに簡略化したもの。ABL上昇処理で頻繁に使用しているのでEXP用に作った
+;GETEXPLVではない
 @GETEXP, ARGS
 #FUNCTION
 RETURNF GETNUM(EXP, ARGS)
 
-;�������ɑ������̃c�[���`�b�v�t����HTML_PRINT�p�̊������ꂽ�^�O��Ԃ������֐�
-;"[]"�ň͂�������������Ύ����Ń{�^��������
-;�{�^�����t���O��0�ɂ���΃{�^�������Ȃ�
-@SET_TOOLTIP, �{��, �c�[���`�b�v, �{�^���� = 1, �����F
+;第一引数に第二引数のツールチップ付けたHTML_PRINT用の完成されたタグを返す式中関数
+;"[]"で囲った部分があれば自動でボタン化する
+;ボタン化フラグを0にすればボタン化しない
+@SET_TOOLTIP, 本文, ツールチップ, ボタン化 = 1, 文字色
 #FUNCTIONS
-#DIMS DYNAMIC �{��
-#DIMS DYNAMIC �c�[���`�b�v
-#DIMS DYNAMIC �^�O
-;�{�^���̐��l���w�肳�ꂽ�{�^���ԍ�����v����ƍ���̂ŁA�{�^��������Ȃ������Ȑ��l�� ���l�^������l�͂�����
-#DIM DYNAMIC �{�^�� = -3189415
-#DIMS DYNAMIC ������{�^��
-#DIM DYNAMIC �{�^����
-#DIMS DYNAMIC �����F
+#DIMS DYNAMIC 本文
+#DIMS DYNAMIC ツールチップ
+#DIMS DYNAMIC タグ
+;ボタンの数値が指定されたボタン番号を一致すると困るので、ボタン化されなさそうな数値に 元ネタ分かる人はすごい
+#DIM DYNAMIC ボタン = -3189415
+#DIMS DYNAMIC 文字列ボタン
+#DIM DYNAMIC ボタン化
+#DIMS DYNAMIC 文字色
 
 VARSET LOCAL, 0
 
-;STRCOUNT�̎g�������킩��Ȃ�
-LOCAL = STRFINDU(�{��, "[")
-LOCAL:1 = STRFINDU(�{��, "]")
+;STRCOUNTの使い方がわからない
+LOCAL = STRFINDU(本文, "[")
+LOCAL:1 = STRFINDU(本文, "]")
 
 IF LOCAL != -1 && LOCAL:1 != -1
-	;STRFIND�n�g����"[�`]"�͈̔͂��擾���Ă�̂�"["��"]"���Ȃ����߂�+1��-1����
-	������{�^�� = %SUBSTRINGU(�{��, LOCAL+1, LOCAL:1-LOCAL-1)%
-	SIF ISNUMERIC(������{�^��)
-		�{�^�� = TOINT(������{�^��)
+	;STRFIND系使うと"[～]"の範囲を取得してるので"["と"]"を省くために+1と-1する
+	文字列ボタン = %SUBSTRINGU(本文, LOCAL+1, LOCAL:1-LOCAL-1)%
+	SIF ISNUMERIC(文字列ボタン)
+		ボタン = TOINT(文字列ボタン)
 ENDIF
 
-;�����F�w�肵�Ă�΂��̕����F��
-IF �����F != ""
-	�^�O = <font color='%�����F%'>
+;文字色指定してればその文字色で
+IF 文字色 != ""
+	タグ = <font color='%文字色%'>
 ELSE
-	�^�O = <font color='#%CONVERT(GETCOLOR(), 16)%'>
+	タグ = <font color='#%CONVERT(GETCOLOR(), 16)%'>
 ENDIF
 
-SIF !�{�^����
+SIF !ボタン化
 	GOTO NONBUTTON
 
-;����킵������title���c�[���`�b�v�Ȃ񂾂�Ȃ�
-IF �{�^�� != -3189415
-	�^�O += @"<button value ='{�{�^��}' title = '%�c�[���`�b�v%'>%�{��%</button></font>"
-ELSEIF ������{�^�� != ""
-	�^�O += @"<button value ='%������{�^��%' title = '%�c�[���`�b�v%'>%�{��%</button></font>"
+;紛らわしいけどtitleがツールチップなんだよなぁ
+IF ボタン != -3189415
+	タグ += @"<button value ='{ボタン}' title = '%ツールチップ%'>%本文%</button></font>"
+ELSEIF 文字列ボタン != ""
+	タグ += @"<button value ='%文字列ボタン%' title = '%ツールチップ%'>%本文%</button></font>"
 ELSE
 	$NONBUTTON
-	�^�O += @"<nonbutton title = '%�c�[���`�b�v%'>%�{��%</nonbutton></font>"
+	タグ += @"<nonbutton title = '%ツールチップ%'>%本文%</nonbutton></font>"
 ENDIF
 
 RESETCOLOR
 
-RETURNF �^�O
+RETURNF タグ
 
-;�����̏����Ɉ�v����L�������y�[�W�`���ŕ\������
-;�ڂ����͎����t�H���_�̎G�L.txt���Q��
-@PAGING, �\��, �ǉ����, �y�[�W��, �I���\�L, �g�p�s���\��
-#DIM �y�[�W��
-#DIM �\����
-#DIM ��΂����l��
-#DIM ���\���L����
-#DIM �\���s��
-#DIM �������t���O
+;引数の条件に一致するキャラをページ形式で表示する
+;詳しくは資料フォルダの雑記.txtを参照
+@PAGING, 表示, 追加情報, ページ名, 終了表記, 使用不可も表示
+#DIM ページ数
+#DIM 表示数
+#DIM 飛ばした人数
+#DIM 未表示キャラ
+#DIM 表示行数
+#DIM 初期化フラグ
 #DIM DYNAMIC LCOUNT
-#DIM DYNAMIC �\��
-#DIM DYNAMIC �g�p�s���\��
-#DIMS DYNAMIC �ǉ����
-#DIMS DYNAMIC �y�[�W��
-#DIMS DYNAMIC �I���\�L
+#DIM DYNAMIC 表示
+#DIM DYNAMIC 使用不可も表示
+#DIMS DYNAMIC 追加情報
+#DIMS DYNAMIC ページ名
+#DIMS DYNAMIC 終了表記
 
 LCOUNT = PAGING
 
-IF �������t���O == 0
+IF 初期化フラグ == 0
 	VARSET LOCAL, 0
-	��΂����l�� = 0
-	�\���� = 0
-	���\���L���� = 0
-	�\���s�� = LINECOUNT
-	�������t���O = 1
+	飛ばした人数 = 0
+	表示数 = 0
+	未表示キャラ = 0
+	表示行数 = LINECOUNT
+	初期化フラグ = 1
 ENDIF
 
-IF �\�� && (�g�p�s���\�� || !CFLAG:PAGING:�g�p�s��)
-	;2�y�[�W�ڈȍ~�̓y�[�W���~10�܂ŕ\�����΂�
-	IF ��΂����l�� < �y�[�W��*10
-		��΂����l��++
+IF 表示 && (使用不可も表示 || !CFLAG:PAGING:使用不可)
+	;2ページ目以降はページ数×10まで表示を飛ばす
+	IF 飛ばした人数 < ページ数*10
+		飛ばした人数++
 		RETURN 0
 	ENDIF
 
-	�\����++
-	;10�l�\�������疢�\���L����������t���O���Ăăy�[�W�I���
-	IF �\���� > 10
-		���\���L���� = 1
+	表示数++
+	;10人表示したら未表示キャラが居るフラグ立ててページ終わり
+	IF 表示数 > 10
+		未表示キャラ = 1
 	ELSE
-		PRINTFORML �@[{LCOUNT, 2, RIGHT}] - %NAME:LCOUNT, 26, LEFT% \@ SEX(LCOUNT) == 1 ? �� # �� \@ %�ǉ����%
+		PRINTFORML 　[{LCOUNT, 2, RIGHT}] - %NAME:LCOUNT, 26, LEFT% \@ SEX(LCOUNT) == 1 ? ♂ # ♀ \@ %追加情報%
 		LOCAL:LCOUNT = 1
 	ENDIF
 ENDIF
 
-;�\������10�l�ɂȂ邩�S�L�����\����������͎󂯕t��
-IF �\���� > 10 || LCOUNT == CHARANUM-1
+;表示数が10人になるか全キャラ表示したら入力受け付け
+IF 表示数 > 10 || LCOUNT == CHARANUM-1
 	DRAWLINE
-	�������t���O = 0
-	IF �y�[�W�� == ""
-		PRINTPLAINFORM �@PAGE.{�y�[�W��+1}�@
+	初期化フラグ = 0
+	IF ページ名 == ""
+		PRINTPLAINFORM 　PAGE.{ページ数+1}　
 	ELSE
-		PRINTPLAINFORM �@%�y�[�W��%�@
+		PRINTPLAINFORM 　%ページ名%　
 	ENDIF
-	IF �y�[�W�� > 0
-		PRINTLC [999]�O�y�[�W
+	IF ページ数 > 0
+		PRINTLC [999]前ページ
 	ELSE
 		PRINTLC  
 	ENDIF
-	IF �I���\�L == ""
-		PRINTLC [1000] �߂�@
+	IF 終了表記 == ""
+		PRINTLC [1000] 戻る　
 	ELSE
-		PRINTFORMLC [1000] %�I���\�L%�@
+		PRINTFORMLC [1000] %終了表記%　
 	ENDIF
-	;�\���ł���L�������܂�����Ύ��y�[�W
-	SIF ���\���L����
-		PRINTLC [1001]���y�[�W
+	;表示できるキャラがまだ居れば次ページ
+	SIF 未表示キャラ
+		PRINTLC [1001]次ページ
 	PRINTL 
 	DO
 		INPUT
 		SELECTCASE RESULT
 			CASE 999
-				SIF �y�[�W�� > 0
-					�y�[�W��--
+				SIF ページ数 > 0
+					ページ数--
 				PAGING = -1
-				CLEARLINE LINECOUNT-�\���s��
+				CLEARLINE LINECOUNT-表示行数
 				RETURN 0
 			CASE 1000
 				PAGING = CHARANUM
-				�y�[�W�� = 0
+				ページ数 = 0
 				RETURN -1
 			CASE 1001
-				;�\���ł���L�������܂�����Ύ��y�[�W
-				SIF ���\���L����
-					�y�[�W��++
+				;表示できるキャラがまだ居れば次ページ
+				SIF 未表示キャラ
+					ページ数++
 				PAGING = -1
-				CLEARLINE LINECOUNT-�\���s��
+				CLEARLINE LINECOUNT-表示行数
 				RETURN 0
 			CASEELSE
 				SIF !LOCAL:RESULT
 					CONTINUE
 				PAGING = CHARANUM
-				�y�[�W�� = 0
+				ページ数 = 0
 				RETURN RESULT
 		ENDSELECT
 	LOOP 1
 ENDIF
 
-;BASE��BAR��32���ŕ\������ėp�֐�
+;BASEのBARを32分で表示する汎用関数
 @BARBASE, ARGS, ARG = -1
 #FUNCTIONS
 SIF ARG == -1

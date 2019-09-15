@@ -1,93 +1,93 @@
+ï»¿;-------------------------------------------------
+;æ„›æ’«
 ;-------------------------------------------------
-;ˆ¤•
-;-------------------------------------------------
-@USERCOM_ABLE_ˆ¤•, ARG
+@USERCOM_ABLE_æ„›æ’«, ARG
 #FUNCTION
 
 COMRESULT = 1
 RETURNF 1
 
-@COM_ˆ¤•
+@COM_æ„›æ’«
 ;-------------------------------------------------
-;“ÁŽê”h¶ˆ—
+;ç‰¹æ®Šæ´¾ç”Ÿå‡¦ç†
 ;-------------------------------------------------
-;‘O‰ñ‚Æ¡‰ñ‚Ì’²‹³ŽÒ‚ª“¯‚¶
-IF PLAYER == TFLAG:‘OƒRƒ}ƒ“ƒhŽÀsŽÒ
-	;‘O‰ñ‚ÌƒRƒ}ƒ“ƒh
+;å‰å›žã¨ä»Šå›žã®èª¿æ•™è€…ãŒåŒã˜
+IF PLAYER == TFLAG:å‰ã‚³ãƒžãƒ³ãƒ‰å®Ÿè¡Œè€…
+	;å‰å›žã®ã‚³ãƒžãƒ³ãƒ‰
 	SELECTCASE PREVCOMS
-		;Œã”wˆÊA‹RæˆÊAŒã”wˆÊƒAƒiƒ‹A‹RæˆÊƒAƒiƒ‹‚¾‚ÆƒZƒbƒNƒXˆ¤•Œn‚É”h¶
-		CASE "Œã”wˆÊŽèˆú", "‹RæˆÊŽèˆú", "Œã”wˆÊƒAƒiƒ‹Žèˆú", "‹RæˆÊƒAƒiƒ‹Žèˆú"
+		;å¾ŒèƒŒä½ã€é¨Žä¹—ä½ã€å¾ŒèƒŒä½ã‚¢ãƒŠãƒ«ã€é¨Žä¹—ä½ã‚¢ãƒŠãƒ«ã ã¨ã‚»ãƒƒã‚¯ã‚¹æ„›æ’«ç³»ã«æ´¾ç”Ÿ
+		CASE "å¾ŒèƒŒä½æ‰‹æ·«", "é¨Žä¹—ä½æ‰‹æ·«", "å¾ŒèƒŒä½ã‚¢ãƒŠãƒ«æ‰‹æ·«", "é¨Žä¹—ä½ã‚¢ãƒŠãƒ«æ‰‹æ·«"
 			JUMPFORM COM_%PREVCOMS%
-		CASE "Œã”wˆÊ"
-			SIF USERCOM_ABLE_Œã”wˆÊŽèˆú()
-				JUMP COM_Œã”wˆÊŽèˆú
-		CASE "‹RæˆÊ"
-			SIF USERCOM_ABLE_‹RæˆÊŽèˆú()
-				JUMP COM_‹RæˆÊŽèˆú
-		CASE "Œã”wˆÊƒAƒiƒ‹"
-			SIF USERCOM_ABLE_Œã”wˆÊƒAƒiƒ‹Žèˆú()
-				JUMP COM_Œã”wˆÊƒAƒiƒ‹Žèˆú
-		CASE "‹RæˆÊƒAƒiƒ‹"
-			SIF USERCOM_ABLE_‹RæˆÊƒAƒiƒ‹Žèˆú()
-				JUMP COM_‹RæˆÊƒAƒiƒ‹Žèˆú
+		CASE "å¾ŒèƒŒä½"
+			SIF USERCOM_ABLE_å¾ŒèƒŒä½æ‰‹æ·«()
+				JUMP COM_å¾ŒèƒŒä½æ‰‹æ·«
+		CASE "é¨Žä¹—ä½"
+			SIF USERCOM_ABLE_é¨Žä¹—ä½æ‰‹æ·«()
+				JUMP COM_é¨Žä¹—ä½æ‰‹æ·«
+		CASE "å¾ŒèƒŒä½ã‚¢ãƒŠãƒ«"
+			SIF USERCOM_ABLE_å¾ŒèƒŒä½ã‚¢ãƒŠãƒ«æ‰‹æ·«()
+				JUMP COM_å¾ŒèƒŒä½ã‚¢ãƒŠãƒ«æ‰‹æ·«
+		CASE "é¨Žä¹—ä½ã‚¢ãƒŠãƒ«"
+			SIF USERCOM_ABLE_é¨Žä¹—ä½ã‚¢ãƒŠãƒ«æ‰‹æ·«()
+				JUMP COM_é¨Žä¹—ä½ã‚¢ãƒŠãƒ«æ‰‹æ·«
 	ENDSELECT
 ENDIF
 
-PRINTL ˆ¤•
+PRINTL æ„›æ’«
 CALL KOJO_MESSAGE_COM
 
 ;-------------------------------------------------
-;ƒ\[ƒX’Ç‰Áˆ—
+;ã‚½ãƒ¼ã‚¹è¿½åŠ å‡¦ç†
 ;-------------------------------------------------
-;Á”ï‘Ì—ÍA‹C—Í
-LOSEBASE:‘Ì—Í += 5
-LOSEBASE:‹C—Í += 50
+;æ¶ˆè²»ä½“åŠ›ã€æ°—åŠ›
+LOSEBASE:ä½“åŠ› += 5
+LOSEBASE:æ°—åŠ› += 50
 
-DOWNBASE:MASTER:‘Ì—Í += 30
-DOWNBASE:MASTER:‹C—Í += 20
+DOWNBASE:MASTER:ä½“åŠ› += 30
+DOWNBASE:MASTER:æ°—åŠ› += 20
 
-SOURCE:‰õC = 30
-SOURCE:‰õB = 30
-SOURCE:îˆ¤ = 30
-SOURCE:«s“® = 30
-SOURCE:˜Io = 10
-SOURCE:•sŒ‰ = 30
-SOURCE:”½Š´ = 10
-
-;-------------------------------------------------
-;“ÁŽêƒ\[ƒXˆ—
-;-------------------------------------------------
-;—}ˆ³A’ïRŽ‚¿‚É‚ÍA—}ŸTƒ\[ƒX’Ç‰Á
-SIF TALENT:—}ˆ³ || TALENT:’ïR
-	SOURCE:ŸT‹ü += 20
+SOURCE:å¿«C = 30
+SOURCE:å¿«B = 30
+SOURCE:æƒ…æ„› = 30
+SOURCE:æ€§è¡Œå‹• = 30
+SOURCE:éœ²å‡º = 10
+SOURCE:ä¸æ½” = 30
+SOURCE:åæ„Ÿ = 10
 
 ;-------------------------------------------------
-;â’¸ƒ`ƒFƒbƒN
+;ç‰¹æ®Šã‚½ãƒ¼ã‚¹å‡¦ç†
+;-------------------------------------------------
+;æŠ‘åœ§ã€æŠµæŠ—æŒã¡ã«ã¯ã€æŠ‘é¬±ã‚½ãƒ¼ã‚¹è¿½åŠ 
+SIF TALENT:æŠ‘åœ§ || TALENT:æŠµæŠ—
+	SOURCE:é¬±å±ˆ += 20
+
+;-------------------------------------------------
+;çµ¶é ‚ãƒã‚§ãƒƒã‚¯
 ;-------------------------------------------------
 CALL SOURCE_CHECK_CVAB
 
 ;-------------------------------------------------
-;ŽË¸ƒ`ƒFƒbƒN
+;å°„ç²¾ãƒã‚§ãƒƒã‚¯
 ;-------------------------------------------------
 CALL SAMEN_CHECK_T, 0
 
-CALL SAMEN_SHOOT_T, 0, NOWEX:ŽË¸
+CALL SAMEN_SHOOT_T, 0, NOWEX:å°„ç²¾
 
 ;-------------------------------------------------
-;‰˜‚ê‚Ìˆ—
+;æ±šã‚Œã®å‡¦ç†
 ;-------------------------------------------------
-;‰˜L“ÝŠ´
-SIF TALENT:‰˜L“ÝŠ´
-	SOURCE:•sŒ‰ /= 4
-;‰˜L•qŠ´
-SIF TALENT:‰˜L•qŠ´
-	SOURCE:•sŒ‰ *= 3
-;ƒvƒ‰ƒCƒh‚‚¢
-SIF TALENT:ƒvƒ‰ƒCƒh‚‚¢
-	SOURCE:•sŒ‰ *= 2
+;æ±šè‡­éˆæ„Ÿ
+SIF TALENT:æ±šè‡­éˆæ„Ÿ
+	SOURCE:ä¸æ½” /= 4
+;æ±šè‡­æ•æ„Ÿ
+SIF TALENT:æ±šè‡­æ•æ„Ÿ
+	SOURCE:ä¸æ½” *= 3
+;ãƒ—ãƒ©ã‚¤ãƒ‰é«˜ã„
+SIF TALENT:ãƒ—ãƒ©ã‚¤ãƒ‰é«˜ã„
+	SOURCE:ä¸æ½” *= 2
 
 ;-------------------------------------------------
-;ŒoŒ±‚Ìˆ—
+;çµŒé¨“ã®å‡¦ç†
 ;-------------------------------------------------
 CALL EXPUP, 1, 1
 

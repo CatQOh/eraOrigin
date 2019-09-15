@@ -1,101 +1,101 @@
+ï»¿;-------------------------------------------------
+;ä½•ã‚‚ã—ãªã„
 ;-------------------------------------------------
-;‰½‚à‚µ‚È‚¢
-;-------------------------------------------------
-@USERCOM_ABLE_‰½‚à‚µ‚È‚¢, ARG
+@USERCOM_ABLE_ä½•ã‚‚ã—ãªã„, ARG
 #FUNCTION
-;˜A‘±ŽÀs‚Í‚Å‚«‚È‚¢
-SIF PREVCOMS == "‰½‚à‚µ‚È‚¢"
+;é€£ç¶šå®Ÿè¡Œã¯ã§ããªã„
+SIF PREVCOMS == "ä½•ã‚‚ã—ãªã„"
 	RETURNF 0
 
-;‰½‚à‚µ‚È‚¢ŽÀs”»’è
+;ä½•ã‚‚ã—ãªã„å®Ÿè¡Œåˆ¤å®š
 COMRESULT = 1
 RETURNF 1
 
-@COM_‰½‚à‚µ‚È‚¢
-PRINTL ‰½‚à‚µ‚È‚¢
+@COM_ä½•ã‚‚ã—ãªã„
+PRINTL ä½•ã‚‚ã—ãªã„
 CALL KOJO_MESSAGE_COM
 
 ;-------------------------------------------------
-;ƒ\[ƒX’Ç‰Áˆ—
+;ã‚½ãƒ¼ã‚¹è¿½åŠ å‡¦ç†
 ;-------------------------------------------------
-;Á”ï‘Ì—ÍA‹C—Í
-LOSEBASE:‘Ì—Í += 0
-LOSEBASE:‹C—Í += 0
+;æ¶ˆè²»ä½“åŠ›ã€æ°—åŠ›
+LOSEBASE:ä½“åŠ› += 0
+LOSEBASE:æ°—åŠ› += 0
 
-SOURCE:îˆ¤ = 10
-SOURCE:˜Io = 10
-SOURCE:ˆí’E = 10
+SOURCE:æƒ…æ„› = 10
+SOURCE:éœ²å‡º = 10
+SOURCE:é€¸è„± = 10
 
 ;-------------------------------------------------
-;“ÁŽêƒ\[ƒXˆ—
+;ç‰¹æ®Šã‚½ãƒ¼ã‚¹å‡¦ç†
 ;-------------------------------------------------
-;‹ê’É‚ð”º‚í‚È‚¢ƒ}ƒ]‚Á‹C‹y‚Ñƒ}ƒ]‚Ì”º‚¤ˆ—‚Íæ‚É‚µ‚Ä‚¨‚­
-;ƒ}ƒ]‚Á‹C‚ðŒ©‚é
-SELECTCASE ABL:ƒ}ƒ]‚Á‹C
+;è‹¦ç—›ã‚’ä¼´ã‚ãªã„ãƒžã‚¾ã£æ°—åŠã³ãƒžã‚¾ã®ä¼´ã†å‡¦ç†ã¯å…ˆã«ã—ã¦ãŠã
+;ãƒžã‚¾ã£æ°—ã‚’è¦‹ã‚‹
+SELECTCASE ABL:ãƒžã‚¾ã£æ°—
 	CASE 0
-		TIMES SOURCE:˜Io , 0.80
-		SOURCE:‰t‘Ì += 0
-		SOURCE:—~î += 0
+		TIMES SOURCE:éœ²å‡º , 0.80
+		SOURCE:æ¶²ä½“ += 0
+		SOURCE:æ¬²æƒ… += 0
 	CASE 1
-		TIMES SOURCE:˜Io , 1.00
-		SOURCE:‰t‘Ì += 20
-		SOURCE:—~î += 30
+		TIMES SOURCE:éœ²å‡º , 1.00
+		SOURCE:æ¶²ä½“ += 20
+		SOURCE:æ¬²æƒ… += 30
 	CASE 2
-		TIMES SOURCE:˜Io , 1.20
-		SOURCE:‰t‘Ì += 40
-		SOURCE:—~î += 70
+		TIMES SOURCE:éœ²å‡º , 1.20
+		SOURCE:æ¶²ä½“ += 40
+		SOURCE:æ¬²æƒ… += 70
 	CASE 3
-		TIMES SOURCE:˜Io , 1.40
-		SOURCE:‰t‘Ì += 70
-		SOURCE:—~î += 120
+		TIMES SOURCE:éœ²å‡º , 1.40
+		SOURCE:æ¶²ä½“ += 70
+		SOURCE:æ¬²æƒ… += 120
 	CASE 4
-		TIMES SOURCE:˜Io , 1.50
-		SOURCE:‰t‘Ì += 110
-		SOURCE:—~î += 180
+		TIMES SOURCE:éœ²å‡º , 1.50
+		SOURCE:æ¶²ä½“ += 110
+		SOURCE:æ¬²æƒ… += 180
 	CASE 5
-		TIMES SOURCE:˜Io , 1.70
-		SOURCE:‰t‘Ì += 150
-		SOURCE:—~î += 250
+		TIMES SOURCE:éœ²å‡º , 1.70
+		SOURCE:æ¶²ä½“ += 150
+		SOURCE:æ¬²æƒ… += 250
 	CASE 6
-		TIMES SOURCE:˜Io , 1.90
-		SOURCE:‰t‘Ì += 200
-		SOURCE:—~î += 300
+		TIMES SOURCE:éœ²å‡º , 1.90
+		SOURCE:æ¶²ä½“ += 200
+		SOURCE:æ¬²æƒ… += 300
 	CASE 7
-		TIMES SOURCE:˜Io , 2.10
-		SOURCE:‰t‘Ì += 250
-		SOURCE:—~î += 350
+		TIMES SOURCE:éœ²å‡º , 2.10
+		SOURCE:æ¶²ä½“ += 250
+		SOURCE:æ¬²æƒ… += 350
 	CASE 8
-		TIMES SOURCE:˜Io , 2.30
-		SOURCE:‰t‘Ì += 300
-		SOURCE:—~î += 400
+		TIMES SOURCE:éœ²å‡º , 2.30
+		SOURCE:æ¶²ä½“ += 300
+		SOURCE:æ¬²æƒ… += 400
 	CASE 9
-		TIMES SOURCE:˜Io , 2.50
-		SOURCE:‰t‘Ì += 350
-		SOURCE:—~î += 450
+		TIMES SOURCE:éœ²å‡º , 2.50
+		SOURCE:æ¶²ä½“ += 350
+		SOURCE:æ¬²æƒ… += 450
 	CASE IS >= 10
-		TIMES SOURCE:˜Io , 3.00
-		SOURCE:‰t‘Ì += 500
-		SOURCE:—~î += 500
+		TIMES SOURCE:éœ²å‡º , 3.00
+		SOURCE:æ¶²ä½“ += 500
+		SOURCE:æ¬²æƒ… += 500
 ENDSELECT
 
-;ƒ}ƒ]‚ðŒ©‚é
-IF TALENT:ƒ}ƒ]
-	TIMES SOURCE:˜Io , 2.50
-	TIMES SOURCE:‰t‘Ì , 1.20
-	TIMES SOURCE:—~î , 1.20
+;ãƒžã‚¾ã‚’è¦‹ã‚‹
+IF TALENT:ãƒžã‚¾
+	TIMES SOURCE:éœ²å‡º , 2.50
+	TIMES SOURCE:æ¶²ä½“ , 1.20
+	TIMES SOURCE:æ¬²æƒ… , 1.20
 ENDIF
 
 ;-------------------------------------------------
-;â’¸ƒ`ƒFƒbƒN
+;çµ¶é ‚ãƒã‚§ãƒƒã‚¯
 ;-------------------------------------------------
 CALL SOURCE_CHECK_CVAB
 
 ;-------------------------------------------------
-;ŽË¸ƒ`ƒFƒbƒN
+;å°„ç²¾ãƒã‚§ãƒƒã‚¯
 ;-------------------------------------------------
 CALL SAMEN_CHECK_T, 0
 
-CALL SAMEN_SHOOT_T, 0, NOWEX:ŽË¸
+CALL SAMEN_SHOOT_T, 0, NOWEX:å°„ç²¾
 
 RETURN 1
 

@@ -1,15 +1,15 @@
+﻿;-------------------------------------------------
+;触手緊縛
 ;-------------------------------------------------
-;�G��ٔ�
-;-------------------------------------------------
-@USERCOM_ABLE_�G��ٔ�, ARG
+@USERCOM_ABLE_触手緊縛, ARG
 #FUNCTION
-;�G��Ȃ��ƃ_��
-SIF !TEQUIP:�G��
+;触手ないとダメ
+SIF !TEQUIP:触手
 	RETURNF 0
 
 COMRESULT = 1
 RETURNF 1
 
-@COM_�G��ٔ�
-JUMP COM_��
+@COM_触手緊縛
+JUMP COM_縄
 

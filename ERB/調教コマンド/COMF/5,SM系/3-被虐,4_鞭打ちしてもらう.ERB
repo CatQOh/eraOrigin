@@ -1,68 +1,68 @@
+﻿;-------------------------------------------------
+;鞭打ちしてもらう
 ;-------------------------------------------------
-;�ڑł����Ă��炤
-;-------------------------------------------------
-@USERCOM_ABLE_�ڑł����Ă��炤, ARG
+@USERCOM_ABLE_鞭打ちしてもらう, ARG
 #FUNCTION
-;�T�h�A�������̓T�h���C3�ȏ�K�v
-SIF ABL:�T�h���C < 3 && !TALENT:�T�h
+;サド、もしくはサドっ気3以上必要
+SIF ABL:サドっ気 < 3 && !TALENT:サド
 	RETURNF 0
-;�S�����̓_��
-SIF TEQUIP:��
+;拘束中はダメ
+SIF TEQUIP:縄
 	RETURNF 0
-;�G�蒲�����̓_��
-SIF TEQUIP:�G��
+;触手調教中はダメ
+SIF TEQUIP:触手
 	RETURNF 0
-;����̏ꍇ�̓}�]���}�]���C3�ȏ�K�v
+;助手の場合はマゾかマゾっ気3以上必要
 IF PLAYER == ASSI
-	SIF ABL:ASSI:�}�]���C < 3 && !TALENT:�}�]
+	SIF ABL:ASSI:マゾっ気 < 3 && !TALENT:マゾ
 		RETURNF 0
 ENDIF
 
 COMRESULT = 1
 RETURNF 1
 
-@COM_�ڑł����Ă��炤
-PRINTL �ڑł����Ă��炤
+@COM_鞭打ちしてもらう
+PRINTL 鞭打ちしてもらう
 CALL KOJO_MESSAGE_COM
 
 ;-------------------------------------------------
-;�\�[�X�ǉ�����
+;ソース追加処理
 ;-------------------------------------------------
-;����̗́A�C��
-LOSEBASE:�̗� += 50
-LOSEBASE:�C�� += 50
+;消費体力、気力
+LOSEBASE:体力 += 50
+LOSEBASE:気力 += 50
 
-DOWNBASE:MASTER:�̗� += 100
-DOWNBASE:MASTER:�C�� += 80
+DOWNBASE:MASTER:体力 += 100
+DOWNBASE:MASTER:気力 += 80
 
-SOURCE:���s�� = 500
-SOURCE:�B�� = 200
-SOURCE:���� = 400
-SOURCE:��E = 300
-SOURCE:���� = 100
-SOURCE:�s�� = 50
+SOURCE:性行動 = 500
+SOURCE:達成 = 200
+SOURCE:中毒 = 400
+SOURCE:逸脱 = 300
+SOURCE:反感 = 100
+SOURCE:不潔 = 50
 
 ;-------------------------------------------------
-;�Ⓒ�`�F�b�N
+;絶頂チェック
 ;-------------------------------------------------
 CALL SOURCE_CHECK_CVAB
 
 ;-------------------------------------------------
-;�ː��`�F�b�N
+;射精チェック
 ;-------------------------------------------------
 CALL SAMEN_CHECK_T, 0
 
-CALL SAMEN_SHOOT_T, 0, NOWEX:�ː�
+CALL SAMEN_SHOOT_T, 0, NOWEX:射精
 
 ;-------------------------------------------------
-;�o���̏���
+;経験の処理
 ;-------------------------------------------------
 CALL EXPUP, 1, 1
 
-PRINTL �n�s���y�o��+5
-EXP:�n�s���y�o�� += 5
-PRINTL �����o��+5
-EXP:�����o�� += 5
+PRINTL 嗜虐快楽経験+5
+EXP:嗜虐快楽経験 += 5
+PRINTL 調教経験+5
+EXP:調教経験 += 5
 
 RETURN 1
 

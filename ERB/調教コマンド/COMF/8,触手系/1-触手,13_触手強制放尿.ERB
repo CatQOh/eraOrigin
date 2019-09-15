@@ -1,75 +1,75 @@
+ï»¿;-------------------------------------------------
+;è§¦æ‰‹å¼·åˆ¶æ”¾å°¿
 ;-------------------------------------------------
-;GŽè‹­§•ú”A
-;-------------------------------------------------
-@USERCOM_ABLE_GŽè‹­§•ú”A, ARG
+@USERCOM_ABLE_è§¦æ‰‹å¼·åˆ¶æ”¾å°¿, ARG
 #FUNCTION
-;GŽè‚È‚¢‚Æƒ_ƒ
-SIF !TEQUIP:GŽè
+;è§¦æ‰‹ãªã„ã¨ãƒ€ãƒ¡
+SIF !TEQUIP:è§¦æ‰‹
 	RETURNF 0
-;‘ÎÛ‚ÉƒyƒjƒX‚ ‚é‚Æƒ_ƒ
+;å¯¾è±¡ã«ãƒšãƒ‹ã‚¹ã‚ã‚‹ã¨ãƒ€ãƒ¡
 SIF PENIS(TARGET)
 	RETURNF 0
 
 COMRESULT = 1
 RETURNF 1
 
-@COM_GŽè‹­§ï¸
-PRINTL GŽè‹­§ï¸
+@COM_è§¦æ‰‹å¼·åˆ¶æ¾ç²¾
+PRINTL è§¦æ‰‹å¼·åˆ¶æ¾ç²¾
 CALL KOJO_MESSAGE_COM
 
 ;-------------------------------------------------
-;ƒ\[ƒX’Ç‰Áˆ—
+;ã‚½ãƒ¼ã‚¹è¿½åŠ å‡¦ç†
 ;-------------------------------------------------
-LOSEBASE:‘Ì—Í += 150
-LOSEBASE:‹C—Í += 300
+LOSEBASE:ä½“åŠ› += 150
+LOSEBASE:æ°—åŠ› += 300
 
-SOURCE:‹ü] = 1500
-SOURCE:‹ê’É = 2000
-SOURCE:‹°•| = 1500
-SOURCE:ˆí’E = 3000
-SOURCE:”½Š´ = 1000
-SOURCE:•sŒ‰ = 500
-SOURCE:˜Io = 1000
+SOURCE:å±ˆå¾“ = 1500
+SOURCE:è‹¦ç—› = 2000
+SOURCE:ææ€– = 1500
+SOURCE:é€¸è„± = 3000
+SOURCE:åæ„Ÿ = 1000
+SOURCE:ä¸æ½” = 500
+SOURCE:éœ²å‡º = 1000
 
 ;-------------------------------------------------
-;â’¸ƒ`ƒFƒbƒN
+;çµ¶é ‚ãƒã‚§ãƒƒã‚¯
 ;-------------------------------------------------
 CALL SOURCE_CHECK_CVAB
 
 ;-------------------------------------------------
-;ŽË¸ƒ`ƒFƒbƒN
-;•ú”AƒRƒ}ƒ“ƒh‚Å‚ÍŽË¸ƒ`ƒFƒbƒN‚ðs‚í‚È‚¢
+;å°„ç²¾ãƒã‚§ãƒƒã‚¯
+;æ”¾å°¿ã‚³ãƒžãƒ³ãƒ‰ã§ã¯å°„ç²¾ãƒã‚§ãƒƒã‚¯ã‚’è¡Œã‚ãªã„
 ;-------------------------------------------------
 ;CALL SAMEN_CHECK_T, 0
 
-;CALL SAMEN_SHOOT_T, 0, NOWEX:ŽË¸
+;CALL SAMEN_SHOOT_T, 0, NOWEX:å°„ç²¾
 
 ;-------------------------------------------------
-;‰˜‚ê‚Ìˆ—
+;æ±šã‚Œã®å‡¦ç†
 ;-------------------------------------------------
-SETBIT STAIN:ƒ”ƒ@ƒMƒi, 7
+SETBIT STAIN:ãƒ´ã‚¡ã‚®ãƒŠ, 7
 
 ;-------------------------------------------------
-;ŒoŒ±‚Ìˆ—
+;çµŒé¨“ã®å‡¦ç†
 ;-------------------------------------------------
-;•ú”AŒoŒ±
-PRINTFORML •ú”AŒoŒ±+5
-EXP:•ú”AŒoŒ± += 5
-TEQUIP:—˜”AÜ = 0
+;æ”¾å°¿çµŒé¨“
+PRINTFORML æ”¾å°¿çµŒé¨“+5
+EXP:æ”¾å°¿çµŒé¨“ += 5
+TEQUIP:åˆ©å°¿å‰¤ = 0
 
-SIF TEQUIP:ƒrƒfƒIƒJƒƒ‰
-	CFLAG:•ú”A‚ðŽB‰e‚³‚ê‚½ŒoŒ±++
-SIF TEQUIP:–ìŠOƒvƒŒƒC
-	CFLAG:–ìŠO•ú”AŒoŒ±++
-SIF TEQUIP:‚¨•—˜Cê
-	CFLAG:•—˜Cê•ú”AŒoŒ±++
+SIF TEQUIP:ãƒ“ãƒ‡ã‚ªã‚«ãƒ¡ãƒ©
+	CFLAG:æ”¾å°¿ã‚’æ’®å½±ã•ã‚ŒãŸçµŒé¨“++
+SIF TEQUIP:é‡Žå¤–ãƒ—ãƒ¬ã‚¤
+	CFLAG:é‡Žå¤–æ”¾å°¿çµŒé¨“++
+SIF TEQUIP:ãŠé¢¨å‘‚å ´
+	CFLAG:é¢¨å‘‚å ´æ”¾å°¿çµŒé¨“++
 
-;blAb‚É‚æ‚éÃˆú
-SELECTCASE CSTR:Ží‘°
-	CASE "bl", "b"
-		CFLAG:PLAYER:›Z–ò++
-		SIF CFLAG:PLAYER:›Z–ò%5 == 0
-			CFLAG:PLAYER:Žc”++
+;ç£äººã€ç£ã«ã‚ˆã‚‹å‚¬æ·«
+SELECTCASE CSTR:ç¨®æ—
+	CASE "ç£äºº", "ç£"
+		CFLAG:PLAYER:åªšè–¬++
+		SIF CFLAG:PLAYER:åªšè–¬%5 == 0
+			CFLAG:PLAYER:æ®‹æ•°++
 ENDSELECT
 
 TENTACLE++

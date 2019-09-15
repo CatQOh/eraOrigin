@@ -1,94 +1,94 @@
+ï»¿;-------------------------------------------------
+;æ–°å¦»ãƒ—ãƒ¬ã‚¤
 ;-------------------------------------------------
-;VÈƒvƒŒƒC
-;-------------------------------------------------
-@USERCOM_ABLE_VÈƒvƒŒƒC, ARG
+@USERCOM_ABLE_æ–°å¦»ãƒ—ãƒ¬ã‚¤, ARG
 #FUNCTION
-;“z—ê‚ª—ö•ç‚©eˆ¤‚Å‚È‚¢‚Æƒ_ƒ
-SIF !TALENT:—ö•ç && !TALENT:eˆ¤
+;å¥´éš·ãŒæ‹æ…•ã‹è¦ªæ„›ã§ãªã„ã¨ãƒ€ãƒ¡
+SIF !TALENT:æ‹æ…• && !TALENT:è¦ªæ„›
 	RETURNF 0
-;‰ðœ‚Í‚¢‚Â‚Å‚à‰Â”\
-IF TEQUIP:ƒGƒvƒƒ“
+;è§£é™¤ã¯ã„ã¤ã§ã‚‚å¯èƒ½
+IF TEQUIP:ã‚¨ãƒ—ãƒ­ãƒ³
 	COMRESULT = 1
 	RETURNF 1
 ENDIF
-;•Žè‚¶‚áƒ_ƒ
+;åŠ©æ‰‹ã˜ã‚ƒãƒ€ãƒ¡
 SIF PLAYER != MASTER
 	RETURNF 0
-;]‡‚ª3ˆÈã‚È‚¢‚Æƒ_ƒ
-SIF ABL:]‡ < 3
+;å¾“é †ãŒ3ä»¥ä¸Šãªã„ã¨ãƒ€ãƒ¡
+SIF ABL:å¾“é † < 3
 	RETURNF 0
-;–ìŠOƒvƒŒƒC’†‚Íƒ_ƒ
-SIF TEQUIP:–ìŠOƒvƒŒƒC
+;é‡Žå¤–ãƒ—ãƒ¬ã‚¤ä¸­ã¯ãƒ€ãƒ¡
+SIF TEQUIP:é‡Žå¤–ãƒ—ãƒ¬ã‚¤
 	RETURNF 0
-;ãµ’pƒvƒŒƒC’†‚Íƒ_ƒ
-SIF TEQUIP:ãµ’pƒvƒŒƒC
+;ç¾žæ¥ãƒ—ãƒ¬ã‚¤ä¸­ã¯ãƒ€ãƒ¡
+SIF TEQUIP:ç¾žæ¥ãƒ—ãƒ¬ã‚¤
 	RETURNF 0
-;‚¨•—˜CêƒvƒŒƒC’†‚Íƒ_ƒ
-SIF TEQUIP:‚¨•—˜Cê
+;ãŠé¢¨å‘‚å ´ãƒ—ãƒ¬ã‚¤ä¸­ã¯ãƒ€ãƒ¡
+SIF TEQUIP:ãŠé¢¨å‘‚å ´
 	RETURNF 0
-;GŽè’²‹³’†‚Íƒ_ƒ
-SIF TEQUIP:GŽè
+;è§¦æ‰‹èª¿æ•™ä¸­ã¯ãƒ€ãƒ¡
+SIF TEQUIP:è§¦æ‰‹
 	RETURNF 0
 
 COMRESULT = 1
 RETURNF 1
 
-@COM_VÈƒvƒŒƒC
-PRINTL VÈƒvƒŒƒC
+@COM_æ–°å¦»ãƒ—ãƒ¬ã‚¤
+PRINTL æ–°å¦»ãƒ—ãƒ¬ã‚¤
 CALL KOJO_MESSAGE_COM
 
-;’…’E‚Ìˆ—
-INVERTBIT TEQUIP:ƒGƒvƒƒ“, 0
+;ç€è„±ã®å‡¦ç†
+INVERTBIT TEQUIP:ã‚¨ãƒ—ãƒ­ãƒ³, 0
 
 ;-------------------------------------------------
-;â’¸ƒ`ƒFƒbƒN
+;çµ¶é ‚ãƒã‚§ãƒƒã‚¯
 ;-------------------------------------------------
 CALL SOURCE_CHECK_CVAB
 
 ;-------------------------------------------------
-;ŽË¸ƒ`ƒFƒbƒN
+;å°„ç²¾ãƒã‚§ãƒƒã‚¯
 ;-------------------------------------------------
 CALL SAMEN_CHECK_T, 0
 
-CALL SAMEN_SHOOT_T, 0, NOWEX:ŽË¸
+CALL SAMEN_SHOOT_T, 0, NOWEX:å°„ç²¾
 
 RETURN 1
 
 ;-------------------------------------------------
-;‘•’…Œp‘±‚Ìˆ—
+;è£…ç€ç¶™ç¶šã®å‡¦ç†
 ;-------------------------------------------------
-@EQUIP_COM_VÈƒvƒŒƒC
-;•Žè’²‹³Žž‚ÍAƒGƒvƒƒ“‚ð‰ðœ‚µ‚ÄŠÖ”I—¹
+@EQUIP_COM_æ–°å¦»ãƒ—ãƒ¬ã‚¤
+;åŠ©æ‰‹èª¿æ•™æ™‚ã¯ã€ã‚¨ãƒ—ãƒ­ãƒ³ã‚’è§£é™¤ã—ã¦é–¢æ•°çµ‚äº†
 IF PLAYER != MASTER
-	TEQUIP:ƒGƒvƒƒ“ = 0
+	TEQUIP:ã‚¨ãƒ—ãƒ­ãƒ³ = 0
 	RETURN 0
 ENDIF
 
-PRINTL ƒVÈƒvƒŒƒC’†„
+PRINTL ï¼œæ–°å¦»ãƒ—ãƒ¬ã‚¤ä¸­ï¼ž
 
 ;-------------------------------------------------
-;ƒ\[ƒX’Ç‰Áˆ—
+;ã‚½ãƒ¼ã‚¹è¿½åŠ å‡¦ç†
 ;-------------------------------------------------
-;Á”ï‘Ì—ÍA‹C—Í
-LOSEBASE:‘Ì—Í += 0
-LOSEBASE:‹C—Í += 0
+;æ¶ˆè²»ä½“åŠ›ã€æ°—åŠ›
+LOSEBASE:ä½“åŠ› += 0
+LOSEBASE:æ°—åŠ› += 0
 
-SOURCE:îˆ¤ += 1000
-SOURCE:‹±‡ += 5000
-SOURCE:ˆí’E += 500
+SOURCE:æƒ…æ„› += 1000
+SOURCE:æ­é † += 5000
+SOURCE:é€¸è„± += 500
 
 ;-------------------------------------------------
-;ŒoŒ±‚Ìˆ—
+;çµŒé¨“ã®å‡¦ç†
 ;-------------------------------------------------
-;ˆ¤îŒoŒ±
-PRINTL ˆ¤îŒoŒ±+1
-EXP:ˆ¤îŒoŒ±++
+;æ„›æƒ…çµŒé¨“
+PRINTL æ„›æƒ…çµŒé¨“+1
+EXP:æ„›æƒ…çµŒé¨“++
 
-;ˆË‘¶“x•â³’l(Žål‚©‚Â—ö•ç‚Å2Aeˆ¤‚Å4j
-IF TALENT:—ö•ç && PLAYER == MASTER
-	TFLAG:ˆË‘¶“x•â³ += 2
-ELSEIF TALENT:eˆ¤ && PLAYER == MASTER
-	TFLAG:ˆË‘¶“x•â³ += 4
+;ä¾å­˜åº¦è£œæ­£å€¤(ä¸»äººã‹ã¤æ‹æ…•ã§2ã€è¦ªæ„›ã§4ï¼‰
+IF TALENT:æ‹æ…• && PLAYER == MASTER
+	TFLAG:ä¾å­˜åº¦è£œæ­£ += 2
+ELSEIF TALENT:è¦ªæ„› && PLAYER == MASTER
+	TFLAG:ä¾å­˜åº¦è£œæ­£ += 4
 ENDIF
 
 RETURN 1

@@ -1,133 +1,133 @@
+ï»¿;-------------------------------------------------
+;ãŠé…’ã‚’é£²ã¾ã›ã‚‹
 ;-------------------------------------------------
-;‚¨Žð‚ðˆù‚Ü‚¹‚é
-;-------------------------------------------------
-@USERCOM_ABLE_‚¨Žð‚ðˆù‚Ü‚¹‚é, ARG
+@USERCOM_ABLE_ãŠé…’ã‚’é£²ã¾ã›ã‚‹, ARG
 #FUNCTION
 #DIM LCOUNT
-;S‘©’†‚Íƒ_ƒ
-SIF TEQUIP:ƒAƒCƒ}ƒXƒN || TEQUIP:“ê || TEQUIP:ƒ{[ƒ‹ƒMƒƒƒO || TEQUIP:GŽè
+;æ‹˜æŸä¸­ã¯ãƒ€ãƒ¡
+SIF TEQUIP:ã‚¢ã‚¤ãƒžã‚¹ã‚¯ || TEQUIP:ç¸„ || TEQUIP:ãƒœãƒ¼ãƒ«ã‚®ãƒ£ã‚° || TEQUIP:è§¦æ‰‹
 	RETURNF 0
 
-;”DP’†‚Íˆù‚Ü‚¹‚³‚ê‚È‚¢
-SIF TALENT:”DP
+;å¦Šå¨ ä¸­ã¯é£²ã¾ã›ã•ã‚Œãªã„
+SIF TALENT:å¦Šå¨ 
 	RETURNF 0
 
-;‹@ŠB‚Æ–³‹@•¨‚Íˆù‚ß‚È‚¢
-SIF TALENT:–³‹@•¨ || CSTR:Ží‘° == "‹@ŠB"
+;æ©Ÿæ¢°ã¨ç„¡æ©Ÿç‰©ã¯é£²ã‚ãªã„
+SIF TALENT:ç„¡æ©Ÿç‰© || CSTR:ç¨®æ— == "æ©Ÿæ¢°"
 	RETURNF 0
 
 COMRESULT = LOCAL
 RETURNF LOCAL
 
-@COM_‚¨Žð‚ðˆù‚Ü‚¹‚é
+@COM_ãŠé…’ã‚’é£²ã¾ã›ã‚‹
 #DIM DYNAMIC ALC
-#DIMS DYNAMIC »–@
-#DIM DYNAMIC Þ—¿, 3
+#DIMS DYNAMIC è£½æ³•
+#DIM DYNAMIC ææ–™, 3
 #DIM DYNAMIC LCOUNT
 
-VARSET Þ—¿, 0
+VARSET ææ–™, 0
 
-PRINTL ‰½‚ðˆù‚Ü‚¹‚Ü‚·‚©H
-PRINTL [1] ŠÊˆù—¿—Þ
-PRINTL [2] ŠF“`(“ú–{Žð)
-PRINTL [3] ƒAƒ‹ƒpƒJ(ƒƒCƒ“)
-PRINTL [4] –‚‰¤(Ä’‘)
-PRINTL [5] ‘q‹g(ƒEƒCƒXƒL[)
-PRINTL [6] ƒXƒyƒŠƒI[ƒ‹(ƒ‰ƒ€)
-PRINTL [7] ƒr[ƒtƒB[ƒ^[(ƒWƒ“)
-PRINTL [8] ƒAƒuƒ\ƒ‹[ƒg(ƒEƒHƒbƒJ)
-PRINTL [9] ƒJƒ‹[ƒA
+PRINTL ä½•ã‚’é£²ã¾ã›ã¾ã™ã‹ï¼Ÿ
+PRINTL [1] ç¼¶é£²æ–™é¡ž
+PRINTL [2] çš†ä¼(æ—¥æœ¬é…’)
+PRINTL [3] ã‚¢ãƒ«ãƒ‘ã‚«(ãƒ¯ã‚¤ãƒ³)
+PRINTL [4] é­”çŽ‹(ç„¼é…Ž)
+PRINTL [5] å€‰å‰(ã‚¦ã‚¤ã‚¹ã‚­ãƒ¼)
+PRINTL [6] ã‚¹ãƒšãƒªã‚ªãƒ¼ãƒ«(ãƒ©ãƒ )
+PRINTL [7] ãƒ“ãƒ¼ãƒ•ã‚£ãƒ¼ã‚¿ãƒ¼(ã‚¸ãƒ³)
+PRINTL [8] ã‚¢ãƒ–ã‚½ãƒ«ãƒ¼ãƒˆ(ã‚¦ã‚©ãƒƒã‚«)
+PRINTL [9] ã‚«ãƒ«ãƒ¼ã‚¢
 SIF MONTH == 1 && DAYS == 1
-	PRINTL [10] ‚¨“j‘h(Alc.2%)
-;SIF ITEM:ƒXƒsƒŠƒ^ƒX
-;	PRINTL [10] ƒXƒsƒŠƒ^ƒX
-PRINTL [100] ‚â‚Á‚Ï‚è‚â‚ß‚é
+	PRINTL [10] ãŠå± è˜‡(Alc.2%)
+;SIF ITEM:ã‚¹ãƒ”ãƒªã‚¿ã‚¹
+;	PRINTL [10] ã‚¹ãƒ”ãƒªã‚¿ã‚¹
+PRINTL [100] ã‚„ã£ã±ã‚Šã‚„ã‚ã‚‹
 
 DO
 	INPUT
 	SELECTCASE RESULT
 		CASE 1
-			PRINTL ‰½‚ðˆù‚Ü‚¹‚Ü‚·‚©H
-			PRINTL [0] ƒX[ƒp[ƒhƒ‰ƒC(Alc.5%)
-			PRINTL [1] ˆê”Ôï‚è(Alc.5%)
-			PRINTL [2] ƒvƒŒƒ~ƒAƒ€ƒ‚ƒ‹ƒc(Alc.5%)
-			PRINTL [3] ƒ‘ƒrƒX(Alc.5%)
-			PRINTL [4] ‚Ù‚ë‚æ‚¢(Alc.3%)
-			PRINTL [5] ƒXƒgƒƒ“ƒOƒ[ƒ(Alc.9%)
+			PRINTL ä½•ã‚’é£²ã¾ã›ã¾ã™ã‹ï¼Ÿ
+			PRINTL [0] ã‚¹ãƒ¼ãƒ‘ãƒ¼ãƒ‰ãƒ©ã‚¤(Alc.5%)
+			PRINTL [1] ä¸€ç•ªæ¾ã‚Š(Alc.5%)
+			PRINTL [2] ãƒ—ãƒ¬ãƒŸã‚¢ãƒ ãƒ¢ãƒ«ãƒ„(Alc.5%)
+			PRINTL [3] ãƒ±ãƒ“ã‚¹(Alc.5%)
+			PRINTL [4] ã»ã‚ã‚ˆã„(Alc.3%)
+			PRINTL [5] ã‚¹ãƒˆãƒ­ãƒ³ã‚°ã‚¼ãƒ­(Alc.9%)
 			DO
 				INPUT
 				SELECTCASE RESULT
 					CASE 0 TO 3
 						SELECTCASE RESULT
 							CASE 0
-								Žð–¼ = ƒX[ƒp[ƒhƒ‰ƒC
+								é…’å = ã‚¹ãƒ¼ãƒ‘ãƒ¼ãƒ‰ãƒ©ã‚¤
 							CASE 1
-								Žð–¼ = ˆê”Ôï‚è
+								é…’å = ä¸€ç•ªæ¾ã‚Š
 							CASE 2
-								Žð–¼ = ƒvƒŒƒ~ƒAƒ€ƒ‚ƒ‹ƒc
+								é…’å = ãƒ—ãƒ¬ãƒŸã‚¢ãƒ ãƒ¢ãƒ«ãƒ„
 							CASE 3
-								Žð–¼ = ƒ‘ƒrƒX
+								é…’å = ãƒ±ãƒ“ã‚¹
 						ENDSELECT
-						PRINTFORML %Žð–¼%‚ð‚Ç‚Ì‚æ‚¤‚Éˆù‚Ü‚¹‚Ü‚·‚©H
-						PRINTL [1] ‚»‚Ì‚Ü‚Ü(Alc.5%)
-						PRINTL [2] ƒVƒƒƒ“ƒfƒBƒKƒt(Alc.3%)
-						PRINTL [3] ƒpƒiƒVƒF(Alc.3%)
-						PRINTL [4] ƒrƒAƒXƒvƒŠƒbƒcƒ@[(Alc.8%)
+						PRINTFORML %é…’å%ã‚’ã©ã®ã‚ˆã†ã«é£²ã¾ã›ã¾ã™ã‹ï¼Ÿ
+						PRINTL [1] ãã®ã¾ã¾(Alc.5%)
+						PRINTL [2] ã‚·ãƒ£ãƒ³ãƒ‡ã‚£ã‚¬ãƒ•(Alc.3%)
+						PRINTL [3] ãƒ‘ãƒŠã‚·ã‚§(Alc.3%)
+						PRINTL [4] ãƒ“ã‚¢ã‚¹ãƒ—ãƒªãƒƒãƒ„ã‚¡ãƒ¼(Alc.8%)
 						DO
 							INPUT
 							SELECTCASE RESULT
 								CASE 1
-									»–@ = ƒr[ƒ‹
+									è£½æ³• = ãƒ“ãƒ¼ãƒ«
 									ALC = 5
 									BREAK
 								CASE 2
-									»–@ = ƒr[ƒ‹
-									Žð–¼ = ƒVƒƒƒ“ƒfƒBƒKƒt
+									è£½æ³• = ãƒ“ãƒ¼ãƒ«
+									é…’å = ã‚·ãƒ£ãƒ³ãƒ‡ã‚£ã‚¬ãƒ•
 									ALC = 3
 									BREAK
 								CASE 3
-									»–@ = ƒr[ƒ‹
-									Žð–¼ = ƒpƒiƒVƒF
+									è£½æ³• = ãƒ“ãƒ¼ãƒ«
+									é…’å = ãƒ‘ãƒŠã‚·ã‚§
 									ALC = 3
 									BREAK
 								CASE 4
-									»–@ = ƒr[ƒ‹
-									Žð–¼ = ƒrƒAƒXƒvƒŠƒbƒcƒ@[
+									è£½æ³• = ãƒ“ãƒ¼ãƒ«
+									é…’å = ãƒ“ã‚¢ã‚¹ãƒ—ãƒªãƒƒãƒ„ã‚¡ãƒ¼
 									ALC = 8
 									BREAK
 							ENDSELECT
 						LOOP 1
 					CASE 4
-						Žð–¼ = ‚Ù‚ë‚æ‚¢
+						é…’å = ã»ã‚ã‚ˆã„
 						ALC = 3
 						BREAK
 					CASE 5
-						Žð–¼ = ƒXƒgƒƒ“ƒOƒ[ƒ
+						é…’å = ã‚¹ãƒˆãƒ­ãƒ³ã‚°ã‚¼ãƒ­
 						ALC = 9
 						BREAK
 				ENDSELECT
 			LOOP 1
 			BREAK
 		CASE 2
-			PRINTL ŠF“`‚ð‚Ç‚Ì‚æ‚¤‚Éˆù‚Ü‚¹‚Ü‚·‚©H
-			PRINTL [1] ‚»‚Ì‚Ü‚Ü(Alc.12%)
-			PRINTL [2] ”Mà“(Alc.12%)
-			PRINTL [3] ƒTƒ€ƒ‰ƒCƒƒbƒN(Alc.3`10%)
+			PRINTL çš†ä¼ã‚’ã©ã®ã‚ˆã†ã«é£²ã¾ã›ã¾ã™ã‹ï¼Ÿ
+			PRINTL [1] ãã®ã¾ã¾(Alc.12%)
+			PRINTL [2] ç†±ç‡—(Alc.12%)
+			PRINTL [3] ã‚µãƒ ãƒ©ã‚¤ãƒ­ãƒƒã‚¯(Alc.3ï½ž10%)
 			DO
 				INPUT
 				SELECTCASE RESULT
 					CASE 1
-						Žð–¼ = ŠF“`
+						é…’å = çš†ä¼
 						ALC = 12
 						BREAK
 					CASE 2
-						»–@ = ”Mà“
-						Žð–¼ = ŠF“`‚Ì”Mà“
+						è£½æ³• = ç†±ç‡—
+						é…’å = çš†ä¼ã®ç†±ç‡—
 						ALC = 12
 					CASE 3
-						»–@ = ƒ‰ƒCƒ€Š„‚è
-						Žð–¼ = ƒTƒ€ƒ‰ƒCƒƒbƒN
-						PRINTL ƒAƒ‹ƒR[ƒ‹“x”‚ðŒˆ‚ß‚Ä‚­‚¾‚³‚¢(3`10%)
+						è£½æ³• = ãƒ©ã‚¤ãƒ å‰²ã‚Š
+						é…’å = ã‚µãƒ ãƒ©ã‚¤ãƒ­ãƒƒã‚¯
+						PRINTL ã‚¢ãƒ«ã‚³ãƒ¼ãƒ«åº¦æ•°ã‚’æ±ºã‚ã¦ãã ã•ã„(3ï½ž10%)
 						CALL TWO_DIGIT, 10, "%", 3
 						ALC = RESULT
 						BREAK
@@ -135,142 +135,142 @@ DO
 			LOOP 1
 			BREAK
 		CASE 3
-			Žð–¼ = ƒAƒ‹ƒpƒJ
+			é…’å = ã‚¢ãƒ«ãƒ‘ã‚«
 			ALC = 12
 			BREAK
 		CASE 4
-			PRINTL –‚‰¤‚ð‚Ç‚Ì‚æ‚¤‚Éˆù‚Ü‚¹‚Ü‚·‚©H
-			PRINTL [1] …Š„‚è(Alc.5`20%)
-			PRINTL [2] ‚¨“’Š„‚è(Alc.5`20%)
-			PRINTL [3] ƒƒbƒN(Alc.22%)
-			PRINTL [4] ƒXƒgƒŒ[ƒg(Alc.25%)
-			PRINTL [5] Ä’‘ƒnƒCƒ{[ƒ‹(Alc.5`20%)
-			PRINTL [6] Ä’‘ƒR[ƒN
-			PRINTL [7] Ä’‘ƒWƒ“ƒWƒƒ[
+			PRINTL é­”çŽ‹ã‚’ã©ã®ã‚ˆã†ã«é£²ã¾ã›ã¾ã™ã‹ï¼Ÿ
+			PRINTL [1] æ°´å‰²ã‚Š(Alc.5ï½ž20%)
+			PRINTL [2] ãŠæ¹¯å‰²ã‚Š(Alc.5ï½ž20%)
+			PRINTL [3] ãƒ­ãƒƒã‚¯(Alc.22%)
+			PRINTL [4] ã‚¹ãƒˆãƒ¬ãƒ¼ãƒˆ(Alc.25%)
+			PRINTL [5] ç„¼é…Žãƒã‚¤ãƒœãƒ¼ãƒ«(Alc.5ï½ž20%)
+			PRINTL [6] ç„¼é…Žã‚³ãƒ¼ã‚¯
+			PRINTL [7] ç„¼é…Žã‚¸ãƒ³ã‚¸ãƒ£ãƒ¼
 			DO
 				INPUT
 				SELECTCASE RESULT
 					CASE 1, 2, 5, 6, 7
 						SELECTCASE RESULT
 							CASE 1
-								»–@ = …Š„‚è
-								Žð–¼ = Ä’‘‚Ì…Š„‚è
+								è£½æ³• = æ°´å‰²ã‚Š
+								é…’å = ç„¼é…Žã®æ°´å‰²ã‚Š
 							CASE 2
-								»–@ = ‚¨“’Š„‚è
-								Žð–¼ = Ä’‘‚Ì‚¨“’Š„‚è
+								è£½æ³• = ãŠæ¹¯å‰²ã‚Š
+								é…’å = ç„¼é…Žã®ãŠæ¹¯å‰²ã‚Š
 							CASE 5
-								»–@ = ƒnƒCƒ{[ƒ‹
-								Žð–¼ = Ä’‘ƒnƒCƒ{[ƒ‹
+								è£½æ³• = ãƒã‚¤ãƒœãƒ¼ãƒ«
+								é…’å = ç„¼é…Žãƒã‚¤ãƒœãƒ¼ãƒ«
 							CASE 6
-								»–@ = ƒR[ƒ‰Š„‚è
-								Žð–¼ = Ä’‘ƒR[ƒN
+								è£½æ³• = ã‚³ãƒ¼ãƒ©å‰²ã‚Š
+								é…’å = ç„¼é…Žã‚³ãƒ¼ã‚¯
 							CASE 7
-								»–@ = ƒWƒ“ƒWƒƒ[Š„‚è
-								Žð–¼ = Ä’‘ƒWƒ“ƒWƒƒ[
+								è£½æ³• = ã‚¸ãƒ³ã‚¸ãƒ£ãƒ¼å‰²ã‚Š
+								é…’å = ç„¼é…Žã‚¸ãƒ³ã‚¸ãƒ£ãƒ¼
 						ENDSELECT
-						PRINTL ƒAƒ‹ƒR[ƒ‹“x”‚ðŒˆ‚ß‚Ä‚­‚¾‚³‚¢(5`20%)
+						PRINTL ã‚¢ãƒ«ã‚³ãƒ¼ãƒ«åº¦æ•°ã‚’æ±ºã‚ã¦ãã ã•ã„(5ï½ž20%)
 						CALL TWO_DIGIT, 20, "%", 5
 						ALC = RESULT
 						BREAK
 					CASE 3
-						Žð–¼ = Ä’‘‚ÌƒƒbƒN
+						é…’å = ç„¼é…Žã®ãƒ­ãƒƒã‚¯
 						ALC = 22
 						BREAK
 					CASE 4
-						Žð–¼ = Ä’‘‚ÌƒXƒgƒŒ[ƒg
+						é…’å = ç„¼é…Žã®ã‚¹ãƒˆãƒ¬ãƒ¼ãƒˆ
 						ALC = 25
 						BREAK
 				ENDSELECT
 			LOOP 1
 			BREAK
 		CASE 5
-			PRINTL ‘q‹g‚ð‚Ç‚Ì‚æ‚¤‚Éˆù‚Ü‚¹‚Ü‚·‚©H
-			PRINTL [1] …Š„‚è(Alc.9`35%)
-			PRINTL [2] ‚¨“’Š„‚è(Alc.9`35%)
-			PRINTL [3] ƒƒbƒN(Alc.37%)
-			PRINTL [4] ƒXƒgƒŒ[ƒg(Alc.40%)
-			PRINTL [5] ƒnƒCƒ{[ƒ‹(Alc.9`35%)
-			PRINTL [6] ƒR[ƒNƒnƒC(Alc.9`35%)
-			PRINTL [7] ƒWƒ“ƒWƒƒ[ƒnƒC(Alc.9`35%)
+			PRINTL å€‰å‰ã‚’ã©ã®ã‚ˆã†ã«é£²ã¾ã›ã¾ã™ã‹ï¼Ÿ
+			PRINTL [1] æ°´å‰²ã‚Š(Alc.9ï½ž35%)
+			PRINTL [2] ãŠæ¹¯å‰²ã‚Š(Alc.9ï½ž35%)
+			PRINTL [3] ãƒ­ãƒƒã‚¯(Alc.37%)
+			PRINTL [4] ã‚¹ãƒˆãƒ¬ãƒ¼ãƒˆ(Alc.40%)
+			PRINTL [5] ãƒã‚¤ãƒœãƒ¼ãƒ«(Alc.9ï½ž35%)
+			PRINTL [6] ã‚³ãƒ¼ã‚¯ãƒã‚¤(Alc.9ï½ž35%)
+			PRINTL [7] ã‚¸ãƒ³ã‚¸ãƒ£ãƒ¼ãƒã‚¤(Alc.9ï½ž35%)
 			DO
 				INPUT
 				SELECTCASE RESULT
 					CASE 1, 2, 5, 6, 7
 						SELECTCASE RESULT
 							CASE 1
-								»–@ = …Š„‚è
-								Žð–¼ = ƒEƒCƒXƒL[‚Ì…Š„‚è
+								è£½æ³• = æ°´å‰²ã‚Š
+								é…’å = ã‚¦ã‚¤ã‚¹ã‚­ãƒ¼ã®æ°´å‰²ã‚Š
 							CASE 2
-								»–@ = ‚¨“’Š„‚è
-								Žð–¼ = ƒEƒCƒXƒL[‚Ì‚¨“’Š„‚è
+								è£½æ³• = ãŠæ¹¯å‰²ã‚Š
+								é…’å = ã‚¦ã‚¤ã‚¹ã‚­ãƒ¼ã®ãŠæ¹¯å‰²ã‚Š
 							CASE 5
-								»–@ = ƒnƒCƒ{[ƒ‹
-								Žð–¼ = ƒnƒCƒ{[ƒ‹
+								è£½æ³• = ãƒã‚¤ãƒœãƒ¼ãƒ«
+								é…’å = ãƒã‚¤ãƒœãƒ¼ãƒ«
 							CASE 6
-								»–@ = ƒR[ƒ‰Š„‚è
-								Žð–¼ = ƒR[ƒNƒnƒC
+								è£½æ³• = ã‚³ãƒ¼ãƒ©å‰²ã‚Š
+								é…’å = ã‚³ãƒ¼ã‚¯ãƒã‚¤
 							CASE 7
-								»–@ = ƒWƒ“ƒWƒƒ[Š„‚è
-								Žð–¼ = ƒWƒ“ƒWƒƒ[ƒnƒC
+								è£½æ³• = ã‚¸ãƒ³ã‚¸ãƒ£ãƒ¼å‰²ã‚Š
+								é…’å = ã‚¸ãƒ³ã‚¸ãƒ£ãƒ¼ãƒã‚¤
 						ENDSELECT
-						PRINTL ƒAƒ‹ƒR[ƒ‹“x”‚ðŒˆ‚ß‚Ä‚­‚¾‚³‚¢(9`35%)
+						PRINTL ã‚¢ãƒ«ã‚³ãƒ¼ãƒ«åº¦æ•°ã‚’æ±ºã‚ã¦ãã ã•ã„(9ï½ž35%)
 						CALL TWO_DIGIT, 35, "%", 9
 						ALC = RESULT
 						BREAK
 					CASE 3
-						Žð–¼ = ‘q‹g‚ÌƒƒbƒN
+						é…’å = å€‰å‰ã®ãƒ­ãƒƒã‚¯
 						ALC = 37
 						BREAK
 					CASE 4
-						Žð–¼ = ‘q‹g‚ÌƒXƒgƒŒ[ƒg
+						é…’å = å€‰å‰ã®ã‚¹ãƒˆãƒ¬ãƒ¼ãƒˆ
 						ALC = 40
 						BREAK
 				ENDSELECT
 			LOOP 1
 			BREAK
 		CASE 6
-			PRINTL ƒXƒyƒŠƒI[ƒ‹‚ð‚Ç‚Ì‚æ‚¤‚Éˆù‚Ü‚¹‚Ü‚·‚©H
-			PRINTL [1] ƒXƒgƒŒ[ƒg(Alc.40%)
-			PRINTL [2] ƒƒbƒN(Alc.37%)
-			PRINTL [3] ƒLƒ…[ƒoƒŠƒo[(Alc.9`35%)
-			PRINTL [4] ƒ_ƒCƒLƒŠ(Alc.20`35%)
-			PRINTL [5] ƒ‰ƒ€ƒgƒjƒbƒN(Alc.9`35%)
-			PRINTL [6] ƒ‰ƒ€ƒtƒBƒY(Alc.9`35%)
-			PRINTL [7] ƒ‚ƒq[ƒg(Alc.9`35%)
+			PRINTL ã‚¹ãƒšãƒªã‚ªãƒ¼ãƒ«ã‚’ã©ã®ã‚ˆã†ã«é£²ã¾ã›ã¾ã™ã‹ï¼Ÿ
+			PRINTL [1] ã‚¹ãƒˆãƒ¬ãƒ¼ãƒˆ(Alc.40%)
+			PRINTL [2] ãƒ­ãƒƒã‚¯(Alc.37%)
+			PRINTL [3] ã‚­ãƒ¥ãƒ¼ãƒãƒªãƒãƒ¼(Alc.9ï½ž35%)
+			PRINTL [4] ãƒ€ã‚¤ã‚­ãƒª(Alc.20ï½ž35%)
+			PRINTL [5] ãƒ©ãƒ ãƒˆãƒ‹ãƒƒã‚¯(Alc.9ï½ž35%)
+			PRINTL [6] ãƒ©ãƒ ãƒ•ã‚£ã‚º(Alc.9ï½ž35%)
+			PRINTL [7] ãƒ¢ãƒ’ãƒ¼ãƒˆ(Alc.9ï½ž35%)
 			DO
 				INPUT
 				SELECTCASE RESULT
 					CASE 1
-						Žð–¼ = ƒXƒyƒŠƒI[ƒ‹‚ÌƒXƒgƒŒ[ƒg
+						é…’å = ã‚¹ãƒšãƒªã‚ªãƒ¼ãƒ«ã®ã‚¹ãƒˆãƒ¬ãƒ¼ãƒˆ
 						ALC = 40
 						BREAK
 					CASE 2
-						Žð–¼ = ƒXƒyƒŠƒI[ƒ‹‚ÌƒƒbƒN
+						é…’å = ã‚¹ãƒšãƒªã‚ªãƒ¼ãƒ«ã®ãƒ­ãƒƒã‚¯
 						ALC = 37
 						BREAK
 					CASE 3, 4, 5, 6, 7
 						SELECTCASE RESULT
 							CASE 3
-								»–@ = ƒR[ƒ‰Š„‚è
-								Žð–¼ = ƒLƒ…[ƒoƒŠƒo[
+								è£½æ³• = ã‚³ãƒ¼ãƒ©å‰²ã‚Š
+								é…’å = ã‚­ãƒ¥ãƒ¼ãƒãƒªãƒãƒ¼
 							CASE 4
-								»–@ = ƒ‰ƒCƒ€Š„‚è
-								Žð–¼ = ƒ_ƒCƒLƒŠ
+								è£½æ³• = ãƒ©ã‚¤ãƒ å‰²ã‚Š
+								é…’å = ãƒ€ã‚¤ã‚­ãƒª
 							CASE 5
-								»–@ = ƒgƒjƒbƒNŠ„‚è
-								Žð–¼ = ƒ‰ƒ€ƒgƒjƒbƒN
+								è£½æ³• = ãƒˆãƒ‹ãƒƒã‚¯å‰²ã‚Š
+								é…’å = ãƒ©ãƒ ãƒˆãƒ‹ãƒƒã‚¯
 							CASE 6
-								»–@ = ƒJƒNƒeƒ‹
-								Žð–¼ = ƒ‰ƒ€ƒtƒBƒY
+								è£½æ³• = ã‚«ã‚¯ãƒ†ãƒ«
+								é…’å = ãƒ©ãƒ ãƒ•ã‚£ã‚º
 							CASE 7
-								»–@ = ƒJƒNƒeƒ‹
-								Žð–¼ = ƒ‚ƒq[ƒg
+								è£½æ³• = ã‚«ã‚¯ãƒ†ãƒ«
+								é…’å = ãƒ¢ãƒ’ãƒ¼ãƒˆ
 						ENDSELECT
-						IF Žð–¼ == "ƒ_ƒCƒLƒŠ"
-							PRINTL ƒAƒ‹ƒR[ƒ‹“x”‚ðŒˆ‚ß‚Ä‚­‚¾‚³‚¢(20`35%)
+						IF é…’å == "ãƒ€ã‚¤ã‚­ãƒª"
+							PRINTL ã‚¢ãƒ«ã‚³ãƒ¼ãƒ«åº¦æ•°ã‚’æ±ºã‚ã¦ãã ã•ã„(20ï½ž35%)
 							CALL TWO_DIGIT, 35, "%", 20
 						ELSE
-							PRINTL ƒAƒ‹ƒR[ƒ‹“x”‚ðŒˆ‚ß‚Ä‚­‚¾‚³‚¢(9`35%)
+							PRINTL ã‚¢ãƒ«ã‚³ãƒ¼ãƒ«åº¦æ•°ã‚’æ±ºã‚ã¦ãã ã•ã„(9ï½ž35%)
 							CALL TWO_DIGIT, 35, "%", 9
 						ENDIF
 						ALC = RESULT
@@ -279,48 +279,48 @@ DO
 			LOOP 1
 			BREAK
 		CASE 7
-			PRINTL ƒr[ƒtƒB[ƒ^[‚ð‚Ç‚Ì‚æ‚¤‚Éˆù‚Ü‚¹‚Ü‚·‚©H
-			PRINTL [1] ƒXƒgƒŒ[ƒg(Alc.47%)
-			PRINTL [2] ƒƒbƒN(Alc.44%)
-			PRINTL [3] ƒWƒ“ƒgƒjƒbƒN(Alc.9`42%)
-			PRINTL [4] ƒWƒ“ƒŠƒbƒL[(Alc.9`42%)
-			PRINTL [5] ƒMƒ€ƒŒƒbƒg(Alc.25`42%)
-			PRINTL [6] ƒWƒ“ƒtƒBƒY(Alc.9`42%)
-			PRINTL [7] ƒWƒ“ƒoƒbƒN(Alc.9`42%)
+			PRINTL ãƒ“ãƒ¼ãƒ•ã‚£ãƒ¼ã‚¿ãƒ¼ã‚’ã©ã®ã‚ˆã†ã«é£²ã¾ã›ã¾ã™ã‹ï¼Ÿ
+			PRINTL [1] ã‚¹ãƒˆãƒ¬ãƒ¼ãƒˆ(Alc.47%)
+			PRINTL [2] ãƒ­ãƒƒã‚¯(Alc.44%)
+			PRINTL [3] ã‚¸ãƒ³ãƒˆãƒ‹ãƒƒã‚¯(Alc.9ï½ž42%)
+			PRINTL [4] ã‚¸ãƒ³ãƒªãƒƒã‚­ãƒ¼(Alc.9ï½ž42%)
+			PRINTL [5] ã‚®ãƒ ãƒ¬ãƒƒãƒˆ(Alc.25ï½ž42%)
+			PRINTL [6] ã‚¸ãƒ³ãƒ•ã‚£ã‚º(Alc.9ï½ž42%)
+			PRINTL [7] ã‚¸ãƒ³ãƒãƒƒã‚¯(Alc.9ï½ž42%)
 			DO
 				INPUT
 				SELECTCASE RESULT
 					CASE 1
-						Žð–¼ = ƒr[ƒtƒB[ƒ^[‚ÌƒXƒgƒŒ[ƒg
+						é…’å = ãƒ“ãƒ¼ãƒ•ã‚£ãƒ¼ã‚¿ãƒ¼ã®ã‚¹ãƒˆãƒ¬ãƒ¼ãƒˆ
 						ALC = 47
 						BREAK
 					CASE 2
-						Žð–¼ = ƒr[ƒtƒB[ƒ^[‚ÌƒƒbƒN
+						é…’å = ãƒ“ãƒ¼ãƒ•ã‚£ãƒ¼ã‚¿ãƒ¼ã®ãƒ­ãƒƒã‚¯
 						ALC = 44
 						BREAK
 					CASE 3, 4, 5, 6, 7
 						SELECTCASE RESULT
 							CASE 3
-								»–@ = ƒgƒjƒbƒNŠ„‚è
-								Žð–¼ = ƒWƒ“ƒgƒjƒbƒN
+								è£½æ³• = ãƒˆãƒ‹ãƒƒã‚¯å‰²ã‚Š
+								é…’å = ã‚¸ãƒ³ãƒˆãƒ‹ãƒƒã‚¯
 							CASE 4
-								»–@ = ƒnƒCƒ{[ƒ‹
-								Žð–¼ = ƒWƒ“ƒŠƒbƒL[
+								è£½æ³• = ãƒã‚¤ãƒœãƒ¼ãƒ«
+								é…’å = ã‚¸ãƒ³ãƒªãƒƒã‚­ãƒ¼
 							CASE 5
-								»–@ = ƒ‰ƒCƒ€Š„‚è
-								Žð–¼ = ƒMƒ€ƒŒƒbƒg
+								è£½æ³• = ãƒ©ã‚¤ãƒ å‰²ã‚Š
+								é…’å = ã‚®ãƒ ãƒ¬ãƒƒãƒˆ
 							CASE 6
-								»–@ = ƒJƒNƒeƒ‹
-								Žð–¼ = ƒWƒ“ƒtƒBƒY
+								è£½æ³• = ã‚«ã‚¯ãƒ†ãƒ«
+								é…’å = ã‚¸ãƒ³ãƒ•ã‚£ã‚º
 							CASE 7
-								»–@ = ƒJƒNƒeƒ‹
-								Žð–¼ = ƒWƒ“ƒoƒbƒN
+								è£½æ³• = ã‚«ã‚¯ãƒ†ãƒ«
+								é…’å = ã‚¸ãƒ³ãƒãƒƒã‚¯
 						ENDSELECT
-						IF Žð–¼ == "ƒMƒ€ƒŒƒbƒg"
-							PRINTL ƒAƒ‹ƒR[ƒ‹“x”‚ðŒˆ‚ß‚Ä‚­‚¾‚³‚¢(25`42%)
+						IF é…’å == "ã‚®ãƒ ãƒ¬ãƒƒãƒˆ"
+							PRINTL ã‚¢ãƒ«ã‚³ãƒ¼ãƒ«åº¦æ•°ã‚’æ±ºã‚ã¦ãã ã•ã„(25ï½ž42%)
 							CALL TWO_DIGIT, 42, "%", 25
 						ELSE
-							PRINTL ƒAƒ‹ƒR[ƒ‹“x”‚ðŒˆ‚ß‚Ä‚­‚¾‚³‚¢(9`42%)
+							PRINTL ã‚¢ãƒ«ã‚³ãƒ¼ãƒ«åº¦æ•°ã‚’æ±ºã‚ã¦ãã ã•ã„(9ï½ž42%)
 							CALL TWO_DIGIT, 42, "%", 9
 						ENDIF
 						ALC = RESULT
@@ -329,44 +329,44 @@ DO
 			LOOP 1
 			BREAK
 		CASE 8
-			PRINTL ƒAƒuƒ\ƒ‹[ƒg‚ð‚Ç‚Ì‚æ‚¤‚Éˆù‚Ü‚¹‚Ü‚·‚©H
-			PRINTL [1] ƒXƒgƒŒ[ƒg(Alc.40%)
-			PRINTL [2] ƒƒbƒN(Alc.37%)
-			PRINTL [3] ƒEƒHƒbƒJƒgƒjƒbƒN(Alc.9`35%)
-			PRINTL [4] ƒEƒHƒbƒJƒŠƒbƒL[(Alc.9`35%)
-			PRINTL [5] ƒuƒ‰ƒbƒNƒ‹ƒVƒAƒ“(Alc.25`37%)
-			PRINTL [6] ƒ‚ƒXƒRƒ~ƒ…[ƒ‹(Alc.9`35%)
+			PRINTL ã‚¢ãƒ–ã‚½ãƒ«ãƒ¼ãƒˆã‚’ã©ã®ã‚ˆã†ã«é£²ã¾ã›ã¾ã™ã‹ï¼Ÿ
+			PRINTL [1] ã‚¹ãƒˆãƒ¬ãƒ¼ãƒˆ(Alc.40%)
+			PRINTL [2] ãƒ­ãƒƒã‚¯(Alc.37%)
+			PRINTL [3] ã‚¦ã‚©ãƒƒã‚«ãƒˆãƒ‹ãƒƒã‚¯(Alc.9ï½ž35%)
+			PRINTL [4] ã‚¦ã‚©ãƒƒã‚«ãƒªãƒƒã‚­ãƒ¼(Alc.9ï½ž35%)
+			PRINTL [5] ãƒ–ãƒ©ãƒƒã‚¯ãƒ«ã‚·ã‚¢ãƒ³(Alc.25ï½ž37%)
+			PRINTL [6] ãƒ¢ã‚¹ã‚³ãƒŸãƒ¥ãƒ¼ãƒ«(Alc.9ï½ž35%)
 			DO
 				INPUT
 				SELECTCASE RESULT
 					CASE 1
-						Žð–¼ = ƒAƒuƒ\ƒ‹[ƒg‚ÌƒXƒgƒŒ[ƒg
+						é…’å = ã‚¢ãƒ–ã‚½ãƒ«ãƒ¼ãƒˆã®ã‚¹ãƒˆãƒ¬ãƒ¼ãƒˆ
 						ALC = 40
 						BREAK
 					CASE 2
-						Žð–¼ = ƒAƒuƒ\ƒ‹[ƒg‚ÌƒƒbƒN
+						é…’å = ã‚¢ãƒ–ã‚½ãƒ«ãƒ¼ãƒˆã®ãƒ­ãƒƒã‚¯
 						ALC = 37
 						BREAK
 					CASE 3, 4, 5, 6
 						SELECTCASE RESULT
 							CASE 3
-								»–@ = ƒgƒjƒbƒNŠ„‚è
-								Žð–¼ = ƒEƒHƒbƒJƒgƒjƒbƒN
+								è£½æ³• = ãƒˆãƒ‹ãƒƒã‚¯å‰²ã‚Š
+								é…’å = ã‚¦ã‚©ãƒƒã‚«ãƒˆãƒ‹ãƒƒã‚¯
 							CASE 4
-								»–@ = ƒnƒCƒ{[ƒ‹
-								Žð–¼ = ƒEƒHƒbƒJƒŠƒbƒL[
+								è£½æ³• = ãƒã‚¤ãƒœãƒ¼ãƒ«
+								é…’å = ã‚¦ã‚©ãƒƒã‚«ãƒªãƒƒã‚­ãƒ¼
 							CASE 5
-								»–@ = ƒJƒNƒeƒ‹
-								Žð–¼ = ƒuƒ‰ƒbƒNƒ‹ƒVƒAƒ“
+								è£½æ³• = ã‚«ã‚¯ãƒ†ãƒ«
+								é…’å = ãƒ–ãƒ©ãƒƒã‚¯ãƒ«ã‚·ã‚¢ãƒ³
 							CASE 6
-								»–@ = ƒJƒNƒeƒ‹
-								Žð–¼ = ƒ‚ƒXƒRƒ~ƒ…[ƒ‹
+								è£½æ³• = ã‚«ã‚¯ãƒ†ãƒ«
+								é…’å = ãƒ¢ã‚¹ã‚³ãƒŸãƒ¥ãƒ¼ãƒ«
 						ENDSELECT
-						IF Žð–¼ == "ƒuƒ‰ƒbƒNƒ‹ƒVƒAƒ“"
-							PRINTL ƒAƒ‹ƒR[ƒ‹“x”‚ðŒˆ‚ß‚Ä‚­‚¾‚³‚¢(25`37%)
+						IF é…’å == "ãƒ–ãƒ©ãƒƒã‚¯ãƒ«ã‚·ã‚¢ãƒ³"
+							PRINTL ã‚¢ãƒ«ã‚³ãƒ¼ãƒ«åº¦æ•°ã‚’æ±ºã‚ã¦ãã ã•ã„(25ï½ž37%)
 							CALL TWO_DIGIT, 37, "%", 25
 						ELSE
-							PRINTL ƒAƒ‹ƒR[ƒ‹“x”‚ðŒˆ‚ß‚Ä‚­‚¾‚³‚¢(9`35%)
+							PRINTL ã‚¢ãƒ«ã‚³ãƒ¼ãƒ«åº¦æ•°ã‚’æ±ºã‚ã¦ãã ã•ã„(9ï½ž35%)
 							CALL TWO_DIGIT, 35, "%", 9
 						ENDIF
 						ALC = RESULT
@@ -375,40 +375,40 @@ DO
 			LOOP 1
 			BREAK
 		CASE 9
-			PRINTL ƒJƒ‹[ƒA‚ð‚Ç‚Ì‚æ‚¤‚Éˆù‚Ü‚¹‚Ü‚·‚©H
-			PRINTL [1] ƒXƒgƒŒ[ƒg(Alc.20%)
-			PRINTL [2] ƒƒbƒN(Alc.18%)
-			PRINTL [3] ƒJƒ‹[ƒAƒ~ƒ‹ƒN(Alc.5`15%)
-			PRINTL [4] ƒJƒ‹[ƒAƒ\[ƒ_(Alc.5`15%)
-			PRINTL [5] ƒuƒ‰ƒbƒNƒ‹ƒVƒAƒ“(Alc.25`37%)
+			PRINTL ã‚«ãƒ«ãƒ¼ã‚¢ã‚’ã©ã®ã‚ˆã†ã«é£²ã¾ã›ã¾ã™ã‹ï¼Ÿ
+			PRINTL [1] ã‚¹ãƒˆãƒ¬ãƒ¼ãƒˆ(Alc.20%)
+			PRINTL [2] ãƒ­ãƒƒã‚¯(Alc.18%)
+			PRINTL [3] ã‚«ãƒ«ãƒ¼ã‚¢ãƒŸãƒ«ã‚¯(Alc.5ï½ž15%)
+			PRINTL [4] ã‚«ãƒ«ãƒ¼ã‚¢ã‚½ãƒ¼ãƒ€(Alc.5ï½ž15%)
+			PRINTL [5] ãƒ–ãƒ©ãƒƒã‚¯ãƒ«ã‚·ã‚¢ãƒ³(Alc.25ï½ž37%)
 			DO
 				INPUT
 				SELECTCASE RESULT
 					CASE 1
-						Žð–¼ = ƒJƒ‹[ƒA‚ÌƒXƒgƒŒ[ƒg
+						é…’å = ã‚«ãƒ«ãƒ¼ã‚¢ã®ã‚¹ãƒˆãƒ¬ãƒ¼ãƒˆ
 						ALC = 40
 						BREAK
 					CASE 2
-						Žð–¼ = ƒJƒ‹[ƒA‚ÌƒƒbƒN
+						é…’å = ã‚«ãƒ«ãƒ¼ã‚¢ã®ãƒ­ãƒƒã‚¯
 						ALC = 37
 						BREAK
 					CASE 3, 4, 5
 						SELECTCASE RESULT
 							CASE 3
-								»–@ = ƒJƒNƒeƒ‹
-								Žð–¼ = ƒJƒ‹[ƒAƒ~ƒ‹ƒN
+								è£½æ³• = ã‚«ã‚¯ãƒ†ãƒ«
+								é…’å = ã‚«ãƒ«ãƒ¼ã‚¢ãƒŸãƒ«ã‚¯
 							CASE 4
-								»–@ = ƒnƒCƒ{[ƒ‹
-								Žð–¼ = ƒJƒ‹[ƒAƒ\[ƒ_
+								è£½æ³• = ãƒã‚¤ãƒœãƒ¼ãƒ«
+								é…’å = ã‚«ãƒ«ãƒ¼ã‚¢ã‚½ãƒ¼ãƒ€
 							CASE 5
-								»–@ = ƒJƒNƒeƒ‹
-								Žð–¼ = ƒuƒ‰ƒbƒNƒ‹ƒVƒAƒ“
+								è£½æ³• = ã‚«ã‚¯ãƒ†ãƒ«
+								é…’å = ãƒ–ãƒ©ãƒƒã‚¯ãƒ«ã‚·ã‚¢ãƒ³
 						ENDSELECT
-						IF Žð–¼ == "ƒuƒ‰ƒbƒNƒ‹ƒVƒAƒ“"
-							PRINTL ƒAƒ‹ƒR[ƒ‹“x”‚ðŒˆ‚ß‚Ä‚­‚¾‚³‚¢(25`37%)
+						IF é…’å == "ãƒ–ãƒ©ãƒƒã‚¯ãƒ«ã‚·ã‚¢ãƒ³"
+							PRINTL ã‚¢ãƒ«ã‚³ãƒ¼ãƒ«åº¦æ•°ã‚’æ±ºã‚ã¦ãã ã•ã„(25ï½ž37%)
 							CALL TWO_DIGIT, 37, "%", 25
 						ELSE
-							PRINTL ƒAƒ‹ƒR[ƒ‹“x”‚ðŒˆ‚ß‚Ä‚­‚¾‚³‚¢(5`15%)
+							PRINTL ã‚¢ãƒ«ã‚³ãƒ¼ãƒ«åº¦æ•°ã‚’æ±ºã‚ã¦ãã ã•ã„(5ï½ž15%)
 							CALL TWO_DIGIT, 15, "%", 5
 						ENDIF
 						ALC = RESULT
@@ -417,16 +417,16 @@ DO
 			LOOP 1
 			BREAK
 		CASE 10
-			Žð–¼ = ‚¨“j‘h
+			é…’å = ãŠå± è˜‡
 			ALC = 2
 			BREAK
 		CASE 100
-			PRINTFORMW ‚¨Žð‚ðˆù‚Ü‚¹‚é‚Ì‚ðŽ~‚ß‚Ü‚µ‚½
+			PRINTFORMW ãŠé…’ã‚’é£²ã¾ã›ã‚‹ã®ã‚’æ­¢ã‚ã¾ã—ãŸ
 			RETURN 0
 	ENDSELECT
 LOOP 1
 
-CALL ALC_ORDER, ALC, »–@
+CALL ALC_ORDER, ALC, è£½æ³•
 
 PRINTFORM  = {RESULT}
 SELECTCASE RESULT
@@ -437,204 +437,204 @@ SELECTCASE RESULT
 	CASEELSE
 		PRINT  = 
 ENDSELECT
-PRINT ŽÀŒø’l0
+PRINT å®ŸåŠ¹å€¤0
 WAIT
 
-TFLAG:ƒAƒ‹ƒR[ƒ‹“x” = ALC
+TFLAG:ã‚¢ãƒ«ã‚³ãƒ¼ãƒ«åº¦æ•° = ALC
 
-;ŽÀs‚Å‚«‚È‚¢ ‚¨Žð‚Í“ÁŽê‚Ì’n‚Ì•¶
+;å®Ÿè¡Œã§ããªã„ ãŠé…’ã¯ç‰¹æ®Šã®åœ°ã®æ–‡
 IF RESULT < 0
-	CALL KOJO_MESSAGE_EVENT, "ˆùŽð‹‘”ÛŽž"
+	CALL KOJO_MESSAGE_EVENT, "é£²é…’æ‹’å¦æ™‚"
 	RETURN 0
 ENDIF
 
 ;-------------------------------------------------
-;ŽÀsŒˆ’è
+;å®Ÿè¡Œæ±ºå®š
 ;-------------------------------------------------
 CALL KOJO_MESSAGE_COM
 
 ;-------------------------------------------------
-;ƒ\[ƒX’Ç‰Áˆ—
+;ã‚½ãƒ¼ã‚¹è¿½åŠ å‡¦ç†
 ;-------------------------------------------------
-;Á”ï‘Ì—ÍA‹C—Í
-LOSEBASE:‘Ì—Í += 20
-LOSEBASE:‹C—Í += 50
+;æ¶ˆè²»ä½“åŠ›ã€æ°—åŠ›
+LOSEBASE:ä½“åŠ› += 20
+LOSEBASE:æ°—åŠ› += 50
 
-SOURCE:’†“Å = 500
-SOURCE:˜Io = 50
-SOURCE:—~î = 100
-SOURCE:‹±‡ = 100
-SOURCE:ˆí’E = 300
-SOURCE:”½Š´ = 300
+SOURCE:ä¸­æ¯’ = 500
+SOURCE:éœ²å‡º = 50
+SOURCE:æ¬²æƒ… = 100
+SOURCE:æ­é † = 100
+SOURCE:é€¸è„± = 300
+SOURCE:åæ„Ÿ = 300
 
 ;-------------------------------------------------
-;“ÁŽêƒ\[ƒXˆ—
+;ç‰¹æ®Šã‚½ãƒ¼ã‚¹å‡¦ç†
 ;-------------------------------------------------
-IF TALENT:‰ºŒË
-	CFLAG:Œ += ALC*2
-ELSEIF TALENT:Žð‹
-	CFLAG:Œ += ALC/2
+IF TALENT:ä¸‹æˆ¸
+	CFLAG:é…” += ALC*2
+ELSEIF TALENT:é…’è±ª
+	CFLAG:é…” += ALC/2
 ELSE
-	CFLAG:Œ += ALC
+	CFLAG:é…” += ALC
 ENDIF
 
 ;-------------------------------------------------
-;â’¸ƒ`ƒFƒbƒN
+;çµ¶é ‚ãƒã‚§ãƒƒã‚¯
 ;-------------------------------------------------
 CALL SOURCE_CHECK_CVAB
 
 ;-------------------------------------------------
-;ŽË¸ƒ`ƒFƒbƒN
+;å°„ç²¾ãƒã‚§ãƒƒã‚¯
 ;-------------------------------------------------
 CALL SAMEN_CHECK_T, 0
 
-CALL SAMEN_SHOOT_T, 0, NOWEX:ŽË¸
+CALL SAMEN_SHOOT_T, 0, NOWEX:å°„ç²¾
 
 RETURN 1
 
 ;-------------------------------------------------
-;‚¨Žðƒ{[ƒiƒX‚Ìˆ—
+;ãŠé…’ãƒœãƒ¼ãƒŠã‚¹ã®å‡¦ç†
 ;-------------------------------------------------
-@EQUIP_COM_‚¨Žð‚ðˆù‚Ü‚¹‚é
-SOURCE:—~î += TEQUIP:‚¨Žðƒ{[ƒiƒX*30
-SOURCE:‹±‡ += TEQUIP:‚¨Žðƒ{[ƒiƒX*30
+@EQUIP_COM_ãŠé…’ã‚’é£²ã¾ã›ã‚‹
+SOURCE:æ¬²æƒ… += TEQUIP:ãŠé…’ãƒœãƒ¼ãƒŠã‚¹*30
+SOURCE:æ­é † += TEQUIP:ãŠé…’ãƒœãƒ¼ãƒŠã‚¹*30
 
-;ˆË‘¶“x•â³‚ª‚¨Žðƒ{[ƒiƒXÅ‘å‚ÌƒƒŠƒbƒg
-TFLAG:ˆË‘¶“x•â³ += TEQUIP:‚¨Žðƒ{[ƒiƒX
+;ä¾å­˜åº¦è£œæ­£ãŒãŠé…’ãƒœãƒ¼ãƒŠã‚¹æœ€å¤§ã®ãƒ¡ãƒªãƒƒãƒˆ
+TFLAG:ä¾å­˜åº¦è£œæ­£ += TEQUIP:ãŠé…’ãƒœãƒ¼ãƒŠã‚¹
 
 ;-------------------------------------------------
-;‚¨Žð‚ðˆù‚Ü‚¹‚éƒRƒ}ƒ“ƒh‚ÌCOM_ORDER‚Í“ÁŽê
+;ãŠé…’ã‚’é£²ã¾ã›ã‚‹ã‚³ãƒžãƒ³ãƒ‰ã®COM_ORDERã¯ç‰¹æ®Š
 ;-------------------------------------------------
-@ALC_ORDER, ALC, »–@
+@ALC_ORDER, ALC, è£½æ³•
 #DIM DYNAMIC ALC
-#DIMS DYNAMIC »–@
+#DIMS DYNAMIC è£½æ³•
 #DIM DYNAMIC LCOUNT
 
 LOCAL = 0
 
-IF TALENT:‰ºŒË
-	PRINTFORM -ƒAƒ‹ƒR[ƒ‹“x”{ALC}\%({ALC*2})
+IF TALENT:ä¸‹æˆ¸
+	PRINTFORM -ã‚¢ãƒ«ã‚³ãƒ¼ãƒ«åº¦æ•°{ALC}\%({ALC*2})
 	LOCAL -= ALC*2
-ELSEIF !TALENT:Žð‹
-	PRINTFORM -ƒAƒ‹ƒR[ƒ‹“x”{ALC}\%({ALC})
+ELSEIF !TALENT:é…’è±ª
+	PRINTFORM -ã‚¢ãƒ«ã‚³ãƒ¼ãƒ«åº¦æ•°{ALC}\%({ALC})
 	LOCAL -= ALC
 ENDIF
 
 LOCAL:1 = 0
 
-IF TALENT:‰õŠ´‚É‘f’¼
-	LOCAL:1 = CFLAG:Œ*3/2
-ELSEIF TALENT:‰õŠ´‚Ì”Û’è
-	LOCAL:1 = CFLAG:Œ/2
+IF TALENT:å¿«æ„Ÿã«ç´ ç›´
+	LOCAL:1 = CFLAG:é…”*3/2
+ELSEIF TALENT:å¿«æ„Ÿã®å¦å®š
+	LOCAL:1 = CFLAG:é…”/2
 ELSE
-	LOCAL:1 = CFLAG:Œ
+	LOCAL:1 = CFLAG:é…”
 ENDIF
 
-IF LOCAL:1 >= 5 && TALENT:‰ºŒË
-	PRINTFORM +Žð‚ª‰ñ‚Á‚Ä‚¢‚é({LOCAL:1/5})
+IF LOCAL:1 >= 5 && TALENT:ä¸‹æˆ¸
+	PRINTFORM +é…’ãŒå›žã£ã¦ã„ã‚‹({LOCAL:1/5})
 	LOCAL += LOCAL:1/5
 ELSEIF LOCAL:1 >= 3
-	PRINTFORM +Žð‚ª‰ñ‚Á‚Ä‚¢‚é({LOCAL:1/3})
+	PRINTFORM +é…’ãŒå›žã£ã¦ã„ã‚‹({LOCAL:1/3})
 	LOCAL += LOCAL:1/3
 ENDIF
 
-IF CFLAG:“ñ“úŒ‚¢
-	PRINT -“ñ“úŒ‚¢(5)
+IF CFLAG:äºŒæ—¥é…”ã„
+	PRINT -äºŒæ—¥é…”ã„(5)
 	LOCAL -= 5
 ENDIF
 
-IF CFLAG:Š×—Ž
-	PRINT +Š×—Ž(5)
+IF CFLAG:é™¥è½
+	PRINT +é™¥è½(5)
 	LOCAL += 5
 ENDIF
 
-IF GETPALAMLV(PALAM:‹±‡, 10)
-	PRINTFORM +‹±‡({GETPALAMLV(PALAM:‹±‡, 10)})
-	LOCAL += GETPALAMLV(PALAM:‹±‡, 10)
+IF GETPALAMLV(PALAM:æ­é †, 10)
+	PRINTFORM +æ­é †({GETPALAMLV(PALAM:æ­é †, 10)})
+	LOCAL += GETPALAMLV(PALAM:æ­é †, 10)
 ENDIF
 
-IF »–@ == "ƒr[ƒ‹" && !TALENT:Žð‹ && (TALENT:¬•¿‘ÌŒ^ || TALENT:‰ºŒË)
-	PRINT -ƒr[ƒ‹‚Í‹ê‚­‚Ä–³—(10)
+IF è£½æ³• == "ãƒ“ãƒ¼ãƒ«" && !TALENT:é…’è±ª && (TALENT:å°æŸ„ä½“åž‹ || TALENT:ä¸‹æˆ¸)
+	PRINT -ãƒ“ãƒ¼ãƒ«ã¯è‹¦ãã¦ç„¡ç†(10)
 	LOCAL -= 10
-	SELECTCASE Žð–¼
-		CASE "ƒVƒƒƒ“ƒfƒBƒKƒt", "ƒpƒiƒVƒF", "ƒrƒAƒXƒvƒŠƒbƒcƒ@["
-			PRINT +ƒr[ƒ‹‚Ì‹ê‚³‚ðŒyŒ¸(5)
+	SELECTCASE é…’å
+		CASE "ã‚·ãƒ£ãƒ³ãƒ‡ã‚£ã‚¬ãƒ•", "ãƒ‘ãƒŠã‚·ã‚§", "ãƒ“ã‚¢ã‚¹ãƒ—ãƒªãƒƒãƒ„ã‚¡ãƒ¼"
+			PRINT +ãƒ“ãƒ¼ãƒ«ã®è‹¦ã•ã‚’è»½æ¸›(5)
 			LOCAL += 5
 	ENDSELECT
 ENDIF
 
-IF !TALENT:‰ºŒË
-	SELECTCASE »–@
-		CASE "ƒnƒCƒ{[ƒ‹", "ƒr[ƒ‹", "ƒR[ƒ‰Š„‚è", "ƒWƒ“ƒWƒƒ[Š„‚è", "ƒŒƒ‚ƒ“Š„‚è", "ƒ‰ƒCƒ€Š„‚è", "ƒgƒjƒbƒNŠ„‚è", "ƒJƒNƒeƒ‹"
-			IF FLAG:‹C‰· >= 200
-				PRINTFORM +‚‹C‰·&—âˆù—¿({(FLAG:‹C‰·-190)/10})
-				LOCAL += (FLAG:‹C‰·-190)/10
+IF !TALENT:ä¸‹æˆ¸
+	SELECTCASE è£½æ³•
+		CASE "ãƒã‚¤ãƒœãƒ¼ãƒ«", "ãƒ“ãƒ¼ãƒ«", "ã‚³ãƒ¼ãƒ©å‰²ã‚Š", "ã‚¸ãƒ³ã‚¸ãƒ£ãƒ¼å‰²ã‚Š", "ãƒ¬ãƒ¢ãƒ³å‰²ã‚Š", "ãƒ©ã‚¤ãƒ å‰²ã‚Š", "ãƒˆãƒ‹ãƒƒã‚¯å‰²ã‚Š", "ã‚«ã‚¯ãƒ†ãƒ«"
+			IF FLAG:æ°—æ¸© >= 200
+				PRINTFORM +é«˜æ°—æ¸©&å†·é£²æ–™({(FLAG:æ°—æ¸©-190)/10})
+				LOCAL += (FLAG:æ°—æ¸©-190)/10
 			ENDIF
-		CASE "‚¨“’Š„‚è", "”Mà“"
-			IF FLAG:‹C‰· <= 100
-				PRINTFORM +’á‹C‰·&‰·ˆù—¿({(110-FLAG:‹C‰·)/10})
-				LOCAL += (110-FLAG:‹C‰·)/10
+		CASE "ãŠæ¹¯å‰²ã‚Š", "ç†±ç‡—"
+			IF FLAG:æ°—æ¸© <= 100
+				PRINTFORM +ä½Žæ°—æ¸©&æ¸©é£²æ–™({(110-FLAG:æ°—æ¸©)/10})
+				LOCAL += (110-FLAG:æ°—æ¸©)/10
 			ENDIF
 	ENDSELECT
 ENDIF
 
-SELECTCASE »–@
-	CASE "ƒnƒCƒ{[ƒ‹"
-		PRINT +ƒnƒCƒ{[ƒ‹‚Í”ü–¡‚µ‚¢(3)
+SELECTCASE è£½æ³•
+	CASE "ãƒã‚¤ãƒœãƒ¼ãƒ«"
+		PRINT +ãƒã‚¤ãƒœãƒ¼ãƒ«ã¯ç¾Žå‘³ã—ã„(3)
 		LOCAL += 3
-	CASE "ƒR[ƒ‰Š„‚è", "ƒWƒ“ƒWƒƒ[Š„‚è", "ƒgƒjƒbƒNŠ„‚è", "ƒŒƒ‚ƒ“Š„‚è", "ƒ‰ƒCƒ€Š„‚è"
-		PRINT +ˆù‚Ý‚â‚·‚¢ƒJƒNƒeƒ‹(5)
+	CASE "ã‚³ãƒ¼ãƒ©å‰²ã‚Š", "ã‚¸ãƒ³ã‚¸ãƒ£ãƒ¼å‰²ã‚Š", "ãƒˆãƒ‹ãƒƒã‚¯å‰²ã‚Š", "ãƒ¬ãƒ¢ãƒ³å‰²ã‚Š", "ãƒ©ã‚¤ãƒ å‰²ã‚Š"
+		PRINT +é£²ã¿ã‚„ã™ã„ã‚«ã‚¯ãƒ†ãƒ«(5)
 		LOCAL += 5
-	CASE "ƒJƒNƒeƒ‹"
-		PRINT +”ü–¡‚µ‚¢ƒJƒNƒeƒ‹(7)
+	CASE "ã‚«ã‚¯ãƒ†ãƒ«"
+		PRINT +ç¾Žå‘³ã—ã„ã‚«ã‚¯ãƒ†ãƒ«(7)
 		LOCAL += 7
 ENDSELECT
 
-IF TALENT:Õ“®“I
-	PRINT +Õ“®“I(3)
+IF TALENT:è¡å‹•çš„
+	PRINT +è¡å‹•çš„(3)
 	LOCAL += 3
 ENDIF
 
-IF TALENT:DŠïS
-	PRINT +DŠïS(3)
+IF TALENT:å¥½å¥‡å¿ƒ
+	PRINT +å¥½å¥‡å¿ƒ(3)
 	LOCAL += 3
 ENDIF
 
-IF TALENT:–³ŠÖS
-	PRINT -–³ŠÖS(2)
+IF TALENT:ç„¡é–¢å¿ƒ
+	PRINT -ç„¡é–¢å¿ƒ(2)
 	LOCAL -= 2
 ENDIF
 
-IF TALENT:Ž©§S
-	PRINT -Ž©§S(5)
+IF TALENT:è‡ªåˆ¶å¿ƒ
+	PRINT -è‡ªåˆ¶å¿ƒ(5)
 	LOCAL -= 5
 ENDIF
 
-IF TALENT:–Ú—§‚¿‚½‚ª‚è
-	PRINT +–Ú—§‚¿‚½‚ª‚è(3)
+IF TALENT:ç›®ç«‹ã¡ãŸãŒã‚Š
+	PRINT +ç›®ç«‹ã¡ãŸãŒã‚Š(3)
 	LOCAL += 3
 ENDIF
 
-SELECTCASE »–@
-	CASE "‚¨“’Š„‚è", "”Mà“"
-		IF TALENT:”Lã
-			PRINT -”Lã(3)
+SELECTCASE è£½æ³•
+	CASE "ãŠæ¹¯å‰²ã‚Š", "ç†±ç‡—"
+		IF TALENT:çŒ«èˆŒ
+			PRINT -çŒ«èˆŒ(3)
 			LOCAL -= 3
 		ENDIF
 ENDSELECT
 
-IF TALENT:¬•¿‘ÌŒ^ && !TALENT:Žð‹
-	PRINT -Žq‹Ÿ(3)
+IF TALENT:å°æŸ„ä½“åž‹ && !TALENT:é…’è±ª
+	PRINT -å­ä¾›(3)
 	LOCAL -= 3
 ENDIF
 
-IF TALENT:MASTER:–£˜f
-	PRINT +Žål‚ª–£˜fŽ‚¿(2)
+IF TALENT:MASTER:é­…æƒ‘
+	PRINT +ä¸»äººãŒé­…æƒ‘æŒã¡(2)
 	LOCAL += 2
 ENDIF
 
-IF ASSI > 0 && TALENT:ASSI:ƒnƒCƒeƒ“ƒVƒ‡ƒ“
-	PRINT +•Žè‚ªƒnƒCƒeƒ“ƒVƒ‡ƒ“(2)
+IF ASSI > 0 && TALENT:ASSI:ãƒã‚¤ãƒ†ãƒ³ã‚·ãƒ§ãƒ³
+	PRINT +åŠ©æ‰‹ãŒãƒã‚¤ãƒ†ãƒ³ã‚·ãƒ§ãƒ³(2)
 	LOCAL += 2
 ENDIF
 

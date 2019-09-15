@@ -1,34 +1,34 @@
+﻿;-------------------------------------------------
+;電気按摩
 ;-------------------------------------------------
-;�d�C��
-;-------------------------------------------------
-@USERCOM_ABLE_�d�C��, ARG
+@USERCOM_ABLE_電気按摩, ARG
 #FUNCTION
-;ASSI�̏ꍇ�A�Z�I3�ȏォ�T�h����Ȃ��Ǝg���Ȃ��B
+;ASSIの場合、技巧3以上かサドじゃないと使えない。
 IF ASSIPLAY
-	SIF ABL:ASSI:�Z�I < 3 && !TALENT:ASSI:�T�h
+	SIF ABL:ASSI:技巧 < 3 && !TALENT:ASSI:サド
 		RETURNF 0
 ENDIF
-;�V�����[���̓_��
-SIF TEQUIP:�V�����[
+;シャワー中はダメ
+SIF TEQUIP:シャワー
 	RETURNF 0
 
 COMRESULT = 1
 RETURNF 1
 
-@COM_�d�C��
-PRINTL �d�C��
+@COM_電気按摩
+PRINTL 電気按摩
 CALL KOJO_MESSAGE_COM
 
 ;-------------------------------------------------
-;�ː��Q�[�W�`�F�b�N�i�z��j
+;射精ゲージチェック（奴隷）
 ;-------------------------------------------------
 LOCAL = 250
 
-;ABL:�����҂̋Z�I���݂�
-LOCAL += (LOCAL/5)*ABL:PLAYER:�Z�I
+;ABL:調教者の技巧をみる
+LOCAL += (LOCAL/5)*ABL:PLAYER:技巧
 
-;ABL:���Ԓ��ł��݂�
-SELECTCASE ABL:���Ԓ���
+;ABL:自慰中毒をみる
+SELECTCASE ABL:自慰中毒
 	CASE 0
 		TIMES LOCAL , 1.00
 	CASE 1
@@ -40,50 +40,50 @@ SELECTCASE ABL:���Ԓ���
 	CASE 4
 		TIMES LOCAL , 2.00
 	CASEELSE
-		LOCAL += (LOCAL/3)*ABL:���Ԓ���
+		LOCAL += (LOCAL/3)*ABL:自慰中毒
 ENDSELECT
 
-;ABL:�~�]���݂�
-LOCAL += (LOCAL/10)*ABL:�~�]
+;ABL:欲望をみる
+LOCAL += (LOCAL/10)*ABL:欲望
 
-;�z���ABL:�b���o���݂�
-LOCAL += (LOCAL/2)*ABL:�b���o
+;奴隷のABL:Ｃ感覚をみる
+LOCAL += (LOCAL/2)*ABL:Ｃ感覚
 
-CALL �ː��Q�[�W����, LOCAL, TARGET
-
-;-------------------------------------------------
-;�\�[�X�ǉ�����
-;-------------------------------------------------
-;����̗́A�C��
-LOSEBASE:�̗� += 30
-LOSEBASE:�C�� += 100
-
-SOURCE:��C = 500
-SOURCE:�I�o = 40
-SOURCE:��E = 60
-SOURCE:���� = 100
+CALL 射精ゲージ増加, LOCAL, TARGET
 
 ;-------------------------------------------------
-;����\�[�X����
+;ソース追加処理
 ;-------------------------------------------------
-;�}���A��R�����ɂ́A�}�T�\�[�X�ǉ�
-SIF TALENT:�}�� || TALENT:��R
-	SOURCE:�T�� += 60
+;消費体力、気力
+LOSEBASE:体力 += 30
+LOSEBASE:気力 += 100
+
+SOURCE:快C = 500
+SOURCE:露出 = 40
+SOURCE:逸脱 = 60
+SOURCE:反感 = 100
 
 ;-------------------------------------------------
-;�Ⓒ�`�F�b�N
+;特殊ソース処理
+;-------------------------------------------------
+;抑圧、抵抗持ちには、抑鬱ソース追加
+SIF TALENT:抑圧 || TALENT:抵抗
+	SOURCE:鬱屈 += 60
+
+;-------------------------------------------------
+;絶頂チェック
 ;-------------------------------------------------
 CALL SOURCE_CHECK_CVAB
 
 ;-------------------------------------------------
-;�ː��`�F�b�N
+;射精チェック
 ;-------------------------------------------------
 CALL SAMEN_CHECK_T, 0
 
-CALL SAMEN_SHOOT_T, 0, NOWEX:�ː�
+CALL SAMEN_SHOOT_T, 0, NOWEX:射精
 
 ;-------------------------------------------------
-;�o���̏���
+;経験の処理
 ;-------------------------------------------------
 CALL EXPUP, 1, 1
 

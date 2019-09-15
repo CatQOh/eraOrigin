@@ -1,16 +1,16 @@
-;�I�v�V�����ݒ菈��
+﻿;オプション設定処理
 @OPTION
 DRAWLINE
-PRINTL ���ݒ荀�ڂ�I�����Ă�������
-PRINTL �@[0] - �e�L�X�g�ݒ�
-PRINTL �@[1] - ���ߊ֘A�ݒ�
-PRINTL �@[2] - �C�x���g�֘A�̐ݒ�
-;PRINTL �@[3] - �`���[�g���A����u
-SIF TALENT:MASTER:�h���S���g��
-	PRINTL �@[4] - �h���S���̖��O�ύX
+PRINTL □設定項目を選択してください
+PRINTL 　[0] - テキスト設定
+PRINTL 　[1] - 着衣関連設定
+PRINTL 　[2] - イベント関連の設定
+;PRINTL 　[3] - チュートリアル受講
+SIF TALENT:MASTER:ドラゴン使い
+	PRINTL 　[4] - ドラゴンの名前変更
 DRAWLINE
-PRINTPLAIN �@OPTION�@
-PRINTL [100] - �߂�
+PRINTPLAIN 　OPTION　
+PRINTL [100] - 戻る
 DO
 	INPUT
 	SELECTCASE RESULT
@@ -24,26 +24,26 @@ DO
 			CALL EVENT_SETTING
 			BREAK
 ;		CASE 3
-;			IF FLAG:�Q�[�����[�h == 8
+;			IF FLAG:ゲームモード == 8
 ;				CALL TEST_TUTORIAL
 ;			ELSE
 ;				CALL TUTORIAL
 ;			ENDIF
 ;			DRAWLINE
 		CASE 4
-			IF TALENT:MASTER:�h���S���g��
+			IF TALENT:MASTER:ドラゴン使い
 				DO
-					PRINTL �h���S���̖��O����͂��Ă�������(�������͂��Ȃ��ꍇ�A�u�h���S���v�ɂȂ�܂�)
+					PRINTL ドラゴンの名前を入力してください(何も入力しない場合、「ドラゴン」になります)
 					INPUTS
 					SIF RESULTS == ""
-						RESULTS = �h���S��
-					PRINTFORML %RESULTS%�ł�낵���ł����H(�ォ��I�v�V������ʂŕύX�ł��܂�)
-					PRINTL [0] - �͂�
-					PRINTL [1] - ������
+						RESULTS = ドラゴン
+					PRINTFORML %RESULTS%でよろしいですか？(後からオプション画面で変更できます)
+					PRINTL [0] - はい
+					PRINTL [1] - いいえ
 					INPUT
 					SELECTCASE RESULT
 						CASE 0
-							CSTR:MASTER:�h���S�� = %RESULTS%
+							CSTR:MASTER:ドラゴン = %RESULTS%
 							BREAK
 						CASE 1
 							CONTINUE
@@ -57,46 +57,46 @@ LOOP 1
 
 RESTART
 
-;�e�L�X�g�֘A
+;テキスト関連
 @TEXT_SETTING
 DRAWLINE
-PRINTL ���e�L�X�g�̐ݒ�����Ă�������
-PRINT �@���݂̐ݒ�F
-IF FLAG:�n�̕��\�� && FLAG:����\��
-	PRINTL �y����+�n�̕��z
-ELSEIF !FLAG:�n�̕��\�� && FLAG:����\��
-	PRINTL �y����̂݁z
-ELSEIF FLAG:�n�̕��\�� && !FLAG:����\��
-	PRINTL �y�n�̕��̂݁z
-ELSEIF !FLAG:�n�̕��\�� && !FLAG:����\��
-	PRINTL �y�e�L�X�g��\�����Ȃ��z
+PRINTL □テキストの設定をしてください
+PRINT 　現在の設定：
+IF FLAG:地の文表示 && FLAG:口上表示
+	PRINTL 【口上+地の文】
+ELSEIF !FLAG:地の文表示 && FLAG:口上表示
+	PRINTL 【口上のみ】
+ELSEIF FLAG:地の文表示 && !FLAG:口上表示
+	PRINTL 【地の文のみ】
+ELSEIF !FLAG:地の文表示 && !FLAG:口上表示
+	PRINTL 【テキストを表示しない】
 ENDIF
-PRINTL �@[0] - ����+�n�̕�
-PRINTL �@[1] - ����̂�
-PRINTL �@[2] - �n�̕��̂�
-PRINTL �@[3] - �e�L�X�g��\�����Ȃ�
+PRINTL 　[0] - 口上+地の文
+PRINTL 　[1] - 口上のみ
+PRINTL 　[2] - 地の文のみ
+PRINTL 　[3] - テキストを表示しない
 DRAWLINE
-PRINTPLAIN �@TEXT�@
-PRINTL [100] - �߂�
+PRINTPLAIN 　TEXT　
+PRINTL [100] - 戻る
 DO
 	INPUT
 	SELECTCASE RESULT
 		CASE 0
-			PRINTL �y����+�n�̕��z�ɐݒ肵�܂���
-			FLAG:�n�̕��\�� = 1
-			FLAG:����\�� = 1
+			PRINTL 【口上+地の文】に設定しました
+			FLAG:地の文表示 = 1
+			FLAG:口上表示 = 1
 		CASE 1
-			PRINTL �y����̂݁z�ɐݒ肵�܂���
-			FLAG:�n�̕��\�� = 0
-			FLAG:����\�� = 1
+			PRINTL 【口上のみ】に設定しました
+			FLAG:地の文表示 = 0
+			FLAG:口上表示 = 1
 		CASE 2
-			PRINTL �y�n�̕��̂݁z�ɐݒ肵�܂���
-			FLAG:�n�̕��\�� = 1
-			FLAG:����\�� = 0
+			PRINTL 【地の文のみ】に設定しました
+			FLAG:地の文表示 = 1
+			FLAG:口上表示 = 0
 		CASE 3
-			PRINTL �y�e�L�X�g��\�����Ȃ��z�ɐݒ肵�܂���
-			FLAG:�n�̕��\�� = 0
-			FLAG:����\�� = 0
+			PRINTL 【テキストを表示しない】に設定しました
+			FLAG:地の文表示 = 0
+			FLAG:口上表示 = 0
 		CASE 100
 			RETURN 0
 	ENDSELECT
@@ -104,15 +104,15 @@ LOOP LOOPRES(0, 1, 2, 3, 100)
 
 RESTART
 
-;�������ߐݒ�
+;初期着衣設定
 @CLOTHES_SETTING
 DRAWLINE
-PRINTL ���ݒ肷�鍀�ڂ�I�����Ă�������
-PRINTL �@[0] - �������̒��ߏ�Ԑݒ�
-PRINTL �@[1] - �����̐ݒ�
+PRINTL □設定する項目を選択してください
+PRINTL 　[0] - 調教時の着衣状態設定
+PRINTL 　[1] - 服装の設定
 DRAWLINE
-PRINTPLAIN �@CLOTHES�@
-PRINTL [100] - �߂�
+PRINTPLAIN 　CLOTHES　
+PRINTL [100] - 戻る
 DO
 	INPUT
 	SELECTCASE RESULT
@@ -127,43 +127,43 @@ LOOP LOOPRES(0, 1, 100)
 
 RESTART
 
-;�����J�n���̒��ߐݒ�
+;調教開始時の着衣設定
 @CLOTHES_SETTING_TRAIN
 DRAWLINE
-PRINTL �������J�n���̕�����ݒ肵�Ă�������
-PRINT �@���݂̐ݒ�F
-SELECTCASE FLAG:���ߐݒ�
+PRINTL □調教開始時の服装を設定してください
+PRINT 　現在の設定：
+SELECTCASE FLAG:着衣設定
 	CASE 0
-		PRINTL �S��
+		PRINTL 全着
 	CASE 1
-		PRINTL ��������
+		PRINTL 下着無し
 	CASE 2
-		PRINTL �����p
+		PRINTL 下着姿
 	CASE 3
-		PRINTL �S��
+		PRINTL 全裸
 ENDSELECT
-PRINTL �@[0] - �S��
-PRINTL �@[1] - ��������
-PRINTL �@[2] - �����p
-PRINTL �@[3] - �S��
+PRINTL 　[0] - 全着
+PRINTL 　[1] - 下着無し
+PRINTL 　[2] - 下着姿
+PRINTL 　[3] - 全裸
 DRAWLINE
-PRINTPLAIN �@CLOTHES SETTING�@
-PRINTL [100] - �߂�
+PRINTPLAIN 　CLOTHES SETTING　
+PRINTL [100] - 戻る
 DO
 	INPUT
 	SELECTCASE RESULT
 		CASE 0
-			PRINTW �����̒��߂�S���ɐݒ肵�܂���
-			FLAG:���ߐݒ� = 0
+			PRINTW 初期の着衣を全着に設定しました
+			FLAG:着衣設定 = 0
 		CASE 1
-			PRINTW �����̒��߂����������ɐݒ肵�܂���
-			FLAG:���ߐݒ� = 1
+			PRINTW 初期の着衣を下着無しに設定しました
+			FLAG:着衣設定 = 1
 		CASE 2
-			PRINTW �����̒��߂������p�ɐݒ肵�܂���
-			FLAG:���ߐݒ� = 2
+			PRINTW 初期の着衣を下着姿に設定しました
+			FLAG:着衣設定 = 2
 		CASE 3
-			PRINTW �����̒��߂�S���ɐݒ肵�܂���
-			FLAG:���ߐݒ� = 3
+			PRINTW 初期の着衣を全裸に設定しました
+			FLAG:着衣設定 = 3
 		CASE 100
 			RETURN 0
 	ENDSELECT
@@ -171,10 +171,10 @@ LOOP LOOPRES(0, 1, 2, 3, 100)
 
 RESTART
 
-;���ߕύX ��������
+;着衣変更 きせかえ
 @CLOTHES_SETTING_USUALLY
 DRAWLINE
-PRINTL �����߂̐ݒ������L������I�����Ă�������
+PRINTL □着衣の設定をするキャラを選択してください
 FOR PAGING, 0, CHARANUM
 	CALL PAGING, 1
 NEXT
@@ -192,106 +192,106 @@ RESTART
 @CHARA_CLOTHES_SETTING
 #DIM LCOUNT
 DRAWLINE
-PRINTFORML ��%NAME:TARGET%�̕���
+PRINTFORML □%NAME:TARGET%の服装
 CALL SHOW_INFO_CLOTHES, TARGET
 DRAWLINE
-PRINTL �����߂̕ύX�����������ʂ�I�����Ă�������
-;����
-IF CFLAG:���� != 100
-	PRINTL �@[0] ����
+PRINTL □着衣の変更をしたい部位を選択してください
+;特殊
+IF CFLAG:特殊 != 100
+	PRINTL 　[0] 特殊
 ELSE
 	SETCOLOR 120, 120, 120
-	PRINTPLAIN �@[-] ����
+	PRINTPLAIN 　[-] 特殊
 	PRINTL 
 	RESETCOLOR
 ENDIF
-;�㔼�g�㒅
-IF CFLAG:�㔼�g�㒅 != 100
-	PRINTL �@[1] �㔼�g�㒅
+;上半身上着
+IF CFLAG:上半身上着 != 100
+	PRINTL 　[1] 上半身上着
 ELSE
 	SETCOLOR 120, 120, 120
-	PRINTPLAIN �@[-] �㔼�g�㒅
+	PRINTPLAIN 　[-] 上半身上着
 	PRINTL 
 	RESETCOLOR
 ENDIF
-;�����g�㒅
-IF CFLAG:�����g�㒅 != 100
-	PRINTL �@[2] �����g�㒅
+;下半身上着
+IF CFLAG:下半身上着 != 100
+	PRINTL 　[2] 下半身上着
 ELSE
 	SETCOLOR 120, 120, 120
-	PRINTPLAIN �@[-] �����g�㒅
+	PRINTPLAIN 　[-] 下半身上着
 	PRINTL 
 	RESETCOLOR
 ENDIF
-;�S�g�㒅
-IF CFLAG:�S�g�㒅 != 100
-	PRINTL �@[3] �S�g�㒅
+;全身上着
+IF CFLAG:全身上着 != 100
+	PRINTL 　[3] 全身上着
 ELSE
 	SETCOLOR 120, 120, 120
-	PRINTPLAIN �@[-] �S�g�㒅
+	PRINTPLAIN 　[-] 全身上着
 	PRINTL 
 	RESETCOLOR
 ENDIF
-;�㔼�g����
-IF CFLAG:�㔼�g���� != 100
-	PRINTL �@[4] �㔼�g����
+;上半身下着
+IF CFLAG:上半身下着 != 100
+	PRINTL 　[4] 上半身下着
 ELSE
 	SETCOLOR 120, 120, 120
-	PRINTPLAIN �@[-] �㔼�g����
+	PRINTPLAIN 　[-] 上半身下着
 	PRINTL 
 	RESETCOLOR
 ENDIF
-;�����g����
-IF CFLAG:�����g���� != 100
-	PRINTL �@[5] �����g����
+;下半身下着
+IF CFLAG:下半身下着 != 100
+	PRINTL 　[5] 下半身下着
 ELSE
 	SETCOLOR 120, 120, 120
-	PRINTPLAIN �@[-] �����g����
+	PRINTPLAIN 　[-] 下半身下着
 	PRINTL 
 	RESETCOLOR
 ENDIF
-;����
-IF CFLAG:���� != 100
-	PRINTL �@[6] ����
+;足元
+IF CFLAG:足元 != 100
+	PRINTL 　[6] 足元
 ELSE
 	SETCOLOR 120, 120, 120
-	PRINTPLAIN �@[-] ����
-	PRINTL 
-	RESETCOLOR
-ENDIF
-
-;�����g�㒅�������͑S�g�㒅�𒅗p���A�}���t���O�̕ύX���ł���
-IF CSTR:�����g�㒅 != "" || CSTR:�S�g�㒅 != ""
-	PRINTFORML �@[7] ���ߏ�Ԃł̐��s�׉ۂ̕ύX(����:\@ CFLAG:�}���� ? �\ # �s�\ \@)
-ELSE
-	SETCOLOR 120, 120, 120
-	PRINTPLAIN �@[-] ���ߏ�Ԃł̐��s�׉ۂ̕ύX
+	PRINTPLAIN 　[-] 足元
 	PRINTL 
 	RESETCOLOR
 ENDIF
 
-;�S�g�㒅�̒��p���A�S�g�㒅�̐����̕ύX���ł���
-IF CSTR:�S�g�㒅 != ""
-	PRINTFORM �@[8] %CSTR:�S�g�㒅%�̐����̕ύX(����:
-	SELECTCASE CFLAG:���ߕ��p
+;下半身上着もしくは全身上着を着用時、挿入可フラグの変更ができる
+IF CSTR:下半身上着 != "" || CSTR:全身上着 != ""
+	PRINTFORML 　[7] 着衣状態での性行為可否の変更(現在:\@ CFLAG:挿入可 ? 可能 # 不可能 \@)
+ELSE
+	SETCOLOR 120, 120, 120
+	PRINTPLAIN 　[-] 着衣状態での性行為可否の変更
+	PRINTL 
+	RESETCOLOR
+ENDIF
+
+;全身上着の着用時、全身上着の性質の変更ができる
+IF CSTR:全身上着 != ""
+	PRINTFORM 　[8] %CSTR:全身上着%の性質の変更(現在:
+	SELECTCASE CFLAG:着衣併用
 		CASE 0
-			PRINTL �ʏ�̑S�g�㒅)
+			PRINTL 通常の全身上着)
 		CASE 1
-			PRINTL �㒅�Ƃ̕��p���\)
+			PRINTL 上着との併用が可能)
 		CASE 2
-			PRINTL �����Ƃ̕��p���s�\)
+			PRINTL 下着との併用が不可能)
 	ENDSELECT
 ELSE
 	SETCOLOR 120, 120, 120
-	PRINTPLAIN �@[-] �S�g�㒅�̐����̕ύX
+	PRINTPLAIN 　[-] 全身上着の性質の変更
 	PRINTL 
 	RESETCOLOR
 ENDIF
 
-PRINTL �@[9] ���ߐݒ�̏�����
+PRINTL 　[9] 着衣設定の初期化
 DRAWLINE
-PRINTPLAIN �@COORDINATE�@
-PRINTL [10] �߂�
+PRINTPLAIN 　COORDINATE　
+PRINTL [10] 戻る
 DO
 	INPUT
 	SELECTCASE RESULT
@@ -299,52 +299,52 @@ DO
 			CALL CHARA_CLOTHES_SETTINGNEXT, RESULT
 			BREAK
 		CASE 7
-			INVERTBIT CFLAG:�}����, 0
+			INVERTBIT CFLAG:挿入可, 0
 			RESTART
 		CASE 8
-			PRINTFORML ��%CSTR:�S�g�㒅%�̐�����I�����Ă�������
-			PRINTL �@[0] - �ʏ�̑S�g�㒅(�㔼�g�㒅�A�����g�㒅�Ƃ̕��p���s��)
-			PRINTL �@[1] - �㒅�̏�ɒ��p�������(�㔼�g�㒅�A�����g�㒅�Ƃ̕��p���\)
-			PRINTL �@[2] - ���������˂����(�㔼�g�㒅�A�����g�㒅�A�y�щ����Ƃ̕��p���s�\)
+			PRINTFORML □%CSTR:全身上着%の性質を選択してください
+			PRINTL 　[0] - 通常の全身上着(上半身上着、下半身上着との併用が不可)
+			PRINTL 　[1] - 上着の上に着用するもの(上半身上着、下半身上着との併用が可能)
+			PRINTL 　[2] - 肌着も兼ねるもの(上半身上着、下半身上着、及び下着との併用が不可能)
 			DO
 				INPUT
 			LOOP LOOPRES(0, 1, 2)
-			CFLAG:���ߕ��p = RESULT
+			CFLAG:着衣併用 = RESULT
 			RESTART
 		CASE 9
-			;�Ώۂ��u���Ȃ��v
+			;対象が「あなた」
 			IF NO:TARGET == 0
-				;�u���Ȃ��v���j�̏ꍇ
+				;「あなた」が男の場合
 				SELECTCASE SEX(TARGET)
 					CASE 1
 						FOR COUNT, 100, 107
 							CSTR:COUNT = 
 						NEXT
-						CSTR:MASTER:�㔼�g�㒅 = T�V���c
-						CSTR:MASTER:�����g�㒅 = �Y�{��
-						CSTR:MASTER:�����g���� = �g�����N�X
-						CFLAG:MASTER:�����p�C�Y�� = 4
-					;�u���Ȃ��v�����̏ꍇ
+						CSTR:MASTER:上半身上着 = Tシャツ
+						CSTR:MASTER:下半身上着 = ズボン
+						CSTR:MASTER:下半身下着 = トランクス
+						CFLAG:MASTER:下着パイズリ = 4
+					;「あなた」が女の場合
 					CASE 2
 						FOR COUNT, 100, 107
 							CSTR:COUNT = 
 						NEXT
-						CSTR:MASTER:�S�g�㒅 = �����s�[�X
-						CSTR:MASTER:�㔼�g���� = �u���W���[
-						CSTR:MASTER:�����g���� = �p���e�B
-						CFLAG:MASTER:�}���� = 1
-						CFLAG:MASTER:�����p�C�Y�� = 3
+						CSTR:MASTER:全身上着 = ワンピース
+						CSTR:MASTER:上半身下着 = ブラジャー
+						CSTR:MASTER:下半身下着 = パンティ
+						CFLAG:MASTER:挿入可 = 1
+						CFLAG:MASTER:下着パイズリ = 3
 				ENDSELECT
 			ELSE
 				FOR LCOUNT, 100, 107
 					CSTR:LCOUNT = %CSVCSTR(NO:TARGET, LCOUNT, 0)%
 				NEXT
-				CFLAG:�}���� = CSVCFLAG(NO:TARGET, GETNUM(CFLAG, "�}����"))
-				CFLAG:���ߕ��p = CSVCFLAG(NO:TARGET, GETNUM(CFLAG, "���ߕ��p"))
-				CFLAG:�㒅�p�C�Y�� = CSVCFLAG(NO:TARGET, GETNUM(CFLAG, "�㒅�p�C�Y��"))
-				CFLAG:�����p�C�Y�� = CSVCFLAG(NO:TARGET, GETNUM(CFLAG, "�����p�C�Y��"))
+				CFLAG:挿入可 = CSVCFLAG(NO:TARGET, GETNUM(CFLAG, "挿入可"))
+				CFLAG:着衣併用 = CSVCFLAG(NO:TARGET, GETNUM(CFLAG, "着衣併用"))
+				CFLAG:上着パイズリ = CSVCFLAG(NO:TARGET, GETNUM(CFLAG, "上着パイズリ"))
+				CFLAG:下着パイズリ = CSVCFLAG(NO:TARGET, GETNUM(CFLAG, "下着パイズリ"))
 			ENDIF
-			PRINTFORMW ��%NAME:TARGET%�̕��������������܂�����
+			PRINTFORMW ＜%NAME:TARGET%の服装を初期化しました＞
 			RESTART
 		CASE 10
 			RETURN 0
@@ -356,16 +356,16 @@ RESTART
 @CHARA_CLOTHES_SETTINGNEXT, ARG
 #DIM DYNAMIC LCOUNT
 DRAWLINE
-PRINTL �����𒅂��܂����H(�ԍ��̑��A���R���͂��\�ł�)
-PRINTL �@[0] ���������Ȃ�
+PRINTL □何を着せますか？(番号の他、自由入力も可能です)
+PRINTL 　[0] 何も着せない
 FOR LCOUNT, (ARG*100), (ARG*100+100)
 	SIF STR:LCOUNT == ""
 		CONTINUE
-	PRINTFORML �@[{LCOUNT}] %STR:LCOUNT%
+	PRINTFORML 　[{LCOUNT}] %STR:LCOUNT%
 NEXT
 DRAWLINE
-PRINTPLAIN �@COORDINATE�@
-PRINTL [1000] �߂�
+PRINTPLAIN 　COORDINATE　
+PRINTL [1000] 戻る
 DO
 	INPUTS
 	
@@ -378,41 +378,41 @@ DO
 	SELECTCASE LOCAL
 		CASE 0 TO 999
 			CSTR:(ARG+100) = %STR:LOCAL%
-			SELECTCASE CSTR:�S�g�㒅
-				CASE "�R�[�g", "�G�v����", "���[�u"
-					CFLAG:���ߕ��p = 1
-				CASE "�o�j�[�X�[�c", "�X�N�[������"
-					CFLAG:���ߕ��p = 2
+			SELECTCASE CSTR:全身上着
+				CASE "コート", "エプロン", "ローブ"
+					CFLAG:着衣併用 = 1
+				CASE "バニースーツ", "スクール水着"
+					CFLAG:着衣併用 = 2
 				CASEELSE
-					CFLAG:���ߕ��p = 0
+					CFLAG:着衣併用 = 0
 			ENDSELECT
-			SELECTCASE CSTR:�����g�㒅
-				CASE "�X�J�[�g", "�p���I"
-					CFLAG:�}���� = 1
+			SELECTCASE CSTR:下半身上着
+				CASE "スカート", "パレオ"
+					CFLAG:挿入可 = 1
 				CASEELSE
-					CFLAG:�}���� = 0
+					CFLAG:挿入可 = 0
 			ENDSELECT
-			SELECTCASE CSTR:�S�g�㒅
-				CASE "�a��", "���[�u", "�����s�[�X", "�`���`��", "�h���X", "�`���C�i�h���X", "�C����", "�S�V�b�N�����[�^", "���C�h��"
-					CFLAG:�}���� = 1
+			SELECTCASE CSTR:全身上着
+				CASE "和服", "ローブ", "ワンピース", "チュチュ", "ドレス", "チャイナドレス", "修道服", "ゴシックロリータ", "メイド服"
+					CFLAG:挿入可 = 1
 				CASEELSE
-					CFLAG:�}���� = 0
+					CFLAG:挿入可 = 0
 			ENDSELECT
 			SELECTCASE ARG
 				CASE 1, 2
-					SIF CFLAG:���ߕ��p != 1
-						CSTR:�S�g�㒅 = 
+					SIF CFLAG:着衣併用 != 1
+						CSTR:全身上着 = 
 				CASE 4, 5
-					SIF CFLAG:���ߕ��p == 2
-						CSTR:�S�g�㒅 = 
+					SIF CFLAG:着衣併用 == 2
+						CSTR:全身上着 = 
 				CASE 3
-					IF CFLAG:���ߕ��p != 1
-						CSTR:�㔼�g�㒅 = 
-						CSTR:�����g�㒅 = 
+					IF CFLAG:着衣併用 != 1
+						CSTR:上半身上着 = 
+						CSTR:下半身上着 = 
 					ENDIF
-					IF CFLAG:���ߕ��p == 2
-						CSTR:�㔼�g���� = 
-						CSTR:�����g���� = 
+					IF CFLAG:着衣併用 == 2
+						CSTR:上半身下着 = 
+						CSTR:下半身下着 = 
 					ENDIF
 			ENDSELECT
 			BREAK
@@ -420,19 +420,19 @@ DO
 			CSTR:(ARG+100) = %RESULTS%
 			SELECTCASE ARG
 				CASE 1, 2
-					SIF CFLAG:���ߕ��p != 1
-						CSTR:�S�g�㒅 = 
+					SIF CFLAG:着衣併用 != 1
+						CSTR:全身上着 = 
 				CASE 4, 5
-					SIF CFLAG:���ߕ��p == 2
-						CSTR:�S�g�㒅 = 
+					SIF CFLAG:着衣併用 == 2
+						CSTR:全身上着 = 
 				CASE 3
-					IF CFLAG:���ߕ��p != 1
-						CSTR:�㔼�g�㒅 = 
-						CSTR:�����g�㒅 = 
+					IF CFLAG:着衣併用 != 1
+						CSTR:上半身上着 = 
+						CSTR:下半身上着 = 
 					ENDIF
-					IF CFLAG:���ߕ��p == 2
-						CSTR:�㔼�g���� = 
-						CSTR:�����g���� = 
+					IF CFLAG:着衣併用 == 2
+						CSTR:上半身下着 = 
+						CSTR:下半身下着 = 
 					ENDIF
 			ENDSELECT
 			BREAK
@@ -441,98 +441,98 @@ DO
 	ENDSELECT
 LOOP LOOPRES(1000)
 
-;�C�x���g�֘A�̐ݒ�
+;イベント関連の設定
 @EVENT_SETTING
 DRAWLINE
-PRINTL ���C�x���g�̃I��/�I�t��ݒ�ł��܂�
-PRINTFORML �@[0] - ��l�ɂ��F�d�|��/�锇��(����\@ FLAG:�F�d�|�� ? �I�� # �I�t \@)
+PRINTL □イベントのオン/オフを設定できます
+PRINTFORML 　[0] - 主人による色仕掛け/夜這い(現在\@ FLAG:色仕掛け ? オン # オフ \@)
 DRAWLINE
-PRINTPLAIN �@EVENT�@
-PRINTL [100] - �߂�
+PRINTPLAIN 　EVENT　
+PRINTL [100] - 戻る
 
 INPUT
 DO
 	SELECTCASE RESULT
 		CASE 0
-			INVERTBIT FLAG:�F�d�|��, 0
+			INVERTBIT FLAG:色仕掛け, 0
 			RESTART
 		CASE 100
 			RETURN 0
 	ENDSELECT
 LOOP LOOPRES(0, 1, 100)
 
-;�f�t�H���g�I�v�V�����̐ݒ�
+;デフォルトオプションの設定
 @DEFAULT_OPTION
 DRAWLINE
 LOADGLOBAL
-PRINTL �������ݒ�̃I�v�V������ݒ肷�邱�Ƃɂ��A�j���[�Q�[�����̃I�v�V�����ݒ���ȗ����邱�Ƃ��ł��܂�
-;PRINTFORML �@[0] - �`���[�g���A���\��(����:\@ �`���[�g���A���ݒ� == 1 ? �펞�m�F # �ȗ� \@)
-PRINT �@[1] - ����&�n�̕��ݒ�(����:
-IF �n�̕��ݒ� && ����ݒ�
-	PRINTL ����+�n�̕�)
-ELSEIF !�n�̕��ݒ� && ����ݒ�
-	PRINTL ����̂�)
-ELSEIF �n�̕��ݒ� && !����ݒ�
-	PRINTL �n�̕��̂�)
-ELSEIF !�n�̕��ݒ� && !����ݒ�
-	PRINTL �e�L�X�g��\�����Ȃ�)
+PRINTL □初期設定のオプションを設定することにより、ニューゲーム時のオプション設定を省略することができます
+;PRINTFORML 　[0] - チュートリアル表示(現在:\@ チュートリアル設定 == 1 ? 常時確認 # 省略 \@)
+PRINT 　[1] - 口上&地の文設定(現在:
+IF 地の文設定 && 口上設定
+	PRINTL 口上+地の文)
+ELSEIF !地の文設定 && 口上設定
+	PRINTL 口上のみ)
+ELSEIF 地の文設定 && !口上設定
+	PRINTL 地の文のみ)
+ELSEIF !地の文設定 && !口上設定
+	PRINTL テキストを表示しない)
 ENDIF
-PRINTFORML �@[2] - �����J�n���̒��ߐݒ�(����:\@ ���߃I�v�V�����ݒ� ? �������܂܎n�߂� # �E�����Ďn�߂� \@)
+PRINTFORML 　[2] - 調教開始時の着衣設定(現在:\@ 着衣オプション設定 ? 着せたまま始める # 脱がせて始める \@)
 DRAWLINE
-PRINTPLAIN �@DEFAULT OPTION�@
-PRINT [100] - �ۑ����Ė߂� 
-PRINTL [101] - �ۑ������ɖ߂�
+PRINTPLAIN 　DEFAULT OPTION　
+PRINT [100] - 保存して戻る 
+PRINTL [101] - 保存せずに戻る
 INPUT
 DO
 	SELECTCASE RESULT
 		CASE 100
-			�f�t�H���g�I�v�V���� = 1
+			デフォルトオプション = 1
 			SAVEGLOBAL
 			RETURN 0
 		CASE 101
 			LOADGLOBAL
 			RETURN 0
 		;CASE 0
-		;	PRINTL ����Ƀ`���[�g���A���̕\�����m�F���܂����H
-		;	PRINTL �@[0] - �m�F���Ȃ��Ă�������
-		;	PRINTL �@[1] - �s��������m�F����
+		;	PRINTL □常にチュートリアルの表示を確認しますか？
+		;	PRINTL 　[0] - 確認しなくてもいいよ
+		;	PRINTL 　[1] - 不安だから確認して
 		;	INPUT
 		;	DO
 		;	LOOP LOOPRES(0, 1)
-		;	�`���[�g���A���ݒ� = RESULT
+		;	チュートリアル設定 = RESULT
 		;	RESTART
 		CASE 1
-			PRINTL ������ƒn�̕��̏����ݒ��I��ł�������
-			PRINTL �@[0] - ����+�n�̕�
-			PRINTL �@[1] - ����̂�
-			PRINTL �@[2] - �n�̕��̂�
-			PRINTL �@[3] - �e�L�X�g��\�����Ȃ�
+			PRINTL □口上と地の文の初期設定を選んでください
+			PRINTL 　[0] - 口上+地の文
+			PRINTL 　[1] - 口上のみ
+			PRINTL 　[2] - 地の文のみ
+			PRINTL 　[3] - テキストを表示しない
 			INPUT
 			DO
 			LOOP LOOPRES(0, 1, 2, 3)
 			SELECTCASE RESULT
 				CASE 0
-					�n�̕��ݒ� = 1
-					����ݒ� = 1
+					地の文設定 = 1
+					口上設定 = 1
 				CASE 1
-					�n�̕��ݒ� = 0
-					����ݒ� = 1
+					地の文設定 = 0
+					口上設定 = 1
 				CASE 2
-					�n�̕��ݒ� = 1
-					����ݒ� = 0
+					地の文設定 = 1
+					口上設定 = 0
 				CASE 3
-					�n�̕��ݒ� = 0
-					����ݒ� = 0
+					地の文設定 = 0
+					口上設定 = 0
 			ENDSELECT
 			RESTART
 		CASE 2
-			PRINTL �������J�n���̒��ߐݒ��I��ł�������
-			PRINTL �@[0] - ���߃v���C�̓G�������璅�����܂܎n�߂�
-			PRINTL �@[1] - �������ƃ��肽���̂ŒE�����Ă���n�߂�
+			PRINTL □調教開始時の着衣設定を選んでください
+			PRINTL 　[0] - 着衣プレイはエロいから着せたまま始める
+			PRINTL 　[1] - さっさとヤりたいので脱がせてから始める
 			INPUT
 			DO
 			LOOP LOOPRES(0, 1)
-			���߃I�v�V�����ݒ� = RESULT
+			着衣オプション設定 = RESULT
 			RESTART
 	ENDSELECT
 LOOP 1

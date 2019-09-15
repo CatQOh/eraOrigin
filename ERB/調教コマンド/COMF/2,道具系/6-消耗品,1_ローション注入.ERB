@@ -1,56 +1,56 @@
+ï»¿;-------------------------------------------------
+;ãƒ­ãƒ¼ã‚·ãƒ§ãƒ³æ³¨å…¥
 ;-------------------------------------------------
-;ƒ[ƒVƒ‡ƒ“’“ü
-;-------------------------------------------------
-@USERCOM_ABLE_ƒ[ƒVƒ‡ƒ“’“ü, ARG
+@USERCOM_ABLE_ãƒ­ãƒ¼ã‚·ãƒ§ãƒ³æ³¨å…¥, ARG
 #FUNCTION
-;’j‚¶‚á‚È‚¢‚Æƒ_ƒ
-SIF TALENT:«•Ê == 2
+;ç”·ã˜ã‚ƒãªã„ã¨ãƒ€ãƒ¡
+SIF TALENT:æ€§åˆ¥ == 2
 	RETURNF 0
-;‰º”¼g‚ªŠJ‚¢‚Ä‚È‚¢‚Æƒ_ƒ
-SIF !«Ší˜Io(TARGET)
+;ä¸‹åŠèº«ãŒé–‹ã„ã¦ãªã„ã¨ãƒ€ãƒ¡
+SIF !æ€§å™¨éœ²å‡º(TARGET)
 	RETURNF 0
-;ƒVƒƒƒ[’†‚Íƒ_ƒ
-SIF TEQUIP:ƒVƒƒƒ[
+;ã‚·ãƒ£ãƒ¯ãƒ¼ä¸­ã¯ãƒ€ãƒ¡
+SIF TEQUIP:ã‚·ãƒ£ãƒ¯ãƒ¼
 	RETURNF 0
-;ƒAƒiƒ‹‚ªŽg—p’†‚¾‚Æƒ_ƒ
-SIF ‚`Žg—p’†(TARGET)
+;ã‚¢ãƒŠãƒ«ãŒä½¿ç”¨ä¸­ã ã¨ãƒ€ãƒ¡
+SIF ï¼¡ä½¿ç”¨ä¸­(TARGET)
 	RETURNF 0
 
 COMRESULT = 1
 RETURNF 1
 
-@COM_ƒ[ƒVƒ‡ƒ“’“ü
-PRINTL ƒ[ƒVƒ‡ƒ“’“ü
+@COM_ãƒ­ãƒ¼ã‚·ãƒ§ãƒ³æ³¨å…¥
+PRINTL ãƒ­ãƒ¼ã‚·ãƒ§ãƒ³æ³¨å…¥
 CALL KOJO_MESSAGE_COM
 
 ;-------------------------------------------------
-;ƒ\[ƒX’Ç‰Áˆ—
+;ã‚½ãƒ¼ã‚¹è¿½åŠ å‡¦ç†
 ;-------------------------------------------------
-;Á”ï‘Ì—ÍA‹C—Í
-LOSEBASE:‘Ì—Í += 10
-LOSEBASE:‹C—Í += 10
+;æ¶ˆè²»ä½“åŠ›ã€æ°—åŠ›
+LOSEBASE:ä½“åŠ› += 10
+LOSEBASE:æ°—åŠ› += 10
 
-DOWNBASE:MASTER:‘Ì—Í += 10
-DOWNBASE:MASTER:‹C—Í += 10
+DOWNBASE:MASTER:ä½“åŠ› += 10
+DOWNBASE:MASTER:æ°—åŠ› += 10
 
-UP:ŠŠ += 10000
-SOURCE:‰t‘Ì = 5000
-SOURCE:˜Io = 100
+UP:æ½¤æ»‘ += 10000
+SOURCE:æ¶²ä½“ = 5000
+SOURCE:éœ²å‡º = 100
 
 ;-------------------------------------------------
-;â’¸ƒ`ƒFƒbƒN
+;çµ¶é ‚ãƒã‚§ãƒƒã‚¯
 ;-------------------------------------------------
 CALL SOURCE_CHECK_CVAB
 
 ;-------------------------------------------------
-;ŽË¸ƒ`ƒFƒbƒN
+;å°„ç²¾ãƒã‚§ãƒƒã‚¯
 ;-------------------------------------------------
 CALL SAMEN_CHECK_T, 0
 
-CALL SAMEN_SHOOT_T, 0, NOWEX:ŽË¸
+CALL SAMEN_SHOOT_T, 0, NOWEX:å°„ç²¾
 
 ;-------------------------------------------------
-;ŒoŒ±‚Ìˆ—
+;çµŒé¨“ã®å‡¦ç†
 ;-------------------------------------------------
 CALL EXPUP, 1, 1
 

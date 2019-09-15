@@ -1,20 +1,20 @@
+ï»¿;-------------------------------------------------
+;ãƒ­ãƒ¼ã‚¿ãƒ¼
 ;-------------------------------------------------
-;ƒ[ƒ^[
-;-------------------------------------------------
-@COM_ƒ[ƒ^[_KX1
-;‰‚ß‚Ä
+@COM_ãƒ­ãƒ¼ã‚¿ãƒ¼_KX1
+;åˆã‚ã¦
 IF FCOM:SELECTCOM == 0
 	PRINTFORMW 
 	FCOM:SELECTCOM = 1
-;“ñ‰ñ–ÚˆÈ~
+;äºŒå›žç›®ä»¥é™
 ELSE
-	;Š×—ŽÏ‚Ý
-	IF CFLAG:Š×—Ž
+	;é™¥è½æ¸ˆã¿
+	IF CFLAG:é™¥è½
 		PRINTFORMW 
-	;‹ü•žˆóLv3
-	ELSEIF MARK:‹ü•žˆó == 3
+	;å±ˆæœåˆ»å°Lv3
+	ELSEIF MARK:å±ˆæœåˆ»å° == 3
 		PRINTFORMW 
-	;‚»‚êˆÈŠO
+	;ãã‚Œä»¥å¤–
 	ELSE
 		PRINTFORMW 
 	ENDIF
@@ -23,22 +23,22 @@ ENDIF
 RETURN 0
 
 ;-------------------------------------------------
-;“d‹CˆÂ–€
+;é›»æ°—æŒ‰æ‘©
 ;-------------------------------------------------
-@COM_“d‹CˆÂ–€_KX1
-;‰‚ß‚Ä
+@COM_é›»æ°—æŒ‰æ‘©_KX1
+;åˆã‚ã¦
 IF FCOM:SELECTCOM == 0
 	PRINTFORMW 
 	FCOM:SELECTCOM = 1
-;“ñ‰ñ–ÚˆÈ~
+;äºŒå›žç›®ä»¥é™
 ELSE
-	;Š×—ŽÏ‚Ý
-	IF CFLAG:Š×—Ž
+	;é™¥è½æ¸ˆã¿
+	IF CFLAG:é™¥è½
 		PRINTFORMW 
-	;‹ü•žˆóLv3
-	ELSEIF MARK:‹ü•žˆó == 3
+	;å±ˆæœåˆ»å°Lv3
+	ELSEIF MARK:å±ˆæœåˆ»å° == 3
 		PRINTFORMW 
-	;‚»‚êˆÈŠO
+	;ãã‚Œä»¥å¤–
 	ELSE
 		PRINTFORMW 
 	ENDIF
@@ -47,36 +47,36 @@ ENDIF
 RETURN 0
 
 ;-------------------------------------------------
-;ƒNƒŠƒLƒƒƒbƒv
+;ã‚¯ãƒªã‚­ãƒ£ãƒƒãƒ—
 ;-------------------------------------------------
-@COM_ƒNƒŠƒLƒƒƒbƒv_KX1
-;‘•’…Žž
-IF TEQUIP:ƒNƒŠƒLƒƒƒbƒv == 0
-	;‰‚ß‚Ä
+@COM_ã‚¯ãƒªã‚­ãƒ£ãƒƒãƒ—_KX1
+;è£…ç€æ™‚
+IF TEQUIP:ã‚¯ãƒªã‚­ãƒ£ãƒƒãƒ— == 0
+	;åˆã‚ã¦
 	IF FCOM:SELECTCOM == 0
 		PRINTFORMW 
 		FCOM:SELECTCOM = 1
-	;“ñ‰ñ–ÚˆÈ~
+	;äºŒå›žç›®ä»¥é™
 	ELSE
-		;Š×—ŽÏ‚Ý
-		IF CFLAG:Š×—Ž
+		;é™¥è½æ¸ˆã¿
+		IF CFLAG:é™¥è½
 			PRINTFORMW 
-		;‹ü•žˆóLv3
-		ELSEIF MARK:‹ü•žˆó == 3
+		;å±ˆæœåˆ»å°Lv3
+		ELSEIF MARK:å±ˆæœåˆ»å° == 3
 			PRINTFORMW 
-		;‚»‚êˆÈŠO
+		;ãã‚Œä»¥å¤–
 		ELSE
 			PRINTFORMW 
 		ENDIF
 	ENDIF
-;‰ðœŽž
-ELSEIF TEQUIP:ƒNƒŠƒLƒƒƒbƒv
-	;‰‚ß‚Äi‚Ì‰ðœj
-	;‰ðœŽž‚É‚µ‚©ƒtƒ‰ƒO‚ðˆ—‚µ‚È‚¢‚½‚ßA‘•’…Žž‚Ì‚Ü‚Ü’²‹³I—¹‚·‚é‚Æ‰ðœŒoŒ±‚Í–³‚¢‚±‚Æ‚É‚È‚é
+;è§£é™¤æ™‚
+ELSEIF TEQUIP:ã‚¯ãƒªã‚­ãƒ£ãƒƒãƒ—
+	;åˆã‚ã¦ï¼ˆã®è§£é™¤ï¼‰
+	;è§£é™¤æ™‚ã«ã—ã‹ãƒ•ãƒ©ã‚°ã‚’å‡¦ç†ã—ãªã„ãŸã‚ã€è£…ç€æ™‚ã®ã¾ã¾èª¿æ•™çµ‚äº†ã™ã‚‹ã¨è§£é™¤çµŒé¨“ã¯ç„¡ã„ã“ã¨ã«ãªã‚‹
 	IF FCOM:SELECTCOM == 1
 		PRINTFORMW 
 		FCOM:SELECTCOM = 2
-	;2‰ñ–ÚˆÈ~
+	;2å›žç›®ä»¥é™
 	ELSE
 		PRINTFORMW 
 	ENDIF
@@ -85,36 +85,36 @@ ENDIF
 RETURN 0
 
 ;-------------------------------------------------
-;ƒoƒCƒu
+;ãƒã‚¤ãƒ–
 ;-------------------------------------------------
-@COM_ƒoƒCƒu_KX1
-;‘•’…Žž
-IF TEQUIP:ƒoƒCƒu == 0
-	;‰‚ß‚Ä
+@COM_ãƒã‚¤ãƒ–_KX1
+;è£…ç€æ™‚
+IF TEQUIP:ãƒã‚¤ãƒ– == 0
+	;åˆã‚ã¦
 	IF FCOM:SELECTCOM == 0
 		PRINTFORMW 
 		FCOM:SELECTCOM = 1
-	;“ñ‰ñ–ÚˆÈ~
+	;äºŒå›žç›®ä»¥é™
 	ELSE
-		;Š×—ŽÏ‚Ý
-		IF CFLAG:Š×—Ž
+		;é™¥è½æ¸ˆã¿
+		IF CFLAG:é™¥è½
 			PRINTFORMW 
-		;‹ü•žˆóLv3
-		ELSEIF MARK:‹ü•žˆó == 3
+		;å±ˆæœåˆ»å°Lv3
+		ELSEIF MARK:å±ˆæœåˆ»å° == 3
 			PRINTFORMW 
-		;‚»‚êˆÈŠO
+		;ãã‚Œä»¥å¤–
 		ELSE
 			PRINTFORMW 
 		ENDIF
 	ENDIF
-;‰ðœŽž
-ELSEIF TEQUIP:ƒoƒCƒu
-	;‰‚ß‚Äi‚Ì‰ðœj
-	;‰ðœŽž‚É‚µ‚©ƒtƒ‰ƒO‚ðˆ—‚µ‚È‚¢‚½‚ßA‘•’…Žž‚Ì‚Ü‚Ü’²‹³I—¹‚·‚é‚Æ‰ðœŒoŒ±‚Í–³‚¢‚±‚Æ‚É‚È‚é
+;è§£é™¤æ™‚
+ELSEIF TEQUIP:ãƒã‚¤ãƒ–
+	;åˆã‚ã¦ï¼ˆã®è§£é™¤ï¼‰
+	;è§£é™¤æ™‚ã«ã—ã‹ãƒ•ãƒ©ã‚°ã‚’å‡¦ç†ã—ãªã„ãŸã‚ã€è£…ç€æ™‚ã®ã¾ã¾èª¿æ•™çµ‚äº†ã™ã‚‹ã¨è§£é™¤çµŒé¨“ã¯ç„¡ã„ã“ã¨ã«ãªã‚‹
 	IF FCOM:SELECTCOM == 1
 		PRINTFORMW 
 		FCOM:SELECTCOM = 2
-	;2‰ñ–ÚˆÈ~
+	;2å›žç›®ä»¥é™
 	ELSE
 		PRINTFORMW 
 	ENDIF
@@ -123,36 +123,36 @@ ENDIF
 RETURN 0
 
 ;-------------------------------------------------
-;ƒIƒiƒz[ƒ‹
+;ã‚ªãƒŠãƒ›ãƒ¼ãƒ«
 ;-------------------------------------------------
-@COM_ƒIƒiƒz[ƒ‹_KX1
-;‘•’…Žž
-IF TEQUIP:ƒIƒiƒz[ƒ‹ == 0
-	;‰‚ß‚Ä
+@COM_ã‚ªãƒŠãƒ›ãƒ¼ãƒ«_KX1
+;è£…ç€æ™‚
+IF TEQUIP:ã‚ªãƒŠãƒ›ãƒ¼ãƒ« == 0
+	;åˆã‚ã¦
 	IF FCOM:SELECTCOM == 0
 		PRINTFORMW 
 		FCOM:SELECTCOM = 1
-	;“ñ‰ñ–ÚˆÈ~
+	;äºŒå›žç›®ä»¥é™
 	ELSE
-		;Š×—ŽÏ‚Ý
-		IF CFLAG:Š×—Ž
+		;é™¥è½æ¸ˆã¿
+		IF CFLAG:é™¥è½
 			PRINTFORMW 
-		;‹ü•žˆóLv3
-		ELSEIF MARK:‹ü•žˆó == 3
+		;å±ˆæœåˆ»å°Lv3
+		ELSEIF MARK:å±ˆæœåˆ»å° == 3
 			PRINTFORMW 
-		;‚»‚êˆÈŠO
+		;ãã‚Œä»¥å¤–
 		ELSE
 			PRINTFORMW 
 		ENDIF
 	ENDIF
-;‰ðœŽž
-ELSEIF TEQUIP:ƒIƒiƒz[ƒ‹
-	;‰‚ß‚Äi‚Ì‰ðœj
-	;‰ðœŽž‚É‚µ‚©ƒtƒ‰ƒO‚ðˆ—‚µ‚È‚¢‚½‚ßA‘•’…Žž‚Ì‚Ü‚Ü’²‹³I—¹‚·‚é‚Æ‰ðœŒoŒ±‚Í–³‚¢‚±‚Æ‚É‚È‚é
+;è§£é™¤æ™‚
+ELSEIF TEQUIP:ã‚ªãƒŠãƒ›ãƒ¼ãƒ«
+	;åˆã‚ã¦ï¼ˆã®è§£é™¤ï¼‰
+	;è§£é™¤æ™‚ã«ã—ã‹ãƒ•ãƒ©ã‚°ã‚’å‡¦ç†ã—ãªã„ãŸã‚ã€è£…ç€æ™‚ã®ã¾ã¾èª¿æ•™çµ‚äº†ã™ã‚‹ã¨è§£é™¤çµŒé¨“ã¯ç„¡ã„ã“ã¨ã«ãªã‚‹
 	IF FCOM:SELECTCOM == 1
 		PRINTFORMW 
 		FCOM:SELECTCOM = 2
-	;2‰ñ–ÚˆÈ~
+	;2å›žç›®ä»¥é™
 	ELSE
 		PRINTFORMW 
 	ENDIF
@@ -161,38 +161,38 @@ ENDIF
 RETURN 0
 
 ;-------------------------------------------------
-;ƒRƒ“ƒh[ƒ€‘•’…
+;ã‚³ãƒ³ãƒ‰ãƒ¼ãƒ è£…ç€
 ;-------------------------------------------------
-@COM_ƒRƒ“ƒh[ƒ€_KX1
-IF TFLAG:”ð”D‹ï’…—pŽÒ == TARGET
-	;‘•’…Žž
-	IF TEQUIP:ƒRƒ“ƒh[ƒ€ == 0
-		;‰‚ß‚Ä
+@COM_ã‚³ãƒ³ãƒ‰ãƒ¼ãƒ _KX1
+IF TFLAG:é¿å¦Šå…·ç€ç”¨è€… == TARGET
+	;è£…ç€æ™‚
+	IF TEQUIP:ã‚³ãƒ³ãƒ‰ãƒ¼ãƒ  == 0
+		;åˆã‚ã¦
 		IF FCOM:SELECTCOM == 0
 			PRINTFORMW 
 			FCOM:SELECTCOM = 1
-		;“ñ‰ñ–ÚˆÈ~
+		;äºŒå›žç›®ä»¥é™
 		ELSE
-			;Š×—ŽÏ‚Ý
-			IF CFLAG:Š×—Ž
+			;é™¥è½æ¸ˆã¿
+			IF CFLAG:é™¥è½
 				PRINTFORMW 
-			;‹ü•žˆóLv3
-			ELSEIF MARK:‹ü•žˆó == 3
+			;å±ˆæœåˆ»å°Lv3
+			ELSEIF MARK:å±ˆæœåˆ»å° == 3
 				PRINTFORMW 
-			;‚»‚êˆÈŠO
+			;ãã‚Œä»¥å¤–
 			ELSE
 				PRINTFORMW 
 			ENDIF
 		ENDIF
-	;‰ðœŽž
-	ELSEIF TEQUIP:ƒRƒ“ƒh[ƒ€
-		;‰‚ß‚Äi‚Ì‰ðœj
-		;‰ðœŽž‚É‚µ‚©ƒtƒ‰ƒO‚ðˆ—‚µ‚È‚¢‚½‚ßA‘•’…Žž‚Ì‚Ü‚Ü’²‹³I—¹‚·‚é‚Æ‰ðœŒoŒ±‚Í–³‚¢‚±‚Æ‚É‚È‚é
-		;‚¿‚È‚Ý‚ÉƒRƒ“ƒh[ƒ€‚Ìê‡A“z—ê‚ÌŽË¸‚Æ“¯Žž‚É‰ðœor‰ðœ‹y‚ÑŽ©“®‘•’…‚É‚È‚é‚½‚ß‰ðœŽžŒûã‚ª•\Ž¦‚³‚ê‚é•p“x‚Í­‚È‚¢‚ÆŽv‚í‚ê
+	;è§£é™¤æ™‚
+	ELSEIF TEQUIP:ã‚³ãƒ³ãƒ‰ãƒ¼ãƒ 
+		;åˆã‚ã¦ï¼ˆã®è§£é™¤ï¼‰
+		;è§£é™¤æ™‚ã«ã—ã‹ãƒ•ãƒ©ã‚°ã‚’å‡¦ç†ã—ãªã„ãŸã‚ã€è£…ç€æ™‚ã®ã¾ã¾èª¿æ•™çµ‚äº†ã™ã‚‹ã¨è§£é™¤çµŒé¨“ã¯ç„¡ã„ã“ã¨ã«ãªã‚‹
+		;ã¡ãªã¿ã«ã‚³ãƒ³ãƒ‰ãƒ¼ãƒ ã®å ´åˆã€å¥´éš·ã®å°„ç²¾ã¨åŒæ™‚ã«è§£é™¤orè§£é™¤åŠã³è‡ªå‹•è£…ç€ã«ãªã‚‹ãŸã‚è§£é™¤æ™‚å£ä¸ŠãŒè¡¨ç¤ºã•ã‚Œã‚‹é »åº¦ã¯å°‘ãªã„ã¨æ€ã‚ã‚Œ
 		IF FCOM:SELECTCOM == 1
 			PRINTFORMW 
 			FCOM:SELECTCOM = 2
-		;2‰ñ–ÚˆÈ~
+		;2å›žç›®ä»¥é™
 		ELSE
 			PRINTFORMW 
 		ENDIF
@@ -202,22 +202,22 @@ ENDIF
 RETURN 0
 
 ;-------------------------------------------------
-;ƒRƒ“ƒh[ƒ€¸ˆùi“z—êj
+;ã‚³ãƒ³ãƒ‰ãƒ¼ãƒ ç²¾é£²ï¼ˆå¥´éš·ï¼‰
 ;-------------------------------------------------
-@COM_ƒRƒ“ƒh[ƒ€¸ˆùi“z—êj_KX1
-;‰‚ß‚Ä
+@COM_ã‚³ãƒ³ãƒ‰ãƒ¼ãƒ ç²¾é£²ï¼ˆå¥´éš·ï¼‰_KX1
+;åˆã‚ã¦
 IF FCOM:SELECTCOM == 0
 	PRINTFORMW 
 	FCOM:SELECTCOM = 1
-;“ñ‰ñ–ÚˆÈ~
+;äºŒå›žç›®ä»¥é™
 ELSE
-	;Š×—ŽÏ‚Ý
-	IF CFLAG:Š×—Ž
+	;é™¥è½æ¸ˆã¿
+	IF CFLAG:é™¥è½
 		PRINTFORMW 
-	;‹ü•žˆóLv3
-	ELSEIF MARK:‹ü•žˆó == 3
+	;å±ˆæœåˆ»å°Lv3
+	ELSEIF MARK:å±ˆæœåˆ»å° == 3
 		PRINTFORMW 
-	;‚»‚êˆÈŠO
+	;ãã‚Œä»¥å¤–
 	ELSE
 		PRINTFORMW 
 	ENDIF
@@ -226,22 +226,22 @@ ENDIF
 RETURN 0
 
 ;-------------------------------------------------
-;ƒRƒ“ƒh[ƒ€¸ˆùi•Žèj
+;ã‚³ãƒ³ãƒ‰ãƒ¼ãƒ ç²¾é£²ï¼ˆåŠ©æ‰‹ï¼‰
 ;-------------------------------------------------
-@COM_ƒRƒ“ƒh[ƒ€¸ˆùi•Žèj_KX1
-;‰‚ß‚Ä
+@COM_ã‚³ãƒ³ãƒ‰ãƒ¼ãƒ ç²¾é£²ï¼ˆåŠ©æ‰‹ï¼‰_KX1
+;åˆã‚ã¦
 IF FCOM:SELECTCOM == 0
 	PRINTFORMW 
 	FCOM:SELECTCOM = 1
-;“ñ‰ñ–ÚˆÈ~
+;äºŒå›žç›®ä»¥é™
 ELSE
-	;Š×—ŽÏ‚Ý
-	IF CFLAG:Š×—Ž
+	;é™¥è½æ¸ˆã¿
+	IF CFLAG:é™¥è½
 		PRINTFORMW 
-	;‹ü•žˆóLv3
-	ELSEIF MARK:‹ü•žˆó == 3
+	;å±ˆæœåˆ»å°Lv3
+	ELSEIF MARK:å±ˆæœåˆ»å° == 3
 		PRINTFORMW 
-	;‚»‚êˆÈŠO
+	;ãã‚Œä»¥å¤–
 	ELSE
 		PRINTFORMW 
 	ENDIF
@@ -250,36 +250,36 @@ ENDIF
 RETURN 0
 
 ;-------------------------------------------------
-;ƒAƒiƒ‹ƒoƒCƒu
+;ã‚¢ãƒŠãƒ«ãƒã‚¤ãƒ–
 ;-------------------------------------------------
-@COM_ƒAƒiƒ‹ƒoƒCƒu_KX1
-;‘•’…Žž
-IF TEQUIP:ƒAƒiƒ‹ƒoƒCƒu == 0
-	;‰‚ß‚Ä
+@COM_ã‚¢ãƒŠãƒ«ãƒã‚¤ãƒ–_KX1
+;è£…ç€æ™‚
+IF TEQUIP:ã‚¢ãƒŠãƒ«ãƒã‚¤ãƒ– == 0
+	;åˆã‚ã¦
 	IF FCOM:SELECTCOM == 0
 		PRINTFORMW 
 		FCOM:SELECTCOM = 1
-	;“ñ‰ñ–ÚˆÈ~
+	;äºŒå›žç›®ä»¥é™
 	ELSE
-		;Š×—ŽÏ‚Ý
-		IF CFLAG:Š×—Ž
+		;é™¥è½æ¸ˆã¿
+		IF CFLAG:é™¥è½
 			PRINTFORMW 
-		;‹ü•žˆóLv3
-		ELSEIF MARK:‹ü•žˆó == 3
+		;å±ˆæœåˆ»å°Lv3
+		ELSEIF MARK:å±ˆæœåˆ»å° == 3
 			PRINTFORMW 
-		;‚»‚êˆÈŠO
+		;ãã‚Œä»¥å¤–
 		ELSE
 			PRINTFORMW 
 		ENDIF
 	ENDIF
-;‰ðœŽž
-ELSEIF TEQUIP:ƒAƒiƒ‹ƒoƒCƒu
-	;‰‚ß‚Äi‚Ì‰ðœj
-	;‰ðœŽž‚É‚µ‚©ƒtƒ‰ƒO‚ðˆ—‚µ‚È‚¢‚½‚ßA‘•’…Žž‚Ì‚Ü‚Ü’²‹³I—¹‚·‚é‚Æ‰ðœŒoŒ±‚Í–³‚¢‚±‚Æ‚É‚È‚é
+;è§£é™¤æ™‚
+ELSEIF TEQUIP:ã‚¢ãƒŠãƒ«ãƒã‚¤ãƒ–
+	;åˆã‚ã¦ï¼ˆã®è§£é™¤ï¼‰
+	;è§£é™¤æ™‚ã«ã—ã‹ãƒ•ãƒ©ã‚°ã‚’å‡¦ç†ã—ãªã„ãŸã‚ã€è£…ç€æ™‚ã®ã¾ã¾èª¿æ•™çµ‚äº†ã™ã‚‹ã¨è§£é™¤çµŒé¨“ã¯ç„¡ã„ã“ã¨ã«ãªã‚‹
 	IF FCOM:SELECTCOM == 1
 		PRINTFORMW 
 		FCOM:SELECTCOM = 2
-	;2‰ñ–ÚˆÈ~
+	;2å›žç›®ä»¥é™
 	ELSE
 		PRINTFORMW 
 	ENDIF
@@ -288,36 +288,36 @@ ENDIF
 RETURN 0
 
 ;-------------------------------------------------
-;ƒAƒiƒ‹ƒr[ƒY
+;ã‚¢ãƒŠãƒ«ãƒ“ãƒ¼ã‚º
 ;-------------------------------------------------
-@COM_ƒAƒiƒ‹ƒr[ƒY_KX1
-;‘•’…Žž
-IF TEQUIP:ƒAƒiƒ‹ƒr[ƒY == 0
-	;‰‚ß‚Ä
+@COM_ã‚¢ãƒŠãƒ«ãƒ“ãƒ¼ã‚º_KX1
+;è£…ç€æ™‚
+IF TEQUIP:ã‚¢ãƒŠãƒ«ãƒ“ãƒ¼ã‚º == 0
+	;åˆã‚ã¦
 	IF FCOM:SELECTCOM == 0
 		PRINTFORMW 
 		FCOM:SELECTCOM = 1
-	;“ñ‰ñ–ÚˆÈ~
+	;äºŒå›žç›®ä»¥é™
 	ELSE
-		;Š×—ŽÏ‚Ý
-		IF CFLAG:Š×—Ž
+		;é™¥è½æ¸ˆã¿
+		IF CFLAG:é™¥è½
 			PRINTFORMW 
-		;‹ü•žˆóLv3
-		ELSEIF MARK:‹ü•žˆó == 3
+		;å±ˆæœåˆ»å°Lv3
+		ELSEIF MARK:å±ˆæœåˆ»å° == 3
 			PRINTFORMW 
-		;‚»‚êˆÈŠO
+		;ãã‚Œä»¥å¤–
 		ELSE
 			PRINTFORMW 
 		ENDIF
 	ENDIF
-;‰ðœŽž
-ELSEIF TEQUIP:ƒAƒiƒ‹ƒr[ƒY
-	;‰‚ß‚Äi‚Ì‰ðœj
-	;‰ðœŽž‚É‚µ‚©ƒtƒ‰ƒO‚ðˆ—‚µ‚È‚¢‚½‚ßA‘•’…Žž‚Ì‚Ü‚Ü’²‹³I—¹‚·‚é‚Æ‰ðœŒoŒ±‚Í–³‚¢‚±‚Æ‚É‚È‚é
+;è§£é™¤æ™‚
+ELSEIF TEQUIP:ã‚¢ãƒŠãƒ«ãƒ“ãƒ¼ã‚º
+	;åˆã‚ã¦ï¼ˆã®è§£é™¤ï¼‰
+	;è§£é™¤æ™‚ã«ã—ã‹ãƒ•ãƒ©ã‚°ã‚’å‡¦ç†ã—ãªã„ãŸã‚ã€è£…ç€æ™‚ã®ã¾ã¾èª¿æ•™çµ‚äº†ã™ã‚‹ã¨è§£é™¤çµŒé¨“ã¯ç„¡ã„ã“ã¨ã«ãªã‚‹
 	IF FCOM:SELECTCOM == 1
 		PRINTFORMW 
 		FCOM:SELECTCOM = 2
-	;2‰ñ–ÚˆÈ~
+	;2å›žç›®ä»¥é™
 	ELSE
 		PRINTFORMW 
 	ENDIF
@@ -326,36 +326,36 @@ ENDIF
 RETURN 0
 
 ;-------------------------------------------------
-;Ÿ¯’°Ší
+;æµ£è…¸å™¨
 ;-------------------------------------------------
-@COM_Ÿ¯’°Ší_KX1
-;‘•’…Žž
-IF TEQUIP:Ÿ¯’°Ší == 0
-	;‰‚ß‚Ä
+@COM_æµ£è…¸å™¨_KX1
+;è£…ç€æ™‚
+IF TEQUIP:æµ£è…¸å™¨ == 0
+	;åˆã‚ã¦
 	IF FCOM:SELECTCOM == 0
 		PRINTFORMW 
 		FCOM:SELECTCOM = 1
-	;“ñ‰ñ–ÚˆÈ~
+	;äºŒå›žç›®ä»¥é™
 	ELSE
-		;Š×—ŽÏ‚Ý
-		IF CFLAG:Š×—Ž
+		;é™¥è½æ¸ˆã¿
+		IF CFLAG:é™¥è½
 			PRINTFORMW 
-		;‹ü•žˆóLv3
-		ELSEIF MARK:‹ü•žˆó == 3
+		;å±ˆæœåˆ»å°Lv3
+		ELSEIF MARK:å±ˆæœåˆ»å° == 3
 			PRINTFORMW 
-		;‚»‚êˆÈŠO
+		;ãã‚Œä»¥å¤–
 		ELSE
 			PRINTFORMW 
 		ENDIF
 	ENDIF
-;‰ðœŽž
-ELSEIF TEQUIP:Ÿ¯’°Ší
-	;‰‚ß‚Äi‚Ì‰ðœj
-	;‰ðœŽž‚É‚µ‚©ƒtƒ‰ƒO‚ðˆ—‚µ‚È‚¢‚½‚ßA‘•’…Žž‚Ì‚Ü‚Ü’²‹³I—¹‚·‚é‚Æ‰ðœŒoŒ±‚Í–³‚¢‚±‚Æ‚É‚È‚é
+;è§£é™¤æ™‚
+ELSEIF TEQUIP:æµ£è…¸å™¨
+	;åˆã‚ã¦ï¼ˆã®è§£é™¤ï¼‰
+	;è§£é™¤æ™‚ã«ã—ã‹ãƒ•ãƒ©ã‚°ã‚’å‡¦ç†ã—ãªã„ãŸã‚ã€è£…ç€æ™‚ã®ã¾ã¾èª¿æ•™çµ‚äº†ã™ã‚‹ã¨è§£é™¤çµŒé¨“ã¯ç„¡ã„ã“ã¨ã«ãªã‚‹
 	IF FCOM:SELECTCOM == 1
 		PRINTFORMW 
 		FCOM:SELECTCOM = 2
-	;2‰ñ–ÚˆÈ~
+	;2å›žç›®ä»¥é™
 	ELSE
 		PRINTFORMW 
 	ENDIF
@@ -364,22 +364,22 @@ ENDIF
 RETURN 0
 
 ;-------------------------------------------------
-;‹ó‹CŸ¯’°
+;ç©ºæ°—æµ£è…¸
 ;-------------------------------------------------
-@COM_‹ó‹CŸ¯’°_KX1
-;‰‚ß‚Ä
+@COM_ç©ºæ°—æµ£è…¸_KX1
+;åˆã‚ã¦
 IF FCOM:SELECTCOM == 0
 	PRINTFORMW 
 	FCOM:SELECTCOM = 1
-;“ñ‰ñ–ÚˆÈ~
+;äºŒå›žç›®ä»¥é™
 ELSE
-	;Š×—ŽÏ‚Ý
-	IF CFLAG:Š×—Ž
+	;é™¥è½æ¸ˆã¿
+	IF CFLAG:é™¥è½
 		PRINTFORMW 
-	;‹ü•žˆóLv3
-	ELSEIF MARK:‹ü•žˆó == 3
+	;å±ˆæœåˆ»å°Lv3
+	ELSEIF MARK:å±ˆæœåˆ»å° == 3
 		PRINTFORMW 
-	;‚»‚êˆÈŠO
+	;ãã‚Œä»¥å¤–
 	ELSE
 		PRINTFORMW 
 	ENDIF
@@ -388,36 +388,36 @@ ENDIF
 RETURN 0
 
 ;-------------------------------------------------
-;Šg’£ƒoƒ‹[ƒ“
+;æ‹¡å¼µãƒãƒ«ãƒ¼ãƒ³
 ;-------------------------------------------------
-@COM_Šg’£ƒoƒ‹[ƒ“_KX1
-;‘•’…Žž
-IF TEQUIP:Šg’£ƒoƒ‹[ƒ“ == 0
-	;‰‚ß‚Ä
+@COM_æ‹¡å¼µãƒãƒ«ãƒ¼ãƒ³_KX1
+;è£…ç€æ™‚
+IF TEQUIP:æ‹¡å¼µãƒãƒ«ãƒ¼ãƒ³ == 0
+	;åˆã‚ã¦
 	IF FCOM:SELECTCOM == 0
 		PRINTFORMW 
 		FCOM:SELECTCOM = 1
-	;“ñ‰ñ–ÚˆÈ~
+	;äºŒå›žç›®ä»¥é™
 	ELSE
-		;Š×—ŽÏ‚Ý
-		IF CFLAG:Š×—Ž
+		;é™¥è½æ¸ˆã¿
+		IF CFLAG:é™¥è½
 			PRINTFORMW 
-		;‹ü•žˆóLv3
-		ELSEIF MARK:‹ü•žˆó == 3
+		;å±ˆæœåˆ»å°Lv3
+		ELSEIF MARK:å±ˆæœåˆ»å° == 3
 			PRINTFORMW 
-		;‚»‚êˆÈŠO
+		;ãã‚Œä»¥å¤–
 		ELSE
 			PRINTFORMW 
 		ENDIF
 	ENDIF
-;‰ðœŽž
-ELSEIF TEQUIP:Šg’£ƒoƒ‹[ƒ“
-	;‰‚ß‚Äi‚Ì‰ðœj
-	;‰ðœŽž‚É‚µ‚©ƒtƒ‰ƒO‚ðˆ—‚µ‚È‚¢‚½‚ßA‘•’…Žž‚Ì‚Ü‚Ü’²‹³I—¹‚·‚é‚Æ‰ðœŒoŒ±‚Í–³‚¢‚±‚Æ‚É‚È‚é
+;è§£é™¤æ™‚
+ELSEIF TEQUIP:æ‹¡å¼µãƒãƒ«ãƒ¼ãƒ³
+	;åˆã‚ã¦ï¼ˆã®è§£é™¤ï¼‰
+	;è§£é™¤æ™‚ã«ã—ã‹ãƒ•ãƒ©ã‚°ã‚’å‡¦ç†ã—ãªã„ãŸã‚ã€è£…ç€æ™‚ã®ã¾ã¾èª¿æ•™çµ‚äº†ã™ã‚‹ã¨è§£é™¤çµŒé¨“ã¯ç„¡ã„ã“ã¨ã«ãªã‚‹
 	IF FCOM:SELECTCOM == 1
 		PRINTFORMW 
 		FCOM:SELECTCOM = 2
-	;2‰ñ–ÚˆÈ~
+	;2å›žç›®ä»¥é™
 	ELSE
 		PRINTFORMW 
 	ENDIF
@@ -426,27 +426,27 @@ ENDIF
 RETURN 0
 
 ;-------------------------------------------------
-;ƒAƒiƒ‹“d‹É •ž]A—ê‘®‚Ì‚Ý
+;ã‚¢ãƒŠãƒ«é›»æ¥µ æœå¾“ã€éš·å±žã®ã¿
 ;-------------------------------------------------
-@COM_ƒAƒiƒ‹“d‹É_KX1
-;‘•’…Žž
-IF TEQUIP:ƒAƒiƒ‹“d‹É == 0
-	;‰‚ß‚Ä
+@COM_ã‚¢ãƒŠãƒ«é›»æ¥µ_KX1
+;è£…ç€æ™‚
+IF TEQUIP:ã‚¢ãƒŠãƒ«é›»æ¥µ == 0
+	;åˆã‚ã¦
 	IF FCOM:SELECTCOM == 0
 		PRINTFORMW 
 		FCOM:SELECTCOM = 1
-	;“ñ‰ñ–ÚˆÈ~
+	;äºŒå›žç›®ä»¥é™
 	ELSE
 		PRINTFORMW 
 	ENDIF
-;‰ðœŽž
-ELSEIF TEQUIP:ƒAƒiƒ‹“d‹É
-	;‰‚ß‚Äi‚Ì‰ðœj
-	;‰ðœŽž‚É‚µ‚©ƒtƒ‰ƒO‚ðˆ—‚µ‚È‚¢‚½‚ßA‘•’…Žž‚Ì‚Ü‚Ü’²‹³I—¹‚·‚é‚Æ‰ðœŒoŒ±‚Í–³‚¢‚±‚Æ‚É‚È‚é
+;è§£é™¤æ™‚
+ELSEIF TEQUIP:ã‚¢ãƒŠãƒ«é›»æ¥µ
+	;åˆã‚ã¦ï¼ˆã®è§£é™¤ï¼‰
+	;è§£é™¤æ™‚ã«ã—ã‹ãƒ•ãƒ©ã‚°ã‚’å‡¦ç†ã—ãªã„ãŸã‚ã€è£…ç€æ™‚ã®ã¾ã¾èª¿æ•™çµ‚äº†ã™ã‚‹ã¨è§£é™¤çµŒé¨“ã¯ç„¡ã„ã“ã¨ã«ãªã‚‹
 	IF FCOM:SELECTCOM == 1
 		PRINTFORMW 
 		FCOM:SELECTCOM = 2
-	;2‰ñ–ÚˆÈ~
+	;2å›žç›®ä»¥é™
 	ELSE
 		PRINTFORMW 
 	ENDIF
@@ -455,36 +455,36 @@ ENDIF
 RETURN 0
 
 ;-------------------------------------------------
-;“ñƒvƒ‹ƒLƒƒƒbƒv
+;äºŒãƒ—ãƒ«ã‚­ãƒ£ãƒƒãƒ—
 ;-------------------------------------------------
-@COM_ƒjƒvƒ‹ƒLƒƒƒbƒv_KX1
-;‘•’…Žž
-IF TEQUIP:ƒjƒvƒ‹ƒLƒƒƒbƒv == 0
-	;‰‚ß‚Ä
+@COM_ãƒ‹ãƒ—ãƒ«ã‚­ãƒ£ãƒƒãƒ—_KX1
+;è£…ç€æ™‚
+IF TEQUIP:ãƒ‹ãƒ—ãƒ«ã‚­ãƒ£ãƒƒãƒ— == 0
+	;åˆã‚ã¦
 	IF FCOM:SELECTCOM == 0
 		PRINTFORMW 
 		FCOM:SELECTCOM = 1
-	;“ñ‰ñ–ÚˆÈ~
+	;äºŒå›žç›®ä»¥é™
 	ELSE
-		;Š×—ŽÏ‚Ý
-		IF CFLAG:Š×—Ž
+		;é™¥è½æ¸ˆã¿
+		IF CFLAG:é™¥è½
 			PRINTFORMW 
-		;‹ü•žˆóLv3
-		ELSEIF MARK:‹ü•žˆó == 3
+		;å±ˆæœåˆ»å°Lv3
+		ELSEIF MARK:å±ˆæœåˆ»å° == 3
 			PRINTFORMW 
-		;‚»‚êˆÈŠO
+		;ãã‚Œä»¥å¤–
 		ELSE
 			PRINTFORMW 
 		ENDIF
 	ENDIF
-;‰ðœŽž
-ELSEIF TEQUIP:ƒjƒvƒ‹ƒLƒƒƒbƒv
-	;‰‚ß‚Äi‚Ì‰ðœj
-	;‰ðœŽž‚É‚µ‚©ƒtƒ‰ƒO‚ðˆ—‚µ‚È‚¢‚½‚ßA‘•’…Žž‚Ì‚Ü‚Ü’²‹³I—¹‚·‚é‚Æ‰ðœŒoŒ±‚Í–³‚¢‚±‚Æ‚É‚È‚é
+;è§£é™¤æ™‚
+ELSEIF TEQUIP:ãƒ‹ãƒ—ãƒ«ã‚­ãƒ£ãƒƒãƒ—
+	;åˆã‚ã¦ï¼ˆã®è§£é™¤ï¼‰
+	;è§£é™¤æ™‚ã«ã—ã‹ãƒ•ãƒ©ã‚°ã‚’å‡¦ç†ã—ãªã„ãŸã‚ã€è£…ç€æ™‚ã®ã¾ã¾èª¿æ•™çµ‚äº†ã™ã‚‹ã¨è§£é™¤çµŒé¨“ã¯ç„¡ã„ã“ã¨ã«ãªã‚‹
 	IF FCOM:SELECTCOM == 1
 		PRINTFORMW 
 		FCOM:SELECTCOM = 2
-	;2‰ñ–ÚˆÈ~
+	;2å›žç›®ä»¥é™
 	ELSE
 		PRINTFORMW 
 	ENDIF
@@ -493,22 +493,22 @@ ENDIF
 RETURN 0
 
 ;-------------------------------------------------
-;“ûŽñƒ[ƒ^[
+;ä¹³é¦–ãƒ­ãƒ¼ã‚¿ãƒ¼
 ;-------------------------------------------------
-@COM_“ûŽñƒ[ƒ^[_KX1
-;‰‚ß‚Ä
+@COM_ä¹³é¦–ãƒ­ãƒ¼ã‚¿ãƒ¼_KX1
+;åˆã‚ã¦
 IF FCOM:SELECTCOM == 0
 	PRINTFORMW 
 	FCOM:SELECTCOM = 1
-;“ñ‰ñ–ÚˆÈ~
+;äºŒå›žç›®ä»¥é™
 ELSE
-	;Š×—ŽÏ‚Ý
-	IF CFLAG:Š×—Ž
+	;é™¥è½æ¸ˆã¿
+	IF CFLAG:é™¥è½
 		PRINTFORMW 
-	;‹ü•žˆóLv3
-	ELSEIF MARK:‹ü•žˆó == 3
+	;å±ˆæœåˆ»å°Lv3
+	ELSEIF MARK:å±ˆæœåˆ»å° == 3
 		PRINTFORMW 
-	;‚»‚êˆÈŠO
+	;ãã‚Œä»¥å¤–
 	ELSE
 		PRINTFORMW 
 	ENDIF
@@ -517,36 +517,36 @@ ENDIF
 RETURN 0
 
 ;-------------------------------------------------
-;ï“ûŠí
+;æ¾ä¹³å™¨
 ;-------------------------------------------------
-@COM_ï“ûŠí_KX1
-;‘•’…Žž
-IF TEQUIP:ï“ûŠí == 0
-	;‰‚ß‚Ä
+@COM_æ¾ä¹³å™¨_KX1
+;è£…ç€æ™‚
+IF TEQUIP:æ¾ä¹³å™¨ == 0
+	;åˆã‚ã¦
 	IF FCOM:SELECTCOM == 0
 		PRINTFORMW 
 		FCOM:SELECTCOM = 1
-	;“ñ‰ñ–ÚˆÈ~
+	;äºŒå›žç›®ä»¥é™
 	ELSE
-		;Š×—ŽÏ‚Ý
-		IF CFLAG:Š×—Ž
+		;é™¥è½æ¸ˆã¿
+		IF CFLAG:é™¥è½
 			PRINTFORMW 
-		;‹ü•žˆóLv3
-		ELSEIF MARK:‹ü•žˆó == 3
+		;å±ˆæœåˆ»å°Lv3
+		ELSEIF MARK:å±ˆæœåˆ»å° == 3
 			PRINTFORMW 
-		;‚»‚êˆÈŠO
+		;ãã‚Œä»¥å¤–
 		ELSE
 			PRINTFORMW 
 		ENDIF
 	ENDIF
-;‰ðœŽž
-ELSEIF TEQUIP:ï“ûŠí
-	;‰‚ß‚Äi‚Ì‰ðœj
-	;‰ðœŽž‚É‚µ‚©ƒtƒ‰ƒO‚ðˆ—‚µ‚È‚¢‚½‚ßA‘•’…Žž‚Ì‚Ü‚Ü’²‹³I—¹‚·‚é‚Æ‰ðœŒoŒ±‚Í–³‚¢‚±‚Æ‚É‚È‚é
+;è§£é™¤æ™‚
+ELSEIF TEQUIP:æ¾ä¹³å™¨
+	;åˆã‚ã¦ï¼ˆã®è§£é™¤ï¼‰
+	;è§£é™¤æ™‚ã«ã—ã‹ãƒ•ãƒ©ã‚°ã‚’å‡¦ç†ã—ãªã„ãŸã‚ã€è£…ç€æ™‚ã®ã¾ã¾èª¿æ•™çµ‚äº†ã™ã‚‹ã¨è§£é™¤çµŒé¨“ã¯ç„¡ã„ã“ã¨ã«ãªã‚‹
 	IF FCOM:SELECTCOM == 1
 		PRINTFORMW 
 		FCOM:SELECTCOM = 2
-	;2‰ñ–ÚˆÈ~
+	;2å›žç›®ä»¥é™
 	ELSE
 		PRINTFORMW 
 	ENDIF
@@ -555,27 +555,27 @@ ENDIF
 RETURN 0
 
 ;-------------------------------------------------
-;“û–[“d‹É •ž]A—ê‘®‚Ì‚Ý
+;ä¹³æˆ¿é›»æ¥µ æœå¾“ã€éš·å±žã®ã¿
 ;-------------------------------------------------
-@COM_“û–[“d‹É_KX1
-;‘•’…Žž
-IF TEQUIP:“û–[“d‹É == 0
-	;‰‚ß‚Ä
+@COM_ä¹³æˆ¿é›»æ¥µ_KX1
+;è£…ç€æ™‚
+IF TEQUIP:ä¹³æˆ¿é›»æ¥µ == 0
+	;åˆã‚ã¦
 	IF FCOM:SELECTCOM == 0
 		PRINTFORMW 
 		FCOM:SELECTCOM = 1
-	;“ñ‰ñ–ÚˆÈ~
+	;äºŒå›žç›®ä»¥é™
 	ELSE
 		PRINTFORMW 
 	ENDIF
-;‰ðœŽž
-ELSEIF TEQUIP:“û–[“d‹É
-	;‰‚ß‚Äi‚Ì‰ðœj
-	;‰ðœŽž‚É‚µ‚©ƒtƒ‰ƒO‚ðˆ—‚µ‚È‚¢‚½‚ßA‘•’…Žž‚Ì‚Ü‚Ü’²‹³I—¹‚·‚é‚Æ‰ðœŒoŒ±‚Í–³‚¢‚±‚Æ‚É‚È‚é
+;è§£é™¤æ™‚
+ELSEIF TEQUIP:ä¹³æˆ¿é›»æ¥µ
+	;åˆã‚ã¦ï¼ˆã®è§£é™¤ï¼‰
+	;è§£é™¤æ™‚ã«ã—ã‹ãƒ•ãƒ©ã‚°ã‚’å‡¦ç†ã—ãªã„ãŸã‚ã€è£…ç€æ™‚ã®ã¾ã¾èª¿æ•™çµ‚äº†ã™ã‚‹ã¨è§£é™¤çµŒé¨“ã¯ç„¡ã„ã“ã¨ã«ãªã‚‹
 	IF FCOM:SELECTCOM == 1
 		PRINTFORMW 
 		FCOM:SELECTCOM = 2
-	;2‰ñ–ÚˆÈ~
+	;2å›žç›®ä»¥é™
 	ELSE
 		PRINTFORMW 
 	ENDIF
@@ -584,22 +584,22 @@ ENDIF
 RETURN 0
 
 ;-------------------------------------------------
-;ƒ[ƒVƒ‡ƒ“
+;ãƒ­ãƒ¼ã‚·ãƒ§ãƒ³
 ;-------------------------------------------------
-@COM_ƒ[ƒVƒ‡ƒ“_KX1
-;‰‚ß‚Ä
+@COM_ãƒ­ãƒ¼ã‚·ãƒ§ãƒ³_KX1
+;åˆã‚ã¦
 IF FCOM:SELECTCOM == 0
 	PRINTFORMW 
 	FCOM:SELECTCOM = 1
-;“ñ‰ñ–ÚˆÈ~
+;äºŒå›žç›®ä»¥é™
 ELSE
-	;Š×—ŽÏ‚Ý
-	IF CFLAG:Š×—Ž
+	;é™¥è½æ¸ˆã¿
+	IF CFLAG:é™¥è½
 		PRINTFORMW 
-	;‹ü•žˆóLv3
-	ELSEIF MARK:‹ü•žˆó == 3
+	;å±ˆæœåˆ»å°Lv3
+	ELSEIF MARK:å±ˆæœåˆ»å° == 3
 		PRINTFORMW 
-	;‚»‚êˆÈŠO
+	;ãã‚Œä»¥å¤–
 	ELSE
 		PRINTFORMW 
 	ENDIF
@@ -608,22 +608,22 @@ ENDIF
 RETURN 0
 
 ;-------------------------------------------------
-;ƒ[ƒVƒ‡ƒ“’“ü
+;ãƒ­ãƒ¼ã‚·ãƒ§ãƒ³æ³¨å…¥
 ;-------------------------------------------------
-@COM_ƒ[ƒVƒ‡ƒ“’“ü_KX1
-;‰‚ß‚Ä
+@COM_ãƒ­ãƒ¼ã‚·ãƒ§ãƒ³æ³¨å…¥_KX1
+;åˆã‚ã¦
 IF FCOM:SELECTCOM == 0
 	PRINTFORMW 
 	FCOM:SELECTCOM = 1
-;“ñ‰ñ–ÚˆÈ~
+;äºŒå›žç›®ä»¥é™
 ELSE
-	;Š×—ŽÏ‚Ý
-	IF CFLAG:Š×—Ž
+	;é™¥è½æ¸ˆã¿
+	IF CFLAG:é™¥è½
 		PRINTFORMW 
-	;‹ü•žˆóLv3
-	ELSEIF MARK:‹ü•žˆó == 3
+	;å±ˆæœåˆ»å°Lv3
+	ELSEIF MARK:å±ˆæœåˆ»å° == 3
 		PRINTFORMW 
-	;‚»‚êˆÈŠO
+	;ãã‚Œä»¥å¤–
 	ELSE
 		PRINTFORMW 
 	ENDIF
@@ -632,22 +632,22 @@ ENDIF
 RETURN 0
 
 ;-------------------------------------------------
-;›Z–ò
+;åªšè–¬
 ;-------------------------------------------------
-@COM_›Z–ò_KX1
-;‰‚ß‚Ä
+@COM_åªšè–¬_KX1
+;åˆã‚ã¦
 IF FCOM:SELECTCOM == 0
 	PRINTFORMW 
 	FCOM:SELECTCOM = 1
-;“ñ‰ñ–ÚˆÈ~
+;äºŒå›žç›®ä»¥é™
 ELSE
-	;Š×—ŽÏ‚Ý
-	IF CFLAG:Š×—Ž
+	;é™¥è½æ¸ˆã¿
+	IF CFLAG:é™¥è½
 		PRINTFORMW 
-	;‹ü•žˆóLv3
-	ELSEIF MARK:‹ü•žˆó == 3
+	;å±ˆæœåˆ»å°Lv3
+	ELSEIF MARK:å±ˆæœåˆ»å° == 3
 		PRINTFORMW 
-	;‚»‚êˆÈŠO
+	;ãã‚Œä»¥å¤–
 	ELSE
 		PRINTFORMW 
 	ENDIF
@@ -656,22 +656,22 @@ ENDIF
 RETURN 0
 
 ;-------------------------------------------------
-;—˜”AÜ
+;åˆ©å°¿å‰¤
 ;-------------------------------------------------
-@COM_—˜”AÜ_KX1
-;‰‚ß‚Ä
+@COM_åˆ©å°¿å‰¤_KX1
+;åˆã‚ã¦
 IF FCOM:SELECTCOM == 0
 	PRINTFORMW 
 	FCOM:SELECTCOM = 1
-;“ñ‰ñ–ÚˆÈ~
+;äºŒå›žç›®ä»¥é™
 ELSE
-	;Š×—ŽÏ‚Ý
-	IF CFLAG:Š×—Ž
+	;é™¥è½æ¸ˆã¿
+	IF CFLAG:é™¥è½
 		PRINTFORMW 
-	;‹ü•žˆóLv3
-	ELSEIF MARK:‹ü•žˆó == 3
+	;å±ˆæœåˆ»å°Lv3
+	ELSEIF MARK:å±ˆæœåˆ»å° == 3
 		PRINTFORMW 
-	;‚»‚êˆÈŠO
+	;ãã‚Œä»¥å¤–
 	ELSE
 		PRINTFORMW 
 	ENDIF
@@ -680,22 +680,22 @@ ENDIF
 RETURN 0
 
 ;-------------------------------------------------
-;‹­¸_–ò
+;å¼·ç²¾ç¥žè–¬
 ;-------------------------------------------------
-@COM_‹­¸_–ò_KX1
-;‰‚ß‚Ä
+@COM_å¼·ç²¾ç¥žè–¬_KX1
+;åˆã‚ã¦
 IF FCOM:SELECTCOM == 0
 	PRINTFORMW 
 	FCOM:SELECTCOM = 1
-;“ñ‰ñ–ÚˆÈ~
+;äºŒå›žç›®ä»¥é™
 ELSE
-	;Š×—ŽÏ‚Ý
-	IF CFLAG:Š×—Ž
+	;é™¥è½æ¸ˆã¿
+	IF CFLAG:é™¥è½
 		PRINTFORMW 
-	;‹ü•žˆóLv3
-	ELSEIF MARK:‹ü•žˆó == 3
+	;å±ˆæœåˆ»å°Lv3
+	ELSEIF MARK:å±ˆæœåˆ»å° == 3
 		PRINTFORMW 
-	;‚»‚êˆÈŠO
+	;ãã‚Œä»¥å¤–
 	ELSE
 		PRINTFORMW 
 	ENDIF
@@ -704,36 +704,36 @@ ENDIF
 RETURN 0
 
 ;-------------------------------------------------
-;ƒrƒfƒIƒJƒƒ‰
+;ãƒ“ãƒ‡ã‚ªã‚«ãƒ¡ãƒ©
 ;-------------------------------------------------
-@COM_ƒrƒfƒIƒJƒƒ‰_KX1
-;‘•’…Žž
-IF TEQUIP:ƒrƒfƒIƒJƒƒ‰ == 0
-	;‰‚ß‚Ä
+@COM_ãƒ“ãƒ‡ã‚ªã‚«ãƒ¡ãƒ©_KX1
+;è£…ç€æ™‚
+IF TEQUIP:ãƒ“ãƒ‡ã‚ªã‚«ãƒ¡ãƒ© == 0
+	;åˆã‚ã¦
 	IF FCOM:SELECTCOM == 0
 		PRINTFORMW 
 		FCOM:SELECTCOM = 1
-	;“ñ‰ñ–ÚˆÈ~
+	;äºŒå›žç›®ä»¥é™
 	ELSE
-		;Š×—ŽÏ‚Ý
-		IF CFLAG:Š×—Ž
+		;é™¥è½æ¸ˆã¿
+		IF CFLAG:é™¥è½
 			PRINTFORMW 
-		;‹ü•žˆóLv3
-		ELSEIF MARK:‹ü•žˆó == 3
+		;å±ˆæœåˆ»å°Lv3
+		ELSEIF MARK:å±ˆæœåˆ»å° == 3
 			PRINTFORMW 
-		;‚»‚êˆÈŠO
+		;ãã‚Œä»¥å¤–
 		ELSE
 			PRINTFORMW 
 		ENDIF
 	ENDIF
-;‰ðœŽž
-ELSEIF TEQUIP:ƒrƒfƒIƒJƒƒ‰
-	;‰‚ß‚Äi‚Ì‰ðœj
-	;‰ðœŽž‚É‚µ‚©ƒtƒ‰ƒO‚ðˆ—‚µ‚È‚¢‚½‚ßAŽB‰eŽž‚Ì‚Ü‚Ü’²‹³I—¹‚·‚é‚Æ‰ðœŒoŒ±‚Í–³‚¢‚±‚Æ‚É‚È‚é
+;è§£é™¤æ™‚
+ELSEIF TEQUIP:ãƒ“ãƒ‡ã‚ªã‚«ãƒ¡ãƒ©
+	;åˆã‚ã¦ï¼ˆã®è§£é™¤ï¼‰
+	;è§£é™¤æ™‚ã«ã—ã‹ãƒ•ãƒ©ã‚°ã‚’å‡¦ç†ã—ãªã„ãŸã‚ã€æ’®å½±æ™‚ã®ã¾ã¾èª¿æ•™çµ‚äº†ã™ã‚‹ã¨è§£é™¤çµŒé¨“ã¯ç„¡ã„ã“ã¨ã«ãªã‚‹
 	IF FCOM:SELECTCOM == 1
 		PRINTFORMW 
 		FCOM:SELECTCOM = 2
-	;2‰ñ–ÚˆÈ~
+	;2å›žç›®ä»¥é™
 	ELSE
 		PRINTFORMW 
 	ENDIF
@@ -742,22 +742,22 @@ ENDIF
 RETURN 0
 
 ;-------------------------------------------------
-;ŽÊ^ŽB‰e
+;å†™çœŸæ’®å½±
 ;-------------------------------------------------
-@COM_ŽÊ^ŽB‰e_KX1
-;‰‚ß‚Ä
+@COM_å†™çœŸæ’®å½±_KX1
+;åˆã‚ã¦
 IF FCOM:SELECTCOM == 0
 	PRINTFORMW 
 	FCOM:SELECTCOM = 1
-;“ñ‰ñ–ÚˆÈ~
+;äºŒå›žç›®ä»¥é™
 ELSE
-	;Š×—ŽÏ‚Ý
-	IF CFLAG:Š×—Ž
+	;é™¥è½æ¸ˆã¿
+	IF CFLAG:é™¥è½
 		PRINTFORMW 
-	;‹ü•žˆóLv3
-	ELSEIF MARK:‹ü•žˆó == 3
+	;å±ˆæœåˆ»å°Lv3
+	ELSEIF MARK:å±ˆæœåˆ»å° == 3
 		PRINTFORMW 
-	;‚»‚êˆÈŠO
+	;ãã‚Œä»¥å¤–
 	ELSE
 		PRINTFORMW 
 	ENDIF

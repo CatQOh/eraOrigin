@@ -1,6 +1,6 @@
-@SHOW_SHOP
-#DIM DYNAMIC •Žè‰Â”\
-#DIM DYNAMIC ’²‹³‰Â”\
+ï»¿@SHOW_SHOP
+#DIM DYNAMIC åŠ©æ‰‹å¯èƒ½
+#DIM DYNAMIC èª¿æ•™å¯èƒ½
 VARSET LOCAL, 0
 
 VARLINE = 0
@@ -12,239 +12,239 @@ REPEAT 10000
 		ADDCHARA COUNT
 REND
 
-;Š×—ŽÏ‚Ý‚È‚çŠ×—ŽÏ‚Ýƒtƒ‰ƒO‚ðƒIƒ“
+;é™¥è½æ¸ˆã¿ãªã‚‰é™¥è½æ¸ˆã¿ãƒ•ãƒ©ã‚°ã‚’ã‚ªãƒ³
 IF TARGET > 0
 	IF FALLTYPE(TARGET) != 0
-		CFLAG:Š×—Ž = 1
+		CFLAG:é™¥è½ = 1
 	ELSE
-		CFLAG:Š×—Ž = 0
+		CFLAG:é™¥è½ = 0
 	ENDIF
 ENDIF
 
-;—j“úŒvŽZ
-FLAG:—j“ú = ZELLER(YEAR,MONTH,DAYS)
+;æ›œæ—¥è¨ˆç®—
+FLAG:æ›œæ—¥ = ZELLER(YEAR,MONTH,DAYS)
 
-;j“úE‹L”O“ú‚ÌÝ’è
+;ç¥æ—¥ãƒ»è¨˜å¿µæ—¥ã®è¨­å®š
 CALL HOLIDAY
 
-;‘ÎÛ‚©•Žè‚ªŽg—p•s‰Â‚Ìê‡‚ÍŠO‚·
-SIF TARGET >= 0 && CFLAG:Žg—p•s‰Â
+;å¯¾è±¡ã‹åŠ©æ‰‹ãŒä½¿ç”¨ä¸å¯ã®å ´åˆã¯å¤–ã™
+SIF TARGET >= 0 && CFLAG:ä½¿ç”¨ä¸å¯
 	TARGET = -1
-SIF ASSI >= 0 && CFLAG:ASSI:Žg—p•s‰Â
+SIF ASSI >= 0 && CFLAG:ASSI:ä½¿ç”¨ä¸å¯
 	ASSI = -1
 
 CALL SHOP_UI
 
-;Œ»•Žè{Œ³•Žè‚ÌƒLƒƒƒ‰”‚ÌŠm”F
+;ç¾åŠ©æ‰‹ï¼‹å…ƒåŠ©æ‰‹ã®ã‚­ãƒ£ãƒ©æ•°ã®ç¢ºèª
 REPEAT CHARANUM
-	;ˆçŽ™•”‰®‚ÉˆÚ“®‚µ‚Ä‚¢‚éƒLƒƒƒ‰‚ÍœŠO
+	;è‚²å…éƒ¨å±‹ã«ç§»å‹•ã—ã¦ã„ã‚‹ã‚­ãƒ£ãƒ©ã¯é™¤å¤–
 	SIF CHECK_CHILD_CARE(COUNT)
 		CONTINUE
-	;•Žè‰Â”\
-	SIF CFLAG:COUNT:ó‘Ô == 2
-		•Žè‰Â”\++
+	;åŠ©æ‰‹å¯èƒ½
+	SIF CFLAG:COUNT:çŠ¶æ…‹ == 2
+		åŠ©æ‰‹å¯èƒ½++
 REND
 
-;TARGET‚Ì‘¼‚É’²‹³‚Å‚«‚éƒLƒƒƒ‰‚ª‚¢‚é‚©‚Ç‚¤‚©
+;TARGETã®ä»–ã«èª¿æ•™ã§ãã‚‹ã‚­ãƒ£ãƒ©ãŒã„ã‚‹ã‹ã©ã†ã‹
 REPEAT CHARANUM
-	;Žål‚ÍœŠO
+	;ä¸»äººã¯é™¤å¤–
 	SIF COUNT == MASTER
 		CONTINUE
-	;“z—ê‚àœŠO
+	;å¥´éš·ã‚‚é™¤å¤–
 	SIF COUNT == TARGET
 		CONTINUE
-	;Žg—p•s‰Â‚ÍœŠO
-	SIF CFLAG:COUNT:Žg—p•s‰Â
+	;ä½¿ç”¨ä¸å¯ã¯é™¤å¤–
+	SIF CFLAG:COUNT:ä½¿ç”¨ä¸å¯
 		CONTINUE
-	;ˆçŽ™•”‰®‚ÉˆÚ“®‚µ‚Ä‚¢‚éƒLƒƒƒ‰‚ÍœŠO
+	;è‚²å…éƒ¨å±‹ã«ç§»å‹•ã—ã¦ã„ã‚‹ã‚­ãƒ£ãƒ©ã¯é™¤å¤–
 	SIF CHECK_CHILD_CARE(COUNT)
 		CONTINUE
-	’²‹³‰Â”\++
+	èª¿æ•™å¯èƒ½++
 REND
 
 VARSET LOCALS, 
 
-;ƒRƒ}ƒ“ƒh–¼‚ÍŒ»Ý‘SŠp4•¶Žš‚Ì”ÍˆÍ‚Å“ˆê
-;100”Ô‘ä‚Ís“®‚ÌƒRƒ}ƒ“ƒh
-LOCALS = @
-;TARGET‚ª‚¢‚ê‚Î•\Ž¦
+;ã‚³ãƒžãƒ³ãƒ‰åã¯ç¾åœ¨å…¨è§’4æ–‡å­—ã®ç¯„å›²ã§çµ±ä¸€
+;100ç•ªå°ã¯è¡Œå‹•ã®ã‚³ãƒžãƒ³ãƒ‰
+LOCALS = ã€€
+;TARGETãŒã„ã‚Œã°è¡¨ç¤º
 IF TARGET > 0
 	SELECTCASE FALLTYPE(TARGET)
 		CASE 1
-			LOCALS:1 = %SET_TOOLTIP("[100] - ˆ¤‚ðˆç‚Þ ", @"%CALLNAME:TARGET%‚ÆK‚¹‚ÈŽžŠÔ‚ð‰ß‚²‚µ‚Ü‚·")%
+			LOCALS:1 = %SET_TOOLTIP("[100] - æ„›ã‚’è‚²ã‚€ ", @"%CALLNAME:TARGET%ã¨å¹¸ã›ãªæ™‚é–“ã‚’éŽã”ã—ã¾ã™")%
 		CASE 2
-			LOCALS:1 = %SET_TOOLTIP("[100] - —‚ê‡‚¤ ", @"%CALLNAME:TARGET%‚ÆŒÝ‚¢‚Ì—~–]‚ð–ž‚½‚µ‡‚¢‚Ü‚·")%
+			LOCALS:1 = %SET_TOOLTIP("[100] - ä¹±ã‚Œåˆã† ", @"%CALLNAME:TARGET%ã¨äº’ã„ã®æ¬²æœ›ã‚’æº€ãŸã—åˆã„ã¾ã™")%
 		CASE 3
-			LOCALS:1 = %SET_TOOLTIP("[100] - ç^‚ð‚·‚é ", @"%CALLNAME:TARGET%‚ÉŒ ˆÐ‚ðŽ¦‚µ‚Ü‚·")%
+			LOCALS:1 = %SET_TOOLTIP("[100] - èº¾ã‚’ã™ã‚‹ ", @"%CALLNAME:TARGET%ã«æ¨©å¨ã‚’ç¤ºã—ã¾ã™")%
 		CASEELSE
-			LOCALS:1 = %SET_TOOLTIP("[100] - ’²‹³ŠJŽn ", @"%CALLNAME:TARGET%‚ð’²‹³‚µ‚Ü‚·")%
+			LOCALS:1 = %SET_TOOLTIP("[100] - èª¿æ•™é–‹å§‹ ", @"%CALLNAME:TARGET%ã‚’èª¿æ•™ã—ã¾ã™")%
 	ENDSELECT
 ELSE
-	LOCALS:1 = %SET_TOOLTIP("[---] - ’²‹³ŠJŽn ", "[202] - ‘ÎÛ•ÏX ‚©‚ç’²‹³‘ÎÛ‚ð‘I‘ð‚µ‚Ä‚­‚¾‚³‚¢", 0, "gray")%
+	LOCALS:1 = %SET_TOOLTIP("[---] - èª¿æ•™é–‹å§‹ ", "[202] - å¯¾è±¡å¤‰æ›´ ã‹ã‚‰èª¿æ•™å¯¾è±¡ã‚’é¸æŠžã—ã¦ãã ã•ã„", 0, "gray")%
 ENDIF
-;–³ðŒ‚Å•\Ž¦
-LOCALS:2 = %SET_TOOLTIP("[101] - ‹xŒe     ", @"\@ TIME == 0 ? –é‚Ü‚Å‹xŒe‚µ‚Ü‚· # —‚“ú‚Ü‚Å‹xŒe‚µ‚Ü‚· \@")%
+;ç„¡æ¡ä»¶ã§è¡¨ç¤º
+LOCALS:2 = %SET_TOOLTIP("[101] - ä¼‘æ†©     ", @"\@ TIME == 0 ? å¤œã¾ã§ä¼‘æ†©ã—ã¾ã™ # ç¿Œæ—¥ã¾ã§ä¼‘æ†©ã—ã¾ã™ \@")%
 
 HTML_PRINT LOCALS+LOCALS:1+LOCALS:2
 
-;200”Ô‘ä‚Í“z—êŠÖ˜A‚ÌƒRƒ}ƒ“ƒh
-LOCALS = @
-;’²‹³ŽÒŠÜ‚ß’N‚©‚ª‚¢‚ê‚Î•\Ž¦ Œ»Ý‚Í•K‚¸•\Ž¦‚³‚ê‚é
-LOCALS:1 = %SET_TOOLTIP("[200] - ”\—Í•\Ž¦ ", @"ƒLƒƒƒ‰‚Ì—lX‚Èî•ñ‚ð•\Ž¦‚µ‚Ü‚·")%
-;“z—ê‚ªˆêl‚Å‚à‚¢‚ê‚Î•\Ž¦
+;200ç•ªå°ã¯å¥´éš·é–¢é€£ã®ã‚³ãƒžãƒ³ãƒ‰
+LOCALS = ã€€
+;èª¿æ•™è€…å«ã‚èª°ã‹ãŒã„ã‚Œã°è¡¨ç¤º ç¾åœ¨ã¯å¿…ãšè¡¨ç¤ºã•ã‚Œã‚‹
+LOCALS:1 = %SET_TOOLTIP("[200] - èƒ½åŠ›è¡¨ç¤º ", @"ã‚­ãƒ£ãƒ©ã®æ§˜ã€…ãªæƒ…å ±ã‚’è¡¨ç¤ºã—ã¾ã™")%
+;å¥´éš·ãŒä¸€äººã§ã‚‚ã„ã‚Œã°è¡¨ç¤º
 IF CHARANUM > 1
-	LOCALS:2 = %SET_TOOLTIP("[201] - ”\—Íã¸ ", @"ƒLƒƒƒ‰‚Ì”\—Í‚ðã¸‚³‚¹‚Ü‚·")%
+	LOCALS:2 = %SET_TOOLTIP("[201] - èƒ½åŠ›ä¸Šæ˜‡ ", @"ã‚­ãƒ£ãƒ©ã®èƒ½åŠ›ã‚’ä¸Šæ˜‡ã•ã›ã¾ã™")%
 ELSE
-	LOCALS:2 = %SET_TOOLTIP("[---] - ”\—Íã¸ ", "’²‹³‰Â”\‚ÈƒLƒƒƒ‰‚ª‹‚Ü‚¹‚ñ", 0, "gray")%
+	LOCALS:2 = %SET_TOOLTIP("[---] - èƒ½åŠ›ä¸Šæ˜‡ ", "èª¿æ•™å¯èƒ½ãªã‚­ãƒ£ãƒ©ãŒå±…ã¾ã›ã‚“", 0, "gray")%
 ENDIF
-IF ’²‹³‰Â”\
-	LOCALS:3 = %SET_TOOLTIP("[202] - ‘ÎÛ•ÏX ", "‚¨‘ŠŽè‚ð•ÏX‚µ‚Ü‚·")%
+IF èª¿æ•™å¯èƒ½
+	LOCALS:3 = %SET_TOOLTIP("[202] - å¯¾è±¡å¤‰æ›´ ", "ãŠç›¸æ‰‹ã‚’å¤‰æ›´ã—ã¾ã™")%
 ELSE
 	IF TARGET > 0
-		LOCALS:3 = %SET_TOOLTIP("[---] - ‘ÎÛ•ÏX ", @"%CALLNAME:TARGET%ˆÈŠO‚ÉƒLƒƒƒ‰‚ª‹‚Ü‚¹‚ñ", 0, "gray")%
+		LOCALS:3 = %SET_TOOLTIP("[---] - å¯¾è±¡å¤‰æ›´ ", @"%CALLNAME:TARGET%ä»¥å¤–ã«ã‚­ãƒ£ãƒ©ãŒå±…ã¾ã›ã‚“", 0, "gray")%
 	ELSE
-		LOCALS:3 = %SET_TOOLTIP("[---] - ‘ÎÛ•ÏX ", "ƒLƒƒƒ‰‚ª‹‚Ü‚¹‚ñ", 0, "gray")%
+		LOCALS:3 = %SET_TOOLTIP("[---] - å¯¾è±¡å¤‰æ›´ ", "ã‚­ãƒ£ãƒ©ãŒå±…ã¾ã›ã‚“", 0, "gray")%
 	ENDIF
 ENDIF
-;•Žè‰Â”\ƒLƒƒƒ‰‚ªˆêl‚Å‚à‚¢‚ê‚Î•\Ž¦
-IF •Žè‰Â”\
+;åŠ©æ‰‹å¯èƒ½ã‚­ãƒ£ãƒ©ãŒä¸€äººã§ã‚‚ã„ã‚Œã°è¡¨ç¤º
+IF åŠ©æ‰‹å¯èƒ½
 	IF ASSI > 0
-		LOCALS:4 = %SET_TOOLTIP("[203] - •Žè•ÏX ", "•Žè‚ð•ÏX‚µ‚Ü‚·")%
+		LOCALS:4 = %SET_TOOLTIP("[203] - åŠ©æ‰‹å¤‰æ›´ ", "åŠ©æ‰‹ã‚’å¤‰æ›´ã—ã¾ã™")%
 	ELSE
-		LOCALS:4 = %SET_TOOLTIP("[203] - •Žè•ÏX ", "•Žè‚ð‘Io‚µ‚Ü‚·")%
+		LOCALS:4 = %SET_TOOLTIP("[203] - åŠ©æ‰‹å¤‰æ›´ ", "åŠ©æ‰‹ã‚’é¸å‡ºã—ã¾ã™")%
 	ENDIF
 ELSE
-	LOCALS:4 = %SET_TOOLTIP("[---] - •Žè•ÏX ", "•Žè‚É‘I‚×‚éƒLƒƒƒ‰‚Í‹‚Ü‚¹‚ñ", 0, "gray")%
+	LOCALS:4 = %SET_TOOLTIP("[---] - åŠ©æ‰‹å¤‰æ›´ ", "åŠ©æ‰‹ã«é¸ã¹ã‚‹ã‚­ãƒ£ãƒ©ã¯å±…ã¾ã›ã‚“", 0, "gray")%
 ENDIF
 
 HTML_PRINT LOCALS+LOCALS:1+LOCALS:2+LOCALS:3+LOCALS:4
 
-;300”Ô‘ä‚Íw“üE”„‹p‚ÌƒRƒ}ƒ“ƒh
-LOCALS = @
-;–³ðŒ‚Å•\Ž¦
-LOCALS:1 = %SET_TOOLTIP("[300] - ƒAƒCƒeƒ€ ", "ˆú‹ï‚â‘fŽ¿’Ç‰Á‚È‚Ç‚ÌƒAƒCƒeƒ€‚ðw“ü‚µ‚Ü‚·")%
+;300ç•ªå°ã¯è³¼å…¥ãƒ»å£²å´ã®ã‚³ãƒžãƒ³ãƒ‰
+LOCALS = ã€€
+;ç„¡æ¡ä»¶ã§è¡¨ç¤º
+LOCALS:1 = %SET_TOOLTIP("[300] - ã‚¢ã‚¤ãƒ†ãƒ  ", "æ·«å…·ã‚„ç´ è³ªè¿½åŠ ãªã©ã®ã‚¢ã‚¤ãƒ†ãƒ ã‚’è³¼å…¥ã—ã¾ã™")%
 
 HTML_PRINT LOCALS+LOCALS:1
 
-;400”Ô‘ä‚ÍƒZ[ƒuEƒ[ƒhEƒIƒvƒVƒ‡ƒ“‚ÌƒVƒXƒeƒ€ƒRƒ}ƒ“ƒh
-;ƒZ[ƒuEƒ[ƒhEƒIƒvƒVƒ‡ƒ“‚Í–³ðŒ‚Å•\Ž¦
-LOCALS = @
-LOCALS:1 = %SET_TOOLTIP("[400] - SAVE     ", "Œ»Ý‚Ìó‹µ‚ðƒZ[ƒu‚µ‚Ü‚·")%
-LOCALS:2 = %SET_TOOLTIP("[401] - LOAD     ", "ƒZ[ƒuƒf[ƒ^‚ðƒ[ƒh‚µ‚Ü‚·B•Û‘¶‚µ‚Ä‚¢‚È‚¢isó‹µ‚ÍŽ¸‚í‚ê‚Ü‚·")%
-LOCALS:3 = %SET_TOOLTIP("[402] - OPTION   ", "•ž‘•‚âƒeƒLƒXƒg•\Ž¦‚È‚ÇA—lX‚ÈÝ’è‚ð•ÏX‚µ‚Ü‚·")%
+;400ç•ªå°ã¯ã‚»ãƒ¼ãƒ–ãƒ»ãƒ­ãƒ¼ãƒ‰ãƒ»ã‚ªãƒ—ã‚·ãƒ§ãƒ³ã®ã‚·ã‚¹ãƒ†ãƒ ã‚³ãƒžãƒ³ãƒ‰
+;ã‚»ãƒ¼ãƒ–ãƒ»ãƒ­ãƒ¼ãƒ‰ãƒ»ã‚ªãƒ—ã‚·ãƒ§ãƒ³ã¯ç„¡æ¡ä»¶ã§è¡¨ç¤º
+LOCALS = ã€€
+LOCALS:1 = %SET_TOOLTIP("[400] - SAVE     ", "ç¾åœ¨ã®çŠ¶æ³ã‚’ã‚»ãƒ¼ãƒ–ã—ã¾ã™")%
+LOCALS:2 = %SET_TOOLTIP("[401] - LOAD     ", "ã‚»ãƒ¼ãƒ–ãƒ‡ãƒ¼ã‚¿ã‚’ãƒ­ãƒ¼ãƒ‰ã—ã¾ã™ã€‚ä¿å­˜ã—ã¦ã„ãªã„é€²è¡ŒçŠ¶æ³ã¯å¤±ã‚ã‚Œã¾ã™")%
+LOCALS:3 = %SET_TOOLTIP("[402] - OPTION   ", "æœè£…ã‚„ãƒ†ã‚­ã‚¹ãƒˆè¡¨ç¤ºãªã©ã€æ§˜ã€…ãªè¨­å®šã‚’å¤‰æ›´ã—ã¾ã™")%
 
 HTML_PRINT LOCALS+LOCALS:1+LOCALS:2+LOCALS:3
 
-;ƒfƒoƒbƒOƒ‚[ƒh‚È‚ç•\Ž¦
-;#;PRINTPLAIN @
-;#;PRINTL [998] - ƒfƒoƒbƒO
+;ãƒ‡ãƒãƒƒã‚°ãƒ¢ãƒ¼ãƒ‰ãªã‚‰è¡¨ç¤º
+;#;PRINTPLAIN ã€€
+;#;PRINTL [998] - ãƒ‡ãƒãƒƒã‚°
 
 DRAWLINE
-PRINTPLAIN @SHOP@
+PRINTPLAIN ã€€SHOPã€€
 
 @USERSHOP
-#DIM DYNAMIC •Žè‰Â”\
-#DIM DYNAMIC ’²‹³‰Â”\
+#DIM DYNAMIC åŠ©æ‰‹å¯èƒ½
+#DIM DYNAMIC èª¿æ•™å¯èƒ½
 #DIM DYNAMIC LCOUNT
 VARSET LOCAL, 0
-;Œ»•Žè{Œ³•Žè‚ÌƒLƒƒƒ‰”‚ÌŠm”F
+;ç¾åŠ©æ‰‹ï¼‹å…ƒåŠ©æ‰‹ã®ã‚­ãƒ£ãƒ©æ•°ã®ç¢ºèª
 FOR LCOUNT, 0, CHARANUM
-	;ˆçŽ™•”‰®‚ÉˆÚ“®‚µ‚Ä‚¢‚éƒLƒƒƒ‰‚ÍœŠO
+	;è‚²å…éƒ¨å±‹ã«ç§»å‹•ã—ã¦ã„ã‚‹ã‚­ãƒ£ãƒ©ã¯é™¤å¤–
 	SIF CHECK_CHILD_CARE(LCOUNT)
 		CONTINUE
-	;•Žè‰Â”\
-	SIF CFLAG:LCOUNT:ó‘Ô == 2
-		•Žè‰Â”\++
+	;åŠ©æ‰‹å¯èƒ½
+	SIF CFLAG:LCOUNT:çŠ¶æ…‹ == 2
+		åŠ©æ‰‹å¯èƒ½++
 NEXT
 
-;TARGET‚Ì‘¼‚É’²‹³‚Å‚«‚éƒLƒƒƒ‰‚ª‚¢‚é‚©‚Ç‚¤‚©
+;TARGETã®ä»–ã«èª¿æ•™ã§ãã‚‹ã‚­ãƒ£ãƒ©ãŒã„ã‚‹ã‹ã©ã†ã‹
 FOR LCOUNT, 0, CHARANUM
-	;Žål‚ÍœŠO
+	;ä¸»äººã¯é™¤å¤–
 	SIF LCOUNT == MASTER
 		CONTINUE
-	;“z—ê‚àœŠO
+	;å¥´éš·ã‚‚é™¤å¤–
 	SIF LCOUNT == TARGET
 		CONTINUE
-	;ˆçŽ™•”‰®‚ÉˆÚ“®‚µ‚Ä‚¢‚éƒLƒƒƒ‰‚ÍœŠO
+	;è‚²å…éƒ¨å±‹ã«ç§»å‹•ã—ã¦ã„ã‚‹ã‚­ãƒ£ãƒ©ã¯é™¤å¤–
 	SIF CHECK_CHILD_CARE(LCOUNT)
 		CONTINUE
-	’²‹³‰Â”\++
+	èª¿æ•™å¯èƒ½++
 NEXT
 
-TFLAG:ƒy[ƒW” = 0
+TFLAG:ãƒšãƒ¼ã‚¸æ•° = 0
 
 SELECTCASE RESULT
-	;’²‹³ŠJŽn
+	;èª¿æ•™é–‹å§‹
 	CASE 100
 		SIF TARGET > 0
 			BEGIN TRAIN
-	;‹xŒe
+	;ä¼‘æ†©
 	CASE 101
-		;‹xŒeƒtƒ‰ƒO‚ð—§‚Ä‚éi‚±‚±‚Í“Á•Êj
-		FLAG:‹xŒeƒtƒ‰ƒO = 2
+		;ä¼‘æ†©ãƒ•ãƒ©ã‚°ã‚’ç«‹ã¦ã‚‹ï¼ˆã“ã“ã¯ç‰¹åˆ¥ï¼‰
+		FLAG:ä¼‘æ†©ãƒ•ãƒ©ã‚° = 2
 		BEGIN TURNEND
-	;”\—Í•\Ž¦
+	;èƒ½åŠ›è¡¨ç¤º
 	CASE 200
 		CALL SHOW_CHARADATA
-	;”\—Íã¸
+	;èƒ½åŠ›ä¸Šæ˜‡
 	CASE 201
 		SIF CHARANUM > 1
 			CALL SHOP_ABLUP
-	;“z—ê•ÏX
+	;å¥´éš·å¤‰æ›´
 	CASE 202
-		SIF ’²‹³‰Â”\
+		SIF èª¿æ•™å¯èƒ½
 			CALL CHANGE_TARGET
-	;•Žè•ÏX
+	;åŠ©æ‰‹å¤‰æ›´
 	CASE 203
-		SIF •Žè‰Â”\
+		SIF åŠ©æ‰‹å¯èƒ½
 			CALL SELECT_ASSI
-	;ƒAƒCƒeƒ€
+	;ã‚¢ã‚¤ãƒ†ãƒ 
 	CASE 300
 		CALL SHOPITEM_BUY
-	;ƒZ[ƒu
+	;ã‚»ãƒ¼ãƒ–
 	CASE 400
 		CALL USERSAVE
-	;ƒ[ƒh
+	;ãƒ­ãƒ¼ãƒ‰
 	CASE 401
 		CALL USERLOAD
-	;ƒIƒvƒVƒ‡ƒ“
+	;ã‚ªãƒ—ã‚·ãƒ§ãƒ³
 	CASE 402
 		CALL OPTION
-	;ƒfƒoƒbƒO—p
+	;ãƒ‡ãƒãƒƒã‚°ç”¨
 	;#;CASE 998
 	;#;	CALL DEBUG
 	CASEELSE
 		CLEARLINE 1
-		REUSELASTLINE {RESULT}‚É‘Î‰ž‚·‚éƒRƒ}ƒ“ƒh‚Í‚ ‚è‚Ü‚¹‚ñ
+		REUSELASTLINE {RESULT}ã«å¯¾å¿œã™ã‚‹ã‚³ãƒžãƒ³ãƒ‰ã¯ã‚ã‚Šã¾ã›ã‚“
 ENDSELECT
 
 RETURN 0
 
 @SHOP_UI
-;ƒQ[ƒ€“à‚Å•\Ž¦‚³‚ê‚éƒVƒ‡ƒbƒv‰æ–Ê
-; XXXX”NXXŒŽXX“ú(—j“ú) X“ú–Ú(’‹–é)
-;@“V‹C:XX ‹C‰·:XX.XŽ XXX(ŒŽ—î.XXX) 
-;@‘“z—ê”:X/Š×—ŽÏ‚Ý:X
+;ã‚²ãƒ¼ãƒ å†…ã§è¡¨ç¤ºã•ã‚Œã‚‹ã‚·ãƒ§ãƒƒãƒ—ç”»é¢
+;â–¡XXXXå¹´XXæœˆXXæ—¥(æ›œæ—¥) Xæ—¥ç›®(æ˜¼å¤œ)
+;ã€€å¤©æ°—:XX æ°—æ¸©:XX.Xâ„ƒ XXX(æœˆé½¢.XXX) 
+;ã€€ç·å¥´éš·æ•°:X/é™¥è½æ¸ˆã¿:X
 ;
-; ’²‹³’†
-;@No.X XXXXXX(‰Š)[‚Ó‚½‚È‚è]yŠ×—Ž‘fŽ¿z(ˆË‘¶“x ƒXƒgƒŒƒX’l)
-;@]‡:LVXX —~–]:LVXX ‹ZI:LVXX [BURST]
-;@‚bŠ´:LVXX ‚uŠ´:LVXX ‚`Š´:LVXX ‚aŠ´:LVXX [•”ˆÊŠ×—Ž‘fŽ¿]
-;@‹ê’Éˆó:LVX [XXX]@‰õŠyˆó:LVX [XXX]@‹ü•žˆó:LVX [XXX]@”½”­ˆó:LVX [XXX]
-;@‘Ì—Í[********************************](XXXX/XXXX)[”r—‘—U”­’†]
+;â–¡èª¿æ•™ä¸­
+;ã€€No.X XXXXXX(â™‚â™€)[ãµãŸãªã‚Š]ã€é™¥è½ç´ è³ªã€‘(ä¾å­˜åº¦ ã‚¹ãƒˆãƒ¬ã‚¹å€¤)
+;ã€€å¾“é †:LVXX æ¬²æœ›:LVXX æŠ€å·§:LVXX [BURST]
+;ã€€ï¼£æ„Ÿ:LVXX ï¼¶æ„Ÿ:LVXX ï¼¡æ„Ÿ:LVXX ï¼¢æ„Ÿ:LVXX [éƒ¨ä½é™¥è½ç´ è³ª]
+;ã€€è‹¦ç—›åˆ»å°:LVX [XXX]ã€€å¿«æ¥½åˆ»å°:LVX [XXX]ã€€å±ˆæœåˆ»å°:LVX [XXX]ã€€åç™ºåˆ»å°:LVX [XXX]
+;ã€€ä½“åŠ›[********************************](XXXX/XXXX)[æŽ’åµèª˜ç™ºä¸­]
 ;
-;@Žål:XXX
+;ã€€ä¸»äºº:XXX
 ;
 
-;“ú”•\Ž¦
+;æ—¥æ•°è¡¨ç¤º
 DRAWLINE
-PRINT  
+PRINT â–¡
 IF YEAR > 0
 	PRINTFORM {YEAR}
 ELSE
 	PRINTFORM BC{ABS(YEAR)+1}
 ENDIF
-PRINTFORM ”N{MONTH}ŒŽ{DAYS}“ú(%DOW(FLAG:—j“ú)%) 
+PRINTFORM å¹´{MONTH}æœˆ{DAYS}æ—¥(%DOW(FLAG:æ›œæ—¥)%) 
 
 REPEAT 5
 	SIF HOLIDAY:COUNT == ""
@@ -252,176 +252,176 @@ REPEAT 5
 	PRINTFORM %HOLIDAY:COUNT% 
 REND 
 
-PRINTFORM {DAY}“ú–Ú
+PRINTFORM {DAY}æ—¥ç›®
 
 IF TIME == 0
-	PRINT (’‹) 
+	PRINT (æ˜¼) 
 ELSE
-	PRINT (–é) 
+	PRINT (å¤œ) 
 ENDIF
 
 PRINTL 
 
-PRINT @“V‹C:
-SELECTCASE FLAG:“V‹C
+PRINT ã€€å¤©æ°—:
+SELECTCASE FLAG:å¤©æ°—
 	CASE 1
-		PRINT °‚ê
+		PRINT æ™´ã‚Œ
 	CASE 2
-		PRINT “Ü‚è
+		PRINT æ›‡ã‚Š
 	CASE 3
-		PRINT ‰J
+		PRINT é›¨
 	CASE 4
-		PRINT ‘å‰J
+		PRINT å¤§é›¨
 	CASE 5
-		PRINT —‹‰J
+		PRINT é›·é›¨
 	CASE 6
-		PRINT á
+		PRINT é›ª
 	CASE 7
-		PRINT ‘åá
+		PRINT å¤§é›ª
 ENDSELECT
 
-PRINTFORM  ‹C‰·:{FLAG:‹C‰·/10}.{ABS(FLAG:‹C‰·)%10}Ž 
+PRINTFORM  æ°—æ¸©:{FLAG:æ°—æ¸©/10}.{ABS(FLAG:æ°—æ¸©)%10}â„ƒ 
 
-SELECTCASE ŒŽ—î
+SELECTCASE æœˆé½¢
 	CASE 0 TO 199
-		PRINT VŒŽ
+		PRINT æ–°æœˆ
 	CASE 200 TO 299
-		PRINT ‘@ŒŽ
+		PRINT ç¹Šæœˆ
 	CASE 300 TO 699
-		PRINT ŽO“úŒŽ
+		PRINT ä¸‰æ—¥æœˆ
 	CASE 700 TO 999
-		PRINT ãŒ·‚ÌŒŽ
+		PRINT ä¸Šå¼¦ã®æœˆ
 	CASE 1000 TO 1399
-		PRINT \“ú–é
+		PRINT åæ—¥å¤œ
 	CASE 1400 TO 1499
-		PRINT ¬–]ŒŽ
+		PRINT å°æœ›æœˆ
 	CASE 1500 TO 1599
-		PRINT –žŒŽ
+		PRINT æº€æœˆ
 	CASE 1600 TO 1699
-		PRINT \˜Z–é
+		PRINT åå…­å¤œ
 	CASE 1700 TO 1799 
-		PRINT —§‘ÒŒŽ
+		PRINT ç«‹å¾…æœˆ
 	CASE 1800 TO 1899
-		PRINT ‹‘ÒŒŽ
+		PRINT å±…å¾…æœˆ
 	CASE 1900 TO 1999
-		PRINT Q‘ÒŒŽ
+		PRINT å¯å¾…æœˆ
 	CASE 2000 TO 2299
-		PRINT “ñ\“úŒŽ
+		PRINT äºŒåæ—¥æœˆ
 	CASE 2300 TO 2599
-		PRINT ‰ºŒ·‚ÌŒŽ
+		PRINT ä¸‹å¼¦ã®æœˆ
 	CASE 2600 TO 2899
-		PRINT ‹ÅŒŽ
+		PRINT æšæœˆ
 	CASE 2900 TO 3000
-		PRINT ŽO\“úŒŽ
+		PRINT ä¸‰åæ—¥æœˆ
 ENDSELECT
 
-PRINTFORM (ŒŽ—î:{ŒŽ—î/100}.\@ŒŽ—î%100 < 10 ? 0 # \@{ŒŽ—î%100})
+PRINTFORM (æœˆé½¢:{æœˆé½¢/100}.\@æœˆé½¢%100 < 10 ? 0 # \@{æœˆé½¢%100})
 PRINTL 
 
-;“z—êl”•\Ž¦
+;å¥´éš·äººæ•°è¡¨ç¤º
 LOCAL = 0
-;Š×—Žl”ŒvŽZ
+;é™¥è½äººæ•°è¨ˆç®—
 REPEAT CHARANUM
-	SIF CFLAG:COUNT:Š×—Ž
+	SIF CFLAG:COUNT:é™¥è½
 		LOCAL++
 REND
-PRINTFORML @‘“z—ê”:{CHARANUM-1}\/Š×—ŽÏ‚Ý:{LOCAL}
+PRINTFORML ã€€ç·å¥´éš·æ•°:{CHARANUM-1}\/é™¥è½æ¸ˆã¿:{LOCAL}
 
-;“z—ê‚Ìó‘Ô
+;å¥´éš·ã®çŠ¶æ…‹
 IF TARGET > 0
 	PRINTL 
-	PRINTL  “¯±’†
-	PRINTFORM @No.{TARGET} %NAME:TARGET%
-	IF TALENT:«“]Š·Ï
+	PRINTL â–¡åŒæ£²ä¸­
+	PRINTFORM ã€€No.{TARGET} %NAME:TARGET%
+	IF TALENT:æ€§è»¢æ›æ¸ˆ
 		SELECTCASE SEX(TARGET)
 			CASE 1
-				PRINT (Œ³Š‚Ì‰)
+				PRINT (å…ƒâ™€ã®â™‚)
 			CASE 2
-				PRINT (Œ³‰‚ÌŠ)
+				PRINT (å…ƒâ™‚ã®â™€)
 		ENDSELECT
 	ELSE
 		SELECTCASE SEX(TARGET)
 			CASE 1
-				PRINT (‰)
+				PRINT (â™‚)
 			CASE 2
-				PRINT (Š)
+				PRINT (â™€)
 		ENDSELECT
 	ENDIF
-	SIF TALENT:‚Ó‚½‚È‚è
-		PRINT [‚Ó‚½‚È‚è]
-	SIF TALENT:”DP
-		PRINT y”DP’†z
-	SIF TALENT:—ö•ç
-		PRINT y—ö•çz
-	SIF TALENT:ˆú—
-		PRINT yˆú—z
-	SIF TALENT:•ž]
-		PRINT y•ž]z
-	SIF TALENT:eˆ¤
-		PRINT yeˆ¤z
-	SIF TALENT:©•w
-		PRINT y©•wz
-	SIF TALENT:—ê‘®
-		PRINT y—ê‘®z
-	SIF TALENT:•ö‰ó
-		PRINT y•ö‰óz
-	PRINTFORM (ˆË‘¶“x:{CFLAG:ˆË‘¶“x} ƒXƒgƒŒƒX’l{CFLAG:ƒXƒgƒŒƒX’l})
+	SIF TALENT:ãµãŸãªã‚Š
+		PRINT [ãµãŸãªã‚Š]
+	SIF TALENT:å¦Šå¨ 
+		PRINT ã€å¦Šå¨ ä¸­ã€‘
+	SIF TALENT:æ‹æ…•
+		PRINT ã€æ‹æ…•ã€‘
+	SIF TALENT:æ·«ä¹±
+		PRINT ã€æ·«ä¹±ã€‘
+	SIF TALENT:æœå¾“
+		PRINT ã€æœå¾“ã€‘
+	SIF TALENT:è¦ªæ„›
+		PRINT ã€è¦ªæ„›ã€‘
+	SIF TALENT:å¨¼å©¦
+		PRINT ã€å¨¼å©¦ã€‘
+	SIF TALENT:éš·å±ž
+		PRINT ã€éš·å±žã€‘
+	SIF TALENT:å´©å£Š
+		PRINT ã€å´©å£Šã€‘
+	PRINTFORM (ä¾å­˜åº¦:{CFLAG:ä¾å­˜åº¦} ã‚¹ãƒˆãƒ¬ã‚¹å€¤{CFLAG:ã‚¹ãƒˆãƒ¬ã‚¹å€¤})
 	PRINTL 
 	
-	PRINTFORM @]‡:LV{ABL:]‡, 2, LEFT} —~–]:LV{ABL:—~–], 2, LEFT} ‹ZI:LV{ABL:‹ZI, 2, LEFT}
-	SIF TALENT:ƒŠƒ~ƒbƒgƒo[ƒXƒg
-		PRINT yBURSTz
-	IF TALENT:ˆúŠj
-		PRINT yˆúŠjz
-	ELSEIF TALENT:ˆúäS
-		PRINT yˆúäSz
-	ELSEIF TALENT:ˆúK
-		PRINT yˆúKz
-	ELSEIF TALENT:ˆú“û
-		PRINT yˆú“ûz
+	PRINTFORM ã€€å¾“é †:LV{ABL:å¾“é †, 2, LEFT} æ¬²æœ›:LV{ABL:æ¬²æœ›, 2, LEFT} æŠ€å·§:LV{ABL:æŠ€å·§, 2, LEFT}
+	SIF TALENT:ãƒªãƒŸãƒƒãƒˆãƒãƒ¼ã‚¹ãƒˆ
+		PRINT ã€BURSTã€‘
+	IF TALENT:æ·«æ ¸
+		PRINT ã€æ·«æ ¸ã€‘
+	ELSEIF TALENT:æ·«è†£
+		PRINT ã€æ·«è†£ã€‘
+	ELSEIF TALENT:æ·«å°»
+		PRINT ã€æ·«å°»ã€‘
+	ELSEIF TALENT:æ·«ä¹³
+		PRINT ã€æ·«ä¹³ã€‘
 	ENDIF
-	PRINTFORML (ˆË‘¶“x:{CFLAG:ˆË‘¶“x} ƒXƒgƒŒƒX’l{CFLAG:ƒXƒgƒŒƒX’l})
+	PRINTFORML (ä¾å­˜åº¦:{CFLAG:ä¾å­˜åº¦} ã‚¹ãƒˆãƒ¬ã‚¹å€¤{CFLAG:ã‚¹ãƒˆãƒ¬ã‚¹å€¤})
 	VARSET LOCALS
 
-	LOCALS = %SET_TOOLTIP(@"@]‡:LV{ABL:]‡, 2, LEFT}", ABL_COMMENT("]‡"))%
-	LOCALS:1 = %SET_TOOLTIP(@"—~–]:LV{ABL:—~–], 2, LEFT}", ABL_COMMENT("—~–]"))%
-	LOCALS:2 = %SET_TOOLTIP(@"‹ZI:LV{ABL:‹ZI, 2, LEFT}", ABL_COMMENT("‹ZI"))%
+	LOCALS = %SET_TOOLTIP(@"ã€€å¾“é †:LV{ABL:å¾“é †, 2, LEFT}", ABL_COMMENT("å¾“é †"))%
+	LOCALS:1 = %SET_TOOLTIP(@"æ¬²æœ›:LV{ABL:æ¬²æœ›, 2, LEFT}", ABL_COMMENT("æ¬²æœ›"))%
+	LOCALS:2 = %SET_TOOLTIP(@"æŠ€å·§:LV{ABL:æŠ€å·§, 2, LEFT}", ABL_COMMENT("æŠ€å·§"))%
 	HTML_PRINT LOCALS+LOCALS:1+LOCALS:2
-	;PRINTFORM @]‡:LV{ABL:]‡, 2, LEFT} —~–]:LV{ABL:—~–], 2, LEFT} ‹ZI:LV{ABL:‹ZI, 2, LEFT}
+	;PRINTFORM ã€€å¾“é †:LV{ABL:å¾“é †, 2, LEFT} æ¬²æœ›:LV{ABL:æ¬²æœ›, 2, LEFT} æŠ€å·§:LV{ABL:æŠ€å·§, 2, LEFT}
 
 	VARSET LOCALS
-	LOCALS = %SET_TOOLTIP(@"@‚bŠ´:LV{ABL:‚bŠ´Šo, 2, LEFT}", ABL_COMMENT("‚bŠ´Šo"))%
+	LOCALS = %SET_TOOLTIP(@"ã€€ï¼£æ„Ÿ:LV{ABL:ï¼£æ„Ÿè¦š, 2, LEFT}", ABL_COMMENT("ï¼£æ„Ÿè¦š"))%
 	SIF VAGINA(TARGET)
-		LOCALS:1 = %SET_TOOLTIP(@"‚uŠ´:LV{ABL:‚uŠ´Šo, 2, LEFT}", ABL_COMMENT("‚uŠ´Šo"))%
-	LOCALS:2 = %SET_TOOLTIP(@"‚`Š´:LV{ABL:‚`Š´Šo, 2, LEFT}", ABL_COMMENT("‚`Š´Šo"))%
-	LOCALS:3 = %SET_TOOLTIP(@"‚aŠ´:LV{ABL:‚aŠ´Šo, 2, LEFT}", ABL_COMMENT("‚aŠ´Šo"))%
+		LOCALS:1 = %SET_TOOLTIP(@"ï¼¶æ„Ÿ:LV{ABL:ï¼¶æ„Ÿè¦š, 2, LEFT}", ABL_COMMENT("ï¼¶æ„Ÿè¦š"))%
+	LOCALS:2 = %SET_TOOLTIP(@"ï¼¡æ„Ÿ:LV{ABL:ï¼¡æ„Ÿè¦š, 2, LEFT}", ABL_COMMENT("ï¼¡æ„Ÿè¦š"))%
+	LOCALS:3 = %SET_TOOLTIP(@"ï¼¢æ„Ÿ:LV{ABL:ï¼¢æ„Ÿè¦š, 2, LEFT}", ABL_COMMENT("ï¼¢æ„Ÿè¦š"))%
 	HTML_PRINT LOCALS+LOCALS:1+LOCALS:2+LOCALS:3
 	
 	CALL SHOW_INFO_MARK, TARGET
-	PRINTFORML @‘Ì—Í%BARBASE("‘Ì—Í")%
+	PRINTFORML ã€€ä½“åŠ›%BARBASE("ä½“åŠ›")%
 ENDIF
 PRINTL 
 
-PRINTFORM @Žål:%NAME:MASTER%
+PRINTFORM ã€€ä¸»äºº:%NAME:MASTER%
 SELECTCASE SEX(MASTER)
 	CASE 1
-		PRINT (‰)
+		PRINT (â™‚)
 	CASE 2
-		PRINT (Š)
+		PRINT (â™€)
 ENDSELECT
-SIF TALENT:MASTER:‚Ó‚½‚È‚è
-	PRINT [‚Ó‚½‚È‚è]
+SIF TALENT:MASTER:ãµãŸãªã‚Š
+	PRINT [ãµãŸãªã‚Š]
 
 IF ASSI >= 0
-	PRINTFORM @•Žè:%NAME:ASSI%
+	PRINTFORM ã€€åŠ©æ‰‹:%NAME:ASSI%
 	SELECTCASE SEX(ASSI)
 		CASE 1
-			PRINT (‰)
+			PRINT (â™‚)
 		CASE 2
-			PRINT (Š)
+			PRINT (â™€)
 	ENDSELECT
-	SIF TALENT:ASSI:‚Ó‚½‚È‚è
-		PRINT [‚Ó‚½‚È‚è]
+	SIF TALENT:ASSI:ãµãŸãªã‚Š
+		PRINT [ãµãŸãªã‚Š]
 ENDIF
 PRINTL 
 
@@ -431,13 +431,13 @@ LOCAL = 0
 REPEAT 10000
 	SIF !EXISTCSV(COUNT)
 		CONTINUE
-	IF (CSVCFLAG(COUNT, GETNUM(CFLAG, "’a¶“ú"))/100) == MONTH && (CSVCFLAG(COUNT, 0)%100) == DAYS
-		PRINTFORML @¡“ú‚Í%CSVNAMEF(COUNT)%‚Ì’a¶“ú‚Å‚·
+	IF (CSVCFLAG(COUNT, GETNUM(CFLAG, "èª•ç”Ÿæ—¥"))/100) == MONTH && (CSVCFLAG(COUNT, 0)%100) == DAYS
+		PRINTFORML ã€€ä»Šæ—¥ã¯%CSVNAMEF(COUNT)%ã®èª•ç”Ÿæ—¥ã§ã™
 		LOCAL++
 	ENDIF
 REND
 IF LOCAL
-	PRINTL @ƒnƒbƒs[ƒo[ƒXƒf[I
+	PRINTL ã€€ãƒãƒƒãƒ”ãƒ¼ãƒãƒ¼ã‚¹ãƒ‡ãƒ¼ï¼
 	DRAWLINE
 ENDIF
 LOCAL = 0

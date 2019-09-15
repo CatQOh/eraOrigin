@@ -1,17 +1,17 @@
-@CSV_EDITOR
-#DIMS DYNAMIC ŒoŒ±–¼
-#DIMS DYNAMIC ‘fŽ¿–¼
+ï»¿@CSV_EDITOR
+#DIMS DYNAMIC çµŒé¨“å
+#DIMS DYNAMIC ç´ è³ªå
 
 ADDVOIDCHARA
 ADDVOIDCHARA
-NAME:0 = Žål
-CALLNAME:0 = Žål
+NAME:0 = ä¸»äºº
+CALLNAME:0 = ä¸»äºº
 TARGET = 1
 
-PRINTL ì¬‚·‚éƒLƒƒƒ‰‚Ì«•Ê‚ð‘I‚ñ‚Å‚­‚¾‚³‚¢
-PRINTL [1] - ’j
-PRINTL [2] - —
-PRINTL [0] - ƒLƒƒƒ“ƒZƒ‹
+PRINTL ä½œæˆã™ã‚‹ã‚­ãƒ£ãƒ©ã®æ€§åˆ¥ã‚’é¸ã‚“ã§ãã ã•ã„
+PRINTL [1] - ç”·
+PRINTL [2] - å¥³
+PRINTL [0] - ã‚­ãƒ£ãƒ³ã‚»ãƒ«
 INPUT
 DO
 	IF RESULT == 0
@@ -20,25 +20,25 @@ DO
 	ENDIF
 LOOP LOOPRES(1, 2)
 
-TALENT:«•Ê = RESULT
+TALENT:æ€§åˆ¥ = RESULT
 
 $RESTART
 DRAWLINE
-PRINTL   Šî–{î•ñ
-PRINTBUTTON @"[ƒLƒƒƒ‰”Ô†] {NO:TARGET} ", "ƒLƒƒƒ‰”Ô†"
-PRINTBUTTON @"[’a¶“ú] \@ CFLAG:’a¶“ú ? {CFLAG:’a¶“ú/100}ŒŽ{CFLAG:’a¶“ú%100}“ú # –¢Ý’è \@", "’a¶“ú"
+PRINTL â–¡ åŸºæœ¬æƒ…å ±
+PRINTBUTTON @"[ã‚­ãƒ£ãƒ©ç•ªå·] {NO:TARGET} ", "ã‚­ãƒ£ãƒ©ç•ªå·"
+PRINTBUTTON @"[èª•ç”Ÿæ—¥] \@ CFLAG:èª•ç”Ÿæ—¥ ? {CFLAG:èª•ç”Ÿæ—¥/100}æœˆ{CFLAG:èª•ç”Ÿæ—¥%100}æ—¥ # æœªè¨­å®š \@", "èª•ç”Ÿæ—¥"
 PRINTL 
-PRINTBUTTON @"[–¼‘O] %NAME:TARGET% ", "–¼‘O"
-PRINTBUTTON @"[ŒÄ‚Ñ–¼] %CALLNAME:TARGET%", "ŒÄ‚Ñ–¼"
+PRINTBUTTON @"[åå‰] %NAME:TARGET% ", "åå‰"
+PRINTBUTTON @"[å‘¼ã³å] %CALLNAME:TARGET%", "å‘¼ã³å"
 PRINTL 
-PRINTBUTTON @"[«•Ê] \@ SEX(TARGET) == 1 ? ’j # — \@ ", "«•Ê"
-PRINTBUTTON @"[Ží‘°] %CSTR:Ží‘°%", "Ží‘°"
+PRINTBUTTON @"[æ€§åˆ¥] \@ SEX(TARGET) == 1 ? ç”· # å¥³ \@ ", "æ€§åˆ¥"
+PRINTBUTTON @"[ç¨®æ—] %CSTR:ç¨®æ—%", "ç¨®æ—"
 PRINTL 
-PRINTBUTTON @"[‘Ì—Í] {MAXBASE:‘Ì—Í} ", "‘Ì—Í"
-PRINTBUTTON @"[‹C—Í] {MAXBASE:‹C—Í}", "‹C—Í"
+PRINTBUTTON @"[ä½“åŠ›] {MAXBASE:ä½“åŠ›} ", "ä½“åŠ›"
+PRINTBUTTON @"[æ°—åŠ›] {MAXBASE:æ°—åŠ›}", "æ°—åŠ›"
 PRINTL 
 DRAWLINE
-PRINTL   ŒoŒ±
+PRINTL â–¡ çµŒé¨“
 
 VARSET LOCALS, 
 LOCAL = 0
@@ -50,7 +50,7 @@ REPEAT VARSIZE("EXP")
 		CONTINUE
 	ENDIF
 
-	;‰üs‚·‚é‚Ì‚©H ‘±‚¯‚Äo—Í‚·‚é‚Ì‚©H
+	;æ”¹è¡Œã™ã‚‹ã®ã‹ï¼Ÿ ç¶šã‘ã¦å‡ºåŠ›ã™ã‚‹ã®ã‹ï¼Ÿ
 	IF LOCAL%6 == 0 && LOCAL != 0
 		HTML_PRINT LOCALS+LOCALS:1+LOCALS:2+LOCALS:3+LOCALS:4+LOCALS:5
 		VARSET LOCALS, 
@@ -61,34 +61,34 @@ REPEAT VARSIZE("EXP")
 		SETCOLORBYNAME gray
 
 	SELECTCASE EXPNAME:COUNT
-		CASE "•òŽd‰õŠyŒoŒ±"
-			ŒoŒ±–¼ = •ò‰õŒoŒ±
-		CASE "ƒtƒFƒ‰ŒoŒ±"
-			ŒoŒ±–¼ = ŒûˆúŒoŒ±
-		CASE "‹ê’É‰õŠyŒoŒ±"
-			ŒoŒ±–¼ = ’ÉŠyŒoŒ±
-		CASE "šn‹s‰õŠyŒoŒ±"
-			ŒoŒ±–¼ = ‹s‰õŒoŒ±
-		CASE "Žål’²‹³ŒoŒ±"
-			ŒoŒ±–¼ = Žå’²ŒoŒ±
-		CASE "•Žè’²‹³ŒoŒ±"
-			ŒoŒ±–¼ = •’²ŒoŒ±
-		CASE "‚uŠg’£ŒoŒ±"
-			ŒoŒ±–¼ = ‚uŠgŒoŒ±
-		CASE "‚`Šg’£ŒoŒ±"
-			ŒoŒ±–¼ = ‚`ŠgŒoŒ±
+		CASE "å¥‰ä»•å¿«æ¥½çµŒé¨“"
+			çµŒé¨“å = å¥‰å¿«çµŒé¨“
+		CASE "ãƒ•ã‚§ãƒ©çµŒé¨“"
+			çµŒé¨“å = å£æ·«çµŒé¨“
+		CASE "è‹¦ç—›å¿«æ¥½çµŒé¨“"
+			çµŒé¨“å = ç—›æ¥½çµŒé¨“
+		CASE "å—œè™å¿«æ¥½çµŒé¨“"
+			çµŒé¨“å = è™å¿«çµŒé¨“
+		CASE "ä¸»äººèª¿æ•™çµŒé¨“"
+			çµŒé¨“å = ä¸»èª¿çµŒé¨“
+		CASE "åŠ©æ‰‹èª¿æ•™çµŒé¨“"
+			çµŒé¨“å = åŠ©èª¿çµŒé¨“
+		CASE "ï¼¶æ‹¡å¼µçµŒé¨“"
+			çµŒé¨“å = ï¼¶æ‹¡çµŒé¨“
+		CASE "ï¼¡æ‹¡å¼µçµŒé¨“"
+			çµŒé¨“å = ï¼¡æ‹¡çµŒé¨“
 		CASEELSE
-			ŒoŒ±–¼ = %EXPNAME:COUNT%
+			çµŒé¨“å = %EXPNAME:COUNT%
 	ENDSELECT
 
-	LOCALS:(LOCAL%6) = %SET_TOOLTIP(@"@[%ŒoŒ±–¼, 8%]:{EXP:COUNT, 4, LEFT}", EXP_COMMENT(EXPNAME:COUNT, TARGET))%
+	LOCALS:(LOCAL%6) = %SET_TOOLTIP(@"ã€€[%çµŒé¨“å, 8%]:{EXP:COUNT, 4, LEFT}", EXP_COMMENT(EXPNAME:COUNT, TARGET))%
 	LOCAL++
 REND
 SIF !LINEISEMPTY()
 	PRINTL 
 
 DRAWLINE
-PRINTL   ”\—Í
+PRINTL â–¡ èƒ½åŠ›
 LOCAL = 0
 VARSET LOCALS, 
 REPEAT VARSIZE("ABL")
@@ -99,7 +99,7 @@ REPEAT VARSIZE("ABL")
 		CONTINUE
 	ENDIF
 
-	;‰üs‚·‚é‚Ì‚©H ‘±‚¯‚Äo—Í‚·‚é‚Ì‚©H
+	;æ”¹è¡Œã™ã‚‹ã®ã‹ï¼Ÿ ç¶šã‘ã¦å‡ºåŠ›ã™ã‚‹ã®ã‹ï¼Ÿ
 	IF LOCAL%6 == 0 && LOCAL != 0
 		HTML_PRINT LOCALS+LOCALS:1+LOCALS:2+LOCALS:3+LOCALS:4+LOCALS:5
 		VARSET LOCALS, 
@@ -109,7 +109,7 @@ REPEAT VARSIZE("ABL")
 	SIF ABL:COUNT == 0
 		SETCOLORBYNAME gray
 
-	LOCALS:(LOCAL%6) = %SET_TOOLTIP(@"@[%ABLNAME:COUNT, 8%]:LV{ABL:COUNT, 4, LEFT}", ABL_COMMENT(ABLNAME:COUNT, TARGET))%
+	LOCALS:(LOCAL%6) = %SET_TOOLTIP(@"ã€€[%ABLNAME:COUNT, 8%]:LV{ABL:COUNT, 4, LEFT}", ABL_COMMENT(ABLNAME:COUNT, TARGET))%
 	LOCAL++
 REND
 
@@ -117,14 +117,14 @@ SIF !LINEISEMPTY()
 	PRINTL 
 
 DRAWLINE
-PRINTPLAIN   ‘fŽ¿ 
-PRINTBUTTON "[•ÏX‚·‚é]", "‘fŽ¿‚ð•ÏX‚·‚é"
+PRINTPLAIN â–¡ ç´ è³ª 
+PRINTBUTTON "[å¤‰æ›´ã™ã‚‹]", "ç´ è³ªã‚’å¤‰æ›´ã™ã‚‹"
 PRINTL 
 LOCAL = 0
 VARSET LOCALS, 
 REPEAT VARSIZE("TALENT")
 	SELECTCASE TALENTNAME:COUNT
-		CASE "«•Ê"
+		CASE "æ€§åˆ¥"
 			CONTINUE
 	ENDSELECT
 	IF COUNT == VARSIZE("TALENT")-1
@@ -134,34 +134,34 @@ REPEAT VARSIZE("TALENT")
 		CONTINUE
 	ENDIF
 
-	IF TALENTNAME:COUNT == "ƒoƒXƒgƒTƒCƒY"
-		SELECTCASE TALENT:ƒoƒXƒgƒTƒCƒY
+	IF TALENTNAME:COUNT == "ãƒã‚¹ãƒˆã‚µã‚¤ã‚º"
+		SELECTCASE TALENT:ãƒã‚¹ãƒˆã‚µã‚¤ã‚º
 			CASE 0
 				SIF SEX(TARGET) == 2
-					‘fŽ¿–¼ = [‹¹‚Ì‘å‚«‚³‚ðÝ’è‚µ‚Ä‚­‚¾‚³‚¢]
+					ç´ è³ªå = [èƒ¸ã®å¤§ãã•ã‚’è¨­å®šã—ã¦ãã ã•ã„]
 			CASE 1
-				‘fŽ¿–¼ = [â•Ç]
+				ç´ è³ªå = [çµ¶å£]
 			CASE 2
-				‘fŽ¿–¼ = [•n“û]
+				ç´ è³ªå = [è²§ä¹³]
 			CASE 3
-				‘fŽ¿–¼ = [•À“û]
+				ç´ è³ªå = [ä¸¦ä¹³]
 			CASE 4
-				‘fŽ¿–¼ = [‹“û]
+				ç´ è³ªå = [å·¨ä¹³]
 			CASE 5
-				‘fŽ¿–¼ = [”š“û]
+				ç´ è³ªå = [çˆ†ä¹³]
 		ENDSELECT
 	ELSE
-		‘fŽ¿–¼ = [%TALENTNAME:COUNT%]
+		ç´ è³ªå = [%TALENTNAME:COUNT%]
 	ENDIF
 
 	SIF LOCAL%6 == 0
-		LOCALS = @
+		LOCALS = ã€€
 
-	LOCALS:(LOCAL%6) += @"%SET_TOOLTIP(‘fŽ¿–¼, TALENT_COMMENT(TALENTNAME:COUNT, TARGET))%"
+	LOCALS:(LOCAL%6) += @"%SET_TOOLTIP(ç´ è³ªå, TALENT_COMMENT(TALENTNAME:COUNT, TARGET))%"
 
 	LOCAL++
 
-	;‰üs‚·‚é‚Ì‚©H ‘±‚¯‚Äo—Í‚·‚é‚Ì‚©H
+	;æ”¹è¡Œã™ã‚‹ã®ã‹ï¼Ÿ ç¶šã‘ã¦å‡ºåŠ›ã™ã‚‹ã®ã‹ï¼Ÿ
 	IF LOCAL%6 == 0 && LOCAL != 0
 		HTML_PRINT LOCALS+LOCALS:1+LOCALS:2+LOCALS:3+LOCALS:4+LOCALS:5
 		VARSET LOCALS, 
@@ -172,30 +172,30 @@ SIF !LINEISEMPTY()
 	PRINTL 
 
 DRAWLINE
-PRINTL   •ž‘•
+PRINTL â–¡ æœè£…
 REPEAT VARSIZE("CSTR")
 	SELECTCASE CSTRNAME:COUNT
-		CASE "“ÁŽê", "ã”¼gã’…", "‰º”¼gã’…", "‘Sgã’…", "ã”¼g‰º’…", "‰º”¼g‰º’…", "‘«Œ³"
+		CASE "ç‰¹æ®Š", "ä¸ŠåŠèº«ä¸Šç€", "ä¸‹åŠèº«ä¸Šç€", "å…¨èº«ä¸Šç€", "ä¸ŠåŠèº«ä¸‹ç€", "ä¸‹åŠèº«ä¸‹ç€", "è¶³å…ƒ"
 			IF CFLAG:(CSTRNAME:COUNT) == 100
-				LOCALS = ’…ˆß•s‰Â
+				LOCALS = ç€è¡£ä¸å¯
 			ELSE
 				LOCALS = %CSTR:COUNT%
 			ENDIF
-			PRINTBUTTON @"%@"@[%CSTRNAME:COUNT%]", 14, LEFT%:%LOCALS% ", CSTRNAME:COUNT
-			IF LOCALS != "’…ˆß•s‰Â"
+			PRINTBUTTON @"%@"ã€€[%CSTRNAME:COUNT%]", 14, LEFT%:%LOCALS% ", CSTRNAME:COUNT
+			IF LOCALS != "ç€è¡£ä¸å¯"
 				SELECTCASE CSTRNAME:COUNT
-					CASE "‰º”¼gã’…"
-						PRINTBUTTON @"[‘}“ü‰Âƒtƒ‰ƒO]:ã’…‚ð’…‚½‚Ü‚Ü‘}“ü\@ CFLAG:‘}“ü‰Â == 1 ? ‰Â”\ # •s‰Â”\ \@", "‘}“ü‰Â"
-					CASE "‘Sgã’…"
-						SELECTCASE CFLAG:’…ˆß•¹—p
+					CASE "ä¸‹åŠèº«ä¸Šç€"
+						PRINTBUTTON @"[æŒ¿å…¥å¯ãƒ•ãƒ©ã‚°]:ä¸Šç€ã‚’ç€ãŸã¾ã¾æŒ¿å…¥\@ CFLAG:æŒ¿å…¥å¯ == 1 ? å¯èƒ½ # ä¸å¯èƒ½ \@", "æŒ¿å…¥å¯"
+					CASE "å…¨èº«ä¸Šç€"
+						SELECTCASE CFLAG:ç€è¡£ä½µç”¨
 							CASE 0
-								LOCALS = ƒtƒ‰ƒO–³‚µ
+								LOCALS = ãƒ•ãƒ©ã‚°ç„¡ã—
 							CASE 1
-								LOCALS = ’Êíã’…‚Æ‚Ì•¹—p‰Â”\
+								LOCALS = é€šå¸¸ä¸Šç€ã¨ã®ä½µç”¨å¯èƒ½
 							CASE 2
-								LOCALS = ‰º’…‚Æ‚Ì•¹—p•s‰Â”\
+								LOCALS = ä¸‹ç€ã¨ã®ä½µç”¨ä¸å¯èƒ½
 						ENDSELECT
-						PRINTBUTTON @"[’…ˆß•¹—pƒtƒ‰ƒO]:%LOCALS%", "’…ˆß•¹—p"
+						PRINTBUTTON @"[ç€è¡£ä½µç”¨ãƒ•ãƒ©ã‚°]:%LOCALS%", "ç€è¡£ä½µç”¨"
 				ENDSELECT
 			ENDIF
 			PRINTL 
@@ -203,15 +203,15 @@ REPEAT VARSIZE("CSTR")
 REND
 
 DRAWLINE
-PRINTPLAIN   ‘Š« 
-PRINTBUTTON "[•ÏX‚·‚é]", "‘Š«‚ð•ÏX‚·‚é"
+PRINTPLAIN â–¡ ç›¸æ€§ 
+PRINTBUTTON "[å¤‰æ›´ã™ã‚‹]", "ç›¸æ€§ã‚’å¤‰æ›´ã™ã‚‹"
 PRINTL 
 LOCAL = 0
 REPEAT 10000
 	IF EXISTCSV(COUNT)
 		LOCALS = 
 		IF RELATION:COUNT != 100
-			LOCALS = @%CSVNAMEF(COUNT)%~{RELATION:COUNT}\%
+			LOCALS = ã€€%CSVNAMEF(COUNT)%Ã—{RELATION:COUNT}\%
 		ENDIF
 		IF LOCALS != ""
 			PRINTFORMLC %LOCALS%
@@ -228,95 +228,95 @@ SIF !LINEISEMPTY()
 	PRINTL 
 
 DRAWLINE
-PRINTPLAIN   ƒLƒƒƒ‰ƒ}ƒjƒ…ƒAƒ‹ 
-PRINTBUTTON "[•ÏX‚·‚é]", "ƒ}ƒjƒ…ƒAƒ‹‚ð•ÏX‚·‚é"
+PRINTPLAIN â–¡ ã‚­ãƒ£ãƒ©ãƒžãƒ‹ãƒ¥ã‚¢ãƒ« 
+PRINTBUTTON "[å¤‰æ›´ã™ã‚‹]", "ãƒžãƒ‹ãƒ¥ã‚¢ãƒ«ã‚’å¤‰æ›´ã™ã‚‹"
 PRINTL 
 REPEAT 100
 	SIF CSTR:COUNT == ""
 		BREAK
-	PRINTFORML @%CSTR:COUNT%
+	PRINTFORML ã€€%CSTR:COUNT%
 REND
 
 DRAWLINE
-PRINTL   “oêì•i
-PRINTBUTTON @"[1] %CSTR:“oêì•i% ", "“oêì•i"
-PRINTBUTTON @"[2] %CSTR:“oêì•i‚Q% ", "“oêì•i‚Q"
-PRINTBUTTON @"[3] %CSTR:“oêì•i‚R%", "“oêì•i‚R"
+PRINTL â–¡ ç™»å ´ä½œå“
+PRINTBUTTON @"[1] %CSTR:ç™»å ´ä½œå“% ", "ç™»å ´ä½œå“"
+PRINTBUTTON @"[2] %CSTR:ç™»å ´ä½œå“ï¼’% ", "ç™»å ´ä½œå“ï¼’"
+PRINTBUTTON @"[3] %CSTR:ç™»å ´ä½œå“ï¼“%", "ç™»å ´ä½œå“ï¼“"
 PRINTL 
 
 DRAWLINE
-PRINTBUTTON "@[0] CSV‚ðo—Í‚·‚é ", "0"
-PRINTBUTTON "[1] CSV‚ð‘S‚Ä”’l‚Åo—Í‚·‚é", "1"
-PRINTBUTTON "[2] CSVì¬‚ð‚â‚ß‚é ", "2"
-PRINTBUTTON "[3] Šù‘¶‚ÌCSV‚ðŒÄ‚Ño‚· ", "3"
-PRINTBUTTON "[4] ƒvƒƒWƒFƒNƒg‚ð‰Šú‰»‚·‚é", "4"
+PRINTBUTTON "ã€€[0] CSVã‚’å‡ºåŠ›ã™ã‚‹ ", "0"
+PRINTBUTTON "[1] CSVã‚’å…¨ã¦æ•°å€¤ã§å‡ºåŠ›ã™ã‚‹", "1"
+PRINTBUTTON "[2] CSVä½œæˆã‚’ã‚„ã‚ã‚‹ ", "2"
+PRINTBUTTON "[3] æ—¢å­˜ã®CSVã‚’å‘¼ã³å‡ºã™ ", "3"
+PRINTBUTTON "[4] ãƒ—ãƒ­ã‚¸ã‚§ã‚¯ãƒˆã‚’åˆæœŸåŒ–ã™ã‚‹", "4"
 
 $LOOP
 INPUTS
 CLEARLINE 1
 SELECTCASE RESULTS
 	CASE "0"
-		PRINTL Œ»Ý‚Ìì‹Æó‹µ‚ÌCSV‚ðƒƒO‚Éo—Í‚µ‚Ü‚·B‚æ‚ë‚µ‚¢‚Å‚·‚©H
-		PRINTL [0] - ‚Í‚¢
-		PRINTL [1] - ‚¢‚¢‚¦
+		PRINTL ç¾åœ¨ã®ä½œæ¥­çŠ¶æ³ã®CSVã‚’ãƒ­ã‚°ã«å‡ºåŠ›ã—ã¾ã™ã€‚ã‚ˆã‚ã—ã„ã§ã™ã‹ï¼Ÿ
+		PRINTL [0] - ã¯ã„
+		PRINTL [1] - ã„ã„ãˆ
 		INPUT
 		DO
 			SELECTCASE RESULT
 				CASE 0
 					CLEARLINE LINECOUNT
-					PRINTFORML ”Ô†,{NO:TARGET}
-					PRINTFORML –¼‘O,%NAME:TARGET%
+					PRINTFORML ç•ªå·,{NO:TARGET}
+					PRINTFORML åå‰,%NAME:TARGET%
 					IF CALLNAME:TARGET == ""
-						PRINTFORML ŒÄ‚Ñ–¼,%NAME:TARGET%
+						PRINTFORML å‘¼ã³å,%NAME:TARGET%
 					ELSE
-						PRINTFORML ŒÄ‚Ñ–¼,%CALLNAME:TARGET%
+						PRINTFORML å‘¼ã³å,%CALLNAME:TARGET%
 					ENDIF
-					SIF CFLAG:’a¶“ú
-						PRINTFORML ƒtƒ‰ƒO,’a¶“ú,{CFLAG:’a¶“ú}
-					;SIF CFLAG:ŒŒ‰ƒR[ƒh
-					;	PRINTFORML ƒtƒ‰ƒO,ŒŒ‰ƒR[ƒh,{CFLAG:ŒŒ‰ƒR[ƒh}
-					;SIF CFLAG:‘±•¿
-					;	PRINTFORML ƒtƒ‰ƒO,‘±•¿,{CFLAG:‘±•¿}
-					;SIF CFLAG:ŒZ’í
-					;	PRINTFORML ƒtƒ‰ƒO,ŒZ’í,{CFLAG:ŒZ’í}
-					;SIF CFLAG:Žo–…
-					;	PRINTFORML ƒtƒ‰ƒO,Žo–…,{CFLAG:Žo–…}
+					SIF CFLAG:èª•ç”Ÿæ—¥
+						PRINTFORML ãƒ•ãƒ©ã‚°,èª•ç”Ÿæ—¥,{CFLAG:èª•ç”Ÿæ—¥}
+					;SIF CFLAG:è¡€ç¸ã‚³ãƒ¼ãƒ‰
+					;	PRINTFORML ãƒ•ãƒ©ã‚°,è¡€ç¸ã‚³ãƒ¼ãƒ‰,{CFLAG:è¡€ç¸ã‚³ãƒ¼ãƒ‰}
+					;SIF CFLAG:ç¶šæŸ„
+					;	PRINTFORML ãƒ•ãƒ©ã‚°,ç¶šæŸ„,{CFLAG:ç¶šæŸ„}
+					;SIF CFLAG:å…„å¼Ÿ
+					;	PRINTFORML ãƒ•ãƒ©ã‚°,å…„å¼Ÿ,{CFLAG:å…„å¼Ÿ}
+					;SIF CFLAG:å§‰å¦¹
+					;	PRINTFORML ãƒ•ãƒ©ã‚°,å§‰å¦¹,{CFLAG:å§‰å¦¹}
 						
 					PRINTL 
-					PRINTFORML Šî‘b,‘Ì—Í,{MAXBASE:‘Ì—Í}
-					PRINTFORML Šî‘b,‹C—Í,{MAXBASE:‹C—Í}
+					PRINTFORML åŸºç¤Ž,ä½“åŠ›,{MAXBASE:ä½“åŠ›}
+					PRINTFORML åŸºç¤Ž,æ°—åŠ›,{MAXBASE:æ°—åŠ›}
 					REPEAT VARSIZE("EXP")
 						SIF EXP:COUNT != 0
-							PRINTFORML ŒoŒ±,%EXPNAME:COUNT%,{EXP:COUNT}
+							PRINTFORML çµŒé¨“,%EXPNAME:COUNT%,{EXP:COUNT}
 					REND
 					REPEAT VARSIZE("ABL")
 						SIF ABL:COUNT != 0
-							PRINTFORML ”\—Í,%ABLNAME:COUNT%,{ABL:COUNT}
+							PRINTFORML èƒ½åŠ›,%ABLNAME:COUNT%,{ABL:COUNT}
 					REND
-					PRINTFORML ‘fŽ¿,«•Ê,{TALENT:«•Ê}
+					PRINTFORML ç´ è³ª,æ€§åˆ¥,{TALENT:æ€§åˆ¥}
 					SIF SEX(TARGET) == 2
-						PRINTFORML ‘fŽ¿,ƒoƒXƒgƒTƒCƒY,{TALENT:ƒoƒXƒgƒTƒCƒY}
-					IF TALENT:—öS != 0
-						PRINTFORML ‘fŽ¿,—öS,{TALENT:—öS},;%CSVCALLNAME(TALENT:—öS)%
-						SIF EXISTCSV(TALENT:—öS)
-							PRINTFORML ;%CSVCALLNAME(TALENT:—öS)%
+						PRINTFORML ç´ è³ª,ãƒã‚¹ãƒˆã‚µã‚¤ã‚º,{TALENT:ãƒã‚¹ãƒˆã‚µã‚¤ã‚º}
+					IF TALENT:æ‹å¿ƒ != 0
+						PRINTFORML ç´ è³ª,æ‹å¿ƒ,{TALENT:æ‹å¿ƒ},;%CSVCALLNAME(TALENT:æ‹å¿ƒ)%
+						SIF EXISTCSV(TALENT:æ‹å¿ƒ)
+							PRINTFORML ;%CSVCALLNAME(TALENT:æ‹å¿ƒ)%
 					ENDIF
-					IF TALENT:Šù¥ŽÒ != 0
-						PRINTFORML ‘fŽ¿,Šù¥ŽÒ,{TALENT:Šù¥ŽÒ},;%CSVCALLNAME(TALENT:Šù¥ŽÒ)%
-						SIF EXISTCSV(TALENT:Šù¥ŽÒ)
-							PRINTFORML ;%CSVCALLNAME(TALENT:Šù¥ŽÒ)%
+					IF TALENT:æ—¢å©šè€… != 0
+						PRINTFORML ç´ è³ª,æ—¢å©šè€…,{TALENT:æ—¢å©šè€…},;%CSVCALLNAME(TALENT:æ—¢å©šè€…)%
+						SIF EXISTCSV(TALENT:æ—¢å©šè€…)
+							PRINTFORML ;%CSVCALLNAME(TALENT:æ—¢å©šè€…)%
 					ENDIF
 					REPEAT VARSIZE("TALENT")
 						SELECTCASE TALENTNAME:COUNT
-							CASE "«•Ê", "ƒoƒXƒgƒTƒCƒY", "—öS", "Šù¥ŽÒ"
+							CASE "æ€§åˆ¥", "ãƒã‚¹ãƒˆã‚µã‚¤ã‚º", "æ‹å¿ƒ", "æ—¢å©šè€…"
 							CASEELSE
 								SIF TALENT:COUNT != 0
-									PRINTFORML ‘fŽ¿,%TALENTNAME:COUNT%
+									PRINTFORML ç´ è³ª,%TALENTNAME:COUNT%
 						ENDSELECT
 					REND
 					REPEAT 10000
 						SIF RELATION:COUNT != 100
-							PRINTFORML ‘Š«,{COUNT},{RELATION:COUNT},;%CSVCALLNAME(COUNT)%
+							PRINTFORML ç›¸æ€§,{COUNT},{RELATION:COUNT},;%CSVCALLNAME(COUNT)%
 					REND
 					
 					PRINTL 
@@ -331,103 +331,103 @@ SELECTCASE RESULTS
 					
 					PRINTL 
 					
-					PRINTL ;•ž‘•
+					PRINTL ;æœè£…
 					REPEAT VARSIZE("CSTR")
 						SELECTCASE CSTRNAME:COUNT
-							CASE "“ÁŽê", "ã”¼gã’…", "‰º”¼gã’…", "‘Sgã’…", "ã”¼g‰º’…", "‰º”¼g‰º’…", "‘«Œ³"
+							CASE "ç‰¹æ®Š", "ä¸ŠåŠèº«ä¸Šç€", "ä¸‹åŠèº«ä¸Šç€", "å…¨èº«ä¸Šç€", "ä¸ŠåŠèº«ä¸‹ç€", "ä¸‹åŠèº«ä¸‹ç€", "è¶³å…ƒ"
 								IF CFLAG:(CSTRNAME:COUNT) == 100
-									PRINTFORML ƒtƒ‰ƒO,%CSTRNAME:COUNT%,100
+									PRINTFORML ãƒ•ãƒ©ã‚°,%CSTRNAME:COUNT%,100
 								ELSEIF CSTR:COUNT != ""
 									PRINTFORML CSTR,%CSTRNAME:COUNT%,%CSTR:COUNT%
 								ENDIF
 						ENDSELECT
 					REND
-					SIF CFLAG:‘}“ü‰Â
-						PRINTL ƒtƒ‰ƒO,‘}“ü‰Â,1
-					SIF CFLAG:’…ˆß•¹—p != 0
-						PRINTFORML ƒtƒ‰ƒO,’…ˆß•¹—p,{CFLAG:’…ˆß•¹—p}
-					SIF CFLAG:ã’…ƒpƒCƒYƒŠ != 0
-						PRINTFORML ƒtƒ‰ƒO,ã’…ƒpƒCƒYƒŠ,{CFLAG:ã’…ƒpƒCƒYƒŠ}
-					SIF CFLAG:‰º’…ƒpƒCƒYƒŠ != 0
-						PRINTFORML ƒtƒ‰ƒO,‰º’…ƒpƒCƒYƒŠ,{CFLAG:‰º’…ƒpƒCƒYƒŠ}
+					SIF CFLAG:æŒ¿å…¥å¯
+						PRINTL ãƒ•ãƒ©ã‚°,æŒ¿å…¥å¯,1
+					SIF CFLAG:ç€è¡£ä½µç”¨ != 0
+						PRINTFORML ãƒ•ãƒ©ã‚°,ç€è¡£ä½µç”¨,{CFLAG:ç€è¡£ä½µç”¨}
+					SIF CFLAG:ä¸Šç€ãƒ‘ã‚¤ã‚ºãƒª != 0
+						PRINTFORML ãƒ•ãƒ©ã‚°,ä¸Šç€ãƒ‘ã‚¤ã‚ºãƒª,{CFLAG:ä¸Šç€ãƒ‘ã‚¤ã‚ºãƒª}
+					SIF CFLAG:ä¸‹ç€ãƒ‘ã‚¤ã‚ºãƒª != 0
+						PRINTFORML ãƒ•ãƒ©ã‚°,ä¸‹ç€ãƒ‘ã‚¤ã‚ºãƒª,{CFLAG:ä¸‹ç€ãƒ‘ã‚¤ã‚ºãƒª}
 
 					PRINTL 
-					PRINTFORML CSTR,Ží‘°,%CSTR:Ží‘°%
-					SIF CSTR:“oêì•i != ""
-						PRINTFORML CSTR,“oêì•i,%CSTR:“oêì•i%
-					SIF CSTR:“oêì•i‚Q != ""
-						PRINTFORML CSTR,“oêì•i‚Q,%CSTR:“oêì•i‚Q%
-					SIF CSTR:“oêì•i‚R != ""
-						PRINTFORML CSTR,“oêì•i‚R,%CSTR:“oêì•i‚R%
+					PRINTFORML CSTR,ç¨®æ—,%CSTR:ç¨®æ—%
+					SIF CSTR:ç™»å ´ä½œå“ != ""
+						PRINTFORML CSTR,ç™»å ´ä½œå“,%CSTR:ç™»å ´ä½œå“%
+					SIF CSTR:ç™»å ´ä½œå“ï¼’ != ""
+						PRINTFORML CSTR,ç™»å ´ä½œå“ï¼’,%CSTR:ç™»å ´ä½œå“ï¼’%
+					SIF CSTR:ç™»å ´ä½œå“ï¼“ != ""
+						PRINTFORML CSTR,ç™»å ´ä½œå“ï¼“,%CSTR:ç™»å ´ä½œå“ï¼“%
 					PRINTL 
 					PRINTL 
 					OUTPUTLOG
-					PRINTW ƒƒO‚Éo—Í‚µ‚Ü‚µ‚½BCSV‚Æ‚µ‚Ä—˜—p‚·‚é•û–@‚Í“¯«‚Ìread me‚ð‚²——‚­‚¾‚³‚¢
+					PRINTW ãƒ­ã‚°ã«å‡ºåŠ›ã—ã¾ã—ãŸã€‚CSVã¨ã—ã¦åˆ©ç”¨ã™ã‚‹æ–¹æ³•ã¯åŒæ¢±ã®read meã‚’ã”è¦§ãã ã•ã„
 			ENDSELECT
 		LOOP LOOPRES(0, 1)
 		GOTO RESTART
 	CASE "1"
-		PRINTL Œ»Ý‚Ìì‹Æó‹µ‚ÌCSV‚ð”’l‚ÅƒƒO‚Éo—Í‚µ‚Ü‚·B‚æ‚ë‚µ‚¢‚Å‚·‚©H
-		PRINTL [0] - ‚Í‚¢
-		PRINTL [1] - ‚¢‚¢‚¦
+		PRINTL ç¾åœ¨ã®ä½œæ¥­çŠ¶æ³ã®CSVã‚’æ•°å€¤ã§ãƒ­ã‚°ã«å‡ºåŠ›ã—ã¾ã™ã€‚ã‚ˆã‚ã—ã„ã§ã™ã‹ï¼Ÿ
+		PRINTL [0] - ã¯ã„
+		PRINTL [1] - ã„ã„ãˆ
 		INPUT
 		DO
 			SELECTCASE RESULT
 				CASE 0
 					CLEARLINE LINECOUNT
-					PRINTFORML ”Ô†,{NO:TARGET}
-					PRINTFORML –¼‘O,%NAME:TARGET%
+					PRINTFORML ç•ªå·,{NO:TARGET}
+					PRINTFORML åå‰,%NAME:TARGET%
 					IF CALLNAME:TARGET == ""
-						PRINTFORML ŒÄ‚Ñ–¼,%NAME:TARGET%
+						PRINTFORML å‘¼ã³å,%NAME:TARGET%
 					ELSE
-						PRINTFORML ŒÄ‚Ñ–¼,%CALLNAME:TARGET%
+						PRINTFORML å‘¼ã³å,%CALLNAME:TARGET%
 					ENDIF
-					SIF CFLAG:’a¶“ú
-						PRINTFORML ƒtƒ‰ƒO,{GETNUM(CFLAG, "’a¶“ú")},{CFLAG:’a¶“ú}
-					;SIF CFLAG:ŒŒ‰ƒR[ƒh
-					;	PRINTFORML ƒtƒ‰ƒO,ŒŒ‰ƒR[ƒh,{CFLAG:ŒŒ‰ƒR[ƒh}
-					;SIF CFLAG:‘±•¿
-					;	PRINTFORML ƒtƒ‰ƒO,‘±•¿,{CFLAG:‘±•¿}
-					;SIF CFLAG:ŒZ’í
-					;	PRINTFORML ƒtƒ‰ƒO,ŒZ’í,{CFLAG:ŒZ’í}
-					;SIF CFLAG:Žo–…
-					;	PRINTFORML ƒtƒ‰ƒO,Žo–…,{CFLAG:Žo–…}
+					SIF CFLAG:èª•ç”Ÿæ—¥
+						PRINTFORML ãƒ•ãƒ©ã‚°,{GETNUM(CFLAG, "èª•ç”Ÿæ—¥")},{CFLAG:èª•ç”Ÿæ—¥}
+					;SIF CFLAG:è¡€ç¸ã‚³ãƒ¼ãƒ‰
+					;	PRINTFORML ãƒ•ãƒ©ã‚°,è¡€ç¸ã‚³ãƒ¼ãƒ‰,{CFLAG:è¡€ç¸ã‚³ãƒ¼ãƒ‰}
+					;SIF CFLAG:ç¶šæŸ„
+					;	PRINTFORML ãƒ•ãƒ©ã‚°,ç¶šæŸ„,{CFLAG:ç¶šæŸ„}
+					;SIF CFLAG:å…„å¼Ÿ
+					;	PRINTFORML ãƒ•ãƒ©ã‚°,å…„å¼Ÿ,{CFLAG:å…„å¼Ÿ}
+					;SIF CFLAG:å§‰å¦¹
+					;	PRINTFORML ãƒ•ãƒ©ã‚°,å§‰å¦¹,{CFLAG:å§‰å¦¹}
 						
 					PRINTL 
-					PRINTFORML Šî‘b,0,{MAXBASE:‘Ì—Í}
-					PRINTFORML Šî‘b,1,{MAXBASE:‹C—Í}
+					PRINTFORML åŸºç¤Ž,0,{MAXBASE:ä½“åŠ›}
+					PRINTFORML åŸºç¤Ž,1,{MAXBASE:æ°—åŠ›}
 					REPEAT VARSIZE("EXP")
 						SIF EXP:COUNT != 0
-							PRINTFORML ŒoŒ±,{COUNT},{EXP:COUNT}
+							PRINTFORML çµŒé¨“,{COUNT},{EXP:COUNT}
 					REND
 					REPEAT VARSIZE("ABL")
 						SIF ABL:COUNT != 0
-							PRINTFORML ”\—Í,{COUNT},{ABL:COUNT}
+							PRINTFORML èƒ½åŠ›,{COUNT},{ABL:COUNT}
 					REND
-					PRINTFORML ‘fŽ¿,{GETNUM(TALENT, "«•Ê")},{TALENT:«•Ê}
+					PRINTFORML ç´ è³ª,{GETNUM(TALENT, "æ€§åˆ¥")},{TALENT:æ€§åˆ¥}
 					SIF SEX(TARGET) == 2
-						PRINTFORML ‘fŽ¿,{GETNUM(TALENT, "ƒoƒXƒgƒTƒCƒY")},{TALENT:ƒoƒXƒgƒTƒCƒY}
-					IF TALENT:—öS != 0
-						PRINTFORML ‘fŽ¿,{GETNUM(TALENT, "—öS")},{TALENT:—öS},;%CSVCALLNAME(TALENT:—öS)%
-						SIF EXISTCSV(TALENT:—öS)
-							PRINTFORML ;%CSVCALLNAME(TALENT:—öS)%
+						PRINTFORML ç´ è³ª,{GETNUM(TALENT, "ãƒã‚¹ãƒˆã‚µã‚¤ã‚º")},{TALENT:ãƒã‚¹ãƒˆã‚µã‚¤ã‚º}
+					IF TALENT:æ‹å¿ƒ != 0
+						PRINTFORML ç´ è³ª,{GETNUM(TALENT, "æ‹å¿ƒ")},{TALENT:æ‹å¿ƒ},;%CSVCALLNAME(TALENT:æ‹å¿ƒ)%
+						SIF EXISTCSV(TALENT:æ‹å¿ƒ)
+							PRINTFORML ;%CSVCALLNAME(TALENT:æ‹å¿ƒ)%
 					ENDIF
-					IF TALENT:Šù¥ŽÒ != 0
-						PRINTFORML ‘fŽ¿,{GETNUM(TALENT, "Šù¥ŽÒ")},{TALENT:Šù¥ŽÒ},;%CSVCALLNAME(TALENT:Šù¥ŽÒ)%
-						SIF EXISTCSV(TALENT:Šù¥ŽÒ)
-							PRINTFORML ;%CSVCALLNAME(TALENT:Šù¥ŽÒ)%
+					IF TALENT:æ—¢å©šè€… != 0
+						PRINTFORML ç´ è³ª,{GETNUM(TALENT, "æ—¢å©šè€…")},{TALENT:æ—¢å©šè€…},;%CSVCALLNAME(TALENT:æ—¢å©šè€…)%
+						SIF EXISTCSV(TALENT:æ—¢å©šè€…)
+							PRINTFORML ;%CSVCALLNAME(TALENT:æ—¢å©šè€…)%
 					ENDIF
 					REPEAT VARSIZE("TALENT")
 						SELECTCASE TALENTNAME:COUNT
-							CASE "«•Ê", "ƒoƒXƒgƒTƒCƒY", "—öS", "Šù¥ŽÒ"
+							CASE "æ€§åˆ¥", "ãƒã‚¹ãƒˆã‚µã‚¤ã‚º", "æ‹å¿ƒ", "æ—¢å©šè€…"
 							CASEELSE
 								SIF TALENT:COUNT != 0
-									PRINTFORML ‘fŽ¿,{COUNT}
+									PRINTFORML ç´ è³ª,{COUNT}
 						ENDSELECT
 					REND
 					REPEAT 10000
 						SIF RELATION:COUNT != 100
-							PRINTFORML ‘Š«,{COUNT},{RELATION:COUNT},;%CSVCALLNAME(COUNT)%
+							PRINTFORML ç›¸æ€§,{COUNT},{RELATION:COUNT},;%CSVCALLNAME(COUNT)%
 					REND
 					
 					PRINTL 
@@ -442,44 +442,44 @@ SELECTCASE RESULTS
 					
 					PRINTL 
 					
-					PRINTL ;•ž‘•
+					PRINTL ;æœè£…
 					REPEAT VARSIZE("CSTR")
 						SELECTCASE CSTRNAME:COUNT
-							CASE "“ÁŽê", "ã”¼gã’…", "‰º”¼gã’…", "‘Sgã’…", "ã”¼g‰º’…", "‰º”¼g‰º’…", "‘«Œ³"
+							CASE "ç‰¹æ®Š", "ä¸ŠåŠèº«ä¸Šç€", "ä¸‹åŠèº«ä¸Šç€", "å…¨èº«ä¸Šç€", "ä¸ŠåŠèº«ä¸‹ç€", "ä¸‹åŠèº«ä¸‹ç€", "è¶³å…ƒ"
 								IF CFLAG:(CSTRNAME:COUNT) == 100
-									PRINTFORML ƒtƒ‰ƒO,{COUNT},100
+									PRINTFORML ãƒ•ãƒ©ã‚°,{COUNT},100
 								ELSEIF CSTR:COUNT != ""
 									PRINTFORML CSTR,{COUNT},%CSTR:COUNT%
 								ENDIF
 						ENDSELECT
 					REND
-					SIF CFLAG:‘}“ü‰Â
-						PRINTFORML ƒtƒ‰ƒO,{GETNUM(CFLAG, "‘}“ü‰Â")},1
-					SIF CFLAG:’…ˆß•¹—p != 0
-						PRINTFORML ƒtƒ‰ƒO,{GETNUM(CFLAG, "’…ˆß•¹—p")},{CFLAG:’…ˆß•¹—p}
-					SIF CFLAG:ã’…ƒpƒCƒYƒŠ != 0
-						PRINTFORML ƒtƒ‰ƒO,{GETNUM(CFLAG, "ã’…ƒpƒCƒYƒŠ")},{CFLAG:ã’…ƒpƒCƒYƒŠ}
-					SIF CFLAG:‰º’…ƒpƒCƒYƒŠ != 0
-						PRINTFORML ƒtƒ‰ƒO,{GETNUM(CFLAG, "‰º’…ƒpƒCƒYƒŠ")},{CFLAG:‰º’…ƒpƒCƒYƒŠ}
+					SIF CFLAG:æŒ¿å…¥å¯
+						PRINTFORML ãƒ•ãƒ©ã‚°,{GETNUM(CFLAG, "æŒ¿å…¥å¯")},1
+					SIF CFLAG:ç€è¡£ä½µç”¨ != 0
+						PRINTFORML ãƒ•ãƒ©ã‚°,{GETNUM(CFLAG, "ç€è¡£ä½µç”¨")},{CFLAG:ç€è¡£ä½µç”¨}
+					SIF CFLAG:ä¸Šç€ãƒ‘ã‚¤ã‚ºãƒª != 0
+						PRINTFORML ãƒ•ãƒ©ã‚°,{GETNUM(CFLAG, "ä¸Šç€ãƒ‘ã‚¤ã‚ºãƒª")},{CFLAG:ä¸Šç€ãƒ‘ã‚¤ã‚ºãƒª}
+					SIF CFLAG:ä¸‹ç€ãƒ‘ã‚¤ã‚ºãƒª != 0
+						PRINTFORML ãƒ•ãƒ©ã‚°,{GETNUM(CFLAG, "ä¸‹ç€ãƒ‘ã‚¤ã‚ºãƒª")},{CFLAG:ä¸‹ç€ãƒ‘ã‚¤ã‚ºãƒª}
 
 					PRINTL 
-					PRINTFORML CSTR,{GETNUM(CSTR, "Ží‘°")},%CSTR:Ží‘°%
-					SIF CSTR:“oêì•i != ""
-						PRINTFORML CSTR,“oêì•i,%CSTR:“oêì•i%
-					SIF CSTR:“oêì•i‚Q != ""
-						PRINTFORML CSTR,“oêì•i‚Q,%CSTR:“oêì•i‚Q%
-					SIF CSTR:“oêì•i‚R != ""
-						PRINTFORML CSTR,“oêì•i‚R,%CSTR:“oêì•i‚R%
+					PRINTFORML CSTR,{GETNUM(CSTR, "ç¨®æ—")},%CSTR:ç¨®æ—%
+					SIF CSTR:ç™»å ´ä½œå“ != ""
+						PRINTFORML CSTR,ç™»å ´ä½œå“,%CSTR:ç™»å ´ä½œå“%
+					SIF CSTR:ç™»å ´ä½œå“ï¼’ != ""
+						PRINTFORML CSTR,ç™»å ´ä½œå“ï¼’,%CSTR:ç™»å ´ä½œå“ï¼’%
+					SIF CSTR:ç™»å ´ä½œå“ï¼“ != ""
+						PRINTFORML CSTR,ç™»å ´ä½œå“ï¼“,%CSTR:ç™»å ´ä½œå“ï¼“%
 					PRINTL 
 					OUTPUTLOG
-					PRINTW ƒƒO‚Éo—Í‚µ‚Ü‚µ‚½BCSV‚Æ‚µ‚Ä—˜—p‚·‚é•û–@‚Í“¯«‚Ìread me‚ð‚²——‚­‚¾‚³‚¢
+					PRINTW ãƒ­ã‚°ã«å‡ºåŠ›ã—ã¾ã—ãŸã€‚CSVã¨ã—ã¦åˆ©ç”¨ã™ã‚‹æ–¹æ³•ã¯åŒæ¢±ã®read meã‚’ã”è¦§ãã ã•ã„
 			ENDSELECT
 		LOOP LOOPRES(0, 1)
 		GOTO RESTART
 	CASE "2"
-		PRINTL Œ»Ý‚Ìì‹Æó‹µ‚ð”jŠü‚µ‚Äƒ^ƒCƒgƒ‹‰æ–Ê‚É–ß‚è‚Ü‚·B‚æ‚ë‚µ‚¢‚Å‚·‚©H
-		PRINTL [0] - ‚Í‚¢
-		PRINTL [1] - ‚¢‚¢‚¦
+		PRINTL ç¾åœ¨ã®ä½œæ¥­çŠ¶æ³ã‚’ç ´æ£„ã—ã¦ã‚¿ã‚¤ãƒˆãƒ«ç”»é¢ã«æˆ»ã‚Šã¾ã™ã€‚ã‚ˆã‚ã—ã„ã§ã™ã‹ï¼Ÿ
+		PRINTL [0] - ã¯ã„
+		PRINTL [1] - ã„ã„ãˆ
 		INPUT
 		DO
 			SELECTCASE RESULT
@@ -491,9 +491,9 @@ SELECTCASE RESULTS
 			ENDSELECT
 		LOOP 1
 	CASE "3"
-		PRINTL Œ»Ý‚Ìì‹Æó‹µ‚ð”jŠü‚µ‚ÄŠù‘¶‚ÌCSV‚ðŒÄ‚Ño‚µ‚Ü‚·B‚æ‚ë‚µ‚¢‚Å‚·‚©H
-		PRINTL [0] - ‚Í‚¢
-		PRINTL [1] - ‚¢‚¢‚¦
+		PRINTL ç¾åœ¨ã®ä½œæ¥­çŠ¶æ³ã‚’ç ´æ£„ã—ã¦æ—¢å­˜ã®CSVã‚’å‘¼ã³å‡ºã—ã¾ã™ã€‚ã‚ˆã‚ã—ã„ã§ã™ã‹ï¼Ÿ
+		PRINTL [0] - ã¯ã„
+		PRINTL [1] - ã„ã„ãˆ
 		INPUT
 		DO
 			SELECTCASE RESULT
@@ -501,8 +501,8 @@ SELECTCASE RESULTS
 					CALL CHARA_LIST, 1
 					DELALLCHARA
 					ADDVOIDCHARA
-					NAME:0 = Žål
-					CALLNAME:0 = Žål
+					NAME:0 = ä¸»äºº
+					CALLNAME:0 = ä¸»äºº
 					ADDCHARA RESULT
 					TARGET = 1
 					GOTO RESTART
@@ -511,9 +511,9 @@ SELECTCASE RESULTS
 			ENDSELECT
 		LOOP 1
 	CASE "4"
-		PRINTL Œ»Ý‚Ìì‹Æó‹µ‚ð”jŠü‚µ‚ÄCSV‚ðì‚è’¼‚µ‚Ü‚·B‚æ‚ë‚µ‚¢‚Å‚·‚©H
-		PRINTL [0] - ‚Í‚¢
-		PRINTL [1] - ‚¢‚¢‚¦
+		PRINTL ç¾åœ¨ã®ä½œæ¥­çŠ¶æ³ã‚’ç ´æ£„ã—ã¦CSVã‚’ä½œã‚Šç›´ã—ã¾ã™ã€‚ã‚ˆã‚ã—ã„ã§ã™ã‹ï¼Ÿ
+		PRINTL [0] - ã¯ã„
+		PRINTL [1] - ã„ã„ãˆ
 		INPUT
 		DO
 			SELECTCASE RESULT
@@ -524,110 +524,110 @@ SELECTCASE RESULTS
 					GOTO RESTART
 			ENDSELECT
 		LOOP 1
-	CASE "ƒLƒƒƒ‰”Ô†"
-		PRINTL ƒLƒƒƒ‰”Ô†‚ð“ü—Í‚µ‚Ä‚­‚¾‚³‚¢
+	CASE "ã‚­ãƒ£ãƒ©ç•ªå·"
+		PRINTL ã‚­ãƒ£ãƒ©ç•ªå·ã‚’å…¥åŠ›ã—ã¦ãã ã•ã„
 		INPUT
 		NO:TARGET = RESULT
 		GOTO RESTART
-	CASE "’a¶“ú"
-		PRINTL ’a¶“ú‚ð4Œ…‚Å“ü—Í‚µ‚Ä‚­‚¾‚³‚¢(—á:6ŒŽ24“ú¨0624)
+	CASE "èª•ç”Ÿæ—¥"
+		PRINTL èª•ç”Ÿæ—¥ã‚’4æ¡ã§å…¥åŠ›ã—ã¦ãã ã•ã„(ä¾‹:6æœˆ24æ—¥â†’0624)
 		DO
 			INPUT
 		LOOP !INRANGE(RESULT/100, 1, 12) || !INRANGE(RESULT%100, 1, 31)
-		CFLAG:’a¶“ú = RESULT
+		CFLAG:èª•ç”Ÿæ—¥ = RESULT
 		GOTO RESTART
-	CASE "–¼‘O"
-		PRINTL ƒtƒ‹ƒl[ƒ€‚ð“ü—Í‚µ‚Ä‚­‚¾‚³‚¢
+	CASE "åå‰"
+		PRINTL ãƒ•ãƒ«ãƒãƒ¼ãƒ ã‚’å…¥åŠ›ã—ã¦ãã ã•ã„
 		INPUTS
 		NAME:TARGET = %RESULTS%
 		GOTO RESTART
-	CASE "ŒÄ‚Ñ–¼"
-		PRINTL ŒÄ‚Ñ–¼‚ð“ü—Í‚µ‚Ä‚­‚¾‚³‚¢
+	CASE "å‘¼ã³å"
+		PRINTL å‘¼ã³åã‚’å…¥åŠ›ã—ã¦ãã ã•ã„
 		INPUTS
 		CALLNAME:TARGET = %RESULTS%
 		GOTO RESTART
-	CASE "«•Ê"
-		PRINTL «•Ê‚ð‘I‚ñ‚Å‚­‚¾‚³‚¢
-		PRINTL [1] - ’j
-		PRINTL [2] - —
+	CASE "æ€§åˆ¥"
+		PRINTL æ€§åˆ¥ã‚’é¸ã‚“ã§ãã ã•ã„
+		PRINTL [1] - ç”·
+		PRINTL [2] - å¥³
 		INPUT
 		DO
 		LOOP LOOPRES(1, 2)
-		TALENT:«•Ê = RESULT
-	CASE "‘Ì—Í"
-		PRINTL ‘Ì—Í‚Ì”’l‚ð“ü—Í‚µ‚Ä‚­‚¾‚³‚¢
+		TALENT:æ€§åˆ¥ = RESULT
+	CASE "ä½“åŠ›"
+		PRINTL ä½“åŠ›ã®æ•°å€¤ã‚’å…¥åŠ›ã—ã¦ãã ã•ã„
 		INPUT
-		MAXBASE:‘Ì—Í = RESULT
+		MAXBASE:ä½“åŠ› = RESULT
 		GOTO RESTART
-	CASE "‹C—Í"
-		PRINTL ‹C—Í‚Ì”’l‚ð“ü—Í‚µ‚Ä‚­‚¾‚³‚¢
+	CASE "æ°—åŠ›"
+		PRINTL æ°—åŠ›ã®æ•°å€¤ã‚’å…¥åŠ›ã—ã¦ãã ã•ã„
 		INPUT
-		MAXBASE:‹C—Í = RESULT
+		MAXBASE:æ°—åŠ› = RESULT
 		GOTO RESTART
-	CASE "Ží‘°"
-		PRINTL Ží‘°–¼‚ð“ü—Í‚µ‚Ä‚­‚¾‚³‚¢
+	CASE "ç¨®æ—"
+		PRINTL ç¨®æ—åã‚’å…¥åŠ›ã—ã¦ãã ã•ã„
 		INPUTS
-		CSTR:TARGET:Ží‘° = %RESULTS%
+		CSTR:TARGET:ç¨®æ— = %RESULTS%
 		GOTO RESTART
-	CASE "‘fŽ¿‚ð•ÏX‚·‚é"
+	CASE "ç´ è³ªã‚’å¤‰æ›´ã™ã‚‹"
 		CALL TALENT_CHANGE
 		GOTO RESTART
-	CASE "“ÁŽê", "ã”¼gã’…", "‰º”¼gã’…", "‘Sgã’…", "ã”¼g‰º’…", "‰º”¼g‰º’…", "‘«Œ³"
+	CASE "ç‰¹æ®Š", "ä¸ŠåŠèº«ä¸Šç€", "ä¸‹åŠèº«ä¸Šç€", "å…¨èº«ä¸Šç€", "ä¸ŠåŠèº«ä¸‹ç€", "ä¸‹åŠèº«ä¸‹ç€", "è¶³å…ƒ"
 		LOCALS = %RESULTS%
-		PRINTFORML %LOCALS%‚Ì–¼‘O‚ð“ü—Í‚µ‚Ä‚­‚¾‚³‚¢
-		PRINTBUTTON "[’…ˆß•s‰Â‚É‚·‚é]", "’…ˆß•s‰Â‚É‚·‚é"
+		PRINTFORML %LOCALS%ã®åå‰ã‚’å…¥åŠ›ã—ã¦ãã ã•ã„
+		PRINTBUTTON "[ç€è¡£ä¸å¯ã«ã™ã‚‹]", "ç€è¡£ä¸å¯ã«ã™ã‚‹"
 		PRINTL 
 		INPUTS
 		SELECTCASE RESULTS
-			CASE "’…ˆß•s‰Â‚É‚·‚é"
+			CASE "ç€è¡£ä¸å¯ã«ã™ã‚‹"
 				CFLAG:LOCALS = 100
 				CSTR:LOCALS = 
 			CASEELSE
 				CSTR:LOCALS = %RESULTS%
 		ENDSELECT
 		GOTO RESTART
-	CASE "‘}“ü‰Â"
-		PRINTL ‘}“ü‰Â”\ƒtƒ‰ƒO‚ðÝ’è‚µ‚Ä‚­‚¾‚³‚¢
-		PRINTL [0] - ƒtƒ‰ƒO–³‚µ
-		PRINTL [1] - ‰º”¼gã’…A‚à‚µ‚­‚Í‘Sgã’…‚ð’…‚½‚Ü‚Ü«Œð‰Â”\
+	CASE "æŒ¿å…¥å¯"
+		PRINTL æŒ¿å…¥å¯èƒ½ãƒ•ãƒ©ã‚°ã‚’è¨­å®šã—ã¦ãã ã•ã„
+		PRINTL [0] - ãƒ•ãƒ©ã‚°ç„¡ã—
+		PRINTL [1] - ä¸‹åŠèº«ä¸Šç€ã€ã‚‚ã—ãã¯å…¨èº«ä¸Šç€ã‚’ç€ãŸã¾ã¾æ€§äº¤å¯èƒ½
 		INPUT
 		DO
 		LOOP LOOPRES(0, 1)
-		CFLAG:‘}“ü‰Â = RESULT
+		CFLAG:æŒ¿å…¥å¯ = RESULT
 		GOTO RESTART
-	CASE "’…ˆß•¹—p"
-		PRINTL ‘Sgã’…‚Ì’…ˆß•¹—pƒtƒ‰ƒO‚ðÝ’è‚µ‚Ä‚­‚¾‚³‚¢
-		PRINTL [0] - ƒtƒ‰ƒO–³‚µ
-		PRINTL [1] - ã”¼gã’…‹y‚Ñ‰º”¼gã’…‚Æ‚Ì•¹—p‰Â”\
-		PRINTL [2] - ã”¼g‰º’…‹y‚Ñ‰º”¼g‰º’…‚Æ‚Ì•¹—p•s‰Â”\
+	CASE "ç€è¡£ä½µç”¨"
+		PRINTL å…¨èº«ä¸Šç€ã®ç€è¡£ä½µç”¨ãƒ•ãƒ©ã‚°ã‚’è¨­å®šã—ã¦ãã ã•ã„
+		PRINTL [0] - ãƒ•ãƒ©ã‚°ç„¡ã—
+		PRINTL [1] - ä¸ŠåŠèº«ä¸Šç€åŠã³ä¸‹åŠèº«ä¸Šç€ã¨ã®ä½µç”¨å¯èƒ½
+		PRINTL [2] - ä¸ŠåŠèº«ä¸‹ç€åŠã³ä¸‹åŠèº«ä¸‹ç€ã¨ã®ä½µç”¨ä¸å¯èƒ½
 		INPUT
 		DO
 		LOOP LOOPRES(0, 1, 2)
-		CFLAG:’…ˆß•¹—p = RESULT
+		CFLAG:ç€è¡£ä½µç”¨ = RESULT
 		GOTO RESTART
-	CASE "‘Š«‚ð•ÏX‚·‚é"
-		PRINTL ‘ŠŽè‚Ì”Ô†‚ð“ü—Í‚µ‚Ä‚­‚¾‚³‚¢
-		PRINT [10000] ˆê——•\Ž¦ 
-		PRINTL [10001] ‘S•”Šù’è’l‚É–ß‚·
+	CASE "ç›¸æ€§ã‚’å¤‰æ›´ã™ã‚‹"
+		PRINTL ç›¸æ‰‹ã®ç•ªå·ã‚’å…¥åŠ›ã—ã¦ãã ã•ã„
+		PRINT [10000] ä¸€è¦§è¡¨ç¤º 
+		PRINTL [10001] å…¨éƒ¨æ—¢å®šå€¤ã«æˆ»ã™
 		INPUT
 		IF RESULT == 10000
-			PRINTL   ˆê——•\Ž¦
+			PRINTL â–¡ ä¸€è¦§è¡¨ç¤º
 			CALL CHARA_LIST, 1
 		ELSEIF RESULT == 10001
 			VARSET RELATION:TARGET:0, 100
 			GOTO RESTART
 		ELSEIF !EXISTCSV(RESULT)
-			PRINTFORMW {RESULT}‚É‚ÍƒLƒƒƒ‰‚ª“o˜^‚³‚ê‚Ä‚¢‚Ü‚¹‚ñ
+			PRINTFORMW {RESULT}ã«ã¯ã‚­ãƒ£ãƒ©ãŒç™»éŒ²ã•ã‚Œã¦ã„ã¾ã›ã‚“
 			GOTO RESTART
 		ENDIF
 		LOCAL = RESULT
-		PRINTFORML %CSVNAME(LOCAL)%‚Æ‚Ì‘Š«’l‚ð“ü—Í‚µ‚Ä‚­‚¾‚³‚¢
+		PRINTFORML %CSVNAME(LOCAL)%ã¨ã®ç›¸æ€§å€¤ã‚’å…¥åŠ›ã—ã¦ãã ã•ã„
 		INPUT
 		RELATION:LOCAL = RESULT
 		GOTO RESTART
-	CASE "ƒ}ƒjƒ…ƒAƒ‹‚ð•ÏX‚·‚é"
+	CASE "ãƒžãƒ‹ãƒ¥ã‚¢ãƒ«ã‚’å¤‰æ›´ã™ã‚‹"
 		$MANUAL
-		PRINTL •ÏX‚·‚és‚ð‘I‚ñ‚Å‚­‚¾‚³‚¢
+		PRINTL å¤‰æ›´ã™ã‚‹è¡Œã‚’é¸ã‚“ã§ãã ã•ã„
 		REPEAT 100
 			IF CSTR:COUNT == ""
 				LOCAL = COUNT
@@ -636,25 +636,25 @@ SELECTCASE RESULTS
 			PRINTFORML [{COUNT}]%CSTR:COUNT%
 		REND
 		DRAWLINE
-		PRINT  [100] Š®—¹ 
-		PRINTL [101] s‚ð’Ç‰Á
+		PRINT  [100] å®Œäº† 
+		PRINTL [101] è¡Œã‚’è¿½åŠ 
 		INPUT
 		DO
 			SELECTCASE RESULT
 				CASE 100
 					GOTO RESTART
 				CASE 101
-					PRINTL ’Ç‰Á‚·‚és‚Ìƒ}ƒjƒ…ƒAƒ‹‚ð“ü—Í‚µ‚Ä‚­‚¾‚³‚¢
+					PRINTL è¿½åŠ ã™ã‚‹è¡Œã®ãƒžãƒ‹ãƒ¥ã‚¢ãƒ«ã‚’å…¥åŠ›ã—ã¦ãã ã•ã„
 					INPUTS
 					CSTR:LOCAL = %RESULTS%
 					GOTO MANUAL
 				CASEELSE
 					IF CSTR:RESULT != ""
-						PRINTFORML {RESULT}s–Ú‚Ìƒ}ƒjƒ…ƒAƒ‹‚ð“ü—Í‚µ‚Ä‚­‚¾‚³‚¢
-						PRINTBUTTON "[‚±‚Ìs‚ðíœ]", "‚±‚Ìs‚ðíœ"
+						PRINTFORML {RESULT}è¡Œç›®ã®ãƒžãƒ‹ãƒ¥ã‚¢ãƒ«ã‚’å…¥åŠ›ã—ã¦ãã ã•ã„
+						PRINTBUTTON "[ã“ã®è¡Œã‚’å‰Šé™¤]", "ã“ã®è¡Œã‚’å‰Šé™¤"
 						PRINTL 
 						INPUTS %CSTR:RESULT%
-						IF RESULTS == "‚±‚Ìs‚ðíœ"
+						IF RESULTS == "ã“ã®è¡Œã‚’å‰Šé™¤"
 							FOR COUNT, RESULT, LOCAL
 								CSTR:COUNT = %CSTR:(COUNT+1)%
 							NEXT
@@ -665,51 +665,51 @@ SELECTCASE RESULTS
 					ENDIF
 			ENDSELECT
 		LOOP 1
-	CASE "“oêì•i"
-		PRINTL “oêì•i–¼‚ð“ü—Í‚µ‚Ä‚­‚¾‚³‚¢
+	CASE "ç™»å ´ä½œå“"
+		PRINTL ç™»å ´ä½œå“åã‚’å…¥åŠ›ã—ã¦ãã ã•ã„
 		INPUTS
-		CSTR:“oêì•i = %RESULTS%
+		CSTR:ç™»å ´ä½œå“ = %RESULTS%
 		GOTO RESTART
-	CASE "“oêì•i‚Q"
-		PRINTL “oêì•i–¼‚ð“ü—Í‚µ‚Ä‚­‚¾‚³‚¢
+	CASE "ç™»å ´ä½œå“ï¼’"
+		PRINTL ç™»å ´ä½œå“åã‚’å…¥åŠ›ã—ã¦ãã ã•ã„
 		INPUTS
-		CSTR:“oêì•i‚Q = %RESULTS%
+		CSTR:ç™»å ´ä½œå“ï¼’ = %RESULTS%
 		GOTO RESTART
-	CASE "“oêì•i‚R"
-		PRINTL “oêì•i–¼‚ð“ü—Í‚µ‚Ä‚­‚¾‚³‚¢
+	CASE "ç™»å ´ä½œå“ï¼“"
+		PRINTL ç™»å ´ä½œå“åã‚’å…¥åŠ›ã—ã¦ãã ã•ã„
 		INPUTS
-		CSTR:“oêì•i‚R = %RESULTS%
+		CSTR:ç™»å ´ä½œå“ï¼“ = %RESULTS%
 		GOTO RESTART
 	CASEELSE
 		RESULTS = %REPLACE(RESULTS, " ", "")%
 		REPEAT VARSIZE("EXP")
 			SELECTCASE RESULTS
-				CASE "•ò‰õŒoŒ±"
-					RESULTS = •òŽd‰õŠyŒoŒ±
-				CASE "ŒûˆúŒoŒ±"
-					RESULTS = ƒtƒFƒ‰ŒoŒ±
-				CASE "’ÉŠyŒoŒ±"
-					RESULTS = ‹ê’É‰õŠyŒoŒ±
-				CASE "‹s‰õŒoŒ±"
-					RESULTS = šn‹s‰õŠyŒoŒ±
-				CASE "Žå’²ŒoŒ±"
-					RESULTS = Žål’²‹³ŒoŒ±
-				CASE "•’²ŒoŒ±"
-					RESULTS = •Žè’²‹³ŒoŒ±
-				CASE "‚uŠgŒoŒ±"
-					RESULTS = ‚uŠg’£ŒoŒ±
-				CASE "‚`ŠgŒoŒ±"
-					RESULTS = ‚`Šg’£ŒoŒ±
+				CASE "å¥‰å¿«çµŒé¨“"
+					RESULTS = å¥‰ä»•å¿«æ¥½çµŒé¨“
+				CASE "å£æ·«çµŒé¨“"
+					RESULTS = ãƒ•ã‚§ãƒ©çµŒé¨“
+				CASE "ç—›æ¥½çµŒé¨“"
+					RESULTS = è‹¦ç—›å¿«æ¥½çµŒé¨“
+				CASE "è™å¿«çµŒé¨“"
+					RESULTS = å—œè™å¿«æ¥½çµŒé¨“
+				CASE "ä¸»èª¿çµŒé¨“"
+					RESULTS = ä¸»äººèª¿æ•™çµŒé¨“
+				CASE "åŠ©èª¿çµŒé¨“"
+					RESULTS = åŠ©æ‰‹èª¿æ•™çµŒé¨“
+				CASE "ï¼¶æ‹¡çµŒé¨“"
+					RESULTS = ï¼¶æ‹¡å¼µçµŒé¨“
+				CASE "ï¼¡æ‹¡çµŒé¨“"
+					RESULTS = ï¼¡æ‹¡å¼µçµŒé¨“
 			ENDSELECT
 			IF EXPNAME:COUNT == RESULTS
-				PRINTFORML %EXPNAME:COUNT%‚Ì”’l‚ð“ü—Í‚µ‚Ä‚­‚¾‚³‚¢
+				PRINTFORML %EXPNAME:COUNT%ã®æ•°å€¤ã‚’å…¥åŠ›ã—ã¦ãã ã•ã„
 				INPUT
 				EXP:COUNT = RESULT
 			ENDIF
 		REND
 		REPEAT VARSIZE("ABL")
 			IF ABLNAME:COUNT == RESULTS
-				PRINTFORML %ABLNAME:COUNT%‚Ì”’l‚ð“ü—Í‚µ‚Ä‚­‚¾‚³‚¢
+				PRINTFORML %ABLNAME:COUNT%ã®æ•°å€¤ã‚’å…¥åŠ›ã—ã¦ãã ã•ã„
 				INPUT
 				ABL:COUNT = RESULT
 			ENDIF

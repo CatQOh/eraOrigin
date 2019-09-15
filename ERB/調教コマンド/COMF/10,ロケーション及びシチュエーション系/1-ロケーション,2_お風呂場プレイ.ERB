@@ -1,62 +1,62 @@
+ï»¿;-------------------------------------------------
+;ãŠé¢¨å‘‚å ´ãƒ—ãƒ¬ã‚¤
 ;-------------------------------------------------
-;‚¨•—˜CêƒvƒŒƒC
-;-------------------------------------------------
-@USERCOM_ABLE_‚¨•—˜CêƒvƒŒƒC, ARG
+@USERCOM_ABLE_ãŠé¢¨å‘‚å ´ãƒ—ãƒ¬ã‚¤, ARG
 #FUNCTION
-;‰ðœ‚Í‚¢‚Â‚Å‚à‰Â”\
-IF TEQUIP:‚¨•—˜Cê
+;è§£é™¤ã¯ã„ã¤ã§ã‚‚å¯èƒ½
+IF TEQUIP:ãŠé¢¨å‘‚å ´
 	COMRESULT = 1
 	RETURNF 1
 ENDIF
-;]‡‚ª1ˆÈã‚È‚¢‚Æƒ_ƒ
-SIF ABL:]‡ <= 1
+;å¾“é †ãŒ1ä»¥ä¸Šãªã„ã¨ãƒ€ãƒ¡
+SIF ABL:å¾“é † <= 1
 	RETURNF 0
-SELECTCASE CSTR:Ží‘°
-	;‘ÎÛ‚©•Žè‚ªŽí‘°FblAb‚ÅA]‡‚ª3ˆÈ‰º‚¾‚Æƒ_ƒ
-	CASE "bl", "b"
-		SIF ABL:]‡ <= 3
+SELECTCASE CSTR:ç¨®æ—
+	;å¯¾è±¡ã‹åŠ©æ‰‹ãŒç¨®æ—ï¼šç£äººã€ç£ã§ã€å¾“é †ãŒ3ä»¥ä¸‹ã ã¨ãƒ€ãƒ¡
+	CASE "ç£äºº", "ç£"
+		SIF ABL:å¾“é † <= 3
 			RETURNF 0
-	;‹@ŠB‚Íƒ_ƒ
-	CASE "‹@ŠB"
+	;æ©Ÿæ¢°ã¯ãƒ€ãƒ¡
+	CASE "æ©Ÿæ¢°"
 		RETURNF 0
 ENDSELECT
-;–³‹@•¨‚Íƒ_ƒ
-SIF TALENT:–³‹@•¨
+;ç„¡æ©Ÿç‰©ã¯ãƒ€ãƒ¡
+SIF TALENT:ç„¡æ©Ÿç‰©
 	RETURNF 0
-;–ìŠOƒvƒŒƒC’†‚Íƒ_ƒ
-SIF TEQUIP:–ìŠOƒvƒŒƒC
+;é‡Žå¤–ãƒ—ãƒ¬ã‚¤ä¸­ã¯ãƒ€ãƒ¡
+SIF TEQUIP:é‡Žå¤–ãƒ—ãƒ¬ã‚¤
 	RETURNF 0
-;ãµ’pƒvƒŒƒC’†‚Íƒ_ƒ
-SIF TEQUIP:ãµ’pƒvƒŒƒC
+;ç¾žæ¥ãƒ—ãƒ¬ã‚¤ä¸­ã¯ãƒ€ãƒ¡
+SIF TEQUIP:ç¾žæ¥ãƒ—ãƒ¬ã‚¤
 	RETURNF 0
-;GŽè’²‹³’†‚Íƒ_ƒ
-SIF TEQUIP:GŽè
+;è§¦æ‰‹èª¿æ•™ä¸­ã¯ãƒ€ãƒ¡
+SIF TEQUIP:è§¦æ‰‹
 	RETURNF 0
-;VÈƒvƒŒƒC’†‚Íƒ_ƒ
-SIF TEQUIP:ƒGƒvƒƒ“
+;æ–°å¦»ãƒ—ãƒ¬ã‚¤ä¸­ã¯ãƒ€ãƒ¡
+SIF TEQUIP:ã‚¨ãƒ—ãƒ­ãƒ³
 	RETURNF 0
 
 COMRESULT = 1
 RETURNF 1
 
-@COM_‚¨•—˜CêƒvƒŒƒC
-PRINTL ‚¨•—˜CêƒvƒŒƒC
+@COM_ãŠé¢¨å‘‚å ´ãƒ—ãƒ¬ã‚¤
+PRINTL ãŠé¢¨å‘‚å ´ãƒ—ãƒ¬ã‚¤
 CALL KOJO_MESSAGE_COM
 
-;’…’E‚Ìˆ—
-INVERTBIT TEQUIP:‚¨•—˜Cê, 0
-;ƒVƒƒƒ[‚Í‰Šú‰»
-TEQUIP:ƒVƒƒƒ[ = 0
+;ç€è„±ã®å‡¦ç†
+INVERTBIT TEQUIP:ãŠé¢¨å‘‚å ´, 0
+;ã‚·ãƒ£ãƒ¯ãƒ¼ã¯åˆæœŸåŒ–
+TEQUIP:ã‚·ãƒ£ãƒ¯ãƒ¼ = 0
 
-;“ü‚éŽž‚Í•ž‚ð’E‚®
-IF TEQUIP:‚¨•—˜Cê
+;å…¥ã‚‹æ™‚ã¯æœã‚’è„±ã
+IF TEQUIP:ãŠé¢¨å‘‚å ´
 	REPEAT 7
 		TEQUIP:COUNT = 0
 		TEQUIP:MASTER:COUNT = 0
 		SIF ASSI > 0
 			TEQUIP:ASSI:COUNT = 0
 	REND
-;I—¹Žž‚Í•ž‚ð’…‚é ƒ\[ƒXAŒoŒ±‚Ì‰ÁŽZ‚Ís‚í‚È‚¢
+;çµ‚äº†æ™‚ã¯æœã‚’ç€ã‚‹ ã‚½ãƒ¼ã‚¹ã€çµŒé¨“ã®åŠ ç®—ã¯è¡Œã‚ãªã„
 ELSE
 	REPEAT 7
 		SIF CSTR:(COUNT+100) != ""
@@ -70,54 +70,54 @@ ELSE
 ENDIF
 
 ;-------------------------------------------------
-;ƒ\[ƒX’Ç‰Áˆ—
+;ã‚½ãƒ¼ã‚¹è¿½åŠ å‡¦ç†
 ;-------------------------------------------------
-;Á”ï‘Ì—ÍA‹C—Í
-LOSEBASE:‘Ì—Í += 10
-LOSEBASE:‹C—Í += 30
+;æ¶ˆè²»ä½“åŠ›ã€æ°—åŠ›
+LOSEBASE:ä½“åŠ› += 10
+LOSEBASE:æ°—åŠ› += 30
 
-DOWNBASE:MASTER:‘Ì—Í += 20
-DOWNBASE:MASTER:‹C—Í += 20
+DOWNBASE:MASTER:ä½“åŠ› += 20
+DOWNBASE:MASTER:æ°—åŠ› += 20
 
-SOURCE:îˆ¤ = 100
-SOURCE:‹±‡ = 50
-SOURCE:‹°•| = 50
-SOURCE:˜Io = 200
-SOURCE:ˆí’E = 50
-SOURCE:”½Š´ = 100
-;Ží‘°‚Å•â³
-SELECTCASE CSTR:Ží‘°
-	CASE "bl", "b"
-		SOURCE:‹°•| += 50
-		SOURCE:”½Š´ += 100
-	CASE "l‹›"
-		LOSEBASE:‹C—Í = 0
-		SOURCE:‹°•| = 0
+SOURCE:æƒ…æ„› = 100
+SOURCE:æ­é † = 50
+SOURCE:ææ€– = 50
+SOURCE:éœ²å‡º = 200
+SOURCE:é€¸è„± = 50
+SOURCE:åæ„Ÿ = 100
+;ç¨®æ—ã§è£œæ­£
+SELECTCASE CSTR:ç¨®æ—
+	CASE "ç£äºº", "ç£"
+		SOURCE:ææ€– += 50
+		SOURCE:åæ„Ÿ += 100
+	CASE "äººé­š"
+		LOSEBASE:æ°—åŠ› = 0
+		SOURCE:ææ€– = 0
 ENDSELECT
 
 ;-------------------------------------------------
-;“ÁŽêƒ\[ƒXˆ—
+;ç‰¹æ®Šã‚½ãƒ¼ã‚¹å‡¦ç†
 ;-------------------------------------------------
-;—}ˆ³A’ïRŽ‚¿‚É‚ÍA—}ŸTƒ\[ƒX’Ç‰Á
-SIF TALENT:—}ˆ³ || TALENT:’ïR
-	SOURCE:ŸT‹ü += 50
+;æŠ‘åœ§ã€æŠµæŠ—æŒã¡ã«ã¯ã€æŠ‘é¬±ã‚½ãƒ¼ã‚¹è¿½åŠ 
+SIF TALENT:æŠ‘åœ§ || TALENT:æŠµæŠ—
+	SOURCE:é¬±å±ˆ += 50
 
 ;-------------------------------------------------
-;â’¸ƒ`ƒFƒbƒN
+;çµ¶é ‚ãƒã‚§ãƒƒã‚¯
 ;-------------------------------------------------
 CALL SOURCE_CHECK_CVAB
 
 ;-------------------------------------------------
-;ŽË¸ƒ`ƒFƒbƒN
+;å°„ç²¾ãƒã‚§ãƒƒã‚¯
 ;-------------------------------------------------
 CALL SAMEN_CHECK_T, 0
 
-CALL SAMEN_SHOOT_T, 0, NOWEX:ŽË¸
+CALL SAMEN_SHOOT_T, 0, NOWEX:å°„ç²¾
 
 ;-------------------------------------------------
-;‰˜‚ê‚Ìˆ—
+;æ±šã‚Œã®å‡¦ç†
 ;-------------------------------------------------
-;‘•”õŽž‚É‰˜‚ê‚ðƒŠƒZƒbƒg‚·‚éi•—˜C‚É—ˆ‚Ä‰˜‚ê‚½‚Ü‚Ü‚à‚Ç‚¤‚©‚Æ‚¢‚¤‚±‚Æ‚Åj
+;è£…å‚™æ™‚ã«æ±šã‚Œã‚’ãƒªã‚»ãƒƒãƒˆã™ã‚‹ï¼ˆé¢¨å‘‚ã«æ¥ã¦æ±šã‚ŒãŸã¾ã¾ã‚‚ã©ã†ã‹ã¨ã„ã†ã“ã¨ã§ï¼‰
 RESET_STAIN MASTER
 RESET_STAIN TARGET
 SIF ASSI > 0
@@ -126,28 +126,28 @@ SIF ASSI > 0
 RETURN 1
 
 ;-------------------------------------------------
-;‘•’…Œp‘±‚Ìˆ—
+;è£…ç€ç¶™ç¶šã®å‡¦ç†
 ;-------------------------------------------------
-@EQUIP_COM_‚¨•—˜CêƒvƒŒƒC
-PRINTL ƒ‚¨•—˜CêƒvƒŒƒC’†„
+@EQUIP_COM_ãŠé¢¨å‘‚å ´ãƒ—ãƒ¬ã‚¤
+PRINTL ï¼œãŠé¢¨å‘‚å ´ãƒ—ãƒ¬ã‚¤ä¸­ï¼ž
 
-LOSEBASE:‘Ì—Í += 10
-LOSEBASE:‹C—Í += 10
+LOSEBASE:ä½“åŠ› += 10
+LOSEBASE:æ°—åŠ› += 10
 
-SOURCE:‹°•| += 50
-SOURCE:‹±‡ += 100
-SOURCE:”½Š´ += 50
+SOURCE:ææ€– += 50
+SOURCE:æ­é † += 100
+SOURCE:åæ„Ÿ += 50
 
-;Ží‘°‚Å•â³
-SELECTCASE CSTR:Ží‘°
-	CASE "bl", "b"
-		SOURCE:‹°•| += 50
-		SOURCE:”½Š´ += 50
-	CASE "l‹›"
-		LOSEBASE:‘Ì—Í -= 10
-		LOSEBASE:‹C—Í -= 10
-		SOURCE:‹°•| -= 50
-		SOURCE:”½Š´ -= 50
+;ç¨®æ—ã§è£œæ­£
+SELECTCASE CSTR:ç¨®æ—
+	CASE "ç£äºº", "ç£"
+		SOURCE:ææ€– += 50
+		SOURCE:åæ„Ÿ += 50
+	CASE "äººé­š"
+		LOSEBASE:ä½“åŠ› -= 10
+		LOSEBASE:æ°—åŠ› -= 10
+		SOURCE:ææ€– -= 50
+		SOURCE:åæ„Ÿ -= 50
 ENDSELECT
 
 RETURN 1

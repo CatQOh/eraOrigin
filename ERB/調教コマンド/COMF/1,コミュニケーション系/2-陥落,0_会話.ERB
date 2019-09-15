@@ -1,244 +1,244 @@
+ï»¿;-------------------------------------------------
+;ä¼šè©±
 ;-------------------------------------------------
-;‰ï˜b
-;-------------------------------------------------
-@USERCOM_ABLE_‰ï˜b, ARG
+@USERCOM_ABLE_ä¼šè©±, ARG
 #FUNCTION
-;“z—ê‚ª—ö•ç‚©eˆ¤‚ÅŽÀsŽÒ‚ªŽål‚Å‚È‚¢‚Æƒ_ƒ
+;å¥´éš·ãŒæ‹æ…•ã‹è¦ªæ„›ã§å®Ÿè¡Œè€…ãŒä¸»äººã§ãªã„ã¨ãƒ€ãƒ¡
 SIF FALLTYPE(TARGET) != 1 || PLAYER != MASTER
 	RETURNF 0
-;S‘©’†‚Íƒ_ƒ
-SIF TEQUIP:ƒAƒCƒ}ƒXƒN || TEQUIP:“ê || TEQUIP:ƒ{[ƒ‹ƒMƒƒƒO || TEQUIP:GŽè
+;æ‹˜æŸä¸­ã¯ãƒ€ãƒ¡
+SIF TEQUIP:ã‚¢ã‚¤ãƒžã‚¹ã‚¯ || TEQUIP:ç¸„ || TEQUIP:ãƒœãƒ¼ãƒ«ã‚®ãƒ£ã‚° || TEQUIP:è§¦æ‰‹
 	RETURNF 0
 
 COMRESULT = 1
 RETURNF 1
 
-@COM_‰ï˜b
-PRINTL ‰ï˜b
+@COM_ä¼šè©±
+PRINTL ä¼šè©±
 CALL KOJO_MESSAGE_COM
 
 ;-------------------------------------------------
-;ƒ\[ƒX’Ç‰Áˆ—
+;ã‚½ãƒ¼ã‚¹è¿½åŠ å‡¦ç†
 ;-------------------------------------------------
-;Á”ï‘Ì—ÍA‹C—Í
-LOSEBASE:‘Ì—Í += 3
-LOSEBASE:‹C—Í += 10
+;æ¶ˆè²»ä½“åŠ›ã€æ°—åŠ›
+LOSEBASE:ä½“åŠ› += 3
+LOSEBASE:æ°—åŠ› += 10
 
-DOWNBASE:MASTER:‘Ì—Í += 10
-DOWNBASE:MASTER:‹C—Í += 40
+DOWNBASE:MASTER:ä½“åŠ› += 10
+DOWNBASE:MASTER:æ°—åŠ› += 40
 
-SOURCE:îˆ¤ = 100
-SOURCE:‹±‡ = 500
-SOURCE:ˆí’E = 10
+SOURCE:æƒ…æ„› = 100
+SOURCE:æ­é † = 500
+SOURCE:é€¸è„± = 10
 
 ;-------------------------------------------------
-;â’¸ƒ`ƒFƒbƒN
+;çµ¶é ‚ãƒã‚§ãƒƒã‚¯
 ;-------------------------------------------------
 CALL SOURCE_CHECK_CVAB
 
 ;-------------------------------------------------
-;ŽË¸ƒ`ƒFƒbƒN
+;å°„ç²¾ãƒã‚§ãƒƒã‚¯
 ;-------------------------------------------------
 CALL SAMEN_CHECK_T, 0
 
-CALL SAMEN_SHOOT_T, 0, NOWEX:ŽË¸
+CALL SAMEN_SHOOT_T, 0, NOWEX:å°„ç²¾
 
 ;-------------------------------------------------
-;ŒoŒ±‚Ìˆ—
+;çµŒé¨“ã®å‡¦ç†
 ;-------------------------------------------------
-;ˆ¤îŒoŒ±
-PRINTL ˆ¤îŒoŒ±+1
-EXP:ˆ¤îŒoŒ±++
+;æ„›æƒ…çµŒé¨“
+PRINTL æ„›æƒ…çµŒé¨“+1
+EXP:æ„›æƒ…çµŒé¨“++
 
-;ˆË‘¶“x•â³’l(—ö•ç‚Å1Aeˆ¤‚Å2j
-IF TALENT:—ö•ç
-	TFLAG:ˆË‘¶“x•â³ += 1
-ELSEIF TALENT:eˆ¤
-	TFLAG:ˆË‘¶“x•â³ += 2
+;ä¾å­˜åº¦è£œæ­£å€¤(æ‹æ…•ã§1ã€è¦ªæ„›ã§2ï¼‰
+IF TALENT:æ‹æ…•
+	TFLAG:ä¾å­˜åº¦è£œæ­£ += 1
+ELSEIF TALENT:è¦ªæ„›
+	TFLAG:ä¾å­˜åº¦è£œæ­£ += 2
 ENDIF
 
 RETURN 1
 
-@©ŠÙ‹q–¼‘OŒó•â
-;ì‚è‚©‚¯‚Å‚· Š®¬‚Í‰½”NŒã‚É‚È‚é‚Ì‚â‚ç
+@å¨¼é¤¨å®¢åå‰å€™è£œ
+;ä½œã‚Šã‹ã‘ã§ã™ å®Œæˆã¯ä½•å¹´å¾Œã«ãªã‚‹ã®ã‚„ã‚‰
 
-SELECTCASE CSTR:Ží‘°
-	CASE "l‹›"
+SELECTCASE CSTR:ç¨®æ—
+	CASE "äººé­š"
 		SELECTCASE RAND:1
 			CASE 0
-				LOCALS = ƒAƒCƒZƒ‹
+				LOCALS = ã‚¢ã‚¤ã‚»ãƒ«
 			CASE 0
-				LOCALS = ƒAƒTƒoƒXƒJ
+				LOCALS = ã‚¢ã‚µãƒã‚¹ã‚«
 			CASE 0
-				LOCALS = ƒAƒ‰ƒ‹
+				LOCALS = ã‚¢ãƒ©ãƒ«
 			CASE 0
-				LOCALS = ƒCƒVƒN
+				LOCALS = ã‚¤ã‚·ã‚¯
 			CASE 0
-				LOCALS = ƒCƒ[[ƒI
+				LOCALS = ã‚¤ã‚¼ãƒ¼ã‚ª
 			CASE 0
-				LOCALS = ƒ”ƒF[ƒlƒ‹ƒ“
+				LOCALS = ãƒ´ã‚§ãƒ¼ãƒãƒ«ãƒ³
 			CASE 0
-				LOCALS = ƒ”ƒHƒ‹ƒ^
+				LOCALS = ãƒ´ã‚©ãƒ«ã‚¿
 			CASE 0
 				SELECTCASE SEX(TARGET)
 					CASE 1
-						LOCALS = ƒGƒhƒ[ƒh
+						LOCALS = ã‚¨ãƒ‰ãƒ¯ãƒ¼ãƒ‰
 					CASE 2
-						LOCALS = ƒ”ƒBƒNƒgƒŠƒA
+						LOCALS = ãƒ´ã‚£ã‚¯ãƒˆãƒªã‚¢
 				ENDSELECT
 			CASE 0
-				LOCALS = ƒG[ƒA
+				LOCALS = ã‚¨ãƒ¼ã‚¢
 			CASE 0
-				LOCALS = ƒGƒg[ƒVƒƒ
+				LOCALS = ã‚¨ãƒˆãƒ¼ã‚·ãƒ£
 			CASE 0
-				LOCALS = ƒGƒŠ[
+				LOCALS = ã‚¨ãƒªãƒ¼
 			CASE 0
-				LOCALS = ƒIƒ“ƒ^ƒŠƒI
+				LOCALS = ã‚ªãƒ³ã‚¿ãƒªã‚ª
 			CASE 0
-				LOCALS = ƒKƒ‰ƒŠƒ„
+				LOCALS = ã‚¬ãƒ©ãƒªãƒ¤
 			CASE 0
-				LOCALS = ƒJƒ‹[ƒ“
+				LOCALS = ã‚«ãƒ«ãƒ¼ãƒ³
 			CASE 0
-				LOCALS = ƒKƒ‹ƒ_
+				LOCALS = ã‚¬ãƒ«ãƒ€
 			CASE 0
-				LOCALS = ƒJƒŒ[ƒ‰
+				LOCALS = ã‚«ãƒ¬ãƒ¼ãƒ©
 			CASE 0
-				LOCALS = ƒXƒyƒŠƒIƒ‹
+				LOCALS = ã‚¹ãƒšãƒªã‚ªãƒ«
 			CASE 0
-				LOCALS = ƒZƒ“ƒgƒNƒŒƒA
+				LOCALS = ã‚»ãƒ³ãƒˆã‚¯ãƒ¬ã‚¢
 			CASE 0
-				LOCALS = ƒeƒiƒ„
+				LOCALS = ãƒ†ãƒŠãƒ¤
 			CASE 0
-				LOCALS = ƒiƒZƒ‹
+				LOCALS = ãƒŠã‚»ãƒ«
 			CASE 0
-				LOCALS = ƒjƒIƒX
+				LOCALS = ãƒ‹ã‚ªã‚¹
 			CASE 0
-				LOCALS = ƒlƒC
+				LOCALS = ãƒã‚¤
 			CASE 0
-				LOCALS = ƒnƒEƒFƒA
+				LOCALS = ãƒã‚¦ã‚§ã‚¢
 			CASE 0
-				LOCALS = ƒtƒ‰
+				LOCALS = ãƒ•ãƒ©
 			CASE 0
-				LOCALS = ƒx[ƒ‹
+				LOCALS = ãƒ™ãƒ¼ãƒ«
 			CASE 0
-				LOCALS = ‚Öƒlƒ‰ƒ‹
+				LOCALS = ã¸ãƒãƒ©ãƒ«
 			CASE 0
-				LOCALS = ƒ{ƒ‹ƒZ[ƒi
+				LOCALS = ãƒœãƒ«ã‚»ãƒ¼ãƒŠ
 			CASE 0
-				LOCALS = ƒ~ƒ…[ƒŠƒbƒc
+				LOCALS = ãƒŸãƒ¥ãƒ¼ãƒªãƒƒãƒ„
 			CASE 0
-				LOCALS = ƒ‚ƒGƒŠƒX
+				LOCALS = ãƒ¢ã‚¨ãƒªã‚¹
 			CASE 0
-				LOCALS = ƒ‹ƒK[ƒm
+				LOCALS = ãƒ«ã‚¬ãƒ¼ãƒŽ
 			CASE 0
-				LOCALS = ƒŒƒ}ƒ“
+				LOCALS = ãƒ¬ãƒžãƒ³
 			CASE 0
-				LOCALS = ƒƒgƒ‹ƒA
+				LOCALS = ãƒ­ãƒˆãƒ«ã‚¢
 			CASE 0
-				LOCALS = ‚¨‚à‚Ì
+				LOCALS = ãŠã‚‚ã®
 			CASE 0
-				LOCALS = ‚±‚Ê‚Ü
+				LOCALS = ã“ã¬ã¾
 			CASE 0
-				LOCALS = ‚Ý‚©‚½‚²
+				LOCALS = ã¿ã‹ãŸã”
 			CASE 0
-				LOCALS = ‚ä‚Ì‚±
+				LOCALS = ã‚†ã®ã“
 			CASE 0
-				LOCALS = ˆ¢•ŒG
+				LOCALS = é˜¿æ­¦éšˆ
 			CASE 0
-				LOCALS = ’–•c‘ã
+				LOCALS = çŒªè‹—ä»£
 			CASE 0
-				LOCALS = ‹vŽí
+				LOCALS = ä¹…ç¨®
 			CASE 0
-				LOCALS = Ž´Î
+				LOCALS = é›«çŸ³
 			CASE 0
-				LOCALS = Žxâ”
+				LOCALS = æ”¯ç¬
 			CASE 0
-				LOCALS = ‚£
+				LOCALS = é«˜ç€¬
 			CASE 0
-				LOCALS = ’†ŠC
+				LOCALS = ä¸­æµ·
 			CASE 0
-				LOCALS = ¬£
+				LOCALS = æˆç€¬
 			CASE 0
-				LOCALS = “úŒŽ
+				LOCALS = æ—¥æœˆ
 			CASE 0
-				LOCALS = ”’—³
+				LOCALS = ç™½ç«œ
 			CASE 0
-				LOCALS = •l–¼
+				LOCALS = æµœå
 			CASE 0
-				LOCALS = •OŒ´
+				LOCALS = æ¡§åŽŸ
 			CASE 0
-				LOCALS = ”ú”i
+				LOCALS = çµç¶
 			CASE 0
-				LOCALS = —]Œà
+				LOCALS = ä½™å‘‰
 		ENDSELECT
-	CASE "ˆ«–‚"
+	CASE "æ‚ªé­”"
 		SELECTCASE RAND:1
 			CASE 0
-				LOCALS = ƒAƒCƒY[ƒ‹
+				LOCALS = ã‚¢ã‚¤ã‚ºãƒ¼ãƒ«
 			CASE 0
-				LOCALS = ƒAƒXƒeƒŠƒIƒ“
+				LOCALS = ã‚¢ã‚¹ãƒ†ãƒªã‚ªãƒ³
 			CASE 0
-				LOCALS = ƒAƒYƒ‰ƒGƒ‹
+				LOCALS = ã‚¢ã‚ºãƒ©ã‚¨ãƒ«
 			CASE 0
-				LOCALS = ƒQƒŠƒ…ƒIƒ“
+				LOCALS = ã‚²ãƒªãƒ¥ã‚ªãƒ³
 			CASE 0
-				LOCALS = ƒ}[ƒ‰
+				LOCALS = ãƒžãƒ¼ãƒ©
 			CASE 0
 				LOCALS = 
 			CASE 0
 				SELECTCASE SEX(TARGET)
 					CASE 1
-						LOCALS = ƒTƒoƒg
+						LOCALS = ã‚µãƒãƒˆ
 					CASE 2
-						LOCALS = ƒ~ƒT
+						LOCALS = ãƒŸã‚µ
 				ENDSELECT
 			CASE 0
 				LOCALS = 
 			CASE 0
 				LOCALS = 
 		ENDSELECT
-	CASE "¸—ì"
+	CASE "ç²¾éœŠ"
 		SELECTCASE RAND:1
 			CASE 0
-				LOCALS = “V”Vì
+				LOCALS = å¤©ä¹‹å·
 			CASE 0
-				LOCALS = ƒGƒNƒŠƒvƒX
+				LOCALS = ã‚¨ã‚¯ãƒªãƒ—ã‚¹
 			CASE 0
-				LOCALS = ƒI[ƒƒ‰
+				LOCALS = ã‚ªãƒ¼ãƒ­ãƒ©
 			CASE 0
-				LOCALS = ƒNƒGƒCƒN
+				LOCALS = ã‚¯ã‚¨ã‚¤ã‚¯
 			CASE 0
-				LOCALS = ŒŽŒõ
+				LOCALS = æœˆå…‰
 			CASE 0
-				LOCALS = ƒRƒƒi
+				LOCALS = ã‚³ãƒ­ãƒŠ
 			CASE 0
-				LOCALS = Ï—
+				LOCALS = ç©ä¹±
 			CASE 0
-				LOCALS = ƒ\ƒ‰
+				LOCALS = ã‚½ãƒ©
 			CASE 0
-				LOCALS = ‚Â‚Þ‚¶
+				LOCALS = ã¤ã‚€ã˜
 			CASE 0
-				LOCALS = ƒgƒl[ƒ‹
+				LOCALS = ãƒˆãƒãƒ¼ãƒ«
 			CASE 0
-				LOCALS = ƒgƒƒCƒ‰ƒCƒg
+				LOCALS = ãƒˆãƒ¯ã‚¤ãƒ©ã‚¤ãƒˆ
 			CASE 0
 				LOCALS = 
 			CASE 0
-				LOCALS = “úŒõ
+				LOCALS = æ—¥å…‰
 			CASE 0
-				LOCALS = ‚Ð‚©‚°
+				LOCALS = ã²ã‹ã’
 			CASE 0
-				LOCALS = ‚Ð‚Å‚è
+				LOCALS = ã²ã§ã‚Š
 			CASE 0
-				LOCALS = è¹
+				LOCALS = é›¹
 			CASE 0
-				LOCALS = ƒtƒŒƒA
+				LOCALS = ãƒ•ãƒ¬ã‚¢
 			CASE 0
-				LOCALS = ƒ‰[ƒ€
+				LOCALS = ãƒ©ãƒ¼ãƒ 
 			CASE 0
-				LOCALS = —‹Œõ
+				LOCALS = é›·å…‰
 			CASE 0
-				LOCALS = —¬»
+				LOCALS = æµç ‚
 			CASE 0
 				LOCALS = 
 			CASE 0
@@ -260,11 +260,11 @@ SELECTCASE CSTR:Ží‘°
 					CASE 1
 						SELECTCASE RAND:1
 							CASE 0
-								LOCALS = ƒNƒ‰ƒEƒh
+								LOCALS = ã‚¯ãƒ©ã‚¦ãƒ‰
 							CASE 0
-								LOCALS = ƒ\ƒ‰ƒg
+								LOCALS = ã‚½ãƒ©ãƒˆ
 							CASE 0
-								LOCALS = —¬¯
+								LOCALS = æµæ˜Ÿ
 							CASE 0
 								LOCALS = 
 							CASE 0
@@ -281,19 +281,19 @@ SELECTCASE CSTR:Ží‘°
 					CASE 2
 						SELECTCASE RAND:1
 							CASE 0
-								LOCALS = ‚©‚·‚Ý
+								LOCALS = ã‹ã™ã¿
 							CASE 0
-								LOCALS = ƒNƒ‰ƒEƒfƒBƒA
+								LOCALS = ã‚¯ãƒ©ã‚¦ãƒ‡ã‚£ã‚¢
 							CASE 0
-								LOCALS = ‚±‚¨‚è
+								LOCALS = ã“ãŠã‚Š
 							CASE 0
-								LOCALS = ¸‰Ø
+								LOCALS = æ˜‡è¯
 							CASE 0
-								LOCALS = ‚Ý‚¼‚ê
+								LOCALS = ã¿ãžã‚Œ
 							CASE 0
-								LOCALS = á
+								LOCALS = é›ª
 							CASE 0
-								LOCALS = ƒ‹ƒi
+								LOCALS = ãƒ«ãƒŠ
 							CASE 0
 								LOCALS = 
 							CASE 0
@@ -311,9 +311,9 @@ SELECTCASE CSTR:Ží‘°
 						ENDSELECT
 				ENDSELECT
 		ENDSELECT
-	CASE "–P™€"
+	CASE "é³³å‡°"
 		
 	
-	CASE "bl"
+	CASE "ç£äºº"
 ENDSELECT
 

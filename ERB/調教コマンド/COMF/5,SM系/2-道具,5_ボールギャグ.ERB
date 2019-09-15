@@ -1,112 +1,112 @@
+ï»¿;-------------------------------------------------
+;ãƒœãƒ¼ãƒ«ã‚®ãƒ£ã‚°
 ;-------------------------------------------------
-;ƒ{[ƒ‹ƒMƒƒƒO
-;-------------------------------------------------
-@USERCOM_ABLE_ƒ{[ƒ‹ƒMƒƒƒO, ARG
+@USERCOM_ABLE_ãƒœãƒ¼ãƒ«ã‚®ãƒ£ã‚°, ARG
 #FUNCTION
-;GŽèŒûJ’†‚¾‚Æƒ_ƒ
-SIF TEQUIP:GŽèŒûJ
+;è§¦æ‰‹å£è¾±ä¸­ã ã¨ãƒ€ãƒ¡
+SIF TEQUIP:è§¦æ‰‹å£è¾±
 	RETURNF 0
-;‰ðœ‚Í‚¢‚Â‚Å‚à‰Â”\
-IF TEQUIP:ƒ{[ƒ‹ƒMƒƒƒO
+;è§£é™¤ã¯ã„ã¤ã§ã‚‚å¯èƒ½
+IF TEQUIP:ãƒœãƒ¼ãƒ«ã‚®ãƒ£ã‚°
 	COMRESULT = 1
 	RETURNF 1
 ENDIF
-;VÈƒvƒŒƒC’†‚Íƒ_ƒ
-SIF TEQUIP:ƒGƒvƒƒ“
+;æ–°å¦»ãƒ—ãƒ¬ã‚¤ä¸­ã¯ãƒ€ãƒ¡
+SIF TEQUIP:ã‚¨ãƒ—ãƒ­ãƒ³
 	RETURNF 0
 
 COMRESULT = 1
 RETURNF 1
 
-@COM_ƒ{[ƒ‹ƒMƒƒƒO
-PRINTL ƒ{[ƒ‹ƒMƒƒƒO
+@COM_ãƒœãƒ¼ãƒ«ã‚®ãƒ£ã‚°
+PRINTL ãƒœãƒ¼ãƒ«ã‚®ãƒ£ã‚°
 CALL KOJO_MESSAGE_COM
 
-;’…’E‚Ìˆ—
-INVERTBIT TEQUIP:ƒ{[ƒ‹ƒMƒƒƒO, 0
+;ç€è„±ã®å‡¦ç†
+INVERTBIT TEQUIP:ãƒœãƒ¼ãƒ«ã‚®ãƒ£ã‚°, 0
 
 ;-------------------------------------------------
-;ƒ\[ƒX’Ç‰Áˆ—
+;ã‚½ãƒ¼ã‚¹è¿½åŠ å‡¦ç†
 ;-------------------------------------------------
-;Á”ï‘Ì—ÍA‹C—Í
-LOSEBASE:‘Ì—Í += 0
-LOSEBASE:‹C—Í += 50
+;æ¶ˆè²»ä½“åŠ›ã€æ°—åŠ›
+LOSEBASE:ä½“åŠ› += 0
+LOSEBASE:æ°—åŠ› += 50
 
-SOURCE:‹°•| = 50
-SOURCE:˜Io = 30
-SOURCE:‹ü] = 50
-SOURCE:ˆí’E = 70
-SOURCE:”½Š´ = 150
+SOURCE:ææ€– = 50
+SOURCE:éœ²å‡º = 30
+SOURCE:å±ˆå¾“ = 50
+SOURCE:é€¸è„± = 70
+SOURCE:åæ„Ÿ = 150
 
 ;-------------------------------------------------
-;“ÁŽêƒ\[ƒXˆ—
+;ç‰¹æ®Šã‚½ãƒ¼ã‚¹å‡¦ç†
 ;-------------------------------------------------
-;‹Ù”›ŒoŒ±‚ª‚‚¢‚ÆÁ”ïŒ¸­
-SELECTCASE GETEXPLV(EXP:‹Ù”›ŒoŒ±, 4)
+;ç·Šç¸›çµŒé¨“ãŒé«˜ã„ã¨æ¶ˆè²»æ¸›å°‘
+SELECTCASE GETEXPLV(EXP:ç·Šç¸›çµŒé¨“, 4)
 	CASE IS <= 2
-		TIMES LOSEBASE:‘Ì—Í , 1.00
-		TIMES LOSEBASE:‹C—Í , 1.00
+		TIMES LOSEBASE:ä½“åŠ› , 1.00
+		TIMES LOSEBASE:æ°—åŠ› , 1.00
 	CASE 3
-		TIMES LOSEBASE:‘Ì—Í , 0.90
-		TIMES LOSEBASE:‹C—Í , 0.90
+		TIMES LOSEBASE:ä½“åŠ› , 0.90
+		TIMES LOSEBASE:æ°—åŠ› , 0.90
 	CASE 4
-		TIMES LOSEBASE:‘Ì—Í , 0.70
-		TIMES LOSEBASE:‹C—Í , 0.70
+		TIMES LOSEBASE:ä½“åŠ› , 0.70
+		TIMES LOSEBASE:æ°—åŠ› , 0.70
 ENDSELECT
 
 ;-------------------------------------------------
-;â’¸ƒ`ƒFƒbƒN
+;çµ¶é ‚ãƒã‚§ãƒƒã‚¯
 ;-------------------------------------------------
 CALL SOURCE_CHECK_CVAB
 
 ;-------------------------------------------------
-;ŽË¸ƒ`ƒFƒbƒN
+;å°„ç²¾ãƒã‚§ãƒƒã‚¯
 ;-------------------------------------------------
 CALL SAMEN_CHECK_T, 0
 
-CALL SAMEN_SHOOT_T, 0, NOWEX:ŽË¸
+CALL SAMEN_SHOOT_T, 0, NOWEX:å°„ç²¾
 
 ;-------------------------------------------------
-;ŒoŒ±‚Ìˆ—
+;çµŒé¨“ã®å‡¦ç†
 ;-------------------------------------------------
-EXP:‹Ù”›ŒoŒ± += 2
-PRINTL ‹Ù”›ŒoŒ±+2
+EXP:ç·Šç¸›çµŒé¨“ += 2
+PRINTL ç·Šç¸›çµŒé¨“+2
 
 CALL EXPUP, 1, 3
 
-;ˆË‘¶“x•â³’l(•ž]‚Å1A—ê‘®‚Å2j
-IF TALENT:•ž] && PLAYER == MASTER
-	TFLAG:ˆË‘¶“x•â³ += 1
-ELSEIF TALENT:—ê‘® && PLAYER == MASTER
-	TFLAG:ˆË‘¶“x•â³ += 2
+;ä¾å­˜åº¦è£œæ­£å€¤(æœå¾“ã§1ã€éš·å±žã§2ï¼‰
+IF TALENT:æœå¾“ && PLAYER == MASTER
+	TFLAG:ä¾å­˜åº¦è£œæ­£ += 1
+ELSEIF TALENT:éš·å±ž && PLAYER == MASTER
+	TFLAG:ä¾å­˜åº¦è£œæ­£ += 2
 ENDIF
 
 RETURN 1
 
 ;-------------------------------------------------
-;‘•’…Œp‘±‚Ìˆ—
+;è£…ç€ç¶™ç¶šã®å‡¦ç†
 ;-------------------------------------------------
-@EQUIP_COM_ƒ{[ƒ‹ƒMƒƒƒO
-PRINTL ƒƒ{[ƒ‹ƒMƒƒƒO‘•”õ’†„
+@EQUIP_COM_ãƒœãƒ¼ãƒ«ã‚®ãƒ£ã‚°
+PRINTL ï¼œãƒœãƒ¼ãƒ«ã‚®ãƒ£ã‚°è£…å‚™ä¸­ï¼ž
 
 ;-------------------------------------------------
-;ƒ\[ƒX’Ç‰Áˆ—
+;ã‚½ãƒ¼ã‚¹è¿½åŠ å‡¦ç†
 ;-------------------------------------------------
-;Á”ï‘Ì—ÍA‹C—Í
-LOSEBASE:‘Ì—Í += 5
+;æ¶ˆè²»ä½“åŠ›ã€æ°—åŠ›
+LOSEBASE:ä½“åŠ› += 5
 
-SOURCE:‹°•| += 150
-SOURCE:˜Io += 150
-SOURCE:‹ü] += 75
-SOURCE:ˆí’E += 50
-SOURCE:”½Š´ += 200
+SOURCE:ææ€– += 150
+SOURCE:éœ²å‡º += 150
+SOURCE:å±ˆå¾“ += 75
+SOURCE:é€¸è„± += 50
+SOURCE:åæ„Ÿ += 200
 
 ;-------------------------------------------------
-;“ÁŽêƒ\[ƒXˆ—
+;ç‰¹æ®Šã‚½ãƒ¼ã‚¹å‡¦ç†
 ;-------------------------------------------------
-;‹Ù”›ŒoŒ±‚ª‚‚¢‚ÆÁ”ïŒ¸­
+;ç·Šç¸›çµŒé¨“ãŒé«˜ã„ã¨æ¶ˆè²»æ¸›å°‘
 LOCAL = 25
-SELECTCASE GETEXPLV(EXP:‹Ù”›ŒoŒ±, 4)
+SELECTCASE GETEXPLV(EXP:ç·Šç¸›çµŒé¨“, 4)
 	CASE IS <= 2
 		TIMES LOCAL , 1.00
 	CASE 3
@@ -114,14 +114,14 @@ SELECTCASE GETEXPLV(EXP:‹Ù”›ŒoŒ±, 4)
 	CASE 4
 		TIMES LOCAL , 0.70
 ENDSELECT
-LOSEBASE:‹C—Í += LOCAL
+LOSEBASE:æ°—åŠ› += LOCAL
 
 ;-------------------------------------------------
-;ŒoŒ±‚Ìˆ—
+;çµŒé¨“ã®å‡¦ç†
 ;-------------------------------------------------
-IF SELECTCOMS != "ƒ{[ƒ‹ƒMƒƒƒO"
-	EXP:‹Ù”›ŒoŒ± += 1
-	PRINTL ‹Ù”›ŒoŒ±+1
+IF SELECTCOMS != "ãƒœãƒ¼ãƒ«ã‚®ãƒ£ã‚°"
+	EXP:ç·Šç¸›çµŒé¨“ += 1
+	PRINTL ç·Šç¸›çµŒé¨“+1
 ENDIF
 
 RETURN 1

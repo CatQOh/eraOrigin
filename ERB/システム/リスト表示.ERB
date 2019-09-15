@@ -1,4 +1,4 @@
-@CHARA_BUY
+ï»¿@CHARA_BUY
 #DIM LRESULT
 
 CALL CHARA_LIST
@@ -14,18 +14,18 @@ ELSE
 	RESTART
 ENDIF
 
-;2017/07/11‚ÉA•\Ž¦`‘I‘ð‚Ü‚Å‚Ì‘S‚Ä‚ðŠÖ”“à‚Ås‚¤‚æ‚¤‚É
+;2017/07/11ã«ã€è¡¨ç¤ºï½žé¸æŠžã¾ã§ã®å…¨ã¦ã‚’é–¢æ•°å†…ã§è¡Œã†ã‚ˆã†ã«
 @CHARA_LIST, ARG
 #DIM DYNAMIC LCOUNT
-#DIM DYNAMIC ŽŸƒy[ƒW‚ ‚è
-#DIM DYNAMIC ŒvŽZ—pƒLƒƒƒ‰”
-#DIM DYNAMIC •\Ž¦ƒLƒƒƒ‰”
-ŽŸƒy[ƒW‚ ‚è = 0
-ŒvŽZ—pƒLƒƒƒ‰” = 0
+#DIM DYNAMIC æ¬¡ãƒšãƒ¼ã‚¸ã‚ã‚Š
+#DIM DYNAMIC è¨ˆç®—ç”¨ã‚­ãƒ£ãƒ©æ•°
+#DIM DYNAMIC è¡¨ç¤ºã‚­ãƒ£ãƒ©æ•°
+æ¬¡ãƒšãƒ¼ã‚¸ã‚ã‚Š = 0
+è¨ˆç®—ç”¨ã‚­ãƒ£ãƒ©æ•° = 0
 VARSET LOCAL, 0
 ;ARG
-;1 = ‚»‚Ì‘¼‚Æ‚è‚ ‚¦‚¸‘SƒLƒƒƒ‰—…—ñ‚·‚é‚½‚ß‚ÌƒLƒƒƒ‰ƒŠƒXƒg
-;2 = PFREE‚ÅŽål‚ð‘I‘ð‚·‚éÛ‚ÌƒLƒƒƒ‰ƒŠƒXƒg
+;1 = ãã®ä»–ã¨ã‚Šã‚ãˆãšå…¨ã‚­ãƒ£ãƒ©ç¾…åˆ—ã™ã‚‹ãŸã‚ã®ã‚­ãƒ£ãƒ©ãƒªã‚¹ãƒˆ
+;2 = PFREEã§ä¸»äººã‚’é¸æŠžã™ã‚‹éš›ã®ã‚­ãƒ£ãƒ©ãƒªã‚¹ãƒˆ
 
 SIF VARLINE
 	CLEARLINE LINECOUNT-VARLINE
@@ -36,45 +36,45 @@ FOR LCOUNT, 0, 10000
 	SIF !EXISTCSV(LCOUNT)
 		CONTINUE
 
-	IF •\Ž¦ƒLƒƒƒ‰” >= 30
-		ŽŸƒy[ƒW‚ ‚è = 1
-		•\Ž¦ƒLƒƒƒ‰” = 0
+	IF è¡¨ç¤ºã‚­ãƒ£ãƒ©æ•° >= 30
+		æ¬¡ãƒšãƒ¼ã‚¸ã‚ã‚Š = 1
+		è¡¨ç¤ºã‚­ãƒ£ãƒ©æ•° = 0
 		BREAK
 	ENDIF
 
-	ŒvŽZ—pƒLƒƒƒ‰”++
-	SIF ŒvŽZ—pƒLƒƒƒ‰” <= (TFLAG:ƒy[ƒW”*30)
+	è¨ˆç®—ç”¨ã‚­ãƒ£ãƒ©æ•°++
+	SIF è¨ˆç®—ç”¨ã‚­ãƒ£ãƒ©æ•° <= (TFLAG:ãƒšãƒ¼ã‚¸æ•°*30)
 		CONTINUE
 
 	PRINTFORMLC [{LCOUNT, 4}] %CSVNAMEF(LCOUNT)%
 
-	•\Ž¦ƒLƒƒƒ‰”++
+	è¡¨ç¤ºã‚­ãƒ£ãƒ©æ•°++
 NEXT
 
 PRINTL 
 
 DRAWLINE
 
-PRINTPLAINFORM @PAGE.{TFLAG:ƒy[ƒW”+1}@
-IF TFLAG:ƒy[ƒW” > 0
-	PRINTLC [10001] ‘O‚Ìƒy[ƒW
+PRINTPLAINFORM ã€€PAGE.{TFLAG:ãƒšãƒ¼ã‚¸æ•°+1}ã€€
+IF TFLAG:ãƒšãƒ¼ã‚¸æ•° > 0
+	PRINTLC [10001] å‰ã®ãƒšãƒ¼ã‚¸
 ELSE
 	PRINTLC  
 ENDIF
 PRINTPLAIN  
-SIF ŽŸƒy[ƒW‚ ‚è
-	PRINTC [10009] Œã‚Ìƒy[ƒW
+SIF æ¬¡ãƒšãƒ¼ã‚¸ã‚ã‚Š
+	PRINTC [10009] å¾Œã®ãƒšãƒ¼ã‚¸
 PRINTL 
 
 DO
 	INPUT
 	SELECTCASE RESULT
 		CASE 10001
-			SIF TFLAG:ƒy[ƒW”
-				TFLAG:ƒy[ƒW”--
+			SIF TFLAG:ãƒšãƒ¼ã‚¸æ•°
+				TFLAG:ãƒšãƒ¼ã‚¸æ•°--
 		CASE 10009
-			SIF ŽŸƒy[ƒW‚ ‚è
-				TFLAG:ƒy[ƒW”++
+			SIF æ¬¡ãƒšãƒ¼ã‚¸ã‚ã‚Š
+				TFLAG:ãƒšãƒ¼ã‚¸æ•°++
 		CASEELSE
 			IF EXISTCSV(RESULT)
 				VARLINE = 0

@@ -1,10 +1,10 @@
-@NEXTDAY
+﻿@NEXTDAY
 #DIM DYNAMIC LYEAR
 #DIM DYNAMIC LMONTH
 #DIM DYNAMIC LDAYS
 VARSET LOCAL, 0
 
-;���t���Z
+;日付加算
 DAYS++
 SELECTCASE MONTH
 	CASE 1, 3, 5, 7, 8, 10, 12
@@ -14,9 +14,9 @@ SELECTCASE MONTH
 		SIF DAYS > 30
 			DAYS = 1
 	CASE 2
-		;���邤�N���ǂ����ŏꍇ����
+		;うるう年かどうかで場合分け
 		SELECTCASE YEAR
-			;�O���S���I��
+			;グレゴリオ暦
 			CASE IS > 1582
 				IF (YEAR%4 == 0 && YEAR%100 != 0) || YEAR%400 == 0
 					SIF DAYS > 29
@@ -25,7 +25,7 @@ SELECTCASE MONTH
 					SIF DAYS > 28
 						DAYS = 1
 				ENDIF
-			;�Ԉ�����^�p������Ă������̃����E�X��
+			;間違った運用がされていた頃のユリウス暦
 			CASE -44 TO -5
 				IF ABS(YEAR)%3 == 1
 					SIF DAYS > 29
@@ -34,11 +34,11 @@ SELECTCASE MONTH
 					SIF DAYS > 28
 						DAYS = 1
 				ENDIF
-			;��̊Ԉ�����^�p�̃V���񂹊���
+			;上の間違った運用のシワ寄せ期間
 			CASE -4 TO 4
 				SIF DAYS > 28
 					DAYS = 1
-			;(�I���O46�N�ȑO���܂�)�c��̊��Ԃ��ׂĂ������E�X��Ƃ���
+			;(紀元前46年以前を含め)残りの期間すべてをユリウス暦とする
 			CASEELSE
 				IF ABS(YEAR)%4 == 0
 					SIF DAYS > 29
@@ -50,11 +50,11 @@ SELECTCASE MONTH
 		ENDSELECT
 ENDSELECT
 
-;1582�N10��5���`1582�N10��14���͑��݂��Ȃ�
+;1582年10月5日～1582年10月14日は存在しない
 SIF YEAR == 1582 && MONTH == 10 && INRANGE(DAYS, 5, 14)
 	DAYS = 15
 
-;�J��グ����
+;繰り上げ処理
 SIF DAYS == 1
 	MONTH++
 SIF MONTH == 13
@@ -62,51 +62,51 @@ SIF MONTH == 13
 SIF DAYS == 1 && MONTH == 1
 	YEAR++
 
-;����v�Z
-CALL ����t�Z, 30, -1
+;月齢計算
+CALL 月齢逆算, 30, -1
 
-;�ߋ�19�N�̌ߑO0���ōł��V���ɋ߂��Ǝv������ƌ��݂̓��t�̓������𒲂ׂ�
+;過去19年の午前0時で最も新月に近いと思われる日と現在の日付の日数差を調べる
 LOCAL = GETDAYS(YEAR, MONTH, DAYS) - GETDAYS(RESULT, RESULT:1, RESULT:2)
 
 SELECTCASE LOCAL
 	CASE IS <= 30
-		���� = LOCAL*100
+		月齢 = LOCAL*100
 	CASEELSE
 		LOCAL:1 = LOCAL-(LOCAL%30)
-		���� = ((LOCAL:1*100000)%2953059)/1000
-		���� += (LOCAL%30)*100
+		月齢 = ((LOCAL:1*100000)%2953059)/1000
+		月齢 += (LOCAL%30)*100
 ;	CASE IS <= 365
-;		���� = (LOCAL/30)*47
-;		���� += (LOCAL%30)*100
+;		月齢 = (LOCAL/30)*47
+;		月齢 += (LOCAL%30)*100
 ;	CASEELSE
-;		���� = (LOCAL/365)*1063
+;		月齢 = (LOCAL/365)*1063
 ;		LOCAL %= 365
-;		���� += (LOCAL/30)*47
+;		月齢 += (LOCAL/30)*47
 ;		LOCAL %= 30
-;		���� += LOCAL*100
+;		月齢 += LOCAL*100
 ENDSELECT
 
-���� %= 3000
+月齢 %= 3000
 
-;�j���v�Z
-FLAG:�j�� = ZELLER(YEAR,MONTH,DAYS)
+;曜日計算
+FLAG:曜日 = ZELLER(YEAR,MONTH,DAYS)
 
 
-;�ȈՌ���v�Z�@��p���āA�ߋ�19�N�ԂŎw�肵������ɍł��߂��Ǝv������t��Ԃ��i�ߑO0����j
-;ARG:1�����̒l�Ȃ疢���ŁA���̒l�Ȃ�ߋ��Œ��ׂ�
-@����t�Z, ARG, ARG:1
+;簡易月齢計算法を用いて、過去19年間で指定した月齢に最も近いと思われる日付を返す（午前0時基準）
+;ARG:1が正の値なら未来で、負の値なら過去で調べる
+@月齢逆算, ARG, ARG:1
 #DIM DYNAMIC LCOUNT
 #DIM DYNAMIC LYEAR
 #DIM DYNAMIC LMONTH
 #DIM DYNAMIC LDAYS
-#DIM DYNAMIC ��N
-#DIM DYNAMIC ��
-#DIM DYNAMIC ���
+#DIM DYNAMIC 朔年
+#DIM DYNAMIC 朔月
+#DIM DYNAMIC 朔日
 
 LOCAL:3 = YEAR-(YEAR%19)+11
 
 FOR LCOUNT, 1*SIGN(ARG:1), 732*SIGN(ARG:1), 1*SIGN(ARG:1)
-	CALL �����t�Z, LCOUNT, LOCAL:3, MONTH, 31
+	CALL 日数逆算, LCOUNT, LOCAL:3, MONTH, 31
 	LYEAR = RESULT:0
 	LMONTH = RESULT:1
 	LDAYS = RESULT:2
@@ -115,9 +115,9 @@ FOR LCOUNT, 1*SIGN(ARG:1), 732*SIGN(ARG:1), 1*SIGN(ARG:1)
 		CONTINUE
 	ENDIF
 
-	;����v�Z
+	;月齢計算
 	LOCAL:2 = LYEAR-11
-	;���̐��̏�]�ɑΉ�
+	;負の数の剰余に対応
 	IF LOCAL:2 < 0
 		LOCAL:2 = 19 + (LOCAL:2)%19
 	ELSE
@@ -135,136 +135,136 @@ FOR LCOUNT, 1*SIGN(ARG:1), 732*SIGN(ARG:1), 1*SIGN(ARG:1)
 NEXT
 
 
-;����0�N1��0������̌o�ߓ�����Ԃ������֐�
+;西暦0年1月0日からの経過日数を返す式中関数
 @GETDAYS, LYEAR, LMONTH, LDAYS
 #FUNCTION
 #DIM DYNAMIC LYEAR
 #DIM DYNAMIC LMONTH
 #DIM DYNAMIC LDAYS
-#DIM DYNAMIC �[�N
-#DIM DYNAMIC �o�ߓ���
-#DIM DYNAMIC IS�[�N
-#DIM DYNAMIC ���␳
+#DIM DYNAMIC 閏年
+#DIM DYNAMIC 経過日数
+#DIM DYNAMIC IS閏年
+#DIM DYNAMIC 月補正
 
-�o�ߓ��� = 365*LYEAR
+経過日数 = 365*LYEAR
 
-;1582�N10��5���`1582�N10��14���͑��݂��Ȃ����߁A�^���Œ��Ȃ�o�ߓ�����
-;1582�N10��15���ȍ~�Ȃ�10�������Z����
+;1582年10月5日～1582年10月14日は存在しないため、真っ最中なら経過日数を
+;1582年10月15日以降なら10日分減算する
 IF LYEAR == 1582 && LMONTH == 10 && INRANGE(LDAYS, 5, 14)
-	�o�ߓ��� -= LDAYS-5
+	経過日数 -= LDAYS-5
 ELSEIF LYEAR > 1582 || (LYEAR == 1582 && LMONTH > 10) || (LYEAR == 1582 && LMONTH == 10 && LDAYS > 14)
-	�o�ߓ��� -= 10
+	経過日数 -= 10
 ENDIF
 
 
-;LYEAR���[�N���ǂ����𔻕�
+;LYEARが閏年かどうかを判別
 SELECTCASE LYEAR
-	;�O���S���I��
+	;グレゴリオ暦
 	CASE IS > 1582
 		SIF (LYEAR%4 == 0 && LYEAR%100 != 0) || LYEAR%400 == 0
-			IS�[�N = 1
-	;�Ԉ�����^�p������Ă������̃����E�X��
+			IS閏年 = 1
+	;間違った運用がされていた頃のユリウス暦
 	CASE -44 TO -5
 		SIF ABS(LYEAR)%3 == 1
-			IS�[�N = 1
-	;(�I���O46�N�ȑO���܂�)�c��̊��Ԃ��ׂĂ������E�X��Ƃ���
+			IS閏年 = 1
+	;(紀元前46年以前を含め)残りの期間すべてをユリウス暦とする
 	CASE IS < -45
 		SIF ABS(LYEAR)%4 == 0
-			IS�[�N = 1
+			IS閏年 = 1
 ENDSELECT
 
-;�[�N�̐����v�Z����
+;閏年の数を計算する
 SELECTCASE LYEAR
-	;�O���S���I��
+	;グレゴリオ暦
 	CASE IS > 1582
-		;�P���ɃO���S���I��̕��@�ł܂��v�Z����
-		;4�N�Ɉ��
-		�[�N = LYEAR/4
-		;������100�N�Ɉ��͉[�N�����̂Ō��Z
-		�[�N -= LYEAR/100
-		;������������400�N�Ɉ��͉[�N���������Ȃ̂ŉ��Z
-		�[�N += LYEAR/400
-		;�����ă����E�X��̌v�Z �����E�X��ł�100�N�Ɉ�񃋁[���͖����̂ŁA400�N�Ɉ���3�񕪍���������1500�N�܂ł̌v12������Z
-		�[�N += 12
-		;����������4�N(�Ɛ���0�N)�͉[�N���~�����̂Ō��Z
-		�[�N -= 1
-	;����0�N���烆���E�X��p�~�܂�
+		;単純にグレゴリオ暦の方法でまず計算する
+		;4年に一回
+		閏年 = LYEAR/4
+		;ただし100年に一回は閏年無いので減算
+		閏年 -= LYEAR/100
+		;ただしただし400年に一回は閏年強制発動なので加算
+		閏年 += LYEAR/400
+		;そしてユリウス暦の計算 ユリウス暦では100年に一回ルールは無いので、400年に一回の3回分差し引いて1500年までの計12回を加算
+		閏年 += 12
+		;しかし西暦4年(と西暦0年)は閏年中止したので減算
+		閏年 -= 1
+	;西暦0年からユリウス暦廃止まで
 	CASE 0 TO 1582
-		;4�N�Ɉ��
-		�[�N = LYEAR/4
-		;����4�N(�Ɛ���0�N)�͉[�N���~�����̂Ō��Z
+		;4年に一回
+		閏年 = LYEAR/4
+		;西暦4年(と西暦0年)は閏年中止したので減算
 		SIF LYEAR >= 4
-			�[�N--
-	;����-6�N(BC7�N)���琼��0�N(BC1�N)�̊Ԃ͉[�N������
+			閏年--
+	;西暦-6年(BC7年)から西暦0年(BC1年)の間は閏年が無い
 	CASE -4 TO 0
-		�[�N = 0
-	;����-44�N(BC45�N)���琼��-7�N(BC8�N)�܂ł̉[�N���s����
+		閏年 = 0
+	;西暦-44年(BC45年)から西暦-7年(BC8年)までの閏年失敗期間
 	CASE -44 TO -5
-		;�I���O�̕Ԃ�l�̓}�C�i�X�ɂȂ�̂ŉ[�N�J�E���g���}�C�i�X�ōl����
-		;����-44�N�`-5�N�܂ł�3�N���Ƃɉ[�N�ɂȂ��Ă�
-		�[�N = (LYEAR-2)/3
-		;����-5�N�ɊԈႢ���o ����-4�N��-1�N�̉[�N�̕����Z
-		�[�N += 2
-	;���Q�[���ł͐���-45�N(BC46�N)�ȑO���S�ă����E�X��Ōv�Z
+		;紀元前の返り値はマイナスになるので閏年カウントもマイナスで考える
+		;西暦-44年～-5年までは3年ごとに閏年になってた
+		閏年 = (LYEAR-2)/3
+		;西暦-5年に間違い発覚 西暦-4年と-1年の閏年の分減算
+		閏年 += 2
+	;当ゲームでは西暦-45年(BC46年)以前も全てユリウス暦で計算
 	CASE IS <= -45
-		;4�N�Ɉ��
-		�[�N = LYEAR/4
-		;����������-44�N�`-5�N��3�N���ɉ[�N�ɂȂ��Ă���A�{���Ȃ�10��̂Ƃ���13��ɂȂ��Ă���
-		;����0�N�ȍ~��2�N���̂���񂹂��s�����̂ŁA����-1�N�ȑO��2�񕪉[�N�������Ȃ�
-		;����Ă��̕������Z
-		�[�N += 2
+		;4年に一回
+		閏年 = LYEAR/4
+		;ただし西暦-44年～-5年は3年毎に閏年になっており、本来なら10回のところ13回になっている
+		;西暦0年以降に2年分のしわ寄せを行ったので、西暦-1年以前は2回分閏年が多くなる
+		;よってその分を減算
+		閏年 += 2
 ENDSELECT
 
-;�Ώ۔N���[�N�Ȃ�1����
-SIF IS�[�N
-	�[�N--
+;対象年が閏年なら1引く
+SIF IS閏年
+	閏年--
 	
-;�o�ߓ����ɉ[�N�̕������Z
-�o�ߓ��� += �[�N
+;経過日数に閏年の分を加算
+経過日数 += 閏年
 
-;0�N1��1�����u0���o�߁v�ƕԂ������̂ł��炩����1�������Ă���
-�o�ߓ��� --
-;�����́u�o�ߓ����v��1�𑫂���0�N1��1������LYEAR�N1��1���܂ł̌o�ߓ����ɂȂ��Ă���
-;�������炻�̔N�ɂ�����w����܂ł̓����𑫂��Ă���
+;0年1月1日を「0日経過」と返したいのであらかじめ1を引いておく
+経過日数 --
+;↑この「経過日数」に1を足すと0年1月1日からLYEAR年1月1日までの経過日数になっている
+;ここからその年における指定日までの日数を足していく
 
-���␳ += (LMONTH-1)*30
+月補正 += (LMONTH-1)*30
 
 SIF LMONTH > 1
-	���␳++
+	月補正++
 
-;2���ȍ~�Ȃ�2�������Z
+;2月以降なら2日分減算
 IF LMONTH > 2
-	���␳ -= 2
-	;�[�N�Ȃ����1�����Z
-	SIF IS�[�N
-		���␳++
+	月補正 -= 2
+	;閏年ならもう1日加算
+	SIF IS閏年
+		月補正++
 ENDIF
 
 SIF LMONTH > 3
-	���␳++
+	月補正++
 SIF LMONTH > 5
-	���␳++
+	月補正++
 SIF LMONTH > 7
-	���␳++
+	月補正++
 SIF LMONTH > 8
-	���␳++
+	月補正++
 SIF LMONTH > 10
-	���␳++
+	月補正++
 
 
-;�N�ɑΉ����������̒l�Ōv�Z
-�o�ߓ��� += ���␳
+;年に対応した正負の値で計算
+経過日数 += 月補正
 
-;�����čŌ�ɓ������@��LDAYS���v�Z
-�o�ߓ��� += LDAYS
+;そして最後に同じ方法でLDAYSを計算
+経過日数 += LDAYS
 
-;����0�N1��0������̌o�ߓ�����Ԃ�
-RETURNF �o�ߓ���
+;西暦0年1月0日からの経過日数を返す
+RETURNF 経過日数
 
 
-;���ݎ�������ARG����A��������ARG���O�̓��t�����߂�֐��B�����֐��ł͂Ȃ�
-;ARG�����̒l�Ȃ�ARG����A���̒l�Ȃ�ARG���O�̓��t��RESULT:0�`2�ɓ���ĕԂ�
-@�����t�Z, ARG, ARG:1 = -1, ARG:2 = -1, ARG:3 = -1
+;現在時刻からARG日後、もしくはARG日前の日付を求める関数。式中関数ではない
+;ARGが正の値ならARG日後、負の値ならARG日前の日付をRESULT:0～2に入れて返す
+@日数逆算, ARG, ARG:1 = -1, ARG:2 = -1, ARG:3 = -1
 #DIM DYNAMIC LCOUNT
 #DIM DYNAMIC LDAYS
 #DIM DYNAMIC LMONTH
@@ -287,9 +287,9 @@ ELSE
 ENDIF
 
 FOR LCOUNT, 0, ABS(ARG)
-	;���t���Z�E���Y
+	;日付加算・減産
 	LDAYS += SIGN(ARG)
-	;���������߂�ꍇ
+	;未来を求める場合
 	IF SIGN(ARG) == 1
 		SELECTCASE LMONTH
 			CASE 1, 3, 5, 7, 8, 10, 12
@@ -299,9 +299,9 @@ FOR LCOUNT, 0, ABS(ARG)
 				SIF LDAYS > 30
 					LDAYS = 1
 			CASE 2
-				;���邤�N���ǂ����ŏꍇ����
+				;うるう年かどうかで場合分け
 				SELECTCASE LYEAR
-					;�O���S���I��
+					;グレゴリオ暦
 					CASE IS > 1582
 						IF (LYEAR%4 == 0 && LYEAR%100 != 0) || LYEAR%400 == 0
 							SIF LDAYS > 29
@@ -310,7 +310,7 @@ FOR LCOUNT, 0, ABS(ARG)
 							SIF LDAYS > 28
 								LDAYS = 1
 						ENDIF
-					;�Ԉ�����^�p������Ă������̃����E�X��
+					;間違った運用がされていた頃のユリウス暦
 					CASE -44 TO -5
 						IF ABS(LYEAR)%3 == 1
 							SIF LDAYS > 29
@@ -319,11 +319,11 @@ FOR LCOUNT, 0, ABS(ARG)
 							SIF LDAYS > 28
 								LDAYS = 1
 						ENDIF
-					;��̊Ԉ�����^�p�̃V���񂹊���
+					;上の間違った運用のシワ寄せ期間
 					CASE -4 TO 4
 						SIF LDAYS > 28
 							LDAYS = 1
-					;(�I���O46�N�ȑO���܂�)�c��̊��Ԃ��ׂĂ������E�X��Ƃ���
+					;(紀元前46年以前を含め)残りの期間すべてをユリウス暦とする
 					CASEELSE
 						IF ABS(LYEAR)%4 == 0
 							SIF LDAYS > 29
@@ -334,10 +334,10 @@ FOR LCOUNT, 0, ABS(ARG)
 						ENDIF
 				ENDSELECT
 		ENDSELECT
-		;1582�N10��5���`1582�N10��14���͑��݂��Ȃ�
+		;1582年10月5日～1582年10月14日は存在しない
 		SIF LYEAR == 1582 && LMONTH == 10 && INRANGE(LDAYS, 5, 14)
 			LDAYS = 15
-		;�J��グ����
+		;繰り上げ処理
 		IF LDAYS == 1
 			LMONTH++
 			SIF LMONTH == 13
@@ -345,12 +345,12 @@ FOR LCOUNT, 0, ABS(ARG)
 			SIF LDAYS == 1 && LMONTH == 1
 				LYEAR++
 		ENDIF
-	;�ߋ������߂�ꍇ
+	;過去を求める場合
 	ELSEIF SIGN(ARG) == -1
-		;1582�N10��5���`1582�N10��14���͑��݂��Ȃ�
+		;1582年10月5日～1582年10月14日は存在しない
 		SIF LYEAR == 1582 && LMONTH == 10 && INRANGE(LDAYS, 5, 14)
 			LDAYS = 4
-		;�J�艺������
+		;繰り下げ処理
 		IF LDAYS == 0
 			LMONTH--
 			IF LMONTH == 0
@@ -363,26 +363,26 @@ FOR LCOUNT, 0, ABS(ARG)
 				CASE 4, 6, 9, 11
 					LDAYS = 30
 				CASE 2
-					;���邤�N���ǂ����ŏꍇ����
+					;うるう年かどうかで場合分け
 					SELECTCASE LYEAR
-						;�O���S���I��
+						;グレゴリオ暦
 						CASE IS > 1582
 							IF (LYEAR%4 == 0 && LYEAR%100 != 0) || LYEAR%400 == 0
 								LDAYS = 29
 							ELSE
 								LDAYS = 28
 							ENDIF
-						;�Ԉ�����^�p������Ă������̃����E�X��
+						;間違った運用がされていた頃のユリウス暦
 						CASE -44 TO -5
 							IF ABS(LYEAR)%3 == 1
 								LDAYS = 29
 							ELSE
 								LDAYS = 28
 							ENDIF
-						;��̊Ԉ�����^�p�̃V���񂹊���
+						;上の間違った運用のシワ寄せ期間
 						CASE -4 TO 4
 							LDAYS = 28
-						;(�I���O46�N�ȑO���܂�)�c��̊��Ԃ��ׂĂ������E�X��Ƃ���
+						;(紀元前46年以前を含め)残りの期間すべてをユリウス暦とする
 						CASEELSE
 							IF ABS(LYEAR)%4 == 0
 								LDAYS = 29
@@ -401,158 +401,158 @@ RETURN LYEAR, LMONTH, LDAYS
 @HOLIDAY
 VARSET HOLIDAY
 
-;�v���~�A���t���C�f�[�Ȃ�܂��v���~�A���t���C�f�[������(���L�j���E�L�O���̕\�����D��)
+;プレミアムフライデーならまずプレミアムフライデーを入れる(下記祝日・記念日の表示が優先)
 SIF PREMIUM_FRIDAY(YEAR, MONTH, DAYS)
-	HOLIDAY = �v���~�A���t���C�f�[
+	HOLIDAY = プレミアムフライデー
 
-;�j���̐ݒ�
+;祝日の設定
 SELECTCASE MONTH
-	;1��
+	;1月
 	CASE 1
 		SELECTCASE DAYS
-			;1��
+			;1日
 			CASE 1
-				HOLIDAY = ����
-			;��񌎗j��
-			CASE NO_DOW(2, "��")
-				HOLIDAY = ���l�̓�
+				HOLIDAY = 元日
+			;第二月曜日
+			CASE NO_DOW(2, "月")
+				HOLIDAY = 成人の日
 		ENDSELECT
-	;2��
+	;2月
 	CASE 2
 		SELECTCASE DAYS
-			;3��
+			;3日
 			CASE 3
-				HOLIDAY = �ߕ�
-			;11��
+				HOLIDAY = 節分
+			;11日
 			CASE 11
-				HOLIDAY = �����L�O��
-			;14��
+				HOLIDAY = 建国記念日
+			;14日
 			CASE 14
-				HOLIDAY = �o�����^�C���f�[
+				HOLIDAY = バレンタインデー
 		ENDSELECT
-	;3��
+	;3月
 	CASE 3
 		SELECTCASE DAYS
-			;3��
+			;3日
 			CASE 3
-				HOLIDAY = �ЂȍՂ�
-			;14��
+				HOLIDAY = ひな祭り
+			;14日
 			CASE 14
-				HOLIDAY = �z���C�g�f�[
-			;�ʓ|������20��
+				HOLIDAY = ホワイトデー
+			;面倒だから20日
 			CASE 20
-				HOLIDAY = �t���̓�
+				HOLIDAY = 春分の日
 		ENDSELECT
-	;4��
+	;4月
 	CASE 4
 		SELECTCASE DAYS
-			;1��
+			;1日
 			CASE 1
-				HOLIDAY = �G�C�v�����t�[��
-			;29��
+				HOLIDAY = エイプリルフール
+			;29日
 			CASE 29
-				HOLIDAY = ���a�̓�
+				HOLIDAY = 昭和の日
 		ENDSELECT
-	;5��
+	;5月
 	CASE 5
 		SELECTCASE DAYS
-			;3��
+			;3日
 			CASE 3
-				HOLIDAY = ���@�L�O��
-			;4��
+				HOLIDAY = 憲法記念日
+			;4日
 			CASE 4
-				HOLIDAY = �݂ǂ�̓�
-			;5��
+				HOLIDAY = みどりの日
+			;5日
 			CASE 5
-				HOLIDAY = ���ǂ��̓�
-			;�����j��
-			CASE NO_DOW(2, "��")
-				HOLIDAY = ��̓�
+				HOLIDAY = こどもの日
+			;第二日曜日
+			CASE NO_DOW(2, "日")
+				HOLIDAY = 母の日
 		ENDSELECT
-	;6��
+	;6月
 	CASE 6
 		SELECTCASE DAYS
-			;��O���j��
-			CASE NO_DOW(3, "��")
-				HOLIDAY = ���̓�
+			;第三日曜日
+			CASE NO_DOW(3, "日")
+				HOLIDAY = 父の日
 		ENDSELECT
-	;7��
+	;7月
 	CASE 7
 		SELECTCASE DAYS
-			;7��
+			;7日
 			CASE 7
-				HOLIDAY = ���[
-			;��O���j��
-			CASE NO_DOW(3, "��")
-				HOLIDAY = �C�̓�
+				HOLIDAY = 七夕
+			;第三月曜日
+			CASE NO_DOW(3, "月")
+				HOLIDAY = 海の日
 		ENDSELECT
-	;8��
+	;8月
 	CASE 8
 		SELECTCASE DAYS
-			;11��
+			;11日
 			CASE 11
-				HOLIDAY = �R�̓�
-			;13�`15��
+				HOLIDAY = 山の日
+			;13～15日
 			CASE 13 TO 15
-				HOLIDAY = ���~
+				HOLIDAY = お盆
 		ENDSELECT
-	;9��
+	;9月
 	CASE 9
 		SELECTCASE DAYS
-			;��O���j��
-			CASE NO_DOW(3, "��")
-				HOLIDAY = �h�V�̓�
-			;�ʓ|������23��
+			;第三月曜日
+			CASE NO_DOW(3, "月")
+				HOLIDAY = 敬老の日
+			;面倒だから23日
 			CASE 23
-				HOLIDAY = �H���̓�
-			;15���ȍ~
+				HOLIDAY = 秋分の日
+			;15日以降
 			CASE IS >= 15
-				;�����Ȃ�\�ܖ�
-				IF INRANGE(����, 1500, 1599)
+				;満月なら十五夜
+				IF INRANGE(月齢, 1500, 1599)
 	                ARRAYSHIFT HOLIDAY, 1, ""
-					HOLIDAY = �\�ܖ�
+					HOLIDAY = 十五夜
 				ENDIF
 		ENDSELECT
-	;10��
+	;10月
 	CASE 10
 		SELECTCASE DAYS
-			;��񌎗j��
-			CASE NO_DOW(2, "��")
-				HOLIDAY = �̈�̓�
-			;15���ȑO
+			;第二月曜日
+			CASE NO_DOW(2, "月")
+				HOLIDAY = 体育の日
+			;15日以前
 			CASE IS <= 15
-				;�����Ȃ�\�ܖ�
-				SIF ���� == 15
-					HOLIDAY = �\�ܖ�
+				;満月なら十五夜
+				SIF 月齢 == 15
+					HOLIDAY = 十五夜
 		ENDSELECT
-	;11��
+	;11月
 	CASE 11
 		SELECTCASE DAYS
-			;3��
+			;3日
 			CASE 3
-				HOLIDAY = �����̓�
-			;15��
+				HOLIDAY = 文化の日
+			;15日
 			CASE 15
-				HOLIDAY = ���܎O
-			;23��
+				HOLIDAY = 七五三
+			;23日
 			CASE 23
-				HOLIDAY = �ΘJ���ӂ̓�
+				HOLIDAY = 勤労感謝の日
 		ENDSELECT
-	;12�� �V�c�a�����͂�����Ɨl�q������̂Ō�����
+	;12月 天皇誕生日はちょっと様子を見るので見送り
 	CASE 12
 		SELECTCASE DAYS
-			;24��
+			;24日
 			CASE 24
-				HOLIDAY = �N���X�}�X�E�C�u
-			;25��
+				HOLIDAY = クリスマス・イブ
+			;25日
 			CASE 25
-				HOLIDAY = �N���X�}�X
+				HOLIDAY = クリスマス
 		ENDSELECT
 ENDSELECT
 
-;�v���~�A���t���C�f�[
+;プレミアムフライデー
 IF PREMIUM_FRIDAY(YEAR, MONTH, DAYS)
 	ARRAYSHIFT HOLIDAY, 1, ""
-	HOLIDAY = �v���~�A���t���C�f�[
+	HOLIDAY = プレミアムフライデー
 ENDIF
 

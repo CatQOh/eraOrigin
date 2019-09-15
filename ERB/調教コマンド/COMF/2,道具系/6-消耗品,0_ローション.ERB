@@ -1,49 +1,49 @@
+ï»¿;-------------------------------------------------
+;ãƒ­ãƒ¼ã‚·ãƒ§ãƒ³
 ;-------------------------------------------------
-;ƒ[ƒVƒ‡ƒ“
-;-------------------------------------------------
-@USERCOM_ABLE_ƒ[ƒVƒ‡ƒ“, ARG
+@USERCOM_ABLE_ãƒ­ãƒ¼ã‚·ãƒ§ãƒ³, ARG
 #FUNCTION
-;‘S—‡‚¶‚á‚È‚¢‚Æƒ_ƒ
+;å…¨è£¸ã˜ã‚ƒãªã„ã¨ãƒ€ãƒ¡
 SIF OVER_GENITAL(TARGET) != "" || OVER_BUST(TARGET) != ""
 	RETURNF 0
-;ƒVƒƒƒ[’†‚Íƒ_ƒ
-SIF TEQUIP:ƒVƒƒƒ[
+;ã‚·ãƒ£ãƒ¯ãƒ¼ä¸­ã¯ãƒ€ãƒ¡
+SIF TEQUIP:ã‚·ãƒ£ãƒ¯ãƒ¼
 	RETURNF 0
 
 COMRESULT = 1
 RETURNF 1
 
-@COM_ƒ[ƒVƒ‡ƒ“
-PRINTL ƒ[ƒVƒ‡ƒ“
+@COM_ãƒ­ãƒ¼ã‚·ãƒ§ãƒ³
+PRINTL ãƒ­ãƒ¼ã‚·ãƒ§ãƒ³
 CALL KOJO_MESSAGE_COM
 
 ;-------------------------------------------------
-;ƒ\[ƒX’Ç‰Áˆ—
+;ã‚½ãƒ¼ã‚¹è¿½åŠ å‡¦ç†
 ;-------------------------------------------------
-;Á”ï‘Ì—ÍA‹C—Í
-LOSEBASE:‘Ì—Í += 3
-LOSEBASE:‹C—Í += 3
+;æ¶ˆè²»ä½“åŠ›ã€æ°—åŠ›
+LOSEBASE:ä½“åŠ› += 3
+LOSEBASE:æ°—åŠ› += 3
 
-DOWNBASE:MASTER:‘Ì—Í += 10
-DOWNBASE:MASTER:‹C—Í += 10
+DOWNBASE:MASTER:ä½“åŠ› += 10
+DOWNBASE:MASTER:æ°—åŠ› += 10
 
-SOURCE:‰t‘Ì = 10000
-SOURCE:˜Io = 100
+SOURCE:æ¶²ä½“ = 10000
+SOURCE:éœ²å‡º = 100
 
 ;-------------------------------------------------
-;â’¸ƒ`ƒFƒbƒN
+;çµ¶é ‚ãƒã‚§ãƒƒã‚¯
 ;-------------------------------------------------
 CALL SOURCE_CHECK_CVAB
 
 ;-------------------------------------------------
-;ŽË¸ƒ`ƒFƒbƒN
+;å°„ç²¾ãƒã‚§ãƒƒã‚¯
 ;-------------------------------------------------
 CALL SAMEN_CHECK_T, 0
 
-CALL SAMEN_SHOOT_T, 0, NOWEX:ŽË¸
+CALL SAMEN_SHOOT_T, 0, NOWEX:å°„ç²¾
 
 ;-------------------------------------------------
-;ŒoŒ±‚Ìˆ—
+;çµŒé¨“ã®å‡¦ç†
 ;-------------------------------------------------
 CALL EXPUP, 1, 1
 

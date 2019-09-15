@@ -1,52 +1,52 @@
-;---------------------------------------------------------
-;ƒhƒ‰ƒSƒ“‚ªŽË¸‚·‚é‚©‚Ìƒ`ƒFƒbƒN
+ï»¿;---------------------------------------------------------
+;ãƒ‰ãƒ©ã‚´ãƒ³ãŒå°„ç²¾ã™ã‚‹ã‹ã®ãƒã‚§ãƒƒã‚¯
 ;---------------------------------------------------------
 @SAMEN_CHECK_DRAGON
-LOCAL = BASE:PLAYER:ƒhƒ‰ƒSƒ“ŽË¸/MAXBASE:PLAYER:ƒhƒ‰ƒSƒ“ŽË¸
+LOCAL = BASE:PLAYER:ãƒ‰ãƒ©ã‚´ãƒ³å°„ç²¾/MAXBASE:PLAYER:ãƒ‰ãƒ©ã‚´ãƒ³å°„ç²¾
 SIF LOCAL <= 0
 	RETURN 0
 
 SELECTCASE SELECTCOMS
-	CASE "ƒtƒFƒ‰‚³‚¹‚éiƒhƒ‰ƒSƒ“j"
-		PRINTFORML %CSTR:PLAYER:ƒhƒ‰ƒSƒ“%Œû“àŽË¸
-	CASE "äS‚ð”Æ‚·iƒhƒ‰ƒSƒ“j"
-		PRINTFORML %CSTR:PLAYER:ƒhƒ‰ƒSƒ“%äS“àŽË¸
-	CASE "ƒAƒiƒ‹‚ð”Æ‚·iƒhƒ‰ƒSƒ“j"
-		PRINTFORML %CSTR:PLAYER:ƒhƒ‰ƒSƒ“%’°“àŽË¸
+	CASE "ãƒ•ã‚§ãƒ©ã•ã›ã‚‹ï¼ˆãƒ‰ãƒ©ã‚´ãƒ³ï¼‰"
+		PRINTFORML %CSTR:PLAYER:ãƒ‰ãƒ©ã‚´ãƒ³%å£å†…å°„ç²¾
+	CASE "è†£ã‚’çŠ¯ã™ï¼ˆãƒ‰ãƒ©ã‚´ãƒ³ï¼‰"
+		PRINTFORML %CSTR:PLAYER:ãƒ‰ãƒ©ã‚´ãƒ³%è†£å†…å°„ç²¾
+	CASE "ã‚¢ãƒŠãƒ«ã‚’çŠ¯ã™ï¼ˆãƒ‰ãƒ©ã‚´ãƒ³ï¼‰"
+		PRINTFORML %CSTR:PLAYER:ãƒ‰ãƒ©ã‚´ãƒ³%è…¸å†…å°„ç²¾
 ENDSELECT
 
-NOWEX:PLAYER:ƒhƒ‰ƒSƒ“ŽË¸ = LOCAL
+NOWEX:PLAYER:ãƒ‰ãƒ©ã‚´ãƒ³å°„ç²¾ = LOCAL
 
-;ŽË¸‹­“x‚ð•\Ž¦
+;å°„ç²¾å¼·åº¦ã‚’è¡¨ç¤º
 SIF LOCAL >= 3
-	PRINTFORML ŽË¸‹­“x~{LOCAL}
+	PRINTFORML å°„ç²¾å¼·åº¦Ã—{LOCAL}
 
 RETURN LOCAL
 
-@SAMEN_SHOOT_DRAGON, ŽË¸—Ê
-#DIM ŽË¸—Ê
+@SAMEN_SHOOT_DRAGON, å°„ç²¾é‡
+#DIM å°„ç²¾é‡
 
-SIF ŽË¸—Ê <= 0
+SIF å°„ç²¾é‡ <= 0
 	RETURN 0
 
 SELECTCASE SELECTCOMS
-	CASE "ƒtƒFƒ‰‚³‚¹‚éiƒhƒ‰ƒSƒ“j"
-		CFLAG:ƒhƒ‰ƒSƒ“‚ðŒû‚ÅŽË¸‚³‚¹‚½ŒoŒ±++
-	CASE "äS‚ð”Æ‚·iƒhƒ‰ƒSƒ“j"
-		SOURCE:‹°•| += 500
-		SOURCE:‹ê’É += 300
-		SOURCE:‹ü] += 500
-		CFLAG:ƒhƒ‰ƒSƒ“äS“àŽË¸ŒoŒ±++
+	CASE "ãƒ•ã‚§ãƒ©ã•ã›ã‚‹ï¼ˆãƒ‰ãƒ©ã‚´ãƒ³ï¼‰"
+		CFLAG:ãƒ‰ãƒ©ã‚´ãƒ³ã‚’å£ã§å°„ç²¾ã•ã›ãŸçµŒé¨“++
+	CASE "è†£ã‚’çŠ¯ã™ï¼ˆãƒ‰ãƒ©ã‚´ãƒ³ï¼‰"
+		SOURCE:ææ€– += 500
+		SOURCE:è‹¦ç—› += 300
+		SOURCE:å±ˆå¾“ += 500
+		CFLAG:ãƒ‰ãƒ©ã‚´ãƒ³è†£å†…å°„ç²¾çµŒé¨“++
 		IF PLAYER == MASTER
 			VIDEOBONUS:7++
 		ELSEIF PLAYER == ASSI
 			VIDEOBONUS:9++
 		ENDIF
-	CASE "ƒAƒiƒ‹‚ð”Æ‚·iƒhƒ‰ƒSƒ“j"
-		SOURCE:‹°•| += 300
-		SOURCE:‹ê’É += 500
-		SOURCE:‹ü] += 500
-		CFLAG:ƒhƒ‰ƒSƒ“’°“àŽË¸ŒoŒ±++
+	CASE "ã‚¢ãƒŠãƒ«ã‚’çŠ¯ã™ï¼ˆãƒ‰ãƒ©ã‚´ãƒ³ï¼‰"
+		SOURCE:ææ€– += 300
+		SOURCE:è‹¦ç—› += 500
+		SOURCE:å±ˆå¾“ += 500
+		CFLAG:ãƒ‰ãƒ©ã‚´ãƒ³è…¸å†…å°„ç²¾çµŒé¨“++
 		IF PLAYER == MASTER
 			VIDEOBONUS:8++
 		ELSEIF PLAYER == ASSI
@@ -54,27 +54,27 @@ SELECTCASE SELECTCOMS
 		ENDIF
 ENDSELECT
 
-EX:PLAYER:ƒhƒ‰ƒSƒ“ŽË¸++
-NOWEX:PLAYER:ƒhƒ‰ƒSƒ“ŽË¸ = ŽË¸—Ê
+EX:PLAYER:ãƒ‰ãƒ©ã‚´ãƒ³å°„ç²¾++
+NOWEX:PLAYER:ãƒ‰ãƒ©ã‚´ãƒ³å°„ç²¾ = å°„ç²¾é‡
 
-;ƒhƒ‰ƒSƒ“‚Ì¸‰t‚Í‘½‚¢
-PRINTFORML ¸‰tŒoŒ±+{ŽË¸—Ê*3}
-EXP:¸‰tŒoŒ± += ŽË¸—Ê*3
+;ãƒ‰ãƒ©ã‚´ãƒ³ã®ç²¾æ¶²ã¯å¤šã„
+PRINTFORML ç²¾æ¶²çµŒé¨“+{å°„ç²¾é‡*3}
+EXP:ç²¾æ¶²çµŒé¨“ += å°„ç²¾é‡*3
 
-BASE:PLAYER:ƒhƒ‰ƒSƒ“ŽË¸ -= MAXBASE:PLAYER:ƒhƒ‰ƒSƒ“ŽË¸*ŽË¸—Ê
-SIF BASE:PLAYER:ƒhƒ‰ƒSƒ“ŽË¸ >= MAXBASE:PLAYER:ƒhƒ‰ƒSƒ“ŽË¸
-	BASE:PLAYER:ƒhƒ‰ƒSƒ“ŽË¸ = MAXBASE:PLAYER:ƒhƒ‰ƒSƒ“ŽË¸-1
+BASE:PLAYER:ãƒ‰ãƒ©ã‚´ãƒ³å°„ç²¾ -= MAXBASE:PLAYER:ãƒ‰ãƒ©ã‚´ãƒ³å°„ç²¾*å°„ç²¾é‡
+SIF BASE:PLAYER:ãƒ‰ãƒ©ã‚´ãƒ³å°„ç²¾ >= MAXBASE:PLAYER:ãƒ‰ãƒ©ã‚´ãƒ³å°„ç²¾
+	BASE:PLAYER:ãƒ‰ãƒ©ã‚´ãƒ³å°„ç²¾ = MAXBASE:PLAYER:ãƒ‰ãƒ©ã‚´ãƒ³å°„ç²¾-1
 
-;ŽË¸Žž‚É’†“Å[‘«‚Ìƒ\[ƒX‚ð’Ç‰Á
-;’ÊíŽË¸Žž
-SIF ŽË¸—Ê == 1
+;å°„ç²¾æ™‚ã«ä¸­æ¯’å……è¶³ã®ã‚½ãƒ¼ã‚¹ã‚’è¿½åŠ 
+;é€šå¸¸å°„ç²¾æ™‚
+SIF å°„ç²¾é‡ == 1
 	LOCAL = 500
-;‘å—ÊŽË¸Žž
-SIF ŽË¸—Ê >= 2
+;å¤§é‡å°„ç²¾æ™‚
+SIF å°„ç²¾é‡ >= 2
 	LOCAL = 1000
 
-;¸‰t’†“Å‚ðŒ©‚é
-SELECTCASE ABL:¸‰t’†“Å
+;ç²¾æ¶²ä¸­æ¯’ã‚’è¦‹ã‚‹
+SELECTCASE ABL:ç²¾æ¶²ä¸­æ¯’
 	CASE 0, 1
 		TIMES LOCAL , 0.10
 	CASE 2
@@ -97,5 +97,5 @@ SELECTCASE ABL:¸‰t’†“Å
 		TIMES LOCAL , 5.00
 ENDSELECT
 
-SOURCE:’†“Å += LOCAL
+SOURCE:ä¸­æ¯’ += LOCAL
 

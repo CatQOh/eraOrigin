@@ -1,119 +1,119 @@
+ï»¿;-------------------------------------------------
+;ãƒ‹ãƒ—ãƒ«ã‚­ãƒ£ãƒƒãƒ—
 ;-------------------------------------------------
-;ƒjƒvƒ‹ƒLƒƒƒbƒv
-;-------------------------------------------------
-@USERCOM_ABLE_ƒjƒvƒ‹ƒLƒƒƒbƒv, ARG
+@USERCOM_ABLE_ãƒ‹ãƒ—ãƒ«ã‚­ãƒ£ãƒƒãƒ—, ARG
 #FUNCTION
-;GŽè’²‹³’†‚Íƒ_ƒ
-SIF TEQUIP:GŽè
+;è§¦æ‰‹èª¿æ•™ä¸­ã¯ãƒ€ãƒ¡
+SIF TEQUIP:è§¦æ‰‹
 	RETURNF 0
-;“û–[‚ª˜Io‚µ‚Ä‚È‚¢‚Æƒ_ƒ
+;ä¹³æˆ¿ãŒéœ²å‡ºã—ã¦ãªã„ã¨ãƒ€ãƒ¡
 SIF OVER_BUST(TARGET) != ""
 	RETURNF 0
-;‰ðœ‚Í‚¢‚Â‚Å‚à‰Â”\
-IF TEQUIP:ƒjƒvƒ‹ƒLƒƒƒbƒv
+;è§£é™¤ã¯ã„ã¤ã§ã‚‚å¯èƒ½
+IF TEQUIP:ãƒ‹ãƒ—ãƒ«ã‚­ãƒ£ãƒƒãƒ—
 	COMRESULT = 1
 	RETURNF 1
 ENDIF
-;‹¹‚ðŽg‚Á‚Ä‚éê‡‚Íƒ_ƒ
-SIF ‚aŽg—p’†(TARGET)
+;èƒ¸ã‚’ä½¿ã£ã¦ã‚‹å ´åˆã¯ãƒ€ãƒ¡
+SIF ï¼¢ä½¿ç”¨ä¸­(TARGET)
 	RETURNF 0
-;ASSI‚Ìê‡A‹ZI3ˆÈã‚¶‚á‚È‚¢‚ÆŽg‚¦‚È‚¢B
+;ASSIã®å ´åˆã€æŠ€å·§3ä»¥ä¸Šã˜ã‚ƒãªã„ã¨ä½¿ãˆãªã„ã€‚
 IF ASSIPLAY
-	SIF ABL:ASSI:‹ZI < 3
+	SIF ABL:ASSI:æŠ€å·§ < 3
 		RETURNF 0
 ENDIF
-;ƒVƒƒƒ[’†‚Íƒ_ƒ
-SIF TEQUIP:ƒVƒƒƒ[
+;ã‚·ãƒ£ãƒ¯ãƒ¼ä¸­ã¯ãƒ€ãƒ¡
+SIF TEQUIP:ã‚·ãƒ£ãƒ¯ãƒ¼
 	RETURNF 0
 
 COMRESULT = 1
 RETURNF 1
 
-@COM_ƒjƒvƒ‹ƒLƒƒƒbƒv
-IF TEQUIP:GŽè
-	PRINTL GŽè“ûŽñÓ‚ß
+@COM_ãƒ‹ãƒ—ãƒ«ã‚­ãƒ£ãƒƒãƒ—
+IF TEQUIP:è§¦æ‰‹
+	PRINTL è§¦æ‰‹ä¹³é¦–è²¬ã‚
 	SELECTCOM = 164
 ELSE
-	PRINTL ƒjƒvƒ‹ƒLƒƒƒbƒv
+	PRINTL ãƒ‹ãƒ—ãƒ«ã‚­ãƒ£ãƒƒãƒ—
 ENDIF
 CALL KOJO_MESSAGE_COM
 
-;’…’E‚Ìˆ—
-INVERTBIT TEQUIP:ƒjƒvƒ‹ƒLƒƒƒbƒv, 0
+;ç€è„±ã®å‡¦ç†
+INVERTBIT TEQUIP:ãƒ‹ãƒ—ãƒ«ã‚­ãƒ£ãƒƒãƒ—, 0
 
 ;-------------------------------------------------
-;ƒ\[ƒX’Ç‰Áˆ—
+;ã‚½ãƒ¼ã‚¹è¿½åŠ å‡¦ç†
 ;-------------------------------------------------
-;Á”ï‘Ì—ÍA‹C—Í
-LOSEBASE:‘Ì—Í += 20
-LOSEBASE:‹C—Í += 50
+;æ¶ˆè²»ä½“åŠ›ã€æ°—åŠ›
+LOSEBASE:ä½“åŠ› += 20
+LOSEBASE:æ°—åŠ› += 50
 
-SOURCE:‰õB = 200
-SOURCE:˜Io = 20
-SOURCE:ˆí’E = 30
-SOURCE:”½Š´ = 30
-
-;-------------------------------------------------
-;“ÁŽêƒ\[ƒXˆ—
-;-------------------------------------------------
-;—}ˆ³A’ïRŽ‚¿‚É‚ÍA—}ŸTƒ\[ƒX’Ç‰Á
-SIF TALENT:—}ˆ³ || TALENT:’ïR
-	SOURCE:ŸT‹ü += 30
+SOURCE:å¿«B = 200
+SOURCE:éœ²å‡º = 20
+SOURCE:é€¸è„± = 30
+SOURCE:åæ„Ÿ = 30
 
 ;-------------------------------------------------
-;â’¸ƒ`ƒFƒbƒN
+;ç‰¹æ®Šã‚½ãƒ¼ã‚¹å‡¦ç†
+;-------------------------------------------------
+;æŠ‘åœ§ã€æŠµæŠ—æŒã¡ã«ã¯ã€æŠ‘é¬±ã‚½ãƒ¼ã‚¹è¿½åŠ 
+SIF TALENT:æŠ‘åœ§ || TALENT:æŠµæŠ—
+	SOURCE:é¬±å±ˆ += 30
+
+;-------------------------------------------------
+;çµ¶é ‚ãƒã‚§ãƒƒã‚¯
 ;-------------------------------------------------
 CALL SOURCE_CHECK_CVAB
 
 ;-------------------------------------------------
-;ŽË¸ƒ`ƒFƒbƒN
+;å°„ç²¾ãƒã‚§ãƒƒã‚¯
 ;-------------------------------------------------
 CALL SAMEN_CHECK_T, 0
 
-CALL SAMEN_SHOOT_T, 0, NOWEX:ŽË¸
+CALL SAMEN_SHOOT_T, 0, NOWEX:å°„ç²¾
 
 ;-------------------------------------------------
-;‰˜‚ê‚Ìˆ—
+;æ±šã‚Œã®å‡¦ç†
 ;-------------------------------------------------
-;GŽè“ûŽñÓ‚ß‚È‚çAGŽè‘Ì‰t‚ª‹¹‚É•t‚­
-SIF TEQUIP:GŽè
-	SETBIT STAIN:‹¹, 5
+;è§¦æ‰‹ä¹³é¦–è²¬ã‚ãªã‚‰ã€è§¦æ‰‹ä½“æ¶²ãŒèƒ¸ã«ä»˜ã
+SIF TEQUIP:è§¦æ‰‹
+	SETBIT STAIN:èƒ¸, 5
 
 ;-------------------------------------------------
-;ŒoŒ±‚Ìˆ—
+;çµŒé¨“ã®å‡¦ç†
 ;-------------------------------------------------
 CALL EXPUP, 1, 1
 
 RETURN 1
 
 ;-------------------------------------------------
-;‘•’…Œp‘±‚Ìˆ—
+;è£…ç€ç¶™ç¶šã®å‡¦ç†
 ;-------------------------------------------------
-@EQUIP_COM_ƒjƒvƒ‹ƒLƒƒƒbƒv
-;ƒjƒvƒ‹ƒLƒƒƒbƒv‘•”õ’†
-IF TEQUIP:GŽè
-	PRINTL ƒGŽè“ûŽñÓ‚ß’†„
+@EQUIP_COM_ãƒ‹ãƒ—ãƒ«ã‚­ãƒ£ãƒƒãƒ—
+;ãƒ‹ãƒ—ãƒ«ã‚­ãƒ£ãƒƒãƒ—è£…å‚™ä¸­
+IF TEQUIP:è§¦æ‰‹
+	PRINTL ï¼œè§¦æ‰‹ä¹³é¦–è²¬ã‚ä¸­ï¼ž
 ELSE
-	PRINTL ƒƒjƒvƒ‹ƒLƒƒƒbƒv‘•”õ’†„
+	PRINTL ï¼œãƒ‹ãƒ—ãƒ«ã‚­ãƒ£ãƒƒãƒ—è£…å‚™ä¸­ï¼ž
 ENDIF
 
 ;-------------------------------------------------
-;ƒ\[ƒX’Ç‰Áˆ—
+;ã‚½ãƒ¼ã‚¹è¿½åŠ å‡¦ç†
 ;-------------------------------------------------
-LOSEBASE:‘Ì—Í += 10
-LOSEBASE:‹C—Í += 30
+LOSEBASE:ä½“åŠ› += 10
+LOSEBASE:æ°—åŠ› += 30
 
-SOURCE:‰õB += 100
-SOURCE:˜Io += 10
-SOURCE:ˆí’E += 20
-SOURCE:”½Š´ += 20
+SOURCE:å¿«B += 100
+SOURCE:éœ²å‡º += 10
+SOURCE:é€¸è„± += 20
+SOURCE:åæ„Ÿ += 20
 
 RETURN 1
 
 ;-------------------------------------------------
-;ŒoŒ±‚Ìˆ—
+;çµŒé¨“ã®å‡¦ç†
 ;-------------------------------------------------
-;GŽèŒoŒ±‰ÁŽZ
-SIF TEQUIP:GŽè
+;è§¦æ‰‹çµŒé¨“åŠ ç®—
+SIF TEQUIP:è§¦æ‰‹
 	TENTACLE++
 

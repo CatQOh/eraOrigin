@@ -1,4 +1,4 @@
-;TRAIN“а‚МЌ\ђ¬‚ЙЊД‚СЏo‚і‚к‚й
+п»ї;TRAINе†…гЃ®ж§‹ж€ђгЃ«е‘јгЃіе‡єгЃ•г‚Њг‚‹
 @SHOW_STATUS
 DRAWLINE
 IF YEAR > 0
@@ -7,125 +7,125 @@ ELSE
 	PRINTFORM BC{ABS(YEAR)+1}
 ENDIF
 PRINTFORM /{MONTH}/{DAYS}(%DOW(ZELLER(YEAR,MONTH,DAYS))%)
-PRINTFORM  {DAY}“ъ–Ъ(\@ TIME == 0 ? ’‹ # –й \@) 
-PRINTFORM ‹C‰·:{FLAG:‹C‰·/10}.{ABS(FLAG:‹C‰·%10)}ЃЋ “V‹C:
-SELECTCASE FLAG:“V‹C
+PRINTFORM  {DAY}ж—Ґз›®(\@ TIME == 0 ? жј # е¤њ \@) 
+PRINTFORM ж°—жё©:{FLAG:ж°—жё©/10}.{ABS(FLAG:ж°—жё©%10)}в„ѓ е¤©ж°—:
+SELECTCASE FLAG:е¤©ж°—
 	CASE 1
-		PRINT ђ°‚к
+		PRINT ж™ґг‚Њ
 	CASE 2
-		PRINT “Ь‚и
+		PRINT ж›‡г‚Љ
 	CASE 3
-		PRINT ‰J
+		PRINT й›Ё
 	CASE 4
-		PRINT ‘е‰J
+		PRINT е¤§й›Ё
 	CASE 5
-		PRINT —‹‰J
+		PRINT й›·й›Ё
 	CASE 6
-		PRINT ђб
+		PRINT й›Є
 	CASE 7
-		PRINT ‘еђб
+		PRINT е¤§й›Є
 ENDSELECT
 PRINTL 
 
-PRINTFORML ’І‹і’†:%NAME:TARGET% ’І‹іЋТ:\@ ASSIPLAY ? %NAME:ASSI%(Џ•Ћи) # %NAME:MASTER% \@
+PRINTFORML иЄїж•™дё­:%NAME:TARGET% иЄїж•™иЂ…:\@ ASSIPLAY ? %NAME:ASSI%(еЉ©ж‰‹) # %NAME:MASTER% \@
 
 CALL SHOW_STATE
 
-PRINTFORML Ѓ %CALLNAME:TARGET%‚МѓXѓeЃ[ѓ^ѓX
+PRINTFORML в–Ў%CALLNAME:TARGET%гЃ®г‚№гѓ†гѓјг‚їг‚№
 CALL SHOW_INFO_HEALTH
 IF PENIS(TARGET)
-	PRINT Ѓ@ЋЛђё
-	SIF CFLAG:Ћcђ” == 0
-		PRINT Ѓ¦‘Е‚їЋ~‚ЯЃ¦
-	PRINTFORML %BARBASE("ЋЛђё", TARGET)%
+	PRINT гЂЂе°„зІѕ
+	SIF CFLAG:ж®‹ж•° == 0
+		PRINT вЂ»ж‰“гЃЎж­ўг‚ЃвЂ»
+	PRINTFORML %BARBASE("е°„зІѕ", TARGET)%
 ENDIF
 
-IF TALENT:•к“ы‘МЋї
-	PRINTFORML •к“ы%BARBASE("•к“ы", TARGET)%
+IF TALENT:жЇЌд№ідЅ“иіЄ
+	PRINTFORML жЇЌд№і%BARBASE("жЇЌд№і", TARGET)%
 ENDIF
 
-;•ћ‘•
-PRINTFORM Ѓ@%CALLNAME:TARGET%‚М•ћ‘•:
-SIF TEQUIP:“БЋк
-	PRINTFORM [%CSTR:“БЋк%]
-SIF TEQUIP:Џг”јђgЏг’…
-	PRINTFORM [%CSTR:Џг”јђgЏг’…%]
-SIF TEQUIP:‰є”јђgЏг’…
-	PRINTFORM [%CSTR:‰є”јђgЏг’…%]
-SIF TEQUIP:‘SђgЏг’…
-	PRINTFORM [%CSTR:‘SђgЏг’…%]
-SIF TEQUIP:Џг”јђg‰є’…
-	PRINTFORM [%CSTR:Џг”јђg‰є’…%]
-SIF TEQUIP:‰є”јђg‰є’…
-	PRINTFORM [%CSTR:‰є”јђg‰є’…%]
-SIF TEQUIP:‘«Њі
-	PRINTFORM [%CSTR:‘«Њі%]
-SIF !TEQUIP:“БЋк && !TEQUIP:Џг”јђgЏг’… && !TEQUIP:‰є”јђgЏг’… && !TEQUIP:‘SђgЏг’… && !TEQUIP:Џг”јђg‰є’… && !TEQUIP:‰є”јђg‰є’… && !TEQUIP:‘«Њі
-	PRINTFORM [‘S—‡]
+;жњЌиЈ…
+PRINTFORM гЂЂ%CALLNAME:TARGET%гЃ®жњЌиЈ…:
+SIF TEQUIP:з‰№ж®Љ
+	PRINTFORM [%CSTR:з‰№ж®Љ%]
+SIF TEQUIP:дёЉеЌЉиє«дёЉзќЂ
+	PRINTFORM [%CSTR:дёЉеЌЉиє«дёЉзќЂ%]
+SIF TEQUIP:дё‹еЌЉиє«дёЉзќЂ
+	PRINTFORM [%CSTR:дё‹еЌЉиє«дёЉзќЂ%]
+SIF TEQUIP:е…Ёиє«дёЉзќЂ
+	PRINTFORM [%CSTR:е…Ёиє«дёЉзќЂ%]
+SIF TEQUIP:дёЉеЌЉиє«дё‹зќЂ
+	PRINTFORM [%CSTR:дёЉеЌЉиє«дё‹зќЂ%]
+SIF TEQUIP:дё‹еЌЉиє«дё‹зќЂ
+	PRINTFORM [%CSTR:дё‹еЌЉиє«дё‹зќЂ%]
+SIF TEQUIP:и¶іе…ѓ
+	PRINTFORM [%CSTR:и¶іе…ѓ%]
+SIF !TEQUIP:з‰№ж®Љ && !TEQUIP:дёЉеЌЉиє«дёЉзќЂ && !TEQUIP:дё‹еЌЉиє«дёЉзќЂ && !TEQUIP:е…Ёиє«дёЉзќЂ && !TEQUIP:дёЉеЌЉиє«дё‹зќЂ && !TEQUIP:дё‹еЌЉиє«дё‹зќЂ && !TEQUIP:и¶іе…ѓ
+	PRINTFORM [е…ЁиЈё]
 PRINTL 
 
 
 CALL SHOW_INFO_PALAM
 
-PRINTL Ѓ Ћеђl‚ЖЏ•Ћи‚МѓXѓeЃ[ѓ^ѓX
+PRINTL в–Ўдё»дєєгЃЁеЉ©ж‰‹гЃ®г‚№гѓ†гѓјг‚їг‚№
 IF PENIS(MASTER)
-	PRINT Ѓ@ЋЛђё(Ћеђl)
-	SIF CFLAG:MASTER:Ћcђ” == 0
-		PRINT Ѓ¦‘Е‚їЋ~‚ЯЃ¦
-	PRINTFORML %BARBASE("ЋЛђё", MASTER)%
+	PRINT гЂЂе°„зІѕ(дё»дєє)
+	SIF CFLAG:MASTER:ж®‹ж•° == 0
+		PRINT вЂ»ж‰“гЃЎж­ўг‚ЃвЂ»
+	PRINTFORML %BARBASE("е°„зІѕ", MASTER)%
 ENDIF
 
 IF ASSI >= 0 && PENIS(ASSI)
-	PRINT Ѓ@ЋЛђё(Џ•Ћи)
-	SIF CFLAG:ASSI:Ћcђ” == 0
-		PRINT Ѓ¦‘Е‚їЋ~‚ЯЃ¦
-	PRINTFORML %BARBASE("ЋЛђё", ASSI)%
+	PRINT гЂЂе°„зІѕ(еЉ©ж‰‹)
+	SIF CFLAG:ASSI:ж®‹ж•° == 0
+		PRINT вЂ»ж‰“гЃЎж­ўг‚ЃвЂ»
+	PRINTFORML %BARBASE("е°„зІѕ", ASSI)%
 ENDIF
 
-SIF TEQUIP:ђGЋи
-	PRINTFORML Ѓ@ЋЛђё(ђGЋи)%BARBASE("ђGЋиЋЛђё", MASTER)%
+SIF TEQUIP:и§¦ж‰‹
+	PRINTFORML гЂЂе°„зІѕ(и§¦ж‰‹)%BARBASE("и§¦ж‰‹е°„зІѕ", MASTER)%
 
 CALL PLAYER_CLOTHES, MASTER
 SIF ASSI >= 0
 	CALL PLAYER_CLOTHES, ASSI
 
-IF TALENT:MASTER:ѓhѓ‰ѓSѓ“Ћg‚ў
-	PRINTFORML Ѓ %CSTR:MASTER:ѓhѓ‰ѓSѓ“%‚МѓXѓeЃ[ѓ^ѓX
-	PRINTFORML Ѓ@ЋЛђёЃ@Ѓ@Ѓ@%BARBASE("ѓhѓ‰ѓSѓ“ЋЛђё", MASTER)%
+IF TALENT:MASTER:гѓ‰гѓ©г‚ґгѓідЅїгЃ„
+	PRINTFORML в–Ў%CSTR:MASTER:гѓ‰гѓ©г‚ґгѓі%гЃ®г‚№гѓ†гѓјг‚їг‚№
+	PRINTFORML гЂЂе°„зІѕгЂЂгЂЂгЂЂ%BARBASE("гѓ‰гѓ©г‚ґгѓіе°„зІѕ", MASTER)%
 ENDIF
-IF ASSI > 0 && TALENT:ASSI:ѓhѓ‰ѓSѓ“Ћg‚ў
-	PRINTFORML Ѓ %CSTR:ASSI:ѓhѓ‰ѓSѓ“%‚МѓXѓeЃ[ѓ^ѓX
-	PRINTFORML Ѓ@ЋЛђёЃ@Ѓ@Ѓ@%BARBASE("ѓhѓ‰ѓSѓ“ЋЛђё", ASSI)%
+IF ASSI > 0 && TALENT:ASSI:гѓ‰гѓ©г‚ґгѓідЅїгЃ„
+	PRINTFORML в–Ў%CSTR:ASSI:гѓ‰гѓ©г‚ґгѓі%гЃ®г‚№гѓ†гѓјг‚їг‚№
+	PRINTFORML гЂЂе°„зІѕгЂЂгЂЂгЂЂ%BARBASE("гѓ‰гѓ©г‚ґгѓіе°„зІѕ", ASSI)%
 ENDIF
 
 DRAWLINE
 
-PRINT Ћg—p’†‚МѓAѓCѓeѓЂЃF
+PRINT дЅїз”Ёдё­гЃ®г‚ўг‚¤гѓ†гѓ пјљ
 CALL SHOW_EQUIP
 
 @PLAYER_CLOTHES, ARG
-;•ћ‘•‚М•\Ћ¦
-PRINTFORM Ѓ@%CALLNAME:ARG%‚М•ћ‘•:
-SIF TEQUIP:ARG:“БЋк
-	PRINTFORM [%CSTR:ARG:“БЋк%]
-SIF TEQUIP:ARG:Џг”јђgЏг’…
-	PRINTFORM [%CSTR:ARG:Џг”јђgЏг’…%]
-SIF TEQUIP:ARG:‰є”јђgЏг’…
-	PRINTFORM [%CSTR:ARG:‰є”јђgЏг’…%]
-SIF TEQUIP:ARG:‘SђgЏг’…
-	PRINTFORM [%CSTR:ARG:‘SђgЏг’…%]
-SIF TEQUIP:ARG:Џг”јђg‰є’…
-	PRINTFORM [%CSTR:ARG:Џг”јђg‰є’…%]
-SIF TEQUIP:ARG:‰є”јђg‰є’…
-	PRINTFORM [%CSTR:ARG:‰є”јђg‰є’…%]
-SIF TEQUIP:ARG:‘«Њі
-	PRINTFORM [%CSTR:ARG:‘«Њі%]
-SIF !TEQUIP:ARG:“БЋк && !TEQUIP:ARG:Џг”јђgЏг’… && !TEQUIP:ARG:‰є”јђgЏг’… && !TEQUIP:ARG:‘SђgЏг’… && !TEQUIP:ARG:Џг”јђg‰є’… && !TEQUIP:ARG:‰є”јђg‰є’… && !TEQUIP:ARG:‘«Њі
-	PRINTFORM [‘S—‡]
+;жњЌиЈ…гЃ®иЎЁз¤є
+PRINTFORM гЂЂ%CALLNAME:ARG%гЃ®жњЌиЈ…:
+SIF TEQUIP:ARG:з‰№ж®Љ
+	PRINTFORM [%CSTR:ARG:з‰№ж®Љ%]
+SIF TEQUIP:ARG:дёЉеЌЉиє«дёЉзќЂ
+	PRINTFORM [%CSTR:ARG:дёЉеЌЉиє«дёЉзќЂ%]
+SIF TEQUIP:ARG:дё‹еЌЉиє«дёЉзќЂ
+	PRINTFORM [%CSTR:ARG:дё‹еЌЉиє«дёЉзќЂ%]
+SIF TEQUIP:ARG:е…Ёиє«дёЉзќЂ
+	PRINTFORM [%CSTR:ARG:е…Ёиє«дёЉзќЂ%]
+SIF TEQUIP:ARG:дёЉеЌЉиє«дё‹зќЂ
+	PRINTFORM [%CSTR:ARG:дёЉеЌЉиє«дё‹зќЂ%]
+SIF TEQUIP:ARG:дё‹еЌЉиє«дё‹зќЂ
+	PRINTFORM [%CSTR:ARG:дё‹еЌЉиє«дё‹зќЂ%]
+SIF TEQUIP:ARG:и¶іе…ѓ
+	PRINTFORM [%CSTR:ARG:и¶іе…ѓ%]
+SIF !TEQUIP:ARG:з‰№ж®Љ && !TEQUIP:ARG:дёЉеЌЉиє«дёЉзќЂ && !TEQUIP:ARG:дё‹еЌЉиє«дёЉзќЂ && !TEQUIP:ARG:е…Ёиє«дёЉзќЂ && !TEQUIP:ARG:дёЉеЌЉиє«дё‹зќЂ && !TEQUIP:ARG:дё‹еЌЉиє«дё‹зќЂ && !TEQUIP:ARG:и¶іе…ѓ
+	PRINTFORM [е…ЁиЈё]
 PRINTL 
 
 @STAIN_INFO
-;‰‚к•\Ћ¦
+;ж±љг‚ЊиЎЁз¤є
 CALL SHOW_STAIN, MASTER
 CALL SHOW_STAIN, TARGET
 SIF ASSI > 0
@@ -133,100 +133,100 @@ SIF ASSI > 0
 WAIT
 
 @SHOW_STAIN, ARG
-PRINTFORML Ѓy%CALLNAME:ARG%‚М‰‚кЃz
+PRINTFORML гЂђ%CALLNAME:ARG%гЃ®ж±љг‚ЊгЂ‘
 REPEAT 9
 	SELECTCASE COUNT
 		CASE 2
-			SIF SEX(ARG) == 2 && !TALENT:ARG:‚У‚Ѕ‚И‚и
+			SIF SEX(ARG) == 2 && !TALENT:ARG:гЃµгЃџгЃЄг‚Љ
 				CONTINUE
 		CASE 3, 6
-			SIF SEX(ARG) == 1 && !TALENT:ARG:‚У‚Ѕ‚И‚и
+			SIF SEX(ARG) == 1 && !TALENT:ARG:гЃµгЃџгЃЄг‚Љ
 				CONTINUE
 		CASE 7
-			SIF CSTR:ARG:‰є”јђg‰є’… == ""
+			SIF CSTR:ARG:дё‹еЌЉиє«дё‹зќЂ == ""
 				CONTINUE
 	ENDSELECT
 
 	SELECTCASE COUNT
 		CASE 0
-			PRINT Ѓ@ЊыђOЃF
+			PRINT гЂЂеЏЈе”‡пјљ
 		CASE 1
-			PRINT Ѓ@ЋиЋwЃF
+			PRINT гЂЂж‰‹жЊ‡пјљ
 		CASE 2
-			PRINT Ѓ@‰AЊsЃF
+			PRINT гЂЂй™°иЊЋпјљ
 		CASE 3
-			PRINT Ѓ@дSЊыЃF
+			PRINT гЂЂи†ЈеЏЈпјљ
 		CASE 4
-			PRINT Ѓ@ги–еЃF
+			PRINT гЂЂи‚›й–Ђпјљ
 		CASE 5
-			PRINT Ѓ@“ы–[ЃF
+			PRINT гЂЂд№іж€їпјљ
 		CASE 6
-			PRINT Ѓ@дS“аЃF
+			PRINT гЂЂи†Је†…пјљ
 		CASE 7
-			PRINT Ѓ@‰є’…ЃF
+			PRINT гЂЂдё‹зќЂпјљ
 	ENDSELECT
 	SIF GETBIT(STAIN:ARG:COUNT, 0)
-		PRINT <€¤‰t>
+		PRINT <ж„›ж¶І>
 	SIF GETBIT(STAIN:ARG:COUNT, 1)
-		PRINT <ђж‘–‚и>
+		PRINT <е…€иµ°г‚Љ>
 	SIF GETBIT(STAIN:ARG:COUNT, 2)
-		PRINT <ђё‰t>
+		PRINT <зІѕж¶І>
 	SIF GETBIT(STAIN:ARG:COUNT, 3)
-		PRINT <ѓAѓiѓ‹>
+		PRINT <г‚ўгѓЉгѓ«>
 	SIF GETBIT(STAIN:ARG:COUNT, 4)
-		PRINT <•к“ы>
+		PRINT <жЇЌд№і>
 	SIF GETBIT(STAIN:ARG:COUNT, 5)
-		PRINT <”S‰t>
+		PRINT <зІж¶І>
 	SIF GETBIT(STAIN:ARG:COUNT, 6)
-		PRINT <”j‰Z‚МЊЊ>
+		PRINT <з ґз“њгЃ®иЎЂ>
 	SIF GETBIT(STAIN:ARG:COUNT, 7)
-		PRINT <”A>
+		PRINT <е°ї>
 	PRINTL 
 REND
 
 @SHOW_STATE
-;Џу‹µ‚М•\Ћ¦
-PRINT Ѓ@
-SIF TFLAG:ЋАЌs”»’и–іЋ‹
-	PRINTFORM [%CALLNAME:TARGET%‚М€УЋЇ‚ЄћNћO]
+;зЉ¶жіЃгЃ®иЎЁз¤є
+PRINT гЂЂ
+SIF TFLAG:е®џиЎЊе€¤е®љз„Ўи¦–
+	PRINTFORM [%CALLNAME:TARGET%гЃ®ж„Џи­гЃЊжњ¦жњ§]
 
-SIF TEQUIP:ѓrѓfѓIѓJѓЃѓ‰
-	PRINTFORM [ЋB‰e’†(Ћc{10-TFLAG:ѓrѓfѓIЋB‰e‰сђ”}‰сЃ@ЋB‰eЋТ:\@ TFLAG:ѓrѓfѓIЋB‰eЋТ == 2 ? %CALLNAME:ASSI% # %CALLNAME:MASTER% \@)]
+SIF TEQUIP:гѓ“гѓ‡г‚Єг‚«гѓЎгѓ©
+	PRINTFORM [ж’®еЅ±дё­(ж®‹{10-TFLAG:гѓ“гѓ‡г‚Єж’®еЅ±е›ћж•°}е›ћгЂЂж’®еЅ±иЂ…:\@ TFLAG:гѓ“гѓ‡г‚Єж’®еЅ±иЂ… == 2 ? %CALLNAME:ASSI% # %CALLNAME:MASTER% \@)]
 
-SIF TEQUIP:ђGЋи
-	PRINT [ђGЋиЏўЉ«’†] 
-SIF TEQUIP:–мЉOѓvѓЊѓC
-	PRINT [–мЉOѓvѓЊѓC’†]
-SIF TEQUIP:гµ’pѓvѓЊѓC
-	PRINT [гµ’pѓvѓЊѓC’†]
-SIF TEQUIP:‚Ё•—CЏк
-	PRINT [‚Ё•—CЏкѓvѓЊѓC’†]
-SIF TEQUIP:ѓGѓvѓЌѓ“
-	PRINT [ђVЌИѓvѓЊѓC’†]
+SIF TEQUIP:и§¦ж‰‹
+	PRINT [и§¦ж‰‹еЏ¬е–љдё­] 
+SIF TEQUIP:й‡Ће¤–гѓ—гѓ¬г‚¤
+	PRINT [й‡Ће¤–гѓ—гѓ¬г‚¤дё­]
+SIF TEQUIP:зѕћжЃҐгѓ—гѓ¬г‚¤
+	PRINT [зѕћжЃҐгѓ—гѓ¬г‚¤дё­]
+SIF TEQUIP:гЃЉйўЁе‘‚е ґ
+	PRINT [гЃЉйўЁе‘‚е ґгѓ—гѓ¬г‚¤дё­]
+SIF TEQUIP:г‚Ёгѓ—гѓ­гѓі
+	PRINT [ж–°е¦»гѓ—гѓ¬г‚¤дё­]
 PRINTL 
 
 @SHOW_EQUIP
-;Ћg—p’†‚М“№‹п‚р•\Ћ¦‚·‚й
-;€к“xЋg—p‚µ‚Ѕ‚з‰рЏњ‚·‚й‚Ь‚ЕЋ~‚Ь‚з‚И‚ў“№‹п‚в’І‹і‚р
-;’З‰Б‚µ‚ЅЏкЌ‡‚Н‚±‚±‚Й’З‰Б‚р‚µ‚Д‚­‚ѕ‚і‚ў
+;дЅїз”Ёдё­гЃ®йЃ“е…·г‚’иЎЁз¤єгЃ™г‚‹
+;дёЂеє¦дЅїз”ЁгЃ—гЃџг‚‰и§Јй™¤гЃ™г‚‹гЃѕгЃ§ж­ўгЃѕг‚‰гЃЄгЃ„йЃ“е…·г‚„иЄїж•™г‚’
+;иїЅеЉ гЃ—гЃџе ґеђ€гЃЇгЃ“гЃ“гЃ«иїЅеЉ г‚’гЃ—гЃ¦гЃЏгЃ гЃ•гЃ„
 
 LOCAL = 0
 
-IF TEQUIP:MASTER:ѓRѓ“ѓhЃ[ѓЂ
-	PRINT [Ћеђl”р”D‹п]
+IF TEQUIP:MASTER:г‚ігѓігѓ‰гѓјгѓ 
+	PRINT [дё»дєєйЃїе¦Ље…·]
 	LOCAL++
 ENDIF
-IF ASSI >= 0 && TEQUIP:ASSI:ѓRѓ“ѓhЃ[ѓЂ
-	PRINT [Џ•Ћи”р”D‹п]
+IF ASSI >= 0 && TEQUIP:ASSI:г‚ігѓігѓ‰гѓјгѓ 
+	PRINT [еЉ©ж‰‹йЃїе¦Ље…·]
 	LOCAL++
 ENDIF
-IF CFLAG:ђЊ
-	IF TALENT:‰єЊЛ && CFLAG:ђЊ >= 20
-		PRINTFORM [%CALLNAME:TARGET%“DђЊ’†]
-	ELSEIF !TALENT:ЋрЌ‹ && CFLAG:ђЊ >= 50
-		PRINTFORM [%CALLNAME:TARGET%“DђЊ’†]
+IF CFLAG:й…”
+	IF TALENT:дё‹ж€ё && CFLAG:й…” >= 20
+		PRINTFORM [%CALLNAME:TARGET%жіҐй…”дё­]
+	ELSEIF !TALENT:й…’и±Є && CFLAG:й…” >= 50
+		PRINTFORM [%CALLNAME:TARGET%жіҐй…”дё­]
 	ELSE
-		PRINTFORM [%CALLNAME:TARGET%Ћр‹C‘С‚С]
+		PRINTFORM [%CALLNAME:TARGET%й…’ж°—еёЇгЃі]
 	ENDIF
 	LOCAL++
 ENDIF
@@ -234,99 +234,99 @@ FOR COUNT, 11, 40
 	SIF TEQUIP:COUNT == 0
 		CONTINUE
 	SELECTCASE TEQUIPNAME:COUNT
-		;ђGЋиЌЕ—Dђж
-		CASE "ђGЋи"
-			PRINT [ђGЋиЏўЉ«’†]
-		;–тЊn‚Н€к”ФЌЕЏ‰
-		CASE "›Z–т"
-			PRINT [›Z–тЊш‰К”­Љц’†]
+		;и§¦ж‰‹жњЂе„Єе…€
+		CASE "и§¦ж‰‹"
+			PRINT [и§¦ж‰‹еЏ¬е–љдё­]
+		;и–¬зі»гЃЇдёЂз•ЄжњЂе€ќ
+		CASE "еЄљи–¬"
+			PRINT [еЄљи–¬еЉ№жћњз™єжЏ®дё­]
 			LOCAL++
-		CASE "—”AЌЬ"
-			PRINT [—”AЌЬЊш‰К”­Љц’†]
+		CASE "е€©е°їе‰¤"
+			PRINT [е€©е°їе‰¤еЉ№жћњз™єжЏ®дё­]
 			LOCAL++
-		CASE "‹­ђёђ_–т"
-			IF TEQUIP:‹­ђёђ_–т == 1
-				PRINT [‹­ђёђ_–т”Ѕ“®’†]
+		CASE "еј·зІѕзҐћи–¬"
+			IF TEQUIP:еј·зІѕзҐћи–¬ == 1
+				PRINT [еј·зІѕзҐћи–¬еЏЌе‹•дё­]
 			ELSE
-				PRINT [ђв’ё—}ђ§’†]
+				PRINT [зµ¶й ‚жЉ‘е€¶дё­]
 			ENDIF
 			LOCAL++
-		CASE "ѓNѓЉѓLѓѓѓbѓv"
-			IF TEQUIP:ђGЋи
-				PRINT [ђGЋиѓNѓЉђУ‚Я]
+		CASE "г‚ЇгѓЄг‚­гѓЈгѓѓгѓ—"
+			IF TEQUIP:и§¦ж‰‹
+				PRINT [и§¦ж‰‹г‚ЇгѓЄиІ¬г‚Ѓ]
 			ELSE
-				PRINT [ѓNѓЉѓLѓѓѓbѓv]
+				PRINT [г‚ЇгѓЄг‚­гѓЈгѓѓгѓ—]
 			ENDIF
 			LOCAL++
-		CASE "ѓIѓiѓzЃ[ѓ‹"
-			IF TEQUIP:ђGЋи
-				PRINT [ђGЋиѓIѓiѓz]
+		CASE "г‚ЄгѓЉгѓ›гѓјгѓ«"
+			IF TEQUIP:и§¦ж‰‹
+				PRINT [и§¦ж‰‹г‚ЄгѓЉгѓ›]
 			ELSE
-				PRINT [ѓIѓiѓzЃ[ѓ‹]
+				PRINT [г‚ЄгѓЉгѓ›гѓјгѓ«]
 			ENDIF
 			LOCAL++
-		CASE "ѓoѓCѓu"
-			IF TEQUIP:ђGЋи
-				PRINT [ђGЋи‘}“ь]
+		CASE "гѓђг‚¤гѓ–"
+			IF TEQUIP:и§¦ж‰‹
+				PRINT [и§¦ж‰‹жЊїе…Ґ]
 			ELSE
-				PRINT [ѓoѓCѓu]
+				PRINT [гѓђг‚¤гѓ–]
 			ENDIF
 			LOCAL++
-		CASE "ѓAѓiѓ‹ѓoѓCѓu"
-			IF TEQUIP:ђGЋи
-				PRINT [ђGЋиѓAѓiѓ‹‘}“ь]
+		CASE "г‚ўгѓЉгѓ«гѓђг‚¤гѓ–"
+			IF TEQUIP:и§¦ж‰‹
+				PRINT [и§¦ж‰‹г‚ўгѓЉгѓ«жЊїе…Ґ]
 			ELSE
-				PRINT [ѓAѓiѓ‹ѓoѓCѓu]
+				PRINT [г‚ўгѓЉгѓ«гѓђг‚¤гѓ–]
 			ENDIF
 			LOCAL++
-		CASE "ѓjѓvѓ‹ѓLѓѓѓbѓv"
-			IF TEQUIP:ђGЋи
-				PRINT [ђGЋи“ыЋсђУ‚Я]
+		CASE "гѓ‹гѓ—гѓ«г‚­гѓЈгѓѓгѓ—"
+			IF TEQUIP:и§¦ж‰‹
+				PRINT [и§¦ж‰‹д№ій¦–иІ¬г‚Ѓ]
 			ELSE
-				PRINT [ѓjѓvѓ‹ѓLѓѓѓbѓv]
+				PRINT [гѓ‹гѓ—гѓ«г‚­гѓЈгѓѓгѓ—]
 			ENDIF
 			LOCAL++
-		CASE "Ќп“ыЉн"
-			IF TEQUIP:ђGЋи
-				PRINT [ђGЋиЌп“ы]
+		CASE "жђѕд№іе™Ё"
+			IF TEQUIP:и§¦ж‰‹
+				PRINT [и§¦ж‰‹жђѕд№і]
 			ELSE
-				PRINT [Ќп“ыЉн]
+				PRINT [жђѕд№іе™Ё]
 			ENDIF
 			LOCAL++
-		CASE "ѓAѓiѓ‹ѓrЃ[ѓY", "ѓAѓCѓ}ѓXѓN", "“к", "ѓ{Ѓ[ѓ‹ѓMѓѓѓO", "џЇ’°Љн", "Љg’Јѓoѓ‹Ѓ[ѓ“", "ѓAѓiѓ‹“d‹Й", "“ы–[“d‹Й", "ѓVѓѓѓЏЃ[", "ђGЋиЊыђJ"
+		CASE "г‚ўгѓЉгѓ«гѓ“гѓјг‚є", "г‚ўг‚¤гѓћг‚№г‚Ї", "зё„", "гѓњгѓјгѓ«г‚®гѓЈг‚°", "жµЈи…ёе™Ё", "ж‹Ўејµгѓђгѓ«гѓјгѓі", "г‚ўгѓЉгѓ«й›»жҐµ", "д№іж€їй›»жҐµ", "г‚·гѓЈгѓЇгѓј", "и§¦ж‰‹еЏЈиѕ±"
 			PRINTFORM [%TEQUIPNAME:COUNT%]
 			LOCAL++
-		CASE "ЌпђёѓRѓ“ѓhЃ[ѓЂ"
-			IF TEQUIP:ђGЋи
-				PRINTL [ђGЋиЌпђё’†]
+		CASE "жђѕзІѕг‚ігѓігѓ‰гѓјгѓ "
+			IF TEQUIP:и§¦ж‰‹
+				PRINTL [и§¦ж‰‹жђѕзІѕдё­]
 			ELSE
-				PRINTL [ЌпђёѓRѓ“ѓhЃ[ѓЂ]
+				PRINTL [жђѕзІѕг‚ігѓігѓ‰гѓјгѓ ]
 			ENDIF
 			LOCAL++
-		CASE "‚u€Щ•Ё"
-			PRINT [дS€Щ•Ё
-			SELECTCASE TEQUIP:‚u€Щ•Ё
+		CASE "пј¶з•°з‰©"
+			PRINT [и†Јз•°з‰©
+			SELECTCASE TEQUIP:пј¶з•°з‰©
 				CASE 1
-					PRINT (ЉК)]
+					PRINT (зј¶)]
 				CASE 2
-					PRINT (ѓ{ѓgѓ‹)]
+					PRINT (гѓњгѓ€гѓ«)]
 				CASE 3
-					PRINT (•r)]
+					PRINT (з“¶)]
 				CASE 4
-					PRINT (ЏБ‰ОЉн)]
+					PRINT (ж¶€зЃ«е™Ё)]
 			ENDSELECT
 			LOCAL++
-		CASE "‚`€Щ•Ё"
-			PRINT [ѓAѓiѓ‹€Щ•Ё
-			SELECTCASE TEQUIP:‚`€Щ•Ё
+		CASE "пјЎз•°з‰©"
+			PRINT [г‚ўгѓЉгѓ«з•°з‰©
+			SELECTCASE TEQUIP:пјЎз•°з‰©
 				CASE 1
-					PRINT (ЉК)]
+					PRINT (зј¶)]
 				CASE 2
-					PRINT (ѓ{ѓgѓ‹)]
+					PRINT (гѓњгѓ€гѓ«)]
 				CASE 3
-					PRINT (•r)]
+					PRINT (з“¶)]
 				CASE 4
-					PRINT (ЏБ‰ОЉн)]
+					PRINT (ж¶€зЃ«е™Ё)]
 			ENDSELECT
 			LOCAL++
 	ENDSELECT
@@ -334,5 +334,5 @@ NEXT
 SIF LOCAL
 	PRINTL 
 SIF LOCAL == 0
-	PRINTL [–і‚µ]
+	PRINTL [з„ЎгЃ—]
 

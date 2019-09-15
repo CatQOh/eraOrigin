@@ -1,50 +1,50 @@
+ï»¿;-------------------------------------------------
+;ã‚¢ãƒŠãƒ«ãƒ•ã‚£ã‚¹ãƒˆã•ã›ã‚‹
 ;-------------------------------------------------
-;ƒAƒiƒ‹ƒtƒBƒXƒg‚³‚¹‚é
-;-------------------------------------------------
-@USERCOM_ABLE_ƒAƒiƒ‹ƒtƒBƒXƒg‚³‚¹‚é, ARG
+@USERCOM_ABLE_ã‚¢ãƒŠãƒ«ãƒ•ã‚£ã‚¹ãƒˆã•ã›ã‚‹, ARG
 #FUNCTION
-;ƒTƒhA‚à‚µ‚­‚ÍƒTƒh‚Á‹C3ˆÈã•K—v
-SIF !TALENT:ƒTƒh && ABL:ƒTƒh‚Á‹C < 3
+;ã‚µãƒ‰ã€ã‚‚ã—ãã¯ã‚µãƒ‰ã£æ°—3ä»¥ä¸Šå¿…è¦
+SIF !TALENT:ã‚µãƒ‰ && ABL:ã‚µãƒ‰ã£æ°— < 3
 	RETURNF 0
 
-;ŽÀsŽÒ‚Ì‚`ŒoŒ±100ˆÈãor‚`Š´Šo3ˆÈã
-SIF EXP:PLAYER:‚`ŒoŒ± < 100 && ABL:‚`Š´Šo <= 3
+;å®Ÿè¡Œè€…ã®ï¼¡çµŒé¨“100ä»¥ä¸Šorï¼¡æ„Ÿè¦š3ä»¥ä¸Š
+SIF EXP:PLAYER:ï¼¡çµŒé¨“ < 100 && ABL:ï¼¡æ„Ÿè¦š <= 3
 	RETURNF 0
 
-;•Žè‚Ìê‡‚Í•Žè‚ªŠ×—Ž‚µ‚Ä‚¢‚È‚¢‚Æƒ_ƒ
-SIF ASSIPLAY && !CFLAG:ASSI:Š×—Ž
+;åŠ©æ‰‹ã®å ´åˆã¯åŠ©æ‰‹ãŒé™¥è½ã—ã¦ã„ãªã„ã¨ãƒ€ãƒ¡
+SIF ASSIPLAY && !CFLAG:ASSI:é™¥è½
 	RETURNF 0
-;’²‹³ŽÒ‚ª¬l‘ÌŒ^‚Ì‚Æ‚«Žål‚ª‹Ö’f‚Ì’mŽ¯Ž‚¿‚¶‚á‚È‚¢‚Æƒ_ƒ
-SIF TALENT:PLAYER:¬l‘ÌŒ^ && !TALENT:MASTER:‹Ö’f‚Ì’mŽ¯ && !TALENT:¬l‘ÌŒ^
+;èª¿æ•™è€…ãŒå°äººä½“åž‹ã®ã¨ãä¸»äººãŒç¦æ–­ã®çŸ¥è­˜æŒã¡ã˜ã‚ƒãªã„ã¨ãƒ€ãƒ¡
+SIF TALENT:PLAYER:å°äººä½“åž‹ && !TALENT:MASTER:ç¦æ–­ã®çŸ¥è­˜ && !TALENT:å°äººä½“åž‹
 	RETURNF 0
-;GŽè’²‹³’†‚Íƒ_ƒ
-SIF TEQUIP:GŽè
+;è§¦æ‰‹èª¿æ•™ä¸­ã¯ãƒ€ãƒ¡
+SIF TEQUIP:è§¦æ‰‹
 	RETURNF 0
-;“êŽg—p’†‚Ío—ˆ‚È‚¢
-SIF TEQUIP:“ê
+;ç¸„ä½¿ç”¨ä¸­ã¯å‡ºæ¥ãªã„
+SIF TEQUIP:ç¸„
 	RETURNF 0
 
 COMRESULT = 1
 RETURNF 1
 
-@ŽÀs”»’è_ƒAƒiƒ‹ƒtƒBƒXƒg‚³‚¹‚é
+@å®Ÿè¡Œåˆ¤å®š_ã‚¢ãƒŠãƒ«ãƒ•ã‚£ã‚¹ãƒˆã•ã›ã‚‹
 ;-------------------------------------------------
-;ŽÀs”»’èˆ—
+;å®Ÿè¡Œåˆ¤å®šå‡¦ç†
 ;-------------------------------------------------
-;‚·‚×‚Ä‚Ì–½—ß‚É‹¤’Ê‚Ì—v‘f‚ðl—¶
-;(]‡‚ª‚‚¢‚Æ–½—ß‚É]‚¢‚â‚·‚¢‚È‚Ç)
+;ã™ã¹ã¦ã®å‘½ä»¤ã«å…±é€šã®è¦ç´ ã‚’è€ƒæ…®
+;(å¾“é †ãŒé«˜ã„ã¨å‘½ä»¤ã«å¾“ã„ã‚„ã™ã„ãªã©)
 CALL COM_ORDER
 
 VARSET LOCAL, 0
 LOCAL = RESULT
 
-;ABL:—~–]
-IF ABL:—~–]
-	LOCAL += ABL:—~–]*3
-	PRINTFORM +—~–]LV{ABL:—~–]}({ABL:—~–]*3})
+;ABL:æ¬²æœ›
+IF ABL:æ¬²æœ›
+	LOCAL += ABL:æ¬²æœ›*3
+	PRINTFORM +æ¬²æœ›LV{ABL:æ¬²æœ›}({ABL:æ¬²æœ›*3})
 ENDIF
 
-CALL COM_ORDER_—~î, 0
+CALL COM_ORDER_æ¬²æƒ…, 0
 LOCAL += RESULT
 
 REPEAT VARSIZE("TALENT")
@@ -52,7 +52,7 @@ REPEAT VARSIZE("TALENT")
 	SIF !TALENT:COUNT
 		CONTINUE
 	SELECTCASE TALENTNAME:COUNT
-		CASE "Œ‰•ÈÇ"
+		CASE "æ½”ç™–ç—‡"
 			LOCAL:1 = -6
 	ENDSELECT
 	IF LOCAL:1
@@ -62,38 +62,38 @@ REPEAT VARSIZE("TALENT")
 REND
 
 LOCAL:1 = 0
-;¸‰t‚Ì‰˜‚ê
-SIF GETBIT(STAIN:PLAYER:ƒAƒiƒ‹, 2)
+;ç²¾æ¶²ã®æ±šã‚Œ
+SIF GETBIT(STAIN:PLAYER:ã‚¢ãƒŠãƒ«, 2)
 	LOCAL:1 += 2
-;ƒAƒiƒ‹‚Ì‰˜‚ê
-SIF GETBIT(STAIN:PLAYER:ƒAƒiƒ‹, 3)
+;ã‚¢ãƒŠãƒ«ã®æ±šã‚Œ
+SIF GETBIT(STAIN:PLAYER:ã‚¢ãƒŠãƒ«, 3)
 	LOCAL:1 += 6
-;•ê“û‰˜‚ê
-SIF GETBIT(STAIN:PLAYER:ƒAƒiƒ‹, 4)
+;æ¯ä¹³æ±šã‚Œ
+SIF GETBIT(STAIN:PLAYER:ã‚¢ãƒŠãƒ«, 4)
 	LOCAL:1 += 1
-;”A
-SIF GETBIT(STAIN:PLAYER:ƒAƒiƒ‹, 7)
+;å°¿
+SIF GETBIT(STAIN:PLAYER:ã‚¢ãƒŠãƒ«, 7)
 	LOCAL:1 += 3
 
-SIF TALENT:‰˜‚ê–³Ž‹
+SIF TALENT:æ±šã‚Œç„¡è¦–
 	LOCAL:1 /= 3
-SIF TALENT:Œ‰•ÈÇ
+SIF TALENT:æ½”ç™–ç—‡
 	LOCAL:1 *= 2
 
-;‰˜‚ê‚ ‚è
+;æ±šã‚Œã‚ã‚Š
 IF LOCAL:1
 	LOCAL -= LOCAL:1
-	IF TALENT:‰˜‚ê–³Ž‹
-		PRINT -‰˜‚ê‚ ‚èA‰˜‚ê–³Ž‹
-	ELSEIF TALENT:Œ‰•ÈÇ
-		PRINT -‰˜‚ê‚ ‚èAŒ‰•ÈÇ
+	IF TALENT:æ±šã‚Œç„¡è¦–
+		PRINT -æ±šã‚Œã‚ã‚Šã€æ±šã‚Œç„¡è¦–
+	ELSEIF TALENT:æ½”ç™–ç—‡
+		PRINT -æ±šã‚Œã‚ã‚Šã€æ½”ç™–ç—‡
 	ELSE
-		PRINT -‰˜‚ê‚ ‚è
+		PRINT -æ±šã‚Œã‚ã‚Š
 	ENDIF
 	PRINTFORM ({LOCAL:1})
 ENDIF
 
-;‡Œv‚ð•\Ž¦(36ˆÈã‚ÅŽÀs)
+;åˆè¨ˆã‚’è¡¨ç¤º(36ä»¥ä¸Šã§å®Ÿè¡Œ)
 PRINTFORM  = {LOCAL}
 
 LOCAL:2 = 36
@@ -105,58 +105,58 @@ SELECTCASE LOCAL
 	CASEELSE
 		PRINT  = 
 ENDSELECT
-PRINTFORM ŽÀs’l{LOCAL:2}
+PRINTFORM å®Ÿè¡Œå€¤{LOCAL:2}
 WAIT
-;ŽÀs‚Å‚«‚È‚¢
+;å®Ÿè¡Œã§ããªã„
 IF LOCAL < LOCAL:2
-	CALL KOJO_MESSAGE_EVENT, "ƒRƒ}ƒ“ƒh‹‘”ÛŽž"
+	CALL KOJO_MESSAGE_EVENT, "ã‚³ãƒžãƒ³ãƒ‰æ‹’å¦æ™‚"
 	RETURN 0
 ELSE
 	RETURN 1
 ENDIF
 
-@COM_ƒAƒiƒ‹ƒtƒBƒXƒg‚³‚¹‚é
-PRINTL ƒAƒiƒ‹ƒtƒBƒXƒg‚³‚¹‚é
+@COM_ã‚¢ãƒŠãƒ«ãƒ•ã‚£ã‚¹ãƒˆã•ã›ã‚‹
+PRINTL ã‚¢ãƒŠãƒ«ãƒ•ã‚£ã‚¹ãƒˆã•ã›ã‚‹
 
-SIF !TFLAG:ŽÀs”»’è–³Ž‹
-	CALLFORM ŽÀs”»’è_%SELECTCOMS%
-SIF !RESULT && !TFLAG:ŽÀs”»’è–³Ž‹
+SIF !TFLAG:å®Ÿè¡Œåˆ¤å®šç„¡è¦–
+	CALLFORM å®Ÿè¡Œåˆ¤å®š_%SELECTCOMS%
+SIF !RESULT && !TFLAG:å®Ÿè¡Œåˆ¤å®šç„¡è¦–
 	RETURN 0
 
 ;-------------------------------------------------
-;ŽÀsŒˆ’è
+;å®Ÿè¡Œæ±ºå®š
 ;-------------------------------------------------
 CALL KOJO_MESSAGE_COM
 
-;ŽÀsŽÒ‚ª“z—êƒtƒ‰ƒO
-TFLAG:“z—êŽÀs = 1
+;å®Ÿè¡Œè€…ãŒå¥´éš·ãƒ•ãƒ©ã‚°
+TFLAG:å¥´éš·å®Ÿè¡Œ = 1
 
 ;-------------------------------------------------
-;’Eˆß
+;è„±è¡£
 ;-------------------------------------------------
 IF OVER_GENITAL(PLAYER) != ""
-	IF CFLAG:PLAYER:‘}“ü‰Â
-		TEQUIP:PLAYER:‰º”¼g‰º’… = 0
+	IF CFLAG:PLAYER:æŒ¿å…¥å¯
+		TEQUIP:PLAYER:ä¸‹åŠèº«ä¸‹ç€ = 0
 	ELSE
-		TEQUIP:PLAYER:‰º”¼g‰º’… = 0
-		TEQUIP:PLAYER:‰º”¼gã’… = 0
-		TEQUIP:PLAYER:‘Sgã’… = 0
+		TEQUIP:PLAYER:ä¸‹åŠèº«ä¸‹ç€ = 0
+		TEQUIP:PLAYER:ä¸‹åŠèº«ä¸Šç€ = 0
+		TEQUIP:PLAYER:å…¨èº«ä¸Šç€ = 0
 	ENDIF
 ENDIF
 
 ;-------------------------------------------------
-;ŽË¸ƒQ[ƒWƒ`ƒFƒbƒNiŽålj
+;å°„ç²¾ã‚²ãƒ¼ã‚¸ãƒã‚§ãƒƒã‚¯ï¼ˆä¸»äººï¼‰
 ;-------------------------------------------------
 LOCAL = 400
 
-;ABL:‹ZI‚ð‚Ý‚é
-LOCAL += LOCAL/10*4*ABL:‹ZI
+;ABL:æŠ€å·§ã‚’ã¿ã‚‹
+LOCAL += LOCAL/10*4*ABL:æŠ€å·§
 
-;ABL:•òŽd¸_‚ð‚Ý‚é
-LOCAL += (LOCAL/10)*ABL:•òŽd¸_
+;ABL:å¥‰ä»•ç²¾ç¥žã‚’ã¿ã‚‹
+LOCAL += (LOCAL/10)*ABL:å¥‰ä»•ç²¾ç¥ž
 
-;ƒvƒŒƒCƒ„[‚ÌABL:‚`Š´Šo‚ð‚Ý‚é
-SELECTCASE ABL:PLAYER:‚`Š´Šo
+;ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ABL:ï¼¡æ„Ÿè¦šã‚’ã¿ã‚‹
+SELECTCASE ABL:PLAYER:ï¼¡æ„Ÿè¦š
 	CASE 0
 		TIMES LOCAL , 1.00
 	CASE 1
@@ -168,84 +168,84 @@ SELECTCASE ABL:PLAYER:‚`Š´Šo
 	CASE 4
 		TIMES LOCAL , 3.50
 	CASEELSE
-		LOCAL += LOCAL*(ABL:PLAYER:‚uŠ´Šo-1)
+		LOCAL += LOCAL*(ABL:PLAYER:ï¼¶æ„Ÿè¦š-1)
 ENDSELECT
 
-CALL ŽË¸ƒQ[ƒW‘‰Á, LOCAL, PLAYER
+CALL å°„ç²¾ã‚²ãƒ¼ã‚¸å¢—åŠ , LOCAL, PLAYER
 
 ;-------------------------------------------------
-;ƒ\[ƒX’Ç‰Áˆ—
+;ã‚½ãƒ¼ã‚¹è¿½åŠ å‡¦ç†
 ;-------------------------------------------------
-;Á”ï‘Ì—ÍA‹C—Í
-LOSEBASE:‘Ì—Í += 50
-LOSEBASE:‹C—Í += 70
+;æ¶ˆè²»ä½“åŠ›ã€æ°—åŠ›
+LOSEBASE:ä½“åŠ› += 50
+LOSEBASE:æ°—åŠ› += 70
 
-DOWNBASE:MASTER:‘Ì—Í += 130
-DOWNBASE:MASTER:‹C—Í += 100
+DOWNBASE:MASTER:ä½“åŠ› += 130
+DOWNBASE:MASTER:æ°—åŠ› += 100
 
-SOURCE:‹°•| = 50
-SOURCE:«s“® = 500
-SOURCE:‹ü] = 300
-SOURCE:ˆí’E = 1000
-SOURCE:”½Š´ = 500
-SOURCE:’†“Å = 200
-;ã‚Ì•û‚ÅŒvŽZ‚µ‚½‰˜‚ê
-SOURCE:•sŒ‰ = LOCAL:1*60+100
-
-;-------------------------------------------------
-;“ÁŽêƒ\[ƒXˆ—
-;-------------------------------------------------
-;—}ˆ³A’ïRŽ‚¿‚É‚ÍA—}ŸTƒ\[ƒX’Ç‰Á
-SIF TALENT:—}ˆ³ || TALENT:’ïR
-	SOURCE:ŸT‹ü += 500
+SOURCE:ææ€– = 50
+SOURCE:æ€§è¡Œå‹• = 500
+SOURCE:å±ˆå¾“ = 300
+SOURCE:é€¸è„± = 1000
+SOURCE:åæ„Ÿ = 500
+SOURCE:ä¸­æ¯’ = 200
+;ä¸Šã®æ–¹ã§è¨ˆç®—ã—ãŸæ±šã‚Œ
+SOURCE:ä¸æ½” = LOCAL:1*60+100
 
 ;-------------------------------------------------
-;â’¸ƒ`ƒFƒbƒN
+;ç‰¹æ®Šã‚½ãƒ¼ã‚¹å‡¦ç†
+;-------------------------------------------------
+;æŠ‘åœ§ã€æŠµæŠ—æŒã¡ã«ã¯ã€æŠ‘é¬±ã‚½ãƒ¼ã‚¹è¿½åŠ 
+SIF TALENT:æŠ‘åœ§ || TALENT:æŠµæŠ—
+	SOURCE:é¬±å±ˆ += 500
+
+;-------------------------------------------------
+;çµ¶é ‚ãƒã‚§ãƒƒã‚¯
 ;-------------------------------------------------
 CALL SOURCE_CHECK_CVAB
 
 ;-------------------------------------------------
-;ŽË¸ƒ`ƒFƒbƒN
+;å°„ç²¾ãƒã‚§ãƒƒã‚¯
 ;-------------------------------------------------
-;ŽË¸Žž‚Ìˆ—
+;å°„ç²¾æ™‚ã®å‡¦ç†
 CALL SAMEN_CHECK, 6
 CALL SAMEN_CHECK_T
 
-CALL SAMEN_SHOOT, 6, NOWEX:PLAYER:ŽË¸
-CALL SAMEN_SHOOT_T, 0, NOWEX:ŽË¸
+CALL SAMEN_SHOOT, 6, NOWEX:PLAYER:å°„ç²¾
+CALL SAMEN_SHOOT_T, 0, NOWEX:å°„ç²¾
 
 ;-------------------------------------------------
-;‰˜‚ê‚Ìˆ—
+;æ±šã‚Œã®å‡¦ç†
 ;-------------------------------------------------
-;“z—ê‚ÌŽèÌ’²‹³ŽÒ‚ÌƒAƒiƒ‹‚Ì‰˜‚ê‚ªˆÚ“®
-STAIN:Žè |= STAIN:PLAYER:ƒAƒiƒ‹
-STAIN:PLAYER:ƒAƒiƒ‹ |= STAIN:Žè
+;å¥´éš·ã®æ‰‹â‡”èª¿æ•™è€…ã®ã‚¢ãƒŠãƒ«ã®æ±šã‚ŒãŒç§»å‹•
+STAIN:æ‰‹ |= STAIN:PLAYER:ã‚¢ãƒŠãƒ«
+STAIN:PLAYER:ã‚¢ãƒŠãƒ« |= STAIN:æ‰‹
 
 ;-------------------------------------------------
-;ŒoŒ±‚Ìˆ—
+;çµŒé¨“ã®å‡¦ç†
 ;-------------------------------------------------
-;’²‹³ŽÒ‚Ì‚`ŒoŒ±
-PRINTFORML ‚`ŒoŒ±+4(%CALLNAME:PLAYER%)
-EXP:PLAYER:‚`ŒoŒ± += 4
-PRINTFORML ‚`Šg’£ŒoŒ±+3(%CALLNAME:PLAYER%)
-EXP:PLAYER:‚`Šg’£ŒoŒ± += 3
-PRINTFORML ‹ê’É‰õŠyŒoŒ±+2(%CALLNAME:PLAYER%)
-EXP:PLAYER:‹ê’É‰õŠyŒoŒ± += 2
+;èª¿æ•™è€…ã®ï¼¡çµŒé¨“
+PRINTFORML ï¼¡çµŒé¨“+4(%CALLNAME:PLAYER%)
+EXP:PLAYER:ï¼¡çµŒé¨“ += 4
+PRINTFORML ï¼¡æ‹¡å¼µçµŒé¨“+3(%CALLNAME:PLAYER%)
+EXP:PLAYER:ï¼¡æ‹¡å¼µçµŒé¨“ += 3
+PRINTFORML è‹¦ç—›å¿«æ¥½çµŒé¨“+2(%CALLNAME:PLAYER%)
+EXP:PLAYER:è‹¦ç—›å¿«æ¥½çµŒé¨“ += 2
 
 CALL EXPUP, 2, 2
 
-PRINTL šn‹s‰õŠyŒoŒ±+3
-EXP:šn‹s‰õŠyŒoŒ± += 3
+PRINTL å—œè™å¿«æ¥½çµŒé¨“+3
+EXP:å—œè™å¿«æ¥½çµŒé¨“ += 3
 
-;ˆË‘¶“x•â³’l(Žål‚©‚Â—ö•çAˆú—A•ž]‚Å1Beˆ¤A©•wA—ê‘®‚Å2j
-IF (TALENT:—ö•ç || TALENT:ˆú— || TALENT:•ž]) && !ASSIPLAY
-	TFLAG:ˆË‘¶“x•â³ += 1
-ELSEIF (TALENT:eˆ¤ || TALENT:©•w || TALENT:—ê‘®) && !ASSIPLAY
-	TFLAG:ˆË‘¶“x•â³ += 2
+;ä¾å­˜åº¦è£œæ­£å€¤(ä¸»äººã‹ã¤æ‹æ…•ã€æ·«ä¹±ã€æœå¾“ã§1ã€‚è¦ªæ„›ã€å¨¼å©¦ã€éš·å±žã§2ï¼‰
+IF (TALENT:æ‹æ…• || TALENT:æ·«ä¹± || TALENT:æœå¾“) && !ASSIPLAY
+	TFLAG:ä¾å­˜åº¦è£œæ­£ += 1
+ELSEIF (TALENT:è¦ªæ„› || TALENT:å¨¼å©¦ || TALENT:éš·å±ž) && !ASSIPLAY
+	TFLAG:ä¾å­˜åº¦è£œæ­£ += 2
 ENDIF
 
-;•òŽd‰õŠyƒtƒ‰ƒO
-TFLAG:•òŽd‰õŠy = 1
+;å¥‰ä»•å¿«æ¥½ãƒ•ãƒ©ã‚°
+TFLAG:å¥‰ä»•å¿«æ¥½ = 1
 
 RETURN 1
 

@@ -1,201 +1,201 @@
-;-------------------------------------------------
-;ˆË‘¶“xƒVƒXƒeƒ€‚Ìˆ—
-;ˆË‘¶“x‚Íƒvƒ‰ƒX‚É‘å‚«‚¢‚ÆŽål‚É‘Î‚µ‚Ä•ç‚¤Œ`‚ÅˆË‘¶‚µA
-;ƒ}ƒCƒiƒX‚É‘å‚«‚¢‚ÆŽål‚ðˆØ•|‚·‚éŒ`‚ÅˆË‘¶‚µ‚Ä‚¢‚­
-;ã‹L‚ÌˆË‘¶‚ÌŽd•û‚Íƒvƒ‰ƒ}ƒC‚©‚ç‹ê’Éˆó‚É’u‚«Š·‚¦
+ï»¿;-------------------------------------------------
+;ä¾å­˜åº¦ã‚·ã‚¹ãƒ†ãƒ ã®å‡¦ç†
+;ä¾å­˜åº¦ã¯ãƒ—ãƒ©ã‚¹ã«å¤§ãã„ã¨ä¸»äººã«å¯¾ã—ã¦æ…•ã†å½¢ã§ä¾å­˜ã—ã€
+;ãƒžã‚¤ãƒŠã‚¹ã«å¤§ãã„ã¨ä¸»äººã‚’ç•æ€–ã™ã‚‹å½¢ã§ä¾å­˜ã—ã¦ã„ã
+;ä¸Šè¨˜ã®ä¾å­˜ã®ä»•æ–¹ã¯ãƒ—ãƒ©ãƒžã‚¤ã‹ã‚‰è‹¦ç—›åˆ»å°ã«ç½®ãæ›ãˆ
 ;-------------------------------------------------
 @DEPENDENCE_CHECK
-;ˆË‘¶“x‚ÌƒxƒNƒgƒ‹ˆ—
-;0‚ÍŠÖ”I—¹A•ö‰ó‚àˆË‘¶“x‚Í•Ï‰»‚µ‚È‚¢
-IF TALENT:•ö‰ó
-	PRINTL <ˆË‘¶“x•Ï‰»–³‚µ>
+;ä¾å­˜åº¦ã®ãƒ™ã‚¯ãƒˆãƒ«å‡¦ç†
+;0ã¯é–¢æ•°çµ‚äº†ã€å´©å£Šã‚‚ä¾å­˜åº¦ã¯å¤‰åŒ–ã—ãªã„
+IF TALENT:å´©å£Š
+	PRINTL <ä¾å­˜åº¦å¤‰åŒ–ç„¡ã—>
 	RETURN 0
 ENDIF
 
 LOCAL = 0
 
-;ABL:]‡‚ð‚Ý‚é
-LOCAL += ABL:]‡*2
+;ABL:å¾“é †ã‚’ã¿ã‚‹
+LOCAL += ABL:å¾“é †*2
 
-;ABL:•òŽd¸_‚ð‚Ý‚é
-LOCAL += ABL:•òŽd¸_
+;ABL:å¥‰ä»•ç²¾ç¥žã‚’ã¿ã‚‹
+LOCAL += ABL:å¥‰ä»•ç²¾ç¥ž
 
-;‘fŽ¿‚É‚æ‚é‘Œ¸
-;Š×—Ž‘fŽ¿
-;—ö•ç
-SIF TALENT:—ö•ç
+;ç´ è³ªã«ã‚ˆã‚‹å¢—æ¸›
+;é™¥è½ç´ è³ª
+;æ‹æ…•
+SIF TALENT:æ‹æ…•
 	LOCAL += 7
-;eˆ¤
-SIF TALENT:eˆ¤
+;è¦ªæ„›
+SIF TALENT:è¦ªæ„›
 	LOCAL += 10
-;ˆú—
-SIF TALENT:ˆú— && RELATION:(NO:MASTER) > 100
+;æ·«ä¹±
+SIF TALENT:æ·«ä¹± && RELATION:(NO:MASTER) > 100
 	LOCAL += 3
-;©•w
-SIF TALENT:©•w && RELATION:(NO:MASTER) > 100
+;å¨¼å©¦
+SIF TALENT:å¨¼å©¦ && RELATION:(NO:MASTER) > 100
 	LOCAL += 5
-;•ž]
-SIF TALENT:•ž]
+;æœå¾“
+SIF TALENT:æœå¾“
 	LOCAL += 5
-;—ê‘®
-SIF TALENT:—ê‘®
+;éš·å±ž
+SIF TALENT:éš·å±ž
 	LOCAL += 7
 
-;â’¸‹­“x‚É‚æ‚é•â³
-LOCAL += TFLAG:â’¸‹­“x
+;çµ¶é ‚å¼·åº¦ã«ã‚ˆã‚‹è£œæ­£
+LOCAL += TFLAG:çµ¶é ‚å¼·åº¦
 
-;‚»‚Ì‘¼‘fŽ¿
-;ˆúŠj
-SIF TALENT:ˆúŠj
+;ãã®ä»–ç´ è³ª
+;æ·«æ ¸
+SIF TALENT:æ·«æ ¸
 	LOCAL += 1
-;ˆúäS
-SIF TALENT:ˆúäS
+;æ·«è†£
+SIF TALENT:æ·«è†£
 	LOCAL += 1
-;ˆúK
-SIF TALENT:ˆúK
+;æ·«å°»
+SIF TALENT:æ·«å°»
 	LOCAL += 1
-;ˆú“û
-SIF TALENT:ˆú“û
+;æ·«ä¹³
+SIF TALENT:æ·«ä¹³
 	LOCAL += 1
-;–ÏM
-SIF TALENT:–ÏM
+;å¦„ä¿¡
+SIF TALENT:å¦„ä¿¡
 	LOCAL += 2
-;Žâ‚µ‚ª‚è‰®‚Å•Žè‚ª‹‚éê‡
-SIF TALENT:Žâ‚µ‚ª‚è‰® && ASSI > 0
+;å¯‚ã—ãŒã‚Šå±‹ã§åŠ©æ‰‹ãŒå±…ã‚‹å ´åˆ
+SIF TALENT:å¯‚ã—ãŒã‚Šå±‹ && ASSI > 0
 	LOCAL += 3
-;’jD‚«&Žål‚ª’j
-SIF TALENT:’jD‚« && SEX(MASTER) == 1
+;ç”·å¥½ã&ä¸»äººãŒç”·
+SIF TALENT:ç”·å¥½ã && SEX(MASTER) == 1
 	LOCAL += 1
-;—D‚«&Žål‚ª—
-SIF TALENT:—D‚« && SEX(MASTER) == 2
+;å¥³å¥½ã&ä¸»äººãŒå¥³
+SIF TALENT:å¥³å¥½ã && SEX(MASTER) == 2
 	LOCAL += 1
-;’É‚Ý‚ÉŽã‚¢
-SIF TALENT:’É‚Ý‚ÉŽã‚¢
+;ç—›ã¿ã«å¼±ã„
+SIF TALENT:ç—›ã¿ã«å¼±ã„
 	LOCAL += 1
-;‰õŠ´‚É‘f’¼
-SIF TALENT:‰õŠ´‚É‘f’¼
+;å¿«æ„Ÿã«ç´ ç›´
+SIF TALENT:å¿«æ„Ÿã«ç´ ç›´
 	LOCAL += 2
-;ƒ}ƒ]
-SIF TALENT:ƒ}ƒ]
+;ãƒžã‚¾
+SIF TALENT:ãƒžã‚¾
 	LOCAL += 1
-;—c’t
-SIF TALENT:—c’t
+;å¹¼ç¨š
+SIF TALENT:å¹¼ç¨š
 	LOCAL += 1
-;Žã‹C
-SIF TALENT:Žã‹C
+;å¼±æ°—
+SIF TALENT:å¼±æ°—
 	LOCAL += 2
 
-;Žål‚Ì–£—Í
-SIF TALENT:MASTER:–£—Í
+;ä¸»äººã®é­…åŠ›
+SIF TALENT:MASTER:é­…åŠ›
 	LOCAL += 2
-;Žål‚Ì–£˜f
-SIF TALENT:MASTER:–£˜f
+;ä¸»äººã®é­…æƒ‘
+SIF TALENT:MASTER:é­…æƒ‘
 	LOCAL += 3
-;Žål‚Ì“ä‚Ì–£—Í
-SIF TALENT:MASTER:“ä‚Ì–£—Í
+;ä¸»äººã®è¬Žã®é­…åŠ›
+SIF TALENT:MASTER:è¬Žã®é­…åŠ›
 	LOCAL += 5
-;Žål‚ÌŽ¡—Ã
-SIF TALENT:MASTER:Ž¡—Ã
+;ä¸»äººã®æ²»ç™‚
+SIF TALENT:MASTER:æ²»ç™‚
 	LOCAL += 2
-;Žål‚ÌŒÛ•‘
-SIF TALENT:MASTER:ŒÛ•‘
+;ä¸»äººã®é¼“èˆž
+SIF TALENT:MASTER:é¼“èˆž
 	LOCAL += 2
-;Žål‚Ìl‹C
-SIF TALENT:MASTER:l‹C
+;ä¸»äººã®äººæ°—
+SIF TALENT:MASTER:äººæ°—
 	LOCAL += 3
 
-;—öS&PLAYER‚ª—öS•ø‚¢‚Ä‚¢‚é‘ŠŽè
-SIF TALENT:—öS && TALENT:—öS == PLAYER
+;æ‹å¿ƒ&PLAYERãŒæ‹å¿ƒæŠ±ã„ã¦ã„ã‚‹ç›¸æ‰‹
+SIF TALENT:æ‹å¿ƒ && TALENT:æ‹å¿ƒ == PLAYER
 	LOCAL += 4
-;Šù¥ŽÒ&PLAYER‚ª”º—µ
-SIF TALENT:Šù¥ŽÒ && TALENT:Šù¥ŽÒ == PLAYER
+;æ—¢å©šè€…&PLAYERãŒä¼´ä¾¶
+SIF TALENT:æ—¢å©šè€… && TALENT:æ—¢å©šè€… == PLAYER
 	LOCAL += 7
 
-;ŽÀsŽÒ‚ªMASTER‚Å“¯«
+;å®Ÿè¡Œè€…ãŒMASTERã§åŒæ€§
 IF PLAYER == MASTER && SEX(MASTER) == SEX(TARGET)
 	SELECTCASE SEX(TARGET)
 		CASE 1
-			LOCAL += ABL:ƒzƒ‚‚Á‹C+ABL:ƒQƒC’†“Å
+			LOCAL += ABL:ãƒ›ãƒ¢ã£æ°—+ABL:ã‚²ã‚¤ä¸­æ¯’
 		CASE 2
-			LOCAL += ABL:ƒŒƒY‚Á‹C+ABL:ƒŒƒY’†“Å
+			LOCAL += ABL:ãƒ¬ã‚ºã£æ°—+ABL:ãƒ¬ã‚ºä¸­æ¯’
 	ENDSELECT
 ENDIF
 
-;‹ü•žˆó
-LOCAL += MARK:‹ü•žˆó
+;å±ˆæœåˆ»å°
+LOCAL += MARK:å±ˆæœåˆ»å°
 
-;ˆË‘¶“x•â³‚ð‰ÁŽZ
-LOCAL += TFLAG:ˆË‘¶“x•â³
+;ä¾å­˜åº¦è£œæ­£ã‚’åŠ ç®—
+LOCAL += TFLAG:ä¾å­˜åº¦è£œæ­£
 
-;“¯‘°Œ™ˆ«&“¯Ží‘°
-SIF TALENT:“¯‘°Œ™ˆ« && CSTR:Ží‘° == CSTR:PLAYER:Ží‘°
+;åŒæ—å«Œæ‚ª&åŒç¨®æ—
+SIF TALENT:åŒæ—å«Œæ‚ª && CSTR:ç¨®æ— == CSTR:PLAYER:ç¨®æ—
 	LOCAL /= 2
-;Š´î–R‚µ‚¢
-SIF TALENT:Š´î–R‚µ‚¢
+;æ„Ÿæƒ…ä¹ã—ã„
+SIF TALENT:æ„Ÿæƒ…ä¹ã—ã„
 	LOCAL /= 2
 
-;¶ˆÓ‹C
-SIF TALENT:¶ˆÓ‹C
+;ç”Ÿæ„æ°—
+SIF TALENT:ç”Ÿæ„æ°—
 	LOCAL -= 1
-;”½R“I
-SIF TALENT:”½R“I
+;åæŠ—çš„
+SIF TALENT:åæŠ—çš„
 	LOCAL -= 1
-;ƒcƒ“ƒfƒŒ+]‡3ˆÈ‰º
-SIF TALENT:ƒcƒ“ƒfƒŒ && ABL:]‡ <= 3
+;ãƒ„ãƒ³ãƒ‡ãƒ¬+å¾“é †3ä»¥ä¸‹
+SIF TALENT:ãƒ„ãƒ³ãƒ‡ãƒ¬ && ABL:å¾“é † <= 3
 	LOCAL -= 2
-;Ž©§S
-SIF TALENT:Ž©§S
+;è‡ªåˆ¶å¿ƒ
+SIF TALENT:è‡ªåˆ¶å¿ƒ
 	LOCAL -= 1
-;–³ŠÖS
-SIF TALENT:–³ŠÖS
+;ç„¡é–¢å¿ƒ
+SIF TALENT:ç„¡é–¢å¿ƒ
 	LOCAL -= 2
-;ˆêü‰z‚¦‚È‚¢+–¢Š×—Ž
-SIF TALENT:ˆêü‰z‚¦‚È‚¢ && !CFLAG:Š×—Ž
+;ä¸€ç·šè¶Šãˆãªã„+æœªé™¥è½
+SIF TALENT:ä¸€ç·šè¶Šãˆãªã„ && !CFLAG:é™¥è½
 	LOCAL -= 3
-;—}ˆ³
-SIF TALENT:—}ˆ³
+;æŠ‘åœ§
+SIF TALENT:æŠ‘åœ§
 	LOCAL -= 1
-;’ïR
-SIF TALENT:’ïR
+;æŠµæŠ—
+SIF TALENT:æŠµæŠ—
 	LOCAL -= 1
-;Žã–¡
-SIF TALENT:Žã–¡
+;å¼±å‘³
+SIF TALENT:å¼±å‘³
 	LOCAL -= 2
-;’É‚Ý‚É‹­‚¢
-SIF TALENT:’É‚Ý‚É‹­‚¢
+;ç—›ã¿ã«å¼·ã„
+SIF TALENT:ç—›ã¿ã«å¼·ã„
 	LOCAL -= 1
-;‰õŠ´‚Ì”Û’è
-SIF TALENT:‰õŠ´‚Ì”Û’è
+;å¿«æ„Ÿã®å¦å®š
+SIF TALENT:å¿«æ„Ÿã®å¦å®š
 	LOCAL -= 2
-;‹­‹C
-SIF TALENT:‹­‹C
+;å¼·æ°—
+SIF TALENT:å¼·æ°—
 	LOCAL -= 2
-;’jŒ™‚¢&Žål‚ª’j
-SIF TALENT:’jŒ™‚¢ && SEX(MASTER) == 1
+;ç”·å«Œã„&ä¸»äººãŒç”·
+SIF TALENT:ç”·å«Œã„ && SEX(MASTER) == 1
 	LOCAL -= 2
-;—Œ™‚¢&Žål‚ª—
-SIF TALENT:—Œ™‚¢ && SEX(MASTER) == 2
+;å¥³å«Œã„&ä¸»äººãŒå¥³
+SIF TALENT:å¥³å«Œã„ && SEX(MASTER) == 2
 	LOCAL -= 2
-;—öS&PLAYER‚ª—öS•ø‚¢‚Ä‚¢‚é‘ŠŽè‚¶‚á‚È‚¢
-SIF TALENT:—öS && TALENT:—öS != PLAYER && !CFLAG:Š×—Ž
+;æ‹å¿ƒ&PLAYERãŒæ‹å¿ƒæŠ±ã„ã¦ã„ã‚‹ç›¸æ‰‹ã˜ã‚ƒãªã„
+SIF TALENT:æ‹å¿ƒ && TALENT:æ‹å¿ƒ != PLAYER && !CFLAG:é™¥è½
 	LOCAL -= 5
-;Šù¥ŽÒ&PLAYER‚ª”º—µ‚¶‚á‚È‚¢
-SIF TALENT:Šù¥ŽÒ && TALENT:Šù¥ŽÒ != PLAYER && !CFLAG:Š×—Ž
+;æ—¢å©šè€…&PLAYERãŒä¼´ä¾¶ã˜ã‚ƒãªã„
+SIF TALENT:æ—¢å©šè€… && TALENT:æ—¢å©šè€… != PLAYER && !CFLAG:é™¥è½
 	LOCAL -= 10
-;”½”­ˆó
-LOCAL -= MARK:”½”­ˆó
+;åç™ºåˆ»å°
+LOCAL -= MARK:åç™ºåˆ»å°
 
-CFLAG:ˆË‘¶“x += LOCAL
+CFLAG:ä¾å­˜åº¦ += LOCAL
 
 IF LOCAL > 0
-	PRINTL <ˆË‘¶“x‘‰Á>
+	PRINTL <ä¾å­˜åº¦å¢—åŠ >
 ELSEIF LOCAL < 0
-	PRINTL <ˆË‘¶“xŒ¸­>
+	PRINTL <ä¾å­˜åº¦æ¸›å°‘>
 ELSE
-	PRINTL <ˆË‘¶“x•Ï‰»–³‚µ>
+	PRINTL <ä¾å­˜åº¦å¤‰åŒ–ç„¡ã—>
 ENDIF
 
-TFLAG:ˆË‘¶“x•â³ = 0
+TFLAG:ä¾å­˜åº¦è£œæ­£ = 0
 
 RETURN 0
 

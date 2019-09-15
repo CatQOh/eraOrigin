@@ -1,68 +1,68 @@
+ï»¿;-------------------------------------------------
+;å©ã„ã¦ã‚‚ã‚‰ã†
 ;-------------------------------------------------
-;’@‚¢‚Ä‚à‚ç‚¤
-;-------------------------------------------------
-@USERCOM_ABLE_’@‚¢‚Ä‚à‚ç‚¤, ARG
+@USERCOM_ABLE_å©ã„ã¦ã‚‚ã‚‰ã†, ARG
 #FUNCTION
-;ƒTƒhA‚à‚µ‚­‚ÍƒTƒh‚Á‹C3ˆÈã•K—v
-SIF ABL:ƒTƒh‚Á‹C < 3 && !TALENT:ƒTƒh
+;ã‚µãƒ‰ã€ã‚‚ã—ãã¯ã‚µãƒ‰ã£æ°—3ä»¥ä¸Šå¿…è¦
+SIF ABL:ã‚µãƒ‰ã£æ°— < 3 && !TALENT:ã‚µãƒ‰
 	RETURNF 0
-;S‘©’†‚Íƒ_ƒ
-SIF TEQUIP:“ê
+;æ‹˜æŸä¸­ã¯ãƒ€ãƒ¡
+SIF TEQUIP:ç¸„
 	RETURNF 0
-;GŽè’²‹³’†‚Íƒ_ƒ
-SIF TEQUIP:GŽè
+;è§¦æ‰‹èª¿æ•™ä¸­ã¯ãƒ€ãƒ¡
+SIF TEQUIP:è§¦æ‰‹
 	RETURNF 0
-;•Žè‚Ìê‡‚Íƒ}ƒ]‚©ƒ}ƒ]‚Á‹C3ˆÈã•K—v
+;åŠ©æ‰‹ã®å ´åˆã¯ãƒžã‚¾ã‹ãƒžã‚¾ã£æ°—3ä»¥ä¸Šå¿…è¦
 IF PLAYER == ASSI
-	SIF ABL:ASSI:ƒ}ƒ]‚Á‹C < 3 && !TALENT:ƒ}ƒ]
+	SIF ABL:ASSI:ãƒžã‚¾ã£æ°— < 3 && !TALENT:ãƒžã‚¾
 		RETURNF 0
 ENDIF
 
 COMRESULT = 1
 RETURNF 1
 
-@COM_’@‚¢‚Ä‚à‚ç‚¤
-PRINTL ’@‚¢‚Ä‚à‚ç‚¤
+@COM_å©ã„ã¦ã‚‚ã‚‰ã†
+PRINTL å©ã„ã¦ã‚‚ã‚‰ã†
 CALL KOJO_MESSAGE_COM
 
 ;-------------------------------------------------
-;ƒ\[ƒX’Ç‰Áˆ—
+;ã‚½ãƒ¼ã‚¹è¿½åŠ å‡¦ç†
 ;-------------------------------------------------
-;Á”ï‘Ì—ÍA‹C—Í
-LOSEBASE:‘Ì—Í += 40
-LOSEBASE:‹C—Í += 40
+;æ¶ˆè²»ä½“åŠ›ã€æ°—åŠ›
+LOSEBASE:ä½“åŠ› += 40
+LOSEBASE:æ°—åŠ› += 40
 
-DOWNBASE:MASTER:‘Ì—Í += 70
-DOWNBASE:MASTER:‹C—Í += 60
+DOWNBASE:MASTER:ä½“åŠ› += 70
+DOWNBASE:MASTER:æ°—åŠ› += 60
 
-SOURCE:«s“® = 200
-SOURCE:’B¬ = 150
-SOURCE:’†“Å = 150
-SOURCE:ˆí’E = 200
-SOURCE:”½Š´ = 100
-SOURCE:•sŒ‰ = 100
+SOURCE:æ€§è¡Œå‹• = 200
+SOURCE:é”æˆ = 150
+SOURCE:ä¸­æ¯’ = 150
+SOURCE:é€¸è„± = 200
+SOURCE:åæ„Ÿ = 100
+SOURCE:ä¸æ½” = 100
 
 ;-------------------------------------------------
-;â’¸ƒ`ƒFƒbƒN
+;çµ¶é ‚ãƒã‚§ãƒƒã‚¯
 ;-------------------------------------------------
 CALL SOURCE_CHECK_CVAB
 
 ;-------------------------------------------------
-;ŽË¸ƒ`ƒFƒbƒN
+;å°„ç²¾ãƒã‚§ãƒƒã‚¯
 ;-------------------------------------------------
 CALL SAMEN_CHECK_T, 0
 
-CALL SAMEN_SHOOT_T, 0, NOWEX:ŽË¸
+CALL SAMEN_SHOOT_T, 0, NOWEX:å°„ç²¾
 
 ;-------------------------------------------------
-;ŒoŒ±‚Ìˆ—
+;çµŒé¨“ã®å‡¦ç†
 ;-------------------------------------------------
 CALL EXPUP, 1, 1
 
-PRINTL šn‹s‰õŠyŒoŒ±+3
-EXP:šn‹s‰õŠyŒoŒ± += 3
-PRINTL ’²‹³ŒoŒ±+3
-EXP:’²‹³ŒoŒ± += 3
+PRINTL å—œè™å¿«æ¥½çµŒé¨“+3
+EXP:å—œè™å¿«æ¥½çµŒé¨“ += 3
+PRINTL èª¿æ•™çµŒé¨“+3
+EXP:èª¿æ•™çµŒé¨“ += 3
 
 RETURN 1
 

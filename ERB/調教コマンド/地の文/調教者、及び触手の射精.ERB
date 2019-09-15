@@ -1,658 +1,658 @@
-;-------------------------------------------
-;�����҂̎ː����̃e�L�X�g
+﻿;-------------------------------------------
+;調教者の射精時のテキスト
 ;-------------------------------------------
 @SHOOT_MESSAGE
 LOCAL = 0
 LOCAL:1 = 0
 
-;���s�҂���D����Ŏː�����
-IF (GETBIT(TFLAG:��D��ː�, 0) || GETBIT(TFLAG:��D��ː�, 1)) && !NOWEX:PLAYER:�h���S���ː�
-	PRINTFORML %CALLNAME:PLAYER%�̃y�j�X�����ł��A��ʂ̐��t�ŃR���h�[������������Ă����c�c
+;実行者が避妊具内で射精した
+IF (GETBIT(TFLAG:避妊具射精, 0) || GETBIT(TFLAG:避妊具射精, 1)) && !NOWEX:PLAYER:ドラゴン射精
+	PRINTFORML %CALLNAME:PLAYER%のペニスが脈打ち、大量の精液でコンドームが満たされていく……
 	RETURN 0
 ENDIF
 
-;NOWEX:MASTER:�ː� = ��l�̎ː�
-;NOWEX:ASSI:�ː� = ����̎ː�
-;NOWEX:PLAYER:�ː� = PLAYER�̎ː� �唼�̃R�}���h��PLAYER�����s����̂ł�����g��
-;�ϐ�������1�̏ꍇ�͒ʏ�̎ː��B2�ȏ�͑�ʎː��ƂȂ�
-;LOCAL = �n�̕��\�������攻��
-;LOCAL:1 = �S���ː������攻��
+;NOWEX:MASTER:射精 = 主人の射精
+;NOWEX:ASSI:射精 = 助手の射精
+;NOWEX:PLAYER:射精 = PLAYERの射精 大半のコマンドはPLAYERが実行するのでこれを使う
+;変数内部が1の場合は通常の射精。2以上は大量射精となる
+;LOCAL = 地の文表示したよ判定
+;LOCAL:1 = 膣内射精したよ判定
 
-IF NOWEX:PLAYER:�ː�
+IF NOWEX:PLAYER:射精
 	SELECTCASE SELECTCOMS
-		CASE "�L�X����", "�L�X���Ă��炤"
-			PRINTFORM %CALLNAME:TARGET%�Ƃ̃L�X������%CALLNAME:PLAYER%��
+		CASE "キスする", "キスしてもらう"
+			PRINTFORM %CALLNAME:TARGET%とのキスだけで%CALLNAME:PLAYER%は
 			SIF OVER_GENITAL(PLAYER) != ""
-				PRINTFORM %OVER_GENITAL(PLAYER)%�̒���
-			PRINTL �ː����Ă��܂����c�c
-			SIF NOWEX:PLAYER:�ː� >= 2 && !NOWEX:�ː�
-				PRINTFORML %CALLNAME:PLAYER%�̐��������ː��̊Ԃɂ���l�̐O������邱�Ƃ͂Ȃ������c�c
-		CASE "�����", "����ʃL�X"
-			IF TALENT:�����̌^
-				PRINTFORML %CALLNAME:TARGET%�̉����g�������グ�āA���̏����ȑ̂ɐ��t��������c�c
+				PRINTFORM %OVER_GENITAL(PLAYER)%の中に
+			PRINTL 射精してしまった……
+			SIF NOWEX:PLAYER:射精 >= 2 && !NOWEX:射精
+				PRINTFORML %CALLNAME:PLAYER%の随分長い射精の間にも二人の唇が離れることはなかった……
+		CASE "正常位", "正常位キス"
+			IF TALENT:小柄体型
+				PRINTFORML %CALLNAME:TARGET%の下半身を持ち上げて、その小さな体に精液を放った……
 			ELSE
-				PRINTFORML %CALLNAME:PLAYER%��%CALLNAME:TARGET%�̉��[���ɓ˂�����Ďː������c�c
+				PRINTFORML %CALLNAME:PLAYER%は%CALLNAME:TARGET%の奥深くに突き入れて射精した……
 			ENDIF
-			IF PENIS(TARGET) && !NOWEX:�ː� && !NOWEX:�u�Ⓒ
-				PRINTFORM �������獪�����h�������%CALLNAME:TARGET%�̃y�j�X��
+			IF PENIS(TARGET) && !NOWEX:射精 && !NOWEX:Ｖ絶頂
+				PRINTFORM 内側から根元を刺激される%CALLNAME:TARGET%のペニスは
 				SIF OVER_GENITAL(TARGET) != ""
-					PRINTFORM %OVER_GENITAL(TARGET)%�̒���
-				IF TALENT:�����̌^ || TALENT:���l�̌^
-					PRINT �̂Ɏ�����ʂقǂ�
+					PRINTFORM %OVER_GENITAL(TARGET)%の中で
+				IF TALENT:小柄体型 || TALENT:小人体型
+					PRINT 体に似合わぬほどに
 				ELSE
-					PRINT ���ɂ��ː����Ă��܂������Ȃقǂ�
+					PRINT 今にも射精してしまいそうなほどに
 				ENDIF
-				PRINTL �傫���c��オ���Ă���c�c
+				PRINTL 大きく膨れ上がっている……
 			ENDIF
 			LOCAL:1++
-		CASE "��w��"
-			SELECTCASE CSTR:�푰
-				;�b�l�������͏b
-				CASE "�b�l", "�b"
-					PRINTFORML ��납���𒍂����%CALLNAME:TARGET%�́A�b�̖{�\���炩�������ߕt����%CALLNAME:PLAYER%�̃y�j�X�𗣂����ɍ�������c�c
+		CASE "後背位"
+			SELECTCASE CSTR:種族
+				;獣人もしくは獣
+				CASE "獣人", "獣"
+					PRINTFORML 後ろから種を注がれる%CALLNAME:TARGET%は、獣の本能からか強い締め付けで%CALLNAME:PLAYER%のペニスを離さずに搾り取った……
 				CASEELSE
-					PRINTFORML %CALLNAME:PLAYER%�͑O��^�����~�߁A���̂悤�ɕ������Ԃ���Ȃ��璆�Ɏː������c�c
+					PRINTFORML %CALLNAME:PLAYER%は前後運動を止め、犬のように覆いかぶさりながら中に射精した……
 			ENDSELECT
-			IF PENIS(TARGET) && !NOWEX:�ː� && !NOWEX:�u�Ⓒ
-				PRINTFORM ��������t�����󂯂�%CALLNAME:TARGET%�̃y�j�X
+			IF PENIS(TARGET) && !NOWEX:射精 && !NOWEX:Ｖ絶頂
+				PRINTFORM 激しい種付けを受ける%CALLNAME:TARGET%のペニス
 				IF OVER_GENITAL(TARGET) != ""
-					PRINTFORML ��%OVER_GENITAL(TARGET)%�̒��łт��т��Ɛk���Ă���c�c
+					PRINTFORML が%OVER_GENITAL(TARGET)%の中でびくびくと震えている……
 				ELSE
-					PRINTL �͔���オ��A���ɂ������̕���摖��ŉ����������c�c
+					PRINTL は反り上がり、今にも自分の腹を先走りで汚しそうだ……
 				ENDIF
 			ENDIF
 			LOCAL:1++
-		CASE "����ʃA�i��", "����ʃA�i���L�X"
-			PRINTFORML %CALLNAME:TARGET%�̃A�i������R��o�����t���K�̊���ڂ�`���Đ��ꗎ���Ă����c�c
-			IF PENIS(TARGET) && !NOWEX:�ː� && !NOWEX:�`�Ⓒ
-				PRINTFORM %CALLNAME:TARGET%�̑̂����t���󂯓����x�A
-				SIF PALAM:�~�� >= PALAMLV:3
-					PRINT ���̖u�N����
-				SIF TALENT:�����̌^ || TALENT:���l�̌^
-					PRINT ������
-				PRINT �y�j�X��
+		CASE "正常位アナル", "正常位アナルキス"
+			PRINTFORML %CALLNAME:TARGET%のアナルから漏れ出た精液が尻の割れ目を伝って垂れ落ちていく……
+			IF PENIS(TARGET) && !NOWEX:射精 && !NOWEX:Ａ絶頂
+				PRINTFORM %CALLNAME:TARGET%の体が精液を受け入れる度、
+				SIF PALAM:欲情 >= PALAMLV:3
+					PRINT その勃起した
+				SIF TALENT:小柄体型 || TALENT:小人体型
+					PRINT 小さな
+				PRINT ペニスが
 				SIF OVER_GENITAL(TARGET) != ""
-					PRINTFORM %OVER_GENITAL(TARGET)%�̒���
-				PRINTL �҂���҂���ƒ��˂Ă����c�c
+					PRINTFORM %OVER_GENITAL(TARGET)%の中で
+				PRINTL ぴくんぴくんと跳ねていた……
 			ENDIF
-		CASE "��w�ʃA�i��"
-			PRINTFORM %CALLNAME:TARGET%�̃A�i������R��o�����t��
+		CASE "後背位アナル"
+			PRINTFORM %CALLNAME:TARGET%のアナルから漏れ出た精液が
 			SELECTCASE SEX(TARGET)
 				CASE 1
-					PRINTL �A�X��`���Đ��ꗎ���Ă������c�c
+					PRINTL 陰嚢を伝って垂れ落ちていった……
 				CASE 2
-					PRINTL ����`���Đ��ꗎ���Ă������c�c
+					PRINTL 秘裂を伝って垂れ落ちていった……
 			ENDSELECT
-			;�y�j�X����or���b�l�A���X�P��
-			IF (PENIS(TARGET) || (SEX(TARGET) == 2 && (CSTR:�푰 == "�b�l" || CSTR:�푰 == "�b"))) && !NOWEX:�ː� && !NOWEX:�`�Ⓒ
-				PRINTFORM %CALLNAME:TARGET%��
+			;ペニスありor女獣人、メスケモ
+			IF (PENIS(TARGET) || (SEX(TARGET) == 2 && (CSTR:種族 == "獣人" || CSTR:種族 == "獣"))) && !NOWEX:射精 && !NOWEX:Ａ絶頂
+				PRINTFORM %CALLNAME:TARGET%は
 				IF PENIS(TARGET)
-					;�u�N��
-					IF PALAM:�~�� >= PALAMLV:3
-						PRINT �u�N�����y�j�X����摖���
-						IF TEQUIP:��O�v���C
-							PRINT �n�ʂɐ��炵�Ȃ���A
+					;勃起時
+					IF PALAM:欲情 >= PALAMLV:3
+						PRINT 勃起したペニスから先走りを
+						IF TEQUIP:野外プレイ
+							PRINT 地面に垂らしながら、
 						ELSE
-							PRINT ���ɐ��炵�Ȃ���A
+							PRINT 床に垂らしながら、
 						ENDIF
 					ELSE
-						PRINT ���Ȃ��ꂽ�y�j�X��h�炵�Ȃ���A
+						PRINT うなだれたペニスを揺らしながら、
 					ENDIF
 				ENDIF
-				SIF SEX(TARGET) == 2 && (CSTR:�푰 == "�b�l" || CSTR:�푰 == "�b")
-					PRINTFORM �Y�����Ă��킹�Ă��炦�Ȃ������킩�爤�t��R�炵�A
-				PRINTFORML %CALLNAME:PLAYER%�̓��_����߂����Ă���
+				SIF SEX(TARGET) == 2 && (CSTR:種族 == "獣人" || CSTR:種族 == "獣")
+					PRINTFORM 雄をあてがわせてもらえない女性器から愛液を漏らし、
+				PRINTFORML %CALLNAME:PLAYER%の肉棒を締めあげている
 			ENDIF
-		CASE "�t���C�v"
-			IF NOWEX:PLAYER:�ː� == 1
-				PRINTFORML %CALLNAME:TARGET%�̃y�j�X���������%CALLNAME:PLAYER%�͐�Ɏː����Ă��܂��A%CALLNAME:TARGET%�̕����狹�𐸉t�ŉ������c�c
+		CASE "逆レイプ"
+			IF NOWEX:PLAYER:射精 == 1
+				PRINTFORML %CALLNAME:TARGET%のペニスを咥え込む%CALLNAME:PLAYER%は先に射精してしまい、%CALLNAME:TARGET%の腹から胸を精液で汚した……
 			ELSE
-				PRINTFORML �R��ʂŐӂߗ��Ă�%CALLNAME:PLAYER%�̗������͑��������X�������t�������o���A%CALLNAME:TARGET%�̑̒���G�炵���c�c
+				PRINTFORML 騎乗位で責め立てる%CALLNAME:PLAYER%の鈴口からは濁った瑞々しい精液が噴き出し、%CALLNAME:TARGET%の体中を濡らした……
 			ENDIF
-			SIF ABL:�b���o >= 4 && !NOWEX:�ː�
-				PRINTFORML %CALLNAME:TARGET%�͎ː��ɓ������Ē��ߏオ��%CALLNAME:PLAYER%�̑̓��̊��G�ɜ����̕\��𕂂��ׂĂ���c�c
+			SIF ABL:Ｃ感覚 >= 4 && !NOWEX:射精
+				PRINTFORML %CALLNAME:TARGET%は射精に同調して締め上がる%CALLNAME:PLAYER%の体内の感触に恍惚の表情を浮かべている……
 			LOCAL++
-		CASE "�R���", "�R��ʃL�X", "�R��ʎ��"
-			PRINTFORML %CALLNAME:TARGET%�̎q�{�ɔ[�܂肫��Ȃ����t������������Ƃ�`���ė��ꗎ�����c�c
-			IF PENIS(TARGET) && !NOWEX:�ː� && !NOWEX:�u�Ⓒ
+		CASE "騎乗位", "騎乗位キス", "騎乗位手淫"
+			PRINTFORML %CALLNAME:TARGET%の子宮に納まりきらない精液が結合部から竿を伝って流れ落ちた……
+			IF PENIS(TARGET) && !NOWEX:射精 && !NOWEX:Ｖ絶頂
 				IF OVER_GENITAL(TARGET) != ""
-					IF PALAM:�~�� >= PALAMLV:3
-						PRINTFORML %OVER_GENITAL(TARGET)%�̐��������グ��%CALLNAME:TARGET%�̃y�j�X���S���ւ̎ː��̓x�ɂт��т��ƒ��˂Ă���c�c
+					IF PALAM:欲情 >= PALAMLV:3
+						PRINTFORML %OVER_GENITAL(TARGET)%の裾を持ち上げる%CALLNAME:TARGET%のペニスが膣内への射精の度にびくびくと跳ねている……
 					ELSE
-						PRINTFORML �݂��̌������𕢂��B��%OVER_GENITAL(TARGET)%�̒��ŁA�u�N�������Ă��Ȃ�%CALLNAME:TARGET%�̃y�j�X��%CALLNAME:PLAYER%�̕����C���Ă���c�c
+						PRINTFORML 互いの結合部を覆い隠す%OVER_GENITAL(TARGET)%の中で、勃起しきっていない%CALLNAME:TARGET%のペニスが%CALLNAME:PLAYER%の腹を擦っている……
 					ENDIF
 				ELSE
-					IF PALAM:�~�� >= PALAMLV:3
-						PRINTFORM %CALLNAME:PLAYER%�̕��̏�œV������%CALLNAME:TARGET%�̃y�j�X��
+					IF PALAM:欲情 >= PALAMLV:3
+						PRINTFORM %CALLNAME:PLAYER%の腹の上で天を向く%CALLNAME:TARGET%のペニスが
 					ELSE
-						PRINTFORM %CALLNAME:PLAYER%�̕������[�ŎC��%CALLNAME:TARGET%�̋T����
+						PRINTFORM %CALLNAME:PLAYER%の腹部を先端で擦る%CALLNAME:TARGET%の亀頭が
 					ENDIF
-					PRINTL �摖��ɔG��ē݂��P���Ă���
+					PRINTL 先走りに濡れて鈍く輝いている
 				ENDIF
 			ENDIF
 			LOCAL:1++
-		CASE "�R��ʃA�i��", "�R��ʃA�i���L�X", "�R��ʃA�i�����"
+		CASE "騎乗位アナル", "騎乗位アナルキス", "騎乗位アナル手淫"
 			SIF SEX(TARGET) == 1
-				PRINTFORML �j���̂悤�ɐK���Ńy�j�X���������%CALLNAME:TARGET%�̑O���B�ɐ��t�𕬂�������ƁA���𔼊J���ɂ��Ėウ�Ă���c�c
-			PRINTFORML %CALLNAME:TARGET%�̒����ɒ����ꂽ���t��������������o�Ă����c�c
-			IF SEX(TARGET) == 1 && !NOWEX:�ː� && !NOWEX:�`�Ⓒ
+				PRINTFORML 男娼のように尻穴でペニスを咥え込む%CALLNAME:TARGET%の前立腺に精液を噴きかけると、口を半開きにして悶えている……
+			PRINTFORML %CALLNAME:TARGET%の腸内に注がれた精液が結合部から溢れ出てきた……
+			IF SEX(TARGET) == 1 && !NOWEX:射精 && !NOWEX:Ａ絶頂
 				IF OVER_GENITAL(TARGET) != ""
-					IF PALAM:�~�� >= PALAMLV:3
-						PRINTFORML %OVER_GENITAL(TARGET)%�̐��������グ��%CALLNAME:TARGET%�̃y�j�X���A�O���B��G�炷�M�����t�ɔ������Ăт��т��ƒ��˂Ă���c�c
+					IF PALAM:欲情 >= PALAMLV:3
+						PRINTFORML %OVER_GENITAL(TARGET)%の裾を持ち上げる%CALLNAME:TARGET%のペニスが、前立腺を濡らす熱い精液に反応してびくびくと跳ねている……
 					ELSE
-						PRINTFORML �݂��̌������𕢂��B��%OVER_GENITAL(TARGET)%�̒��ŁA�u�N�������Ă��Ȃ�%CALLNAME:TARGET%�̃y�j�X��%CALLNAME:PLAYER%�̕����C���Ă���c�c
+						PRINTFORML 互いの結合部を覆い隠す%OVER_GENITAL(TARGET)%の中で、勃起しきっていない%CALLNAME:TARGET%のペニスが%CALLNAME:PLAYER%の腹を擦っている……
 					ENDIF
 				ELSE
-					IF PALAM:�~�� >= PALAMLV:3
-						PRINTFORM %CALLNAME:PLAYER%�̕��̏�œV������%CALLNAME:TARGET%�̃y�j�X��
+					IF PALAM:欲情 >= PALAMLV:3
+						PRINTFORM %CALLNAME:PLAYER%の腹の上で天を向く%CALLNAME:TARGET%のペニスが
 					ELSE
-						PRINTFORM %CALLNAME:PLAYER%�̕����̕������[�ŎC��%CALLNAME:TARGET%�̋T����
+						PRINTFORM %CALLNAME:PLAYER%の腹部の腹部を先端で擦る%CALLNAME:TARGET%の亀頭が
 					ENDIF
-					PRINTL �摖��ɔG��ē݂��P���Ă���
+					PRINTL 先走りに濡れて鈍く輝いている
 				ENDIF
-			ELSEIF TALENT:�ӂ��Ȃ� && !NOWEX:�ː� && !NOWEX:�`�Ⓒ
-				PRINTFORML �����ւ̎ː���%CALLNAME:TARGET%�̋T��������o�铧���Ȗ������؂�`���A�S����G�炵���c�c
+			ELSEIF TALENT:ふたなり && !NOWEX:射精 && !NOWEX:Ａ絶頂
+				PRINTFORML 腸内への射精に%CALLNAME:TARGET%の亀頭から溢れ出る透明な蜜が裏筋を伝い、膣口を濡らした……
 			ENDIF
-		CASE "�Ζʍ���", "�Ζʍ��ʃL�X"
-			IF CFLAG:�ח� && PLAYER == MASTER
-				PRINTFORM %CALLNAME:TARGET%��%CALLNAME:PLAYER%�̎ː����@����ƁA
-				SIF TALENT:�����̌^ || TALENT:���l�̌^
-					PRINT ���̏����Ȑg�̂Ō�����
-				SELECTCASE TALENT:�o�X�g�T�C�Y
+		CASE "対面座位", "対面座位キス"
+			IF CFLAG:陥落 && PLAYER == MASTER
+				PRINTFORM %CALLNAME:TARGET%が%CALLNAME:PLAYER%の射精を察すると、
+				SIF TALENT:小柄体型 || TALENT:小人体型
+					PRINT その小さな身体で懸命に
+				SELECTCASE TALENT:バストサイズ
 					CASE 4, 5
-						PRINT �傫�ȋ��������t���Ȃ���
+						PRINT 大きな胸を押し付けながら
 				ENDSELECT
-				PRINTL �������Ă���c�c
+				PRINTL 抱きついてくる……
 			ENDIF
-			PRINTFORML %CALLNAME:PLAYER%��%CALLNAME:TARGET%��������߂Ȃ����S���Ɏː������c�c
-			SIF PENIS(TARGET) && !NOWEX:�ː�
-				PRINTFORML %CALLNAME:PLAYER%���ː��ɉA�s��c��܂���x�ɁA��l�̕��ɋ��܂��%CALLNAME:TARGET%�̃y�j�X���������Ă���c�c
+			PRINTFORML %CALLNAME:PLAYER%は%CALLNAME:TARGET%を抱きしめながら膣内に射精した……
+			SIF PENIS(TARGET) && !NOWEX:射精
+				PRINTFORML %CALLNAME:PLAYER%が射精に陰茎を膨らませる度に、二人の腹に挟まれる%CALLNAME:TARGET%のペニスも反応している……
 			LOCAL:1++
-		CASE "�w�ʍ���", "���ꉲ�O"
-			IF TEQUIP:㵒p�v���C && (TALENT:�����̌^ || TALENT:���l�̌^)
-				PRINTFORML �������S�Ŏ󂯎~�߂��ꂸ�Ɉ��o�������t�����ɐ��ꗎ����̂��A���z���ɂ悭������c�c
+		CASE "背面座位", "乱れ牡丹"
+			IF TEQUIP:羞恥プレイ && (TALENT:小柄体型 || TALENT:小人体型)
+				PRINTFORML 小さな膣で受け止めきれずに溢れ出した精液が床に垂れ落ちるのが、鏡越しによく見える……
 			ELSE
-				PRINTFORML %CALLNAME:TARGET%�̑̂�M��܂킵�Ȃ���A�S���ɐ��t�𒍂����c�c
+				PRINTFORML %CALLNAME:TARGET%の体を弄りまわしながら、膣内に精液を注いだ……
 			ENDIF
-			IF TEQUIP:㵒p�v���C && CSTR:�푰 != "�@�B" && !NOWEX:�ː� && !NOWEX:�u�Ⓒ
-			 	IF CFLAG:�ח� && PLAYER == MASTER
-					PRINTFORML %CALLNAME:TARGET%��%CALLNAME:PLAYER%�̐��t�Ŗ������ꂽ�����𕏂łȂ�����Ԃ�߂��c�c
+			IF TEQUIP:羞恥プレイ && CSTR:種族 != "機械" && !NOWEX:射精 && !NOWEX:Ｖ絶頂
+			 	IF CFLAG:陥落 && PLAYER == MASTER
+					PRINTFORML %CALLNAME:TARGET%は%CALLNAME:PLAYER%の精液で満たされた腹部を撫でながら顔を赤らめた……
 				ELSE
-					PRINTFORML %CALLNAME:TARGET%�̎q�{�ɂ�������ƒ����ꂽ��q�����т��̂�z�������̂��A���̊炪�c�ނ̂��͂�����Ƃ킩��c�c
+					PRINTFORML %CALLNAME:TARGET%の子宮にしっかりと注がれた種子が結びつくのを想像したのか、その顔が歪むのがはっきりとわかる……
 				ENDIF
 			ENDIF
 			LOCAL:1++
-		CASE "�Ζʍ��ʃA�i��", "�Ζʍ��ʃA�i���L�X"
-			IF CFLAG:�ח� && PLAYER == MASTER
-				PRINTFORM %CALLNAME:TARGET%��%CALLNAME:PLAYER%�̎ː����@����ƁA
-				SIF TALENT:�����̌^ || TALENT:���l�̌^
-					PRINT ���̏����Ȑg�̂Ō�����
-				SELECTCASE TALENT:�o�X�g�T�C�Y
+		CASE "対面座位アナル", "対面座位アナルキス"
+			IF CFLAG:陥落 && PLAYER == MASTER
+				PRINTFORM %CALLNAME:TARGET%が%CALLNAME:PLAYER%の射精を察すると、
+				SIF TALENT:小柄体型 || TALENT:小人体型
+					PRINT その小さな身体で懸命に
+				SELECTCASE TALENT:バストサイズ
 					CASE 4, 5
-						PRINT �傫�ȋ��������t���Ȃ���
+						PRINT 大きな胸を押し付けながら
 				ENDSELECT
-				PRINTL �������Ă���c�c
+				PRINTL 抱きついてくる……
 			ENDIF
-			PRINTFORML %CALLNAME:PLAYER%��%CALLNAME:TARGET%��������߂Ȃ��環���Ɏː������c�c
-			SIF PENIS(TARGET) && !NOWEX:�ː� && !NOWEX:�`�Ⓒ
-				PRINTFORML %CALLNAME:PLAYER%���ː��ɉA�s��c��܂���x�ɁA��l�̕��ɋ��܂��%CALLNAME:TARGET%�̃y�j�X���������Ă���c�c
-		CASE "�w�ʍ��ʃA�i��"
-			PRINTFORML %CALLNAME:TARGET%�̑̂�M��܂킵�Ȃ���A�����ɐ��t�𒍂����c�c
-			IF PENIS(TARGET) && PALAM:�~�� >= PALAMLV:3 && !NOWEX:�ː� && !NOWEX:�`�Ⓒ
+			PRINTFORML %CALLNAME:PLAYER%は%CALLNAME:TARGET%を抱きしめながら腸内に射精した……
+			SIF PENIS(TARGET) && !NOWEX:射精 && !NOWEX:Ａ絶頂
+				PRINTFORML %CALLNAME:PLAYER%が射精に陰茎を膨らませる度に、二人の腹に挟まれる%CALLNAME:TARGET%のペニスも反応している……
+		CASE "背面座位アナル"
+			PRINTFORML %CALLNAME:TARGET%の体を弄りまわしながら、腸内に精液を注いだ……
+			IF PENIS(TARGET) && PALAM:欲情 >= PALAMLV:3 && !NOWEX:射精 && !NOWEX:Ａ絶頂
 				IF OVER_GENITAL(TARGET) != ""
-					PRINTFORM %OVER_GENITAL(TARGET)%�̐��������グ��
+					PRINTFORM %OVER_GENITAL(TARGET)%の裾を持ち上げる
 				ELSE
-					PRINTFORM �������̏ォ��L�т�
+					PRINTFORM 結合部の上から伸びる
 				ENDIF
-				PRINTFORML %CALLNAME:TARGET%�̉A�s���A%CALLNAME:PLAYER%�̌`��^���邩�̂悤�ɔ���Ԃ��Ă���c�c
-			ELSEIF SEX(TARGET) == 2 && !NOWEX:�`�Ⓒ
-				PRINTFORML %CALLNAME:TARGET%�̉A�O������o�鈤�t���A���t�̘R��o���݂��̌������ɗ���Z�����Ă���c�c
+				PRINTFORML %CALLNAME:TARGET%の陰茎が、%CALLNAME:PLAYER%の形を真似るかのように反り返っている……
+			ELSEIF SEX(TARGET) == 2 && !NOWEX:Ａ絶頂
+				PRINTFORML %CALLNAME:TARGET%の陰唇から溢れ出る愛液が、精液の漏れ出す互いの結合部に流れ纏わりついてくる……
 			ENDIF
-		CASE "�������炵�}��"
-			IF TALENT:�����̌^
-				PRINTFORML %CALLNAME:TARGET%�̉����g�������グ�āA���̏����ȑ̂ɐ��t��������c�c
+		CASE "下着ずらし挿入"
+			IF TALENT:小柄体型
+				PRINTFORML %CALLNAME:TARGET%の下半身を持ち上げて、その小さな体に精液を放った……
 			ELSE
-				PRINTFORML %CALLNAME:PLAYER%��%CALLNAME:TARGET%�̉��[���ɓ˂�����Ďː������c�c
+				PRINTFORML %CALLNAME:PLAYER%は%CALLNAME:TARGET%の奥深くに突き入れて射精した……
 			ENDIF
-			PRINTFORML �S��������o�����t��%CALLNAME:TARGET%��%CSTR:�����g����%�ɟ���ł���c�c
-			SIF PENIS(TARGET) && !NOWEX:�ː� && !NOWEX:�u�Ⓒ
-				PRINTFORM �S���Ɏː������%CALLNAME:TARGET%�̃y�j�X��%CSTR:�����g����%�̒��ŋ��������ɖc���ł���c�c
+			PRINTFORML 膣内から溢れ出す精液が%CALLNAME:TARGET%の%CSTR:下半身下着%に滲んでいる……
+			SIF PENIS(TARGET) && !NOWEX:射精 && !NOWEX:Ｖ絶頂
+				PRINTFORM 膣内に射精される%CALLNAME:TARGET%のペニスは%CSTR:下半身下着%の中で窮屈そうに膨らんでいる……
 			LOCAL:1++
-		CASE "�������炵�}���A�i��"
-			PRINTFORML %CALLNAME:TARGET%�̃A�i������R��o�����t��%CSTR:�����g����%�ɟ���ł���c�c
-			IF !NOWEX:�ː� && !NOWEX:�`�Ⓒ
+		CASE "下着ずらし挿入アナル"
+			PRINTFORML %CALLNAME:TARGET%のアナルから漏れ出た精液が%CSTR:下半身下着%に滲んでいる……
+			IF !NOWEX:射精 && !NOWEX:Ａ絶頂
 				SELECTCASE SEX(TARGET)
 					CASE 1
-						SIF PALAM:�~�� >= PALAMLV:3
-							PRINTFORML �ː��ɐk����y�j�X�ɑO���B��P����x�ɁA%CALLNAME:TARGET%�̃y�j�X��%CSTR:�����g����%�̒��łт��т��Ɛk���Ă���c�c
+						SIF PALAM:欲情 >= PALAMLV:3
+							PRINTFORML 射精に震えるペニスに前立腺を抉られる度に、%CALLNAME:TARGET%のペニスは%CSTR:下半身下着%の中でびくびくと震えている……
 					CASE 2
-						SIF PALAM:���� >= PALAMLV:4
-							PRINTFORML �����ւ̎ː��Ɋ����Ă���̂��A%CALLNAME:TARGET%��%CSTR:�����g����%�͎~�ߏ��Ȃ����o�鈤�t�ɂ�����G��ɂȂ��Ă���c�c
+						SIF PALAM:潤滑 >= PALAMLV:4
+							PRINTFORML 腸内への射精に感じているのか、%CALLNAME:TARGET%の%CSTR:下半身下着%は止め処なく溢れ出る愛液にぐしょ濡れになっている……
 				ENDSELECT
 			ENDIF
-		CASE "����ʂ�����"
-			IF NOWEX:�ː� && !GETBIT(TFLAG:��D��ː�, 2)
-				PRINTFORML %CALLNAME:TARGET%��%CALLNAME:PLAYER%���S���Ŏː����}����Ɠ����ɁA%CALLNAME:PLAYER%���q�{�ɔM�����t�𒍂���Ȃ��甽��Ԃ�y�j�X���琸�t���΂��Ď����̑̂��������c�c
+		CASE "正常位させる"
+			IF NOWEX:射精 && !GETBIT(TFLAG:避妊具射精, 2)
+				PRINTFORML %CALLNAME:TARGET%が%CALLNAME:PLAYER%の膣内で射精を迎えると同時に、%CALLNAME:PLAYER%も子宮に熱い精液を注がれながら反り返るペニスから精液を飛ばして自分の体を汚した……
 			ELSE
-				PRINTFORML %CALLNAME:TARGET%�ɕ������%CALLNAME:PLAYER%�́A�S�����C����h�������Ŏː��ɒB���Ă��܂����c�c
+				PRINTFORML %CALLNAME:TARGET%に抱かれる%CALLNAME:PLAYER%は、膣内を擦られる刺激だけで射精に達してしまった……
 			ENDIF
-		CASE "��w�ʂ�����"
-			IF NOWEX:�ː� && !GETBIT(TFLAG:��D��ː�, 2)
-				PRINTFORML %CALLNAME:TARGET%���S���ː��Ɠ�����%CALLNAME:PLAYER%���ː����}���A�S������R��o�����t�Ǝ��g�̃y�j�X������o�����t�����ꗎ����̂��͂�����ƌ������c�c
+		CASE "後背位させる"
+			IF NOWEX:射精 && !GETBIT(TFLAG:避妊具射精, 2)
+				PRINTFORML %CALLNAME:TARGET%の膣内射精と同時に%CALLNAME:PLAYER%も射精を迎え、膣内から漏れ出す精液と自身のペニスから溢れ出す精液が垂れ落ちるのがはっきりと見えた……
 			ELSE
-				PRINTFORML ��l�̌������̉��ōd���c���%CALLNAME:PLAYER%�̃y�j�X�����������ˁA���t��f���o�����c�c
+				PRINTFORML 二人の結合部の下で硬く膨らんだ%CALLNAME:PLAYER%のペニスが激しく跳ね、精液を吐き出した……
 			ENDIF
-		CASE "����ʃA�i��������"
-			IF NOWEX:�ː� && !GETBIT(TFLAG:��D��ː�, 2)
+		CASE "正常位アナルさせる"
+			IF NOWEX:射精 && !GETBIT(TFLAG:避妊具射精, 2)
 				IF SEX(PLAYER) == 1
-					PRINTFORML �O���B���C���Ă��ݏグ�Ă���������A%CALLNAME:TARGET%�̒����ː��Ƌ��ɐ��t�ƂȂ���%CALLNAME:PLAYER%�̃y�j�X������o�����c�c
+					PRINTFORML 前立腺を擦られてこみ上げてくる快感が、%CALLNAME:TARGET%の腸内射精と共に精液となって%CALLNAME:PLAYER%のペニスから溢れ出した……
 				ELSE
-					PRINTFORML ������%CALLNAME:TARGET%�̔M�����̂����ꍞ��ł���̂�������ƁA%CALLNAME:PLAYER%���ꏏ�Ɏː����}�����c�c
+					PRINTFORML 腸内に%CALLNAME:TARGET%の熱いものが流れ込んでくるのを感じると、%CALLNAME:PLAYER%も一緒に射精を迎えた……
 				ENDIF
 			ELSE
 				IF SEX(PLAYER) == 1
-					PRINTFORML �����Ŕ���Ԃ���̂ɑO���B��P����%CALLNAME:PLAYER%�́A���̂悤�țg�����グ�Ďː������c�c
+					PRINTFORML 腸内で反り返るものに前立腺を抉られる%CALLNAME:PLAYER%は、雌のような嬌声を上げて射精した……
 				ELSE
-					PRINTFORML �A�i���Ńy�j�X���������%CALLNAME:PLAYER%�́A���܂�̉����Ɉ��t����ꂳ���Ȃ���ː������c�c
+					PRINTFORML アナルでペニスを咥え込む%CALLNAME:PLAYER%は、あまりの快感に愛液を溢れさせながら射精した……
 				ENDIF
 			ENDIF
-		CASE "��w�ʃA�i��������"
-			IF NOWEX:�ː� && !GETBIT(TFLAG:��D��ː�, 2)
-				PRINTFORML ��납��%CALLNAME:TARGET%�̐��t��K���ɏo����A%CALLNAME:PLAYER%�����������������グ�Ȃ���ː������c�c
+		CASE "後背位アナルさせる"
+			IF NOWEX:射精 && !GETBIT(TFLAG:避妊具射精, 2)
+				PRINTFORML 後ろから%CALLNAME:TARGET%の精液を尻穴に出され、%CALLNAME:PLAYER%もくぐもった声を上げながら射精した……
 			ELSE
-				PRINTFORML %CALLNAME:PLAYER%�͌�납��K�������x���˂���A�����o�����悤�ɐ��t��R�炵�Ă��܂����c�c
+				PRINTFORML %CALLNAME:PLAYER%は後ろから尻穴を何度も突かれ、押し出されるように精液を漏らしてしまった……
 			ENDIF
-		CASE "���"
-			IF NOWEX:PLAYER:�ː� == 1
-				PRINTFORM %CALLNAME:TARGET%��
-				IF TALENT:�����̌^
-					PRINT �����Ȏ��
+		CASE "手淫"
+			IF NOWEX:PLAYER:射精 == 1
+				PRINTFORM %CALLNAME:TARGET%の
+				IF TALENT:小柄体型
+					PRINT 小さな手に
 				ELSE
-					PRINT ���
+					PRINT 手に
 				ENDIF
-				PRINTFORML ��܂ꂽ%CALLNAME:PLAYER%�̃y�j�X���琸�t�����A%CALLNAME:TARGET%�̎w���������c�c
-				SIF TALENT:���� || TALENT:���w
-					PRINTFORML %CALLNAME:TARGET%�͎w�ɕt�������t�������������r�߂Ƃ��Ă���c�c
+				PRINTFORML 包まれた%CALLNAME:PLAYER%のペニスから精液が溢れ、%CALLNAME:TARGET%の指を汚した……
+				SIF TALENT:淫乱 || TALENT:娼婦
+					PRINTFORML %CALLNAME:TARGET%は指に付いた精液を愛おしげに舐めとっている……
 			ELSE
-				PRINTFORM %CALLNAME:PLAYER%�̃y�j�X����s�ӂɔ�яo�������t���A%CALLNAME:TARGET%�̎w��
-				IF TEQUIP:��O�v���C
-					PRINTL �n�ʂ��������c�c
+				PRINTFORM %CALLNAME:PLAYER%のペニスから不意に飛び出した精液が、%CALLNAME:TARGET%の指と
+				IF TEQUIP:野外プレイ
+					PRINTL 地面を汚した……
 				ELSE
-					PRINTL �����������c�c
+					PRINTL 床を汚した……
 				ENDIF
 			ENDIF
-		CASE "�t�F���`�I"
-			IF NOWEX:PLAYER:�ː� == 1
-				IF ABL:��d���_ >= 3
-					PRINTFORML %CALLNAME:TARGET%�͍A��炵�Č����ɏo���ꂽ���t�����݊������c�c
+		CASE "フェラチオ"
+			IF NOWEX:PLAYER:射精 == 1
+				IF ABL:奉仕精神 >= 3
+					PRINTFORML %CALLNAME:TARGET%は喉を鳴らして口内に出された精液を飲み干した……
 				ELSE
-					PRINTFORML ���t��%CALLNAME:TARGET%�̌��̒��ւƗ������񂾁c�c
+					PRINTFORML 精液を%CALLNAME:TARGET%の口の中へと流し込んだ……
 				ENDIF
 			ELSE
-				IF ABL:��d���_ >= 3
-					PRINTFORML ���݂���Ȃ��������t��%CALLNAME:TARGET%�̌��������c�c
-					SIF CFLAG:�ח� && !TALENT:���L�q��
-						PRINTFORML ����ł�%CALLNAME:TARGET%��%CALLNAME:PLAYER%���琸�t���z���o�����̂悤�ɁA�y�j�X������ė����Ȃ��c�c
+				IF ABL:奉仕精神 >= 3
+					PRINTFORML 飲みきれなかった精液が%CALLNAME:TARGET%の口から溢れる……
+					SIF CFLAG:陥落 && !TALENT:汚臭敏感
+						PRINTFORML それでも%CALLNAME:TARGET%は%CALLNAME:PLAYER%から精液を吸い出すかのように、ペニスを咥えて離さない……
 				ELSE
-					PRINTFORML ����قǂ̐��t��%CALLNAME:TARGET%�̍A�ɒ@������ꂽ�c�c
+					PRINTFORML 溢れるほどの精液が%CALLNAME:TARGET%の喉に叩きつけられた……
 				ENDIF
 			ENDIF
-		CASE "�p�C�Y��", "�p�C�Y���t�F��", "�c�p�C�Y��"
+		CASE "パイズリ", "パイズリフェラ", "縦パイズリ"
 			IF OVER_BUST(TARGET) != ""
 				SELECTCASE SELECTCOMS
-					CASE "�p�C�Y��"
-						PRINTFORML %CALLNAME:TARGET%��%OVER_BUST(TARGET)%�ɂ������t���ׂ��Ƃ�Ƃ��т�����c�c
+					CASE "パイズリ"
+						PRINTFORML %CALLNAME:TARGET%の%OVER_BUST(TARGET)%にも白濁液がべっとりとこびりついた……
 						SIF FALLTYPE(TARGET) == 2
-							PRINTFORML %OVER_BUST(TARGET)%�̒��ŏ���鐸�t�̓�����%CALLNAME:TARGET%�͖j����߂Ă����Ƃ肵�Ă���c�c
-					CASE "�p�C�Y���t�F��"
-						PRINTFORML %OVER_BUST(TARGET)%�̒���%CALLNAME:PLAYER%�̃y�j�X���琸�t����юU���Ă������c�c
+							PRINTFORML %OVER_BUST(TARGET)%の中で蒸れる精液の匂いに%CALLNAME:TARGET%は頬を染めてうっとりしている……
+					CASE "パイズリフェラ"
+						PRINTFORML %OVER_BUST(TARGET)%の中で%CALLNAME:PLAYER%のペニスから精液が飛び散っていった……
 						SIF FALLTYPE(TARGET) == 2
-							PRINTFORML %CALLNAME:TARGET%��%OVER_BUST(TARGET)%�ɐ��ݕt�����t�����i�ɐ����𗧂Ă��r�ߎ���Ă���c�c
-					CASE "�c�p�C�Y��"
-						PRINTFORML %OVER_BUST(TARGET)%�ɕ���ꂽ%CALLNAME:TARGET%�̓����ւƗ������ނ悤�Ɏː������c�c
-						SIF CFLAG:�ח�
-							PRINTFORML %CALLNAME:TARGET%�͓��[�𗼕����炬����Ɖ���������Ő��t���󂯓���Ă���c�c
+							PRINTFORML %CALLNAME:TARGET%は%OVER_BUST(TARGET)%に染み付く精液を下品に水音を立てて舐め取っている……
+					CASE "縦パイズリ"
+						PRINTFORML %OVER_BUST(TARGET)%に覆われた%CALLNAME:TARGET%の乳内へと流し込むように射精した……
+						SIF CFLAG:陥落
+							PRINTFORML %CALLNAME:TARGET%は乳房を両方からぎゅっと押さえ込んで精液を受け入れている……
 				ENDSELECT
 			ELSE
-				IF NOWEX:PLAYER:�ː� == 1
-					IF TALENT:�t�@�[���[
-						PRINTFORML %CALLNAME:TARGET%�̖̑тɕ���ꂽ���[�ɔ������t�����݂����c�c
+				IF NOWEX:PLAYER:射精 == 1
+					IF TALENT:ファーリー
+						PRINTFORML %CALLNAME:TARGET%の体毛に覆われた乳房に白い精液が絡みついた……
 					ELSE
-						SELECTCASE TALENT:�o�X�g�T�C�Y
+						SELECTCASE TALENT:バストサイズ
 							CASE 1, 2
-								PRINTFORML %CALLNAME:TARGET%�̋N���̏��Ȃ����𐸉t�����ꗎ���Ă����c�c
+								PRINTFORML %CALLNAME:TARGET%の起伏の少ない胸を精液が流れ落ちていく……
 							CASE 3
-								PRINTFORML %CALLNAME:TARGET%�̋��������ɂ܂Ő��t����юU�����c�c
+								PRINTFORML %CALLNAME:TARGET%の胸元から顔にまで精液が飛び散った……
 							CASE 4, 5
-								PRINTFORML %CALLNAME:TARGET%�̋��̒��ŘR��o�����t���J�Ԃɗ��܂��Ă���c�c
+								PRINTFORML %CALLNAME:TARGET%の胸の中で漏れ出た精液が谷間に溜まっている……
 						ENDSELECT
 					ENDIF
 				ELSE
-					PRINTFORML ��юU�������t��%CALLNAME:TARGET%�̊炩�狹���܂ł𕢂��Ă���c�c
-					SIF CFLAG:�ח�
-						PRINTFORML %CALLNAME:TARGET%�͋��̒��Ők����y�j�X��������ƕ�ݍ��݁A�Ō�̈�H�܂Ŏː��𑣂����c�c
+					PRINTFORML 飛び散った精液が%CALLNAME:TARGET%の顔から胸元までを覆っている……
+					SIF CFLAG:陥落
+						PRINTFORML %CALLNAME:TARGET%は胸の中で震えるペニスをぎゅっと包み込み、最後の一滴まで射精を促した……
 				ENDIF
-				IF (FALLTYPE(TARGET) == 1 || PALAM:�~�� >= PALAMLV:5) && !TEQUIP:�A�C�}�X�N && !NOWEX:�a�Ⓒ
-					PRINTFORM %CALLNAME:TARGET%�͎����̋��������ɂ܂݂�Ă����̂�
-					SIF FALLTYPE(TARGET) == 1 || ABL:���t���� >= 3
-						PRINT �����Ƃ����\������Ȃ���
-					SIF PALAM:�~�� >= PALAMLV:5
-						PRINT �~��ɑ���������
-					PRINTFORML ���߂Ă���c�c
+				IF (FALLTYPE(TARGET) == 1 || PALAM:欲情 >= PALAMLV:5) && !TEQUIP:アイマスク && !NOWEX:Ｂ絶頂
+					PRINTFORM %CALLNAME:TARGET%は自分の胸が白濁にまみれていくのを
+					SIF FALLTYPE(TARGET) == 1 || ABL:精液中毒 >= 3
+						PRINT 恍惚とした表情をしながら
+					SIF PALAM:欲情 >= PALAMLV:5
+						PRINT 欲情に濁った瞳で
+					PRINTFORML 見つめている……
 				ENDIF
-				IF FALLTYPE(TARGET) == 2 && !NOWEX:�a�Ⓒ
-					PRINTFORML ���̌�A%CALLNAME:TARGET%�͊��������ɐ��t���w�ł������āA�d���u��������ɓh����Ă����c�c
-				ELSEIF FALLTYPE(TARGET) == 1 || ABL:���t���� >= 3
-					PRINTFORM ���̌�A%CALLNAME:TARGET%�͂��������Ȃ��ƌ����΂���Ɏ����̋��ɂ������t��
-					SIF ABL:�a���o >= 4
-						PRINT �����ɐg��k�킹�Ȃ���
-					PRINTL �r�߂Ƃ��Ă����c�c
+				IF FALLTYPE(TARGET) == 2 && !NOWEX:Ｂ絶頂
+					PRINTFORML その後、%CALLNAME:TARGET%は嬉しそうに精液を指ですくって、硬く勃った乳首に塗りつけていた……
+				ELSEIF FALLTYPE(TARGET) == 1 || ABL:精液中毒 >= 3
+					PRINTFORM その後、%CALLNAME:TARGET%はもったいないと言わんばかりに自分の胸についた精液を
+					SIF ABL:Ｂ感覚 >= 4
+						PRINT 快感に身を震わせながら
+					PRINTL 舐めとっていた……
 				ENDIF
 			ENDIF
-		CASE "�f��"
-			IF NOWEX:PLAYER:�ː� == 1
-				PRINTFORML %CALLNAME:TARGET%�̌ҊԂɓY����ꂽ�y�j�X���甒���t���R��o��c�c
-				IF (TEQUIP:�����g�㒅 || (TEQUIP:�S�g�㒅 && CFLAG:���ߕ��p != 1)) && !CFLAG:�}����
-					PRINTFORML %CALLNAME:TARGET%��%OVER_GENITAL(TARGET)%�����t�ŉ���Ă��܂����c�c
-				ELSEIF TEQUIP:�����g����
-					PRINTFORML %CALLNAME:TARGET%�̈��t�Ŏ���%CSTR:�����g����%�𐸉t�ŉ������c�c
-				ELSEIF TALENT:�����̌^
-					PRINTL �܂��Y�т��琶���Ă��Ȃ��Ղ�����Ƃ�������ڂɐ��t���S������c�c
+		CASE "素股"
+			IF NOWEX:PLAYER:射精 == 1
+				PRINTFORML %CALLNAME:TARGET%の股間に添えられたペニスから白濁液が漏れ出る……
+				IF (TEQUIP:下半身上着 || (TEQUIP:全身上着 && CFLAG:着衣併用 != 1)) && !CFLAG:挿入可
+					PRINTFORML %CALLNAME:TARGET%の%OVER_GENITAL(TARGET)%が精液で汚れてしまった……
+				ELSEIF TEQUIP:下半身下着
+					PRINTFORML %CALLNAME:TARGET%の愛液で湿る%CSTR:下半身下着%を精液で汚した……
+				ELSEIF TALENT:小柄体型
+					PRINTL まだ産毛すら生えていないぷっくりとした割れ目に精液が粘りついた……
 				ELSE
-					PRINTL ��������Ƃ����_�炩�Ȓp�тƈ��t�łʂ߂����A�O�ɐ��t�����݂��Ă������c�c
+					PRINTL うっすらとした柔らかな恥毛と愛液でぬめった陰唇に精液が絡みついていった……
 				ENDIF
 			ELSE
-				PRINTFORML %CALLNAME:TARGET%�̌҂̊Ԃ��琨���ǂ���яo�����t���A%CALLNAME:TARGET%�̎��鏊�ɍ~�肩����c�c
-				IF (TEQUIP:�����g�㒅 || (TEQUIP:�S�g�㒅 && CFLAG:���ߕ��p != 1)) && !CFLAG:�}����
-					PRINTFORML %CALLNAME:TARGET%��%OVER_GENITAL(TARGET)%�͑�ʂ̐��t�Ō҂��炪�������܂��Ă���c�c
-				ELSEIF TEQUIP:�����g����
-					PRINTFORML %CALLNAME:TARGET%��%CSTR:�����g����%�͑�ʂ̐��t�łǂ�ǂ�ɂȂ��Ă���c�c
+				PRINTFORML %CALLNAME:TARGET%の股の間から勢い良く飛び出た精液が、%CALLNAME:TARGET%の至る所に降りかかる……
+				IF (TEQUIP:下半身上着 || (TEQUIP:全身上着 && CFLAG:着衣併用 != 1)) && !CFLAG:挿入可
+					PRINTFORML %CALLNAME:TARGET%の%OVER_GENITAL(TARGET)%は大量の精液で股ぐらが白く染まっている……
+				ELSEIF TEQUIP:下半身下着
+					PRINTFORML %CALLNAME:TARGET%の%CSTR:下半身下着%は大量の精液でどろどろになっている……
 				ELSE
-					PRINT �����ȏ�ɑł��o�����t��
-					SELECTCASE TALENT:�o�X�g�T�C�Y
+					PRINT いつも以上に打ち出た精液が
+					SELECTCASE TALENT:バストサイズ
 						CASE 1, 2
-							PRINTFORML %CALLNAME:TARGET%�ؚ̉��ȋ���N���A
+							PRINTFORML %CALLNAME:TARGET%の華奢な胸を侵し、
 						CASE 3
-							PRINTFORML %CALLNAME:TARGET%�̒J�Ԃ𗬂�A
+							PRINTFORML %CALLNAME:TARGET%の谷間を流れ、
 						CASE 4, 5
-							PRINTL ���̑傫�ȓ��[���������A
+							PRINTL その大きな乳房をも汚し、
 					ENDSELECT
-					IF TALENT:�����̌^ || TALENT:���l�̌^
-						PRINTL �܂��Y�т��琶���Ă��Ȃ��Ղ�����Ƃ�������ڂ���ʂ̐��t�ŉ���Ă���c�c
+					IF TALENT:小柄体型 || TALENT:小人体型
+						PRINTL まだ産毛すら生えていないぷっくりとした割れ目が大量の精液で汚れている……
 					ELSE
-						PRINTL ��������Ƃ����_�炩�Ȓp�тƈ��t�łʂ߂����A�O�ɑ�ʂ̐��t�����݂��Ă������c�c
+						PRINTL うっすらとした柔らかな恥毛と愛液でぬめった陰唇に大量の精液が絡みついていった……
 					ENDIF
 				ENDIF
 			ENDIF
-		CASE "������"
+		CASE "足扱き"
 			IF OVER_GENITAL(PLAYER) != ""
-				PRINTFORML ���̏ォ��%CALLNAME:TARGET%��\@ TALENT:�T�h ? ������ #  \@�y�j�X�𓥂܂�A%CALLNAME:PLAYER%��%OVER_GENITAL(PLAYER)%�̒���\@ NOWEX:PLAYER:�ː� >= 2 ? ����� #  \@���t��R�炵���c�c
+				PRINTFORML 服の上から%CALLNAME:TARGET%に\@ TALENT:サド ? 激しく #  \@ペニスを踏まれ、%CALLNAME:PLAYER%は%OVER_GENITAL(PLAYER)%の中で\@ NOWEX:PLAYER:射精 >= 2 ? 盛大に #  \@精液を漏らした……
 			ELSE
-				IF TALENT:�T�h
-					PRINTFORM %CALLNAME:TARGET%�̗��₩�Ȏ������󂯂Ȃ���A����
+				IF TALENT:サド
+					PRINTFORM %CALLNAME:TARGET%の冷ややかな視線を受けながら、その
 				ELSE
-					PRINTFORM %CALLNAME:TARGET%��
+					PRINTFORM %CALLNAME:TARGET%の
 				ENDIF
-				;�C�����p
-				IF TEQUIP:����
-					PRINTFORML %CSTR:����%��\@ NOWEX:PLAYER:�ː� >= 2 ? ��ʂ� #  \@���t�ŉ������c�c
+				;靴下着用
+				IF TEQUIP:足元
+					PRINTFORML %CSTR:足元%を\@ NOWEX:PLAYER:射精 >= 2 ? 大量の #  \@精液で汚した……
 				ELSE
-					PRINTFORML ����\@ NOWEX:PLAYER:�ː� >= 2 ? ��ʂ� #  \@�M�����t��������c�c
+					PRINTFORML 足に\@ NOWEX:PLAYER:射精 >= 2 ? 大量の #  \@熱い精液を放った……
 				ENDIF
 			ENDIF
-		CASE "�����킹"
-			IF NOWEX:PLAYER:�ː� == 1
-				PRINTFORML %CALLNAME:TARGET%�̊ƂƐG�ꍇ��%CALLNAME:PLAYER%�̊Ƃ��琸�t�����o��c�c
-				;�~��Lv3�ȏ�
-				IF PALAM:�~�� >= PALAMLV:3 && !NOWEX:�ː�
-					PRINTFORML %CALLNAME:TARGET%�̂����藧�����y�j�X�ɔ����������t�����݂����c�c
-				ELSEIF !NOWEX:�ː�
-					PRINTFORML �܂������̏����������Ă��Ȃ�%CALLNAME:TARGET%�̏_�炩���y�j�X��%CALLNAME:PLAYER%�̐��t�ŉ���Ă���c�c
+		CASE "兜合わせ"
+			IF NOWEX:PLAYER:射精 == 1
+				PRINTFORML %CALLNAME:TARGET%の竿と触れ合う%CALLNAME:PLAYER%の竿から精液が溢れ出る……
+				;欲情Lv3以上
+				IF PALAM:欲情 >= PALAMLV:3 && !NOWEX:射精
+					PRINTFORML %CALLNAME:TARGET%のいきり立ったペニスに白濁した精液が絡みついた……
+				ELSEIF !NOWEX:射精
+					PRINTFORML まだ性交の準備が整っていない%CALLNAME:TARGET%の柔らかいペニスが%CALLNAME:PLAYER%の精液で汚れている……
 				ENDIF
 			ELSE
-				PRINTFORML %CALLNAME:PLAYER%�̊Ƃ��ǂ���Ɩ��ł��A%CALLNAME:TARGET%�̊Ƃ�����̐F�ɐ��ߏグ��c�c
-				;�~��Lv3�ȏ�
-				IF PALAM:�~�� >= PALAMLV:3 && !NOWEX:�ː�
-					PRINTFORML %CALLNAME:TARGET%�̂����藧�����y�j�X�ɔ����������t�����݂����c�c
-				ELSEIF !NOWEX:�ː�
-					PRINTFORML �܂������̏����������Ă��Ȃ�%CALLNAME:TARGET%�̏_�炩���y�j�X��%CALLNAME:PLAYER%�̐��t�ŉ���Ă���c�c
+				PRINTFORML %CALLNAME:PLAYER%の竿がどくんと脈打ち、%CALLNAME:TARGET%の竿を自らの色に染め上げる……
+				;欲情Lv3以上
+				IF PALAM:欲情 >= PALAMLV:3 && !NOWEX:射精
+					PRINTFORML %CALLNAME:TARGET%のいきり立ったペニスに白濁した精液が絡みついた……
+				ELSEIF !NOWEX:射精
+					PRINTFORML まだ性交の準備が整っていない%CALLNAME:TARGET%の柔らかいペニスが%CALLNAME:PLAYER%の精液で汚れている……
 				ENDIF
 			ENDIF
-		CASE "��������"
-			IF NOWEX:PLAYER:�ː� == 1
-				PRINTFORML %CALLNAME:TARGET%�ɉ����ň�����Ȃ���ː��ɒB����%CALLNAME:PLAYER%�́A�y�j�X���ݍ���%CSTR:�����g����%�𐸉t�ŉ������c�c
+		CASE "下着扱き"
+			IF NOWEX:PLAYER:射精 == 1
+				PRINTFORML %CALLNAME:TARGET%に下着で扱かれながら射精に達する%CALLNAME:PLAYER%は、ペニスを包み込む%CSTR:下半身下着%を精液で汚した……
 			ELSE
-				PRINTFORML %CALLNAME:PLAYER%�͑�ʂ̐摖�肪���݂���%CSTR:�����g����%�ň����ꑱ���A����%CSTR:�����g����%�̒��ɑ�ʂ̐��t��R�炵�Ăǂ�ǂ�ɉ����Ă��܂����c�c
+				PRINTFORML %CALLNAME:PLAYER%は大量の先走りが染みこんだ%CSTR:下半身下着%で扱かれ続け、その%CSTR:下半身下着%の中に大量の精液を漏らしてどろどろに汚してしまった……
 			ENDIF
-		CASE "��ʋR�悷��"
-			IF TEQUIP:PLAYER:�����g���� || (TEQUIP:PLAYER:�S�g�㒅 && CFLAG:���ߕ��p == 2)
-				PRINTFORML ���̏ォ��鏊���r�߂���%CALLNAME:PLAYER%�͎ː����Ă��܂��A�y�j�X��k�킹��\@ TEQUIP:PLAYER:�����g���� ? %CSTR:PLAYER:�����g����% # %CSTR:PLAYER:�S�g�㒅% \@\@ NOWEX:PLAYER:�ː� == 1 ? �𐸉t�ŉ������c�c # �̒����ʂ̐��t�Ŗ��������c�c \@
+		CASE "顔面騎乗する"
+			IF TEQUIP:PLAYER:下半身下着 || (TEQUIP:PLAYER:全身上着 && CFLAG:着衣併用 == 2)
+				PRINTFORML 服の上から秘所を舐められる%CALLNAME:PLAYER%は射精してしまい、ペニスを震わせて\@ TEQUIP:PLAYER:下半身下着 ? %CSTR:PLAYER:下半身下着% # %CSTR:PLAYER:全身上着% \@\@ NOWEX:PLAYER:射精 == 1 ? を精液で汚した…… # の中を大量の精液で満たした…… \@
 			ELSE
-				IF NOWEX:PLAYER:�ː� == 1
-					PRINTFORML %CALLNAME:TARGET%�̊�ʂɌׂ�%CALLNAME:PLAYER%���ː����}���A%CALLNAME:TARGET%�Ɋ�ɐ��t�����ꗎ�����c�c
+				IF NOWEX:PLAYER:射精 == 1
+					PRINTFORML %CALLNAME:TARGET%の顔面に跨る%CALLNAME:PLAYER%が射精を迎え、%CALLNAME:TARGET%に顔に精液が垂れ落ちた……
 				ELSE
-					PRINTFORML %CALLNAME:TARGET%�̊�ʂɌׂ�Ȃ���ː��ɒB����%CALLNAME:PLAYER%�͐����ǂ����t���΂��A���ły�j�X�����ꂽ���t�����؂�`����%CALLNAME:PLAYER%�̊�ɗ��ꗎ�����c�c
+					PRINTFORML %CALLNAME:TARGET%の顔面に跨りながら射精に達した%CALLNAME:PLAYER%は勢い良く精液を飛ばし、脈打つペニスから溢れた精液が裏筋を伝って%CALLNAME:PLAYER%の顔に流れ落ちた……
 				ENDIF
 			ENDIF
-		CASE "�C���}�`�I"
-			IF NOWEX:PLAYER:�ː� == 1
-				IF ABL:��d���_ >= 3
-					PRINTFORML %CALLNAME:TARGET%�͍A��炵�Đ��t�����݊������c�c
+		CASE "イラマチオ"
+			IF NOWEX:PLAYER:射精 == 1
+				IF ABL:奉仕精神 >= 3
+					PRINTFORML %CALLNAME:TARGET%は喉を鳴らして精液を飲み干した……
 				ELSE
-					PRINTFORML %CALLNAME:TARGET%�̓���͂�ŁA�A�̉��ɐ��t��������c�c
+					PRINTFORML %CALLNAME:TARGET%の頭を掴んで、喉の奥に精液を放った……
 				ENDIF
 			ELSE
-				IF ABL:��d���_ >= 3
-					PRINTFORML %CALLNAME:TARGET%��%CALLNAME:PLAYER%�̍��Ɏ���񂷂ƁA����A�̉��Ŏː����󂯎~�߂��c�c
+				IF ABL:奉仕精神 >= 3
+					PRINTFORML %CALLNAME:TARGET%は%CALLNAME:PLAYER%の腰に手を回すと、自ら喉の奥で射精を受け止めた……
 				ELSE
-					PRINTFORML %CALLNAME:TARGET%�ׂ̍��H�����璼�ڐ��t�𗬂����񂾁c�c
+					PRINTFORML %CALLNAME:TARGET%の細い食道から直接精液を流し込んだ……
 				ENDIF
 			ENDIF
-		CASE "�A�i�����r�߂�����", "�A�i������������"
-			IF NOWEX:PLAYER:�ː� == 1
-				PRINTFORML �K����M���Ĉ��o��%CALLNAME:PLAYER%�̐��t�͖I���̂悤�ɂ����Ɨ�ꗎ�����c�c
+		CASE "アナルを舐めさせる", "アナル愛撫させる"
+			IF NOWEX:PLAYER:射精 == 1
+				PRINTFORML 尻穴を弄られて溢れ出た%CALLNAME:PLAYER%の精液は蜂蜜のようにだらりと零れ落ちた……
 			ELSE
-				PRINTFORML %CALLNAME:PLAYER%�͐K���ւ̋���Ȏh���ɐ��t�𐨂��ǂ���΂����c�c
+				PRINTFORML %CALLNAME:PLAYER%は尻穴への強烈な刺激に精液を勢い良く飛ばした……
 			ENDIF
-		CASE "�V�b�N�X�i�C��"
-			IF NOWEX:PLAYER:�ː� == 1
-				PRINTFORML %CALLNAME:TARGET%�͔镔�ւ̎h���ɑ̂�k�킹�Ȃ��琸�t�����ݍ���ł����c�c
+		CASE "シックスナイン"
+			IF NOWEX:PLAYER:射精 == 1
+				PRINTFORML %CALLNAME:TARGET%は秘部への刺激に体を震わせながら精液を飲み込んでいく……
 			ELSE
-				PRINTFORML %CALLNAME:TARGET%�̐����O�ɂ��āA%CALLNAME:PLAYER%�̉����g�͔M�������ŋ����Ⓒ���}�����c�c
+				PRINTFORML %CALLNAME:TARGET%の性器を前にして、%CALLNAME:PLAYER%の下半身は熱い口内で強い絶頂を迎えた……
 			ENDIF
-			SIF ABL:���t���� >= 3 && !NOWEX:�ː�
-				PRINTFORML %CALLNAME:PLAYER%�̐��ǂ��琸�t���o��x�ɁA%CALLNAME:TARGET%�̐��킩����ː����邩�̂悤�ɓ����ȏ`�����o���c�c
-		CASE "69�p�C�Y��"
-			PRINTFORM �ׂ鏗�����ڂ̑O�ɂ��āA%CALLNAME:PLAYER%�̃y�j�X��%CALLNAME:TARGET%��
-			SELECTCASE TALENT:�o�X�g�T�C�Y
+			SIF ABL:精液中毒 >= 3 && !NOWEX:射精
+				PRINTFORML %CALLNAME:PLAYER%の精管から精液が出る度に、%CALLNAME:TARGET%の性器からも射精するかのように透明な汁が溢れ出た……
+		CASE "69パイズリ"
+			PRINTFORM 跨る女性器を目の前にして、%CALLNAME:PLAYER%のペニスは%CALLNAME:TARGET%の
+			SELECTCASE TALENT:バストサイズ
 				CASE 1, 2
-					PRINT �������Ɉ�����Ȃ���
+					PRINT 薄い胸に扱かれながら
 				CASE 3
-					PRINT ���[�̒���
+					PRINT 乳房の中で
 				CASE 4, 5
-					PRINT �L���ȓ��[�ɕ�ݍ��܂��
+					PRINT 豊満な乳房に包み込まれて
 			ENDSELECT
-			PRINTL �ː����}�����c�c
+			PRINTL 射精を迎えた……
 			SIF OVER_BUST(TARGET) != ""
-				PRINTFORML %CALLNAME:TARGET%��%OVER_BUST(TARGET)%�́A����Ԃ���_������o���������t�ŉ���Ă���c�c
-		CASE "�}��G�X�|�ӂ�"
-			PRINTFORML %CALLNAME:TARGET%���S�ǂ��y�j�X�ŝP�����܂܁A%CALLNAME:PLAYER%�͗��݂��S���̒��Ŏː������c�c
+				PRINTFORML %CALLNAME:TARGET%の%OVER_BUST(TARGET)%は、反り返る肉棒から溢れ出した白濁液で汚れている……
+		CASE "挿入Gスポ責め"
+			PRINTFORML %CALLNAME:TARGET%の膣壁をペニスで抉ったまま、%CALLNAME:PLAYER%は絡みつく膣肉の中で射精した……
 			LOCAL:1++
-		CASE "�}���q�{���ӂ�"
-			PRINTFORML %CALLNAME:TARGET%�̎q�{�ɔM�����t���������܂�Ă������c�c
+		CASE "挿入子宮口責め"
+			PRINTFORML %CALLNAME:TARGET%の子宮に熱い精液が注ぎ込まれていった……
 			LOCAL:1++
-		CASE "�_�u���f��"
-			IF NOWEX:PLAYER:�ː� == 1
-				PRINTFORML �f���o���ꂽ���t����l�̑̂������Ă������c�c
+		CASE "ダブル素股"
+			IF NOWEX:PLAYER:射精 == 1
+				PRINTFORML 吐き出された精液が二人の体を汚していった……
 			ELSE
-				PRINTL ��l�͓̑̂f���o���ꂽ��ʂ̐��t�ɂ܂݂�Ă������c�c
+				PRINTL 二人の体は吐き出された大量の精液にまみれていった……
 			ENDIF
-		CASE "���Ԍ�����"
+		CASE "自慰見せつけ"
 			IF VAGINA(PLAYER)
-				PRINTFORML %CALLNAME:PLAYER%�͉����̂��܂�A�S��������𕬂��Ȃ���y�j�X���甒���t���΂����c�c
+				PRINTFORML %CALLNAME:PLAYER%は快感のあまり、膣からも潮を噴きながらペニスから白濁液を飛ばした……
 			ELSE
-				PRINTFORML %CALLNAME:PLAYER%�̓y�j�X��������𑬂߁A%CALLNAME:TARGET%�Ɍ������Đ��t���΂����c�c
+				PRINTFORML %CALLNAME:PLAYER%はペニスを扱く手を速め、%CALLNAME:TARGET%に向かって精液を飛ばした……
 			ENDIF
-		CASE "�o�C�u��}��", "�t�B�X�g�t�@�b�N������"
-			IF NOWEX:PLAYER:�ː� == 1
-				PRINTFORML %CALLNAME:PLAYER%���S���ɒ��ވٕ��̎h���ŁA�y�j�X���琸�t�𐂂ꗬ���Ă���c�c
+		CASE "バイブ被挿入", "フィストファックさせる"
+			IF NOWEX:PLAYER:射精 == 1
+				PRINTFORML %CALLNAME:PLAYER%は膣奥に沈む異物の刺激で、ペニスから精液を垂れ流している……
 			ELSE
-				PRINTFORML %CALLNAME:PLAYER%���S���ɒ��ވٕ��̋���Ȏh���Ō������y�j�X��k�킹�A��������`���܂łɐ����ǂ��ː������c�c
+				PRINTFORML %CALLNAME:PLAYER%は膣奥に沈む異物の強烈な刺激で激しくペニスを震わせ、放物線を描くまでに勢い良く射精した……
 			ENDIF
-		CASE "�A�i���o�C�u��}��", "�t�B�X�g�t�@�b�N������"
-			IF NOWEX:PLAYER:�ː� == 1
-				PRINTFORML %CALLNAME:PLAYER%�͐K���ւ̏d���݂������ŁA�y�j�X���琸�t�𐂂ꗬ���Ă���c�c
+		CASE "アナルバイブ被挿入", "フィストファックさせる"
+			IF NOWEX:PLAYER:射精 == 1
+				PRINTFORML %CALLNAME:PLAYER%は尻穴への重く鈍い快感で、ペニスから精液を垂れ流している……
 			ELSE
-				PRINTFORML %CALLNAME:PLAYER%�͐K���ւ̏d���݂�����ȉ������猃�����y�j�X��k�킹�A��������`���܂łɐ����ǂ��ː������c�c
+				PRINTFORML %CALLNAME:PLAYER%は尻穴への重く鈍い強烈な快感から激しくペニスを震わせ、放物線を描くまでに勢い良く射精した……
 			ENDIF
-		CASE "���[�^�[����������", "�d�C������������"
-			PRINTFORML %CALLNAME:PLAYER%�͏����݂ɐU������ߋ�̎h���Ŏː������c�c
+		CASE "ローター愛撫させる", "電気按摩愛撫させる"
+			PRINTFORML %CALLNAME:PLAYER%は小刻みに振動する玩具の刺激で射精した……
 		CASEELSE
-			;SIF SELECTCOMS != "��{�t�F��" && SELECTCOMS != "3P"
-			;	PRINTFORML %CALLNAME:PLAYER%�̃y�j�X�͂т��т��ƒ��ˁA���t����o���Ă���c�c
+			;SIF SELECTCOMS != "二本フェラ" && SELECTCOMS != "3P"
+			;	PRINTFORML %CALLNAME:PLAYER%のペニスはびくびくと跳ね、精液を放出している……
 	ENDSELECT
 	LOCAL++
 ENDIF
 
-;�h���S���̎ː�
-IF NOWEX:PLAYER:�h���S���ː�
+;ドラゴンの射精
+IF NOWEX:PLAYER:ドラゴン射精
 	SELECTCASE SELECTCOMS
-		CASE "�t�F��������i�h���S���j"
-			PRINTFORML %CSTR:PLAYER:�h���S��%���Y���т��グ��Ƌ��Ƀy�j�X�̐�[�����ʂ̐��t�𕬂��o���ƁA%CALLNAME:TARGET%�̓��ォ��J�̂悤�ɍ~�蒍�����c�c
-		CASE "�S��Ƃ��i�h���S���j"
-			PRINTFORML �ː����}����%CSTR:PLAYER:�h���S��%���Ⴂ���ŚX��ƁA%CALLNAME:TARGET%�̕����c��ނقǂ̐��t�����o����A���������琨���ǂ��R��o�Ă���c�c
-		CASE "�A�i����Ƃ��i�h���S���j"
-			PRINTFORML %CSTR:PLAYER:�h���S��%�̑��������d���y�j�X��%CALLNAME:TARGET%�̃A�i�����т����܂ܑ̂������グ��ƁA�l�ԂƂ͔�ו��ɂȂ�Ȃ��قǑ��ʂ̐��t������������o�����c�c
+		CASE "フェラさせる（ドラゴン）"
+			PRINTFORML %CSTR:PLAYER:ドラゴン%が雄叫びを上げると共にペニスの先端から大量の精液を噴き出すと、%CALLNAME:TARGET%の頭上から雨のように降り注いだ……
+		CASE "膣を犯す（ドラゴン）"
+			PRINTFORML 射精を迎える%CSTR:PLAYER:ドラゴン%が低い声で唸ると、%CALLNAME:TARGET%の腹が膨らむほどの精液が放出され、結合部から勢い良く漏れ出ている……
+		CASE "アナルを犯す（ドラゴン）"
+			PRINTFORML %CSTR:PLAYER:ドラゴン%の太く長く硬いペニスが%CALLNAME:TARGET%のアナルを貫いたまま体を持ち上げると、人間とは比べ物にならないほど多量の精液が腸内から溢れ出した……
 	ENDSELECT
 	LOCAL++
 ENDIF
 
-;�����r��
-SIF TFLAG:�R�}���h�j�Z && LOCAL:1
-	PRINTL �S������R��o�鐸�t�͔j�Z�̌���������A�Ԃ݂𗁂тĂ���c�c
+;処女喪失
+SIF TFLAG:コマンド破瓜 && LOCAL:1
+	PRINTL 膣内から漏れ出る精液は破瓜の血が混ざり、赤みを浴びている……
 
-;��l�ː�
-IF NOWEX:MASTER:�ː�
+;主人射精
+IF NOWEX:MASTER:射精
 	SELECTCASE SELECTCOMS
-		CASE "�����Ƃ�"
-			IF NOWEX:PLAYER:�ː� == 1
-				IF CFLAG:ASSI:�ח�
-					PRINTFORML \@ TFLAG:��l�}���ӏ� == 1 ? �S�̈�ԉ� # �K�� \@�Ő��t�������%CALLNAME:ASSI%�́A%CALLNAME:TARGET%�Ɍ�������悤��%CALLNAME:MASTER%�ɊÂ��Ă݂����c�c
+		CASE "助手を犯す"
+			IF NOWEX:PLAYER:射精 == 1
+				IF CFLAG:ASSI:陥落
+					PRINTFORML \@ TFLAG:主人挿入箇所 == 1 ? 膣の一番奥 # 尻穴 \@で精液を搾り取る%CALLNAME:ASSI%は、%CALLNAME:TARGET%に見せつけるように%CALLNAME:MASTER%に甘えてみせた……
 				ELSE
-					PRINTFORML %CALLNAME:MASTER%�Ɏ�𒍂����%CALLNAME:ASSI%�́A���������Ȃ��܂܎���H�����΂��Ă���c�c
+					PRINTFORML %CALLNAME:MASTER%に種を注がれる%CALLNAME:ASSI%は、何も言えないまま歯を食いしばっている……
 				ENDIF
 			ELSE
-				IF CFLAG:ASSI:�ח�
-					PRINTFORML %CALLNAME:MASTER%��%CALLNAME:ASSI%�ɂ�������̐��t�𒍂��I����ƁA%CALLNAME:ASSI%��\@ SEX(ASSI) == 1 ? �K�� # �S�� \@���g�����o�鐸�t��%CALLNAME:TARGET%�Ɍ��������c�c
+				IF CFLAG:ASSI:陥落
+					PRINTFORML %CALLNAME:MASTER%が%CALLNAME:ASSI%にたくさんの精液を注ぎ終えると、%CALLNAME:ASSI%は\@ SEX(ASSI) == 1 ? 尻穴 # 膣口 \@を拡げ溢れ出る精液を%CALLNAME:TARGET%に見せつけた……
 				ELSE
-					PRINTFORML �e�͖������t��ł��t������%CALLNAME:ASSI%�́A�����ɗ��܂邠�Ȃ��̐��t�������č��ɂ������o�������Ȋ炾�c�c
+					PRINTFORML 容赦無く精液を打ち付けられる%CALLNAME:ASSI%は、腹部に溜まるあなたの精液を感じて今にも泣き出しそうな顔だ……
 				ENDIF
 			ENDIF
-			IF (TALENT:�e�� || TALENT:���w || TALENT:�ꑮ) && !NOWEX:�ː�
-				PRINTFORML ���������%CALLNAME:TARGET%�͔��M��X�点���悤�Ȋ�ŁA�����̒��ɂ��ː����Ăق����Ƃ�����ł����c�c
-			ELSEIF CFLAG:�ח� && !NOWEX:�ː�
-				PRINTFORML %CALLNAME:TARGET%�͂��̎p��A�܂������Ɍ��߂Ă���c�c
-			ELSEIF !NOWEX:�ː�
-				PRINTFORML %CALLNAME:TARGET%�͂��̌��i����ڂ�w���Ă���c�c
-				SIF PENIS(TARGET) && PALAM:�~�� >= PALAMLV:3
-					PRINTFORML �������ҊԂ̂���͂�������Ɣ������A�����ɂł�%CALLNAME:MASTER%�̑��肪���܂肻�����c�c
+			IF (TALENT:親愛 || TALENT:娼婦 || TALENT:隷属) && !NOWEX:射精
+				PRINTFORML それを見た%CALLNAME:TARGET%は微熱を拗らせたような顔で、自分の中にも射精してほしいとせがんできた……
+			ELSEIF CFLAG:陥落 && !NOWEX:射精
+				PRINTFORML %CALLNAME:TARGET%はその姿を羨ましそうに見つめている……
+			ELSEIF !NOWEX:射精
+				PRINTFORML %CALLNAME:TARGET%はその光景から目を背けている……
+				SIF PENIS(TARGET) && PALAM:欲情 >= PALAMLV:3
+					PRINTFORML しかし股間のそれはしっかりと反応し、すぐにでも%CALLNAME:MASTER%の代わりが務まりそうだ……
 			ENDIF
-		CASE "�_�u���t�F��"
-			IF NOWEX:PLAYER:�ː� == 1
-				PRINTFORML %CALLNAME:TARGET%��%CALLNAME:ASSI%�͐��t�����Ŏ󂯎~�߂Ă���c�c
+		CASE "ダブルフェラ"
+			IF NOWEX:PLAYER:射精 == 1
+				PRINTFORML %CALLNAME:TARGET%と%CALLNAME:ASSI%は精液を口で受け止めている……
 			ELSE
-				PRINTFORML ��ʂ̐��t��%CALLNAME:TARGET%��%CALLNAME:ASSI%�̊璆�ɍ~�蒍�����c�c
-				SIF CFLAG:�ח� && CFLAG:ASSI:�ח� && !NOWEX:�ː�
-					PRINTL ��l�݂͌��̊�ɕt�������t�����r�ߍ����Ă���c�c
+				PRINTFORML 大量の精液が%CALLNAME:TARGET%と%CALLNAME:ASSI%の顔中に降り注いだ……
+				SIF CFLAG:陥落 && CFLAG:ASSI:陥落 && !NOWEX:射精
+					PRINTL 二人は互いの顔に付いた精液を舌で舐め合っている……
 			ENDIF
-		CASE "�_�u���p�C�Y��"
-			IF NOWEX:PLAYER:�ː� == 1
-				PRINTFORML %CALLNAME:TARGET%��%CALLNAME:ASSI%�̋������܂ł𐸉t�������Ă������c�c
+		CASE "ダブルパイズリ"
+			IF NOWEX:PLAYER:射精 == 1
+				PRINTFORML %CALLNAME:TARGET%と%CALLNAME:ASSI%の胸から顔までを精液が汚していった……
 			ELSE
-				PRINTFORML �y�j�X���ޓ�l�̋������A���̖тɎ���܂ł𐸉t���������ߏグ���c�c
+				PRINTFORML ペニスを包む二人の胸から顔、髪の毛に至るまでを精液が白く染め上げた……
 			ENDIF
 		CASE "3P"
-			IF NOWEX:MASTER:�ː�
-				PRINTFORM %CALLNAME:TARGET%�͂���
-				SIF TALENT:�����̌^ || TALENT:���l�̌^
-					PRINT ������
-				PRINTFORM �̂�%CALLNAME:MASTER%��%CALLNAME:ASSI%�̐��t��
-				SIF CFLAG:�ח�
-					PRINT ����t
-				PRINTL �󂯎~�߂Ă���c�c
+			IF NOWEX:MASTER:射精
+				PRINTFORM %CALLNAME:TARGET%はその
+				SIF TALENT:小柄体型 || TALENT:小人体型
+					PRINT 小さな
+				PRINTFORM 体で%CALLNAME:MASTER%と%CALLNAME:ASSI%の精液を
+				SIF CFLAG:陥落
+					PRINT 精一杯
+				PRINTL 受け止めている……
 			ELSE
-				SELECTCASE TFLAG:��l�}���ӏ�
+				SELECTCASE TFLAG:主人挿入箇所
 					CASE 1
-						PRINTFORML %CALLNAME:MASTER%��%CALLNAME:TARGET%���S���Ɏː������c�c
+						PRINTFORML %CALLNAME:MASTER%は%CALLNAME:TARGET%の膣内に射精した……
 					CASE 2
-						PRINTFORML %CALLNAME:MASTER%��%CALLNAME:TARGET%�̒����Ɏː������c�c
+						PRINTFORML %CALLNAME:MASTER%は%CALLNAME:TARGET%の腸内に射精した……
 					CASE 3
-						PRINTFORML %CALLNAME:MASTER%��%CALLNAME:TARGET%�̌����Ɏː������c�c
+						PRINTFORML %CALLNAME:MASTER%は%CALLNAME:TARGET%の口内に射精した……
 				ENDSELECT
 			ENDIF
 	ENDSELECT
 ENDIF
 
-;����ː�
-IF ASSI > 0 && NOWEX:ASSI:�ː�
+;助手射精
+IF ASSI > 0 && NOWEX:ASSI:射精
 	SELECTCASE SELECTCOMS
-		CASE "�����Ƃ�����"
-			IF NOWEX:�ː�
-				PRINTFORML %CALLNAME:TARGET%�Ɏq���ł��t�����Ȃ���A%CALLNAME:ASSI%���ː����Ă���c�c
+		CASE "助手を犯させる"
+			IF NOWEX:射精
+				PRINTFORML %CALLNAME:TARGET%に子種を打ち付けられながら、%CALLNAME:ASSI%も射精している……
 			ELSE
-				PRINTFORML �Ȃ����܂܂ɔƂ����%CALLNAME:ASSI%�́A%CALLNAME:TARGET%�̓����ɍ��킹��悤�Ɏː����Ă��܂��Ă���c�c
+				PRINTFORML なすがままに犯される%CALLNAME:ASSI%は、%CALLNAME:TARGET%の動きに合わせるように射精してしまっている……
 			ENDIF
-		CASE "�����Ƃ�"
-			IF NOWEX:MASTER:�ː�
-				PRINTFORML %CALLNAME:MASTER%��%CALLNAME:ASSI%�̒��Ɏː�����ƁA%CALLNAME:ASSI%������ɍ��킹�Ďː����}�����c�c
+		CASE "助手を犯す"
+			IF NOWEX:MASTER:射精
+				PRINTFORML %CALLNAME:MASTER%が%CALLNAME:ASSI%の中に射精すると、%CALLNAME:ASSI%もそれに合わせて射精を迎えた……
 			ELSE
-				PRINTFORML %CALLNAME:MASTER%�ɓ˂����%CALLNAME:ASSI%�́A��������O�シ��A�s�ɉ����o�����悤�ɐ��t��R�炵�Ă���c�c
+				PRINTFORML %CALLNAME:MASTER%に突かれる%CALLNAME:ASSI%は、下腹部を前後する陰茎に押し出されるように精液を漏らしている……
 			ENDIF
 		CASE "3P"
-			IF !NOWEX:MASTER:�ː�
-				SELECTCASE TFLAG:����}���ӏ�
+			IF !NOWEX:MASTER:射精
+				SELECTCASE TFLAG:助手挿入箇所
 					CASE 1
-						PRINTFORML %CALLNAME:ASSI%��%CALLNAME:TARGET%���S���Ɏː������c�c
+						PRINTFORML %CALLNAME:ASSI%は%CALLNAME:TARGET%の膣内に射精した……
 					CASE 2
-						PRINTFORML %CALLNAME:ASSI%��%CALLNAME:TARGET%�̒����Ɏː������c�c
+						PRINTFORML %CALLNAME:ASSI%は%CALLNAME:TARGET%の腸内に射精した……
 					CASE 3
-						PRINTFORML %CALLNAME:ASSI%��%CALLNAME:TARGET%�̌����Ɏː������c�c
+						PRINTFORML %CALLNAME:ASSI%は%CALLNAME:TARGET%の口内に射精した……
 				ENDSELECT
 			ENDIF
 	ENDSELECT
 	LOCAL++
 ENDIF
 
-IF SELECTCOMS == "��{�t�F��"
-	IF NOWEX:MASTER:�ː� && NOWEX:ASSI:�ː�
-		PRINTFORML %CALLNAME:MASTER%��%CALLNAME:ASSI%�͓����Ɏː����A%CALLNAME:TARGET%�̊���l���̐��t�ŉ������c�c
-	ELSEIF NOWEX:MASTER:�ː�
-		PRINTFORML �ЂƂ̌�����{�̊Ƃɕ�d���钆�A%CALLNAME:MASTER%�͐�Ɏː����Ă��܂����c�c
-	ELSEIF NOWEX:ASSI:�ː�
-		PRINTFORML ���������Ⓒ�ɒB����%CALLNAME:ASSI%���A%CALLNAME:TARGET%�̊��%CALLNAME:MASTER%�̃y�j�X�ɐ��t���Ԃ��܂����c�c
+IF SELECTCOMS == "二本フェラ"
+	IF NOWEX:MASTER:射精 && NOWEX:ASSI:射精
+		PRINTFORML %CALLNAME:MASTER%と%CALLNAME:ASSI%は同時に射精し、%CALLNAME:TARGET%の顔を二人分の精液で汚した……
+	ELSEIF NOWEX:MASTER:射精
+		PRINTFORML ひとつの口が二本の竿に奉仕する中、%CALLNAME:MASTER%は先に射精してしまった……
+	ELSEIF NOWEX:ASSI:射精
+		PRINTFORML いち早く絶頂に達した%CALLNAME:ASSI%が、%CALLNAME:TARGET%の顔と%CALLNAME:MASTER%のペニスに精液をぶちまけた……
 	ENDIF
 	LOCAL++
 ENDIF
 
-;�p�~
+;廃止
 ;SIF LOCAL
 ;	WAIT
 
 ;-------------------------------------------
-;�G��̎ː����̃e�L�X�g
+;触手の射精時のテキスト
 ;-------------------------------------------
 @TSHOOT_MESSAGE
-SELECTCASE NOWEX:MASTER:�G��ː�
-	;�G�肪�ː�
+SELECTCASE NOWEX:MASTER:触手射精
+	;触手が射精
 	CASE 1
-		PRINTFORML %CALLNAME:TARGET%�ɗ��݂����G�肪�S���̉t��f���o�����c�c
-	;�G�肪��ʎː�
+		PRINTFORML %CALLNAME:TARGET%に絡みついた触手が粘つく体液を吐き出した……
+	;触手が大量射精
 	CASE IS >= 2
-		PRINTFORML %CALLNAME:TARGET%�̑S�g�ɗ��݂����G�肪��ĂɔS���̉t��f���o�����c�c
+		PRINTFORML %CALLNAME:TARGET%の全身に絡みついた触手が一斉に粘つく体液を吐き出した……
 ENDSELECT
-;�e�L�X�g��ǂނ��߂̃E�G�C�g
-;�\��������Ƃ��̂�
-;SIF NOWEX:MASTER:�G��ː�
+;テキストを読むためのウエイト
+;表示があるときのみ
+;SIF NOWEX:MASTER:触手射精
 ;	WAIT
 
 

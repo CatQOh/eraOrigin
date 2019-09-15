@@ -1,87 +1,87 @@
+﻿;-------------------------------------------------
+;腹パン
 ;-------------------------------------------------
-;���p��
-;-------------------------------------------------
-@USERCOM_ABLE_���p��, ARG
+@USERCOM_ABLE_腹パン, ARG
 #FUNCTION
-;�D�P���͒����҂��T�h�������͋֒f�̒m����������Ȃ��Ƃł��Ȃ�
-IF TALENT:MASTER:�T�h || TALENT:MASTER:�֒f�̒m��
+;妊娠中は調教者がサドもしくは禁断の知識持ちじゃないとできない
+IF TALENT:MASTER:サド || TALENT:MASTER:禁断の知識
 	COMRESULT = 1
 	RETURNF 1
 ENDIF
-SIF TALENT:�D�P
+SIF TALENT:妊娠
 	RETURNF 0
 
 COMRESULT = 1
 RETURNF 1
 
-@COM_���p��
-PRINTL ���p��
+@COM_腹パン
+PRINTL 腹パン
 CALL KOJO_MESSAGE_COM
 
 ;-------------------------------------------------
-;�\�[�X�ǉ�����
+;ソース追加処理
 ;-------------------------------------------------
-IF TALENT:�D�P && RAND:4 == 0
-	;����̗́A�C��
-	LOSEBASE:�̗� += 3500
-	LOSEBASE:�C�� += 5000
-	SOURCE:��� = 30000
-	SOURCE:���| = 6000
-	SOURCE:���] = 500
-	SOURCE:��E = 10000
-	SOURCE:���� = 10000
+IF TALENT:妊娠 && RAND:4 == 0
+	;消費体力、気力
+	LOSEBASE:体力 += 3500
+	LOSEBASE:気力 += 5000
+	SOURCE:苦痛 = 30000
+	SOURCE:恐怖 = 6000
+	SOURCE:屈従 = 500
+	SOURCE:逸脱 = 10000
+	SOURCE:反感 = 10000
 	SETCOLOR 255 , 0 , 0
 		FONTBOLD
-			PRINTW ���Y
+			PRINTW 流産
 		FONTREGULAR
 	RESETCOLOR
-	TFLAG:���Y = 1
-	TALENT:�D�P = 0
+	TFLAG:流産 = 1
+	TALENT:妊娠 = 0
 ELSE
-	;����̗́A�C��
-	LOSEBASE:�̗� += 150
-	LOSEBASE:�C�� += 100
+	;消費体力、気力
+	LOSEBASE:体力 += 150
+	LOSEBASE:気力 += 100
 
-	SIF CFLAG:�ח�
-		SOURCE:� = 100
-	SOURCE:��� = 1000
-	SOURCE:���| = 1000
-	SOURCE:���] = 150
-	SOURCE:��E = 500
-	SOURCE:���� = 1500
+	SIF CFLAG:陥落
+		SOURCE:情愛 = 100
+	SOURCE:苦痛 = 1000
+	SOURCE:恐怖 = 1000
+	SOURCE:屈従 = 150
+	SOURCE:逸脱 = 500
+	SOURCE:反感 = 1500
 ENDIF
 
-DOWNBASE:MASTER:�̗� += 60
-DOWNBASE:MASTER:�C�� += 40
+DOWNBASE:MASTER:体力 += 60
+DOWNBASE:MASTER:気力 += 40
 
 ;-------------------------------------------------
-;����\�[�X����
+;特殊ソース処理
 ;-------------------------------------------------
-;��ɂ̃p�����[�^�ɂ���ɂ̃\�[�X�����͐�ɏ������Ă���
-SOURCE:��� += GETPALAMLV(PALAM:���, 4)*(SOURCE:���/2)
+;苦痛のパラメータによる苦痛のソース増加は先に処理しておく
+SOURCE:苦痛 += GETPALAMLV(PALAM:苦痛, 4)*(SOURCE:苦痛/2)
 
 ;-------------------------------------------------
-;�Ⓒ�`�F�b�N
+;絶頂チェック
 ;-------------------------------------------------
 CALL SOURCE_CHECK_CVAB
 
 ;-------------------------------------------------
-;�ː��`�F�b�N
+;射精チェック
 ;-------------------------------------------------
 CALL SAMEN_CHECK_T, 0
 
-CALL SAMEN_SHOOT_T, 0, NOWEX:�ː�
+CALL SAMEN_SHOOT_T, 0, NOWEX:射精
 
 ;-------------------------------------------------
-;�o���̏���
+;経験の処理
 ;-------------------------------------------------
 CALL EXPUP, 1, 4
 
-;�ˑ��x�␳�l(���]��1�A�ꑮ��2�j
-IF TALENT:���] && PLAYER == MASTER
-	TFLAG:�ˑ��x�␳ += 1
-ELSEIF TALENT:�ꑮ && PLAYER == MASTER
-	TFLAG:�ˑ��x�␳ += 2
+;依存度補正値(服従で1、隷属で2）
+IF TALENT:服従 && PLAYER == MASTER
+	TFLAG:依存度補正 += 1
+ELSEIF TALENT:隷属 && PLAYER == MASTER
+	TFLAG:依存度補正 += 2
 ENDIF
 
 RETURN 1

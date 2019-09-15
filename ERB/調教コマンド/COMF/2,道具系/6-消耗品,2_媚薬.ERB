@@ -1,67 +1,67 @@
+﻿;-------------------------------------------------
+;媚薬
 ;-------------------------------------------------
-;�Z��
-;-------------------------------------------------
-@USERCOM_ABLE_�Z��, ARG
+@USERCOM_ABLE_媚薬, ARG
 #FUNCTION
-;��őϐ����ƃ_��
-SIF TALENT:��őϐ�
+;薬毒耐性だとダメ
+SIF TALENT:薬毒耐性
 	RETURNF 0
-;[���@��]���푰:�@�B���ƃ_��
-SIF TALENT:���@�� || CSTR:�푰 == "�@�B"
+;[無機物]か種族:機械だとダメ
+SIF TALENT:無機物 || CSTR:種族 == "機械"
 	RETURNF 0
 
 COMRESULT = 1
 RETURNF 1
 
-@COM_�Z��
-PRINTL �Z��
+@COM_媚薬
+PRINTL 媚薬
 CALL KOJO_MESSAGE_COM
 
-CFLAG:�Z�� += 10
-TEQUIP:�Z�� = 1
+CFLAG:媚薬 += 10
+TEQUIP:媚薬 = 1
 
-CFLAG:PLAYER:�Z�� += 5
-TEQUIP:PLAYER:�Z�� = 1
+CFLAG:PLAYER:媚薬 += 5
+TEQUIP:PLAYER:媚薬 = 1
 
 SIF PENIS(TARGET)
-	CFLAG:�c�� += 2
+	CFLAG:残数 += 2
 SIF PENIS(PLAYER)
-	CFLAG:PLAYER:�c��++
+	CFLAG:PLAYER:残数++
 
 ;-------------------------------------------------
-;�\�[�X�ǉ�����
+;ソース追加処理
 ;-------------------------------------------------
-;����̗́A�C��
-;�����҂������m���������Ă���Ώ����}������
-IF TALENT:PLAYER:�����m��
-	LOSEBASE:�̗� += 150
-	LOSEBASE:�C�� += 150
+;消費体力、気力
+;調教者が調合知識を持っていれば消費を抑えられる
+IF TALENT:PLAYER:調合知識
+	LOSEBASE:体力 += 150
+	LOSEBASE:気力 += 150
 ELSE
-	LOSEBASE:�̗� += 300
-	LOSEBASE:�C�� += 300
+	LOSEBASE:体力 += 300
+	LOSEBASE:気力 += 300
 ENDIF
 
-DOWNBASE:MASTER:�̗� += 100
-DOWNBASE:MASTER:�C�� += 100
+DOWNBASE:MASTER:体力 += 100
+DOWNBASE:MASTER:気力 += 100
 
-;�Z����ʂŗ~��̃A�b�v��2�{�ɂȂ�̂Ŏ��ۂɂ�+5000
-UP:�~�� = 2500
-SOURCE:��E = 1000
+;媚薬効果で欲情のアップが2倍になるので実際には+5000
+UP:欲情 = 2500
+SOURCE:逸脱 = 1000
 
 ;-------------------------------------------------
-;�Ⓒ�`�F�b�N
+;絶頂チェック
 ;-------------------------------------------------
 CALL SOURCE_CHECK_CVAB
 
 ;-------------------------------------------------
-;�ː��`�F�b�N
+;射精チェック
 ;-------------------------------------------------
 CALL SAMEN_CHECK_T, 0
 
-CALL SAMEN_SHOOT_T, 0, NOWEX:�ː�
+CALL SAMEN_SHOOT_T, 0, NOWEX:射精
 
 ;-------------------------------------------------
-;�o���̏���
+;経験の処理
 ;-------------------------------------------------
 CALL EXPUP, 1, 1
 

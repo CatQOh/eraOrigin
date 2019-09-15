@@ -1,163 +1,163 @@
+ï»¿;-------------------------------------------------
+;ç½µå€’
 ;-------------------------------------------------
-;”l“|
-;-------------------------------------------------
-@USERCOM_ABLE_”l“|, ARG
+@USERCOM_ABLE_ç½µå€’, ARG
 #FUNCTION
-;’²‹³ŽÒ‚ªƒTƒhŽ‚¿‚¶‚á‚È‚¢‚Æƒ_ƒ
-SIF !TALENT:PLAYER:ƒTƒh
+;èª¿æ•™è€…ãŒã‚µãƒ‰æŒã¡ã˜ã‚ƒãªã„ã¨ãƒ€ãƒ¡
+SIF !TALENT:PLAYER:ã‚µãƒ‰
 	RETURNF 0
 
 COMRESULT = 1
 RETURNF 1
 
-@COM_”l“|
-PRINTL ”l“|
+@COM_ç½µå€’
+PRINTL ç½µå€’
 CALL KOJO_MESSAGE_COM
 
 ;-------------------------------------------------
-;ƒ\[ƒX’Ç‰Áˆ—
+;ã‚½ãƒ¼ã‚¹è¿½åŠ å‡¦ç†
 ;-------------------------------------------------
-;Á”ï‘Ì—ÍA‹C—Í
-LOSEBASE:‘Ì—Í += 10
-LOSEBASE:‹C—Í += 100
+;æ¶ˆè²»ä½“åŠ›ã€æ°—åŠ›
+LOSEBASE:ä½“åŠ› += 10
+LOSEBASE:æ°—åŠ› += 100
 
-DOWNBASE:MASTER:‘Ì—Í += 20
-DOWNBASE:MASTER:‹C—Í += 10
+DOWNBASE:MASTER:ä½“åŠ› += 20
+DOWNBASE:MASTER:æ°—åŠ› += 10
 
-SOURCE:’†“Å = 700
-SOURCE:‹ü] = 200
-SOURCE:ˆí’E = 400
-SOURCE:”½Š´ = 500
+SOURCE:ä¸­æ¯’ = 700
+SOURCE:å±ˆå¾“ = 200
+SOURCE:é€¸è„± = 400
+SOURCE:åæ„Ÿ = 500
 
 ;-------------------------------------------------
-;“ÁŽêƒ\[ƒXˆ—
+;ç‰¹æ®Šã‚½ãƒ¼ã‚¹å‡¦ç†
 ;-------------------------------------------------
-;‹ê’É‚ð”º‚í‚È‚¢ƒ}ƒ]‚Á‹C‹y‚Ñƒ}ƒ]‚Ìˆ—‚Íæ‚É‚µ‚Ä‚¨‚­
-;ƒ}ƒ]‚Á‹C‚ðŒ©‚é
-SELECTCASE ABL:ƒ}ƒ]‚Á‹C
+;è‹¦ç—›ã‚’ä¼´ã‚ãªã„ãƒžã‚¾ã£æ°—åŠã³ãƒžã‚¾ã®å‡¦ç†ã¯å…ˆã«ã—ã¦ãŠã
+;ãƒžã‚¾ã£æ°—ã‚’è¦‹ã‚‹
+SELECTCASE ABL:ãƒžã‚¾ã£æ°—
 	CASE 0
-		TIMES SOURCE:‹ü] , 0.80
-		SOURCE:‰t‘Ì += 0
-		SOURCE:—~î += 0
+		TIMES SOURCE:å±ˆå¾“ , 0.80
+		SOURCE:æ¶²ä½“ += 0
+		SOURCE:æ¬²æƒ… += 0
 	CASE 1
-		TIMES SOURCE:‹ü] , 1.00
-		SOURCE:‰t‘Ì += 20
-		SOURCE:—~î += 30
+		TIMES SOURCE:å±ˆå¾“ , 1.00
+		SOURCE:æ¶²ä½“ += 20
+		SOURCE:æ¬²æƒ… += 30
 	CASE 2
-		TIMES SOURCE:‹ü] , 1.20
-		SOURCE:‰t‘Ì += 40
-		SOURCE:—~î += 70
+		TIMES SOURCE:å±ˆå¾“ , 1.20
+		SOURCE:æ¶²ä½“ += 40
+		SOURCE:æ¬²æƒ… += 70
 	CASE 3
-		TIMES SOURCE:‹ü] , 1.40
-		SOURCE:‰t‘Ì += 70
-		SOURCE:—~î += 120
+		TIMES SOURCE:å±ˆå¾“ , 1.40
+		SOURCE:æ¶²ä½“ += 70
+		SOURCE:æ¬²æƒ… += 120
 	CASE 4
-		TIMES SOURCE:‹ü] , 1.50
-		SOURCE:‰t‘Ì += 110
-		SOURCE:—~î += 180
+		TIMES SOURCE:å±ˆå¾“ , 1.50
+		SOURCE:æ¶²ä½“ += 110
+		SOURCE:æ¬²æƒ… += 180
 	CASE 5
-		TIMES SOURCE:‹ü] , 1.70
-		SOURCE:‰t‘Ì += 150
-		SOURCE:—~î += 250
+		TIMES SOURCE:å±ˆå¾“ , 1.70
+		SOURCE:æ¶²ä½“ += 150
+		SOURCE:æ¬²æƒ… += 250
 	CASE 6
-		TIMES SOURCE:‹ü] , 1.90
-		SOURCE:‰t‘Ì += 200
-		SOURCE:—~î += 300
+		TIMES SOURCE:å±ˆå¾“ , 1.90
+		SOURCE:æ¶²ä½“ += 200
+		SOURCE:æ¬²æƒ… += 300
 	CASE 7
-		TIMES SOURCE:‹ü] , 2.10
-		SOURCE:‰t‘Ì += 250
-		SOURCE:—~î += 350
+		TIMES SOURCE:å±ˆå¾“ , 2.10
+		SOURCE:æ¶²ä½“ += 250
+		SOURCE:æ¬²æƒ… += 350
 	CASE 8
-		TIMES SOURCE:‹ü] , 2.30
-		SOURCE:‰t‘Ì += 300
-		SOURCE:—~î += 400
+		TIMES SOURCE:å±ˆå¾“ , 2.30
+		SOURCE:æ¶²ä½“ += 300
+		SOURCE:æ¬²æƒ… += 400
 	CASE 9
-		TIMES SOURCE:‹ü] , 2.50
-		SOURCE:‰t‘Ì += 350
-		SOURCE:—~î += 450
+		TIMES SOURCE:å±ˆå¾“ , 2.50
+		SOURCE:æ¶²ä½“ += 350
+		SOURCE:æ¬²æƒ… += 450
 	CASE IS >= 10
-		TIMES SOURCE:‹ü] , 3.00
-		SOURCE:‰t‘Ì += 500
-		SOURCE:—~î += 500
+		TIMES SOURCE:å±ˆå¾“ , 3.00
+		SOURCE:æ¶²ä½“ += 500
+		SOURCE:æ¬²æƒ… += 500
 ENDSELECT
 
-;ƒ}ƒ]‚ðŒ©‚é
-IF TALENT:ƒ}ƒ]
-	TIMES SOURCE:‹ü] , 2.50
-	TIMES SOURCE:‰t‘Ì , 1.20
-	TIMES SOURCE:—~î , 1.20
+;ãƒžã‚¾ã‚’è¦‹ã‚‹
+IF TALENT:ãƒžã‚¾
+	TIMES SOURCE:å±ˆå¾“ , 2.50
+	TIMES SOURCE:æ¶²ä½“ , 1.20
+	TIMES SOURCE:æ¬²æƒ… , 1.20
 ENDIF
 
-;TALENT:”½R“I‚ð‚Ý‚é
-IF TALENT:”½R“I
-	TIMES SOURCE:’†“Å , 0.75
-	TIMES SOURCE:‹ü] , 0.75
-	TIMES SOURCE:”½Š´ , 1.50
+;TALENT:åæŠ—çš„ã‚’ã¿ã‚‹
+IF TALENT:åæŠ—çš„
+	TIMES SOURCE:ä¸­æ¯’ , 0.75
+	TIMES SOURCE:å±ˆå¾“ , 0.75
+	TIMES SOURCE:åæ„Ÿ , 1.50
 ENDIF
 
-;TALENT:‹Cä‚ð‚Ý‚é
-IF TALENT:‹Cä
-	TIMES SOURCE:’†“Å , 0.75
-	TIMES SOURCE:‹ü] , 0.75
-	TIMES SOURCE:”½Š´ , 2.50
+;TALENT:æ°—ä¸ˆã‚’ã¿ã‚‹
+IF TALENT:æ°—ä¸ˆ
+	TIMES SOURCE:ä¸­æ¯’ , 0.75
+	TIMES SOURCE:å±ˆå¾“ , 0.75
+	TIMES SOURCE:åæ„Ÿ , 2.50
 ENDIF
 
-;TALENT:ƒvƒ‰ƒCƒh‚‚¢‚ð‚Ý‚é
-IF TALENT:ƒvƒ‰ƒCƒh‚‚¢
-	TIMES SOURCE:’†“Å , 1.50
-	TIMES SOURCE:‹ü] , 1.50
-	TIMES SOURCE:”½Š´ , 2.00
+;TALENT:ãƒ—ãƒ©ã‚¤ãƒ‰é«˜ã„ã‚’ã¿ã‚‹
+IF TALENT:ãƒ—ãƒ©ã‚¤ãƒ‰é«˜ã„
+	TIMES SOURCE:ä¸­æ¯’ , 1.50
+	TIMES SOURCE:å±ˆå¾“ , 1.50
+	TIMES SOURCE:åæ„Ÿ , 2.00
 ENDIF
 
-;TALENT:¶ˆÓ‹C‚ð‚Ý‚é
-IF TALENT:¶ˆÓ‹C
-	TIMES SOURCE:’†“Å , 0.80
-	TIMES SOURCE:‹ü] , 0.80
-	TIMES SOURCE:”½Š´ , 1.80
+;TALENT:ç”Ÿæ„æ°—ã‚’ã¿ã‚‹
+IF TALENT:ç”Ÿæ„æ°—
+	TIMES SOURCE:ä¸­æ¯’ , 0.80
+	TIMES SOURCE:å±ˆå¾“ , 0.80
+	TIMES SOURCE:åæ„Ÿ , 1.80
 ENDIF
 
-;TALENT:ƒvƒ‰ƒCƒh’á‚¢‚ð‚Ý‚é
-IF TALENT:ƒvƒ‰ƒCƒh’á‚¢
-	TIMES SOURCE:’†“Å , 1.50
-	TIMES SOURCE:‹ü] , 0.75
-	TIMES SOURCE:”½Š´ , 0.75
+;TALENT:ãƒ—ãƒ©ã‚¤ãƒ‰ä½Žã„ã‚’ã¿ã‚‹
+IF TALENT:ãƒ—ãƒ©ã‚¤ãƒ‰ä½Žã„
+	TIMES SOURCE:ä¸­æ¯’ , 1.50
+	TIMES SOURCE:å±ˆå¾“ , 0.75
+	TIMES SOURCE:åæ„Ÿ , 0.75
 ENDIF
 
-;“ê‚Å‹Ù”›’†‚Ì‚Æ‚«Œø‰Êã¸
-SIF TEQUIP:“ê
-	TIMES SOURCE:‹ü] , 1.50
-;ƒ{[ƒ‹ƒMƒƒƒO‘•’…’†‚Ì‚Æ‚«Œø‰Êã¸
-SIF TEQUIP:ƒ{[ƒ‹ƒMƒƒƒO
-	TIMES SOURCE:‹ü] , 1.75
+;ç¸„ã§ç·Šç¸›ä¸­ã®ã¨ãåŠ¹æžœä¸Šæ˜‡
+SIF TEQUIP:ç¸„
+	TIMES SOURCE:å±ˆå¾“ , 1.50
+;ãƒœãƒ¼ãƒ«ã‚®ãƒ£ã‚°è£…ç€ä¸­ã®ã¨ãåŠ¹æžœä¸Šæ˜‡
+SIF TEQUIP:ãƒœãƒ¼ãƒ«ã‚®ãƒ£ã‚°
+	TIMES SOURCE:å±ˆå¾“ , 1.75
 
 ;-------------------------------------------------
-;â’¸ƒ`ƒFƒbƒN
+;çµ¶é ‚ãƒã‚§ãƒƒã‚¯
 ;-------------------------------------------------
 CALL SOURCE_CHECK_CVAB
 
 ;-------------------------------------------------
-;ŽË¸ƒ`ƒFƒbƒN
+;å°„ç²¾ãƒã‚§ãƒƒã‚¯
 ;-------------------------------------------------
 CALL SAMEN_CHECK_T, 0
 
-CALL SAMEN_SHOOT_T, 0, NOWEX:ŽË¸
+CALL SAMEN_SHOOT_T, 0, NOWEX:å°„ç²¾
 
 ;-------------------------------------------------
-;ŒoŒ±‚Ìˆ—
+;çµŒé¨“ã®å‡¦ç†
 ;-------------------------------------------------
 CALL EXPUP, 1, 1
 
-;ˆ¤îŒoŒ±(Œ¸­j
-IF FALLTYPE(TARGET) == 1 && !ASSIPLAY && EXP:ˆ¤îŒoŒ± > 0
-	PRINTL ˆ¤îŒoŒ±-1
-	EXP:ˆ¤îŒoŒ± -= 1
+;æ„›æƒ…çµŒé¨“(æ¸›å°‘ï¼‰
+IF FALLTYPE(TARGET) == 1 && !ASSIPLAY && EXP:æ„›æƒ…çµŒé¨“ > 0
+	PRINTL æ„›æƒ…çµŒé¨“-1
+	EXP:æ„›æƒ…çµŒé¨“ -= 1
 ENDIF
 
-;ˆË‘¶“x•â³’l(•ž]‚Å1A—ê‘®‚Å2j
-IF TALENT:•ž] && !ASSIPLAY
-	TFLAG:ˆË‘¶“x•â³ += 1
-ELSEIF TALENT:—ê‘® && !ASSIPLAY
-	TFLAG:ˆË‘¶“x•â³ += 2
+;ä¾å­˜åº¦è£œæ­£å€¤(æœå¾“ã§1ã€éš·å±žã§2ï¼‰
+IF TALENT:æœå¾“ && !ASSIPLAY
+	TFLAG:ä¾å­˜åº¦è£œæ­£ += 1
+ELSEIF TALENT:éš·å±ž && !ASSIPLAY
+	TFLAG:ä¾å­˜åº¦è£œæ­£ += 2
 ENDIF
 
 RETURN 1

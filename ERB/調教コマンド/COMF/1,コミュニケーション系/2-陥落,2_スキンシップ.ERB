@@ -1,76 +1,76 @@
+﻿;-------------------------------------------------
+;スキンシップ
 ;-------------------------------------------------
-;�X�L���V�b�v
-;-------------------------------------------------
-@USERCOM_ABLE_�X�L���V�b�v, ARG
+@USERCOM_ABLE_スキンシップ, ARG
 #FUNCTION
-;�z�ꂪ���炩�e���Ŏ��s�҂���l�łȂ��ƃ_��
+;奴隷が恋慕か親愛で実行者が主人でないとダメ
 SIF FALLTYPE(TARGET) != 1 || PLAYER != MASTER
 	RETURNF 0
-;�S�����̓_��
-SIF TEQUIP:�A�C�}�X�N || TEQUIP:�� || TEQUIP:�{�[���M���O || TEQUIP:�G��
+;拘束中はダメ
+SIF TEQUIP:アイマスク || TEQUIP:縄 || TEQUIP:ボールギャグ || TEQUIP:触手
 	RETURNF 0
 
 COMRESULT = 1
 RETURNF 1
 
-@COM_�X�L���V�b�v
-PRINTL �X�L���V�b�v
+@COM_スキンシップ
+PRINTL スキンシップ
 CALL KOJO_MESSAGE_COM
 
 ;-------------------------------------------------
-;�ː��Q�[�W�`�F�b�N�i�z��j
+;射精ゲージチェック（奴隷）
 ;-------------------------------------------------
-;�����̂͂��݂ŐG��Ă��܂�����
+;何かのはずみで触れてしまったら
 IF RAND:2 == 0
 	LOCAL = 50
 ELSE
 	LOCAL = 0
 ENDIF
 
-;ABL:�����҂̋Z�I���݂�
-LOCAL += LOCAL*ABL:PLAYER:�Z�I
+;ABL:調教者の技巧をみる
+LOCAL += LOCAL*ABL:PLAYER:技巧
 
-;ABL:�~�]���݂�
-LOCAL += (LOCAL/5)*ABL:�~�]
+;ABL:欲望をみる
+LOCAL += (LOCAL/5)*ABL:欲望
 
-CALL �ː��Q�[�W����, LOCAL, TARGET
-
-;-------------------------------------------------
-;�\�[�X�ǉ�����
-;-------------------------------------------------
-;����̗́A�C��
-LOSEBASE:�̗� += 10
-LOSEBASE:�C�� += 20
-
-SOURCE:� = 500
-SOURCE:���s�� = 500
-SOURCE:��E = 10
-SOURCE:�B�� = 300
+CALL 射精ゲージ増加, LOCAL, TARGET
 
 ;-------------------------------------------------
-;�Ⓒ�`�F�b�N
+;ソース追加処理
+;-------------------------------------------------
+;消費体力、気力
+LOSEBASE:体力 += 10
+LOSEBASE:気力 += 20
+
+SOURCE:情愛 = 500
+SOURCE:性行動 = 500
+SOURCE:逸脱 = 10
+SOURCE:達成 = 300
+
+;-------------------------------------------------
+;絶頂チェック
 ;-------------------------------------------------
 CALL SOURCE_CHECK_CVAB
 
 ;-------------------------------------------------
-;�ː��`�F�b�N
+;射精チェック
 ;-------------------------------------------------
 CALL SAMEN_CHECK_T
 
-CALL SAMEN_SHOOT_T, 0, NOWEX:�ː�
+CALL SAMEN_SHOOT_T, 0, NOWEX:射精
 
 ;-------------------------------------------------
-;�o���̏���
+;経験の処理
 ;-------------------------------------------------
-;����o��
-PRINTL ����o��+1
-EXP:����o�� += 1
+;愛情経験
+PRINTL 愛情経験+1
+EXP:愛情経験 += 1
 
-;�ˑ��x�␳�l(�����1�A�e����2�j
-IF TALENT:����
-	TFLAG:�ˑ��x�␳ += 1
-ELSEIF TALENT:�e��
-	TFLAG:�ˑ��x�␳ += 2
+;依存度補正値(恋慕で1、親愛で2）
+IF TALENT:恋慕
+	TFLAG:依存度補正 += 1
+ELSEIF TALENT:親愛
+	TFLAG:依存度補正 += 2
 ENDIF
 
 RETURN 1

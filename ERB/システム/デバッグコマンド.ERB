@@ -1,4 +1,4 @@
-;ƒfƒoƒbƒO—pŠÖ”‚Å‚·BƒXƒŒ‚Ì>>8‚ªì‚Á‚Ä‚­‚ê‚Ü‚µ‚½
+ï»¿;ãƒ‡ãƒãƒƒã‚°ç”¨é–¢æ•°ã§ã™ã€‚ã‚¹ãƒ¬ã®>>8ãŒä½œã£ã¦ãã‚Œã¾ã—ãŸ
 @DEBUG
 
 SIF TARGET == -1
@@ -6,16 +6,16 @@ SIF TARGET == -1
 
 $LOOP_DEBUG
 
-PRINTFORML ‚È‚É‚ð‚µ‚Ü‚·‚©H@@‘ÎÛF%NAME:TARGET%
-PRINTLC [0] - ‘ÎÛ•ÏX
-PRINTLC [1] - ‘fŽ¿‘€ì
-PRINTLC [2] - ABL‘€ì
-PRINTLC [3] - ŒoŒ±‘€ì
-PRINTLC [4] - ˆó‘€ì
-PRINTLC [5] - ITEM‘€ì
-PRINTLC [6] - ‚»‚Ì‘¼
+PRINTFORML ãªã«ã‚’ã—ã¾ã™ã‹ï¼Ÿã€€ã€€å¯¾è±¡ï¼š%NAME:TARGET%
+PRINTLC [0] - å¯¾è±¡å¤‰æ›´
+PRINTLC [1] - ç´ è³ªæ“ä½œ
+PRINTLC [2] - ABLæ“ä½œ
+PRINTLC [3] - çµŒé¨“æ“ä½œ
+PRINTLC [4] - åˆ»å°æ“ä½œ
+PRINTLC [5] - ITEMæ“ä½œ
+PRINTLC [6] - ãã®ä»–
 PRINTL 
-PRINTL [-1] –ß‚é
+PRINTL [-1] æˆ»ã‚‹
 
 INPUT
 
@@ -42,10 +42,10 @@ ENDSELECT
 
 GOTO LOOP_DEBUG
 
-;[0] - ‘ÎÛ•ÏX  --------------------------------
+;[0] - å¯¾è±¡å¤‰æ›´  --------------------------------
 @TARGET_CHANGE
 
-;‘ÎÛ‚ð•\Ž¦
+;å¯¾è±¡ã‚’è¡¨ç¤º
 REPEAT CHARANUM
 	PRINTFORML [{COUNT + 100}] %NAME:COUNT%
 REND
@@ -54,11 +54,11 @@ DRAWLINE
 INPUT
 
 TARGET = RESULT - 100
-PRINTFORMW ‘ÎÛ‚ð%NAME:TARGET%‚É‚µ‚Ü‚µ‚½B
+PRINTFORMW å¯¾è±¡ã‚’%NAME:TARGET%ã«ã—ã¾ã—ãŸã€‚
 
 RETURN
 
-;[1] - ‘fŽ¿‘€ì  --------------------------------
+;[1] - ç´ è³ªæ“ä½œ  --------------------------------
 @TALENT_CHANGE
 DRAWLINE
 REPEAT VARSIZE("TALENT")
@@ -66,26 +66,26 @@ REPEAT VARSIZE("TALENT")
 		CONTINUE
 	PRINTFORMLC [{COUNT}] %TALENTNAME:COUNT%
 	SELECTCASE TALENTNAME:COUNT
-		CASE "«•Ê"
+		CASE "æ€§åˆ¥"
 			SELECTCASE SEX(TARGET)
 				CASE 1
-					PRINT ‰
+					PRINT â™‚
 				CASE 2
-					PRINT Š
+					PRINT â™€
 			ENDSELECT
 		CASEELSE
 			IF !TALENT:TARGET:COUNT
-				PRINT ~
+				PRINT Ã—
 			ELSE
-				PRINT ü
+				PRINT â—¯
 			ENDIF
 	ENDSELECT
-	PRINT @
+	PRINT ã€€
 REND
 PRINTL
 DRAWLINE
 
-PRINTL [-1] - –ß‚é
+PRINTL [-1] - æˆ»ã‚‹
 
 INPUT
 
@@ -96,10 +96,10 @@ SIF TALENTNAME:RESULT == ""
 	RESTART
 
 SELECTCASE TALENTNAME:RESULT
-	CASE "«•Ê"
-		PRINTL [1] - ’j‚É‚·‚é
-		PRINTL [2] - —‚É‚·‚é
-		PRINTL [-1] - –ß‚é
+	CASE "æ€§åˆ¥"
+		PRINTL [1] - ç”·ã«ã™ã‚‹
+		PRINTL [2] - å¥³ã«ã™ã‚‹
+		PRINTL [-1] - æˆ»ã‚‹
 
 		INPUT
 		
@@ -108,53 +108,53 @@ SELECTCASE TALENTNAME:RESULT
 		
 		SELECTCASE RESULT
 			CASE 1, 2
-				TALENT:TARGET:«•Ê = RESULT
+				TALENT:TARGET:æ€§åˆ¥ = RESULT
 		ENDSELECT
 		
 		RESTART
-	CASE "ƒoƒXƒgƒTƒCƒY"
+	CASE "ãƒã‚¹ãƒˆã‚µã‚¤ã‚º"
 		SIF SEX(TARGET) == 1
 			RESTART
-		PRINTL [1] â•Ç‚É‚·‚é
-		PRINTL [2] •n“û‚É‚·‚é
-		PRINTL [3] •À“û‚É‚·‚é
-		PRINTL [4] ‹“û‚É‚·‚é
-		PRINTL [5] ”š“û‚É‚·‚é
+		PRINTL [1] çµ¶å£ã«ã™ã‚‹
+		PRINTL [2] è²§ä¹³ã«ã™ã‚‹
+		PRINTL [3] ä¸¦ä¹³ã«ã™ã‚‹
+		PRINTL [4] å·¨ä¹³ã«ã™ã‚‹
+		PRINTL [5] çˆ†ä¹³ã«ã™ã‚‹
 		INPUT
 		DO
 		LOOP LOOPRES(1, 2, 3, 4, 5)
-		TALENT:ƒoƒXƒgƒTƒCƒY = RESULT
+		TALENT:ãƒã‚¹ãƒˆã‚µã‚¤ã‚º = RESULT
 		RESTART
-	CASE "—öS"
-		PRINTL ‘ŠŽè‚ÌƒLƒƒƒ‰”Ô†‚ð“ü—Í‚µ‚Ä‚­‚¾‚³‚¢
+	CASE "æ‹å¿ƒ"
+		PRINTL ç›¸æ‰‹ã®ã‚­ãƒ£ãƒ©ç•ªå·ã‚’å…¥åŠ›ã—ã¦ãã ã•ã„
 		$LOOP
 		INPUT
 		SELECTCASE RESULT
 			CASE 0 TO 9999
 				IF EXISTCSV(RESULT)
-					TALENT:—öS = RESULT
+					TALENT:æ‹å¿ƒ = RESULT
 				ELSE
-					PRINTFORMW {RESULT}‚É‚ÍƒLƒƒƒ‰‚ª“o˜^‚³‚ê‚Ä‚¢‚Ü‚¹‚ñ
+					PRINTFORMW {RESULT}ã«ã¯ã‚­ãƒ£ãƒ©ãŒç™»éŒ²ã•ã‚Œã¦ã„ã¾ã›ã‚“
 				ENDIF
 			CASE 10000
-				TALENT:—öS = 10000
+				TALENT:æ‹å¿ƒ = 10000
 			CASEELSE
 				GOTO LOOP
 		ENDSELECT
 		RESTART
-	CASE "Šù¥ŽÒ"
-		PRINTL ‘ŠŽè‚ÌƒLƒƒƒ‰”Ô†‚ð“ü—Í‚µ‚Ä‚­‚¾‚³‚¢
+	CASE "æ—¢å©šè€…"
+		PRINTL ç›¸æ‰‹ã®ã‚­ãƒ£ãƒ©ç•ªå·ã‚’å…¥åŠ›ã—ã¦ãã ã•ã„
 		$LOOP2
 		INPUT
 		SELECTCASE RESULT
 			CASE 0 TO 9999
 				IF EXISTCSV(RESULT)
-					TALENT:Šù¥ŽÒ = RESULT
+					TALENT:æ—¢å©šè€… = RESULT
 				ELSE
-					PRINTFORMW {RESULT}‚É‚ÍƒLƒƒƒ‰‚ª“o˜^‚³‚ê‚Ä‚¢‚Ü‚¹‚ñ
+					PRINTFORMW {RESULT}ã«ã¯ã‚­ãƒ£ãƒ©ãŒç™»éŒ²ã•ã‚Œã¦ã„ã¾ã›ã‚“
 				ENDIF
 			CASE 10000
-				TALENT:Šù¥ŽÒ = 10000
+				TALENT:æ—¢å©šè€… = 10000
 			CASEELSE
 				GOTO LOOP2
 		ENDSELECT
@@ -164,7 +164,7 @@ SELECTCASE TALENTNAME:RESULT
 		RESTART
 ENDSELECT
 
-;[2] - ABL‘€ì  --------------------------------
+;[2] - ABLæ“ä½œ  --------------------------------
 @ABL_CHANGE
 DRAWLINE
 
@@ -174,7 +174,7 @@ REPEAT VARSIZE("ABL")
 	PRINTFORMLC [{COUNT}] %ABLNAME:COUNT% Lv{ABL:TARGET:COUNT}
 REND
 PRINTL
-PRINTL [-1] - –ß‚é
+PRINTL [-1] - æˆ»ã‚‹
 DRAWLINE
 
 INPUT
@@ -184,10 +184,10 @@ SIF RESULT == -1
 
 LOCAL = RESULT
 
-PRINTFORML %ABLNAME:RESULT%‚ð‚¢‚­‚Â‚É‚µ‚Ü‚·‚©H
+PRINTFORML %ABLNAME:RESULT%ã‚’ã„ãã¤ã«ã—ã¾ã™ã‹ï¼Ÿ
 PRINTL [0][1][2][3][4]
 PRINTL [5][6][7][8][9][10]
-PRINTL [-1] - –ß‚é
+PRINTL [-1] - æˆ»ã‚‹
 
 INPUT
 
@@ -195,18 +195,18 @@ SIF RESULT == -1
 	RETURN
 
 ABL:TARGET:LOCAL = RESULT
-PRINTFORML %NAME:TARGET%‚Ì%ABLNAME:LOCAL%‚ðLv{RESULT}‚É‚µ‚Ü‚µ‚½
+PRINTFORML %NAME:TARGET%ã®%ABLNAME:LOCAL%ã‚’Lv{RESULT}ã«ã—ã¾ã—ãŸ
 
-;[3] - ŒoŒ±‘€ì  --------------------------------
+;[3] - çµŒé¨“æ“ä½œ  --------------------------------
 @EXP_CHANGE
 
 REPEAT VARSIZE("EXP")
 	SIF EXPNAME:COUNT == ""
 		CONTINUE
-	PRINTFORMLC [{COUNT}] %EXPNAME:COUNT%i{EXP:TARGET:COUNT}j
+	PRINTFORMLC [{COUNT}] %EXPNAME:COUNT%ï¼ˆ{EXP:TARGET:COUNT}ï¼‰
 REND
 PRINTL
-PRINTL [-1] - –ß‚é
+PRINTL [-1] - æˆ»ã‚‹
 DRAWLINE
 
 INPUT
@@ -216,9 +216,9 @@ SIF RESULT == -1
 
 LOCAL = RESULT
 
-PRINTFORML %EXPNAME:RESULT%‚ð‚¢‚­‚Â‚É‚µ‚Ü‚·‚©H
+PRINTFORML %EXPNAME:RESULT%ã‚’ã„ãã¤ã«ã—ã¾ã™ã‹ï¼Ÿ
 PRINTL [0][1][9][99][999][9999][99999][999999][9999999]
-PRINTL [-1] - –ß‚é
+PRINTL [-1] - æˆ»ã‚‹
 
 INPUT
 
@@ -226,9 +226,9 @@ SIF RESULT == -1
 	RETURN
 
 EXP:TARGET:LOCAL = RESULT
-PRINTFORML %NAME:TARGET%‚Ì%EXPNAME:LOCAL%‚ÌŒoŒ±‚ð{RESULT}‚É‚µ‚Ü‚µ‚½
+PRINTFORML %NAME:TARGET%ã®%EXPNAME:LOCAL%ã®çµŒé¨“ã‚’{RESULT}ã«ã—ã¾ã—ãŸ
 
-;[4] - ˆó‘€ì  --------------------------------
+;[4] - åˆ»å°æ“ä½œ  --------------------------------
 @MARK_CHANGE
 
 REPEAT VARSIZE("MARK")
@@ -237,7 +237,7 @@ REPEAT VARSIZE("MARK")
 	PRINTFORMLC [{COUNT}] %MARKNAME:COUNT% Lv{MARK:TARGET:COUNT}
 REND
 PRINTL
-PRINTL [-1] - –ß‚é
+PRINTL [-1] - æˆ»ã‚‹
 DRAWLINE
 
 INPUT
@@ -247,9 +247,9 @@ SIF RESULT == -1
 
 LOCAL = RESULT
 
-PRINTFORML %MARKNAME:RESULT%‚ð‚¢‚­‚Â‚É‚µ‚Ü‚·‚©H
+PRINTFORML %MARKNAME:RESULT%ã‚’ã„ãã¤ã«ã—ã¾ã™ã‹ï¼Ÿ
 PRINTL [0][1][2][3]
-PRINTL [-1] - –ß‚é
+PRINTL [-1] - æˆ»ã‚‹
 
 INPUT
 
@@ -257,19 +257,19 @@ SIF RESULT == -1
 	RETURN
 
 MARK:TARGET:LOCAL = RESULT
-PRINTFORML %NAME:TARGET%‚Ì%MARKNAME:LOCAL%‚ðLv{RESULT}‚É‚µ‚Ü‚µ‚½
+PRINTFORML %NAME:TARGET%ã®%MARKNAME:LOCAL%ã‚’Lv{RESULT}ã«ã—ã¾ã—ãŸ
 
-;[5] - ITEM‘€ì  --------------------------------
+;[5] - ITEMæ“ä½œ  --------------------------------
 @ITEM_CHANGE
 
 REPEAT 100
 	SIF ITEMNAME:COUNT == ""
 		CONTINUE
-	PRINTFORMLC [{COUNT}] %ITEMNAME:COUNT% {ITEM:COUNT}ŒÂ
+	PRINTFORMLC [{COUNT}] %ITEMNAME:COUNT% {ITEM:COUNT}å€‹
 REND
 PRINTL
-PRINTL [999] - ‘S•”
-PRINTL [-1] - –ß‚é
+PRINTL [999] - å…¨éƒ¨
+PRINTL [-1] - æˆ»ã‚‹
 DRAWLINE
 
 INPUT
@@ -290,9 +290,9 @@ IF RESULT == 999
 ENDIF
 LOCAL = RESULT
 
-PRINTFORML %ITEMNAME:RESULT%‚ð‚¢‚­‚Â‚É‚µ‚Ü‚·‚©H
+PRINTFORML %ITEMNAME:RESULT%ã‚’ã„ãã¤ã«ã—ã¾ã™ã‹ï¼Ÿ
 PRINTL [0][1][10][50][99]
-PRINTL [-1] –ß‚é
+PRINTL [-1] æˆ»ã‚‹
 
 INPUT
 
@@ -300,17 +300,17 @@ SIF RESULT == -1
 	RETURN
 
 ITEM:LOCAL = RESULT
-PRINTFORML %ITEMNAME:LOCAL%‚ð{RESULT}ŒÂ‚É‚µ‚Ü‚µ‚½
+PRINTFORML %ITEMNAME:LOCAL%ã‚’{RESULT}å€‹ã«ã—ã¾ã—ãŸ
 
-;[6] - ‚»‚Ì‘¼  --------------------------------
+;[6] - ãã®ä»–  --------------------------------
 @EXTRA_CHANGE
 DRAWLINE
-PRINTLC [0] - “ú”
-PRINTLC [1] - “ú•t
-PRINTLC [2] - ŽžŠÔ‘Ñ
+PRINTLC [0] - æ—¥æ•°
+PRINTLC [1] - æ—¥ä»˜
+PRINTLC [2] - æ™‚é–“å¸¯
 PRINTL
-PRINTLC [4] - ‹C‰·
-PRINTLC [-1] - –ß‚é
+PRINTLC [4] - æ°—æ¸©
+PRINTLC [-1] - æˆ»ã‚‹
 
 INPUT
 
@@ -318,33 +318,33 @@ DRAWLINE
 SIF RESULT == -1
 	RETURN
 IF RESULT == 0
-	PRINTFORML ‰½“ú‚É‚µ‚Ü‚·‚©H@@Œ»Ý‚Ì“ú”F{DAY}
+	PRINTFORML ä½•æ—¥ã«ã—ã¾ã™ã‹ï¼Ÿã€€ã€€ç¾åœ¨ã®æ—¥æ•°ï¼š{DAY}
 	PRINTL [1][9][99][999][9999][99999][999999]
-	PRINTL [-1] –ß‚é
+	PRINTL [-1] æˆ»ã‚‹
 	INPUT
 	SIF RESULT == -1
 		RESTART
 	DAY = RESULT
-	PRINTFORMW {DAY}“ú–Ú‚É•ÏX‚µ‚Ü‚µ‚½
+	PRINTFORMW {DAY}æ—¥ç›®ã«å¤‰æ›´ã—ã¾ã—ãŸ
 ELSEIF RESULT == 1
 	DO
-		PRINTFORM ‚Ç‚ê‚ð•ÏX‚µ‚Ü‚·‚©H@@Œ»Ý‚Ì“ú•tF
+		PRINTFORM ã©ã‚Œã‚’å¤‰æ›´ã—ã¾ã™ã‹ï¼Ÿã€€ã€€ç¾åœ¨ã®æ—¥ä»˜ï¼š
 		IF YEAR > 0
 			PRINTFORM {YEAR}
 		ELSE
 			PRINTFORM BC{ABS(YEAR)+1}
 		ENDIF
-		PRINTFORML ”N{MONTH}ŒŽ{DAYS}“ú(%DOW(ZELLER(YEAR,MONTH,DAYS))%)
-		PRINTL [0] - ”N
-		PRINTL [1] - ŒŽ
-		PRINTL [2] - “ú
-		PRINTL [3] - Œ»Ý‚Ì“úŽž‚ðŽæ“¾
-		PRINTL [-1] - –ß‚é
+		PRINTFORML å¹´{MONTH}æœˆ{DAYS}æ—¥(%DOW(ZELLER(YEAR,MONTH,DAYS))%)
+		PRINTL [0] - å¹´
+		PRINTL [1] - æœˆ
+		PRINTL [2] - æ—¥
+		PRINTL [3] - ç¾åœ¨ã®æ—¥æ™‚ã‚’å–å¾—
+		PRINTL [-1] - æˆ»ã‚‹
 		INPUT
 		SIF RESULT == -1
 			RESTART
 		IF RESULT == 0
-			PRINTL ‰½”N‚É•ÏX‚µ‚Ü‚·‚©H’l‚ð“ü—Í‚µ‚Ä‚­‚¾‚³‚¢
+			PRINTL ä½•å¹´ã«å¤‰æ›´ã—ã¾ã™ã‹ï¼Ÿå€¤ã‚’å…¥åŠ›ã—ã¦ãã ã•ã„
 			CALL INPUT_YEAR
 			YEAR = RESULT
 			PRINTL
@@ -353,45 +353,45 @@ ELSEIF RESULT == 1
 			ELSE
 				PRINTFORM BC{ABS(YEAR)+1}
 			ENDIF
-			PRINTFORML ”N‚É•ÏX‚µ‚Ü‚µ‚½
+			PRINTFORML å¹´ã«å¤‰æ›´ã—ã¾ã—ãŸ
 			PRINTL
 		ELSEIF RESULT == 1
-			PRINTL ‰½ŒŽ‚É•ÏX‚µ‚Ü‚·‚©H
-			PRINTL [ 1]‚PŒŽ [ 2]‚QŒŽ [ 3]‚RŒŽ [ 4]‚SŒŽ [ 5]‚TŒŽ [ 6]‚UŒŽ
-			PRINTL [ 7]‚VŒŽ [ 8]‚WŒŽ [ 9]‚XŒŽ [10]10ŒŽ [11]11ŒŽ [12]12ŒŽ
+			PRINTL ä½•æœˆã«å¤‰æ›´ã—ã¾ã™ã‹ï¼Ÿ
+			PRINTL [ 1]ï¼‘æœˆ [ 2]ï¼’æœˆ [ 3]ï¼“æœˆ [ 4]ï¼”æœˆ [ 5]ï¼•æœˆ [ 6]ï¼–æœˆ
+			PRINTL [ 7]ï¼—æœˆ [ 8]ï¼˜æœˆ [ 9]ï¼™æœˆ [10]10æœˆ [11]11æœˆ [12]12æœˆ
 			$MONTH_INPUT
 			INPUT
 			SELECTCASE RESULT
 				CASE 1 TO 12
 					MONTH = RESULT
 					PRINTL
-					PRINTFORML {MONTH}ŒŽ‚É•ÏX‚µ‚Ü‚µ‚½
+					PRINTFORML {MONTH}æœˆã«å¤‰æ›´ã—ã¾ã—ãŸ
 					PRINTL
 				CASEELSE
 					GOTO MONTH_INPUT
 			ENDSELECT
 		ELSEIF RESULT == 2
-			PRINTL ‰½“ú‚É•ÏX‚µ‚Ü‚·‚©H’l‚ð“ü—Í‚µ‚Ä‚­‚¾‚³‚¢
-			CALL TWO_DIGIT, 31, "“ú"
+			PRINTL ä½•æ—¥ã«å¤‰æ›´ã—ã¾ã™ã‹ï¼Ÿå€¤ã‚’å…¥åŠ›ã—ã¦ãã ã•ã„
+			CALL TWO_DIGIT, 31, "æ—¥"
 			DAYS = RESULT
 			SIF DAYS < 0
 				DAYS = 1
 			PRINTL
-			PRINTFORML {DAYS}“ú‚É•ÏX‚µ‚Ü‚µ‚½
+			PRINTFORML {DAYS}æ—¥ã«å¤‰æ›´ã—ã¾ã—ãŸ
 			PRINTL
 		ELSEIF RESULT == 3
 			GETTIME
 			LOCAL = RESULT
-			;”NŒŽ“ú‚¾‚¯‚ÌŒ…‚ÉŒ¸‚ç‚·
+			;å¹´æœˆæ—¥ã ã‘ã®æ¡ã«æ¸›ã‚‰ã™
 			LOCAL /= POWER(10,9)
 			YEAR = LOCAL / 10000
 			MONTH = LOCAL /100 %100
 			DAYS = LOCAL %100
 			PRINTL
-			PRINTFORML {YEAR}”N{MONTH}ŒŽ{DAYS}“ú‚É•ÏX‚µ‚Ü‚µ‚½
+			PRINTFORML {YEAR}å¹´{MONTH}æœˆ{DAYS}æ—¥ã«å¤‰æ›´ã—ã¾ã—ãŸ
 			PRINTL
 		ENDIF
-		;•s³‚È’l‚ÌC³
+		;ä¸æ­£ãªå€¤ã®ä¿®æ­£
 		SIF DAYS <= 0
 			DAYS = 1
 		SELECTCASE MONTH
@@ -402,9 +402,9 @@ ELSEIF RESULT == 1
 				SIF DAYS > 30
 					DAYS = 30
 			CASE 2
-				;‚¤‚é‚¤”N‚©‚Ç‚¤‚©‚Åê‡•ª‚¯
+				;ã†ã‚‹ã†å¹´ã‹ã©ã†ã‹ã§å ´åˆåˆ†ã‘
 				SELECTCASE YEAR
-					;ƒOƒŒƒSƒŠƒI—ï
+					;ã‚°ãƒ¬ã‚´ãƒªã‚ªæš¦
 					CASE IS > 1582
 						IF (YEAR%4 == 0 && YEAR%100 != 0) || YEAR%400 == 0
 							SIF DAYS > 29
@@ -413,7 +413,7 @@ ELSEIF RESULT == 1
 							SIF DAYS > 28
 								DAYS = 28
 						ENDIF
-					;ŠÔˆá‚Á‚½‰^—p‚ª‚³‚ê‚Ä‚¢‚½ ‚Ìƒ†ƒŠƒEƒX—ï
+					;é–“é•ã£ãŸé‹ç”¨ãŒã•ã‚Œã¦ã„ãŸé ƒã®ãƒ¦ãƒªã‚¦ã‚¹æš¦
 					CASE -44 TO -5
 						IF ABS(YEAR)%3 == 1
 							SIF DAYS > 29
@@ -422,11 +422,11 @@ ELSEIF RESULT == 1
 							SIF DAYS > 28
 								DAYS = 28
 						ENDIF
-					;ã‚ÌŠÔˆá‚Á‚½‰^—p‚ÌƒVƒŠñ‚¹ŠúŠÔ
+					;ä¸Šã®é–“é•ã£ãŸé‹ç”¨ã®ã‚·ãƒ¯å¯„ã›æœŸé–“
 					CASE -4 TO 4
 						SIF DAYS > 28
 							DAYS = 28
-					;(‹IŒ³‘O46”NˆÈ‘O‚ðŠÜ‚ß)Žc‚è‚ÌŠúŠÔ‚·‚×‚Ä‚ðƒ†ƒŠƒEƒX—ï‚Æ‚·‚é
+					;(ç´€å…ƒå‰46å¹´ä»¥å‰ã‚’å«ã‚)æ®‹ã‚Šã®æœŸé–“ã™ã¹ã¦ã‚’ãƒ¦ãƒªã‚¦ã‚¹æš¦ã¨ã™ã‚‹
 					CASEELSE
 						IF ABS(YEAR)%4 == 0
 							SIF DAYS > 29
@@ -437,7 +437,7 @@ ELSEIF RESULT == 1
 						ENDIF
 				ENDSELECT
 		ENDSELECT
-		;1582”N10ŒŽ5“ú`1582”N10ŒŽ14“ú‚Í‘¶Ý‚µ‚È‚¢‚Ì‚Å‚»‚ÌŠúŠÔ‚Ì“ú•t‚Í‚·‚×‚Ä10ŒŽ15“ú‚É‚·‚é
+		;1582å¹´10æœˆ5æ—¥ï½ž1582å¹´10æœˆ14æ—¥ã¯å­˜åœ¨ã—ãªã„ã®ã§ãã®æœŸé–“ã®æ—¥ä»˜ã¯ã™ã¹ã¦10æœˆ15æ—¥ã«ã™ã‚‹
 		IF YEAR == 1582 && MONTH == 10
 			IF 5 <= DAYS && DAYS <= 14
 				DAYS = 15
@@ -445,53 +445,53 @@ ELSEIF RESULT == 1
 		ENDIF
 	LOOP 1
 ELSEIF RESULT == 2
-	PRINT ‚¢‚Â‚É‚µ‚Ü‚·‚©H@@Œ»Ý‚ÌŽžŠÔ‘ÑF
+	PRINT ã„ã¤ã«ã—ã¾ã™ã‹ï¼Ÿã€€ã€€ç¾åœ¨ã®æ™‚é–“å¸¯ï¼š
 	IF TIME == 0
-		PRINTL ’‹
+		PRINTL æ˜¼
 	ELSE
-		PRINTL –é
+		PRINTL å¤œ
 	ENDIF
-	PRINTL [0] - ’‹
-	PRINTL [1] - –é
-	PRINTL [-1] - –ß‚é
+	PRINTL [0] - æ˜¼
+	PRINTL [1] - å¤œ
+	PRINTL [-1] - æˆ»ã‚‹
 	INPUT
 	SIF RESULT == -1
 		RESTART
 	TIME = RESULT
-	PRINT Œ»Ý‚ÌŽžŠÔ‘Ñ‚ð
+	PRINT ç¾åœ¨ã®æ™‚é–“å¸¯ã‚’
 	IF TIME == 0
-		PRINTL ’‹
+		PRINTL æ˜¼
 	ELSE
-		PRINTL –é
+		PRINTL å¤œ
 	ENDIF
-	PRINTW ‚É•ÏX‚µ‚Ü‚µ‚½
+	PRINTW ã«å¤‰æ›´ã—ã¾ã—ãŸ
 ELSEIF RESULT == 4
-	;¡‰½“xH ‚Æ‚©‘‚±‚¤‚Æ‚µ‚½
-	PRINTL ‰½“x‚É‚µ‚Ü‚·‚©H@¦10”{‚µ‚½’l‚Å“ü—Í‚µ‚Ä‚­‚¾‚³‚¢
-	PRINTFORML Œ»Ý‚Ì‹C‰·F{FLAG:‹C‰·/10}.{ABS(FLAG:‹C‰·)%10}Ž
-	PRINTLC [-50] -5Ž
-	PRINTLC [  0] 0Ž
-	PRINTLC [ 50] 5Ž
-	PRINTLC [100] 10Ž
-	PRINTLC [150] 15Ž
-	PRINTLC [200] 20Ž
-	PRINTLC [250] 25Ž
-	PRINTLC [300] 30Ž
+	;ä»Šä½•åº¦ï¼Ÿ ã¨ã‹æ›¸ã“ã†ã¨ã—ãŸ
+	PRINTL ä½•åº¦ã«ã—ã¾ã™ã‹ï¼Ÿã€€â€»10å€ã—ãŸå€¤ã§å…¥åŠ›ã—ã¦ãã ã•ã„
+	PRINTFORML ç¾åœ¨ã®æ°—æ¸©ï¼š{FLAG:æ°—æ¸©/10}.{ABS(FLAG:æ°—æ¸©)%10}â„ƒ
+	PRINTLC [-50] -5â„ƒ
+	PRINTLC [  0] 0â„ƒ
+	PRINTLC [ 50] 5â„ƒ
+	PRINTLC [100] 10â„ƒ
+	PRINTLC [150] 15â„ƒ
+	PRINTLC [200] 20â„ƒ
+	PRINTLC [250] 25â„ƒ
+	PRINTLC [300] 30â„ƒ
 	INPUTS
 	IF ISNUMERIC(RESULTS)
-		FLAG:‹C‰· = TOINT(RESULTS)
-		PRINTFORMW ‹C‰·‚ð{FLAG:‹C‰·/10}.{ABS(FLAG:‹C‰·)%10}Ž‚É•ÏX‚µ‚Ü‚µ‚½
+		FLAG:æ°—æ¸© = TOINT(RESULTS)
+		PRINTFORMW æ°—æ¸©ã‚’{FLAG:æ°—æ¸©/10}.{ABS(FLAG:æ°—æ¸©)%10}â„ƒã«å¤‰æ›´ã—ã¾ã—ãŸ
 	ENDIF
 ENDIF
 
 RESTART
 
 
-;”N‚ð“ü—Í‚·‚é‚½‚ß‚ÌŠÖ”
+;å¹´ã‚’å…¥åŠ›ã™ã‚‹ãŸã‚ã®é–¢æ•°
 @INPUT_YEAR
 
-;LOCAL‚Í•\Ž¦‚³‚ê‚é”N
-;LOCAL:1‚Í‹IŒ³‘O‚©‚Ç‚¤‚©
+;LOCALã¯è¡¨ç¤ºã•ã‚Œã‚‹å¹´
+;LOCAL:1ã¯ç´€å…ƒå‰ã‹ã©ã†ã‹
 LOCAL = YEAR
 IF LOCAL > 0
 	LOCAL:1 = 0
@@ -502,10 +502,10 @@ ENDIF
 
 DO
 	PRINTL
-	PRINT y
+	PRINT ã€
 	SIF LOCAL:1
-		PRINT ‹IŒ³‘O
-	PRINTFORML %TOFULL(TOSTR(LOCAL))%”Nz
+		PRINT ç´€å…ƒå‰
+	PRINTFORML %TOFULL(TOSTR(LOCAL))%å¹´ã€‘
 	PRINTBUTTON "[+1]", "+1"
 	PRINTPLAIN  
 	PRINTBUTTON "[+10]", "+10"
@@ -585,22 +585,22 @@ DO
 	
 	SIF RESULTS != "0" && TOINT(RESULTS) == 0
 		CONTINUE
-	;Œ©‚â‚·‚³‚©‚ç•Ï”RESULT‚ðŽg—p
+	;è¦‹ã‚„ã™ã•ã‹ã‚‰å¤‰æ•°RESULTã‚’ä½¿ç”¨
 	RESULT = TOINT(RESULTS)
 	
-	;“ü—Í’l‚ÌŒ…”‚ðŒvŽZ
+	;å…¥åŠ›å€¤ã®æ¡æ•°ã‚’è¨ˆç®—
 	IF RESULT == 0
 		LOCAL:2 = 1
 	ELSE
 		LOCAL:2 = LOG10(RESULT) + 1
 	ENDIF
-	;•\Ž¦‚³‚ê‚Ä‚¢‚é’l‚ÌŒ…”‚ðŒvŽZ
+	;è¡¨ç¤ºã•ã‚Œã¦ã„ã‚‹å€¤ã®æ¡æ•°ã‚’è¨ˆç®—
 	IF LOCAL == 0
 		LOCAL:3 = 1
 	ELSE
 		LOCAL:3 = LOG10(LOCAL) + 1
 	ENDIF
-	;18Œ…‚É—}‚¦‚é
+	;18æ¡ã«æŠ‘ãˆã‚‹
 	SIF LOCAL:2 + LOCAL:3 > 18
 		CONTINUE
 	LOCAL = LOCAL * POWER(10,LOCAL:2) + RESULT

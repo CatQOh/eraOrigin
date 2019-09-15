@@ -1,44 +1,44 @@
+ï»¿;-------------------------------------------------
+;èˆã‚å›žã™ï¼ˆãƒ‰ãƒ©ã‚´ãƒ³ï¼‰
 ;-------------------------------------------------
-;är‚ß‰ñ‚·iƒhƒ‰ƒSƒ“j
-;-------------------------------------------------
-@USERCOM_ABLE_är‚ß‰ñ‚·iƒhƒ‰ƒSƒ“j, ARG
+@USERCOM_ABLE_èˆã‚å›žã™ï¼ˆãƒ‰ãƒ©ã‚´ãƒ³ï¼‰, ARG
 #FUNCTION
-;GŽè’²‹³’†‚Íƒ_ƒ
-SIF TEQUIP:GŽè
+;è§¦æ‰‹èª¿æ•™ä¸­ã¯ãƒ€ãƒ¡
+SIF TEQUIP:è§¦æ‰‹
 	RETURNF 0
-;•—˜Cê‚¾‚Æƒ_ƒ
-SIF TEQUIP:‚¨•—˜Cê
+;é¢¨å‘‚å ´ã ã¨ãƒ€ãƒ¡
+SIF TEQUIP:ãŠé¢¨å‘‚å ´
 	RETURNF 0
-;PLAYER‚ªƒhƒ‰ƒSƒ“Žg‚¢Ž‚Á‚Ä‚È‚¢‚Æƒ_ƒ
-SIF !TALENT:PLAYER:ƒhƒ‰ƒSƒ“Žg‚¢
+;PLAYERãŒãƒ‰ãƒ©ã‚´ãƒ³ä½¿ã„æŒã£ã¦ãªã„ã¨ãƒ€ãƒ¡
+SIF !TALENT:PLAYER:ãƒ‰ãƒ©ã‚´ãƒ³ä½¿ã„
 	RETURNF 0
-;PLAYER‚ª•Žè‚Å–¢Š×—Ž‚¾‚Æƒ_ƒ
-SIF PLAYER == ASSI && !CFLAG:PLAYER:Š×—Ž
+;PLAYERãŒåŠ©æ‰‹ã§æœªé™¥è½ã ã¨ãƒ€ãƒ¡
+SIF PLAYER == ASSI && !CFLAG:PLAYER:é™¥è½
 	RETURNF 0
 
 COMRESULT = 1
 RETURNF 1
 
-@COM_är‚ß‰ñ‚·iƒhƒ‰ƒSƒ“j
-PRINTL är‚ß‰ñ‚·iƒhƒ‰ƒSƒ“j
+@COM_èˆã‚å›žã™ï¼ˆãƒ‰ãƒ©ã‚´ãƒ³ï¼‰
+PRINTL èˆã‚å›žã™ï¼ˆãƒ‰ãƒ©ã‚´ãƒ³ï¼‰
 CALL KOJO_MESSAGE_COM
 
 ;-------------------------------------------------
-;ŽË¸ƒQ[ƒWƒ`ƒFƒbƒNi“z—êj
+;å°„ç²¾ã‚²ãƒ¼ã‚¸ãƒã‚§ãƒƒã‚¯ï¼ˆå¥´éš·ï¼‰
 ;-------------------------------------------------
 LOCAL = 100
 
-;ABL:’²‹³ŽÒ‚Ì‹ZI‚ð‚Ý‚é
-LOCAL += LOCAL*ABL:PLAYER:‹ZI/2
+;ABL:èª¿æ•™è€…ã®æŠ€å·§ã‚’ã¿ã‚‹
+LOCAL += LOCAL*ABL:PLAYER:æŠ€å·§/2
 
-;ABL:]‡‚ð‚Ý‚é
-LOCAL += (LOCAL/10)*ABL:]‡ - (LOCAL/10)*2
+;ABL:å¾“é †ã‚’ã¿ã‚‹
+LOCAL += (LOCAL/10)*ABL:å¾“é † - (LOCAL/10)*2
 
-;ABL:—~–]‚ð‚Ý‚é
-LOCAL += (LOCAL/10)*ABL:—~–]
+;ABL:æ¬²æœ›ã‚’ã¿ã‚‹
+LOCAL += (LOCAL/10)*ABL:æ¬²æœ›
 
-;“z—ê‚ÌABL:‚bŠ´Šo‚ð‚Ý‚é
-SELECTCASE ABL:‚bŠ´Šo
+;å¥´éš·ã®ABL:ï¼£æ„Ÿè¦šã‚’ã¿ã‚‹
+SELECTCASE ABL:ï¼£æ„Ÿè¦š
 	CASE 0
 		TIMES LOCAL , 0.50
 	CASE 1
@@ -50,44 +50,44 @@ SELECTCASE ABL:‚bŠ´Šo
 	CASE 4
 		TIMES LOCAL , 2.00
 	CASEELSE
-		LOCAL += LOCAL*(ABL:‚bŠ´Šo-3)
+		LOCAL += LOCAL*(ABL:ï¼£æ„Ÿè¦š-3)
 ENDSELECT
 
-CALL ŽË¸ƒQ[ƒW‘‰Á, LOCAL, TARGET
+CALL å°„ç²¾ã‚²ãƒ¼ã‚¸å¢—åŠ , LOCAL, TARGET
 
 ;-------------------------------------------------
-;ƒ\[ƒX’Ç‰Áˆ—
+;ã‚½ãƒ¼ã‚¹è¿½åŠ å‡¦ç†
 ;-------------------------------------------------
-;Á”ï‘Ì—ÍA‹C—Í
-LOSEBASE:‘Ì—Í += 10
-LOSEBASE:‹C—Í += 15
+;æ¶ˆè²»ä½“åŠ›ã€æ°—åŠ›
+LOSEBASE:ä½“åŠ› += 10
+LOSEBASE:æ°—åŠ› += 15
 
-DOWNBASE:MASTER:‘Ì—Í += 20
-DOWNBASE:MASTER:‹C—Í += 20
+DOWNBASE:MASTER:ä½“åŠ› += 20
+DOWNBASE:MASTER:æ°—åŠ› += 20
 
-SOURCE:‰õC = 100
-SOURCE:‰õB = 100
-SOURCE:‰t‘Ì = 1000
-SOURCE:‹ü] = 100
-SOURCE:˜Io = 100
-SOURCE:‹°•| = 300
-SOURCE:•sŒ‰ = 300
-SOURCE:ˆí’E = 100
+SOURCE:å¿«C = 100
+SOURCE:å¿«B = 100
+SOURCE:æ¶²ä½“ = 1000
+SOURCE:å±ˆå¾“ = 100
+SOURCE:éœ²å‡º = 100
+SOURCE:ææ€– = 300
+SOURCE:ä¸æ½” = 300
+SOURCE:é€¸è„± = 100
 
 ;-------------------------------------------------
-;â’¸ƒ`ƒFƒbƒN
+;çµ¶é ‚ãƒã‚§ãƒƒã‚¯
 ;-------------------------------------------------
 CALL SOURCE_CHECK_CVAB
 
 ;-------------------------------------------------
-;ŽË¸ƒ`ƒFƒbƒN
+;å°„ç²¾ãƒã‚§ãƒƒã‚¯
 ;-------------------------------------------------
 CALL SAMEN_CHECK_T, 0
 
-CALL SAMEN_SHOOT_T, 0, NOWEX:ŽË¸
+CALL SAMEN_SHOOT_T, 0, NOWEX:å°„ç²¾
 
 ;-------------------------------------------------
-;ŒoŒ±‚Ìˆ—
+;çµŒé¨“ã®å‡¦ç†
 ;-------------------------------------------------
 CALL EXPUP, 0, 1
 

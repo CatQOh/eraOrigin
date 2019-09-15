@@ -1,130 +1,130 @@
+ï»¿;-------------------------------------------------
+;ã‚¢ãƒŠãƒ«é›»æ¥µ
 ;-------------------------------------------------
-;ƒAƒiƒ‹“d‹É
-;-------------------------------------------------
-@USERCOM_ABLE_ƒAƒiƒ‹“d‹É, ARG
+@USERCOM_ABLE_ã‚¢ãƒŠãƒ«é›»æ¥µ, ARG
 #FUNCTION
-;“z—ê‚ª•ž]‚©—ê‘®‚Å‚È‚¢‚Æƒ_ƒ
+;å¥´éš·ãŒæœå¾“ã‹éš·å±žã§ãªã„ã¨ãƒ€ãƒ¡
 SIF FALLTYPE(TARGET) != 3
 	RETURNF 0
 
-;•ž’…‚Ä‚é‚Æƒ_ƒ
-SIF !«Ší˜Io(TARGET)
+;æœç€ã¦ã‚‹ã¨ãƒ€ãƒ¡
+SIF !æ€§å™¨éœ²å‡º(TARGET)
 	RETURNF 0
 
-;GŽè’²‹³’†‚Íƒ_ƒ
-SIF TEQUIP:GŽè
+;è§¦æ‰‹èª¿æ•™ä¸­ã¯ãƒ€ãƒ¡
+SIF TEQUIP:è§¦æ‰‹
 	RETURNF 0
-;‰ðœ‚Í‚¢‚Â‚Å‚à‰Â”\
-IF TEQUIP:ƒAƒiƒ‹“d‹É
+;è§£é™¤ã¯ã„ã¤ã§ã‚‚å¯èƒ½
+IF TEQUIP:ã‚¢ãƒŠãƒ«é›»æ¥µ
 	COMRESULT = 1
 	RETURNF 1
 ENDIF
-;’²‹³‘ÎÛ‚ª¬l‘ÌŒ^‚Ìê‡‚ÍŽål‚ª‹Ö’f‚Ì’mŽ¯Ž‚¿‚¶‚á‚È‚¢‚Æƒ_ƒ
-SIF TALENT:¬l‘ÌŒ^ && !TALENT:MASTER:‹Ö’f‚Ì’mŽ¯
+;èª¿æ•™å¯¾è±¡ãŒå°äººä½“åž‹ã®å ´åˆã¯ä¸»äººãŒç¦æ–­ã®çŸ¥è­˜æŒã¡ã˜ã‚ƒãªã„ã¨ãƒ€ãƒ¡
+SIF TALENT:å°äººä½“åž‹ && !TALENT:MASTER:ç¦æ–­ã®çŸ¥è­˜
 	RETURNF 0
-;ƒAƒiƒ‹Žg—p’†‚Íƒ_ƒ
-SIF ‚`Žg—p’†(TARGET)
+;ã‚¢ãƒŠãƒ«ä½¿ç”¨ä¸­ã¯ãƒ€ãƒ¡
+SIF ï¼¡ä½¿ç”¨ä¸­(TARGET)
 	RETURNF 0
 
 COMRESULT = 1
 RETURNF 1
 
-@COM_ƒAƒiƒ‹“d‹É
-PRINTL ƒAƒiƒ‹“d‹É
+@COM_ã‚¢ãƒŠãƒ«é›»æ¥µ
+PRINTL ã‚¢ãƒŠãƒ«é›»æ¥µ
 CALL KOJO_MESSAGE_COM
 
-;’…’E‚Ìˆ—
-INVERTBIT TEQUIP:ƒAƒiƒ‹“d‹É, 0
+;ç€è„±ã®å‡¦ç†
+INVERTBIT TEQUIP:ã‚¢ãƒŠãƒ«é›»æ¥µ, 0
 
 ;-------------------------------------------------
-;ƒ\[ƒX’Ç‰Áˆ—
+;ã‚½ãƒ¼ã‚¹è¿½åŠ å‡¦ç†
 ;-------------------------------------------------
-;Á”ï‘Ì—ÍA‹C—Í
-LOSEBASE:‘Ì—Í += 150
-LOSEBASE:‹C—Í += 200
+;æ¶ˆè²»ä½“åŠ›ã€æ°—åŠ›
+LOSEBASE:ä½“åŠ› += 150
+LOSEBASE:æ°—åŠ› += 200
 
-SOURCE:‰õA = 500
-SOURCE:‹ê’É = 1500
-SOURCE:˜Io = 300
-SOURCE:‹ü] = 800
-SOURCE:ˆí’E = 1200
-SOURCE:”½Š´ = 1200
-
-;-------------------------------------------------
-;“ÁŽêƒ\[ƒXˆ—
-;-------------------------------------------------
-;—}ˆ³A’ïRŽ‚¿‚É‚ÍA—}ŸTƒ\[ƒX’Ç‰Á
-SIF TALENT:—}ˆ³ || TALENT:’ïR
-	SOURCE:ŸT‹ü += 1200
-
-CALL “ÁŽêƒ\[ƒXˆ—_‚`‹­
-
-SIF CSTR:Ží‘° == "‹@ŠB"
-	TIMES SOURCE:‹ê’É , 8.00
+SOURCE:å¿«A = 500
+SOURCE:è‹¦ç—› = 1500
+SOURCE:éœ²å‡º = 300
+SOURCE:å±ˆå¾“ = 800
+SOURCE:é€¸è„± = 1200
+SOURCE:åæ„Ÿ = 1200
 
 ;-------------------------------------------------
-;â’¸ƒ`ƒFƒbƒN
+;ç‰¹æ®Šã‚½ãƒ¼ã‚¹å‡¦ç†
+;-------------------------------------------------
+;æŠ‘åœ§ã€æŠµæŠ—æŒã¡ã«ã¯ã€æŠ‘é¬±ã‚½ãƒ¼ã‚¹è¿½åŠ 
+SIF TALENT:æŠ‘åœ§ || TALENT:æŠµæŠ—
+	SOURCE:é¬±å±ˆ += 1200
+
+CALL ç‰¹æ®Šã‚½ãƒ¼ã‚¹å‡¦ç†_ï¼¡å¼·
+
+SIF CSTR:ç¨®æ— == "æ©Ÿæ¢°"
+	TIMES SOURCE:è‹¦ç—› , 8.00
+
+;-------------------------------------------------
+;çµ¶é ‚ãƒã‚§ãƒƒã‚¯
 ;-------------------------------------------------
 CALL SOURCE_CHECK_CVAB
 
 ;-------------------------------------------------
-;ŽË¸ƒ`ƒFƒbƒN
+;å°„ç²¾ãƒã‚§ãƒƒã‚¯
 ;-------------------------------------------------
 CALL SAMEN_CHECK_T, 0
 
-CALL SAMEN_SHOOT_T, 0, NOWEX:ŽË¸
+CALL SAMEN_SHOOT_T, 0, NOWEX:å°„ç²¾
 
 ;-------------------------------------------------
-;ŒoŒ±‚Ìˆ—
+;çµŒé¨“ã®å‡¦ç†
 ;-------------------------------------------------
-;ˆÙíŒoŒ±‚ª3–¢–ž‚Ì‚Æ‚«AˆÙíŒoŒ±’Ç‰Á
-IF EXP:ˆÙíŒoŒ± < 3
-	PRINTL ˆÙíŒoŒ±+1
-	EXP:ˆÙíŒoŒ±++
+;ç•°å¸¸çµŒé¨“ãŒ3æœªæº€ã®ã¨ãã€ç•°å¸¸çµŒé¨“è¿½åŠ 
+IF EXP:ç•°å¸¸çµŒé¨“ < 3
+	PRINTL ç•°å¸¸çµŒé¨“+1
+	EXP:ç•°å¸¸çµŒé¨“++
 ENDIF
 
 CALL EXPUP, 1, 4
 
-;ˆË‘¶“x•â³’l(•ž]‚Å1A—ê‘®‚Å2j
-IF TALENT:•ž] && PLAYER == MASTER
-	TFLAG:ˆË‘¶“x•â³ += 1
-ELSEIF TALENT:—ê‘® && PLAYER == MASTER
-	TFLAG:ˆË‘¶“x•â³ += 2
+;ä¾å­˜åº¦è£œæ­£å€¤(æœå¾“ã§1ã€éš·å±žã§2ï¼‰
+IF TALENT:æœå¾“ && PLAYER == MASTER
+	TFLAG:ä¾å­˜åº¦è£œæ­£ += 1
+ELSEIF TALENT:éš·å±ž && PLAYER == MASTER
+	TFLAG:ä¾å­˜åº¦è£œæ­£ += 2
 ENDIF
 
 RETURN 1
 
 ;-------------------------------------------------
-;‘•’…Œp‘±‚Ìˆ—
+;è£…ç€ç¶™ç¶šã®å‡¦ç†
 ;-------------------------------------------------
-@EQUIP_COM_ƒAƒiƒ‹“d‹É
-PRINTL ƒƒAƒiƒ‹“d‹É‘}“ü’†„
+@EQUIP_COM_ã‚¢ãƒŠãƒ«é›»æ¥µ
+PRINTL ï¼œã‚¢ãƒŠãƒ«é›»æ¥µæŒ¿å…¥ä¸­ï¼ž
 
-LOSEBASE:‘Ì—Í += 90
-LOSEBASE:‹C—Í += 150
+LOSEBASE:ä½“åŠ› += 90
+LOSEBASE:æ°—åŠ› += 150
 
-SOURCE:‰õA += 250
-SOURCE:‹ü] += 400
-SOURCE:ˆí’E += 600
-
-;-------------------------------------------------
-;“ÁŽêƒ\[ƒXˆ—
-;-------------------------------------------------
-;—}ˆ³A’ïRŽ‚¿‚É‚ÍA—}ŸTƒ\[ƒX’Ç‰Á
-SIF TALENT:—}ˆ³ || TALENT:’ïR
-	SOURCE:ŸT‹ü += 600
-
-CALL “ÁŽêƒ\[ƒXˆ—_‚`“¹‹ï‹­, 750, 600
-
-SIF CSTR:Ží‘° == "‹@ŠB"
-	TIMES SOURCE:‹ê’É , 8.00
+SOURCE:å¿«A += 250
+SOURCE:å±ˆå¾“ += 400
+SOURCE:é€¸è„± += 600
 
 ;-------------------------------------------------
-;ŒoŒ±‚Ìˆ—
+;ç‰¹æ®Šã‚½ãƒ¼ã‚¹å‡¦ç†
 ;-------------------------------------------------
-;‚`ŒoŒ±
-PRINTL ‚`ŒoŒ±+5
-EXP:‚`ŒoŒ± += 5
+;æŠ‘åœ§ã€æŠµæŠ—æŒã¡ã«ã¯ã€æŠ‘é¬±ã‚½ãƒ¼ã‚¹è¿½åŠ 
+SIF TALENT:æŠ‘åœ§ || TALENT:æŠµæŠ—
+	SOURCE:é¬±å±ˆ += 600
+
+CALL ç‰¹æ®Šã‚½ãƒ¼ã‚¹å‡¦ç†_ï¼¡é“å…·å¼·, 750, 600
+
+SIF CSTR:ç¨®æ— == "æ©Ÿæ¢°"
+	TIMES SOURCE:è‹¦ç—› , 8.00
+
+;-------------------------------------------------
+;çµŒé¨“ã®å‡¦ç†
+;-------------------------------------------------
+;ï¼¡çµŒé¨“
+PRINTL ï¼¡çµŒé¨“+5
+EXP:ï¼¡çµŒé¨“ += 5
 
 RETURN 1
 

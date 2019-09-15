@@ -1,134 +1,134 @@
-;ѓrѓfѓI‚МЏd•ЎЋg—p‚рЏ€—ќ‚·‚й‚Ѕ‚Я‚ЙЃA—\‚Я’l’i‚М‰БЋZ‚рЌs‚Б‚Д‚Ё‚­
+п»ї;гѓ“гѓ‡г‚ЄгЃ®й‡Ќи¤‡дЅїз”Ёг‚’е‡¦зђ†гЃ™г‚‹гЃџг‚ЃгЃ«гЂЃдє€г‚ЃеЂ¤ж®µгЃ®еЉ з®—г‚’иЎЊгЃЈгЃ¦гЃЉгЃЏ
 @PRICE_VIDEO
-TFLAG:ѓrѓfѓI‰їЉi++
-TFLAG:ѓrѓfѓIЋB‰e‰сђ” = 0
+TFLAG:гѓ“гѓ‡г‚ЄдѕЎж ј++
+TFLAG:гѓ“гѓ‡г‚Єж’®еЅ±е›ћж•° = 0
 
 @SELL_VIDEO
-;ЋB‰e’†‚М‚Ь‚Ь”„‹p‚Ь‚Е—€‚ЅЏкЌ‡‚НѓeЃ[ѓv‚Мђ”‚рЊё‚з‚·
-;ѓeЃ[ѓv‚МЊёђ”‚НЋB‰eЊгЏ€—ќ‚М‚Ѕ‚ЯЃA‚і‚з‚ЙѓrѓfѓI‚М’l’i‚Ё‚ж‚СЊoЊ±‚а‚±‚±‚ЕЏ€—ќ‚р‚·‚й
-SIF TEQUIP:ѓrѓfѓIѓJѓЃѓ‰
+;ж’®еЅ±дё­гЃ®гЃѕгЃѕеЈІеЌґгЃѕгЃ§жќҐгЃџе ґеђ€гЃЇгѓ†гѓјгѓ—гЃ®ж•°г‚’жё›г‚‰гЃ™
+;гѓ†гѓјгѓ—гЃ®жё›ж•°гЃЇж’®еЅ±еѕЊе‡¦зђ†гЃ®гЃџг‚ЃгЂЃгЃ•г‚‰гЃ«гѓ“гѓ‡г‚ЄгЃ®еЂ¤ж®µгЃЉг‚€гЃізµЊйЁ“г‚‚гЃ“гЃ“гЃ§е‡¦зђ†г‚’гЃ™г‚‹
+SIF TEQUIP:гѓ“гѓ‡г‚Єг‚«гѓЎгѓ©
 	CALL PRICE_VIDEO
 
-;^‰ж‚µ‚Д‚И‚Ї‚к‚ОЏI—№
-SIF TFLAG:ѓrѓfѓI‰їЉi == 0
+;йЊІз”»гЃ—гЃ¦гЃЄгЃ‘г‚ЊгЃ°зµ‚дє†
+SIF TFLAG:гѓ“гѓ‡г‚ЄдѕЎж ј == 0
 	RETURN 0
 
 DRAWLINE
 
-;ѓrѓfѓIѓ{Ѓ[ѓiѓXЃA‚а‚µ‚­‚НЏ€Џ—‘rЋёѓVЃ[ѓ“‚Є‚ ‚к‚О“а—e‚р•\Ћ¦
-IF VIDEOBONUS:0 || VIDEOBONUS:1 || VIDEOBONUS:2 || VIDEOBONUS:3 || VIDEOBONUS:4 || VIDEOBONUS:5 || VIDEOBONUS:6 || TFLAG:ЋB‰e”j‰Z
-	PRINTL ЃyѓrѓfѓI“а—eЃz
-	;Џ€Џ—‘rЋёѓVЃ[ѓ“‚Є‚ ‚к‚О‰БЋZ
-	IF TFLAG:ЋB‰e”j‰Z
-		EXP:€ЩЏнЊoЊ±++
-		PRINTFORML Ѓ@‚±‚МѓrѓfѓI‚Й‚Н%CALLNAME:TARGET%‚МЏ€Џ—‘rЋёѓVЃ[ѓ“‚Є‹L^‚і‚к‚Д‚ў‚й
-		PRINTFORML Ѓ@€ЩЏнЊoЊ±+1
+;гѓ“гѓ‡г‚ЄгѓњгѓјгѓЉг‚№гЂЃг‚‚гЃ—гЃЏгЃЇе‡¦еҐіе–Єе¤±г‚·гѓјгѓігЃЊгЃ‚г‚ЊгЃ°е†…е®№г‚’иЎЁз¤є
+IF VIDEOBONUS:0 || VIDEOBONUS:1 || VIDEOBONUS:2 || VIDEOBONUS:3 || VIDEOBONUS:4 || VIDEOBONUS:5 || VIDEOBONUS:6 || TFLAG:ж’®еЅ±з ґз“њ
+	PRINTL гЂђгѓ“гѓ‡г‚Єе†…е®№гЂ‘
+	;е‡¦еҐіе–Єе¤±г‚·гѓјгѓігЃЊгЃ‚г‚ЊгЃ°еЉ з®—
+	IF TFLAG:ж’®еЅ±з ґз“њ
+		EXP:з•°еёёзµЊйЁ“++
+		PRINTFORML гЂЂгЃ“гЃ®гѓ“гѓ‡г‚ЄгЃ«гЃЇ%CALLNAME:TARGET%гЃ®е‡¦еҐіе–Єе¤±г‚·гѓјгѓігЃЊиЁйЊІгЃ•г‚ЊгЃ¦гЃ„г‚‹
+		PRINTFORML гЂЂз•°еёёзµЊйЁ“+1
 	ENDIF
 
-	;ѓrѓfѓIѓ{Ѓ[ѓiѓX‚рЊ©‚й
-	;ЋеђlЃЁ“z—к ’†Џo‚µ&ѓAѓiѓ‹’†Џo‚µ
+	;гѓ“гѓ‡г‚ЄгѓњгѓјгѓЉг‚№г‚’и¦‹г‚‹
+	;дё»дєєв†’еҐґйљ· дё­е‡єгЃ—&г‚ўгѓЉгѓ«дё­е‡єгЃ—
 	IF VIDEOBONUS:0 && VIDEOBONUS:1
-		PRINTFORML Ѓ@%CALLNAME:TARGET%‚Н%CALLNAME:MASTER%‚Й{VIDEOBONUS:0}‰сдS“аЋЛђё‚і‚кЃA{VIDEOBONUS:1}‰сѓAѓiѓ‹‚Й‚аЋЛђё‚і‚к‚Д‚ў‚й
-	;’†Џo‚µ‚М‚Э
+		PRINTFORML гЂЂ%CALLNAME:TARGET%гЃЇ%CALLNAME:MASTER%гЃ«{VIDEOBONUS:0}е›ћи†Је†…е°„зІѕгЃ•г‚ЊгЂЃ{VIDEOBONUS:1}е›ћг‚ўгѓЉгѓ«гЃ«г‚‚е°„зІѕгЃ•г‚ЊгЃ¦гЃ„г‚‹
+	;дё­е‡єгЃ—гЃ®гЃї
 	ELSEIF VIDEOBONUS:0
-		PRINTFORML Ѓ@%CALLNAME:TARGET%‚Н%CALLNAME:MASTER%‚Й{VIDEOBONUS:0}‰сЃAдS“а‚ЙЋЛђё‚і‚к‚Д‚ў‚й
-	;ѓAѓiѓ‹’†Џo‚µ‚М‚Э
+		PRINTFORML гЂЂ%CALLNAME:TARGET%гЃЇ%CALLNAME:MASTER%гЃ«{VIDEOBONUS:0}е›ћгЂЃи†Је†…гЃ«е°„зІѕгЃ•г‚ЊгЃ¦гЃ„г‚‹
+	;г‚ўгѓЉгѓ«дё­е‡єгЃ—гЃ®гЃї
 	ELSEIF VIDEOBONUS:1
-		PRINTFORML Ѓ@%CALLNAME:TARGET%‚Н%CALLNAME:MASTER%‚Й{VIDEOBONUS:1}‰сЃAѓAѓiѓ‹‚ЙЋЛђё‚і‚к‚Д‚ў‚й
+		PRINTFORML гЂЂ%CALLNAME:TARGET%гЃЇ%CALLNAME:MASTER%гЃ«{VIDEOBONUS:1}е›ћгЂЃг‚ўгѓЉгѓ«гЃ«е°„зІѕгЃ•г‚ЊгЃ¦гЃ„г‚‹
 	ENDIF
 
-	;Џ•ЋиЃЁ“z—к ’†Џo‚µ&ѓAѓiѓ‹’†Џo‚µ
+	;еЉ©ж‰‹в†’еҐґйљ· дё­е‡єгЃ—&г‚ўгѓЉгѓ«дё­е‡єгЃ—
 	IF VIDEOBONUS:2 && VIDEOBONUS:3
-		PRINTFORML Ѓ@%CALLNAME:TARGET%‚Н%CALLNAME:ASSI%‚Й{VIDEOBONUS:2}‰сдS“аЋЛђё‚і‚кЃA{VIDEOBONUS:3}‰сѓAѓiѓ‹‚Й‚аЋЛђё‚і‚к‚Д‚ў‚й
-	;’†Џo‚µ‚М‚Э
+		PRINTFORML гЂЂ%CALLNAME:TARGET%гЃЇ%CALLNAME:ASSI%гЃ«{VIDEOBONUS:2}е›ћи†Је†…е°„зІѕгЃ•г‚ЊгЂЃ{VIDEOBONUS:3}е›ћг‚ўгѓЉгѓ«гЃ«г‚‚е°„зІѕгЃ•г‚ЊгЃ¦гЃ„г‚‹
+	;дё­е‡єгЃ—гЃ®гЃї
 	ELSEIF VIDEOBONUS:2
-		PRINTFORML Ѓ@%CALLNAME:TARGET%‚Н%CALLNAME:ASSI%‚Й{VIDEOBONUS:2}‰сЃAдS“а‚ЙЋЛђё‚і‚к‚Д‚ў‚й
-	;ѓAѓiѓ‹’†Џo‚µ‚М‚Э
+		PRINTFORML гЂЂ%CALLNAME:TARGET%гЃЇ%CALLNAME:ASSI%гЃ«{VIDEOBONUS:2}е›ћгЂЃи†Је†…гЃ«е°„зІѕгЃ•г‚ЊгЃ¦гЃ„г‚‹
+	;г‚ўгѓЉгѓ«дё­е‡єгЃ—гЃ®гЃї
 	ELSEIF VIDEOBONUS:3
-		PRINTFORML Ѓ@%CALLNAME:TARGET%‚Н%CALLNAME:ASSI%‚Й{VIDEOBONUS:3}‰сЃAѓAѓiѓ‹‚ЙЋЛђё‚і‚к‚Д‚ў‚й
+		PRINTFORML гЂЂ%CALLNAME:TARGET%гЃЇ%CALLNAME:ASSI%гЃ«{VIDEOBONUS:3}е›ћгЂЃг‚ўгѓЉгѓ«гЃ«е°„зІѕгЃ•г‚ЊгЃ¦гЃ„г‚‹
 	ENDIF
 
-	;“z—кЋЛђё
+	;еҐґйљ·е°„зІѕ
 	IF VIDEOBONUS:4
-		PRINTFORML Ѓ@{VIDEOBONUS:4}‰сЃA%CALLNAME:TARGET%‚ЄЋЛђё‚µ‚Д‚ў‚й
+		PRINTFORML гЂЂ{VIDEOBONUS:4}е›ћгЂЃ%CALLNAME:TARGET%гЃЊе°„зІѕгЃ—гЃ¦гЃ„г‚‹
 	ENDIF
-	;“z—к•ъ”A
+	;еҐґйљ·ж”ѕе°ї
 	IF VIDEOBONUS:5
-		PRINTFORML Ѓ@{VIDEOBONUS:5}‰сЃA%CALLNAME:TARGET%‚Є•ъ”A‚µ‚Д‚ў‚й
+		PRINTFORML гЂЂ{VIDEOBONUS:5}е›ћгЂЃ%CALLNAME:TARGET%гЃЊж”ѕе°їгЃ—гЃ¦гЃ„г‚‹
 	ENDIF
-	;“z—к•¬“ы
+	;еҐґйљ·е™ґд№і
 	IF VIDEOBONUS:6
-		PRINTFORML Ѓ@{VIDEOBONUS:6}‰сЃA%CALLNAME:TARGET%‚Є•¬“ы‚µ‚Д‚ў‚й
+		PRINTFORML гЂЂ{VIDEOBONUS:6}е›ћгЂЃ%CALLNAME:TARGET%гЃЊе™ґд№ігЃ—гЃ¦гЃ„г‚‹
 	ENDIF
-	;Ћеђl‚Мѓhѓ‰ѓSѓ“ЃЁ“z—к’†Џo‚µ&ѓAѓiѓ‹’†Џo‚µ
+	;дё»дєєгЃ®гѓ‰гѓ©г‚ґгѓів†’еҐґйљ·дё­е‡єгЃ—&г‚ўгѓЉгѓ«дё­е‡єгЃ—
 	IF VIDEOBONUS:7 && VIDEOBONUS:8
-		IF CSTR:MASTER:ѓhѓ‰ѓSѓ“ == "ѓhѓ‰ѓSѓ“"
-			PRINTFORML Ѓ@%CALLNAME:TARGET%‚Н%CALLNAME:MASTER%‚Мѓhѓ‰ѓSѓ“‚Й{VIDEOBONUS:7}‰сдS“аЋЛђё‚і‚кЃA{VIDEOBONUS:8}‰сѓAѓiѓ‹‚Й‚аЋЛђё‚і‚к‚Д‚ў‚й
+		IF CSTR:MASTER:гѓ‰гѓ©г‚ґгѓі == "гѓ‰гѓ©г‚ґгѓі"
+			PRINTFORML гЂЂ%CALLNAME:TARGET%гЃЇ%CALLNAME:MASTER%гЃ®гѓ‰гѓ©г‚ґгѓігЃ«{VIDEOBONUS:7}е›ћи†Је†…е°„зІѕгЃ•г‚ЊгЂЃ{VIDEOBONUS:8}е›ћг‚ўгѓЉгѓ«гЃ«г‚‚е°„зІѕгЃ•г‚ЊгЃ¦гЃ„г‚‹
 		ELSE
-			PRINTFORML Ѓ@%CALLNAME:TARGET%‚Н%CSTR:MASTER:ѓhѓ‰ѓSѓ“%‚Й{VIDEOBONUS:7}‰сдS“аЋЛђё‚і‚кЃA{VIDEOBONUS:8}‰сѓAѓiѓ‹‚Й‚аЋЛђё‚і‚к‚Д‚ў‚й
+			PRINTFORML гЂЂ%CALLNAME:TARGET%гЃЇ%CSTR:MASTER:гѓ‰гѓ©г‚ґгѓі%гЃ«{VIDEOBONUS:7}е›ћи†Је†…е°„зІѕгЃ•г‚ЊгЂЃ{VIDEOBONUS:8}е›ћг‚ўгѓЉгѓ«гЃ«г‚‚е°„зІѕгЃ•г‚ЊгЃ¦гЃ„г‚‹
 		ENDIF
-	;’†Џo‚µ‚М‚Э
+	;дё­е‡єгЃ—гЃ®гЃї
 	ELSEIF VIDEOBONUS:7
-		IF CSTR:MASTER:ѓhѓ‰ѓSѓ“ == "ѓhѓ‰ѓSѓ“"
-			PRINTFORML Ѓ@%CALLNAME:TARGET%‚Н%CALLNAME:MASTER%‚Мѓhѓ‰ѓSѓ“‚Й{VIDEOBONUS:7}‰сЃAдS“а‚ЙЋЛђё‚і‚к‚Д‚ў‚й
+		IF CSTR:MASTER:гѓ‰гѓ©г‚ґгѓі == "гѓ‰гѓ©г‚ґгѓі"
+			PRINTFORML гЂЂ%CALLNAME:TARGET%гЃЇ%CALLNAME:MASTER%гЃ®гѓ‰гѓ©г‚ґгѓігЃ«{VIDEOBONUS:7}е›ћгЂЃи†Је†…гЃ«е°„зІѕгЃ•г‚ЊгЃ¦гЃ„г‚‹
 		ELSE
-			PRINTFORML Ѓ@%CALLNAME:TARGET%‚Н%CSTR:MASTER:ѓhѓ‰ѓSѓ“%‚Й{VIDEOBONUS:7}‰сЃAдS“а‚ЙЋЛђё‚і‚к‚Д‚ў‚й
+			PRINTFORML гЂЂ%CALLNAME:TARGET%гЃЇ%CSTR:MASTER:гѓ‰гѓ©г‚ґгѓі%гЃ«{VIDEOBONUS:7}е›ћгЂЃи†Је†…гЃ«е°„зІѕгЃ•г‚ЊгЃ¦гЃ„г‚‹
 		ENDIF
-	;ѓAѓiѓ‹’†Џo‚µ‚М‚Э
+	;г‚ўгѓЉгѓ«дё­е‡єгЃ—гЃ®гЃї
 	ELSEIF VIDEOBONUS:8
-		IF CSTR:MASTER:ѓhѓ‰ѓSѓ“ == "ѓhѓ‰ѓSѓ“"
-			PRINTFORML Ѓ@%CALLNAME:TARGET%‚Н%CALLNAME:MASTER%‚Мѓhѓ‰ѓSѓ“‚Й{VIDEOBONUS:8}‰сЃAѓAѓiѓ‹‚ЙЋЛђё‚і‚к‚Д‚ў‚й
+		IF CSTR:MASTER:гѓ‰гѓ©г‚ґгѓі == "гѓ‰гѓ©г‚ґгѓі"
+			PRINTFORML гЂЂ%CALLNAME:TARGET%гЃЇ%CALLNAME:MASTER%гЃ®гѓ‰гѓ©г‚ґгѓігЃ«{VIDEOBONUS:8}е›ћгЂЃг‚ўгѓЉгѓ«гЃ«е°„зІѕгЃ•г‚ЊгЃ¦гЃ„г‚‹
 		ELSE
-			PRINTFORML Ѓ@%CALLNAME:TARGET%‚Н%CSTR:MASTER:ѓhѓ‰ѓSѓ“%‚Й{VIDEOBONUS:8}‰сЃAѓAѓiѓ‹‚ЙЋЛђё‚і‚к‚Д‚ў‚й
+			PRINTFORML гЂЂ%CALLNAME:TARGET%гЃЇ%CSTR:MASTER:гѓ‰гѓ©г‚ґгѓі%гЃ«{VIDEOBONUS:8}е›ћгЂЃг‚ўгѓЉгѓ«гЃ«е°„зІѕгЃ•г‚ЊгЃ¦гЃ„г‚‹
 		ENDIF
 	ENDIF
-	;Џ•Ћи‚Мѓhѓ‰ѓSѓ“ЃЁ“z—к’†Џo‚µ&ѓAѓiѓ‹’†Џo‚µ
+	;еЉ©ж‰‹гЃ®гѓ‰гѓ©г‚ґгѓів†’еҐґйљ·дё­е‡єгЃ—&г‚ўгѓЉгѓ«дё­е‡єгЃ—
 	IF VIDEOBONUS:9 && VIDEOBONUS:10
-		IF CSTR:ASSI:ѓhѓ‰ѓSѓ“ == "ѓhѓ‰ѓSѓ“"
-			PRINTFORML Ѓ@%CALLNAME:TARGET%‚Н%CALLNAME:ASSI%‚Мѓhѓ‰ѓSѓ“‚Й{VIDEOBONUS:9}‰сдS“аЋЛђё‚і‚кЃA{VIDEOBONUS:10}‰сѓAѓiѓ‹‚Й‚аЋЛђё‚і‚к‚Д‚ў‚й
+		IF CSTR:ASSI:гѓ‰гѓ©г‚ґгѓі == "гѓ‰гѓ©г‚ґгѓі"
+			PRINTFORML гЂЂ%CALLNAME:TARGET%гЃЇ%CALLNAME:ASSI%гЃ®гѓ‰гѓ©г‚ґгѓігЃ«{VIDEOBONUS:9}е›ћи†Је†…е°„зІѕгЃ•г‚ЊгЂЃ{VIDEOBONUS:10}е›ћг‚ўгѓЉгѓ«гЃ«г‚‚е°„зІѕгЃ•г‚ЊгЃ¦гЃ„г‚‹
 		ELSE
-			PRINTFORML Ѓ@%CALLNAME:TARGET%‚Н%CSTR:ASSI:ѓhѓ‰ѓSѓ“%‚Й{VIDEOBONUS:9}‰сдS“аЋЛђё‚і‚кЃA{VIDEOBONUS:10}‰сѓAѓiѓ‹‚Й‚аЋЛђё‚і‚к‚Д‚ў‚й
+			PRINTFORML гЂЂ%CALLNAME:TARGET%гЃЇ%CSTR:ASSI:гѓ‰гѓ©г‚ґгѓі%гЃ«{VIDEOBONUS:9}е›ћи†Је†…е°„зІѕгЃ•г‚ЊгЂЃ{VIDEOBONUS:10}е›ћг‚ўгѓЉгѓ«гЃ«г‚‚е°„зІѕгЃ•г‚ЊгЃ¦гЃ„г‚‹
 		ENDIF
-	;’†Џo‚µ‚М‚Э
+	;дё­е‡єгЃ—гЃ®гЃї
 	ELSEIF VIDEOBONUS:9
-		IF CSTR:MASTER:ѓhѓ‰ѓSѓ“ == "ѓhѓ‰ѓSѓ“"
-			PRINTFORML Ѓ@%CALLNAME:TARGET%‚Н%CALLNAME:ASSI%‚Мѓhѓ‰ѓSѓ“‚Й{VIDEOBONUS:9}‰сЃAдS“а‚ЙЋЛђё‚і‚к‚Д‚ў‚й
+		IF CSTR:MASTER:гѓ‰гѓ©г‚ґгѓі == "гѓ‰гѓ©г‚ґгѓі"
+			PRINTFORML гЂЂ%CALLNAME:TARGET%гЃЇ%CALLNAME:ASSI%гЃ®гѓ‰гѓ©г‚ґгѓігЃ«{VIDEOBONUS:9}е›ћгЂЃи†Је†…гЃ«е°„зІѕгЃ•г‚ЊгЃ¦гЃ„г‚‹
 		ELSE
-			PRINTFORML Ѓ@%CALLNAME:TARGET%‚Н%CSTR:ASSI:ѓhѓ‰ѓSѓ“%‚Й{VIDEOBONUS:9}‰сЃAдS“а‚ЙЋЛђё‚і‚к‚Д‚ў‚й
+			PRINTFORML гЂЂ%CALLNAME:TARGET%гЃЇ%CSTR:ASSI:гѓ‰гѓ©г‚ґгѓі%гЃ«{VIDEOBONUS:9}е›ћгЂЃи†Је†…гЃ«е°„зІѕгЃ•г‚ЊгЃ¦гЃ„г‚‹
 		ENDIF
-	;ѓAѓiѓ‹’†Џo‚µ‚М‚Э
+	;г‚ўгѓЉгѓ«дё­е‡єгЃ—гЃ®гЃї
 	ELSEIF VIDEOBONUS:10
-		IF CSTR:MASTER:ѓhѓ‰ѓSѓ“ == "ѓhѓ‰ѓSѓ“"
-			PRINTFORML Ѓ@%CALLNAME:TARGET%‚Н%CALLNAME:ASSI%‚Мѓhѓ‰ѓSѓ“‚Й{VIDEOBONUS:10}‰сЃAѓAѓiѓ‹‚ЙЋЛђё‚і‚к‚Д‚ў‚й
+		IF CSTR:MASTER:гѓ‰гѓ©г‚ґгѓі == "гѓ‰гѓ©г‚ґгѓі"
+			PRINTFORML гЂЂ%CALLNAME:TARGET%гЃЇ%CALLNAME:ASSI%гЃ®гѓ‰гѓ©г‚ґгѓігЃ«{VIDEOBONUS:10}е›ћгЂЃг‚ўгѓЉгѓ«гЃ«е°„зІѕгЃ•г‚ЊгЃ¦гЃ„г‚‹
 		ELSE
-			PRINTFORML Ѓ@%CALLNAME:TARGET%‚Н%CSTR:ASSI:ѓhѓ‰ѓSѓ“%‚Й{VIDEOBONUS:10}‰сЃAѓAѓiѓ‹‚ЙЋЛђё‚і‚к‚Д‚ў‚й
+			PRINTFORML гЂЂ%CALLNAME:TARGET%гЃЇ%CSTR:ASSI:гѓ‰гѓ©г‚ґгѓі%гЃ«{VIDEOBONUS:10}е›ћгЂЃг‚ўгѓЉгѓ«гЃ«е°„зІѕгЃ•г‚ЊгЃ¦гЃ„г‚‹
 		ENDIF
 	ENDIF
-	;“z—к•¬“ы
+	;еҐґйљ·е™ґд№і
 	IF VIDEOBONUS:11
-		PRINTFORML Ѓ@%CALLNAME:TARGET%‚ЄђGЋи‚Й{VIDEOBONUS:11}‰сЃAдS“а‚ЙЋЛђё‚і‚к‚Д‚ў‚й
+		PRINTFORML гЂЂ%CALLNAME:TARGET%гЃЊи§¦ж‰‹гЃ«{VIDEOBONUS:11}е›ћгЂЃи†Је†…гЃ«е°„зІѕгЃ•г‚ЊгЃ¦гЃ„г‚‹
 	ENDIF
-	;“z—к•¬“ы
+	;еҐґйљ·е™ґд№і
 	IF VIDEOBONUS:12
-		PRINTFORML Ѓ@%CALLNAME:TARGET%‚ЄђGЋи‚Й{VIDEOBONUS:11}‰сЃAѓAѓiѓ‹‚ЙЋЛђё‚і‚к‚Д‚ў‚й
+		PRINTFORML гЂЂ%CALLNAME:TARGET%гЃЊи§¦ж‰‹гЃ«{VIDEOBONUS:11}е›ћгЂЃг‚ўгѓЉгѓ«гЃ«е°„зІѕгЃ•г‚ЊгЃ¦гЃ„г‚‹
 	ENDIF
 ENDIF
 
-PRINTFORMW %CALLNAME:TARGET%‚МѓrѓfѓI‚р•ЫЉЗ‚µ‚Ѕ({CFLAG:ЏЉЋќѓrѓfѓIђ”+1}–{–Ъ)
-CFLAG:ЏЉЋќѓrѓfѓIђ”++
+PRINTFORMW %CALLNAME:TARGET%гЃ®гѓ“гѓ‡г‚Єг‚’дїќз®ЎгЃ—гЃџ({CFLAG:ж‰ЂжЊЃгѓ“гѓ‡г‚Єж•°+1}жњ¬з›®)
+CFLAG:ж‰ЂжЊЃгѓ“гѓ‡г‚Єж•°++
 
 @SELL_PICTURE
-;”„‚к‚йЋКђ^‚Є–і‚Ї‚к‚ОЉЦђ”ЏI—№
+;еЈІг‚Њг‚‹е†™зњџгЃЊз„ЎгЃ‘г‚ЊгЃ°й–ўж•°зµ‚дє†
 LOCAL = 0
-SIF ЋКђ^“а—e:0 == ""
+SIF е†™зњџе†…е®№:0 == ""
 	RETURN 0
 DRAWLINE
-PRINTL ЋB‰e‚µ‚ЅЋКђ^‚рЉm”F‚µ‚Ь‚·
+PRINTL ж’®еЅ±гЃ—гЃџе†™зњџг‚’зўєиЄЌгЃ—гЃѕгЃ™
 REPEAT 10
-	SIF ЋКђ^“а—e:COUNT == ""
+	SIF е†™зњџе†…е®№:COUNT == ""
 		BREAK
-	PRINTFORML {COUNT+1, 2}–‡–Ъ.%ЋКђ^“а—e:COUNT%
+	PRINTFORML {COUNT+1, 2}жћљз›®.%е†™зњџе†…е®№:COUNT%
 REND
 
-PRINTFORMW Њv{COUNT}–‡‚МЋКђ^‚р•Ы‘¶‚µ‚Ь‚µ‚Ѕ
+PRINTFORMW иЁ€{COUNT}жћљгЃ®е†™зњџг‚’дїќе­гЃ—гЃѕгЃ—гЃџ
 

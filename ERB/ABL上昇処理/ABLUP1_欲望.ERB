@@ -1,139 +1,139 @@
-@ABLUP1
-SIF ABL:—~–] == 10 && !TALENT:ƒŠƒ~ƒbƒgƒo[ƒXƒg
+ï»¿@ABLUP1
+SIF ABL:æ¬²æœ› == 10 && !TALENT:ãƒªãƒŸãƒƒãƒˆãƒãƒ¼ã‚¹ãƒˆ
 	RETURN 0
-CALL NEED_JUEL_—~–]
-CALL CHECK_JUEL_—~–]
+CALL NEED_JUEL_æ¬²æœ›
+CALL CHECK_JUEL_æ¬²æœ›
 IF RESULT
-	CALL NEED_JUEL_—~–]
+	CALL NEED_JUEL_æ¬²æœ›
 	REPEAT 15
 		JUEL:COUNT -= ABLUP:COUNT
 	REND
-	ABL:—~–]++
+	ABL:æ¬²æœ›++
 ENDIF
 
-@NEED_JUEL_—~–]
-SELECTCASE ABL:—~–]
+@NEED_JUEL_æ¬²æœ›
+SELECTCASE ABL:æ¬²æœ›
 	CASE 0
-		ABLUP:GETPALAM("—~î") = 1
+		ABLUP:GETPALAM("æ¬²æƒ…") = 1
 	CASE 1
-		ABLUP:GETPALAM("—~î") = 20
+		ABLUP:GETPALAM("æ¬²æƒ…") = 20
 	CASE 2
-		ABLUP:GETPALAM("—~î") = 1000
+		ABLUP:GETPALAM("æ¬²æƒ…") = 1000
 	CASE 3
-		ABLUP:GETPALAM("—~î") = 8000
+		ABLUP:GETPALAM("æ¬²æƒ…") = 8000
 	CASE 4
-		ABLUP:GETPALAM("—~î") = 24000
+		ABLUP:GETPALAM("æ¬²æƒ…") = 24000
 	CASE 5
-		ABLUP:GETPALAM("—~î") = 30000
+		ABLUP:GETPALAM("æ¬²æƒ…") = 30000
 	CASE 6
-		ABLUP:GETPALAM("—~î") = 36000
+		ABLUP:GETPALAM("æ¬²æƒ…") = 36000
 	CASE 7
-		ABLUP:GETPALAM("—~î") = 45000
+		ABLUP:GETPALAM("æ¬²æƒ…") = 45000
 	CASE 8
-		ABLUP:GETPALAM("—~î") = 55000
+		ABLUP:GETPALAM("æ¬²æƒ…") = 55000
 	CASE 9
-		ABLUP:GETPALAM("—~î") = 70000
+		ABLUP:GETPALAM("æ¬²æƒ…") = 70000
 	CASE IS >= 10
-		LOCAL = ABL:—~–]*ABL:—~–]
-		ABLUP:GETPALAM("—~î") = 800 * LOCAL
+		LOCAL = ABL:æ¬²æœ›*ABL:æ¬²æœ›
+		ABLUP:GETPALAM("æ¬²æƒ…") = 800 * LOCAL
 ENDSELECT
 
-;LV4‚©‚ç‚ÍˆÙíŒoŒ±‚à‚µ‚­‚Í‰õŠyˆóLV3•K—v LV7‚©‚ç‚ÍˆÙíŒoŒ±3ˆÈã•K—viŠ×—ŽÏ‚Ý‚à‚µ‚­‚Í[‰õŠ´‚É‘f’¼]‚È‚ç–³Ž‹‚Å‚«‚éj
-IF !CFLAG:Š×—Ž && !TALENT:‰õŠ´‚É‘f’¼
-	IF ABL:—~–] >= 7
-		ABLUPEXP:GETEXP("ˆÙíŒoŒ±") = 3
-	ELSEIF ABL:—~–] >= 4
-		ABLUPEXP:GETEXP("ˆÙíŒoŒ±") = 1
+;LV4ã‹ã‚‰ã¯ç•°å¸¸çµŒé¨“ã‚‚ã—ãã¯å¿«æ¥½åˆ»å°LV3å¿…è¦ LV7ã‹ã‚‰ã¯ç•°å¸¸çµŒé¨“3ä»¥ä¸Šå¿…è¦ï¼ˆé™¥è½æ¸ˆã¿ã‚‚ã—ãã¯[å¿«æ„Ÿã«ç´ ç›´]ãªã‚‰ç„¡è¦–ã§ãã‚‹ï¼‰
+IF !CFLAG:é™¥è½ && !TALENT:å¿«æ„Ÿã«ç´ ç›´
+	IF ABL:æ¬²æœ› >= 7
+		ABLUPEXP:GETEXP("ç•°å¸¸çµŒé¨“") = 3
+	ELSEIF ABL:æ¬²æœ› >= 4
+		ABLUPEXP:GETEXP("ç•°å¸¸çµŒé¨“") = 1
 	ENDIF
 ENDIF
 
-;‘fŽ¿‚Å‚Ì•â³
-;ˆú—
-SIF TALENT:ˆú—
-	TIMES ABLUP:GETPALAM("—~î") , 0.70
-;©•w
-SIF TALENT:©•w
-	TIMES ABLUP:GETPALAM("—~î") , 0.50
-;‰õŠ´‚É‘f’¼
-SIF TALENT:‰õŠ´‚É‘f’¼
-	TIMES ABLUP:GETPALAM("—~î") , 0.70
-;Š´î–R‚µ‚¢A–³ŠÖS
-SIF TALENT:Š´î–R‚µ‚¢ || TALENT:–³ŠÖS
-	TIMES ABLUP:GETPALAM("—~î") , 1.30
-;‰õŠ´‚Ì”Û’è
-SIF TALENT:‰õŠ´‚Ì”Û’è
-	TIMES ABLUP:GETPALAM("—~î") , 2.00
-;ƒcƒ“ƒfƒŒ
-SIF TALENT:ƒcƒ“ƒfƒŒ
-	TIMES ABLUP:GETPALAM("—~î") , 0.80
-;ƒTƒhƒ}ƒ]
-SIF TALENT:ƒTƒh || TALENT:ƒ}ƒ]
-	TIMES ABLUP:GETPALAM("—~î") , 0.90
-;‰õŠyˆó 1‚²‚Æ‚É10%ˆø‚« Å‘å30%ƒIƒtI
-ABLUP:GETPALAM("—~î") -= (ABLUP:GETPALAM("—~î")/10)*MARK:‰õŠyˆó
+;ç´ è³ªã§ã®è£œæ­£
+;æ·«ä¹±
+SIF TALENT:æ·«ä¹±
+	TIMES ABLUP:GETPALAM("æ¬²æƒ…") , 0.70
+;å¨¼å©¦
+SIF TALENT:å¨¼å©¦
+	TIMES ABLUP:GETPALAM("æ¬²æƒ…") , 0.50
+;å¿«æ„Ÿã«ç´ ç›´
+SIF TALENT:å¿«æ„Ÿã«ç´ ç›´
+	TIMES ABLUP:GETPALAM("æ¬²æƒ…") , 0.70
+;æ„Ÿæƒ…ä¹ã—ã„ã€ç„¡é–¢å¿ƒ
+SIF TALENT:æ„Ÿæƒ…ä¹ã—ã„ || TALENT:ç„¡é–¢å¿ƒ
+	TIMES ABLUP:GETPALAM("æ¬²æƒ…") , 1.30
+;å¿«æ„Ÿã®å¦å®š
+SIF TALENT:å¿«æ„Ÿã®å¦å®š
+	TIMES ABLUP:GETPALAM("æ¬²æƒ…") , 2.00
+;ãƒ„ãƒ³ãƒ‡ãƒ¬
+SIF TALENT:ãƒ„ãƒ³ãƒ‡ãƒ¬
+	TIMES ABLUP:GETPALAM("æ¬²æƒ…") , 0.80
+;ã‚µãƒ‰ãƒžã‚¾
+SIF TALENT:ã‚µãƒ‰ || TALENT:ãƒžã‚¾
+	TIMES ABLUP:GETPALAM("æ¬²æƒ…") , 0.90
+;å¿«æ¥½åˆ»å° 1ã”ã¨ã«10%å¼•ã æœ€å¤§30%ã‚ªãƒ•ï¼
+ABLUP:GETPALAM("æ¬²æƒ…") -= (ABLUP:GETPALAM("æ¬²æƒ…")/10)*MARK:å¿«æ¥½åˆ»å°
 
-@CHECK_JUEL_—~–]
-SELECTCASE ABL:—~–]
+@CHECK_JUEL_æ¬²æœ›
+SELECTCASE ABL:æ¬²æœ›
 	CASE 4
-		;ˆÙíŒoŒ±‚à‚µ‚­‚Í‰õŠyˆóLV3•K—v
-		SIF EXP:ˆÙíŒoŒ± < ABLUPEXP:GETEXP("ˆÙíŒoŒ±") && MARK:‰õŠyˆó < 3
+		;ç•°å¸¸çµŒé¨“ã‚‚ã—ãã¯å¿«æ¥½åˆ»å°LV3å¿…è¦
+		SIF EXP:ç•°å¸¸çµŒé¨“ < ABLUPEXP:GETEXP("ç•°å¸¸çµŒé¨“") && MARK:å¿«æ¥½åˆ»å° < 3
 			RETURN 0
 	CASE 7
-		;ˆÙíŒoŒ±‚ª‹K’è’l‚É–ž‚½‚È‚¢‚Æã¸‚Å‚«‚È‚¢
-		SIF EXP:ˆÙíŒoŒ± < ABLUPEXP:GETEXP("ˆÙíŒoŒ±")
+		;ç•°å¸¸çµŒé¨“ãŒè¦å®šå€¤ã«æº€ãŸãªã„ã¨ä¸Šæ˜‡ã§ããªã„
+		SIF EXP:ç•°å¸¸çµŒé¨“ < ABLUPEXP:GETEXP("ç•°å¸¸çµŒé¨“")
 			RETURN 0
 ENDSELECT
 
-;LV3‚©‚ç‚Í‰õŠyˆóLV1•K—v LV5‚©‚ç‚Í‰õŠyˆóLV2•K—v LV7‚©‚ç‚Í‰õŠyˆóLV3•K—v
-IF ABL:—~–] >= 7 && MARK:‰õŠyˆó < 3
+;LV3ã‹ã‚‰ã¯å¿«æ¥½åˆ»å°LV1å¿…è¦ LV5ã‹ã‚‰ã¯å¿«æ¥½åˆ»å°LV2å¿…è¦ LV7ã‹ã‚‰ã¯å¿«æ¥½åˆ»å°LV3å¿…è¦
+IF ABL:æ¬²æœ› >= 7 && MARK:å¿«æ¥½åˆ»å° < 3
 	RETURN 0
-ELSEIF ABL:—~–] >= 5 && MARK:‰õŠyˆó < 2
+ELSEIF ABL:æ¬²æœ› >= 5 && MARK:å¿«æ¥½åˆ»å° < 2
 	RETURN 0
-ELSEIF ABL:—~–] >= 3 && MARK:‰õŠyˆó < 1
+ELSEIF ABL:æ¬²æœ› >= 3 && MARK:å¿«æ¥½åˆ»å° < 1
 	RETURN 0
 ENDIF
 
-;—~î‚ÌŽì‚ª•K—v
-SIF JUEL:—~î >= ABLUP:GETPALAM("—~î")
+;æ¬²æƒ…ã®ç ãŒå¿…è¦
+SIF JUEL:æ¬²æƒ… >= ABLUP:GETPALAM("æ¬²æƒ…")
 	RETURN 1
 
-;ã‹L‚ÌðŒ‚ð–ž‚½‚¹‚È‚©‚Á‚½‚çã‚°‚ç‚ê‚È‚¢
+;ä¸Šè¨˜ã®æ¡ä»¶ã‚’æº€ãŸã›ãªã‹ã£ãŸã‚‰ä¸Šã’ã‚‰ã‚Œãªã„
 RETURN 0
 
-@ABLUP_MESSAGE_—~–]
-;LV4‚©‚ç‚ÍˆÙíŒoŒ±•K—v LV7‚©‚ç‚ÍˆÙíŒoŒ±3ˆÈã•K—viŠ×—ŽÏ‚Ý‚à‚µ‚­‚Í[‰õŠ´‚É‘f’¼]‚È‚ç–³Ž‹‚Å‚«‚éj
-SELECTCASE ABL:—~–]
+@ABLUP_MESSAGE_æ¬²æœ›
+;LV4ã‹ã‚‰ã¯ç•°å¸¸çµŒé¨“å¿…è¦ LV7ã‹ã‚‰ã¯ç•°å¸¸çµŒé¨“3ä»¥ä¸Šå¿…è¦ï¼ˆé™¥è½æ¸ˆã¿ã‚‚ã—ãã¯[å¿«æ„Ÿã«ç´ ç›´]ãªã‚‰ç„¡è¦–ã§ãã‚‹ï¼‰
+SELECTCASE ABL:æ¬²æœ›
 	CASE 4
-		SIF EXP:ˆÙíŒoŒ± == 0 && MARK:‰õŠyˆó < 3
+		SIF EXP:ç•°å¸¸çµŒé¨“ == 0 && MARK:å¿«æ¥½åˆ»å° < 3
 			SETCOLOR 120, 120, 120
-		SIF ABLUPEXP:GETEXP("ˆÙíŒoŒ±")
-			PRINT [ˆÙíŒoŒ±1ˆÈãor‰õŠyˆóLV3ˆÈã]
+		SIF ABLUPEXP:GETEXP("ç•°å¸¸çµŒé¨“")
+			PRINT [ç•°å¸¸çµŒé¨“1ä»¥ä¸Šorå¿«æ¥½åˆ»å°LV3ä»¥ä¸Š]
 		RESETCOLOR
 	CASE 7
-		SIF EXP:ˆÙíŒoŒ± < ABLUPEXP:GETEXP("ˆÙíŒoŒ±")
+		SIF EXP:ç•°å¸¸çµŒé¨“ < ABLUPEXP:GETEXP("ç•°å¸¸çµŒé¨“")
 			SETCOLOR 120, 120, 120
-		SIF ABLUPEXP:GETEXP("ˆÙíŒoŒ±")
-			PRINT [ˆÙíŒoŒ±3ˆÈã]
+		SIF ABLUPEXP:GETEXP("ç•°å¸¸çµŒé¨“")
+			PRINT [ç•°å¸¸çµŒé¨“3ä»¥ä¸Š]
 		RESETCOLOR
 ENDSELECT
 
-SELECTCASE ABL:—~–]
+SELECTCASE ABL:æ¬²æœ›
 	CASE 3, 5, 7
-		SIF (ABL:—~–] >= 7 && MARK:‰õŠyˆó < 3) || (ABL:—~–] >= 5 && MARK:‰õŠyˆó < 2) || (ABL:—~–] >= 3 && MARK:‰õŠyˆó < 1)
+		SIF (ABL:æ¬²æœ› >= 7 && MARK:å¿«æ¥½åˆ»å° < 3) || (ABL:æ¬²æœ› >= 5 && MARK:å¿«æ¥½åˆ»å° < 2) || (ABL:æ¬²æœ› >= 3 && MARK:å¿«æ¥½åˆ»å° < 1)
 			SETCOLOR 120, 120, 120
-		;LV3‚©‚ç‚Í‰õŠyˆóLV1•K—v LV5‚©‚ç‚Í‰õŠyˆóLV2•K—v LV7‚©‚ç‚Í‰õŠyˆóLV3•K—v
-		IF ABL:—~–] >= 7
-			PRINT [‰õŠyˆóLV3]
-		ELSEIF ABL:—~–] >= 5
-			PRINT [‰õŠyˆóLV2ˆÈã]
-		ELSEIF ABL:—~–] >= 3
-			PRINT [‰õŠyˆó‚ ‚è]
+		;LV3ã‹ã‚‰ã¯å¿«æ¥½åˆ»å°LV1å¿…è¦ LV5ã‹ã‚‰ã¯å¿«æ¥½åˆ»å°LV2å¿…è¦ LV7ã‹ã‚‰ã¯å¿«æ¥½åˆ»å°LV3å¿…è¦
+		IF ABL:æ¬²æœ› >= 7
+			PRINT [å¿«æ¥½åˆ»å°LV3]
+		ELSEIF ABL:æ¬²æœ› >= 5
+			PRINT [å¿«æ¥½åˆ»å°LV2ä»¥ä¸Š]
+		ELSEIF ABL:æ¬²æœ› >= 3
+			PRINT [å¿«æ¥½åˆ»å°ã‚ã‚Š]
 		ENDIF
 		RESETCOLOR
 ENDSELECT
 
-SIF JUEL:—~î < ABLUP:GETPALAM("—~î")
+SIF JUEL:æ¬²æƒ… < ABLUP:GETPALAM("æ¬²æƒ…")
 	SETCOLOR 120, 120, 120
-PRINTFORM [—~î‚ÌŽì~{ABLUP:GETPALAM("—~î")}]
+PRINTFORM [æ¬²æƒ…ã®ç Ã—{ABLUP:GETPALAM("æ¬²æƒ…")}]
 RESETCOLOR
 

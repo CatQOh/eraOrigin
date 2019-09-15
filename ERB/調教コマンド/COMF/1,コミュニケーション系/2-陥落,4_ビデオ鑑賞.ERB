@@ -1,64 +1,64 @@
+ï»¿;-------------------------------------------------
+;ãƒ“ãƒ‡ã‚ªé‘‘è³ž
 ;-------------------------------------------------
-;ƒrƒfƒIŠÓÜ
-;-------------------------------------------------
-@USERCOM_ABLE_ƒrƒfƒIŠÓÜ, ARG
+@USERCOM_ABLE_ãƒ“ãƒ‡ã‚ªé‘‘è³ž, ARG
 #FUNCTION
-;Ž–‘O‚É“z—ê‚ðŽB‰e‚µ‚½ƒrƒfƒI‚ª–³‚¢‚Æƒ_ƒ
-SIF !CFLAG:ŠŽƒrƒfƒI”
+;äº‹å‰ã«å¥´éš·ã‚’æ’®å½±ã—ãŸãƒ“ãƒ‡ã‚ªãŒç„¡ã„ã¨ãƒ€ãƒ¡
+SIF !CFLAG:æ‰€æŒãƒ“ãƒ‡ã‚ªæ•°
 	RETURNF 0
-;Š×—ŽÏ‚Ý‚¶‚á‚È‚¢‚Æƒ_ƒ
-SIF !CFLAG:Š×—Ž
+;é™¥è½æ¸ˆã¿ã˜ã‚ƒãªã„ã¨ãƒ€ãƒ¡
+SIF !CFLAG:é™¥è½
 	RETURNF 0
-;–ìŠOƒvƒŒƒC’†‚Íƒ_ƒ
-SIF TEQUIP:–ìŠOƒvƒŒƒC
+;é‡Žå¤–ãƒ—ãƒ¬ã‚¤ä¸­ã¯ãƒ€ãƒ¡
+SIF TEQUIP:é‡Žå¤–ãƒ—ãƒ¬ã‚¤
 	RETURNF 0
-;‚¨•—˜CêƒvƒŒƒC’†‚Íƒ_ƒ
-SIF TEQUIP:‚¨•—˜Cê
+;ãŠé¢¨å‘‚å ´ãƒ—ãƒ¬ã‚¤ä¸­ã¯ãƒ€ãƒ¡
+SIF TEQUIP:ãŠé¢¨å‘‚å ´
 	RETURNF 0
-;ƒAƒCƒ}ƒXƒN‘•”õ’†‚Íƒ_ƒ
-SIF TEQUIP:ƒAƒCƒ}ƒXƒN
+;ã‚¢ã‚¤ãƒžã‚¹ã‚¯è£…å‚™ä¸­ã¯ãƒ€ãƒ¡
+SIF TEQUIP:ã‚¢ã‚¤ãƒžã‚¹ã‚¯
 	RETURNF 0
 
 COMRESULT = 1
 RETURNF 1
 
-@COM_ƒrƒfƒIŠÓÜ
-PRINTL ƒrƒfƒIŠÓÜ
+@COM_ãƒ“ãƒ‡ã‚ªé‘‘è³ž
+PRINTL ãƒ“ãƒ‡ã‚ªé‘‘è³ž
 CALL KOJO_MESSAGE_COM
 
 ;-------------------------------------------------
-;ƒ\[ƒX’Ç‰Áˆ—
+;ã‚½ãƒ¼ã‚¹è¿½åŠ å‡¦ç†
 ;-------------------------------------------------
-;Á”ï‘Ì—ÍA‹C—Í
-LOSEBASE:‘Ì—Í += 30
-LOSEBASE:‹C—Í += 80
+;æ¶ˆè²»ä½“åŠ›ã€æ°—åŠ›
+LOSEBASE:ä½“åŠ› += 30
+LOSEBASE:æ°—åŠ› += 80
 
-SOURCE:‹°•| = 1000
-SOURCE:‹±‡ = 1000
-SOURCE:«s“® = 100
-SOURCE:—~î = 500
-SOURCE:’†“Å = 100
-SOURCE:‹ü] = 500
-SOURCE:ˆí’E = 200
-SOURCE:”½Š´ = 200
+SOURCE:ææ€– = 1000
+SOURCE:æ­é † = 1000
+SOURCE:æ€§è¡Œå‹• = 100
+SOURCE:æ¬²æƒ… = 500
+SOURCE:ä¸­æ¯’ = 100
+SOURCE:å±ˆå¾“ = 500
+SOURCE:é€¸è„± = 200
+SOURCE:åæ„Ÿ = 200
 
 ;-------------------------------------------------
-;â’¸ƒ`ƒFƒbƒN
+;çµ¶é ‚ãƒã‚§ãƒƒã‚¯
 ;-------------------------------------------------
 CALL SOURCE_CHECK_CVAB
 
 ;-------------------------------------------------
-;ŽË¸ƒ`ƒFƒbƒN
+;å°„ç²¾ãƒã‚§ãƒƒã‚¯
 ;-------------------------------------------------
 CALL SAMEN_CHECK_T, 0
 
-CALL SAMEN_SHOOT_T, 0, NOWEX:ŽË¸
+CALL SAMEN_SHOOT_T, 0, NOWEX:å°„ç²¾
 
 ;-------------------------------------------------
-;ŒoŒ±‚Ìˆ—
+;çµŒé¨“ã®å‡¦ç†
 ;-------------------------------------------------
-;ˆË‘¶“x•â³’l
-TFLAG:ˆË‘¶“x•â³ += 2
+;ä¾å­˜åº¦è£œæ­£å€¤
+TFLAG:ä¾å­˜åº¦è£œæ­£ += 2
 
 RETURN 1
 

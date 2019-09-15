@@ -1,46 +1,46 @@
+﻿;-------------------------------------------------
+;顔面騎乗する
 ;-------------------------------------------------
-;��ʋR�悷��
-;-------------------------------------------------
-@USERCOM_ABLE_��ʋR�悷��, ARG
+@USERCOM_ABLE_顔面騎乗する, ARG
 #FUNCTION
-;�����҂����@�M�i�����ƃ_��
+;調教者がヴァギナ無いとダメ
 SIF !VAGINA(PLAYER)
 	RETURNF 0
-;�L��̓z��̏ꍇ�͋Z�ILv2�ȏ�K�v
-SIF TALENT:�L�� && ABL:�Z�I < 2
+;猫舌の奴隷の場合は技巧Lv2以上必要
+SIF TALENT:猫舌 && ABL:技巧 < 2
 	RETURNF 0
-;�{�[���M���O�g�p���͕s��
-SIF TEQUIP:�{�[���M���O
+;ボールギャグ使用中は不可
+SIF TEQUIP:ボールギャグ
 	RETURNF 0
-;�����Ă�ꍇ�͉����󂢂Ă��Ȃ��ƃ_�� ������̌^�S�g�㒅�͗�O
-IF TEQUIP:PLAYER:�����g�㒅 || (TEQUIP:PLAYER:�S�g�㒅 && CFLAG:PLAYER:���ߕ��p != 1)
-	SIF !CFLAG:PLAYER:�}���� && !CFLAG:PLAYER:���ߕ��p != 2
+;服着てる場合は下が空いていないとダメ 下着一体型全身上着は例外
+IF TEQUIP:PLAYER:下半身上着 || (TEQUIP:PLAYER:全身上着 && CFLAG:PLAYER:着衣併用 != 1)
+	SIF !CFLAG:PLAYER:挿入可 && !CFLAG:PLAYER:着衣併用 != 2
 		RETURNF 0
 ENDIF
 
 COMRESULT = 1
 RETURNF 1
 
-@COM_��ʋR�悷��
-PRINTL ��ʋR�悷��
+@COM_顔面騎乗する
+PRINTL 顔面騎乗する
 CALL KOJO_MESSAGE_COM
 
-;���s�҂��z��ł���t���O
-TFLAG:�z����s = 1
+;実行者が奴隷であるフラグ
+TFLAG:奴隷実行 = 1
 
 ;-------------------------------------------------
-;�ː��Q�[�W�`�F�b�N�i�ӂ��Ȃ�̏ꍇ�j
+;射精ゲージチェック（ふたなりの場合）
 ;-------------------------------------------------
 LOCAL = 100
 
-;ABL:�Z�I���݂�
-LOCAL += (LOCAL/5)*ABL:�Z�I
+;ABL:技巧をみる
+LOCAL += (LOCAL/5)*ABL:技巧
 
-;ABL:�]�����݂�
-LOCAL += (LOCAL/10)*ABL:�]�� - (LOCAL/10)*2
+;ABL:従順をみる
+LOCAL += (LOCAL/10)*ABL:従順 - (LOCAL/10)*2
 
-;ABL:��d���_���݂�
-SELECTCASE ABL:��d���_
+;ABL:奉仕精神をみる
+SELECTCASE ABL:奉仕精神
 	CASE 0
 		TIMES LOCAL , 0.50
 	CASE 1
@@ -52,11 +52,11 @@ SELECTCASE ABL:��d���_
 	CASE 4
 		TIMES LOCAL , 1.80
 	CASEELSE
-		LOCAL += LOCAL/3*ABL:��d���_
+		LOCAL += LOCAL/3*ABL:奉仕精神
 ENDSELECT
 
-;�v���C���[��ABL:�b���o���݂�
-SELECTCASE ABL:PLAYER:�b���o
+;プレイヤーのABL:Ｃ感覚をみる
+SELECTCASE ABL:PLAYER:Ｃ感覚
 	CASE 0
 		TIMES LOCAL , 1.00
 	CASE 1
@@ -68,82 +68,82 @@ SELECTCASE ABL:PLAYER:�b���o
 	CASE 4
 		TIMES LOCAL , 3.50
 	CASEELSE
-		LOCAL += LOCAL*(ABL:PLAYER:�b���o-1)
+		LOCAL += LOCAL*(ABL:PLAYER:Ｃ感覚-1)
 ENDSELECT
 
-;TALENT:��g�����݂�
-SIF TALENT:��g��
+;TALENT:舌使いをみる
+SIF TALENT:舌使い
 	TIMES LOCAL , 2.00
 
-CALL �ː��Q�[�W����, LOCAL, PLAYER
+CALL 射精ゲージ増加, LOCAL, PLAYER
 
 ;-------------------------------------------------
-;�\�[�X�ǉ�����
+;ソース追加処理
 ;-------------------------------------------------
-;����̗́A�C��
-LOSEBASE:�̗� += 30
-LOSEBASE:�C�� += 100
+;消費体力、気力
+LOSEBASE:体力 += 30
+LOSEBASE:気力 += 100
 
-DOWNBASE:MASTER:�̗� += 30
-DOWNBASE:MASTER:�C�� += 30
+DOWNBASE:MASTER:体力 += 30
+DOWNBASE:MASTER:気力 += 30
 
-SOURCE:���s�� = 300
-SOURCE:���| = 300
-SOURCE:�B�� = 100
-SOURCE:���] = 500
-SOURCE:��E = 400
-SOURCE:���� = 400
-SOURCE:�s�� = 300
-
-;-------------------------------------------------
-;����\�[�X����
-;-------------------------------------------------
-;�}���A��R�����ɂ́A�}�T�\�[�X�ǉ�
-SIF TALENT:�}�� || TALENT:��R
-	SOURCE:�T�� += 400
+SOURCE:性行動 = 300
+SOURCE:恐怖 = 300
+SOURCE:達成 = 100
+SOURCE:屈従 = 500
+SOURCE:逸脱 = 400
+SOURCE:反感 = 400
+SOURCE:不潔 = 300
 
 ;-------------------------------------------------
-;�Ⓒ�`�F�b�N
+;特殊ソース処理
+;-------------------------------------------------
+;抑圧、抵抗持ちには、抑鬱ソース追加
+SIF TALENT:抑圧 || TALENT:抵抗
+	SOURCE:鬱屈 += 400
+
+;-------------------------------------------------
+;絶頂チェック
 ;-------------------------------------------------
 CALL SOURCE_CHECK_CVAB
 
 ;-------------------------------------------------
-;�ː��`�F�b�N
+;射精チェック
 ;-------------------------------------------------
 CALL SAMEN_CHECK, 6
 CALL SAMEN_CHECK_T, 0
 
-CALL SAMEN_SHOOT, 6, NOWEX:PLAYER:�ː�
-CALL SAMEN_SHOOT_T, 0, NOWEX:�ː�
+CALL SAMEN_SHOOT, 6, NOWEX:PLAYER:射精
+CALL SAMEN_SHOOT_T, 0, NOWEX:射精
 
 ;-------------------------------------------------
-;�o���̏���
+;経験の処理
 ;-------------------------------------------------
 CALL EXPUP, 3, 2
 
-;�z�ꂪ�L�㎝���̏ꍇ�́A�����҂ɚn�s���y�o����ǉ�
-IF TALENT:�L��
-	EXP:�n�s���y�o�� += 1
-	PRINTL �n�s���y�o��+1
+;奴隷が猫舌持ちの場合は、調教者に嗜虐快楽経験を追加
+IF TALENT:猫舌
+	EXP:嗜虐快楽経験 += 1
+	PRINTL 嗜虐快楽経験+1
 ENDIF
 
-;�b�l�A�b�ɂ��È�
-SELECTCASE CSTR:PLAYER:�푰
-	CASE "�b�l", "�b"
-		CFLAG:�Z��++
-		SIF CFLAG:�Z��%5 == 0
-			CFLAG:�c��++
+;獣人、獣による催淫
+SELECTCASE CSTR:PLAYER:種族
+	CASE "獣人", "獣"
+		CFLAG:媚薬++
+		SIF CFLAG:媚薬%5 == 0
+			CFLAG:残数++
 ENDSELECT
 
-;�ˑ��x�␳�l(����100����������1�A���w��2�j
-IF TALENT:���� && RELATION:(NO:PLAYER) > 100
-	TFLAG:�ˑ��x�␳ += 1
-ELSEIF TALENT:���w && RELATION:(NO:PLAYER) > 100
-	TFLAG:�ˑ��x�␳ += 2
+;依存度補正値(相性100↑かつ淫乱で1、娼婦で2）
+IF TALENT:淫乱 && RELATION:(NO:PLAYER) > 100
+	TFLAG:依存度補正 += 1
+ELSEIF TALENT:娼婦 && RELATION:(NO:PLAYER) > 100
+	TFLAG:依存度補正 += 2
 ENDIF
 
-;��d���y�t���O
-TFLAG:��d���y = 1
+;奉仕快楽フラグ
+TFLAG:奉仕快楽 = 1
 
 RETURN 1
 

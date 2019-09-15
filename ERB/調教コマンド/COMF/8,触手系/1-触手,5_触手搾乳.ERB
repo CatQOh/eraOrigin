@@ -1,24 +1,24 @@
+ï»¿;-------------------------------------------------
+;è§¦æ‰‹æ¾ä¹³
 ;-------------------------------------------------
-;GŽèï“û
-;-------------------------------------------------
-@USERCOM_ABLE_GŽèï“û, ARG
+@USERCOM_ABLE_è§¦æ‰‹æ¾ä¹³, ARG
 #FUNCTION
-;GŽè‚È‚¢‚Æƒ_ƒ
-SIF !TEQUIP:GŽè
+;è§¦æ‰‹ãªã„ã¨ãƒ€ãƒ¡
+SIF !TEQUIP:è§¦æ‰‹
 	RETURNF 0
-;GŽè“ûŽñÓ‚ß’†‚Í•s‰Â
-SIF TEQUIP:ƒjƒvƒ‹ƒLƒƒƒbƒv
+;è§¦æ‰‹ä¹³é¦–è²¬ã‚ä¸­ã¯ä¸å¯
+SIF TEQUIP:ãƒ‹ãƒ—ãƒ«ã‚­ãƒ£ãƒƒãƒ—
 	RETURNF 0
-;•ê“û‘ÌŽ¿‚¶‚á‚È‚¢‚Æƒ_ƒ
-SIF !TALENT:•ê“û‘ÌŽ¿
+;æ¯ä¹³ä½“è³ªã˜ã‚ƒãªã„ã¨ãƒ€ãƒ¡
+SIF !TALENT:æ¯ä¹³ä½“è³ª
 	RETURNF 0
-;’j‚¾‚Æƒ_ƒ
+;ç”·ã ã¨ãƒ€ãƒ¡
 SIF SEX(TARGET) == 1
 	RETURNF 0
 
 COMRESULT = 1
 RETURNF 1
 
-@COM_GŽèï“û
-JUMP COM_ï“ûŠí
+@COM_è§¦æ‰‹æ¾ä¹³
+JUMP COM_æ¾ä¹³å™¨
 

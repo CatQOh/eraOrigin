@@ -1,393 +1,393 @@
-@CREATE_PICTURE
-;�ʐ^�B�e�����ۂɂǂ�Ȏʐ^�����邩���L�^���Ă���
-IF TEQUIP:�㔼�g�㒅 || TEQUIP:�����g�㒅 || TEQUIP:�S�g�㒅
-	�ʐ^���e�L�^�p = %CALLNAME:TARGET%�����𒅂��܂�
-ELSEIF TEQUIP:�㔼�g���� || TEQUIP:�����g����
-	�ʐ^���e�L�^�p = �����p��%CALLNAME:TARGET%��
+﻿@CREATE_PICTURE
+;写真撮影した際にどんな写真が取れるかを記録しておく
+IF TEQUIP:上半身上着 || TEQUIP:下半身上着 || TEQUIP:全身上着
+	写真内容記録用 = %CALLNAME:TARGET%が服を着たまま
+ELSEIF TEQUIP:上半身下着 || TEQUIP:下半身下着
+	写真内容記録用 = 下着姿の%CALLNAME:TARGET%が
 ELSE
-	IF TEQUIP:�G��
-		�ʐ^���e�L�^�p = �G��ɑ̂��x�z�����%CALLNAME:TARGET%��
-	ELSEIF TEQUIP:��
-		�ʐ^���e�L�^�p = ��Ŕ���ꂽ%CALLNAME:TARGET%��
-	ELSEIF TEQUIP:�Z��
-		�ʐ^���e�L�^�p = �Z��ŏ�~��I��ɂ���%CALLNAME:TARGET%��
-	ELSEIF TEQUIP:�A�C�}�X�N
-		�ʐ^���e�L�^�p = �A�C�}�X�N�Ŏ��E��D��ꂽ%CALLNAME:TARGET%��
-	ELSEIF TEQUIP:�{�[���M���O
-		�ʐ^���e�L�^�p = �{�[���M���O�Ő���D��ꂽ%CALLNAME:TARGET%��
+	IF TEQUIP:触手
+		写真内容記録用 = 触手に体を支配される%CALLNAME:TARGET%が
+	ELSEIF TEQUIP:縄
+		写真内容記録用 = 縄で縛られた%CALLNAME:TARGET%が
+	ELSEIF TEQUIP:媚薬
+		写真内容記録用 = 媚薬で情欲を露わにした%CALLNAME:TARGET%が
+	ELSEIF TEQUIP:アイマスク
+		写真内容記録用 = アイマスクで視界を奪われた%CALLNAME:TARGET%が
+	ELSEIF TEQUIP:ボールギャグ
+		写真内容記録用 = ボールギャグで声を奪われた%CALLNAME:TARGET%が
 	ELSE
-		�ʐ^���e�L�^�p = ����%CALLNAME:TARGET%��
+		写真内容記録用 = 裸の%CALLNAME:TARGET%が
 	ENDIF
 ENDIF
 
-IF TEQUIP:��O�v���C
-	�ʐ^���e�L�^�p += "���O��"
-ELSEIF TEQUIP:�����C��
-	�ʐ^���e�L�^�p += "���C���"
+IF TEQUIP:野外プレイ
+	写真内容記録用 += "屋外で"
+ELSEIF TEQUIP:お風呂場
+	写真内容記録用 += "風呂場で"
 ENDIF
 
 SELECTCASE SELECTCOMS
-	CASE "�e���v��"
-		�ʐ^���e�L�^�p += @""
-	CASE "����"
-		�ʐ^���e�L�^�p += @"%CALLNAME:PLAYER%�Ɉ��������"
-	CASE "�N���j", "�␴��"
-		�ʐ^���e�L�^�p += @"%CALLNAME:PLAYER%�ɔ鏊���r�߂���"
-	CASE "�t�F������"
-		�ʐ^���e�L�^�p += @"%CALLNAME:PLAYER%�Ƀy�j�X���r�߂���"
-	CASE "�w�}����", "G�X�|�b�g�h��"
-		�ʐ^���e�L�^�p += @"%CALLNAME:PLAYER%���S�����w�ŘM��񂳂��"
-	CASE "�A�i���r��"
-		�ʐ^���e�L�^�p += @"%CALLNAME:PLAYER%�ɃA�i�����r�߂���"
-	CASE "�A�i������"
-		�ʐ^���e�L�^�p += @"%CALLNAME:PLAYER%�ɃA�i�������������"
-	CASE "������", "����ӂ�", "������"
-		�ʐ^���e�L�^�p += @"%CALLNAME:PLAYER%�ɋ���G����"
-	CASE "��L�J��"
-		�ʐ^���e�L�^�p += "�����̉A�O���w�Ŋg����"
-	CASE "������"
-		�ʐ^���e�L�^�p += "���Ŏ��Ԃ�����"
-	CASE "����"
+	CASE "テンプレ"
+		写真内容記録用 += @""
+	CASE "愛撫"
+		写真内容記録用 += @"%CALLNAME:PLAYER%に愛撫されて"
+	CASE "クンニ", "岩清水"
+		写真内容記録用 += @"%CALLNAME:PLAYER%に秘所を舐められて"
+	CASE "フェラする"
+		写真内容記録用 += @"%CALLNAME:PLAYER%にペニスを舐められて"
+	CASE "指挿入れ", "Gスポット刺激"
+		写真内容記録用 += @"%CALLNAME:PLAYER%に膣内を指で弄り回されて"
+	CASE "アナル舐め"
+		写真内容記録用 += @"%CALLNAME:PLAYER%にアナルを舐められて"
+	CASE "アナル愛撫"
+		写真内容記録用 += @"%CALLNAME:PLAYER%にアナルを愛撫されて"
+	CASE "胸揉み", "乳首責め", "胸愛撫"
+		写真内容記録用 += @"%CALLNAME:PLAYER%に胸を触られて"
+	CASE "秘貝開帳"
+		写真内容記録用 += "自分の陰唇を指で拡げて"
+	CASE "胸自慰"
+		写真内容記録用 += "胸で自慰をして"
+	CASE "自慰"
 		IF PENIS(TARGET)
-			�ʐ^���e�L�^�p += "�����̃y�j�X��������"
+			写真内容記録用 += "自分のペニスを扱いて"
 		ELSE
-			�ʐ^���e�L�^�p += "�����̔鏊��M����"
+			写真内容記録用 += "自分の秘所を弄って"
 		ENDIF
-	CASE "������������"
-		�ʐ^���e�L�^�p += @"%CALLNAME:PLAYER%�Ƀy�j�X��%CSTR:PLAYER:�����g����%�ň������"
-	CASE "�z������"
-		�ʐ^���e�L�^�p += @"%CALLNAME:PLAYER%�Ɍ����z����"
-	CASE "�z��������"
-		�ʐ^���e�L�^�p += @"%CALLNAME:PLAYER%�̌����z����"
-	CASE "�L�X����"
-		�ʐ^���e�L�^�p += @"%CALLNAME:PLAYER%�ƃL�X������"
-	CASE "�������Ȃ�"
-		�ʐ^���e�L�^�p += "���������ɕ��u�����"
-	CASE "��b", "�v���[���g", "�X�L���V�b�v", "�܂����肷��", "�Ǝ�", "�̗̂��K", "�r�f�I�ӏ�"
-		�ʐ^���e�L�^�p += @"%CALLNAME:PLAYER%�ƃC�`������"
-	CASE "�l�|"
-		�ʐ^���e�L�^�p += "�l�|�ɑς���"
-	CASE "���[�^�[", "�d�C��", "�N���L���b�v", "�I�i�z�[��"
-		�ʐ^���e�L�^�p += @"%CALLNAME:PLAYER%��%SELECTCOMS%��\@ PENIS(TARGET) ? �y�j�X # �N���g���X \@��ӂ߂���"
-	CASE "�o�C�u", "�A�i���o�C�u", "�A�i���r�[�Y", "�g���o���[��", "�A�i���d��"
-		�ʐ^���e�L�^�p += @"%CALLNAME:PLAYER%��%SELECTCOMS%��}�������"
-	CASE "�j�v���L���b�v", "�����", "���[�d��"
-		�ʐ^���e�L�^�p += @"%CALLNAME:PLAYER%�ɓ����%SELECTCOMS%�Őӂ߂���"
-	CASE "���񃍁[�^�["
-		�ʐ^���e�L�^�p += @"%CALLNAME:PLAYER%�ɓ�������[�^�[�Őӂ߂���"
-	CASE "�����", "��w��", "�w�ʍ���", "�Ζʍ���", "���ꉲ�O"
-		�ʐ^���e�L�^�p += @"%CALLNAME:PLAYER%��%SELECTCOMS%�ŔƂ����"
-	CASE "����ʃA�i��", "��w�ʃA�i��", "�w�ʍ��ʃA�i��", "�Ζʍ��ʃA�i��"
-		;���������ƂɂȂ���
-		�ʐ^���e�L�^�p += @"%CALLNAME:PLAYER%�ɃA�i����\@ STRLENSU(SELECTCOMS) == 6 ? %SUBSTRINGU(SELECTCOMS, 0, 3)% # %SUBSTRINGU(SELECTCOMS, 0, 4)% \@�ŔƂ����"
-	CASE "�R���"
-		�ʐ^���e�L�^�p += @"%CALLNAME:PLAYER%�ɋR��ʂ�����"
-	CASE "�R��ʃA�i��"
-		�ʐ^���e�L�^�p += @"%CALLNAME:PLAYER%�ɃA�i���ŋR��ʂ�����"
-	CASE "�t���C�v"
-		�ʐ^���e�L�^�p += @"%CALLNAME:PLAYER%�ɋR��ʂ����"
-	CASE "����ʂ�����", "��w�ʂ�����"
-		�ʐ^���e�L�^�p += @"%CALLNAME:PLAYER%��%SUBSTRINGU(SELECTCOMS, 0, 3)%�ŔƂ���"
-	CASE "����ʃA�i��������", "��w�ʃA�i��������"
-		�ʐ^���e�L�^�p += @"%CALLNAME:PLAYER%�̃A�i����%SUBSTRINGU(SELECTCOMS, 0, 3)%�ŔƂ���"
-	CASE "���t�@�b�N"
-		�ʐ^���e�L�^�p += @"%CALLNAME:PLAYER%�̃y�j�X�ŗ��\�ɓ��[��M��񂳂��"
-	CASE "�������炵�}��", "�������炵�}���A�i��"
-		�ʐ^���e�L�^�p += @"%CSTR:�����g����%�����炳��Ƃ����"
-	CASE "���", "�t�F���`�I", "�p�C�Y��", "������", "�c�p�C�Y��", "�p�C�Y���t�F��"
-		�ʐ^���e�L�^�p += @"%CALLNAME:PLAYER%��%SELECTCOMS%������"
-	CASE "�f��", "�L���킹", "�����킹"
-		�ʐ^���e�L�^�p += @"%CALLNAME:PLAYER%�ƌ݂��̐�����C�荇�킹��"
-	CASE "�A�x��"
-		�ʐ^���e�L�^�p += @"%CALLNAME:PLAYER%�ɖA�܂݂�̑̂ŕ�������"
-	CASE "�����r�߂�����"
-		�ʐ^���e�L�^�p += @"%CALLNAME:PLAYER%�ɑ����r�߂�������"
-	CASE "��������"
-		�ʐ^���e�L�^�p += @"%CALLNAME:PLAYER%�̃y�j�X��%CSTR:�����g����%�ň�����"
-	CASE "�������"
-		�ʐ^���e�L�^�p += @"%CALLNAME:PLAYER%�ɕ�������܂��"
-	CASE "�X�p���L���O", "���X�p���L���O", "��", "�X�C", "�j"
-		�ʐ^���e�L�^�p += @"%CALLNAME:PLAYER%�ɂ��d�u�������"
-	CASE "�A�C�}�X�N", "��", "�{�[���M���O"
-		�ʐ^���e�L�^�p += @"%CALLNAME:PLAYER%�ɍS�������"
-	CASE "���p��", "����", "������", "����i�߂�", "�r���^", "�ٕ��}��", "�ٕ��}������"
-		�ʐ^���e�L�^�p += @"%CALLNAME:PLAYER%�ɍ�����󂯂�"
-	CASE "�N���j������"
-		�ʐ^���e�L�^�p += @"%CALLNAME:PLAYER%���S���ɐ�𔇂킹��"
-	CASE "��ʋR�悷��"
-		�ʐ^���e�L�^�p += @"%CALLNAME:PLAYER%�̉A���Ɏ��E�𕢂���"
-	CASE "�����Ƃ�����"
-		�ʐ^���e�L�^�p += @"%CALLNAME:ASSI%�ƃZ�b�N�X����"
-	CASE "����������"
-		�ʐ^���e�L�^�p += @"%CALLNAME:PLAYER%�ɑ��Ńy�j�X��ӂ߂���"
-	CASE "�_�u���t�F��"
-		�ʐ^���e�L�^�p += @"%CALLNAME:ASSI%�ƈꏏ��%CALLNAME:MASTER%�Ƀt�F������"
-	CASE "�_�u���p�C�Y��"
-		�ʐ^���e�L�^�p += @"%CALLNAME:ASSI%�ƈꏏ��%CALLNAME:MASTER%�Ƀp�C�Y������"
-	CASE "���̝��ݍ���"
-		�ʐ^���e�L�^�p += @"%CALLNAME:PLAYER%�ƌ݂��̓��[�𝆂ݍ�����"
-	CASE "�C���}�`�I"
-		�ʐ^���e�L�^�p += @"%CALLNAME:PLAYER%�̃y�j�X���A�܂œ˂��������"
-	CASE "�t�B�X�g�t�@�b�N"
-		�ʐ^���e�L�^�p += @"%CALLNAME:PLAYER%�̌����S�Ŏ󂯓����"
-	CASE "�A�i���t�B�X�g"
-		�ʐ^���e�L�^�p += @"%CALLNAME:PLAYER%�̌���K���Ŏ󂯓����"
-	CASE "�����t�B�X�g"
-		�ʐ^���e�L�^�p += @"%CALLNAME:PLAYER%�̌����S�ƐK���̗����Ŏ󂯓����"
-	CASE "���A"
-		�ʐ^���e�L�^�p += "���A����"
-	CASE "�A�i�����r�߂�����"
-		�ʐ^���e�L�^�p += @"%CALLNAME:PLAYER%�̃A�i�����r�߂�"
-	CASE "������"
-		IF TEQUIP:������
-			�ʐ^���e�L�^�p += "�����ł̕ֈӂɑς���"
+	CASE "下着扱きする"
+		写真内容記録用 += @"%CALLNAME:PLAYER%にペニスを%CSTR:PLAYER:下半身下着%で扱かれて"
+	CASE "吸血する"
+		写真内容記録用 += @"%CALLNAME:PLAYER%に血を吸われて"
+	CASE "吸血させる"
+		写真内容記録用 += @"%CALLNAME:PLAYER%の血を吸って"
+	CASE "キスする"
+		写真内容記録用 += @"%CALLNAME:PLAYER%とキスをして"
+	CASE "何もしない"
+		写真内容記録用 += "何もせずに放置されて"
+	CASE "会話", "プレゼント", "スキンシップ", "まったりする", "家事", "歌の練習", "ビデオ鑑賞"
+		写真内容記録用 += @"%CALLNAME:PLAYER%とイチャついて"
+	CASE "罵倒"
+		写真内容記録用 += "罵倒に耐えて"
+	CASE "ローター", "電気按摩", "クリキャップ", "オナホール"
+		写真内容記録用 += @"%CALLNAME:PLAYER%に%SELECTCOMS%で\@ PENIS(TARGET) ? ペニス # クリトリス \@を責められて"
+	CASE "バイブ", "アナルバイブ", "アナルビーズ", "拡張バルーン", "アナル電極"
+		写真内容記録用 += @"%CALLNAME:PLAYER%に%SELECTCOMS%を挿入されて"
+	CASE "ニプルキャップ", "搾乳器", "乳房電極"
+		写真内容記録用 += @"%CALLNAME:PLAYER%に乳首を%SELECTCOMS%で責められて"
+	CASE "乳首ローター"
+		写真内容記録用 += @"%CALLNAME:PLAYER%に乳首をローターで責められて"
+	CASE "正常位", "後背位", "背面座位", "対面座位", "乱れ牡丹"
+		写真内容記録用 += @"%CALLNAME:PLAYER%に%SELECTCOMS%で犯されて"
+	CASE "正常位アナル", "後背位アナル", "背面座位アナル", "対面座位アナル"
+		;すごいことになった
+		写真内容記録用 += @"%CALLNAME:PLAYER%にアナルを\@ STRLENSU(SELECTCOMS) == 6 ? %SUBSTRINGU(SELECTCOMS, 0, 3)% # %SUBSTRINGU(SELECTCOMS, 0, 4)% \@で犯されて"
+	CASE "騎乗位"
+		写真内容記録用 += @"%CALLNAME:PLAYER%に騎乗位をして"
+	CASE "騎乗位アナル"
+		写真内容記録用 += @"%CALLNAME:PLAYER%にアナルで騎乗位をして"
+	CASE "逆レイプ"
+		写真内容記録用 += @"%CALLNAME:PLAYER%に騎乗位されて"
+	CASE "正常位させる", "後背位させる"
+		写真内容記録用 += @"%CALLNAME:PLAYER%を%SUBSTRINGU(SELECTCOMS, 0, 3)%で犯して"
+	CASE "正常位アナルさせる", "後背位アナルさせる"
+		写真内容記録用 += @"%CALLNAME:PLAYER%のアナルを%SUBSTRINGU(SELECTCOMS, 0, 3)%で犯して"
+	CASE "乳ファック"
+		写真内容記録用 += @"%CALLNAME:PLAYER%のペニスで乱暴に乳房を弄り回されて"
+	CASE "下着ずらし挿入", "下着ずらし挿入アナル"
+		写真内容記録用 += @"%CSTR:下半身下着%をずらされ犯されて"
+	CASE "手淫", "フェラチオ", "パイズリ", "足扱き", "縦パイズリ", "パイズリフェラ"
+		写真内容記録用 += @"%CALLNAME:PLAYER%に%SELECTCOMS%をして"
+	CASE "素股", "貝あわせ", "兜合わせ"
+		写真内容記録用 += @"%CALLNAME:PLAYER%と互いの性器を擦り合わせて"
+	CASE "泡踊り"
+		写真内容記録用 += @"%CALLNAME:PLAYER%に泡まみれの体で抱きついて"
+	CASE "足を舐めさせる"
+		写真内容記録用 += @"%CALLNAME:PLAYER%に足を舐めさせられて"
+	CASE "下着扱き"
+		写真内容記録用 += @"%CALLNAME:PLAYER%のペニスを%CSTR:下半身下着%で扱いて"
+	CASE "母乳飲み"
+		写真内容記録用 += @"%CALLNAME:PLAYER%に母乳を飲まれて"
+	CASE "スパンキング", "乳スパンキング", "鞭", "蝋燭", "針"
+		写真内容記録用 += @"%CALLNAME:PLAYER%にお仕置きされて"
+	CASE "アイマスク", "縄", "ボールギャグ"
+		写真内容記録用 += @"%CALLNAME:PLAYER%に拘束されて"
+	CASE "腹パン", "踏む", "裸締め", "首を絞める", "ビンタ", "異物挿入", "異物挿入解除"
+		写真内容記録用 += @"%CALLNAME:PLAYER%に拷問を受けて"
+	CASE "クンニさせる"
+		写真内容記録用 += @"%CALLNAME:PLAYER%の膣口に舌を這わせて"
+	CASE "顔面騎乗する"
+		写真内容記録用 += @"%CALLNAME:PLAYER%の陰部に視界を覆われて"
+	CASE "助手を犯させる"
+		写真内容記録用 += @"%CALLNAME:ASSI%とセックスして"
+	CASE "足扱きする"
+		写真内容記録用 += @"%CALLNAME:PLAYER%に足でペニスを責められて"
+	CASE "ダブルフェラ"
+		写真内容記録用 += @"%CALLNAME:ASSI%と一緒に%CALLNAME:MASTER%にフェラして"
+	CASE "ダブルパイズリ"
+		写真内容記録用 += @"%CALLNAME:ASSI%と一緒に%CALLNAME:MASTER%にパイズリして"
+	CASE "乳の揉み合い"
+		写真内容記録用 += @"%CALLNAME:PLAYER%と互いの乳房を揉み合って"
+	CASE "イラマチオ"
+		写真内容記録用 += @"%CALLNAME:PLAYER%のペニスを喉まで突き入れられて"
+	CASE "フィストファック"
+		写真内容記録用 += @"%CALLNAME:PLAYER%の拳を膣で受け入れて"
+	CASE "アナルフィスト"
+		写真内容記録用 += @"%CALLNAME:PLAYER%の拳を尻穴で受け入れて"
+	CASE "両穴フィスト"
+		写真内容記録用 += @"%CALLNAME:PLAYER%の拳を膣と尻穴の両方で受け入れて"
+	CASE "放尿"
+		写真内容記録用 += "放尿して"
+	CASE "アナルを舐めさせる"
+		写真内容記録用 += @"%CALLNAME:PLAYER%のアナルを舐めて"
+	CASE "浣腸器"
+		IF TEQUIP:浣腸器
+			写真内容記録用 += "浣腸での便意に耐えて"
 		ELSE
-			�ʐ^���e�L�^�p += "�v���O�𔲂��ꖳ�l�ɔr�ւ���"
+			写真内容記録用 += "プラグを抜かれ無様に排便して"
 		ENDIF
-	CASE "��C����"
-		�ʐ^���e�L�^�p += "��C�����ɕ���c��܂���"
-	CASE "�G��}��"
-		�ʐ^���e�L�^�p += "�G����S����Ƃ����"
-	CASE "�A�i���G��"
-		�ʐ^���e�L�^�p += "�G��ɃA�i����Ƃ����"
-	CASE "�G��N���ӂ�"
-		�ʐ^���e�L�^�p += "�G��ɃN���g���X���z����"
-	CASE "�G�����ӂ�"
-		�ʐ^���e�L�^�p += "�G��ɓ�����z����"
-	CASE "�G��ٔ�"
-		�ʐ^���e�L�^�p += "�G��ɍS�������"
-	CASE "�G�蟯��"
-		IF TEQUIP:������
-			�ʐ^���e�L�^�p += "�A�i���ɒ������G��̑̉t�ɕ���c��܂���"
+	CASE "空気浣腸"
+		写真内容記録用 += "空気浣腸に腹を膨らませて"
+	CASE "触手挿入"
+		写真内容記録用 += "触手に膣内を犯されて"
+	CASE "アナル触手"
+		写真内容記録用 += "触手にアナルを犯されて"
+	CASE "触手クリ責め"
+		写真内容記録用 += "触手にクリトリスを吸われて"
+	CASE "触手乳首責め"
+		写真内容記録用 += "触手に乳首を吸われて"
+	CASE "触手緊縛"
+		写真内容記録用 += "触手に拘束されて"
+	CASE "触手浣腸"
+		IF TEQUIP:浣腸器
+			写真内容記録用 += "アナルに注がれる触手の体液に腹を膨らませて"
 		ELSE
-			�ʐ^���e�L�^�p += "�G��̔S�t�ł˂΂������ւ��ʂɐ��ꗬ����"
+			写真内容記録用 += "触手の粘液でねばついた糞便を大量に垂れ流して"
 		ENDIF
-	CASE "�G����J"
-		�ʐ^���e�L�^�p += "�G��Ɍ���Ƃ����"
-	CASE "�G��y�j�X�ӂ�"
-		�ʐ^���e�L�^�p += "�G��Ƀy�j�X���������"
-	CASE "�G��"
-		�ʐ^���e�L�^�p += "�G��ɐ��t���������悤�Ƀy�j�X���z����"
-	CASE "�R���h�[�������i�z��j"
-		�ʐ^���e�L�^�p += "�R���h�[���ɗ��܂������t�������"
+	CASE "触手口辱"
+		写真内容記録用 += "触手に口を犯されて"
+	CASE "触手ペニス責め"
+		写真内容記録用 += "触手にペニスを扱かれて"
+	CASE "触手搾精"
+		写真内容記録用 += "触手に精液を搾り取られるようにペニスを吸われて"
+	CASE "コンドーム精飲（奴隷）"
+		写真内容記録用 += "コンドームに溜まった精液を飲んで"
 	CASE "3P"
-		�ʐ^���e�L�^�p += @"%CALLNAME:MASTER%��%CALLNAME:ASSI%�ɗ֊������"
-	CASE "�V�b�N�X�i�C��", "69�p�C�Y��"
-		�ʐ^���e�L�^�p += @"%CALLNAME:PLAYER%�ƌ݂��̐�����r�ߍ�����"
-	CASE "�R����[����"
-		�ʐ^���e�L�^�p += @"%CALLNAME:PLAYER%�ɋR��ʂ����Ȃ��狹�Ŏ��Ԃ�����"
-	CASE "�}��G�X�|�ӂ�", "�}���q�{���ӂ�"
-		�ʐ^���e�L�^�p += @"%CALLNAME:PLAYER%�̃y�j�X���S���̕q���ȕ�����ӂ߂���"
-	CASE "���"
-		�ʐ^���e�L�^�p += @"%CALLNAME:PLAYER%�ɕ�����������"
-	CASE "�_�u���f��"
-		�ʐ^���e�L�^�p += @"%CALLNAME:ASSI%�Ɠ�l�̔镔��%CALLNAME:MASTER%�̃y�j�X�������"
-	CASE "��{�t�F��"
-		�ʐ^���e�L�^�p += @"%CALLNAME:MASTER%��%CALLNAME:ASSI%�̃y�j�X���r�߉񂵂�"
-	CASE "����q��"
-		�ʐ^���e�L�^�p += @"%CALLNAME:MASTER%��%CALLNAME:ASSI%�Ɨ�������"
-	CASE "������R�L"
-		�ʐ^���e�L�^�p += @"%CALLNAME:PLAYER%�ɕ����^���Ȃ�����������"
-	CASE "����ʎ�i��", "��w�ʎ�i��"
-		�ʐ^���e�L�^�p += @"%CALLNAME:PLAYER%�ɔƂ���Ȃ�������߂���"
-	CASE "����ʃA�i����i��", "��w�ʃA�i����i��"
-		�ʐ^���e�L�^�p += @"%CALLNAME:PLAYER%�ɃA�i����Ƃ���Ȃ�������߂���"
-	CASE "�t���C�v��i��"
-		�ʐ^���e�L�^�p += @"%CALLNAME:PLAYER%�ɋR��ʂ���Ȃ�������߂���"
-	CASE "����ʃL�X", "�Ζʍ��ʃL�X"
-		�ʐ^���e�L�^�p += @"%CALLNAME:PLAYER%��\@ STRLENSU(SELECTCOMS) == 5 ? %SUBSTRINGU(SELECTCOMS, 0, 3)% # %SUBSTRINGU(SELECTCOMS, 0, 4)% \@�ŕ�����Ȃ���L�X������"
-	CASE "����ʃA�i���L�X", "�Ζʍ��ʃA�i���L�X"
-		�ʐ^���e�L�^�p += @"%CALLNAME:PLAYER%�ɃA�i����\@ STRLENSU(SELECTCOMS) == 8 ? %SUBSTRINGU(SELECTCOMS, 0, 3)% # %SUBSTRINGU(SELECTCOMS, 0, 4)% \@�ŕ�����Ȃ���L�X������"
-	CASE "�R��ʃL�X"
-		�ʐ^���e�L�^�p += @"%CALLNAME:PLAYER%�ɋR��ʂ����Ȃ���L�X������"
-	CASE "�R��ʃA�i���L�X"
-		�ʐ^���e�L�^�p += @"%CALLNAME:PLAYER%�ɃA�i���ŋR��ʂ����Ȃ���L�X������"
-	CASE "��w�ʎ��"
-		�ʐ^���e�L�^�p += @"%CALLNAME:PLAYER%�Ɍ�납��Ƃ���Ȃ���\@ PENIS(TARGET) ? �y�j�X��������� # �镔��M���� \@"
-	CASE "��w�ʃA�i�����"
-		�ʐ^���e�L�^�p += @"%CALLNAME:PLAYER%�Ɍ�납��A�i����Ƃ���Ȃ���\@ PENIS(TARGET) ? �y�j�X��������� # �镔��M���� \@"
-	CASE "�R��ʎ��"
-		�ʐ^���e�L�^�p += @"%CALLNAME:PLAYER%�ɋR��ʂ����Ȃ���y�j�X���������"
-	CASE "�R��ʃA�i�����"
-		�ʐ^���e�L�^�p += @"%CALLNAME:PLAYER%�ɃA�i���ŋR��ʂ����Ȃ���y�j�X���������"
-	CASE "�I�i�z����"
-		�ʐ^���e�L�^�p += @"%CALLNAME:PLAYER%�̃y�j�X���I�i�z�ň�����"
-	CASE "���[�V��������"
-		�ʐ^���e�L�^�p += @"�A�i���Ƀ��[�V�����𒍓������"
-	CASE "�L�X�i�h���S���j"
-		�ʐ^���e�L�^�p += @"%CSTR:PLAYER:�h���S��%�ƃL�X������"
-	CASE "�t�F��������i�h���S���j"
-		�ʐ^���e�L�^�p += @"%CSTR:PLAYER:�h���S��%�̃y�j�X�Ɍ��ŕ�d����"
-	CASE "�r�߉񂷁i�h���S���j"
-		�ʐ^���e�L�^�p += @"%CSTR:PLAYER:�h���S��%�ɑ̒����r�߉񂳂��"
-	CASE "�ɂ݂���i�h���S���j"
-		�ʐ^���e�L�^�p += @"%CSTR:PLAYER:�h���S��%���ɂ܂��"
-	CASE "�S��Ƃ��i�h���S���j"
-		�ʐ^���e�L�^�p += @"%CSTR:PLAYER:�h���S��%�ɔƂ����"
-	CASE "�A�i����Ƃ��i�h���S���j"
-		�ʐ^���e�L�^�p += @"%CSTR:PLAYER:�h���S��%�ɃA�i����Ƃ����"
-	CASE "��w�ʎ��"
-		�ʐ^���e�L�^�p += @"%CALLNAME:PLAYER%�Ɍ�납��Ƃ���Ȃ���\@ PENIS(TARGET) ? �y�j�X��������� # �N���g���X����������� \@"
-	CASE "�R��ʎ��"
-		�ʐ^���e�L�^�p += @"%CALLNAME:PLAYER%�ɋR��ʂ��Ȃ���y�j�X���������"
-	CASE "��w�ʃA�i�����"
-		�ʐ^���e�L�^�p += @"%CALLNAME:PLAYER%�Ɍ�납��A�i����Ƃ���Ȃ���\@ PENIS(TARGET) ? �y�j�X��������� # �N���g���X����������� \@"
-	CASE "�R��ʃA�i�����"
-		�ʐ^���e�L�^�p += @"%CALLNAME:PLAYER%�ɃA�i���ŋR��ʂ��Ȃ���y�j�X���������"
-	CASE "�������"
-		�ʐ^���e�L�^�p += @"%CALLNAME:PLAYER%�Ƀy�j�X���������"
-	CASE "���Ԍ�����"
-		�ʐ^���e�L�^�p += @"%CALLNAME:PLAYER%�Ɏ��Ԃ�����������"
-	CASE "��L�J��������"
-		�ʐ^���e�L�^�p += @"%CALLNAME:PLAYER%���S��������������"
-	CASE "�f�҂���"
-		�ʐ^���e�L�^�p += @"%CALLNAME:PLAYER%�̔镔�Ńy�j�X���������"
-	CASE "�p�C�Y������"
-		�ʐ^���e�L�^�p += @"%CALLNAME:PLAYER%�̋��Ńy�j�X���������"
-	CASE "�p�C�Y���t�F������"
-		�ʐ^���e�L�^�p += @"%CALLNAME:PLAYER%�̋��ƌ��Ńy�j�X��ӂ߂���"
-	CASE "�L�X���Ă��炤"
-		�ʐ^���e�L�^�p += @"%CALLNAME:PLAYER%�ɐڕ������߂�"
-	CASE "��~�����"
-		�ʐ^���e�L�^�p += @"%CALLNAME:PLAYER%�ɏ�~�������"
-	CASE "�o�C�u��}��"
-		�ʐ^���e�L�^�p += @"%CALLNAME:PLAYER%���S���o�C�u�Őӂ߂�"
-	CASE "�A�i���o�C�u��}��"
-		�ʐ^���e�L�^�p += @"%CALLNAME:PLAYER%�̃A�i�����o�C�u�Őӂ߂�"
-	CASE "���[�^�[����������"
-		�ʐ^���e�L�^�p += @"%CALLNAME:PLAYER%�̑̂����[�^�[�ň�������"
-	CASE "�d�C������������"
-		�ʐ^���e�L�^�p += @"%CALLNAME:PLAYER%�̑̂�d�C���ň�������"
-	CASE "�ڑł����Ă��炤"
-		�ʐ^���e�L�^�p += @"%CALLNAME:PLAYER%��ڂőł���"
-	CASE "����ł��炤"
-		�ʐ^���e�L�^�p += @"%CALLNAME:PLAYER%�𓥂��"
-	CASE "�@���Ă��炤"
-		�ʐ^���e�L�^�p += @"%CALLNAME:PLAYER%��@����"
-	CASE "�t�B�X�g�t�@�b�N"
-		�ʐ^���e�L�^�p += @"%CALLNAME:PLAYER%���S��r�ŔƂ���"
-	CASE "�A�i���t�B�X�g������"
-		�ʐ^���e�L�^�p += @"%CALLNAME:PLAYER%�̃A�i����r�ŔƂ���"
-	CASE "�G��ː��~��"
-		�ʐ^���e�L�^�p += @"�G��Ɏː����~�߂���"
-	CASE "�G�苭���"
-		�ʐ^���e�L�^�p += @"���X�ɖ������S�t�𒍂����܂��"
+		写真内容記録用 += @"%CALLNAME:MASTER%と%CALLNAME:ASSI%に輪姦されて"
+	CASE "シックスナイン", "69パイズリ"
+		写真内容記録用 += @"%CALLNAME:PLAYER%と互いの性器を舐め合って"
+	CASE "騎乗乳房自慰"
+		写真内容記録用 += @"%CALLNAME:PLAYER%に騎乗位をしながら胸で自慰をして"
+	CASE "挿入Gスポ責め", "挿入子宮口責め"
+		写真内容記録用 += @"%CALLNAME:PLAYER%のペニスで膣内の敏感な部分を責められて"
+	CASE "搾乳"
+		写真内容記録用 += @"%CALLNAME:PLAYER%に母乳を搾り取られて"
+	CASE "ダブル素股"
+		写真内容記録用 += @"%CALLNAME:ASSI%と二人の秘部で%CALLNAME:MASTER%のペニスを挟んで"
+	CASE "二本フェラ"
+		写真内容記録用 += @"%CALLNAME:MASTER%と%CALLNAME:ASSI%のペニスを舐め回して"
+	CASE "数珠繋ぎ"
+		写真内容記録用 += @"%CALLNAME:MASTER%と%CALLNAME:ASSI%と乱交して"
+	CASE "授乳手コキ"
+		写真内容記録用 += @"%CALLNAME:PLAYER%に母乳を与えながら手淫をして"
+	CASE "正常位首絞め", "後背位首絞め"
+		写真内容記録用 += @"%CALLNAME:PLAYER%に犯されながら首を締められて"
+	CASE "正常位アナル首絞め", "後背位アナル首絞め"
+		写真内容記録用 += @"%CALLNAME:PLAYER%にアナルを犯されながら首を締められて"
+	CASE "逆レイプ首絞め"
+		写真内容記録用 += @"%CALLNAME:PLAYER%に騎乗位されながら首を締められて"
+	CASE "正常位キス", "対面座位キス"
+		写真内容記録用 += @"%CALLNAME:PLAYER%に\@ STRLENSU(SELECTCOMS) == 5 ? %SUBSTRINGU(SELECTCOMS, 0, 3)% # %SUBSTRINGU(SELECTCOMS, 0, 4)% \@で抱かれながらキスをして"
+	CASE "正常位アナルキス", "対面座位アナルキス"
+		写真内容記録用 += @"%CALLNAME:PLAYER%にアナルを\@ STRLENSU(SELECTCOMS) == 8 ? %SUBSTRINGU(SELECTCOMS, 0, 3)% # %SUBSTRINGU(SELECTCOMS, 0, 4)% \@で抱かれながらキスをして"
+	CASE "騎乗位キス"
+		写真内容記録用 += @"%CALLNAME:PLAYER%に騎乗位をしながらキスをして"
+	CASE "騎乗位アナルキス"
+		写真内容記録用 += @"%CALLNAME:PLAYER%にアナルで騎乗位をしながらキスをして"
+	CASE "後背位手淫"
+		写真内容記録用 += @"%CALLNAME:PLAYER%に後ろから犯されながら\@ PENIS(TARGET) ? ペニスを扱かれて # 秘部を弄られて \@"
+	CASE "後背位アナル手淫"
+		写真内容記録用 += @"%CALLNAME:PLAYER%に後ろからアナルを犯されながら\@ PENIS(TARGET) ? ペニスを扱かれて # 秘部を弄られて \@"
+	CASE "騎乗位手淫"
+		写真内容記録用 += @"%CALLNAME:PLAYER%に騎乗位をしながらペニスを扱かれて"
+	CASE "騎乗位アナル手淫"
+		写真内容記録用 += @"%CALLNAME:PLAYER%にアナルで騎乗位をしながらペニスを扱かれて"
+	CASE "オナホ扱き"
+		写真内容記録用 += @"%CALLNAME:PLAYER%のペニスをオナホで扱いて"
+	CASE "ローション注入"
+		写真内容記録用 += @"アナルにローションを注入されて"
+	CASE "キス（ドラゴン）"
+		写真内容記録用 += @"%CSTR:PLAYER:ドラゴン%とキスをして"
+	CASE "フェラさせる（ドラゴン）"
+		写真内容記録用 += @"%CSTR:PLAYER:ドラゴン%のペニスに口で奉仕して"
+	CASE "舐め回す（ドラゴン）"
+		写真内容記録用 += @"%CSTR:PLAYER:ドラゴン%に体中を舐め回されて"
+	CASE "睨みつける（ドラゴン）"
+		写真内容記録用 += @"%CSTR:PLAYER:ドラゴン%に睨まれて"
+	CASE "膣を犯す（ドラゴン）"
+		写真内容記録用 += @"%CSTR:PLAYER:ドラゴン%に犯されて"
+	CASE "アナルを犯す（ドラゴン）"
+		写真内容記録用 += @"%CSTR:PLAYER:ドラゴン%にアナルを犯されて"
+	CASE "後背位手淫"
+		写真内容記録用 += @"%CALLNAME:PLAYER%に後ろから犯されながら\@ PENIS(TARGET) ? ペニスを扱かれて # クリトリスを愛撫されて \@"
+	CASE "騎乗位手淫"
+		写真内容記録用 += @"%CALLNAME:PLAYER%に騎乗位しながらペニスを扱かれて"
+	CASE "後背位アナル手淫"
+		写真内容記録用 += @"%CALLNAME:PLAYER%に後ろからアナルを犯されながら\@ PENIS(TARGET) ? ペニスを扱かれて # クリトリスを愛撫されて \@"
+	CASE "騎乗位アナル手淫"
+		写真内容記録用 += @"%CALLNAME:PLAYER%にアナルで騎乗位しながらペニスを扱かれて"
+	CASE "手淫する"
+		写真内容記録用 += @"%CALLNAME:PLAYER%にペニスを扱かれて"
+	CASE "自慰見せつけ"
+		写真内容記録用 += @"%CALLNAME:PLAYER%に自慰を見せつけられて"
+	CASE "秘貝開帳見せつけ"
+		写真内容記録用 += @"%CALLNAME:PLAYER%に膣内を見せつけられて"
+	CASE "素股する"
+		写真内容記録用 += @"%CALLNAME:PLAYER%の秘部でペニスを扱かれて"
+	CASE "パイズリする"
+		写真内容記録用 += @"%CALLNAME:PLAYER%の胸でペニスを扱かれて"
+	CASE "パイズリフェラする"
+		写真内容記録用 += @"%CALLNAME:PLAYER%の胸と口でペニスを責められて"
+	CASE "キスしてもらう"
+		写真内容記録用 += @"%CALLNAME:PLAYER%に接吻を求めて"
+	CASE "情欲を煽る"
+		写真内容記録用 += @"%CALLNAME:PLAYER%に情欲を煽られて"
+	CASE "バイブ被挿入"
+		写真内容記録用 += @"%CALLNAME:PLAYER%の膣をバイブで責めて"
+	CASE "アナルバイブ被挿入"
+		写真内容記録用 += @"%CALLNAME:PLAYER%のアナルをバイブで責めて"
+	CASE "ローター愛撫させる"
+		写真内容記録用 += @"%CALLNAME:PLAYER%の体をローターで愛撫して"
+	CASE "電気按摩愛撫させる"
+		写真内容記録用 += @"%CALLNAME:PLAYER%の体を電気按摩で愛撫して"
+	CASE "鞭打ちしてもらう"
+		写真内容記録用 += @"%CALLNAME:PLAYER%を鞭で打って"
+	CASE "踏んでもらう"
+		写真内容記録用 += @"%CALLNAME:PLAYER%を踏んで"
+	CASE "叩いてもらう"
+		写真内容記録用 += @"%CALLNAME:PLAYER%を叩いて"
+	CASE "フィストファック"
+		写真内容記録用 += @"%CALLNAME:PLAYER%の膣を腕で犯して"
+	CASE "アナルフィストさせる"
+		写真内容記録用 += @"%CALLNAME:PLAYER%のアナルを腕で犯して"
+	CASE "触手射精止め"
+		写真内容記録用 += @"触手に射精を止められて"
+	CASE "触手強制搾精"
+		写真内容記録用 += @"精嚢に無理やり粘液を注ぎ込まれて"
 	CASE ""
-		�ʐ^���e�L�^�p += @"�N���ɖ������̉t�𒍂����܂��"
-	CASE "�����"
-		�ʐ^���e�L�^�p += @"�������򂵂�"
+		写真内容記録用 += @"膀胱に無理やり体液を注ぎ込まれて"
+	CASE "腸洗浄"
+		写真内容記録用 += @"腸内を洗浄して"
 	CASE ""
-		�ʐ^���e�L�^�p += @""
+		写真内容記録用 += @""
 ENDSELECT
 
-;��O�R�}���h����
+;例外コマンドあり
 SELECTCASE SELECTCOMS
-	CASE "�t���C�v", "�t���C�v��i��", "�����Ƃ�����", "����ʂ�����", "��w�ʂ�����", "����ʃA�i��������", "��w�ʃA�i��������"
-		IF NOWEX:�ː�
-			�ʐ^���e�L�^�p += "���o�����Ă���ʐ^"
+	CASE "逆レイプ", "逆レイプ首絞め", "助手を犯させる", "正常位させる", "後背位させる", "正常位アナルさせる", "後背位アナルさせる"
+		IF NOWEX:射精
+			写真内容記録用 += "中出ししている写真"
 		ELSE
-			�ʐ^���e�L�^�p += "����ʐ^"
+			写真内容記録用 += "いる写真"
 		ENDIF
-	CASE "��{�t�F��", "����q��"
-		IF NOWEX:MASTER:�ː� && NOWEX:ASSI:�ː� && NOWEX:�ː�
-			�ʐ^���e�L�^�p += "��l���ː������Ȃ��玩�����ː����Ă���ʐ^"
-		ELSEIF NOWEX:MASTER:�ː� && NOWEX:ASSI:�ː�
-			�ʐ^���e�L�^�p += "��l���ː������Ă���ʐ^"
-		ELSEIF (NOWEX:MASTER:�ː� || NOWEX:ASSI:�ː�) && NOWEX:�ː� && SELECTCOMS == "��{�t�F��"
-			�ʐ^���e�L�^�p += "���t�����Ŏ󂯎~�߂Ȃ��玩�����ː����Ă���ʐ^"
-		ELSEIF NOWEX:MASTER:�ː� || NOWEX:ASSI:�ː�
-			�ʐ^���e�L�^�p += "�ː������Ă���ʐ^"
-		ELSEIF NOWEX:�ː�
-			�ʐ^���e�L�^�p += "�ː����Ă���ʐ^"
+	CASE "二本フェラ", "数珠繋ぎ"
+		IF NOWEX:MASTER:射精 && NOWEX:ASSI:射精 && NOWEX:射精
+			写真内容記録用 += "二人を射精させながら自分も射精している写真"
+		ELSEIF NOWEX:MASTER:射精 && NOWEX:ASSI:射精
+			写真内容記録用 += "二人を射精させている写真"
+		ELSEIF (NOWEX:MASTER:射精 || NOWEX:ASSI:射精) && NOWEX:射精 && SELECTCOMS == "二本フェラ"
+			写真内容記録用 += "精液を口で受け止めながら自分も射精している写真"
+		ELSEIF NOWEX:MASTER:射精 || NOWEX:ASSI:射精
+			写真内容記録用 += "射精させている写真"
+		ELSEIF NOWEX:射精
+			写真内容記録用 += "射精している写真"
 		ELSE
-			�ʐ^���e�L�^�p += "����ʐ^"
+			写真内容記録用 += "いる写真"
 		ENDIF
 	CASEELSE
-		;���s�҂��ː�����
-		IF NOWEX:PLAYER:�ː� || NOWEX:PLAYER:�h���S���ː�
-			;�z����ː�����
-			IF NOWEX:�ː�
+		;実行者が射精した
+		IF NOWEX:PLAYER:射精 || NOWEX:PLAYER:ドラゴン射精
+			;奴隷も射精した
+			IF NOWEX:射精
 				SELECTCASE SELECTCOMS
-					CASE "�����", "��w��", "�R���", "�Ζʍ���", "�w�ʍ���", "�������炵�}��", "����ʎ�i��", "��w�ʎ�i��", "�}��G�X�|�ӂ�", "�}���q�{���ӂ�", "���ꉲ�O", "����ʃA�i��", "��w�ʃA�i��", "�R��ʃA�i��", "�Ζʍ��ʃA�i��", "�w�ʍ��ʃA�i��", "�������炵�}���A�i��", "����ʃA�i����i��", "��w�ʃA�i����i��", "�R����[����", "3P", "����ʃL�X", "�R��ʃL�X", "�Ζʍ��ʃL�X", "����ʃA�i���L�X", "�R��ʃA�i���L�X", "�Ζʍ��ʃA�i���L�X", "�S��Ƃ��i�h���S���j", "�A�i����Ƃ��i�h���S���j"
-						�ʐ^���e�L�^�p += "���o������Ȃ���ꏏ�Ɏː����Ă���ʐ^"
-					CASE "����ʂ�����", "��w�ʂ�����", "����ʃA�i��������", "��w�ʃA�i��������"
-						�ʐ^���e�L�^�p += "���o�����Ȃ��瑊����ː������Ă���ʐ^"
+					CASE "正常位", "後背位", "騎乗位", "対面座位", "背面座位", "下着ずらし挿入", "正常位首絞め", "後背位首絞め", "挿入Gスポ責め", "挿入子宮口責め", "乱れ牡丹", "正常位アナル", "後背位アナル", "騎乗位アナル", "対面座位アナル", "背面座位アナル", "下着ずらし挿入アナル", "正常位アナル首絞め", "後背位アナル首絞め", "騎乗乳房自慰", "3P", "正常位キス", "騎乗位キス", "対面座位キス", "正常位アナルキス", "騎乗位アナルキス", "対面座位アナルキス", "膣を犯す（ドラゴン）", "アナルを犯す（ドラゴン）"
+						写真内容記録用 += "中出しされながら一緒に射精している写真"
+					CASE "正常位させる", "後背位させる", "正常位アナルさせる", "後背位アナルさせる"
+						写真内容記録用 += "中出ししながら相手も射精させている写真"
 					CASEELSE
-						�ʐ^���e�L�^�p += "�ː������Ȃ��玩�����ː����Ă���ʐ^"
+						写真内容記録用 += "射精させながら自分も射精している写真"
 				ENDSELECT
-			;�z������A����
-			ELSEIF NOWEX:���A
+			;奴隷も放尿した
+			ELSEIF NOWEX:放尿
 				SELECTCASE SELECTCOMS
-					CASE "�����", "��w��", "�R���", "�Ζʍ���", "�w�ʍ���", "�������炵�}��", "����ʎ�i��", "��w�ʎ�i��", "�}��G�X�|�ӂ�", "�}���q�{���ӂ�", "���ꉲ�O", "����ʃA�i��", "��w�ʃA�i��", "�R��ʃA�i��", "�Ζʍ��ʃA�i��", "�w�ʍ��ʃA�i��", "�������炵�}���A�i��", "����ʃA�i����i��", "��w�ʃA�i����i��", "�R����[����", "3P", "����ʃL�X", "�R��ʃL�X", "�Ζʍ��ʃL�X", "����ʃA�i���L�X", "�R��ʃA�i���L�X", "�Ζʍ��ʃA�i���L�X", "�S��Ƃ��i�h���S���j", "�A�i����Ƃ��i�h���S���j"
-						�ʐ^���e�L�^�p += "���o������Ȃ���A��R�炵�Ă���ʐ^"
+					CASE "正常位", "後背位", "騎乗位", "対面座位", "背面座位", "下着ずらし挿入", "正常位首絞め", "後背位首絞め", "挿入Gスポ責め", "挿入子宮口責め", "乱れ牡丹", "正常位アナル", "後背位アナル", "騎乗位アナル", "対面座位アナル", "背面座位アナル", "下着ずらし挿入アナル", "正常位アナル首絞め", "後背位アナル首絞め", "騎乗乳房自慰", "3P", "正常位キス", "騎乗位キス", "対面座位キス", "正常位アナルキス", "騎乗位アナルキス", "対面座位アナルキス", "膣を犯す（ドラゴン）", "アナルを犯す（ドラゴン）"
+						写真内容記録用 += "中出しされながら尿を漏らしている写真"
 					CASEELSE
-						�ʐ^���e�L�^�p += "�ː������Ȃ���A��R�炵�Ă���ʐ^"
+						写真内容記録用 += "射精させながら尿を漏らしている写真"
 				ENDSELECT
-			;�z����Ⓒ�ɒB����
-			ELSEIF NOWEX:�b�Ⓒ || NOWEX:�u�Ⓒ || NOWEX:�`�Ⓒ || NOWEX:�a�Ⓒ
+			;奴隷も絶頂に達した
+			ELSEIF NOWEX:Ｃ絶頂 || NOWEX:Ｖ絶頂 || NOWEX:Ａ絶頂 || NOWEX:Ｂ絶頂
 				SELECTCASE SELECTCOMS
-					CASE "�����", "��w��", "�R���", "�Ζʍ���", "�w�ʍ���", "�������炵�}��", "����ʎ�i��", "��w�ʎ�i��", "�}��G�X�|�ӂ�", "�}���q�{���ӂ�", "���ꉲ�O", "����ʃA�i��", "��w�ʃA�i��", "�R��ʃA�i��", "�Ζʍ��ʃA�i��", "�w�ʍ��ʃA�i��", "�������炵�}���A�i��", "����ʃA�i����i��", "��w�ʃA�i����i��", "�R����[����", "3P", "����ʃL�X", "�R��ʃL�X", "�Ζʍ��ʃL�X", "����ʃA�i���L�X", "�R��ʃA�i���L�X", "�Ζʍ��ʃA�i���L�X", "�S��Ƃ��i�h���S���j", "�A�i����Ƃ��i�h���S���j"
-						�ʐ^���e�L�^�p += "���o������Ȃ���Ⓒ�ɒB���Ă���ʐ^"
+					CASE "正常位", "後背位", "騎乗位", "対面座位", "背面座位", "下着ずらし挿入", "正常位首絞め", "後背位首絞め", "挿入Gスポ責め", "挿入子宮口責め", "乱れ牡丹", "正常位アナル", "後背位アナル", "騎乗位アナル", "対面座位アナル", "背面座位アナル", "下着ずらし挿入アナル", "正常位アナル首絞め", "後背位アナル首絞め", "騎乗乳房自慰", "3P", "正常位キス", "騎乗位キス", "対面座位キス", "正常位アナルキス", "騎乗位アナルキス", "対面座位アナルキス", "膣を犯す（ドラゴン）", "アナルを犯す（ドラゴン）"
+						写真内容記録用 += "中出しされながら絶頂に達している写真"
 					CASEELSE
-						�ʐ^���e�L�^�p += "�ː������Ȃ��玩�����Ⓒ�ɒB���Ă���ʐ^"
+						写真内容記録用 += "射精させながら自分も絶頂に達している写真"
 				ENDSELECT
-			;�z��͉����Ȃ�
+			;奴隷は何もない
 			ELSE
 				SELECTCASE SELECTCOMS
-					CASE "�����", "��w��", "�R���", "�Ζʍ���", "�w�ʍ���", "�������炵�}��", "����ʎ�i��", "��w�ʎ�i��", "�}��G�X�|�ӂ�", "�}���q�{���ӂ�", "���ꉲ�O", "����ʃA�i��", "��w�ʃA�i��", "�R��ʃA�i��", "�Ζʍ��ʃA�i��", "�w�ʍ��ʃA�i��", "�������炵�}���A�i��", "����ʃA�i����i��", "��w�ʃA�i����i��", "�R����[����", "3P", "����ʃL�X", "�R��ʃL�X", "�Ζʍ��ʃL�X", "����ʃA�i���L�X", "�R��ʃA�i���L�X", "�Ζʍ��ʃA�i���L�X", "�S��Ƃ��i�h���S���j", "�A�i����Ƃ��i�h���S���j"
-						�ʐ^���e�L�^�p += "���o������Ă���ʐ^"
-					CASE "����ʂ�����", "��w�ʂ�����", "����ʃA�i��������", "��w�ʃA�i��������"
-						�ʐ^���e�L�^�p += "������ː������Ă���ʐ^"
+					CASE "正常位", "後背位", "騎乗位", "対面座位", "背面座位", "下着ずらし挿入", "正常位首絞め", "後背位首絞め", "挿入Gスポ責め", "挿入子宮口責め", "乱れ牡丹", "正常位アナル", "後背位アナル", "騎乗位アナル", "対面座位アナル", "背面座位アナル", "下着ずらし挿入アナル", "正常位アナル首絞め", "後背位アナル首絞め", "騎乗乳房自慰", "3P", "正常位キス", "騎乗位キス", "対面座位キス", "正常位アナルキス", "騎乗位アナルキス", "対面座位アナルキス", "膣を犯す（ドラゴン）", "アナルを犯す（ドラゴン）"
+						写真内容記録用 += "中出しされている写真"
+					CASE "正常位させる", "後背位させる", "正常位アナルさせる", "後背位アナルさせる"
+						写真内容記録用 += "相手を射精させている写真"
 					CASEELSE
-						�ʐ^���e�L�^�p += "�ː������Ă���ʐ^"
+						写真内容記録用 += "射精させている写真"
 				ENDSELECT
 			ENDIF
-		;�G�肪�ː�����
-		ELSEIF NOWEX:MASTER:�G��ː�
-			IF NOWEX:�ː�
+		;触手が射精した
+		ELSEIF NOWEX:MASTER:触手射精
+			IF NOWEX:射精
 				SELECTCASE SELECTCOMS
-					CASE "�G��}��", "�A�i���G��"
-						�ʐ^���e�L�^�p += "��ʂ̐��t�𒍂���Ȃ���ꏏ�Ɏː����Ă���ʐ^"
+					CASE "触手挿入", "アナル触手"
+						写真内容記録用 += "大量の精液を注がれながら一緒に射精している写真"
 					CASEELSE
-						�ʐ^���e�L�^�p += "��ʂ̐��t�𗁂т����Ď������ː����Ă���ʐ^"
+						写真内容記録用 += "大量の精液を浴びせられて自分も射精している写真"
 				ENDSELECT
-			ELSEIF NOWEX:���A && NOWEX:PLAYER:�ː�
+			ELSEIF NOWEX:放尿 && NOWEX:PLAYER:射精
 				SELECTCASE SELECTCOMS
-					CASE "�G��}��", "�A�i���G��"
-						�ʐ^���e�L�^�p += "��ʂ̐��t�𒍂���Ȃ���A��R�炵�Ă���ʐ^"
+					CASE "触手挿入", "アナル触手"
+						写真内容記録用 += "大量の精液を注がれながら尿を漏らしている写真"
 					CASEELSE
-						�ʐ^���e�L�^�p += "��ʂ̐��t�𗁂т����ĔA��R�炵�Ă���ʐ^"
+						写真内容記録用 += "大量の精液を浴びせられて尿を漏らしている写真"
 				ENDSELECT
-			ELSEIF (NOWEX:�b�Ⓒ || NOWEX:�u�Ⓒ || NOWEX:�`�Ⓒ || NOWEX:�a�Ⓒ) && NOWEX:PLAYER:�ː�
+			ELSEIF (NOWEX:Ｃ絶頂 || NOWEX:Ｖ絶頂 || NOWEX:Ａ絶頂 || NOWEX:Ｂ絶頂) && NOWEX:PLAYER:射精
 				SELECTCASE SELECTCOMS
-					CASE "�G��}��", "�A�i���G��"
-						�ʐ^���e�L�^�p += "��ʂ̐��t�𒍂���Ȃ���Ⓒ�ɒB���Ă���ʐ^"
+					CASE "触手挿入", "アナル触手"
+						写真内容記録用 += "大量の精液を注がれながら絶頂に達している写真"
 					CASEELSE
-						�ʐ^���e�L�^�p += "��ʂ̐��t�𗁂т����ĐⒸ�ɒB���Ă���ʐ^"
+						写真内容記録用 += "大量の精液を浴びせられて絶頂に達している写真"
 				ENDSELECT
 			ELSE
 				SELECTCASE SELECTCOMS
-					CASE "�G��}��", "�A�i���G��"
-						�ʐ^���e�L�^�p += "��ʂ̐��t�𒍂���Ă���ʐ^"
+					CASE "触手挿入", "アナル触手"
+						写真内容記録用 += "大量の精液を注がれている写真"
 					CASEELSE
-						�ʐ^���e�L�^�p += "��ʂ̐��t�𗁂т����Ă���ʐ^"
+						写真内容記録用 += "大量の精液を浴びせられている写真"
 				ENDSELECT
 			ENDIF
-		;�ː����Ă��Ȃ�
+		;射精していない
 		ELSE
-			IF NOWEX:�ː�
+			IF NOWEX:射精
 				SELECTCASE SELECTCOMS
-					CASE "����ʂ�����", "��w�ʂ�����", "����ʃA�i��������", "��w�ʃA�i��������"
-						�ʐ^���e�L�^�p += "���o�����Ă���ʐ^"
+					CASE "正常位させる", "後背位させる", "正常位アナルさせる", "後背位アナルさせる"
+						写真内容記録用 += "中出ししている写真"
 					CASEELSE
-						�ʐ^���e�L�^�p += "�ː����Ă���ʐ^"
+						写真内容記録用 += "射精している写真"
 				ENDSELECT
-			ELSEIF NOWEX:���A
-				�ʐ^���e�L�^�p += "�A��R�炵�Ă���ʐ^"
-			ELSEIF NOWEX:�b�Ⓒ || NOWEX:�u�Ⓒ || NOWEX:�`�Ⓒ || NOWEX:�a�Ⓒ
-				�ʐ^���e�L�^�p += "�Ⓒ�ɒB���Ă���ʐ^"
+			ELSEIF NOWEX:放尿
+				写真内容記録用 += "尿を漏らしている写真"
+			ELSEIF NOWEX:Ｃ絶頂 || NOWEX:Ｖ絶頂 || NOWEX:Ａ絶頂 || NOWEX:Ｂ絶頂
+				写真内容記録用 += "絶頂に達している写真"
 			ELSE
-				�ʐ^���e�L�^�p += "����ʐ^"
+				写真内容記録用 += "いる写真"
 			ENDIF
 		ENDIF
 ENDSELECT

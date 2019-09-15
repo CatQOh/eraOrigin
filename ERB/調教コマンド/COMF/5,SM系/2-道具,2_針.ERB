@@ -1,73 +1,73 @@
+﻿;-------------------------------------------------
+;針
 ;-------------------------------------------------
-;�j
-;-------------------------------------------------
-@USERCOM_ABLE_�j, ARG
+@USERCOM_ABLE_針, ARG
 #FUNCTION
-;����̏ꍇ�]��5�������ƂłȂ��ƃ_���i�T�h�A�j���΂��Ȃ�n�j�j
+;助手の場合従順5未満だとでないとダメ（サド、針さばきならＯＫ）
 IF PLAYER == ASSI
-	SIF ABL:ASSI:�]�� < 5 && !TALENT:ASSI:�T�h && !TALENT:ASSI:�j���΂�
+	SIF ABL:ASSI:従順 < 5 && !TALENT:ASSI:サド && !TALENT:ASSI:針さばき
 		RETURNF 0
 ENDIF
-;�S���łȂ��ƃ_���i�����A����͏����j
+;全裸でないとダメ（足元、特殊は除く）
 SIF OVER_BUST(TARGET) != "" || OVER_GENITAL(TARGET) != ""
 	RETURNF 0
-;�G�蒲�����̓_��
-SIF TEQUIP:�G��
+;触手調教中はダメ
+SIF TEQUIP:触手
 	RETURNF 0
-;�����C��v���C���̓_��
-SIF TEQUIP:�����C��
+;お風呂場プレイ中はダメ
+SIF TEQUIP:お風呂場
 	RETURNF 0
-;�V�ȃv���C���̓_��
-SIF TEQUIP:�G�v����
+;新妻プレイ中はダメ
+SIF TEQUIP:エプロン
 	RETURNF 0
 
 COMRESULT = 1
 RETURNF 1
 
-@COM_�j
-PRINTL �j
+@COM_針
+PRINTL 針
 CALL KOJO_MESSAGE_COM
 
 ;-------------------------------------------------
-;�\�[�X�ǉ�����
+;ソース追加処理
 ;-------------------------------------------------
-;����̗́A�C��
-LOSEBASE:�̗� += 150
-LOSEBASE:�C�� += 100
+;消費体力、気力
+LOSEBASE:体力 += 150
+LOSEBASE:気力 += 100
 
-SOURCE:��� = 2000
-SOURCE:���| = 1500
-SOURCE:��E = 500
-SOURCE:���� = 1200
-
-;-------------------------------------------------
-;����\�[�X����
-;-------------------------------------------------
-;��ɂ̃p�����[�^�ɂ���ɂ̃\�[�X�����͐�ɏ������Ă���
-SOURCE:��� += GETPALAMLV(PALAM:���, 4)*(SOURCE:���/2)
+SOURCE:苦痛 = 2000
+SOURCE:恐怖 = 1500
+SOURCE:逸脱 = 500
+SOURCE:反感 = 1200
 
 ;-------------------------------------------------
-;�Ⓒ�`�F�b�N
+;特殊ソース処理
+;-------------------------------------------------
+;苦痛のパラメータによる苦痛のソース増加は先に処理しておく
+SOURCE:苦痛 += GETPALAMLV(PALAM:苦痛, 4)*(SOURCE:苦痛/2)
+
+;-------------------------------------------------
+;絶頂チェック
 ;-------------------------------------------------
 CALL SOURCE_CHECK_CVAB
 
 ;-------------------------------------------------
-;�ː��`�F�b�N
+;射精チェック
 ;-------------------------------------------------
 CALL SAMEN_CHECK_T, 0
 
-CALL SAMEN_SHOOT_T, 0, NOWEX:�ː�
+CALL SAMEN_SHOOT_T, 0, NOWEX:射精
 
 ;-------------------------------------------------
-;�o���̏���
+;経験の処理
 ;-------------------------------------------------
 CALL EXPUP, 1, 4
 
-;�ˑ��x�␳�l(���]��1�A�ꑮ��2�j
-IF TALENT:���] && PLAYER == MASTER
-	TFLAG:�ˑ��x�␳ += 1
-ELSEIF TALENT:�ꑮ && PLAYER == MASTER
-	TFLAG:�ˑ��x�␳ += 2
+;依存度補正値(服従で1、隷属で2）
+IF TALENT:服従 && PLAYER == MASTER
+	TFLAG:依存度補正 += 1
+ELSEIF TALENT:隷属 && PLAYER == MASTER
+	TFLAG:依存度補正 += 2
 ENDIF
 
 RETURN 1

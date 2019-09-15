@@ -1,920 +1,920 @@
-;---------------------------------------------------------
-;ŽË¸‚·‚é‚©‚Ìƒ`ƒFƒbƒN
+ï»¿;---------------------------------------------------------
+;å°„ç²¾ã™ã‚‹ã‹ã®ãƒã‚§ãƒƒã‚¯
 ;---------------------------------------------------------
 @SAMEN_CHECK, ARG
-;ARG:0“à–ó
-;1 = äS“àŽË¸
-;2 = ƒAƒiƒ‹ŽË¸
-;3 = Žèˆú
-;4 = ƒtƒFƒ‰
-;5 = ƒpƒCƒYƒŠ
-;6 = ‚»‚Ì‘¼•òŽd
-;7 = •Žè‚ð”Æ‚·‚ÅŽË¸
-;8 = ƒNƒ“ƒj‚³‚ê‚ÄŽË¸
-;---ˆÈ‰º‚Í’²‹³‘ÎÛ‚ÌŽË¸‚È‚Ì‚ÅŠÇŠŠO---
-;;9 = •Žè‚ð”Æ‚³‚¹‚é‚ÅŽË¸
-;;10 = ‹tƒŒƒCƒv‚ÅŽË¸
+;ARG:0å†…è¨³
+;1 = è†£å†…å°„ç²¾
+;2 = ã‚¢ãƒŠãƒ«å°„ç²¾
+;3 = æ‰‹æ·«
+;4 = ãƒ•ã‚§ãƒ©
+;5 = ãƒ‘ã‚¤ã‚ºãƒª
+;6 = ãã®ä»–å¥‰ä»•
+;7 = åŠ©æ‰‹ã‚’çŠ¯ã™ã§å°„ç²¾
+;8 = ã‚¯ãƒ³ãƒ‹ã•ã‚Œã¦å°„ç²¾
+;---ä»¥ä¸‹ã¯èª¿æ•™å¯¾è±¡ã®å°„ç²¾ãªã®ã§ç®¡è½„å¤–---
+;;9 = åŠ©æ‰‹ã‚’çŠ¯ã•ã›ã‚‹ã§å°„ç²¾
+;;10 = é€†ãƒ¬ã‚¤ãƒ—ã§å°„ç²¾
 ;--------------------------------------
-;11 = 3P•ŽèŽË¸
+;11 = 3PåŠ©æ‰‹å°„ç²¾
 
 IF !PENIS(PLAYER)
-	BASE:PLAYER:ŽË¸ = 0
+	BASE:PLAYER:å°„ç²¾ = 0
 	RETURN 0
 ENDIF
 
-;ŽË¸ŒÀŠE‚ª—ˆ‚Ä‚¢‚éê‡‚ÍŽË¸‚µ‚È‚¢
-IF CFLAG:PLAYER:Žc” == 0
-	CFLAG:PLAYER:ŽË¸ü‚è’l += RAND:20+1
-	BASE:PLAYER:ŽË¸ = CFLAG:PLAYER:ŽË¸ü‚è’l
-	PRINTFORML %CALLNAME:PLAYER%‚ÌƒyƒjƒX‚Í¸‰t‚ðo‚µs‚­‚µ‚Ä‚µ‚Ü‚Á‚½‚æ‚¤‚¾cc
+;å°„ç²¾é™ç•ŒãŒæ¥ã¦ã„ã‚‹å ´åˆã¯å°„ç²¾ã—ãªã„
+IF CFLAG:PLAYER:æ®‹æ•° == 0
+	CFLAG:PLAYER:å°„ç²¾é£¾ã‚Šå€¤ += RAND:20+1
+	BASE:PLAYER:å°„ç²¾ = CFLAG:PLAYER:å°„ç²¾é£¾ã‚Šå€¤
+	PRINTFORML %CALLNAME:PLAYER%ã®ãƒšãƒ‹ã‚¹ã¯ç²¾æ¶²ã‚’å‡ºã—å°½ãã—ã¦ã—ã¾ã£ãŸã‚ˆã†ã â€¦â€¦
 	RETURN 0
 ENDIF
 
-LOCAL = BASE:PLAYER:ŽË¸/MAXBASE:PLAYER:ŽË¸
+LOCAL = BASE:PLAYER:å°„ç²¾/MAXBASE:PLAYER:å°„ç²¾
 SIF LOCAL <= 0
 	RETURN 0
 
-;ƒRƒ}ƒ“ƒh‚²‚Æ‚Ì•ªŠò
+;ã‚³ãƒžãƒ³ãƒ‰ã”ã¨ã®åˆ†å²
 SELECTCASE ARG
-;’ÊíƒZƒbƒNƒXŒn
+;é€šå¸¸ã‚»ãƒƒã‚¯ã‚¹ç³»
 	CASE 1
-		;Žål‚É‚æ‚é“z—ê‚Ö‚Ì’†“cŽ
+		;ä¸»äººã«ã‚ˆã‚‹å¥´éš·ã¸ã®ä¸­ç”°æ°
 		IF PLAYER == MASTER
-			IF TEQUIP:MASTER:ƒRƒ“ƒh[ƒ€
+			IF TEQUIP:MASTER:ã‚³ãƒ³ãƒ‰ãƒ¼ãƒ 
 				IF LOCAL >= 2
-					PRINTL äS“à‘å—ÊŽË¸(”ð”D‹ï)
+					PRINTL è†£å†…å¤§é‡å°„ç²¾(é¿å¦Šå…·)
 				ELSE
-					PRINTL äS“àŽË¸i”ð”D‹ï)
+					PRINTL è†£å†…å°„ç²¾ï¼ˆé¿å¦Šå…·)
 				ENDIF
 			ELSE
 				IF LOCAL >= 2
-					PRINTL äS“à‘å—ÊŽË¸
+					PRINTL è†£å†…å¤§é‡å°„ç²¾
 				ELSE
-					PRINTL äS“àŽË¸
+					PRINTL è†£å†…å°„ç²¾
 				ENDIF
 			ENDIF
-		;•Žè‚É‚æ‚é“z—ê‚Ö‚Ì’†“cŽ
+		;åŠ©æ‰‹ã«ã‚ˆã‚‹å¥´éš·ã¸ã®ä¸­ç”°æ°
 		ELSEIF PLAYER == ASSI
-			IF TEQUIP:ASSI:ƒRƒ“ƒh[ƒ€
+			IF TEQUIP:ASSI:ã‚³ãƒ³ãƒ‰ãƒ¼ãƒ 
 				IF LOCAL >= 2
-					PRINTFORML %CALLNAME:ASSI%äS“à‘å—ÊŽË¸(”ð”D‹ï)
+					PRINTFORML %CALLNAME:ASSI%è†£å†…å¤§é‡å°„ç²¾(é¿å¦Šå…·)
 				ELSE
-					PRINTFORML %CALLNAME:ASSI%äS“àŽË¸(”ð”D‹ï)
+					PRINTFORML %CALLNAME:ASSI%è†£å†…å°„ç²¾(é¿å¦Šå…·)
 				ENDIF
 			ELSE
 				IF LOCAL >= 2
-					PRINTFORML %CALLNAME:ASSI%äS“à‘å—ÊŽË¸
+					PRINTFORML %CALLNAME:ASSI%è†£å†…å¤§é‡å°„ç²¾
 				ELSE
-					PRINTFORML %CALLNAME:ASSI%äS“àŽË¸
+					PRINTFORML %CALLNAME:ASSI%è†£å†…å°„ç²¾
 				ENDIF
 			ENDIF
 		ENDIF
-	;ƒAƒiƒ‹ŽË¸
+	;ã‚¢ãƒŠãƒ«å°„ç²¾
 	CASE 2
 		IF PLAYER == MASTER
-			IF TEQUIP:MASTER:ƒRƒ“ƒh[ƒ€
+			IF TEQUIP:MASTER:ã‚³ãƒ³ãƒ‰ãƒ¼ãƒ 
 				IF LOCAL >= 2
-					PRINTL ’°“à‘å—ÊŽË¸(”ð”D‹ï)
+					PRINTL è…¸å†…å¤§é‡å°„ç²¾(é¿å¦Šå…·)
 				ELSE
-					PRINTL ’°“àŽË¸(”ð”D‹ï)
+					PRINTL è…¸å†…å°„ç²¾(é¿å¦Šå…·)
 				ENDIF
 			ELSE
 				IF LOCAL >= 2
-					PRINTL ’°“à‘å—ÊŽË¸
+					PRINTL è…¸å†…å¤§é‡å°„ç²¾
 				ELSE
-					PRINTL ’°“àŽË¸
+					PRINTL è…¸å†…å°„ç²¾
 				ENDIF
 			ENDIF
 		ELSEIF PLAYER == ASSI
-			IF TEQUIP:ASSI:ƒRƒ“ƒh[ƒ€
+			IF TEQUIP:ASSI:ã‚³ãƒ³ãƒ‰ãƒ¼ãƒ 
 				IF LOCAL >= 2
-					PRINTFORML %CALLNAME:ASSI%’°“à‘å—ÊŽË¸(”ð”D‹ï)
+					PRINTFORML %CALLNAME:ASSI%è…¸å†…å¤§é‡å°„ç²¾(é¿å¦Šå…·)
 				ELSE
-					PRINTFORML %CALLNAME:ASSI%’°“àŽË¸(”ð”D‹ï)
+					PRINTFORML %CALLNAME:ASSI%è…¸å†…å°„ç²¾(é¿å¦Šå…·)
 				ENDIF
 			ELSE
 				IF LOCAL >= 2
-					PRINTFORML %CALLNAME:ASSI%’°“à‘å—ÊŽË¸
+					PRINTFORML %CALLNAME:ASSI%è…¸å†…å¤§é‡å°„ç²¾
 				ELSE
-					PRINTFORML %CALLNAME:ASSI%’°“àŽË¸
+					PRINTFORML %CALLNAME:ASSI%è…¸å†…å°„ç²¾
 				ENDIF
 			ENDIF
 		ENDIF
-	;Žèˆú
+	;æ‰‹æ·«
 	CASE 3
 		IF PLAYER == MASTER
-			IF TEQUIP:MASTER:ƒRƒ“ƒh[ƒ€
+			IF TEQUIP:MASTER:ã‚³ãƒ³ãƒ‰ãƒ¼ãƒ 
 				IF LOCAL >= 2
-					PRINTL ‘å—ÊŽË¸(”ð”D‹ï)
+					PRINTL å¤§é‡å°„ç²¾(é¿å¦Šå…·)
 				ELSE
-					PRINTL ŽË¸(”ð”D‹ï)
+					PRINTL å°„ç²¾(é¿å¦Šå…·)
 				ENDIF
 			ELSE
 				IF LOCAL >= 2
-					PRINTL ‘å—ÊŽË¸
+					PRINTL å¤§é‡å°„ç²¾
 				ELSE
-					PRINTL ŽË¸
+					PRINTL å°„ç²¾
 				ENDIF
 			ENDIF
 		ELSEIF PLAYER == ASSI
-			IF TEQUIP:ASSI:ƒRƒ“ƒh[ƒ€
+			IF TEQUIP:ASSI:ã‚³ãƒ³ãƒ‰ãƒ¼ãƒ 
 				IF LOCAL >= 2
-					PRINTFORML %CALLNAME:ASSI%‘å—ÊŽË¸(”ð”D‹ï)
+					PRINTFORML %CALLNAME:ASSI%å¤§é‡å°„ç²¾(é¿å¦Šå…·)
 				ELSE
-					PRINTFORML %CALLNAME:ASSI%ŽË¸(”ð”D‹ï)
+					PRINTFORML %CALLNAME:ASSI%å°„ç²¾(é¿å¦Šå…·)
 				ENDIF
 			ELSE
 				IF LOCAL >= 2
-					PRINTFORML %CALLNAME:ASSI%‘å—ÊŽË¸
+					PRINTFORML %CALLNAME:ASSI%å¤§é‡å°„ç²¾
 				ELSE
-					PRINTFORML %CALLNAME:ASSI%ŽË¸
+					PRINTFORML %CALLNAME:ASSI%å°„ç²¾
 				ENDIF
 			ENDIF
 		ENDIF
-	;ƒtƒFƒ‰
+	;ãƒ•ã‚§ãƒ©
 	CASE 4
-		IF PLAYER == MASTER || SELECTCOMS == "ƒ_ƒuƒ‹ƒtƒFƒ‰"
-			IF TEQUIP:MASTER:ƒRƒ“ƒh[ƒ€
+		IF PLAYER == MASTER || SELECTCOMS == "ãƒ€ãƒ–ãƒ«ãƒ•ã‚§ãƒ©"
+			IF TEQUIP:MASTER:ã‚³ãƒ³ãƒ‰ãƒ¼ãƒ 
 				IF LOCAL >= 2
-					PRINTL Œû“à‘å—ÊŽË¸(”ð”D‹ï)
+					PRINTL å£å†…å¤§é‡å°„ç²¾(é¿å¦Šå…·)
 				ELSE
-					PRINTL Œû“àŽË¸(”ð”D‹ï)
+					PRINTL å£å†…å°„ç²¾(é¿å¦Šå…·)
 				ENDIF
 			ELSE
 				IF LOCAL >= 2
-					PRINTL Œû“à‘å—ÊŽË¸
+					PRINTL å£å†…å¤§é‡å°„ç²¾
 				ELSE
-					PRINTL Œû“àŽË¸
+					PRINTL å£å†…å°„ç²¾
 				ENDIF
 			ENDIF
 		ELSEIF PLAYER == ASSI
-			IF TEQUIP:ASSI:ƒRƒ“ƒh[ƒ€
+			IF TEQUIP:ASSI:ã‚³ãƒ³ãƒ‰ãƒ¼ãƒ 
 				IF LOCAL >= 2
-					PRINTFORML %CALLNAME:ASSI%Œû“à‘å—ÊŽË¸(”ð”D‹ï)
+					PRINTFORML %CALLNAME:ASSI%å£å†…å¤§é‡å°„ç²¾(é¿å¦Šå…·)
 				ELSE
-					PRINTFORML %CALLNAME:ASSI%Œû“àŽË¸(”ð”D‹ï)
+					PRINTFORML %CALLNAME:ASSI%å£å†…å°„ç²¾(é¿å¦Šå…·)
 				ENDIF
 			ELSE
 				IF LOCAL >= 2
-					PRINTFORML %CALLNAME:ASSI%Œû“à‘å—ÊŽË¸
+					PRINTFORML %CALLNAME:ASSI%å£å†…å¤§é‡å°„ç²¾
 				ELSE
-					PRINTFORML %CALLNAME:ASSI%Œû“àŽË¸
+					PRINTFORML %CALLNAME:ASSI%å£å†…å°„ç²¾
 				ENDIF
 			ENDIF
 		ENDIF
-	;ƒpƒCƒYƒŠ
+	;ãƒ‘ã‚¤ã‚ºãƒª
 	CASE 5
-		IF PLAYER == MASTER || SELECTCOMS == "ƒ_ƒuƒ‹ƒpƒCƒYƒŠ"
-			IF TEQUIP:MASTER:ƒRƒ“ƒh[ƒ€
+		IF PLAYER == MASTER || SELECTCOMS == "ãƒ€ãƒ–ãƒ«ãƒ‘ã‚¤ã‚ºãƒª"
+			IF TEQUIP:MASTER:ã‚³ãƒ³ãƒ‰ãƒ¼ãƒ 
 				IF LOCAL >= 2
-					PRINTL “û“à‘å—ÊŽË¸(”ð”D‹ï)
+					PRINTL ä¹³å†…å¤§é‡å°„ç²¾(é¿å¦Šå…·)
 				ELSE
-					PRINTL “û“àŽË¸(”ð”D‹ï)
+					PRINTL ä¹³å†…å°„ç²¾(é¿å¦Šå…·)
 				ENDIF
 			ELSE
 				IF LOCAL >= 2
-					PRINTL “û“à‘å—ÊŽË¸
+					PRINTL ä¹³å†…å¤§é‡å°„ç²¾
 				ELSE
-					PRINTL “û“àŽË¸
+					PRINTL ä¹³å†…å°„ç²¾
 				ENDIF
 			ENDIF
 		ELSEIF PLAYER == ASSI
-			IF TEQUIP:ASSI:ƒRƒ“ƒh[ƒ€
+			IF TEQUIP:ASSI:ã‚³ãƒ³ãƒ‰ãƒ¼ãƒ 
 				IF LOCAL >= 2
-					PRINTFORML %CALLNAME:ASSI%“û“à‘å—ÊŽË¸(”ð”D‹ï)
+					PRINTFORML %CALLNAME:ASSI%ä¹³å†…å¤§é‡å°„ç²¾(é¿å¦Šå…·)
 				ELSE
-					PRINTFORML %CALLNAME:ASSI%“û“àŽË¸(”ð”D‹ï)
+					PRINTFORML %CALLNAME:ASSI%ä¹³å†…å°„ç²¾(é¿å¦Šå…·)
 				ENDIF
 			ELSE
 				IF LOCAL >= 2
-					PRINTFORML %CALLNAME:ASSI%“û“à‘å—ÊŽË¸
+					PRINTFORML %CALLNAME:ASSI%ä¹³å†…å¤§é‡å°„ç²¾
 				ELSE
-					PRINTFORML %CALLNAME:ASSI%“û“àŽË¸
+					PRINTFORML %CALLNAME:ASSI%ä¹³å†…å°„ç²¾
 				ENDIF
 			ENDIF
 		ENDIF
-	;‚»‚Ì‘¼•òŽd
+	;ãã®ä»–å¥‰ä»•
 	CASE 6
 		IF PLAYER == MASTER
-			IF TEQUIP:MASTER:ƒRƒ“ƒh[ƒ€
+			IF TEQUIP:MASTER:ã‚³ãƒ³ãƒ‰ãƒ¼ãƒ 
 				IF LOCAL >= 2
-					PRINTL ‘å—ÊŽË¸(”ð”D‹ï)
+					PRINTL å¤§é‡å°„ç²¾(é¿å¦Šå…·)
 				ELSE
-					PRINTL ŽË¸(”ð”D‹ï)
+					PRINTL å°„ç²¾(é¿å¦Šå…·)
 				ENDIF
 			ELSE
 				IF LOCAL >= 2
-					PRINTL ‘å—ÊŽË¸
+					PRINTL å¤§é‡å°„ç²¾
 				ELSE
-					PRINTL ŽË¸
+					PRINTL å°„ç²¾
 				ENDIF
 			ENDIF
 		ELSEIF PLAYER == ASSI
-			IF TEQUIP:ASSI:ƒRƒ“ƒh[ƒ€
+			IF TEQUIP:ASSI:ã‚³ãƒ³ãƒ‰ãƒ¼ãƒ 
 				IF LOCAL >= 2
-					PRINTFORML %CALLNAME:ASSI%‘å—ÊŽË¸(”ð”D‹ï)
+					PRINTFORML %CALLNAME:ASSI%å¤§é‡å°„ç²¾(é¿å¦Šå…·)
 				ELSE
-					PRINTFORML %CALLNAME:ASSI%ŽË¸(”ð”D‹ï)
+					PRINTFORML %CALLNAME:ASSI%å°„ç²¾(é¿å¦Šå…·)
 				ENDIF
 			ELSE
 				IF LOCAL >= 2
-					PRINTFORML %CALLNAME:ASSI%‘å—ÊŽË¸
+					PRINTFORML %CALLNAME:ASSI%å¤§é‡å°„ç²¾
 				ELSE
-					PRINTFORML %CALLNAME:ASSI%ŽË¸
+					PRINTFORML %CALLNAME:ASSI%å°„ç²¾
 				ENDIF
 			ENDIF
 		ENDIF
-	;•Žè‚ð”Æ‚·‚ÅŽË¸
+	;åŠ©æ‰‹ã‚’çŠ¯ã™ã§å°„ç²¾
 	CASE 7
 		IF PLAYER == MASTER
 			IF VAGINA(ASSI)
-				IF TEQUIP:ASSI:ƒRƒ“ƒh[ƒ€
+				IF TEQUIP:ASSI:ã‚³ãƒ³ãƒ‰ãƒ¼ãƒ 
 					IF LOCAL >= 2
-						PRINTFORML %CALLNAME:MASTER%¨%CALLNAME:ASSI% ’°“à‘å—ÊŽË¸(”ð”D‹ï)
+						PRINTFORML %CALLNAME:MASTER%â†’%CALLNAME:ASSI% è…¸å†…å¤§é‡å°„ç²¾(é¿å¦Šå…·)
 					ELSE
-						PRINTFORML %CALLNAME:MASTER%¨%CALLNAME:ASSI% ’°“àŽË¸(”ð”D‹ï)
+						PRINTFORML %CALLNAME:MASTER%â†’%CALLNAME:ASSI% è…¸å†…å°„ç²¾(é¿å¦Šå…·)
 					ENDIF
 				ELSE
 					IF LOCAL >= 2
-						PRINTFORML %CALLNAME:MASTER%¨%CALLNAME:ASSI% ’°“à‘å—ÊŽË¸
+						PRINTFORML %CALLNAME:MASTER%â†’%CALLNAME:ASSI% è…¸å†…å¤§é‡å°„ç²¾
 					ELSE
-						PRINTFORML %CALLNAME:MASTER%¨%CALLNAME:ASSI% ’°“àŽË¸
+						PRINTFORML %CALLNAME:MASTER%â†’%CALLNAME:ASSI% è…¸å†…å°„ç²¾
 					ENDIF
 				ENDIF
 			ELSE
-				IF TEQUIP:MASTER:ƒRƒ“ƒh[ƒ€
+				IF TEQUIP:MASTER:ã‚³ãƒ³ãƒ‰ãƒ¼ãƒ 
 					IF LOCAL >= 2
-						PRINTFORML %CALLNAME:MASTER%¨%CALLNAME:ASSI% äS“à‘å—ÊŽË¸(”ð”D‹ï)
+						PRINTFORML %CALLNAME:MASTER%â†’%CALLNAME:ASSI% è†£å†…å¤§é‡å°„ç²¾(é¿å¦Šå…·)
 					ELSE
-						PRINTFORML %CALLNAME:MASTER%¨%CALLNAME:ASSI% äS“àŽË¸(”ð”D‹ï)
+						PRINTFORML %CALLNAME:MASTER%â†’%CALLNAME:ASSI% è†£å†…å°„ç²¾(é¿å¦Šå…·)
 					ENDIF
 				ELSE
 					IF LOCAL >= 2
-						PRINTFORML %CALLNAME:MASTER%¨%CALLNAME:ASSI% äS“à‘å—ÊŽË¸
+						PRINTFORML %CALLNAME:MASTER%â†’%CALLNAME:ASSI% è†£å†…å¤§é‡å°„ç²¾
 					ELSE
-						PRINTFORML %CALLNAME:MASTER%¨%CALLNAME:ASSI% äS“àŽË¸
+						PRINTFORML %CALLNAME:MASTER%â†’%CALLNAME:ASSI% è†£å†…å°„ç²¾
 					ENDIF
 				ENDIF
 			ENDIF
 		ELSEIF PLAYER == ASSI
-			IF TEQUIP:ASSI:ƒRƒ“ƒh[ƒ€
+			IF TEQUIP:ASSI:ã‚³ãƒ³ãƒ‰ãƒ¼ãƒ 
 				IF LOCAL >= 2
-					PRINTFORML %CALLNAME:ASSI%‘å—ÊŽË¸(”ð”D‹ï)
+					PRINTFORML %CALLNAME:ASSI%å¤§é‡å°„ç²¾(é¿å¦Šå…·)
 				ELSE
-					PRINTFORML %CALLNAME:ASSI%ŽË¸(”ð”D‹ï)
+					PRINTFORML %CALLNAME:ASSI%å°„ç²¾(é¿å¦Šå…·)
 				ENDIF
 			ELSE
 				IF LOCAL >= 2
-					PRINTFORML %CALLNAME:ASSI%‘å—ÊŽË¸
+					PRINTFORML %CALLNAME:ASSI%å¤§é‡å°„ç²¾
 				ELSE
-					PRINTFORML %CALLNAME:ASSI%ŽË¸
+					PRINTFORML %CALLNAME:ASSI%å°„ç²¾
 				ENDIF
 			ENDIF
 		ENDIF
-	;ƒNƒ“ƒj
+	;ã‚¯ãƒ³ãƒ‹
 	CASE 8
 		IF PLAYER == MASTER
-			IF TEQUIP:MASTER:ƒRƒ“ƒh[ƒ€
+			IF TEQUIP:MASTER:ã‚³ãƒ³ãƒ‰ãƒ¼ãƒ 
 				IF LOCAL >= 2
-					PRINTL ‘å—ÊŽË¸(”ð”D‹ï)
+					PRINTL å¤§é‡å°„ç²¾(é¿å¦Šå…·)
 				ELSE
-					PRINTL ŽË¸(”ð”D‹ï)
+					PRINTL å°„ç²¾(é¿å¦Šå…·)
 				ENDIF
 			ELSE
 				IF LOCAL >= 2
-					PRINTL ‘å—ÊŠçŽË
+					PRINTL å¤§é‡é¡”å°„
 				ELSE
-					PRINTL ŠçŽË
+					PRINTL é¡”å°„
 				ENDIF
 			ENDIF
 		ELSEIF PLAYER == ASSI
-			IF TEQUIP:ASSI:ƒRƒ“ƒh[ƒ€
+			IF TEQUIP:ASSI:ã‚³ãƒ³ãƒ‰ãƒ¼ãƒ 
 				IF LOCAL >= 2
-					PRINTFORML %CALLNAME:ASSI%‘å—ÊŽË¸(”ð”D‹ï)
+					PRINTFORML %CALLNAME:ASSI%å¤§é‡å°„ç²¾(é¿å¦Šå…·)
 				ELSE
-					PRINTFORML %CALLNAME:ASSI%ŽË¸(”ð”D‹ï)
+					PRINTFORML %CALLNAME:ASSI%å°„ç²¾(é¿å¦Šå…·)
 				ENDIF
 			ELSE
 				IF LOCAL >= 2
-					PRINTFORML %CALLNAME:ASSI%‘å—ÊŠçŽË
+					PRINTFORML %CALLNAME:ASSI%å¤§é‡é¡”å°„
 				ELSE
-					PRINTFORML %CALLNAME:ASSI%ŠçŽË
+					PRINTFORML %CALLNAME:ASSI%é¡”å°„
 				ENDIF
 			ENDIF
 		ENDIF
-	;3P•ŽèŽË¸
+	;3PåŠ©æ‰‹å°„ç²¾
 	CASE 11
-		IF TEQUIP:ASSI:ƒRƒ“ƒh[ƒ€
+		IF TEQUIP:ASSI:ã‚³ãƒ³ãƒ‰ãƒ¼ãƒ 
 			IF LOCAL >= 2
-				PRINTFORML %CALLNAME:ASSI%‘å—ÊŽË¸(”ð”D‹ï)
+				PRINTFORML %CALLNAME:ASSI%å¤§é‡å°„ç²¾(é¿å¦Šå…·)
 			ELSE
-				PRINTFORML %CALLNAME:ASSI%ŽË¸(”ð”D‹ï)
+				PRINTFORML %CALLNAME:ASSI%å°„ç²¾(é¿å¦Šå…·)
 			ENDIF
 		ELSE
 			IF LOCAL >= 2
-				PRINTFORML %CALLNAME:ASSI%‘å—ÊŽË¸
+				PRINTFORML %CALLNAME:ASSI%å¤§é‡å°„ç²¾
 			ELSE
-				PRINTFORML %CALLNAME:ASSI%ŽË¸
+				PRINTFORML %CALLNAME:ASSI%å°„ç²¾
 			ENDIF
 		ENDIF
 ENDSELECT
 
-NOWEX:PLAYER:ŽË¸ = LOCAL
+NOWEX:PLAYER:å°„ç²¾ = LOCAL
 
-;ŽË¸‹­“x‚ð•\Ž¦
+;å°„ç²¾å¼·åº¦ã‚’è¡¨ç¤º
 SIF LOCAL >= 3
-	PRINTFORML ŽË¸‹­“x~{LOCAL}
+	PRINTFORML å°„ç²¾å¼·åº¦Ã—{LOCAL}
 
 RETURN LOCAL
 
 @SAMEN_CHECK_M, ARG
 IF !PENIS(MASTER)
-	BASE:MASTER:ŽË¸ = 0
+	BASE:MASTER:å°„ç²¾ = 0
 	RETURN 0
 ENDIF
 
-;PLAYER‚ªMASTER‚Å‚Í‚È‚¢ê‡
-;ŽË¸ŒÀŠE‚ª—ˆ‚Ä‚¢‚éê‡‚ÍAŽË¸ƒQ[ƒW‚Í‹­§“I‚É0‚É‚·‚é
-IF CFLAG:MASTER:Žc” == 0
-	CFLAG:MASTER:ŽË¸ü‚è’l += RAND:20+1
-	BASE:MASTER:ŽË¸ = CFLAG:MASTER:ŽË¸ü‚è’l
-	PRINTFORML %CALLNAME:MASTER%‚ÌƒyƒjƒX‚Í¸‰t‚ðo‚µs‚­‚µ‚Ä‚µ‚Ü‚Á‚½‚æ‚¤‚¾cc
+;PLAYERãŒMASTERã§ã¯ãªã„å ´åˆ
+;å°„ç²¾é™ç•ŒãŒæ¥ã¦ã„ã‚‹å ´åˆã¯ã€å°„ç²¾ã‚²ãƒ¼ã‚¸ã¯å¼·åˆ¶çš„ã«0ã«ã™ã‚‹
+IF CFLAG:MASTER:æ®‹æ•° == 0
+	CFLAG:MASTER:å°„ç²¾é£¾ã‚Šå€¤ += RAND:20+1
+	BASE:MASTER:å°„ç²¾ = CFLAG:MASTER:å°„ç²¾é£¾ã‚Šå€¤
+	PRINTFORML %CALLNAME:MASTER%ã®ãƒšãƒ‹ã‚¹ã¯ç²¾æ¶²ã‚’å‡ºã—å°½ãã—ã¦ã—ã¾ã£ãŸã‚ˆã†ã â€¦â€¦
 	RETURN 0
 ENDIF
 
-LOCAL = BASE:MASTER:ŽË¸/MAXBASE:MASTER:ŽË¸
+LOCAL = BASE:MASTER:å°„ç²¾/MAXBASE:MASTER:å°„ç²¾
 SIF !LOCAL
 	RETURN 0
 
-;ƒRƒ}ƒ“ƒh‚²‚Æ‚Ì•ªŠò
+;ã‚³ãƒžãƒ³ãƒ‰ã”ã¨ã®åˆ†å²
 SELECTCASE ARG
-	;’ÊíƒZƒbƒNƒXŒn
+	;é€šå¸¸ã‚»ãƒƒã‚¯ã‚¹ç³»
 	CASE 1
-		IF TEQUIP:MASTER:ƒRƒ“ƒh[ƒ€
+		IF TEQUIP:MASTER:ã‚³ãƒ³ãƒ‰ãƒ¼ãƒ 
 			IF LOCAL >= 2
-				PRINTL äS“à‘å—ÊŽË¸(”ð”D‹ï)
+				PRINTL è†£å†…å¤§é‡å°„ç²¾(é¿å¦Šå…·)
 			ELSE
-				PRINTL äS“àŽË¸i”ð”D‹ï)
+				PRINTL è†£å†…å°„ç²¾ï¼ˆé¿å¦Šå…·)
 			ENDIF
 		ELSE
 			IF LOCAL >= 2
-				PRINTL äS“à‘å—ÊŽË¸
+				PRINTL è†£å†…å¤§é‡å°„ç²¾
 			ELSE
-				PRINTL äS“àŽË¸
+				PRINTL è†£å†…å°„ç²¾
 			ENDIF
 		ENDIF
-	;ƒAƒiƒ‹ŽË¸
+	;ã‚¢ãƒŠãƒ«å°„ç²¾
 	CASE 2
-		IF TEQUIP:MASTER:ƒRƒ“ƒh[ƒ€
+		IF TEQUIP:MASTER:ã‚³ãƒ³ãƒ‰ãƒ¼ãƒ 
 			IF LOCAL >= 2
-				PRINTL ’°“à‘å—ÊŽË¸(”ð”D‹ï)
+				PRINTL è…¸å†…å¤§é‡å°„ç²¾(é¿å¦Šå…·)
 			ELSE
-				PRINTL ’°“àŽË¸(”ð”D‹ï)
+				PRINTL è…¸å†…å°„ç²¾(é¿å¦Šå…·)
 			ENDIF
 		ELSE
 			IF LOCAL >= 2
-				PRINTL ’°“à‘å—ÊŽË¸
+				PRINTL è…¸å†…å¤§é‡å°„ç²¾
 			ELSE
-				PRINTL ’°“àŽË¸
+				PRINTL è…¸å†…å°„ç²¾
 			ENDIF
 		ENDIF
-	;Žèˆú
+	;æ‰‹æ·«
 	CASE 3
-		IF TEQUIP:MASTER:ƒRƒ“ƒh[ƒ€
+		IF TEQUIP:MASTER:ã‚³ãƒ³ãƒ‰ãƒ¼ãƒ 
 			IF LOCAL >= 2
-				PRINTL ‘å—ÊŽË¸(”ð”D‹ï)
+				PRINTL å¤§é‡å°„ç²¾(é¿å¦Šå…·)
 			ELSE
-				PRINTL ŽË¸(”ð”D‹ï)
+				PRINTL å°„ç²¾(é¿å¦Šå…·)
 			ENDIF
 		ELSE
 			IF LOCAL >= 2
-				PRINTL ‘å—ÊŽË¸
+				PRINTL å¤§é‡å°„ç²¾
 			ELSE
-				PRINTL ŽË¸
+				PRINTL å°„ç²¾
 			ENDIF
 		ENDIF
-	;ƒtƒFƒ‰
+	;ãƒ•ã‚§ãƒ©
 	CASE 4
-		IF TEQUIP:MASTER:ƒRƒ“ƒh[ƒ€
+		IF TEQUIP:MASTER:ã‚³ãƒ³ãƒ‰ãƒ¼ãƒ 
 			IF LOCAL >= 2
-				PRINTL Œû“à‘å—ÊŽË¸(”ð”D‹ï)
+				PRINTL å£å†…å¤§é‡å°„ç²¾(é¿å¦Šå…·)
 			ELSE
-				PRINTL Œû“àŽË¸(”ð”D‹ï)
+				PRINTL å£å†…å°„ç²¾(é¿å¦Šå…·)
 			ENDIF
 		ELSE
 			IF LOCAL >= 2
-				PRINTL Œû“à‘å—ÊŽË¸
+				PRINTL å£å†…å¤§é‡å°„ç²¾
 			ELSE
-				PRINTL Œû“àŽË¸
+				PRINTL å£å†…å°„ç²¾
 			ENDIF
 		ENDIF
-	;ƒpƒCƒYƒŠ
+	;ãƒ‘ã‚¤ã‚ºãƒª
 	CASE 5
-		IF TEQUIP:MASTER:ƒRƒ“ƒh[ƒ€
+		IF TEQUIP:MASTER:ã‚³ãƒ³ãƒ‰ãƒ¼ãƒ 
 			IF LOCAL >= 2
-				PRINTL “û“à‘å—ÊŽË¸(”ð”D‹ï)
+				PRINTL ä¹³å†…å¤§é‡å°„ç²¾(é¿å¦Šå…·)
 			ELSE
-				PRINTL “û“àŽË¸(”ð”D‹ï)
+				PRINTL ä¹³å†…å°„ç²¾(é¿å¦Šå…·)
 			ENDIF
 		ELSE
 			IF LOCAL >= 2
-				PRINTL “û“à‘å—ÊŽË¸
+				PRINTL ä¹³å†…å¤§é‡å°„ç²¾
 			ELSE
-				PRINTL “û“àŽË¸
+				PRINTL ä¹³å†…å°„ç²¾
 			ENDIF
 		ENDIF
-	;‚»‚Ì‘¼•òŽd
+	;ãã®ä»–å¥‰ä»•
 	CASE 6
-		IF TEQUIP:MASTER:ƒRƒ“ƒh[ƒ€
+		IF TEQUIP:MASTER:ã‚³ãƒ³ãƒ‰ãƒ¼ãƒ 
 			IF LOCAL >= 2
-				PRINTL ‘å—ÊŽË¸(”ð”D‹ï)
+				PRINTL å¤§é‡å°„ç²¾(é¿å¦Šå…·)
 			ELSE
-				PRINTL ŽË¸(”ð”D‹ï)
+				PRINTL å°„ç²¾(é¿å¦Šå…·)
 			ENDIF
 		ELSE
 			IF LOCAL >= 2
-				PRINTL ‘å—ÊŽË¸
+				PRINTL å¤§é‡å°„ç²¾
 			ELSE
-				PRINTL ŽË¸
+				PRINTL å°„ç²¾
 			ENDIF
 		ENDIF
-	;•Žè‚ð”Æ‚·‚ÅŽË¸
+	;åŠ©æ‰‹ã‚’çŠ¯ã™ã§å°„ç²¾
 	CASE 7
-		IF TFLAG:Žål‘}“ü‰ÓŠ == 1
-			IF TEQUIP:MASTER:ƒRƒ“ƒh[ƒ€
+		IF TFLAG:ä¸»äººæŒ¿å…¥ç®‡æ‰€ == 1
+			IF TEQUIP:MASTER:ã‚³ãƒ³ãƒ‰ãƒ¼ãƒ 
 				IF LOCAL >= 2
-					PRINTFORML %CALLNAME:MASTER%¨%CALLNAME:ASSI% äS“à‘å—ÊŽË¸(”ð”D‹ï)
+					PRINTFORML %CALLNAME:MASTER%â†’%CALLNAME:ASSI% è†£å†…å¤§é‡å°„ç²¾(é¿å¦Šå…·)
 				ELSE
-					PRINTFORML %CALLNAME:MASTER%¨%CALLNAME:ASSI% äS“àŽË¸(”ð”D‹ï)
+					PRINTFORML %CALLNAME:MASTER%â†’%CALLNAME:ASSI% è†£å†…å°„ç²¾(é¿å¦Šå…·)
 				ENDIF
 			ELSE
 				IF LOCAL >= 2
-					PRINTFORML %CALLNAME:MASTER%¨%CALLNAME:ASSI% äS“à‘å—ÊŽË¸
+					PRINTFORML %CALLNAME:MASTER%â†’%CALLNAME:ASSI% è†£å†…å¤§é‡å°„ç²¾
 				ELSE
-					PRINTFORML %CALLNAME:MASTER%¨%CALLNAME:ASSI% äS“àŽË¸
+					PRINTFORML %CALLNAME:MASTER%â†’%CALLNAME:ASSI% è†£å†…å°„ç²¾
 				ENDIF
 			ENDIF
 		ELSE
-			IF TEQUIP:ASSI:ƒRƒ“ƒh[ƒ€
+			IF TEQUIP:ASSI:ã‚³ãƒ³ãƒ‰ãƒ¼ãƒ 
 				IF LOCAL >= 2
-					PRINTFORML %CALLNAME:MASTER%¨%CALLNAME:ASSI% ’°“à‘å—ÊŽË¸(”ð”D‹ï)
+					PRINTFORML %CALLNAME:MASTER%â†’%CALLNAME:ASSI% è…¸å†…å¤§é‡å°„ç²¾(é¿å¦Šå…·)
 				ELSE
-					PRINTFORML %CALLNAME:MASTER%¨%CALLNAME:ASSI% ’°“àŽË¸(”ð”D‹ï)
+					PRINTFORML %CALLNAME:MASTER%â†’%CALLNAME:ASSI% è…¸å†…å°„ç²¾(é¿å¦Šå…·)
 				ENDIF
 			ELSE
 				IF LOCAL >= 2
-					PRINTFORML %CALLNAME:MASTER%¨%CALLNAME:ASSI% ’°“à‘å—ÊŽË¸
+					PRINTFORML %CALLNAME:MASTER%â†’%CALLNAME:ASSI% è…¸å†…å¤§é‡å°„ç²¾
 				ELSE
-					PRINTFORML %CALLNAME:MASTER%¨%CALLNAME:ASSI% ’°“àŽË¸
+					PRINTFORML %CALLNAME:MASTER%â†’%CALLNAME:ASSI% è…¸å†…å°„ç²¾
 				ENDIF
 			ENDIF
 		ENDIF
-	;ƒNƒ“ƒj‚³‚¹‚é
+	;ã‚¯ãƒ³ãƒ‹ã•ã›ã‚‹
 	CASE 8
-		IF TEQUIP:MASTER:ƒRƒ“ƒh[ƒ€
+		IF TEQUIP:MASTER:ã‚³ãƒ³ãƒ‰ãƒ¼ãƒ 
 			IF LOCAL >= 2
-				PRINTL ‘å—ÊŽË¸(”ð”D‹ï)
+				PRINTL å¤§é‡å°„ç²¾(é¿å¦Šå…·)
 			ELSE
-				PRINTL ŽË¸(”ð”D‹ï)
+				PRINTL å°„ç²¾(é¿å¦Šå…·)
 			ENDIF
 		ELSE
 			IF LOCAL >= 2
-				PRINTL ‘å—ÊŠçŽË
+				PRINTL å¤§é‡é¡”å°„
 			ELSE
-				PRINTL ŠçŽË
+				PRINTL é¡”å°„
 			ENDIF
 		ENDIF
 ENDSELECT
 
-NOWEX:MASTER:ŽË¸ = LOCAL
+NOWEX:MASTER:å°„ç²¾ = LOCAL
 
-;ŽË¸‹­“x‚ð•\Ž¦
+;å°„ç²¾å¼·åº¦ã‚’è¡¨ç¤º
 SIF LOCAL >= 3
-	PRINTFORML ŽË¸‹­“x~{LOCAL}
+	PRINTFORML å°„ç²¾å¼·åº¦Ã—{LOCAL}
 
 RETURN LOCAL
 
 @SAMEN_CHECK_A, ARG
 IF !PENIS(ASSI)
-	BASE:ASSI:ŽË¸ = 0
+	BASE:ASSI:å°„ç²¾ = 0
 	RETURN 0
 ENDIF
 
-;PLAYER‚ªASSI‚Å‚Í‚È‚¢ê‡
-;ŽË¸ŒÀŠE‚ª—ˆ‚Ä‚¢‚éê‡‚ÍAŽË¸ƒQ[ƒW‚Í‹­§“I‚É0‚É‚·‚é
-IF CFLAG:ASSI:Žc” == 0
-	CFLAG:ASSI:ŽË¸ü‚è’l += RAND:20+1
-	BASE:ASSI:ŽË¸ = CFLAG:ASSI:ŽË¸ü‚è’l
-	PRINTFORML %CALLNAME:ASSI%‚ÌƒyƒjƒX‚Í¸‰t‚ðo‚µs‚­‚µ‚Ä‚µ‚Ü‚Á‚½‚æ‚¤‚¾cc
+;PLAYERãŒASSIã§ã¯ãªã„å ´åˆ
+;å°„ç²¾é™ç•ŒãŒæ¥ã¦ã„ã‚‹å ´åˆã¯ã€å°„ç²¾ã‚²ãƒ¼ã‚¸ã¯å¼·åˆ¶çš„ã«0ã«ã™ã‚‹
+IF CFLAG:ASSI:æ®‹æ•° == 0
+	CFLAG:ASSI:å°„ç²¾é£¾ã‚Šå€¤ += RAND:20+1
+	BASE:ASSI:å°„ç²¾ = CFLAG:ASSI:å°„ç²¾é£¾ã‚Šå€¤
+	PRINTFORML %CALLNAME:ASSI%ã®ãƒšãƒ‹ã‚¹ã¯ç²¾æ¶²ã‚’å‡ºã—å°½ãã—ã¦ã—ã¾ã£ãŸã‚ˆã†ã â€¦â€¦
 	RETURN 0
 ENDIF
 
-LOCAL = BASE:ASSI:ŽË¸/MAXBASE:ASSI:ŽË¸
+LOCAL = BASE:ASSI:å°„ç²¾/MAXBASE:ASSI:å°„ç²¾
 SIF !LOCAL
 	RETURN 0
 
-;ƒRƒ}ƒ“ƒh‚²‚Æ‚Ì•ªŠò
+;ã‚³ãƒžãƒ³ãƒ‰ã”ã¨ã®åˆ†å²
 SELECTCASE ARG
-;’ÊíƒZƒbƒNƒXŒn
+;é€šå¸¸ã‚»ãƒƒã‚¯ã‚¹ç³»
 	CASE 1
-		IF TEQUIP:ASSI:ƒRƒ“ƒh[ƒ€
+		IF TEQUIP:ASSI:ã‚³ãƒ³ãƒ‰ãƒ¼ãƒ 
 			IF LOCAL >= 2
-				PRINTFORML %CALLNAME:ASSI%äS“à‘å—ÊŽË¸(”ð”D‹ï)
+				PRINTFORML %CALLNAME:ASSI%è†£å†…å¤§é‡å°„ç²¾(é¿å¦Šå…·)
 			ELSE
-				PRINTFORML %CALLNAME:ASSI%äS“àŽË¸(”ð”D‹ï)
+				PRINTFORML %CALLNAME:ASSI%è†£å†…å°„ç²¾(é¿å¦Šå…·)
 			ENDIF
 		ELSE
 			IF LOCAL >= 2
-				PRINTFORML %CALLNAME:ASSI%äS“à‘å—ÊŽË¸
+				PRINTFORML %CALLNAME:ASSI%è†£å†…å¤§é‡å°„ç²¾
 			ELSE
-				PRINTFORML %CALLNAME:ASSI%äS“àŽË¸
+				PRINTFORML %CALLNAME:ASSI%è†£å†…å°„ç²¾
 			ENDIF
 		ENDIF
-	;ƒAƒiƒ‹ŽË¸
+	;ã‚¢ãƒŠãƒ«å°„ç²¾
 	CASE 2
-		IF TEQUIP:ASSI:ƒRƒ“ƒh[ƒ€
+		IF TEQUIP:ASSI:ã‚³ãƒ³ãƒ‰ãƒ¼ãƒ 
 			IF LOCAL >= 2
-				PRINTFORML %CALLNAME:ASSI%’°“à‘å—ÊŽË¸(”ð”D‹ï)
+				PRINTFORML %CALLNAME:ASSI%è…¸å†…å¤§é‡å°„ç²¾(é¿å¦Šå…·)
 			ELSE
-				PRINTFORML %CALLNAME:ASSI%’°“àŽË¸(”ð”D‹ï)
+				PRINTFORML %CALLNAME:ASSI%è…¸å†…å°„ç²¾(é¿å¦Šå…·)
 			ENDIF
 		ELSE
 			IF LOCAL >= 2
-				PRINTFORML %CALLNAME:ASSI%’°“à‘å—ÊŽË¸
+				PRINTFORML %CALLNAME:ASSI%è…¸å†…å¤§é‡å°„ç²¾
 			ELSE
-				PRINTFORML %CALLNAME:ASSI%’°“àŽË¸
+				PRINTFORML %CALLNAME:ASSI%è…¸å†…å°„ç²¾
 			ENDIF
 		ENDIF
-	;Žèˆú
+	;æ‰‹æ·«
 	CASE 3
-		IF TEQUIP:ASSI:ƒRƒ“ƒh[ƒ€
+		IF TEQUIP:ASSI:ã‚³ãƒ³ãƒ‰ãƒ¼ãƒ 
 			IF LOCAL >= 2
-				PRINTFORML %CALLNAME:ASSI%‘å—ÊŽË¸(”ð”D‹ï)
+				PRINTFORML %CALLNAME:ASSI%å¤§é‡å°„ç²¾(é¿å¦Šå…·)
 			ELSE
-				PRINTFORML %CALLNAME:ASSI%ŽË¸(”ð”D‹ï)
+				PRINTFORML %CALLNAME:ASSI%å°„ç²¾(é¿å¦Šå…·)
 			ENDIF
 		ELSE
 			IF LOCAL >= 2
-				PRINTFORML %CALLNAME:ASSI%‘å—ÊŽË¸
+				PRINTFORML %CALLNAME:ASSI%å¤§é‡å°„ç²¾
 			ELSE
-				PRINTFORML %CALLNAME:ASSI%ŽË¸
+				PRINTFORML %CALLNAME:ASSI%å°„ç²¾
 			ENDIF
 		ENDIF
-	;ƒtƒFƒ‰
+	;ãƒ•ã‚§ãƒ©
 	CASE 4
-		IF TEQUIP:ASSI:ƒRƒ“ƒh[ƒ€
+		IF TEQUIP:ASSI:ã‚³ãƒ³ãƒ‰ãƒ¼ãƒ 
 			IF LOCAL >= 2
-				PRINTFORML %CALLNAME:ASSI%Œû“à‘å—ÊŽË¸(”ð”D‹ï)
+				PRINTFORML %CALLNAME:ASSI%å£å†…å¤§é‡å°„ç²¾(é¿å¦Šå…·)
 			ELSE
-				PRINTFORML %CALLNAME:ASSI%Œû“àŽË¸(”ð”D‹ï)
+				PRINTFORML %CALLNAME:ASSI%å£å†…å°„ç²¾(é¿å¦Šå…·)
 			ENDIF
 		ELSE
 			IF LOCAL >= 2
-				PRINTFORML %CALLNAME:ASSI%Œû“à‘å—ÊŽË¸
+				PRINTFORML %CALLNAME:ASSI%å£å†…å¤§é‡å°„ç²¾
 			ELSE
-				PRINTFORML %CALLNAME:ASSI%Œû“àŽË¸
+				PRINTFORML %CALLNAME:ASSI%å£å†…å°„ç²¾
 			ENDIF
 		ENDIF
-	;ƒpƒCƒYƒŠ
+	;ãƒ‘ã‚¤ã‚ºãƒª
 	CASE 5
-		IF TEQUIP:ASSI:ƒRƒ“ƒh[ƒ€
+		IF TEQUIP:ASSI:ã‚³ãƒ³ãƒ‰ãƒ¼ãƒ 
 			IF LOCAL >= 2
-				PRINTFORML %CALLNAME:ASSI%“û“à‘å—ÊŽË¸(”ð”D‹ï)
+				PRINTFORML %CALLNAME:ASSI%ä¹³å†…å¤§é‡å°„ç²¾(é¿å¦Šå…·)
 			ELSE
-				PRINTFORML %CALLNAME:ASSI%“û“àŽË¸(”ð”D‹ï)
+				PRINTFORML %CALLNAME:ASSI%ä¹³å†…å°„ç²¾(é¿å¦Šå…·)
 			ENDIF
 		ELSE
 			IF LOCAL >= 2
-				PRINTFORML %CALLNAME:ASSI%“û“à‘å—ÊŽË¸
+				PRINTFORML %CALLNAME:ASSI%ä¹³å†…å¤§é‡å°„ç²¾
 			ELSE
-				PRINTFORML %CALLNAME:ASSI%“û“àŽË¸
+				PRINTFORML %CALLNAME:ASSI%ä¹³å†…å°„ç²¾
 			ENDIF
 		ENDIF
-	;‚»‚Ì‘¼•òŽd
+	;ãã®ä»–å¥‰ä»•
 	CASE 6
-		IF TEQUIP:ASSI:ƒRƒ“ƒh[ƒ€
+		IF TEQUIP:ASSI:ã‚³ãƒ³ãƒ‰ãƒ¼ãƒ 
 			IF LOCAL >= 2
-				PRINTFORML %CALLNAME:ASSI%‘å—ÊŽË¸(”ð”D‹ï)
+				PRINTFORML %CALLNAME:ASSI%å¤§é‡å°„ç²¾(é¿å¦Šå…·)
 			ELSE
-				PRINTFORML %CALLNAME:ASSI%ŽË¸(”ð”D‹ï)
+				PRINTFORML %CALLNAME:ASSI%å°„ç²¾(é¿å¦Šå…·)
 			ENDIF
 		ELSE
 			IF LOCAL >= 2
-				PRINTFORML %CALLNAME:ASSI%‘å—ÊŽË¸
+				PRINTFORML %CALLNAME:ASSI%å¤§é‡å°„ç²¾
 			ELSE
-				PRINTFORML %CALLNAME:ASSI%ŽË¸
+				PRINTFORML %CALLNAME:ASSI%å°„ç²¾
 			ENDIF
 		ENDIF
-	;•Žè‚ð”Æ‚·‚ÅŽË¸
+	;åŠ©æ‰‹ã‚’çŠ¯ã™ã§å°„ç²¾
 	CASE 7
-		IF TEQUIP:ASSI:ƒRƒ“ƒh[ƒ€
+		IF TEQUIP:ASSI:ã‚³ãƒ³ãƒ‰ãƒ¼ãƒ 
 			IF LOCAL >= 2
-				PRINTFORML %CALLNAME:ASSI%‘å—ÊŽË¸(”ð”D‹ï)
+				PRINTFORML %CALLNAME:ASSI%å¤§é‡å°„ç²¾(é¿å¦Šå…·)
 			ELSE
-				PRINTFORML %CALLNAME:ASSI%ŽË¸(”ð”D‹ï)
+				PRINTFORML %CALLNAME:ASSI%å°„ç²¾(é¿å¦Šå…·)
 			ENDIF
 		ELSE
 			IF LOCAL >= 2
-				PRINTFORML %CALLNAME:ASSI%‘å—ÊŽË¸
+				PRINTFORML %CALLNAME:ASSI%å¤§é‡å°„ç²¾
 			ELSE
-				PRINTFORML %CALLNAME:ASSI%ŽË¸
+				PRINTFORML %CALLNAME:ASSI%å°„ç²¾
 			ENDIF
 		ENDIF
-	;ƒNƒ“ƒj‚³‚¹‚é
+	;ã‚¯ãƒ³ãƒ‹ã•ã›ã‚‹
 	CASE 8
-		IF TEQUIP:ASSI:ƒRƒ“ƒh[ƒ€
+		IF TEQUIP:ASSI:ã‚³ãƒ³ãƒ‰ãƒ¼ãƒ 
 			IF LOCAL >= 2
-				PRINTFORML %CALLNAME:ASSI%‘å—ÊŽË¸(”ð”D‹ï)
+				PRINTFORML %CALLNAME:ASSI%å¤§é‡å°„ç²¾(é¿å¦Šå…·)
 			ELSE
-				PRINTFORML %CALLNAME:ASSI%ŽË¸(”ð”D‹ï)
+				PRINTFORML %CALLNAME:ASSI%å°„ç²¾(é¿å¦Šå…·)
 			ENDIF
 		ELSE
 			IF LOCAL >= 2
-				PRINTFORML %CALLNAME:ASSI%‘å—ÊŠçŽË
+				PRINTFORML %CALLNAME:ASSI%å¤§é‡é¡”å°„
 			ELSE
-				PRINTFORML %CALLNAME:ASSI%ŠçŽË
+				PRINTFORML %CALLNAME:ASSI%é¡”å°„
 			ENDIF
 		ENDIF
-	;3P•ŽèŽË¸
+	;3PåŠ©æ‰‹å°„ç²¾
 	CASE 11
-		IF TEQUIP:ASSI:ƒRƒ“ƒh[ƒ€
+		IF TEQUIP:ASSI:ã‚³ãƒ³ãƒ‰ãƒ¼ãƒ 
 			IF LOCAL >= 2
-				PRINTFORML %CALLNAME:ASSI%‘å—ÊŽË¸(”ð”D‹ï)
+				PRINTFORML %CALLNAME:ASSI%å¤§é‡å°„ç²¾(é¿å¦Šå…·)
 			ELSE
-				PRINTFORML %CALLNAME:ASSI%ŽË¸(”ð”D‹ï)
+				PRINTFORML %CALLNAME:ASSI%å°„ç²¾(é¿å¦Šå…·)
 			ENDIF
 		ELSE
 			IF LOCAL >= 2
-				PRINTFORML %CALLNAME:ASSI%‘å—ÊŽË¸
+				PRINTFORML %CALLNAME:ASSI%å¤§é‡å°„ç²¾
 			ELSE
-				PRINTFORML %CALLNAME:ASSI%ŽË¸
+				PRINTFORML %CALLNAME:ASSI%å°„ç²¾
 			ENDIF
 		ENDIF
 ENDSELECT
 
-NOWEX:ASSI:ŽË¸ = LOCAL
+NOWEX:ASSI:å°„ç²¾ = LOCAL
 
-;ŽË¸‹­“x‚ð•\Ž¦
+;å°„ç²¾å¼·åº¦ã‚’è¡¨ç¤º
 SIF LOCAL >= 3
-	PRINTFORML ŽË¸‹­“x~{LOCAL}
+	PRINTFORML å°„ç²¾å¼·åº¦Ã—{LOCAL}
 
 RETURN LOCAL
 
 ;---------------------------------------------------------
-;ŽË¸ˆ—
+;å°„ç²¾å‡¦ç†
 ;---------------------------------------------------------
-@SAMEN_SHOOT, ŽË¸æ, ŽË¸—Ê, ŽË¸‚µ‚½ƒLƒƒƒ‰ = -1, ŽË¸‚³‚ê‚éƒLƒƒƒ‰ = -1
-#DIM DYNAMIC ŽË¸æ
-#DIM DYNAMIC ŽË¸—Ê
-#DIM DYNAMIC ŽË¸‚µ‚½ƒLƒƒƒ‰
-#DIM DYNAMIC ŽË¸‚³‚ê‚éƒLƒƒƒ‰
-#DIM DYNAMIC ŒvŽZ—pŽË¸—Ê
-ŒvŽZ—pŽË¸—Ê = LIMIT(ŽË¸—Ê, 1, 10)
-;ARG:0 = ŽË¸æ
-;ARG:1 = ŽË¸—Ê
-;ARG:2 = ŽË¸‚µ‚½ƒLƒƒƒ‰
-;ARG:3 = ŽË¸‚³‚ê‚éƒLƒƒƒ‰
-SIF ŽË¸‚µ‚½ƒLƒƒƒ‰ == -1
-	ŽË¸‚µ‚½ƒLƒƒƒ‰ = PLAYER
-SIF ŽË¸‚³‚ê‚éƒLƒƒƒ‰ == -1
-	ŽË¸‚³‚ê‚éƒLƒƒƒ‰ = TARGET
-SIF ŽË¸—Ê <= 0
+@SAMEN_SHOOT, å°„ç²¾å…ˆ, å°„ç²¾é‡, å°„ç²¾ã—ãŸã‚­ãƒ£ãƒ© = -1, å°„ç²¾ã•ã‚Œã‚‹ã‚­ãƒ£ãƒ© = -1
+#DIM DYNAMIC å°„ç²¾å…ˆ
+#DIM DYNAMIC å°„ç²¾é‡
+#DIM DYNAMIC å°„ç²¾ã—ãŸã‚­ãƒ£ãƒ©
+#DIM DYNAMIC å°„ç²¾ã•ã‚Œã‚‹ã‚­ãƒ£ãƒ©
+#DIM DYNAMIC è¨ˆç®—ç”¨å°„ç²¾é‡
+è¨ˆç®—ç”¨å°„ç²¾é‡ = LIMIT(å°„ç²¾é‡, 1, 10)
+;ARG:0 = å°„ç²¾å…ˆ
+;ARG:1 = å°„ç²¾é‡
+;ARG:2 = å°„ç²¾ã—ãŸã‚­ãƒ£ãƒ©
+;ARG:3 = å°„ç²¾ã•ã‚Œã‚‹ã‚­ãƒ£ãƒ©
+SIF å°„ç²¾ã—ãŸã‚­ãƒ£ãƒ© == -1
+	å°„ç²¾ã—ãŸã‚­ãƒ£ãƒ© = PLAYER
+SIF å°„ç²¾ã•ã‚Œã‚‹ã‚­ãƒ£ãƒ© == -1
+	å°„ç²¾ã•ã‚Œã‚‹ã‚­ãƒ£ãƒ© = TARGET
+SIF å°„ç²¾é‡ <= 0
 	RETURN 0
 
-;ŽË¸æ•Ï”“à–ó
-;1 = äS“àŽË¸
-;2 = ƒAƒiƒ‹ŽË¸
-;3 = Žèˆú
-;4 = ƒtƒFƒ‰
-;5 = ƒpƒCƒYƒŠ
-;6 = ‚»‚Ì‘¼•òŽd
-;7 = •Žè‚ð”Æ‚·‚ÅŽË¸
-;8 = ƒNƒ“ƒj‚³‚ê‚ÄŽË¸
-;---ˆÈ‰º‚Í’²‹³‘ÎÛ‚ÌŽË¸‚È‚Ì‚ÅŠÇŠŠO---
-;;9 = •Žè‚ð”Æ‚³‚¹‚é‚ÅŽË¸
-;;10 = ‹tƒŒƒCƒv‚ÅŽË¸
+;å°„ç²¾å…ˆå¤‰æ•°å†…è¨³
+;1 = è†£å†…å°„ç²¾
+;2 = ã‚¢ãƒŠãƒ«å°„ç²¾
+;3 = æ‰‹æ·«
+;4 = ãƒ•ã‚§ãƒ©
+;5 = ãƒ‘ã‚¤ã‚ºãƒª
+;6 = ãã®ä»–å¥‰ä»•
+;7 = åŠ©æ‰‹ã‚’çŠ¯ã™ã§å°„ç²¾
+;8 = ã‚¯ãƒ³ãƒ‹ã•ã‚Œã¦å°„ç²¾
+;---ä»¥ä¸‹ã¯èª¿æ•™å¯¾è±¡ã®å°„ç²¾ãªã®ã§ç®¡è½„å¤–---
+;;9 = åŠ©æ‰‹ã‚’çŠ¯ã•ã›ã‚‹ã§å°„ç²¾
+;;10 = é€†ãƒ¬ã‚¤ãƒ—ã§å°„ç²¾
 ;--------------------------------------
-;11 = 3P•ŽèŽË¸
+;11 = 3PåŠ©æ‰‹å°„ç²¾
 
-;ƒRƒ}ƒ“ƒh‚²‚Æ‚Ì•ªŠò
-SELECTCASE ŽË¸æ
-;’ÊíƒZƒbƒNƒXŒn
+;ã‚³ãƒžãƒ³ãƒ‰ã”ã¨ã®åˆ†å²
+SELECTCASE å°„ç²¾å…ˆ
+;é€šå¸¸ã‚»ãƒƒã‚¯ã‚¹ç³»
 	CASE 1
-		;Žål‚É‚æ‚é“z—ê‚Ö‚Ì’†“cŽ
-		IF ŽË¸‚µ‚½ƒLƒƒƒ‰ == MASTER
-			IF !TEQUIP:MASTER:ƒRƒ“ƒh[ƒ€
-				SETBIT TFLAG:’†o‚µ, 0
-				PRINTFORML äS“àŽË¸ŒoŒ±+{ŒvŽZ—pŽË¸—Ê}
-				EXP:äSŽËŒoŒ± += ŒvŽZ—pŽË¸—Ê
-				PREG:0 += ŒvŽZ—pŽË¸—Ê
-				CFLAG:Žål‚©‚ç‚ÌäSŽËŒoŒ±++
-				’†o‚µl”:MASTER:(NO:TARGET)++
-				’†o‚³‚êl”:(NO:MASTER)++
-				;”DP‚µ‚Ä‚¢‚È‚¢‚Ì‚Å‚ ‚ê‚Î’†“cŽŽž‚Ì‹°•|”»’è“™
-				SIF !TALENT:”DP
-					CALL SAMEN_SHOOT_SOURCE, ŽË¸‚µ‚½ƒLƒƒƒ‰
-				;ƒrƒfƒIŽB‰e’†‚Íƒ{[ƒiƒXƒJƒEƒ“ƒg
-				SIF TEQUIP:ƒrƒfƒIƒJƒƒ‰
+		;ä¸»äººã«ã‚ˆã‚‹å¥´éš·ã¸ã®ä¸­ç”°æ°
+		IF å°„ç²¾ã—ãŸã‚­ãƒ£ãƒ© == MASTER
+			IF !TEQUIP:MASTER:ã‚³ãƒ³ãƒ‰ãƒ¼ãƒ 
+				SETBIT TFLAG:ä¸­å‡ºã—, 0
+				PRINTFORML è†£å†…å°„ç²¾çµŒé¨“+{è¨ˆç®—ç”¨å°„ç²¾é‡}
+				EXP:è†£å°„çµŒé¨“ += è¨ˆç®—ç”¨å°„ç²¾é‡
+				PREG:0 += è¨ˆç®—ç”¨å°„ç²¾é‡
+				CFLAG:ä¸»äººã‹ã‚‰ã®è†£å°„çµŒé¨“++
+				ä¸­å‡ºã—äººæ•°:MASTER:(NO:TARGET)++
+				ä¸­å‡ºã•ã‚Œäººæ•°:(NO:MASTER)++
+				;å¦Šå¨ ã—ã¦ã„ãªã„ã®ã§ã‚ã‚Œã°ä¸­ç”°æ°æ™‚ã®ææ€–åˆ¤å®šç­‰
+				SIF !TALENT:å¦Šå¨ 
+					CALL SAMEN_SHOOT_SOURCE, å°„ç²¾ã—ãŸã‚­ãƒ£ãƒ©
+				;ãƒ“ãƒ‡ã‚ªæ’®å½±ä¸­ã¯ãƒœãƒ¼ãƒŠã‚¹ã‚«ã‚¦ãƒ³ãƒˆ
+				SIF TEQUIP:ãƒ“ãƒ‡ã‚ªã‚«ãƒ¡ãƒ©
 					VIDEOBONUS:0++
-				;blAb‚É‚æ‚éÃˆú
-				SELECTCASE CSTR:ŽË¸‚µ‚½ƒLƒƒƒ‰:Ží‘°
-					CASE "bl", "b"
-						CFLAG:ŽË¸‚³‚ê‚éƒLƒƒƒ‰:Žc” += ((CFLAG:ŽË¸‚³‚ê‚éƒLƒƒƒ‰:›Z–ò%5)+ŒvŽZ—pŽË¸—Ê)/5
-						CFLAG:ŽË¸‚³‚ê‚éƒLƒƒƒ‰:›Z–ò += ŒvŽZ—pŽË¸—Ê
+				;ç£äººã€ç£ã«ã‚ˆã‚‹å‚¬æ·«
+				SELECTCASE CSTR:å°„ç²¾ã—ãŸã‚­ãƒ£ãƒ©:ç¨®æ—
+					CASE "ç£äºº", "ç£"
+						CFLAG:å°„ç²¾ã•ã‚Œã‚‹ã‚­ãƒ£ãƒ©:æ®‹æ•° += ((CFLAG:å°„ç²¾ã•ã‚Œã‚‹ã‚­ãƒ£ãƒ©:åªšè–¬%5)+è¨ˆç®—ç”¨å°„ç²¾é‡)/5
+						CFLAG:å°„ç²¾ã•ã‚Œã‚‹ã‚­ãƒ£ãƒ©:åªšè–¬ += è¨ˆç®—ç”¨å°„ç²¾é‡
 				ENDSELECT
 			ENDIF
-		;•Žè‚É‚æ‚é“z—ê‚Ö‚Ì’†“cŽ
-		ELSEIF ŽË¸‚µ‚½ƒLƒƒƒ‰ == ASSI
-			IF !TEQUIP:ASSI:ƒRƒ“ƒh[ƒ€
-				SETBIT TFLAG:’†o‚µ, 0
-				PRINTFORML äS“àŽË¸ŒoŒ±+{ŒvŽZ—pŽË¸—Ê}
-				EXP:TARGET:äSŽËŒoŒ± += ŒvŽZ—pŽË¸—Ê
-				PREG:1 += ŒvŽZ—pŽË¸—Ê
-				CFLAG:•Žè‚©‚ç‚ÌäSŽËŒoŒ±++
-				’†o‚µl”:ASSI:(NO:TARGET)++
-				’†o‚³‚êl”:(NO:ASSI)++
-				;”DP‚µ‚Ä‚¢‚È‚¢‚Ì‚Å‚ ‚ê‚Î’†“cŽŽž‚Ì‹°•|”»’è“™
-				SIF TALENT:”DP == 0
-					CALL SAMEN_SHOOT_SOURCE, ŽË¸‚µ‚½ƒLƒƒƒ‰
-				;ƒrƒfƒIŽB‰e’†‚Íƒ{[ƒiƒXƒJƒEƒ“ƒg
-				SIF TEQUIP:ƒrƒfƒIƒJƒƒ‰
+		;åŠ©æ‰‹ã«ã‚ˆã‚‹å¥´éš·ã¸ã®ä¸­ç”°æ°
+		ELSEIF å°„ç²¾ã—ãŸã‚­ãƒ£ãƒ© == ASSI
+			IF !TEQUIP:ASSI:ã‚³ãƒ³ãƒ‰ãƒ¼ãƒ 
+				SETBIT TFLAG:ä¸­å‡ºã—, 0
+				PRINTFORML è†£å†…å°„ç²¾çµŒé¨“+{è¨ˆç®—ç”¨å°„ç²¾é‡}
+				EXP:TARGET:è†£å°„çµŒé¨“ += è¨ˆç®—ç”¨å°„ç²¾é‡
+				PREG:1 += è¨ˆç®—ç”¨å°„ç²¾é‡
+				CFLAG:åŠ©æ‰‹ã‹ã‚‰ã®è†£å°„çµŒé¨“++
+				ä¸­å‡ºã—äººæ•°:ASSI:(NO:TARGET)++
+				ä¸­å‡ºã•ã‚Œäººæ•°:(NO:ASSI)++
+				;å¦Šå¨ ã—ã¦ã„ãªã„ã®ã§ã‚ã‚Œã°ä¸­ç”°æ°æ™‚ã®ææ€–åˆ¤å®šç­‰
+				SIF TALENT:å¦Šå¨  == 0
+					CALL SAMEN_SHOOT_SOURCE, å°„ç²¾ã—ãŸã‚­ãƒ£ãƒ©
+				;ãƒ“ãƒ‡ã‚ªæ’®å½±ä¸­ã¯ãƒœãƒ¼ãƒŠã‚¹ã‚«ã‚¦ãƒ³ãƒˆ
+				SIF TEQUIP:ãƒ“ãƒ‡ã‚ªã‚«ãƒ¡ãƒ©
 					VIDEOBONUS:2++
-				;blAb‚É‚æ‚éÃˆú
-				SELECTCASE CSTR:ŽË¸‚µ‚½ƒLƒƒƒ‰:Ží‘°
-					CASE "bl", "b"
-						CFLAG:ŽË¸‚³‚ê‚éƒLƒƒƒ‰:Žc” += ((CFLAG:ŽË¸‚³‚ê‚éƒLƒƒƒ‰:›Z–ò%5)+ŒvŽZ—pŽË¸—Ê)/5
-						CFLAG:ŽË¸‚³‚ê‚éƒLƒƒƒ‰:›Z–ò += ŒvŽZ—pŽË¸—Ê
+				;ç£äººã€ç£ã«ã‚ˆã‚‹å‚¬æ·«
+				SELECTCASE CSTR:å°„ç²¾ã—ãŸã‚­ãƒ£ãƒ©:ç¨®æ—
+					CASE "ç£äºº", "ç£"
+						CFLAG:å°„ç²¾ã•ã‚Œã‚‹ã‚­ãƒ£ãƒ©:æ®‹æ•° += ((CFLAG:å°„ç²¾ã•ã‚Œã‚‹ã‚­ãƒ£ãƒ©:åªšè–¬%5)+è¨ˆç®—ç”¨å°„ç²¾é‡)/5
+						CFLAG:å°„ç²¾ã•ã‚Œã‚‹ã‚­ãƒ£ãƒ©:åªšè–¬ += è¨ˆç®—ç”¨å°„ç²¾é‡
 				ENDSELECT
 			ENDIF
 		ENDIF
-	;ƒAƒiƒ‹ŽË¸
+	;ã‚¢ãƒŠãƒ«å°„ç²¾
 	CASE 2
-		IF ŽË¸‚µ‚½ƒLƒƒƒ‰ == MASTER
-			IF !TEQUIP:MASTER:ƒRƒ“ƒh[ƒ€
-				SETBIT TFLAG:’†o‚µ, 1
-				CFLAG:Žål‚©‚ç‚Ì’°ŽËŒoŒ±++
-				ƒAƒiƒ‹’†o‚µl”:MASTER:(NO:TARGET)++
-				ƒAƒiƒ‹’†o‚³‚êl”:(NO:MASTER)++
-				;ƒrƒfƒIŽB‰eŽž‚Íƒ{[ƒiƒXƒJƒEƒ“ƒg
-				SIF TEQUIP:ƒrƒfƒIƒJƒƒ‰
+		IF å°„ç²¾ã—ãŸã‚­ãƒ£ãƒ© == MASTER
+			IF !TEQUIP:MASTER:ã‚³ãƒ³ãƒ‰ãƒ¼ãƒ 
+				SETBIT TFLAG:ä¸­å‡ºã—, 1
+				CFLAG:ä¸»äººã‹ã‚‰ã®è…¸å°„çµŒé¨“++
+				ã‚¢ãƒŠãƒ«ä¸­å‡ºã—äººæ•°:MASTER:(NO:TARGET)++
+				ã‚¢ãƒŠãƒ«ä¸­å‡ºã•ã‚Œäººæ•°:(NO:MASTER)++
+				;ãƒ“ãƒ‡ã‚ªæ’®å½±æ™‚ã¯ãƒœãƒ¼ãƒŠã‚¹ã‚«ã‚¦ãƒ³ãƒˆ
+				SIF TEQUIP:ãƒ“ãƒ‡ã‚ªã‚«ãƒ¡ãƒ©
 					VIDEOBONUS:1++
-				;blAb‚É‚æ‚éÃˆú
-				SELECTCASE CSTR:ŽË¸‚µ‚½ƒLƒƒƒ‰:Ží‘°
-					CASE "bl", "b"
-						CFLAG:ŽË¸‚³‚ê‚éƒLƒƒƒ‰:Žc” += ((CFLAG:ŽË¸‚³‚ê‚éƒLƒƒƒ‰:›Z–ò%5)+ŒvŽZ—pŽË¸—Ê)/5
-						CFLAG:ŽË¸‚³‚ê‚éƒLƒƒƒ‰:›Z–ò += ŒvŽZ—pŽË¸—Ê
+				;ç£äººã€ç£ã«ã‚ˆã‚‹å‚¬æ·«
+				SELECTCASE CSTR:å°„ç²¾ã—ãŸã‚­ãƒ£ãƒ©:ç¨®æ—
+					CASE "ç£äºº", "ç£"
+						CFLAG:å°„ç²¾ã•ã‚Œã‚‹ã‚­ãƒ£ãƒ©:æ®‹æ•° += ((CFLAG:å°„ç²¾ã•ã‚Œã‚‹ã‚­ãƒ£ãƒ©:åªšè–¬%5)+è¨ˆç®—ç”¨å°„ç²¾é‡)/5
+						CFLAG:å°„ç²¾ã•ã‚Œã‚‹ã‚­ãƒ£ãƒ©:åªšè–¬ += è¨ˆç®—ç”¨å°„ç²¾é‡
 				ENDSELECT
 			ENDIF
-		ELSEIF ŽË¸‚µ‚½ƒLƒƒƒ‰ == ASSI
-			IF !TEQUIP:ASSI:ƒRƒ“ƒh[ƒ€
-				SETBIT TFLAG:’†o‚µ, 1
-				CFLAG:•Žè‚©‚ç‚Ì’°ŽËŒoŒ±++
-				ƒAƒiƒ‹’†o‚µl”:ASSI:(NO:TARGET)++
-				ƒAƒiƒ‹’†o‚³‚êl”:(NO:ASSI)++
-				;ƒrƒfƒIŽB‰eŽž‚Íƒ{[ƒiƒXƒJƒEƒ“ƒg
-				SIF TEQUIP:ƒrƒfƒIƒJƒƒ‰
+		ELSEIF å°„ç²¾ã—ãŸã‚­ãƒ£ãƒ© == ASSI
+			IF !TEQUIP:ASSI:ã‚³ãƒ³ãƒ‰ãƒ¼ãƒ 
+				SETBIT TFLAG:ä¸­å‡ºã—, 1
+				CFLAG:åŠ©æ‰‹ã‹ã‚‰ã®è…¸å°„çµŒé¨“++
+				ã‚¢ãƒŠãƒ«ä¸­å‡ºã—äººæ•°:ASSI:(NO:TARGET)++
+				ã‚¢ãƒŠãƒ«ä¸­å‡ºã•ã‚Œäººæ•°:(NO:ASSI)++
+				;ãƒ“ãƒ‡ã‚ªæ’®å½±æ™‚ã¯ãƒœãƒ¼ãƒŠã‚¹ã‚«ã‚¦ãƒ³ãƒˆ
+				SIF TEQUIP:ãƒ“ãƒ‡ã‚ªã‚«ãƒ¡ãƒ©
 					VIDEOBONUS:3++
-				;blAb‚É‚æ‚éÃˆú
-				SELECTCASE CSTR:ŽË¸‚µ‚½ƒLƒƒƒ‰:Ží‘°
-					CASE "bl", "b"
-						CFLAG:ŽË¸‚³‚ê‚éƒLƒƒƒ‰:Žc” += ((CFLAG:ŽË¸‚³‚ê‚éƒLƒƒƒ‰:›Z–ò%5)+ŒvŽZ—pŽË¸—Ê)/5
-						CFLAG:ŽË¸‚³‚ê‚éƒLƒƒƒ‰:›Z–ò += ŒvŽZ—pŽË¸—Ê
+				;ç£äººã€ç£ã«ã‚ˆã‚‹å‚¬æ·«
+				SELECTCASE CSTR:å°„ç²¾ã—ãŸã‚­ãƒ£ãƒ©:ç¨®æ—
+					CASE "ç£äºº", "ç£"
+						CFLAG:å°„ç²¾ã•ã‚Œã‚‹ã‚­ãƒ£ãƒ©:æ®‹æ•° += ((CFLAG:å°„ç²¾ã•ã‚Œã‚‹ã‚­ãƒ£ãƒ©:åªšè–¬%5)+è¨ˆç®—ç”¨å°„ç²¾é‡)/5
+						CFLAG:å°„ç²¾ã•ã‚Œã‚‹ã‚­ãƒ£ãƒ©:åªšè–¬ += è¨ˆç®—ç”¨å°„ç²¾é‡
 				ENDSELECT
 			ENDIF
 		ENDIF
-	;Žèˆú
+	;æ‰‹æ·«
 	CASE 3
-		SIF ŽË¸‚µ‚½ƒLƒƒƒ‰ == MASTER
-			CFLAG:Žè‚ÅŽË¸‚³‚¹‚½ŒoŒ±++
-	;ƒtƒFƒ‰
+		SIF å°„ç²¾ã—ãŸã‚­ãƒ£ãƒ© == MASTER
+			CFLAG:æ‰‹ã§å°„ç²¾ã•ã›ãŸçµŒé¨“++
+	;ãƒ•ã‚§ãƒ©
 	CASE 4
-		IF ŽË¸‚µ‚½ƒLƒƒƒ‰ == MASTER || SELECTCOMS == "ƒ_ƒuƒ‹ƒtƒFƒ‰"
-			IF !TEQUIP:MASTER:ƒRƒ“ƒh[ƒ€
-				;•òŽd¸_LV2ˆÈãA‹ZILV2ˆÈã‚È‚ç‰˜‚ê‚ð‚È‚ßŽæ‚éiƒ{[ƒ‹ƒMƒƒƒOŽg—pŽž‚Íœ‚­j
-				IF ABL:‹ZI >= 2 && ABL:•òŽd¸_ >= 2
-					STAIN:MASTER:ƒyƒjƒX = 2
-					CFLAG:‚¨‘|œƒtƒFƒ‰ŒoŒ±++
+		IF å°„ç²¾ã—ãŸã‚­ãƒ£ãƒ© == MASTER || SELECTCOMS == "ãƒ€ãƒ–ãƒ«ãƒ•ã‚§ãƒ©"
+			IF !TEQUIP:MASTER:ã‚³ãƒ³ãƒ‰ãƒ¼ãƒ 
+				;å¥‰ä»•ç²¾ç¥žLV2ä»¥ä¸Šã€æŠ€å·§LV2ä»¥ä¸Šãªã‚‰æ±šã‚Œã‚’ãªã‚å–ã‚‹ï¼ˆãƒœãƒ¼ãƒ«ã‚®ãƒ£ã‚°ä½¿ç”¨æ™‚ã¯é™¤ãï¼‰
+				IF ABL:æŠ€å·§ >= 2 && ABL:å¥‰ä»•ç²¾ç¥ž >= 2
+					STAIN:MASTER:ãƒšãƒ‹ã‚¹ = 2
+					CFLAG:ãŠæŽƒé™¤ãƒ•ã‚§ãƒ©çµŒé¨“++
 					SELECTCASE SELECTCOMS
-						CASE "ƒ_ƒuƒ‹ƒtƒFƒ‰"
-							TFLAG:‚¨‘|œƒtƒFƒ‰ = 2
+						CASE "ãƒ€ãƒ–ãƒ«ãƒ•ã‚§ãƒ©"
+							TFLAG:ãŠæŽƒé™¤ãƒ•ã‚§ãƒ© = 2
 						CASEELSE
-							TFLAG:‚¨‘|œƒtƒFƒ‰ = 1
+							TFLAG:ãŠæŽƒé™¤ãƒ•ã‚§ãƒ© = 1
 					ENDSELECT
 				ENDIF
 			ENDIF
-			CFLAG:Œû‚ÅŽË¸‚³‚¹‚½ŒoŒ±++
+			CFLAG:å£ã§å°„ç²¾ã•ã›ãŸçµŒé¨“++
 		ENDIF
-		IF !TEQUIP:PLAYER:ƒRƒ“ƒh[ƒ€
-			SETBIT TFLAG:Œû“àŽË¸, 0
-			;blAb‚É‚æ‚éÃˆú
-			SELECTCASE CSTR:ŽË¸‚µ‚½ƒLƒƒƒ‰:Ží‘°
-				CASE "bl", "b"
-					CFLAG:ŽË¸‚³‚ê‚éƒLƒƒƒ‰:Žc” += ((CFLAG:ŽË¸‚³‚ê‚éƒLƒƒƒ‰:›Z–ò%5)+ŒvŽZ—pŽË¸—Ê)/5
-					CFLAG:ŽË¸‚³‚ê‚éƒLƒƒƒ‰:›Z–ò += ŒvŽZ—pŽË¸—Ê
+		IF !TEQUIP:PLAYER:ã‚³ãƒ³ãƒ‰ãƒ¼ãƒ 
+			SETBIT TFLAG:å£å†…å°„ç²¾, 0
+			;ç£äººã€ç£ã«ã‚ˆã‚‹å‚¬æ·«
+			SELECTCASE CSTR:å°„ç²¾ã—ãŸã‚­ãƒ£ãƒ©:ç¨®æ—
+				CASE "ç£äºº", "ç£"
+					CFLAG:å°„ç²¾ã•ã‚Œã‚‹ã‚­ãƒ£ãƒ©:æ®‹æ•° += ((CFLAG:å°„ç²¾ã•ã‚Œã‚‹ã‚­ãƒ£ãƒ©:åªšè–¬%5)+è¨ˆç®—ç”¨å°„ç²¾é‡)/5
+					CFLAG:å°„ç²¾ã•ã‚Œã‚‹ã‚­ãƒ£ãƒ©:åªšè–¬ += è¨ˆç®—ç”¨å°„ç²¾é‡
 			ENDSELECT
 		ENDIF
-	;ƒpƒCƒYƒŠ
+	;ãƒ‘ã‚¤ã‚ºãƒª
 	CASE 5
-		SIF ŽË¸‚µ‚½ƒLƒƒƒ‰ == MASTER || SELECTCOMS == "ƒ_ƒuƒ‹ƒpƒCƒYƒŠ"
-			CFLAG:‹¹‚ÅŽË¸‚³‚¹‚½ŒoŒ±++
-	;‚»‚Ì‘¼•òŽd
+		SIF å°„ç²¾ã—ãŸã‚­ãƒ£ãƒ© == MASTER || SELECTCOMS == "ãƒ€ãƒ–ãƒ«ãƒ‘ã‚¤ã‚ºãƒª"
+			CFLAG:èƒ¸ã§å°„ç²¾ã•ã›ãŸçµŒé¨“++
+	;ãã®ä»–å¥‰ä»•
 	CASE 6
 		;
-	;•Žè‚ð”Æ‚·‚ÅŽË¸
+	;åŠ©æ‰‹ã‚’çŠ¯ã™ã§å°„ç²¾
 	CASE 7
-		IF ŽË¸‚µ‚½ƒLƒƒƒ‰ == MASTER
-			SELECTCASE TFLAG:Žål‘}“ü‰ÓŠ
+		IF å°„ç²¾ã—ãŸã‚­ãƒ£ãƒ© == MASTER
+			SELECTCASE TFLAG:ä¸»äººæŒ¿å…¥ç®‡æ‰€
 				CASE 1
-					IF !TEQUIP:MASTER:ƒRƒ“ƒh[ƒ€
-						SETBIT TFLAG:’†o‚µ, 2
-						PRINTFORML ¸‰tŒoŒ±+{ŒvŽZ—pŽË¸—Ê}(%CALLNAME:ASSI%)
-						EXP:ASSI:¸‰tŒoŒ± += ŒvŽZ—pŽË¸—Ê
-						PRINTFORML äS“àŽË¸ŒoŒ±+{ŒvŽZ—pŽË¸—Ê}(%CALLNAME:ASSI%)
-						EXP:äSŽËŒoŒ± += ŒvŽZ—pŽË¸—Ê
-						PREG:ASSI:0 += ŒvŽZ—pŽË¸—Ê
-						;blAb‚É‚æ‚éÃˆú
-						SELECTCASE CSTR:ŽË¸‚µ‚½ƒLƒƒƒ‰:Ží‘°
-							CASE "bl", "b"
-								CFLAG:ŽË¸‚³‚ê‚éƒLƒƒƒ‰:Žc” += ((CFLAG:ŽË¸‚³‚ê‚éƒLƒƒƒ‰:›Z–ò%5)+ŒvŽZ—pŽË¸—Ê)/5
-								CFLAG:ŽË¸‚³‚ê‚éƒLƒƒƒ‰:›Z–ò += ŒvŽZ—pŽË¸—Ê
+					IF !TEQUIP:MASTER:ã‚³ãƒ³ãƒ‰ãƒ¼ãƒ 
+						SETBIT TFLAG:ä¸­å‡ºã—, 2
+						PRINTFORML ç²¾æ¶²çµŒé¨“+{è¨ˆç®—ç”¨å°„ç²¾é‡}(%CALLNAME:ASSI%)
+						EXP:ASSI:ç²¾æ¶²çµŒé¨“ += è¨ˆç®—ç”¨å°„ç²¾é‡
+						PRINTFORML è†£å†…å°„ç²¾çµŒé¨“+{è¨ˆç®—ç”¨å°„ç²¾é‡}(%CALLNAME:ASSI%)
+						EXP:è†£å°„çµŒé¨“ += è¨ˆç®—ç”¨å°„ç²¾é‡
+						PREG:ASSI:0 += è¨ˆç®—ç”¨å°„ç²¾é‡
+						;ç£äººã€ç£ã«ã‚ˆã‚‹å‚¬æ·«
+						SELECTCASE CSTR:å°„ç²¾ã—ãŸã‚­ãƒ£ãƒ©:ç¨®æ—
+							CASE "ç£äºº", "ç£"
+								CFLAG:å°„ç²¾ã•ã‚Œã‚‹ã‚­ãƒ£ãƒ©:æ®‹æ•° += ((CFLAG:å°„ç²¾ã•ã‚Œã‚‹ã‚­ãƒ£ãƒ©:åªšè–¬%5)+è¨ˆç®—ç”¨å°„ç²¾é‡)/5
+								CFLAG:å°„ç²¾ã•ã‚Œã‚‹ã‚­ãƒ£ãƒ©:åªšè–¬ += è¨ˆç®—ç”¨å°„ç²¾é‡
 						ENDSELECT
 					ENDIF
 				CASE 2
-					IF !TEQUIP:MASTER:ƒRƒ“ƒh[ƒ€
-						SETBIT TFLAG:’†o‚µ, 3
-						PRINTFORML ¸‰tŒoŒ±+{ŒvŽZ—pŽË¸—Ê}(%CALLNAME:ASSI%)
-						EXP:ASSI:¸‰tŒoŒ± += ŒvŽZ—pŽË¸—Ê
-						;blAb‚É‚æ‚éÃˆú
-						SELECTCASE CSTR:ŽË¸‚µ‚½ƒLƒƒƒ‰:Ží‘°
-							CASE "bl", "b"
-								CFLAG:ŽË¸‚³‚ê‚éƒLƒƒƒ‰:Žc” += ((CFLAG:ŽË¸‚³‚ê‚éƒLƒƒƒ‰:›Z–ò%5)+ŒvŽZ—pŽË¸—Ê)/5
-								CFLAG:ŽË¸‚³‚ê‚éƒLƒƒƒ‰:›Z–ò += ŒvŽZ—pŽË¸—Ê
+					IF !TEQUIP:MASTER:ã‚³ãƒ³ãƒ‰ãƒ¼ãƒ 
+						SETBIT TFLAG:ä¸­å‡ºã—, 3
+						PRINTFORML ç²¾æ¶²çµŒé¨“+{è¨ˆç®—ç”¨å°„ç²¾é‡}(%CALLNAME:ASSI%)
+						EXP:ASSI:ç²¾æ¶²çµŒé¨“ += è¨ˆç®—ç”¨å°„ç²¾é‡
+						;ç£äººã€ç£ã«ã‚ˆã‚‹å‚¬æ·«
+						SELECTCASE CSTR:å°„ç²¾ã—ãŸã‚­ãƒ£ãƒ©:ç¨®æ—
+							CASE "ç£äºº", "ç£"
+								CFLAG:å°„ç²¾ã•ã‚Œã‚‹ã‚­ãƒ£ãƒ©:æ®‹æ•° += ((CFLAG:å°„ç²¾ã•ã‚Œã‚‹ã‚­ãƒ£ãƒ©:åªšè–¬%5)+è¨ˆç®—ç”¨å°„ç²¾é‡)/5
+								CFLAG:å°„ç²¾ã•ã‚Œã‚‹ã‚­ãƒ£ãƒ©:åªšè–¬ += è¨ˆç®—ç”¨å°„ç²¾é‡
 						ENDSELECT
 					ENDIF
 			ENDSELECT
 		ENDIF
-	;ƒNƒ“ƒj
+	;ã‚¯ãƒ³ãƒ‹
 	CASE 8
-		SIF ŽË¸‚µ‚½ƒLƒƒƒ‰ == MASTER
-			CFLAG:Œû‚ÅŽË¸‚³‚¹‚½ŒoŒ±++
-	;3P•ŽèŽË¸
+		SIF å°„ç²¾ã—ãŸã‚­ãƒ£ãƒ© == MASTER
+			CFLAG:å£ã§å°„ç²¾ã•ã›ãŸçµŒé¨“++
+	;3PåŠ©æ‰‹å°„ç²¾
 	CASE 11
 		;
 ENDSELECT
 
-IF ŽË¸‚µ‚½ƒLƒƒƒ‰ == MASTER
+IF å°„ç²¾ã—ãŸã‚­ãƒ£ãƒ© == MASTER
 	SELECTCASE SELECTCOMS
-		CASE "ƒLƒX‚·‚é"
-			CFLAG:ƒLƒX‚ÅŽË¸‚³‚¹‚½ŒoŒ±++
-		CASE "‹RæˆÊ"
-			CFLAG:‹RæˆÊ‚ÅŽË¸‚³‚¹‚½ŒoŒ±++
-		CASE "‹RæˆÊƒAƒiƒ‹"
-			CFLAG:ƒAƒiƒ‹‹RæˆÊ‚ÅŽË¸‚³‚¹‚½ŒoŒ±++
-		CASE "‘«ˆµ‚«"
-			CFLAG:‘«‚ÅŽË¸‚³‚¹‚½ŒoŒ±++
+		CASE "ã‚­ã‚¹ã™ã‚‹"
+			CFLAG:ã‚­ã‚¹ã§å°„ç²¾ã•ã›ãŸçµŒé¨“++
+		CASE "é¨Žä¹—ä½"
+			CFLAG:é¨Žä¹—ä½ã§å°„ç²¾ã•ã›ãŸçµŒé¨“++
+		CASE "é¨Žä¹—ä½ã‚¢ãƒŠãƒ«"
+			CFLAG:ã‚¢ãƒŠãƒ«é¨Žä¹—ä½ã§å°„ç²¾ã•ã›ãŸçµŒé¨“++
+		CASE "è¶³æ‰±ã"
+			CFLAG:è¶³ã§å°„ç²¾ã•ã›ãŸçµŒé¨“++
 	ENDSELECT
 ENDIF
 
-;ŽË¸‰ñ”ƒJƒEƒ“ƒg
-EX:(ŽË¸‚µ‚½ƒLƒƒƒ‰):ŽË¸++
+;å°„ç²¾å›žæ•°ã‚«ã‚¦ãƒ³ãƒˆ
+EX:(å°„ç²¾ã—ãŸã‚­ãƒ£ãƒ©):å°„ç²¾++
 
-;•Žè‚ÉŽË¸‚µ‚½ŽžˆÈŠO‚Í“z—ê‚Ì¸‰tŒoŒ±‘‰Á
-IF ŽË¸æ != 7
-	PRINTFORML ¸‰tŒoŒ±+{LIMIT(ŽË¸—Ê, 1, 10)}
-	EXP:¸‰tŒoŒ± += LIMIT(ŽË¸—Ê, 1, 10)
+;åŠ©æ‰‹ã«å°„ç²¾ã—ãŸæ™‚ä»¥å¤–ã¯å¥´éš·ã®ç²¾æ¶²çµŒé¨“å¢—åŠ 
+IF å°„ç²¾å…ˆ != 7
+	PRINTFORML ç²¾æ¶²çµŒé¨“+{LIMIT(å°„ç²¾é‡, 1, 10)}
+	EXP:ç²¾æ¶²çµŒé¨“ += LIMIT(å°„ç²¾é‡, 1, 10)
 ENDIF
-;ƒ_ƒuƒ‹ƒtƒFƒ‰Aƒ_ƒuƒ‹ƒpƒCƒYƒŠŽžA•Žè‚ð”Æ‚·Žž‚Í•Žè‚Ì¸‰tŒoŒ±‚à‘‰Á
-IF SELECTCOMS == "ƒ_ƒuƒ‹ƒtƒFƒ‰" || SELECTCOMS == "ƒ_ƒuƒ‹ƒpƒCƒYƒŠ" || ŽË¸æ == 7
-	PRINTFORML ¸‰tŒoŒ±+{LIMIT(ŽË¸—Ê, 1, 10)}(%CALLNAME:ASSI%)
-	EXP:ASSI:¸‰tŒoŒ± += LIMIT(ŽË¸—Ê, 1, 10)
+;ãƒ€ãƒ–ãƒ«ãƒ•ã‚§ãƒ©ã€ãƒ€ãƒ–ãƒ«ãƒ‘ã‚¤ã‚ºãƒªæ™‚ã€åŠ©æ‰‹ã‚’çŠ¯ã™æ™‚ã¯åŠ©æ‰‹ã®ç²¾æ¶²çµŒé¨“ã‚‚å¢—åŠ 
+IF SELECTCOMS == "ãƒ€ãƒ–ãƒ«ãƒ•ã‚§ãƒ©" || SELECTCOMS == "ãƒ€ãƒ–ãƒ«ãƒ‘ã‚¤ã‚ºãƒª" || å°„ç²¾å…ˆ == 7
+	PRINTFORML ç²¾æ¶²çµŒé¨“+{LIMIT(å°„ç²¾é‡, 1, 10)}(%CALLNAME:ASSI%)
+	EXP:ASSI:ç²¾æ¶²çµŒé¨“ += LIMIT(å°„ç²¾é‡, 1, 10)
 ENDIF
 
-PRINTFORML ŽË¸ŒoŒ±+{LIMIT(ŽË¸—Ê, 1, 10)}(%CALLNAME:(ŽË¸‚µ‚½ƒLƒƒƒ‰)%)
-EXP:ŽË¸‚µ‚½ƒLƒƒƒ‰:ŽË¸ŒoŒ± += LIMIT(ŽË¸—Ê, 1, 10)
+PRINTFORML å°„ç²¾çµŒé¨“+{LIMIT(å°„ç²¾é‡, 1, 10)}(%CALLNAME:(å°„ç²¾ã—ãŸã‚­ãƒ£ãƒ©)%)
+EXP:å°„ç²¾ã—ãŸã‚­ãƒ£ãƒ©:å°„ç²¾çµŒé¨“ += LIMIT(å°„ç²¾é‡, 1, 10)
 
-;¸‰t‰˜‚ê‚ÌÝ’è
-SETBIT STAIN:ŽË¸‚µ‚½ƒLƒƒƒ‰:ƒyƒjƒX, 2
+;ç²¾æ¶²æ±šã‚Œã®è¨­å®š
+SETBIT STAIN:å°„ç²¾ã—ãŸã‚­ãƒ£ãƒ©:ãƒšãƒ‹ã‚¹, 2
 
-BASE:ŽË¸‚µ‚½ƒLƒƒƒ‰:ŽË¸ -= MAXBASE:ŽË¸‚µ‚½ƒLƒƒƒ‰:ŽË¸*ŽË¸—Ê
-SIF BASE:ŽË¸‚µ‚½ƒLƒƒƒ‰:ŽË¸ >= MAXBASE:ŽË¸‚µ‚½ƒLƒƒƒ‰:ŽË¸
-	BASE:ŽË¸‚µ‚½ƒLƒƒƒ‰:ŽË¸ = MAXBASE:ŽË¸‚µ‚½ƒLƒƒƒ‰:ŽË¸-1
+BASE:å°„ç²¾ã—ãŸã‚­ãƒ£ãƒ©:å°„ç²¾ -= MAXBASE:å°„ç²¾ã—ãŸã‚­ãƒ£ãƒ©:å°„ç²¾*å°„ç²¾é‡
+SIF BASE:å°„ç²¾ã—ãŸã‚­ãƒ£ãƒ©:å°„ç²¾ >= MAXBASE:å°„ç²¾ã—ãŸã‚­ãƒ£ãƒ©:å°„ç²¾
+	BASE:å°„ç²¾ã—ãŸã‚­ãƒ£ãƒ©:å°„ç²¾ = MAXBASE:å°„ç²¾ã—ãŸã‚­ãƒ£ãƒ©:å°„ç²¾-1
 
-;ŽË¸Žž‚É’†“ÅA’B¬‚Ìƒ\[ƒX‚ð’Ç‰Á
-SELECTCASE ŽË¸æ
-	;äSAƒAƒiƒ‹
+;å°„ç²¾æ™‚ã«ä¸­æ¯’ã€é”æˆã®ã‚½ãƒ¼ã‚¹ã‚’è¿½åŠ 
+SELECTCASE å°„ç²¾å…ˆ
+	;è†£ã€ã‚¢ãƒŠãƒ«
 	CASE 1, 2
-		LOCAL = ŽË¸—Ê*400
-	;ŒûA‹¹AŠçŽË
+		LOCAL = å°„ç²¾é‡*400
+	;å£ã€èƒ¸ã€é¡”å°„
 	CASE 4, 5, 8
-		LOCAL = ŽË¸—Ê*300
-	;ŽèA‚»‚Ì‘¼•òŽdA3P•ŽèŽË¸
+		LOCAL = å°„ç²¾é‡*300
+	;æ‰‹ã€ãã®ä»–å¥‰ä»•ã€3PåŠ©æ‰‹å°„ç²¾
 	CASE 3, 6, 11
-		LOCAL = ŽË¸—Ê*200
+		LOCAL = å°„ç²¾é‡*200
 ENDSELECT
 
-IF ŽË¸‚³‚ê‚éƒLƒƒƒ‰ == TARGET
-	;¸‰t’†“Å‚ðŒ©‚é
-	SELECTCASE ABL:¸‰t’†“Å
+IF å°„ç²¾ã•ã‚Œã‚‹ã‚­ãƒ£ãƒ© == TARGET
+	;ç²¾æ¶²ä¸­æ¯’ã‚’è¦‹ã‚‹
+	SELECTCASE ABL:ç²¾æ¶²ä¸­æ¯’
 		CASE 0, 1
 			TIMES LOCAL , 0.10
 		CASE 2
@@ -938,54 +938,54 @@ IF ŽË¸‚³‚ê‚éƒLƒƒƒ‰ == TARGET
 	ENDSELECT
 ENDIF
 
-SOURCE:’†“Å += LOCAL
-SOURCE:’B¬ += LOCAL
+SOURCE:ä¸­æ¯’ += LOCAL
+SOURCE:é”æˆ += LOCAL
 
-;ŽË¸Œã‚ÍÄ‘•“U‚ÌŽžŠÔ‚ðÝ‚¯‚é
-;’ÊíŽË¸Žž
-SIF ŽË¸—Ê == 1
-	CFLAG:ŽË¸‚µ‚½ƒLƒƒƒ‰:Œ«ŽÒƒ^ƒCƒ€ = 3
-;‘å—ÊŽË¸Žž
-SIF ŽË¸—Ê >= 2
-	CFLAG:ŽË¸‚µ‚½ƒLƒƒƒ‰:Œ«ŽÒƒ^ƒCƒ€ = 5
+;å°„ç²¾å¾Œã¯å†è£…å¡«ã®æ™‚é–“ã‚’è¨­ã‘ã‚‹
+;é€šå¸¸å°„ç²¾æ™‚
+SIF å°„ç²¾é‡ == 1
+	CFLAG:å°„ç²¾ã—ãŸã‚­ãƒ£ãƒ©:è³¢è€…ã‚¿ã‚¤ãƒ  = 3
+;å¤§é‡å°„ç²¾æ™‚
+SIF å°„ç²¾é‡ >= 2
+	CFLAG:å°„ç²¾ã—ãŸã‚­ãƒ£ãƒ©:è³¢è€…ã‚¿ã‚¤ãƒ  = 5
 
-;›Z–ò‚ÌŒø‰Ê‚É‰ž‚¶‚ÄŒ«ŽÒƒ^ƒCƒ€‚ª’Z‚­‚È‚é
-CFLAG:ŽË¸‚µ‚½ƒLƒƒƒ‰:Œ«ŽÒƒ^ƒCƒ€ -= CFLAG:ŽË¸‚µ‚½ƒLƒƒƒ‰:›Z–ò/10
+;åªšè–¬ã®åŠ¹æžœã«å¿œã˜ã¦è³¢è€…ã‚¿ã‚¤ãƒ ãŒçŸ­ããªã‚‹
+CFLAG:å°„ç²¾ã—ãŸã‚­ãƒ£ãƒ©:è³¢è€…ã‚¿ã‚¤ãƒ  -= CFLAG:å°„ç²¾ã—ãŸã‚­ãƒ£ãƒ©:åªšè–¬/10
 
-CFLAG:ŽË¸‚µ‚½ƒLƒƒƒ‰:Žc”--
+CFLAG:å°„ç²¾ã—ãŸã‚­ãƒ£ãƒ©:æ®‹æ•°--
 
-IF TEQUIP:ŽË¸‚µ‚½ƒLƒƒƒ‰:ƒRƒ“ƒh[ƒ€
-	TEQUIP:ŽË¸‚µ‚½ƒLƒƒƒ‰:ƒRƒ“ƒh[ƒ€ = 0
-	IF ŽË¸‚µ‚½ƒLƒƒƒ‰ == MASTER
-		SETBIT TFLAG:”ð”D‹ïŽË¸, 0
-		TFLAG:Žg—pÏ‚Ý”ð”D‹ï = 1
-	ELSEIF ŽË¸‚µ‚½ƒLƒƒƒ‰ == ASSI
-		SETBIT TFLAG:”ð”D‹ïŽË¸, 1
-		TFLAG:Žg—pÏ‚Ý”ð”D‹ï = 2
+IF TEQUIP:å°„ç²¾ã—ãŸã‚­ãƒ£ãƒ©:ã‚³ãƒ³ãƒ‰ãƒ¼ãƒ 
+	TEQUIP:å°„ç²¾ã—ãŸã‚­ãƒ£ãƒ©:ã‚³ãƒ³ãƒ‰ãƒ¼ãƒ  = 0
+	IF å°„ç²¾ã—ãŸã‚­ãƒ£ãƒ© == MASTER
+		SETBIT TFLAG:é¿å¦Šå…·å°„ç²¾, 0
+		TFLAG:ä½¿ç”¨æ¸ˆã¿é¿å¦Šå…· = 1
+	ELSEIF å°„ç²¾ã—ãŸã‚­ãƒ£ãƒ© == ASSI
+		SETBIT TFLAG:é¿å¦Šå…·å°„ç²¾, 1
+		TFLAG:ä½¿ç”¨æ¸ˆã¿é¿å¦Šå…· = 2
 	ENDIF
-	;ƒRƒ“ƒh[ƒ€Ž©“®‘•’…ˆ—
-	IF GETBIT(FLAG:”ð”D‹ïÝ’è, 0) && ŽË¸‚µ‚½ƒLƒƒƒ‰ == MASTER
-		TEQUIP:MASTER:ƒRƒ“ƒh[ƒ€ = 1
-	ELSEIF GETBIT(FLAG:”ð”D‹ïÝ’è, 1) && ŽË¸‚µ‚½ƒLƒƒƒ‰ == ASSI
-		TEQUIP:ASSI:ƒRƒ“ƒh[ƒ€ = 1
+	;ã‚³ãƒ³ãƒ‰ãƒ¼ãƒ è‡ªå‹•è£…ç€å‡¦ç†
+	IF GETBIT(FLAG:é¿å¦Šå…·è¨­å®š, 0) && å°„ç²¾ã—ãŸã‚­ãƒ£ãƒ© == MASTER
+		TEQUIP:MASTER:ã‚³ãƒ³ãƒ‰ãƒ¼ãƒ  = 1
+	ELSEIF GETBIT(FLAG:é¿å¦Šå…·è¨­å®š, 1) && å°„ç²¾ã—ãŸã‚­ãƒ£ãƒ© == ASSI
+		TEQUIP:ASSI:ã‚³ãƒ³ãƒ‰ãƒ¼ãƒ  = 1
 	ENDIF
 ENDIF
 
 ;-------------------------------------------------
-;ƒ\[ƒX‚ÌŒvŽZ
+;ã‚½ãƒ¼ã‚¹ã®è¨ˆç®—
 ;-------------------------------------------------
 @SAMEN_SHOOT_SOURCE, ARG
-;—ö•çAeˆ¤Ž‚¿‚ÅŽË¸ŽÒ‚ªŽål‚Ìê‡‚Í’B¬Š´‚Ìƒ\[ƒX‚ª‘‰Á‚·‚é
-IF (TALENT:—ö•ç || TALENT:eˆ¤) && ARG == MASTER
-	SOURCE:’B¬ += 1500
-;ˆú—A©•w‚È‚ç—~î‚Ìƒ\[ƒX‘‰Á
-ELSEIF TALENT:ˆú— || TALENT:©•w
-	SOURCE:—~î += 1500
+;æ‹æ…•ã€è¦ªæ„›æŒã¡ã§å°„ç²¾è€…ãŒä¸»äººã®å ´åˆã¯é”æˆæ„Ÿã®ã‚½ãƒ¼ã‚¹ãŒå¢—åŠ ã™ã‚‹
+IF (TALENT:æ‹æ…• || TALENT:è¦ªæ„›) && ARG == MASTER
+	SOURCE:é”æˆ += 1500
+;æ·«ä¹±ã€å¨¼å©¦ãªã‚‰æ¬²æƒ…ã®ã‚½ãƒ¼ã‚¹å¢—åŠ 
+ELSEIF TALENT:æ·«ä¹± || TALENT:å¨¼å©¦
+	SOURCE:æ¬²æƒ… += 1500
 ELSE
-	SOURCE:‹°•| += 1500
+	SOURCE:ææ€– += 1500
 ENDIF
 
-;–¢Š×—Ž‚Ìê‡‚Í”½”­‘‰Á
-SIF !CFLAG:Š×—Ž
-	SOURCE:”½Š´ += 1000
+;æœªé™¥è½ã®å ´åˆã¯åç™ºå¢—åŠ 
+SIF !CFLAG:é™¥è½
+	SOURCE:åæ„Ÿ += 1000
 

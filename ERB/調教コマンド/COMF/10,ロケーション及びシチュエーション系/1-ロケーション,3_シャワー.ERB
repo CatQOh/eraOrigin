@@ -1,115 +1,115 @@
+ï»¿;-------------------------------------------------
+;ã‚·ãƒ£ãƒ¯ãƒ¼
 ;-------------------------------------------------
-;ƒVƒƒƒ[
-;-------------------------------------------------
-@USERCOM_ABLE_ƒVƒƒƒ[, ARG
+@USERCOM_ABLE_ã‚·ãƒ£ãƒ¯ãƒ¼, ARG
 #FUNCTION
-;‰ðœ‚Í‚¢‚Â‚Å‚à‰Â”\
-IF TEQUIP:ƒVƒƒƒ[
+;è§£é™¤ã¯ã„ã¤ã§ã‚‚å¯èƒ½
+IF TEQUIP:ã‚·ãƒ£ãƒ¯ãƒ¼
 	COMRESULT = 1
 	RETURNF 1
 ENDIF
-;‚¨•—˜C’†‚¶‚á‚È‚¢‚Æƒ_ƒ
-SIF !TEQUIP:‚¨•—˜Cê
+;ãŠé¢¨å‘‚ä¸­ã˜ã‚ƒãªã„ã¨ãƒ€ãƒ¡
+SIF !TEQUIP:ãŠé¢¨å‘‚å ´
 	RETURNF 0
-;ƒNƒŠƒLƒƒƒbƒvŽg—p’†‚Í•s‰Â
-SIF TEQUIP:ƒNƒŠƒLƒƒƒbƒv
+;ã‚¯ãƒªã‚­ãƒ£ãƒƒãƒ—ä½¿ç”¨ä¸­ã¯ä¸å¯
+SIF TEQUIP:ã‚¯ãƒªã‚­ãƒ£ãƒƒãƒ—
 	RETURNF 0
-;ƒjƒvƒ‹ƒLƒƒƒbƒvŽg—p’†‚Í•s‰Â
-SIF TEQUIP:ƒjƒvƒ‹ƒLƒƒƒbƒv
+;ãƒ‹ãƒ—ãƒ«ã‚­ãƒ£ãƒƒãƒ—ä½¿ç”¨ä¸­ã¯ä¸å¯
+SIF TEQUIP:ãƒ‹ãƒ—ãƒ«ã‚­ãƒ£ãƒƒãƒ—
 	RETURNF 0
-;ï“ûŠíŽg—p’†‚Í•s‰Â
-SIF TEQUIP:ï“ûŠí
+;æ¾ä¹³å™¨ä½¿ç”¨ä¸­ã¯ä¸å¯
+SIF TEQUIP:æ¾ä¹³å™¨
 	RETURNF 0
-;“û–[“d‹É‘•’…’†‚Íƒ_ƒ
-SIF TEQUIP:“û–[“d‹É
+;ä¹³æˆ¿é›»æ¥µè£…ç€ä¸­ã¯ãƒ€ãƒ¡
+SIF TEQUIP:ä¹³æˆ¿é›»æ¥µ
 	RETURNF 0
-;ƒ”ƒ@ƒ“ƒpƒCƒA‚âblAb‚É‚Í]‡4‚ª‚È‚¢‚ÆŽg—p•s‰ÂiƒvƒŒƒCƒ„[‚ªƒTƒh‚È‚ç‚n‚jj
-SELECTCASE CSTR:Ží‘°
-	CASE "ƒ”ƒ@ƒ“ƒpƒCƒA", "bl", "b"
-		SIF ABL:]‡ < 4 && !TALENT:PLAYER:ƒTƒh
+;ãƒ´ã‚¡ãƒ³ãƒ‘ã‚¤ã‚¢ã‚„ç£äººã€ç£ã«ã¯å¾“é †4ãŒãªã„ã¨ä½¿ç”¨ä¸å¯ï¼ˆãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ãŒã‚µãƒ‰ãªã‚‰ï¼¯ï¼«ï¼‰
+SELECTCASE CSTR:ç¨®æ—
+	CASE "ãƒ´ã‚¡ãƒ³ãƒ‘ã‚¤ã‚¢", "ç£äºº", "ç£"
+		SIF ABL:å¾“é † < 4 && !TALENT:PLAYER:ã‚µãƒ‰
 			RETURNF 0
 ENDSELECT
 
 COMRESULT = 1
 RETURNF 1
 
-@COM_ƒVƒƒƒ[
-PRINTL ƒVƒƒƒ[
+@COM_ã‚·ãƒ£ãƒ¯ãƒ¼
+PRINTL ã‚·ãƒ£ãƒ¯ãƒ¼
 CALL KOJO_MESSAGE_COM
 
-;’…’E‚Ìˆ—
-INVERTBIT TEQUIP:ƒVƒƒƒ[, 0
+;ç€è„±ã®å‡¦ç†
+INVERTBIT TEQUIP:ã‚·ãƒ£ãƒ¯ãƒ¼, 0
 
 ;-------------------------------------------------
-;â’¸ƒ`ƒFƒbƒN
+;çµ¶é ‚ãƒã‚§ãƒƒã‚¯
 ;-------------------------------------------------
 CALL SOURCE_CHECK_CVAB
 
 ;-------------------------------------------------
-;ŽË¸ƒ`ƒFƒbƒN
+;å°„ç²¾ãƒã‚§ãƒƒã‚¯
 ;-------------------------------------------------
 CALL SAMEN_CHECK_T, 0
 
-CALL SAMEN_SHOOT_T, 0, NOWEX:ŽË¸
+CALL SAMEN_SHOOT_T, 0, NOWEX:å°„ç²¾
 
 RETURN 1
 
 ;-------------------------------------------------
-;‘•’…Œp‘±‚Ìˆ—
+;è£…ç€ç¶™ç¶šã®å‡¦ç†
 ;-------------------------------------------------
-@EQUIP_COM_ƒVƒƒƒ[
-PRINTL ƒƒVƒƒƒ[Žg—p’†„
+@EQUIP_COM_ã‚·ãƒ£ãƒ¯ãƒ¼
+PRINTL ï¼œã‚·ãƒ£ãƒ¯ãƒ¼ä½¿ç”¨ä¸­ï¼ž
 
 ;-------------------------------------------------
-;ƒ\[ƒX’Ç‰Áˆ—
+;ã‚½ãƒ¼ã‚¹è¿½åŠ å‡¦ç†
 ;-------------------------------------------------
-;Á”ï‘Ì—ÍA‹C—Í
-LOSEBASE:‘Ì—Í += 5
-LOSEBASE:‹C—Í += 10
+;æ¶ˆè²»ä½“åŠ›ã€æ°—åŠ›
+LOSEBASE:ä½“åŠ› += 5
+LOSEBASE:æ°—åŠ› += 10
 
-DOWNBASE:MASTER:‘Ì—Í += 5
-DOWNBASE:MASTER:‹C—Í += 10
+DOWNBASE:MASTER:ä½“åŠ› += 5
+DOWNBASE:MASTER:æ°—åŠ› += 10
 
-SOURCE:‹±‡ += 100
-SOURCE:ŸT‹ü += 50
-SOURCE:”½Š´ += 50
+SOURCE:æ­é † += 100
+SOURCE:é¬±å±ˆ += 50
+SOURCE:åæ„Ÿ += 50
 
 ;-------------------------------------------------
-;“ÁŽêƒ\[ƒXˆ—
+;ç‰¹æ®Šã‚½ãƒ¼ã‚¹å‡¦ç†
 ;-------------------------------------------------
-SELECTCASE CSTR:Ží‘°
-	;ƒ”ƒ@ƒ“ƒpƒCƒAi—¬…‚Ì’†‚Å‚Í“®‚¯‚È‚¢‚½‚ßA‚¢‚ë‚¢‚ë’Ç‰Áj
-	CASE "ƒ”ƒ@ƒ“ƒpƒCƒA"
-		SOURCE:‹°•| += 200
-		SOURCE:‹ü] += 200
-		SOURCE:•sŒ‰ += 500
-		SOURCE:ˆí’E += 500
-		SOURCE:”½Š´ += 500
-	;blAb‚Ìê‡i‚Ü‚ŸŠî–{ô‚í‚ê‚é‚Ì‚ÍŒ™‚Æ‰ðŽßj
-	CASE "bl", "b"
-		SOURCE:‹°•| += 100
-		SOURCE:‹ü] += 100
-		SOURCE:ˆí’E += 500
-		SOURCE:”½Š´ += 500
-	;l‹›‚ÍLOSEBASE‚ðŒyŒ¸‚·‚é
-	CASE "l‹›"
-		LOSEBASE:‘Ì—Í -= 10
-		LOSEBASE:‹C—Í -= 10
-		SOURCE:ŸT‹ü -= 50
-		SOURCE:”½Š´ -= 50
+SELECTCASE CSTR:ç¨®æ—
+	;ãƒ´ã‚¡ãƒ³ãƒ‘ã‚¤ã‚¢ï¼ˆæµæ°´ã®ä¸­ã§ã¯å‹•ã‘ãªã„ãŸã‚ã€ã„ã‚ã„ã‚è¿½åŠ ï¼‰
+	CASE "ãƒ´ã‚¡ãƒ³ãƒ‘ã‚¤ã‚¢"
+		SOURCE:ææ€– += 200
+		SOURCE:å±ˆå¾“ += 200
+		SOURCE:ä¸æ½” += 500
+		SOURCE:é€¸è„± += 500
+		SOURCE:åæ„Ÿ += 500
+	;ç£äººã€ç£ã®å ´åˆï¼ˆã¾ãåŸºæœ¬æ´—ã‚ã‚Œã‚‹ã®ã¯å«Œã¨è§£é‡ˆï¼‰
+	CASE "ç£äºº", "ç£"
+		SOURCE:ææ€– += 100
+		SOURCE:å±ˆå¾“ += 100
+		SOURCE:é€¸è„± += 500
+		SOURCE:åæ„Ÿ += 500
+	;äººé­šã¯LOSEBASEã‚’è»½æ¸›ã™ã‚‹
+	CASE "äººé­š"
+		LOSEBASE:ä½“åŠ› -= 10
+		LOSEBASE:æ°—åŠ› -= 10
+		SOURCE:é¬±å±ˆ -= 50
+		SOURCE:åæ„Ÿ -= 50
 ENDSELECT
 
 ;-------------------------------------------------
-;‰˜‚ê‚Ìˆ—
+;æ±šã‚Œã®å‡¦ç†
 ;-------------------------------------------------
-;ƒVƒƒƒ[‚Å‰˜‚ê‚Íí‚ÉƒŠƒZƒbƒg
+;ã‚·ãƒ£ãƒ¯ãƒ¼ã§æ±šã‚Œã¯å¸¸ã«ãƒªã‚»ãƒƒãƒˆ
 RESET_STAIN TARGET
 
-;ŠŠ‚ð1000Œ¸‚ç‚·
-IF PALAM:ŠŠ > 1000
-	PALAM:ŠŠ -= 1000
+;æ½¤æ»‘ã‚’1000æ¸›ã‚‰ã™
+IF PALAM:æ½¤æ»‘ > 1000
+	PALAM:æ½¤æ»‘ -= 1000
 ELSE
-	PALAM:ŠŠ = 0
+	PALAM:æ½¤æ»‘ = 0
 ENDIF
 
 RETURN 1
