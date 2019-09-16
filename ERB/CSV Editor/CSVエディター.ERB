@@ -730,6 +730,10 @@ SELECTCASE RESULTS
 			RESULTS = 奉仕快楽経験
 		SIF RESULTS == "痛楽経験"
 			RESULTS = 苦痛快楽経験
+		SIF RESULTS == "射精管理"
+			RESULTS = 射精管理経験
+		SIF RESULTS == "乳擦経験"
+			RESULTS = パイズリ経験
 		
 		FOR LCOUNT, 0, VARSIZE("EXP")
 			IF EXPNAME:LCOUNT == RESULTS

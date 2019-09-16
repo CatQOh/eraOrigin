@@ -978,14 +978,6 @@ CFLAG:射精したキャラ:賢者タイム -= CFLAG:射精したキャラ:媚�
 
 CFLAG:射精したキャラ:残数--
 
-;実績:シグを相手に打ち止めまで射精する
-IF CFLAG:射精したキャラ:残数 == 0
-	SELECTCASE CHARANAMEF(TARGET)
-		CASE "赤シグ", "青シグ", "黄シグ"
-			CALL 実績解除, "「シグの勝ち！」"
-	ENDSELECT
-ENDIF
-
 IF TEQUIP:射精したキャラ:コンドーム
 	TEQUIP:射精したキャラ:コンドーム = 0
 	IF 射精したキャラ == MASTER

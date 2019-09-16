@@ -51,9 +51,6 @@ COMRESULT = 1
 RETURNF 1
 
 @COM_岩清水
-;実績「野増菜かなでの愛液を岩清水で啜り上げる」
-SIF CHARANAMEF(TARGET) == "野増菜かなで"
-	CALL 実績解除, "「ごちそうさまでした」をちゃーんとゆってね"
 PRINTL 岩清水
 SELECTCOMS = 岩清水
 SELECTCOM = GETNUM(TRAINNAME, "岩清水")
