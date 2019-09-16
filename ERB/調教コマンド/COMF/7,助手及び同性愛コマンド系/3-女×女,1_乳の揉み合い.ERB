@@ -18,6 +18,9 @@ SIF TEQUIP:縄
 ;触手調教中はダメ
 SIF TEQUIP:触手
 	RETURNF 0
+;アニマルだと無理
+SIF TALENT:アニマル
+	RETURNF 0
 
 COMRESULT = 1
 RETURNF 1
@@ -82,14 +85,7 @@ STAIN:PLAYER:手 |= STAIN:胸
 ;-------------------------------------------------
 ;経験の処理
 ;-------------------------------------------------
-CALL EXPUP, 2, 1
-
-;依存度補正値(相性100↑かつ淫乱で1、娼婦で2）
-IF TALENT:淫乱 && RELATION:(NO:PLAYER) > 100
-	TFLAG:依存度補正 += 1
-ELSEIF TALENT:娼婦 && RELATION:(NO:PLAYER) > 100
-	TFLAG:依存度補正 += 2
-ENDIF
+CALL EXPUP_BASE, 2, 1
 
 RETURN 1
 

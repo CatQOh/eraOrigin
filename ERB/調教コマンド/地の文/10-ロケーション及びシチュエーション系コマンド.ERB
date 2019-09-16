@@ -16,17 +16,18 @@ ENDIF
 ;解除時
 IF TEQUIP:羞恥プレイ
 	IF TALENT:ナルシスト
-		PRINTFORMW %CALLNAME:TARGET%と鏡部屋から出ると、%CALLNAME:TARGET%は少し寂しそうにしている……
+		PRINTFORML %CALLNAME:TARGET%と鏡部屋から出ると、%CALLNAME:TARGET%は少し寂しそうにしている……
 	ELSE
-		PRINTFORMW %CALLNAME:TARGET%を連れて鏡の前から離れた……
+		PRINTFORML %CALLNAME:TARGET%を連れて大鏡の前から離れた……
 	ENDIF
 ELSE
 	IF TALENT:ナルシスト
-		PRINTFORMW %CALLNAME:TARGET%を鏡の前に連れてくると、心なしか%CALLNAME:TARGET%が意気揚々に見えた……
+		PRINTFORML %CALLNAME:TARGET%を大鏡の前に連れてくると、心なしか%CALLNAME:TARGET%が意気揚々に見えた……
 	ELSE
-		PRINTFORMW %CALLNAME:TARGET%を鏡の前に連れて来た……
+		PRINTFORML %CALLNAME:TARGET%を大鏡の前に連れて来た……
 	ENDIF
 ENDIF
+WAIT
 
 ;-------------------------------------------------
 ;お風呂場プレイ
@@ -56,7 +57,9 @@ IF TEQUIP:お風呂場
 			PRINTFORML びしょ濡れのまま逃げ回る%CALLNAME:TARGET%を捕まえて、濡れた体の隅々まで拭いた
 		ELSEIF TALENT:ファーリー || CSTR:種族 == "獣人" || CSTR:種族 == "獣"
 			PRINTFORM %CALLNAME:TARGET%は体をぶるぶると震わせて水滴を飛ばし、
-			IF TALENT:ファーリー
+			IF TALENT:アニマル
+				PRINTL その体をバスタオルで丁寧に拭いた
+			ELSEIF TALENT:ファーリー
 				PRINTL ぐしょ濡れの体毛を丁寧に拭いて乾かしている
 			ELSE
 				PRINTFORML %CALLNAME:MASTER%を警戒しながら体を拭いた
@@ -75,13 +78,19 @@ ELSE
 		ENDIF
 	ELSE
 		IF TALENT:ファーリー || CSTR:種族 == "獣人" || CSTR:種族 == "獣"
-			PRINTFORML 風呂を嫌がる%CALLNAME:PLAYER%を強引に風呂場へと連れて行った……
+			PRINTFORML 風呂を嫌がる%CALLNAME:TARGET%を強引に風呂場へと連れて行った……
 		ELSE
 			PRINTFORML %CALLNAME:TARGET%を風呂場に連れて行った……
 		ENDIF
 	ENDIF
 ENDIF
 WAIT
+
+;-------------------------------------------------
+;腸洗浄
+;-------------------------------------------------
+@MESSAGE_COM_腸洗浄
+PRINTFORMW %CALLNAME:TARGET%の腸内をぬるま湯で綺麗に洗浄した……
 
 ;-------------------------------------------------
 ;シャワー
@@ -114,4 +123,3 @@ IF TEQUIP:エプロン
 ELSE
 	PRINTFORMW %CALLNAME:TARGET%にエプロンを着せた……
 ENDIF
-

@@ -9,18 +9,27 @@ SIF TALENT:PLAYER:小人体型 && !TALENT:MASTER:禁断の知識 && !TALENT:小�
 ;調教者が助手の場合は助手が陥落していないとダメ
 SIF ASSIPLAY && !CFLAG:ASSI:陥落
 	RETURNF 0
+;足使用不可だとできない
+SIF TALENT:PLAYER:足使用不可
+	RETURNF 0
+;PLAYERがＶ使用中はダメ
+SIF Ｖ使用中(PLAYER)
+	RETURNF 0
 
 ;対象がペニス無いとダメ
 SIF !PENIS(TARGET)
 	RETURNF 0
-;オナホール装備中はダメ
-SIF TEQUIP:オナホール
+;Ｐ使用中、使用不可はダメ
+SIF Ｐ使用中(TARGET) || Ｐ使用不可(TARGET)
 	RETURNF 0
 ;新妻プレイ中はダメ
 SIF TEQUIP:エプロン
 	RETURNF 0
-;欲情が一定以上じゃないとダメ
-SIF PALAM:欲情 < PALAMLV:3
+;勃起が一定以上じゃないとダメ
+SIF PALAM:勃起 < PALAMLV:3
+	RETURNF 0
+;アニマルは無理
+SIF TALENT:アニマル
 	RETURNF 0
 
 COMRESULT = 1
@@ -35,76 +44,15 @@ IF !TEQUIP:縄
 	;すべての命令に共通の要素を考慮
 	;(従順が高いと命令に従いやすいなど)
 	CALL COM_ORDER
-
-	VARSET LOCAL, 0
 	LOCAL = RESULT
 
-	;ABL:欲望
-	IF ABL:欲望
-		LOCAL += ABL:欲望*3
-		PRINTFORM +欲望LV{ABL:欲望}({ABL:欲望*3})
-	ENDIF
-	;ABL:性交中毒
-	IF ABL:性交中毒
-		LOCAL += ABL:性交中毒*2
-		PRINTFORM +性交中毒LV{ABL:性交中毒}({ABL:性交中毒*2})
-	ENDIF
-	;快楽刻印
-	IF MARK:快楽刻印
-		LOCAL += MARK:快楽刻印*3
-		PRINTFORM +快楽刻印LV{MARK:快楽刻印}({MARK:快楽刻印*3})
-	ENDIF
-
-	CALL COM_ORDER_欲情, 0
+	CALL COM_ORDER_セックスさせる
 	LOCAL += RESULT
 
-	REPEAT VARSIZE("TALENT")
-		LOCAL:1 = 0
-		SIF !TALENT:COUNT
-			CONTINUE
-		SELECTCASE TALENTNAME:COUNT
-			CASE "恥じらい"
-				LOCAL:1 = -5
-			CASE "快感の否定"
-				SIF FALLTYPE(TARGET) != 2
-					LOCAL:1 = -10
-			CASE "女嫌い"
-				SIF SEX(PLAYER) == 2 && (FALLTYPE(TARGET) != 1 || PLAYER != MASTER)
-					LOCAL:1 = -12
-		ENDSELECT
-		IF LOCAL:1
-			PRINTFORM \@SIGN(LOCAL:1) == 1 ? + # - \@%TALENTNAME:COUNT%({ABS(LOCAL:1)})
-			LOCAL += LOCAL:1
-		ENDIF
-	REND
+	;32以上で実行
+	CALL 実効値判定, LOCAL, 32
 
-	;媚薬
-	IF TEQUIP:媚薬
-		LOCAL += 6
-		PRINT +媚薬(6)
-	ENDIF
-
-	;合計を表示(32以上で実行)
-	PRINTFORM  = {LOCAL}
-
-	LOCAL:2 = 32
-	SELECTCASE LOCAL
-		CASE IS < LOCAL:2
-			PRINT  < 
-		CASE IS > LOCAL:2
-			PRINT  > 
-		CASEELSE
-			PRINT  = 
-	ENDSELECT
-	PRINTFORM 実行値{LOCAL:2}
-	WAIT
-	;実行できない
-	IF LOCAL < LOCAL:2
-		CALL KOJO_MESSAGE_EVENT, "コマンド拒否時"
-		RETURN 0
-	ELSE
-		RETURN 1
-	ENDIF
+	RETURN RESULT
 ELSE
 	RETURN 1
 ENDIF
@@ -150,50 +98,13 @@ ENDIF
 ;-------------------------------------------------
 ;射精ゲージチェック（主人）
 ;-------------------------------------------------
-LOCAL = 500
+LOCAL = 射精ゲージ計算_実行者受け(500)
 
 ;ABL:調教者の技巧をみる
 LOCAL += (LOCAL/5)*ABL:PLAYER:技巧
 
 ;ABL:技巧をみる
 LOCAL += (LOCAL/5)*ABL:技巧
-
-;ABL:奉仕精神をみる
-LOCAL += (LOCAL/10)*ABL:奉仕精神
-
-;プレイヤーのABL:Ｖ感覚、Ａ感覚をみる
-SELECTCASE TFLAG:奴隷挿入箇所
-	CASE 1
-		SELECTCASE ABL:PLAYER:Ｖ感覚
-			CASE 0
-				TIMES LOCAL , 1.00
-			CASE 1
-				TIMES LOCAL , 1.50
-			CASE 2
-				TIMES LOCAL , 2.00
-			CASE 3
-				TIMES LOCAL , 2.50
-			CASE 4
-				TIMES LOCAL , 3.50
-			CASEELSE
-				LOCAL += LOCAL*(ABL:PLAYER:Ｖ感覚-1)
-		ENDSELECT
-	CASE 2
-		SELECTCASE ABL:PLAYER:Ａ感覚
-			CASE 0
-				TIMES LOCAL , 1.00
-			CASE 1
-				TIMES LOCAL , 1.50
-			CASE 2
-				TIMES LOCAL , 2.00
-			CASE 3
-				TIMES LOCAL , 2.50
-			CASE 4
-				TIMES LOCAL , 3.50
-			CASEELSE
-				LOCAL += LOCAL*(ABL:PLAYER:Ａ感覚-1)
-		ENDSELECT
-ENDSELECT
 
 CALL 射精ゲージ増加, LOCAL, PLAYER
 
@@ -227,6 +138,10 @@ SELECTCASE ABL:Ｃ感覚
 		LOCAL += LOCAL*(ABL:Ｃ感覚-1)
 ENDSELECT
 
+;子供は締まりが良いので増える
+SIF TALENT:PLAYER:小柄体型
+	TIMES LOCAL , 1.20
+
 CALL 射精ゲージ増加, LOCAL, TARGET
 
 ;-------------------------------------------------
@@ -257,7 +172,7 @@ SIF TALENT:抑圧 || TALENT:抵抗
 	SOURCE:鬱屈 += 700
 
 ;調教者が処女か再生処女
-IF TFLAG:奴隷挿入箇所
+IF TFLAG:奴隷挿入箇所 == 1
 	IF TALENT:PLAYER:処女 || TALENT:PLAYER:再生処女
 		TIMES SOURCE:露出 , 20.00
 		TIMES SOURCE:屈従 , 3.00
@@ -337,31 +252,28 @@ ENDSELECT
 ;-------------------------------------------------
 ;経験の処理
 ;-------------------------------------------------
+CALL EXPUP_BASE, 3, 2
+
 ;調教者のV,A経験
 SELECTCASE TFLAG:奴隷挿入箇所
 	CASE 1
-		PRINTFORML Ｖ経験+1(%CALLNAME:PLAYER%)
-		EXP:PLAYER:Ｖ経験++
-		PRINTFORML 苦痛快楽経験+1(%CALLNAME:PLAYER%)
-		EXP:PLAYER:苦痛快楽経験++
+		CALL EXPUP, "Ｖ経験", 2, PLAYER
+		CALL EXPUP, "苦痛快楽経験", 1, PLAYER
 	CASE 2
-		PRINTFORML Ａ経験+1(%CALLNAME:PLAYER%)
-		EXP:PLAYER:Ａ経験++
-		PRINTFORML 苦痛快楽経験+2(%CALLNAME:PLAYER%)
-		EXP:PLAYER:苦痛快楽経験 += 2
+		CALL EXPUP, "Ａ経験", 2, PLAYER
+		CALL EXPUP, "苦痛快楽経験", 2, PLAYER
 ENDSELECT
 
-CALL EXPUP, 3, 2
+CALL EXPUP, "性交経験", 1
+CALL EXPUP, "性交経験", 1, PLAYER
 
-;依存度補正値(主人かつ恋慕、淫乱、服従で1。親愛、娼婦、隷属で2）
-IF (TALENT:恋慕 || TALENT:淫乱 || TALENT:服従) && !ASSIPLAY
-	TFLAG:依存度補正 += 1
-ELSEIF (TALENT:親愛 || TALENT:娼婦 || TALENT:隷属) && !ASSIPLAY
-	TFLAG:依存度補正 += 2
-ENDIF
-
+SIF !避妊具(TARGET)
+	
 ;奉仕快楽フラグ
 TFLAG:奉仕快楽 = 1
+
+経験回数:PLAYER:(NO:TARGET) += 1
+経験回数:TARGET:(NO:PLAYER) += 1
 
 RETURN 1
 

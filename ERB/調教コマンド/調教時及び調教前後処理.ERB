@@ -259,6 +259,9 @@ IF CSTR:種族 == "宇宙人"
 	ENDSELECT
 ENDIF
 
+;開始前の愛情経験を入れておく
+TFLAG:愛情経験計算用 = EXP:愛情経験
+
 CALL KOJO_START
 
 ;コマンド後のTFLAGリセット処理
@@ -416,6 +419,72 @@ ENDIF
 CALL KOJO_TURNEND
 PRINTW 調教を終了しました
 
+;屋外プレイで雨、もしくはお風呂場プレイ中に終了した場合、人魚の体力気力を半減させる
+IF TEQUIP:お風呂場
+	IF CSTR:種族 == "人魚"
+		MAXBASE:体力 /= 2
+		MAXBASE:気力 /= 2
+		BASE:体力 /= 2
+		BASE:気力 /= 2
+	ENDIF
+ELSEIF TEQUIP:野外プレイ
+	SELECTCASE FLAG:天気
+		CASE 3, 4, 5
+			IF CSTR:種族 == "人魚"
+				MAXBASE:体力 /= 2
+				MAXBASE:気力 /= 2
+				BASE:体力 /= 2
+				BASE:気力 /= 2
+			ENDIF
+	ENDSELECT
+ENDIF
+
+;快感に素直、快感の否定は絶頂回数に応じてストレス増減
+IF TALENT:快感に素直
+	CFLAG:ストレス値 -= EX:Ｃ絶頂+EX:Ｖ絶頂+EX:Ａ絶頂+EX:Ｂ絶頂+EX:射精/3
+ELSEIF TALENT:快感の否定 && !CFLAG:陥落
+	CFLAG:ストレス値 += EX:Ｃ絶頂+EX:Ｖ絶頂+EX:Ａ絶頂+EX:Ｂ絶頂+EX:射精/3
+ENDIF
+
+;恋慕系陥落で流産してなければ愛情経験に応じてストレス低下
+LOCAL = EXP:愛情経験-TFLAG:愛情経験計算用
+IF LOCAL > 0 && CFLAG:ストレス値 > 0
+	IF TALENT:恋慕 && LOCAL >= 2
+		PRINTFORMW %CALLNAME:TARGET%は%CALLNAME:MASTER%の求愛によってストレスが緩和されました
+		CFLAG:ストレス値 -= LOCAL/2
+	ELSEIF TALENT:親愛
+		PRINTFORMW %CALLNAME:TARGET%は%CALLNAME:MASTER%からの愛を確かめることでことでストレスが緩和されました
+		CFLAG:ストレス値 -= LOCAL
+	ENDIF
+ENDIF
+
+;淫乱系陥落で絶頂回数に応じてストレス低下
+LOCAL = EX:Ｃ絶頂+EX:Ｖ絶頂+EX:Ａ絶頂*EX:Ｂ絶頂+EX:射精
+IF LOCAL > 0
+	IF TALENT:淫乱
+		PRINTFORMW %CALLNAME:TARGET%は欲求を満たされることでストレスが緩和しました
+		CFLAG:ストレス値 = LOCAL
+	ELSEIF TALENT:娼婦
+		PRINTFORMW %CALLNAME:TARGET%は欲求を満たされることでストレスが緩和しました
+		CFLAG:ストレス値 -= LOCAL*2
+	ENDIF
+ENDIF
+
+;マゾっ気があればPALAM:苦痛のPALAMLVに応じてストレス低下
+IF ABL:マゾっ気 && GETPALAMLV(PALAM:苦痛, 10)
+	PRINTFORMW %CALLNAME:TARGET%はマゾヒズムを満たされることでストレスが緩和しました
+	CFLAG:ストレス値 -= MIN(ABL:マゾっ気, GETPALAMLV(PALAM:苦痛, 10))
+ENDIF
+
+;精液中毒 主人と助手の射精回数に応じてストレス低下
+LOCAL = EX:MASTER:射精+EX:MASTER:触手射精
+SIF ASSI > 0
+	LOCAL += EX:ASSI:射精
+IF LOCAL > 4 && ABL:精液中毒
+	PRINTFORMW %CALLNAME:TARGET%は精液への渇望を満たされることでストレスが緩和しました
+	CFLAG:ストレス値 -= MIN(ABL:精液中毒, LOCAL/5)
+ENDIF
+
 ;調教後行為のチェック 気絶、流産時はスルー
 SIF !TFLAG:気絶 && !TFLAG:流産 && !CFLAG:使用不可
 	CALL SELF_CHECK
@@ -477,6 +546,8 @@ REPEAT 15
 			ELSE
 				LOCAL = 200
 			ENDIF
+		CASE 4
+			LOCAL = 500
 		CASE 5
 			LOCAL = 1000
 		CASE 6
@@ -525,14 +596,14 @@ REND
 
 PRINTW 以上の珠を得ました
 
-;上限は9,999,999
+;上限は999,999,999,999
 REPEAT 13
 	IF COUNT == 12
-		SIF JUEL:否定 > 9999999
-			JUEL:否定 = 9999999
+		SIF JUEL:否定 > 999999999999
+			JUEL:否定 = 999999999999
 	ELSE
-		SIF JUEL:COUNT > 9999999
-			JUEL:COUNT = 9999999
+		SIF JUEL:COUNT > 999999999999
+			JUEL:COUNT = 999999999999
 	ENDIF
 REND
 
@@ -604,5 +675,5 @@ VARSET TEQUIP:MASTER:0, 0
 VARSET EX:MASTER:0, 0
 PREVCOMS = 
 SELECTCOMS = 
-SELECTCOM = 0
+SELECTCOM = -1
 

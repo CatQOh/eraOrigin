@@ -2,6 +2,20 @@
 ;愛撫
 ;-------------------------------------------------
 @MESSAGE_COM_愛撫
+IF TALENT:アニマル
+	PRINTFORML %CALLNAME:TARGET%を丁寧に撫で回した
+	SELECTCASE CFLAG:依存度
+		CASE IS <= 500
+			PRINTFORML %CALLNAME:TARGET%は警戒して低い唸り声を上げている……
+		CASE IS <= 1500
+			PRINTFORML %CALLNAME:TARGET%はあまり感心を示さないが、%CALLNAME:PLAYER%の手の中で大人しくしている……
+		CASEELSE
+			PRINTFORML %CALLNAME:TARGET%は舌を出しながら喜んで仰向けになり、%CALLNAME:PLAYER%にお腹をさらけ出した……
+	ENDSELECT
+	WAIT
+	RETURN
+ENDIF
+
 PRINTFORM %CALLNAME:PLAYER%は%CALLNAME:TARGET%の
 ;小柄体型 NOT無機物
 IF TALENT:小柄体型 && !TALENT:無機物
@@ -21,7 +35,7 @@ SIF TEQUIP:上半身上着 || TEQUIP:上半身下着 || TEQUIP:全身上着 || T
 	PRINT 服の上から
 ;触手の有無で分岐
 IF TEQUIP:触手
-	PRINTW 触手が弄んでいる……
+	PRINTW 触手が弄んだ……
 ELSE
 	SELECTCASE RAND:2
 		CASE 0
@@ -36,6 +50,8 @@ ENDIF
 ;-------------------------------------------------
 @MESSAGE_COM_クンニ
 PRINTFORM %CALLNAME:PLAYER%は
+
+PRINTFORM %CALLNAME:TARGET%の
 ;着衣中
 IF TEQUIP:下半身上着 || (TEQUIP:全身上着 && CFLAG:着衣併用 != 1)
 	PRINTFORM %OVER_GENITAL(TARGET)%を
@@ -84,8 +100,8 @@ ELSE
 ENDIF
 ;ペニス有り
 IF PENIS(TARGET)
-	;欲情のPALAMLV3以上(勃起を想定)
-	IF PALAM:欲情 >= PALAMLV:3
+	;勃起のPALAMLV3以上
+	IF PALAM:勃起 >= PALAMLV:3
 		SELECTCASE RAND:3
 			CASE 0
 				PRINTL 、そそり勃ったペニスに舌を這わせて舐め上げた……
@@ -94,6 +110,9 @@ IF PENIS(TARGET)
 			CASE 2
 				PRINTL 、女性器の刺激にびくびくと震える熱い男根を舌で責め立てた……
 		ENDSELECT
+	;メス堕ち
+	ELSEIF ABL:メス度 >= 10
+		PRINTL 、勃たなくなった飾り物のペニスにも舌を這わせた……
 	;欲情が足りない場合(勃っていないのを想定)
 	ELSE
 		SELECTCASE RAND:3
@@ -111,11 +130,23 @@ ELSEIF PALAM:欲情 >= PALAMLV:3
 ELSE
 	PRINTL た……
 ENDIF
-;潤滑LV3以下
-IF PALAM:潤滑 <= PALAMLV:3
-	PRINTFORML まだ湿り気の無い%CALLNAME:TARGET%の膣の奥からじんわりと愛液が漏れる……
-ELSEIF TEQUIP:下半身下着
-	PRINTFORML 秘所を覆っていた%CSTR:下半身下着%が%CALLNAME:TARGET%の愛液で濡れている……
+
+IF TALENT:アニマル
+	SELECTCASE CFLAG:依存度
+		CASE IS <= 500
+			PRINTFORML 体をよじらせて暴れる%CALLNAME:TARGET%の両後ろ足を掴み、口淫を続ける……
+		CASE IS <= 1500
+			PRINTFORML 低く唸ってはいるものの抵抗は無く、時折前足がぴくりぴくりと動いている……
+		CASEELSE
+			PRINTFORML %CALLNAME:TARGET%は地を這う尻尾を激しく振り、飼い主である%CALLNAME:PLAYER%に身を委ねている……
+	ENDSELECT
+ELSE
+	;潤滑LV3以下
+	IF PALAM:潤滑 <= PALAMLV:3
+		PRINTFORML まだ湿り気の無い%CALLNAME:TARGET%の膣の奥からじんわりと愛液が漏れる……
+	ELSEIF TEQUIP:下半身下着
+		PRINTFORML 秘所を覆っていた%CSTR:下半身下着%が%CALLNAME:TARGET%の愛液で濡れている……
+	ENDIF
 ENDIF
 WAIT
 
@@ -126,14 +157,17 @@ WAIT
 @MESSAGE_COM_指挿入れ
 PRINTFORM %CALLNAME:PLAYER%は
 ;着衣中
-SIF OVER_GENITAL(TARGET) != "" && OVER_GENITAL(TARGET) != CSTR:下半身下着 && CFLAG:着衣併用 != 2
+SIF OVER_GENITAL(TARGET) != "" && OVER_GENITAL(TARGET) != CSTR:下半身下着 && OVER_GENITAL(TARGET) != "貞操帯" && CFLAG:着衣併用 != 2
 	PRINTFORM %OVER_GENITAL(TARGET)%の上から
 
-PRINTFORM %CALLNAME:TARGET%の秘所を撫で回し、
+PRINTFORM %CALLNAME:TARGET%の
+SIF TALENT:アニマル
+	PRINT 体を押さえて
+PRINT 秘所を撫で回し、
 
 IF TEQUIP:下半身下着
 	PRINTFORM %CSTR:下半身下着%の中に手を忍ばせて
-ELSEIF OVER_GENITAL(TARGET) != ""
+ELSEIF OVER_GENITAL(TARGET) != "" && OVER_GENITAL(TARGET) != "貞操帯"
 	PRINTFORM %OVER_GENITAL(TARGET)%の中に手を忍ばせて
 ENDIF
 
@@ -171,36 +205,58 @@ IF PALAM:潤滑 >= PALAMLV:3 && !TALENT:無機物
 		PRINTFORML 膣口から溢れ出る愛液と共に、内側から精管を締め付けられるペニスからも透明な先走りが押し出されている……
 	ENDIF
 ENDIF
+
+;アニマル
+IF TALENT:アニマル
+	IF PALAM:潤滑 >= PALAMLV:3
+		PRINTFORM %CALLNAME:TARGET%も感じているのか、
+		IF CFLAG:依存度 <= 1000
+			PRINTL 警戒心を見せつつも、膣口は牡を誘うように濡れている……
+		ELSE
+			PRINTL 下を出して息を荒げ、膣口を濡らしている……
+		ENDIF
+	ELSE
+		IF CFLAG:依存度 <= 1000
+			PRINTFORML %CALLNAME:TARGET%は膣内に入り込む指から逃げるように腰を前に動かしている……
+		ELSE
+			PRINTL 人間のそれよりも幾分温かい膣内は柔らかくしっとりと濡れている……
+		ENDIF
+	ENDIF
+ENDIF
 WAIT
 
 ;-------------------------------------------------
 ;フェラする
 ;-------------------------------------------------
 @MESSAGE_COM_フェラする
-PRINTFORM %CALLNAME:PLAYER%は%CALLNAME:TARGET%の
-$ELSE
-;着衣中
-IF TEQUIP:下半身上着 || (TEQUIP:全身上着 && CFLAG:着衣併用 != 1)
-	SIF PALAM:欲情 >= PALAMLV:3
-		PRINT 欲に膨らむ陰部を隔てる
-	PRINTFORM %OVER_GENITAL(TARGET)%を
-	IF CFLAG:挿入可
-		PRINT 捲り上げ、
-	ELSE
-		PRINT ずらし、
+IF TALENT:アニマル
+	PRINTFORM %CALLNAME:PLAYER%は%CALLNAME:TARGET%を仰向けに押さえつけ、
+ELSE
+	PRINTFORM %CALLNAME:PLAYER%は%CALLNAME:TARGET%の
+	$ELSE
+	;着衣中
+	IF TEQUIP:下半身上着 || (TEQUIP:全身上着 && CFLAG:着衣併用 != 1)
+		SIF PALAM:勃起 >= PALAMLV:3
+			PRINT 欲に膨らむ陰部を隔てる
+		PRINTFORM %OVER_GENITAL(TARGET)%を
+		IF CFLAG:挿入可
+			PRINT 捲り上げ、
+		ELSE
+			PRINT ずらし、
+		ENDIF
+	ELSEIF TEQUIP:下半身下着
+		SIF PALAM:勃起 >= PALAMLV:3
+			PRINT 窮屈そうな股ぐらを覆い隠す
+		PRINTFORM %CSTR:下半身下着%をずらして、
 	ENDIF
-ELSEIF TEQUIP:下半身下着
-	SIF PALAM:欲情 >= PALAMLV:3
-		PRINT 窮屈そうな股ぐらを覆い隠す
-	PRINTFORM %CSTR:下半身下着%をずらして、
 ENDIF
 
 ;欲情のPALAMLV3以上
 ;無機物
 IF TALENT:無機物
 	PRINT 無機質な
-;勃起時を想定
-ELSEIF PALAM:欲情 >= PALAMLV:3
+;勃起時
+ELSEIF PALAM:勃起 >= PALAMLV:3
 	;小柄体型(小さい子は無条件で包茎になる)
 	IF TALENT:小柄体型
 		SELECTCASE RAND:4
@@ -223,6 +279,23 @@ ELSEIF PALAM:欲情 >= PALAMLV:3
 				PRINT 隆々と勃ち上がる
 			CASE 3
 				PRINT 劣情を露わにする
+		ENDSELECT
+	ENDIF
+;メス堕ち
+ELSEIF ABL:メス度 >= 10
+	IF TALENT:小柄体型
+		SELECTCASE RAND:2
+			CASE 0
+				PRINT 幼くして勃たなくなってしまった
+			CASE 1
+				PRINT 小さく勃起することもない淫核のような
+		ENDSELECT
+	ELSE
+		SELECTCASE RAND:2
+			CASE 0
+				PRINT すっかり雄を忘れてしまった
+			CASE 1
+				PRINT 勃つことのなくなった
 		ENDSELECT
 	ENDIF
 ELSE
@@ -288,7 +361,7 @@ SIF TEQUIP:PLAYER:足元
 PRINTFORM %CALLNAME:TARGET%のペニスを
 ;着衣中
 SIF OVER_GENITAL(TARGET) != ""
-	PRINT 服の上から
+	PRINTFORM %OVER_GENITAL(TARGET)%の上から
 ;調教者がサド
 SIF TALENT:PLAYER:サド
 	PRINT 踏みつけるように
@@ -337,7 +410,11 @@ WAIT
 ;手淫する
 ;-------------------------------------------------
 @MESSAGE_COM_手淫する
-PRINTFORM %CALLNAME:PLAYER%は%CALLNAME:TARGET%の
+IF TALENT:アニマル
+	PRINTFORM %CALLNAME:PLAYER%は四つん這いの%CALLNAME:TARGET%の後ろに回り、
+ELSE
+	PRINTFORM %CALLNAME:PLAYER%は%CALLNAME:TARGET%の
+ENDIF
 
 IF TEQUIP:下半身下着
 	PRINTFORM %CSTR:下半身下着%の中に手を忍ばせて
@@ -345,16 +422,39 @@ ELSEIF OVER_GENITAL(TARGET) != ""
 	PRINTFORM %OVER_GENITAL(TARGET)%の中に手を忍ばせて
 ENDIF
 
-SIF PALAM:欲情 >= PALAMLV:3
+SIF PALAM:勃起 >= PALAMLV:3
 	PRINT 硬く勃起した
-PRINTL ペニスを扱き上げた……
+IF ABL:メス度 >= 10
+	PRINT 雄としての機能を失ったペニスを弄った……
+ELSEIF TEQUIP:オナホール
+	PRINTL ペニスを包むオナホールごと扱き上げた……
+ELSEIF TEQUIP:搾精器
+	PRINTL ペニスから精液を搾り取るように搾精器ごと扱き上げた……
+ELSE
+	PRINTL ペニスを扱き上げた……
+ENDIF
+IF TALENT:アニマル
+	IF CFLAG:依存度 <= 1000
+		PRINTFORML 逃げられない手淫の快感に、%CALLNAME:TARGET%は舌を出して息を荒げるしかできない……
+	ELSE
+		PRINTFORML %CALLNAME:TARGET%も擬似的な交尾に腰を前後に振り、%CALLNAME:PLAYER%の手中を犯している……
+	ENDIF
+ENDIF
 WAIT
 
 ;-------------------------------------------------
 ;素股する
 ;-------------------------------------------------
 @MESSAGE_COM_素股する
-PRINTFORM %CALLNAME:PLAYER%は%CALLNAME:TARGET%のペニスを股にはさみ、
+IF OVER_GENITAL(TARGET) != ""
+	PRINTFORM %CALLNAME:PLAYER%は%CALLNAME:TARGET%の上に跨ると、
+ELSE
+	IF TALENT:アニマル
+		PRINTFORM %CALLNAME:PLAYER%は仰向けに倒した%CALLNAME:TARGET%に馬乗りになり、
+	ELSE
+		PRINTFORM %CALLNAME:PLAYER%は%CALLNAME:TARGET%のペニスを股にはさみ、
+	ENDIF
+ENDIF
 
 IF TEQUIP:PLAYER:下半身上着 || (TEQUIP:PLAYER:全身上着 && CFLAG:PLAYER:着衣併用 != 1)
 	IF CFLAG:PLAYER:挿入可
@@ -383,7 +483,15 @@ IF !性器露出(TARGET)
 ELSE
 	PRINT ペニスへ
 ENDIF
-PRINTW 擦りつけた……
+PRINTL 擦りつけた……
+
+IF TALENT:アニマル
+	IF CFLAG:依存度 <= 1000
+		PRINTFORML 逃げようとする%CALLNAME:TARGET%の両前足を掴み、さらに強く押し付ける……
+	ELSE
+		PRINTFORML %CALLNAME:TARGET%は逃げようともせず、飼い主から与えられる快感に身を委ねている……
+	ENDIF
+ENDIF
 
 ;-------------------------------------------------
 ;パイズリする
@@ -399,36 +507,59 @@ IF PLAYER == TFLAG:前コマンド実行者
 	ENDSELECT
 ENDIF
 
+IF TALENT:アニマル
+	PRINTFORML %CALLNAME:PLAYER%は寝転がって%CALLNAME:TARGET%を上に跨がせると、下からペニスを乳房で挟み込んで擦り始めた……
+	IF CFLAG:依存度 <= 1000
+		PRINTFORML 床を引っ掻いて逃げようとする%CALLNAME:TARGET%を押さえつけ、谷間へとさらに深く誘い込んだ……
+	ELSE
+		PRINTFORML その快感に交尾と錯覚する%CALLNAME:TARGET%は激しく腰を振り、乳房を先走りで濡らしている……
+	ENDIF
+	WAIT
+	RETURN
+ENDIF
+
 PRINTFORM %CALLNAME:PLAYER%は%CALLNAME:TARGET%の
 IF TEQUIP:PLAYER:下半身上着 || (TEQUIP:PLAYER:全身上着 && CFLAG:PLAYER:着衣併用 != 1)
 	PRINTFORM %OVER_GENITAL(TARGET)%
 	IF ズリ穴作り(PLAYER, 0)
 		IF CFLAG:挿入可
 			IF TEQUIP:下半身下着
-				PRINTFORM を捲り上げて%CSTR:下半身下着%からペニスを取り出し
-			ELSE
+				PRINTFORM を捲り上げて%CSTR:下半身下着%を脱がし
+			ELSEIF PALAM:勃起 >= PALAMLV:3
 				PRINT を捲り上げて期待に膨らむペニスを見つけ
+			ELSE
+				PRINT を捲りあげ
 			ENDIF
 		ELSE
-			PRINT の中から勃起したペニスを取り出し
+			PRINT の中から勃起したペニスを露わにし
 		ENDIF
 		PRINTFORM %OVER_BUST(PLAYER)%をはだけて胸の一部を露出させると、
 	ELSE
 		IF CFLAG:挿入可
 			IF TEQUIP:下半身下着
-				PRINTFORM を捲り上げて%CSTR:下半身下着%からペニスを取り出すと、
-			ELSE
+				PRINTFORM を捲り上げて%CSTR:下半身下着%を脱がすと、
+			ELSEIF PALAM:勃起 >= PALAMLV:3
 				PRINT を捲り上げて期待に膨らむペニスを見つけると、
+			ELSE
+				PRINT を捲り上げると、
 			ENDIF
 		ELSE
-			PRINT の中から勃起したペニスを取り出して、
+			PRINT の中から勃起したペニスを露出させると、
 		ENDIF
 	ENDIF
 ELSEIF TEQUIP:下半身下着
-	IF ズリ穴作り(PLAYER, 0)
-		PRINTFORM %CSTR:下半身下着%を膨らませるペニスを解放させ%OVER_BUST(PLAYER)%をはだけて胸の一部を露出させると、
+	IF PALAM:勃起 >= PALAMLV:3
+		IF ズリ穴作り(PLAYER, 0)
+			PRINTFORM %CSTR:下半身下着%を膨らませるペニスを解放させ%OVER_BUST(PLAYER)%をはだけて胸の一部を露出させると、
+		ELSE
+			PRINTFORM %CSTR:下半身下着%を膨らませるペニスを解放すると、
+		ENDIF
 	ELSE
-		PRINTFORM %CSTR:下半身下着%を膨らませるペニスを解放すると、
+		IF ズリ穴作り(PLAYER, 0)
+			PRINTFORM %CSTR:下半身下着%の中のペニスを解放させ%OVER_BUST(PLAYER)%をはだけて胸の一部を露出させると、
+		ELSE
+			PRINTFORM %CSTR:下半身下着%を中のペニスを解放すると、
+		ENDIF
 	ENDIF
 ELSE
 	SIF ズリ穴作り(PLAYER, 0)
@@ -512,37 +643,59 @@ WAIT
 ;パイズリフェラする
 ;-------------------------------------------------
 @MESSAGE_COM_パイズリフェラする
+IF TALENT:アニマル
+	PRINTFORML %CALLNAME:PLAYER%は寝転がって%CALLNAME:TARGET%を上に跨がせると、下からペニスを乳房で挟み込んで先端を舐め始めた……
+	IF CFLAG:依存度 <= 1000
+		PRINTFORML 床を引っ掻いて逃げようとする%CALLNAME:TARGET%を押さえつけ、谷間へとさらに深く誘い込んだ……
+	ELSE
+		PRINTFORML その快感に交尾と錯覚する%CALLNAME:TARGET%は激しく腰を振り、乳房と口内に大量の先走りを漏らしている……
+	ENDIF
+	WAIT
+	RETURN
+ENDIF
+
 PRINTFORM %CALLNAME:PLAYER%は%CALLNAME:TARGET%の
 IF TEQUIP:下半身上着 || (TEQUIP:全身上着 && CFLAG:着衣併用 != 1)
+	PRINTFORM %OVER_GENITAL(TARGET)%
 	IF ズリ穴作り(PLAYER, 0)
-		PRINTFORM %OVER_GENITAL(TARGET)%
 		IF CFLAG:挿入可
 			IF TEQUIP:下半身下着
-				PRINTFORM を捲り上げて%CSTR:下半身下着%からペニスを取り出し
-			ELSE
+				PRINTFORM を捲り上げて%CSTR:下半身下着%を脱がし
+			ELSEIF PALAM:勃起 >= PALAMLV:3
 				PRINT を捲り上げて期待に膨らむペニスを見つけ
+			ELSE
+				PRINT を捲りあげ
 			ENDIF
 		ELSE
-			PRINT の中から勃起したペニスを取り出し
+			PRINT の中から勃起したペニスを露わにし
 		ENDIF
 		PRINTFORM %OVER_BUST(PLAYER)%をはだけて胸の一部を露出させると、
 	ELSE
-		PRINTFORM %OVER_GENITAL(TARGET)%
 		IF CFLAG:挿入可
 			IF TEQUIP:下半身下着
-				PRINTFORM を捲り上げて%CSTR:下半身下着%からペニスを取り出すと、
-			ELSE
+				PRINTFORM を捲り上げて%CSTR:下半身下着%を脱がすと、
+			ELSEIF PALAM:勃起 >= PALAMLV:3
 				PRINT を捲り上げて期待に膨らむペニスを見つけると、
+			ELSE
+				PRINT を捲り上げると、
 			ENDIF
 		ELSE
-			PRINT の中から勃起したペニスを取り出して、
+			PRINT の中から勃起したペニスを露出させると、
 		ENDIF
 	ENDIF
 ELSEIF TEQUIP:下半身下着
-	IF ズリ穴作り(PLAYER, 0)
-		PRINTFORM %CSTR:下半身下着%を膨らませるペニスを解放し%OVER_BUST(PLAYER)%をはだけて胸の一部を露出させると、
+	IF PALAM:勃起 >= PALAMLV:3
+		IF ズリ穴作り(PLAYER, 0)
+			PRINTFORM %CSTR:下半身下着%を膨らませるペニスを解放させ%OVER_BUST(PLAYER)%をはだけて胸の一部を露出させると、
+		ELSE
+			PRINTFORM %CSTR:下半身下着%を膨らませるペニスを解放すると、
+		ENDIF
 	ELSE
-		PRINTFORM %CSTR:下半身下着%を膨らませるペニスを解放すると、
+		IF ズリ穴作り(PLAYER, 0)
+			PRINTFORM %CSTR:下半身下着%の中のペニスを解放させ%OVER_BUST(PLAYER)%をはだけて胸の一部を露出させると、
+		ELSE
+			PRINTFORM %CSTR:下半身下着%を中のペニスを解放すると、
+		ENDIF
 	ENDIF
 ELSE
 	IF ズリ穴作り(PLAYER, 0)
@@ -637,6 +790,59 @@ ENDIF
 WAIT
 
 ;-------------------------------------------------
+;射精寸止め
+;-------------------------------------------------
+@MESSAGE_COM_射精寸止め
+PRINTFORM %CALLNAME:TARGET%が射精する寸前で%CALLNAME:PLAYER%は
+SELECTCASE PREVCOMS
+	CASE "クンニ"
+		PRINT 女性器に舌を這わせるのを止め、
+	CASE "指挿入れ", "Gスポット刺激"
+		PRINT 膣に挿れた指を引き抜き、
+	CASE "フェラする"
+		PRINT 男性器を舐め回すのを止め、
+	CASE "足扱きする"
+		PRINT 足での愛撫を止め、
+	CASE "下着扱きする", "手淫する"
+		PRINT 男性器への手淫を止め、
+	CASE "素股する"
+		PRINT 素股を止め、
+	CASE "パイズリする", "パイズリフェラする"
+		PRINT 乳房の間から男性器を離し、
+	CASE "アナル舐め", "アナル愛撫", "前立腺刺激"
+		PRINT アナルへの刺激を止め、
+	CASE "胸揉み", "乳首責め", "胸愛撫"
+		PRINT 胸への愛撫を止め、
+	CASE "ローター", "乳首ローター"
+		PRINT ローターのスイッチを切り、
+	CASE "電気按摩"
+		PRINT 電気按摩のスイッチを切り、
+	CASE "正常位", "後背位", "対面座位", "背面座位", "下着ずらし挿入", "正常位キス", "対面座位キス", "後背位手淫", "乱れ牡丹", "挿入Gスポ責め", "挿入子宮口責め"
+		PRINT 膣からペニス\@ TEQUIP:PLAYER:ペニスバンド ? バンド #  \@を引き抜き、
+	CASE "正常位アナル", "後背位アナル", "対面座位アナル", "背面座位アナル", "下着ずらし挿入アナル", "正常位アナルキス", "対面座位アナルキス", "後背位アナル手淫"
+		PRINT 膣からペニス\@ TEQUIP:PLAYER:ペニスバンド ? バンド #  \@を引き抜き、
+	CASE "逆レイプ"
+		PRINT 騎乗位を止め、
+	CASE "フィストファック"
+		PRINT 膣から手を引き抜き、
+	CASE "アナルフィスト"
+		PRINT アナルから手を引き抜き、
+	CASE "両穴フィスト"
+		PRINT 膣とアナルから両手を引き抜き、
+	CASE "触手挿入", "アナル触手", "触手乳首責め", "触手搾乳", "触手緊縛", "触手浣腸", "触手口辱", "触手搾精"
+		PRINT 触手たちを制止して、
+	CASE "膣を犯す（ドラゴン）", "アナルを犯す（ドラゴン）"
+		PRINT %CSTR:PLAYER:ドラゴン%を制止して、
+	CASE "ペットに舐めさせる", "ペットに犯させる"
+		PRINT %CALLNAME:ASSI%を制止して、
+	CASE "正常位首絞め", "後背位首絞め", "正常位アナル首絞め", "後背位アナル首絞め", "逆レイプ首絞め"
+		PRINT 首を締めるのを止め、
+	CASEELSE
+		PRINT 寸止めをして
+ENDSELECT
+PRINTW 射精をお預けにした……
+
+;-------------------------------------------------
 ;アナル舐め
 ;-------------------------------------------------
 @MESSAGE_COM_アナル舐め
@@ -653,7 +859,6 @@ IF PLAYER == TFLAG:前コマンド実行者
 ENDIF
 
 PRINTFORM %CALLNAME:TARGET%の
-
 IF TEQUIP:下半身上着 || (TEQUIP:全身上着 && CFLAG:着衣併用 != 1)
 	PRINTFORM %OVER_GENITAL(TARGET)%を
 	IF CFLAG:挿入可
@@ -675,19 +880,22 @@ ENDIF
 PRINT 尻穴を丁寧に舐めほぐし
 ;Ａ経験100以上＋欲情のPALAMLV3以上
 SIF EXP:Ａ経験 >= 100 && PALAM:欲情 >= PALAMLV:3
-	PRINT 、舌先を突き入れて穴の中までかきまわしてやっ
+	PRINT 、舌先を突き入れて穴の中までかきまわし
 PRINTL た……
-
-;男 NOT無機物
-IF SEX(TARGET) == 1 && !TALENT:無機物
-	;Ａ経験100以上＋欲情のPALAMLV3以上
-	;前立腺まで舌が届くのかという話はたびたび上がりますがここでは届きます
-	IF EXP:Ａ経験 >= 100 && PALAM:欲情 >= PALAMLV:3
-		PRINT 前立腺への刺激に反応しているのか、
-	ELSE
-		PRINT アナルへの刺激が怖いのか、
+IF TALENT:アニマル
+	PRINTFORML %CALLNAME:TARGET%は特段嫌がることもなく、ゆらゆらと尻尾を振っている……
+ELSE
+	;男 NOT無機物
+	IF SEX(TARGET) == 1 && !TALENT:無機物
+		;Ａ経験100以上＋欲情のPALAMLV3以上
+		;前立腺まで舌が届くのかという話はたびたび上がりますがここでは届きます
+		IF EXP:Ａ経験 >= 100 && PALAM:欲情 >= PALAMLV:3
+			PRINT 前立腺への刺激に反応しているのか、
+		ELSE
+			PRINT アナルへの刺激が怖いのか、
+		ENDIF
+		PRINTL 陰嚢がきゅんと引き締まっている……
 	ENDIF
-	PRINTL 陰嚢がきゅんと引き締まっている……
 ENDIF
 WAIT
 
@@ -697,7 +905,7 @@ WAIT
 @MESSAGE_COM_アナル愛撫
 SIF !TEQUIP:触手
 	PRINTFORM %CALLNAME:PLAYER%は
-IF PLAYER == TFLAG:前コマンド実行者
+IF PLAYER == TFLAG:前コマンド実行者 && !Ａ使用中(TARGET)
 	SELECTCASE PREVCOMS
 		CASE "アナル舐め"
 			PRINTFORMW 唾液で馴染んだ尻穴にぐっと指を突き入れ、腸壁を擦るように愛撫した……
@@ -710,13 +918,13 @@ ENDIF
 
 ;触手
 IF TEQUIP:触手
-	PRINTFORML 粘液に塗れた触手が\@ OVER_GENITAL(TARGET) != "" ? 服の中に入り込み、 #  \@%CALLNAME:TARGET%のアナルを刺激している……
+	PRINTFORML 粘液に塗れた触手が\@ !性器露出(TARGET) ? 服の中に入り込み、 #  \@%CALLNAME:TARGET%のアナルを刺激している……
 ;アナルバイブ
 ELSEIF TEQUIP:アナルバイブ
-	PRINTFORML \@ OVER_GENITAL(TARGET) != "" ? 服の中で #  \@小刻みに震えるアナルバイブを前後に抜き差しした……
+	PRINTFORML \@ !性器露出(TARGET) ? 服の中で #  \@小刻みに震えるアナルバイブを前後に抜き差しした……
 ;アナルビーズ
 ELSEIF TEQUIP:アナルビーズ
-	IF OVER_GENITAL(TARGET) != ""
+	IF OVER_GENITAL(TARGET) != "" && OVER_GENITAL(TARGET) != "貞操帯"
 		PRINTFORML 服の上から%CALLNAME:TARGET%の尻を撫でる。その中でアナルビーズが小さく前後していた……
 	ELSE
 		PRINTFORML ビーズの紐を引っ張って軽く出し入れしてやった……
@@ -724,7 +932,7 @@ ELSEIF TEQUIP:アナルビーズ
 ;浣腸器
 ELSEIF TEQUIP:浣腸器
 	PRINTFORML 排泄感に震える菊穴をプラグでグリグリとほじってやった……
-	SIF OVER_GENITAL(TARGET) != ""
+	SIF OVER_GENITAL(TARGET) != "" && OVER_GENITAL(TARGET) != "貞操帯"
 		PRINTL 衣服が漏れ出した汚液で濡れてしまっている……
 ;拡張バルーン
 ELSEIF TEQUIP:拡張バルーン
@@ -732,9 +940,14 @@ ELSEIF TEQUIP:拡張バルーン
 ;アナル電極
 ELSEIF TEQUIP:アナル電極
 	PRINTFORML かすかに音を立てる電極でグリグリと菊穴をこねくりまわした……
+;電動エネマグラ
+ELSEIF TEQUIP:電動エネマグラ
+	PRINTFORML エネマグラを小さく出し入れして前立腺を圧迫した……
 ;男
 ELSEIF SEX(TARGET) == 1
 	;着衣中
+	SIF EXP:Ａ経験 < 100
+		PRINTFORM %CALLNAME:TARGET%の
 	IF TEQUIP:下半身上着 || (TEQUIP:全身上着 && CFLAG:着衣併用 != 1)
 		PRINTFORM %OVER_GENITAL(TARGET)%を
 		IF CFLAG:挿入可
@@ -771,6 +984,8 @@ ELSE
 	ENDIF
 	PRINTL た……
 ENDIF
+SIF TALENT:アニマル && SEX(TARGET) == 1
+	PRINTFORML 動物でも前立腺で感じることはあるのか、粘性の無い先走りが垂れている……
 WAIT
 
 ;-------------------------------------------------
@@ -813,76 +1028,87 @@ PRINTFORM %CALLNAME:TARGET%の
 ;欲情のPALAMLV3以上
 SIF PALAM:欲情 > PALAMLV:3
 	PRINT 期待に震える
-SELECTCASE TALENT:バストサイズ
-	;男
-	CASE 0
-		SIF TALENT:小柄体型
-			PRINT 未発達な
-	;貧乳,絶壁
-	CASE 1, 2
-		IF TALENT:小柄体型 || TALENT:バストサイズ == 1
-			PRINT 僅かに膨らみが感じられる程度の
-		ELSE
-			PRINT 小振りの
-		ENDIF
-	;普通
-	CASE 3
-		IF TALENT:無機物
-			PRINT 無機質な
-		ELSE
-			PRINT 柔らかい
-		ENDIF
-	;巨乳
-	CASE 4
-		PRINT 手から溢れそうなほどの
-	;爆乳
-	CASE 5
-		PRINT 手に余るほど大きな
-ENDSELECT
-;母乳体質
-IF TALENT:母乳体質
-	;欲情のPALAMLV3以上+恋慕or親愛
-	IF PALAM:欲情 > PALAMLV:3 && FALLTYPE(TARGET) == 1
-		PRINTFORML 胸を強く搾り上げてやると、%CALLNAME:TARGET%は嬌声をあげて、より強い刺激を求めた……
-	;欲情のPALAMLV3以上
-	ELSEIF PALAM:欲情 > PALAMLV:3
-		PRINTL 胸を強く搾り上げた……
-	ELSE
-		PRINTL 胸を搾り上げた……
-	ENDIF
-;男
-ELSEIF SEX(TARGET) == 1
-	;欲情のPALAMLV3以上+恋慕or親愛+小柄体型
-	IF PALAM:欲情 > PALAMLV:3 && FALLTYPE(TARGET) == 1 && TALENT:小柄体型
-		PRINTFORML 胸を優しく撫でてやると、%CALLNAME:TARGET%は体を委ねながら熱い息を吐いている……
-	;小柄体型
-	ELSEIF TALENT:小柄体型
-		PRINTL 胸を優しく撫でるように触れた……
-	;欲情のPALAMLV3以上+恋慕or親愛
-	ELSEIF PALAM:欲情 > PALAMLV:3 && FALLTYPE(TARGET) == 1
-		PRINTFORML 胸板に手を這わせると、%CALLNAME:TARGET%は顔を赤らめながら息を荒らげている……
-	;欲情のPALAMLV3以上
-	ELSEIF PALAM:欲情 > PALAMLV:3
-		PRINTFORML 胸部に手を添えると、ぴんと立った乳首が%CALLNAME:PLAYER%の掌の中で擦れている……
-	ELSE
-		PRINTL 胸部を掌でなぞった……
-	ENDIF
-;その他(母乳体質でない女性)
+IF TALENT:アニマル
+	SIF TALENT:ファーリー
+		PRINT 体毛に覆われる
 ELSE
-	;欲情のPALAMLV3以上+恋慕or親愛+小柄体型
-	IF PALAM:欲情 > PALAMLV:3 && FALLTYPE(TARGET) == 1 && TALENT:小柄体型
-		PRINTFORML 胸を優しく撫でてやると、%CALLNAME:TARGET%は胸を突き出すようにして激しい愛撫を求めた……
-	;小柄体型
-	ELSEIF TALENT:小柄体型
-		PRINTL 胸を優しく撫でるように触れた……
-	;欲情のPALAMLV3以上+恋慕or親愛
-	ELSEIF PALAM:欲情 > PALAMLV:3 && FALLTYPE(TARGET) == 1
-		PRINTFORML 胸を強く揉みしだいてやると、%CALLNAME:TARGET%は嬌声をあげて、より強い愛撫を求めた……
-	;欲情のPALAMLV3以上
-	ELSEIF PALAM:欲情 > PALAMLV:3
-		PRINTL 胸を強く揉みしだいた……
+	SELECTCASE TALENT:バストサイズ
+		;男
+		CASE 0
+			SIF TALENT:小柄体型
+				PRINT 未発達な
+		;貧乳,絶壁
+		CASE 1, 2
+			IF TALENT:小柄体型 || TALENT:バストサイズ == 1
+				PRINT 僅かに膨らみが感じられる程度の
+			ELSE
+				PRINT 小振りの
+			ENDIF
+		;普通
+		CASE 3
+			IF TALENT:無機物
+				PRINT 無機質な
+			ELSE
+				PRINT 柔らかい
+			ENDIF
+		;巨乳
+		CASE 4
+			PRINT 手から溢れそうなほどの
+		;爆乳
+		CASE 5
+			PRINT 手に余るほど大きな
+	ENDSELECT
+ENDIF
+
+;アニマル
+IF TALENT:アニマル
+	PRINTL 胸部を撫で回して可愛がった……
+ELSE
+	;母乳体質
+	IF TALENT:母乳体質
+		;欲情のPALAMLV3以上+恋慕or親愛
+		IF PALAM:欲情 > PALAMLV:3 && FALLTYPE(TARGET) == 1
+			PRINTFORML 胸を強く搾り上げてやると、%CALLNAME:TARGET%は嬌声をあげて、より強い刺激を求めた……
+		;欲情のPALAMLV3以上
+		ELSEIF PALAM:欲情 > PALAMLV:3
+			PRINTL 胸を強く搾り上げた……
+		ELSE
+			PRINTL 胸を搾り上げた……
+		ENDIF
+	;男
+	ELSEIF SEX(TARGET) == 1
+		;欲情のPALAMLV3以上+恋慕or親愛+小柄体型
+		IF PALAM:欲情 > PALAMLV:3 && FALLTYPE(TARGET) == 1 && TALENT:小柄体型
+			PRINTFORML 胸を優しく撫でてやると、%CALLNAME:TARGET%は体を委ねながら熱い息を吐いている……
+		;小柄体型
+		ELSEIF TALENT:小柄体型
+			PRINTL 胸を優しく撫でるように触れた……
+		;欲情のPALAMLV3以上+恋慕or親愛
+		ELSEIF PALAM:欲情 > PALAMLV:3 && FALLTYPE(TARGET) == 1
+			PRINTFORML 胸板に手を這わせると、%CALLNAME:TARGET%は顔を赤らめながら息を荒らげている……
+		;欲情のPALAMLV3以上
+		ELSEIF PALAM:欲情 > PALAMLV:3
+			PRINTFORML 胸部に手を添えると、ぴんと立った乳首が%CALLNAME:PLAYER%の掌の中で擦れている……
+		ELSE
+			PRINTL 胸部を掌でなぞった……
+		ENDIF
+	;その他(母乳体質でない女性)
 	ELSE
-		PRINTL 胸を揉みしだいた……
+		;欲情のPALAMLV3以上+恋慕or親愛+小柄体型
+		IF PALAM:欲情 > PALAMLV:3 && FALLTYPE(TARGET) == 1 && TALENT:小柄体型
+			PRINTFORML 胸を優しく撫でてやると、%CALLNAME:TARGET%は胸を突き出すようにして激しい愛撫を求めた……
+		;小柄体型
+		ELSEIF TALENT:小柄体型
+			PRINTL 胸を優しく撫でるように触れた……
+		;欲情のPALAMLV3以上+恋慕or親愛
+		ELSEIF PALAM:欲情 > PALAMLV:3 && FALLTYPE(TARGET) == 1
+			PRINTFORML 胸を強く揉みしだいてやると、%CALLNAME:TARGET%は嬌声をあげて、より強い愛撫を求めた……
+		;欲情のPALAMLV3以上
+		ELSEIF PALAM:欲情 > PALAMLV:3
+			PRINTL 胸を強く揉みしだいた……
+		ELSE
+			PRINTL 胸を揉みしだいた……
+		ENDIF
 	ENDIF
 ENDIF
 WAIT
@@ -907,40 +1133,46 @@ IF PLAYER == TFLAG:前コマンド実行者
 ENDIF
 
 PRINTFORM %CALLNAME:TARGET%の
-SELECTCASE TALENT:バストサイズ
-	;男
-	CASE 0
-		;小柄体型
-		SIF TALENT:小柄体型
-			PRINT 未発達な
-	;貧乳,絶壁
-	CASE 1, 2
-		;小柄体型or絶壁
-		IF TALENT:小柄体型 || TALENT:バストサイズ == 1
-			PRINT 僅かに膨らみが感じられる程度の
-		ELSE
-			PRINT 小振りの
-		ENDIF
-	;普通
-	CASE 3
-		IF TALENT:無機物
-			PRINT 無機質な
-		ELSE
-			PRINT 柔らかい
-		ENDIF
-	;巨乳
-	CASE 4
-		PRINT 手から溢れそうなほどの
-	;爆乳
-	CASE 5
-		PRINT 手に余るほど大きな
-ENDSELECT
-PRINT 胸の先端の、
-;欲情のPALAMLV3以上
-IF PALAM:欲情 >= PALAMLV:3
-	PRINT すっかり硬くなった乳首を
+IF !TALENT:アニマル
+	SELECTCASE TALENT:バストサイズ
+		;男
+		CASE 0
+			;小柄体型
+			SIF TALENT:小柄体型
+				PRINT 未発達な
+		;貧乳,絶壁
+		CASE 1, 2
+			;小柄体型or絶壁
+			IF TALENT:小柄体型 || TALENT:バストサイズ == 1
+				PRINT 僅かに膨らみが感じられる程度の
+			ELSE
+				PRINT 小振りの
+			ENDIF
+		;普通
+		CASE 3
+			IF TALENT:無機物
+				PRINT 無機質な
+			ELSE
+				PRINT 柔らかい
+			ENDIF
+		;巨乳
+		CASE 4
+			PRINT 手から溢れそうなほどの
+		;爆乳
+		CASE 5
+			PRINT 手に余るほど大きな
+	ENDSELECT
+ENDIF
+IF TALENT:アニマル
+	PRINT 複数ある乳首を
 ELSE
-	PRINT まだ柔らかい乳首を
+	PRINT 胸の先端の、
+	;欲情のPALAMLV3以上
+	IF PALAM:欲情 >= PALAMLV:3
+		PRINT すっかり硬くなった乳首を
+	ELSE
+		PRINT まだ柔らかい乳首を
+	ENDIF
 ENDIF
 SIF OVER_BUST(TARGET) != ""
 	PRINTFORM %OVER_BUST(TARGET)%の上から
@@ -985,37 +1217,42 @@ ENDIF
 SIF OVER_BUST(TARGET) != ""
 	PRINTFORM %OVER_BUST(TARGET)%の上から
 PRINTFORM %CALLNAME:TARGET%の
-SELECTCASE TALENT:バストサイズ
-	;男
-	CASE 0
-		;小柄体型
-		SIF TALENT:小柄体型
-			PRINT 未発達な
-	;貧乳,絶壁
-	CASE 1, 2
-		;小柄体型or絶壁
-		IF TALENT:小柄体型 || TALENT:バストサイズ == 1
-			PRINT 僅かに膨らみが感じられる程度の
-		ELSE
-			PRINT 小振りの
-		ENDIF
-	;普通
-	CASE 3
-		IF TALENT:無機物
-			PRINT 無機質な
-		ELSE
-			PRINT 柔らかい
-		ENDIF
-	;巨乳
-	CASE 4
-		PRINT 手から溢れそうなほどの
-	;爆乳
-	CASE 5
-		PRINT 手に余るほど大きな
-ENDSELECT
+IF !TALENT:アニマル
+	SELECTCASE TALENT:バストサイズ
+		;男
+		CASE 0
+			;小柄体型
+			SIF TALENT:小柄体型
+				PRINT 未発達な
+		;貧乳,絶壁
+		CASE 1, 2
+			;小柄体型or絶壁
+			IF TALENT:小柄体型 || TALENT:バストサイズ == 1
+				PRINT 僅かに膨らみが感じられる程度の
+			ELSE
+				PRINT 小振りの
+			ENDIF
+		;普通
+		CASE 3
+			IF TALENT:無機物
+				PRINT 無機質な
+			ELSE
+				PRINT 柔らかい
+			ENDIF
+		;巨乳
+		CASE 4
+			PRINT 手から溢れそうなほどの
+		;爆乳
+		CASE 5
+			PRINT 手に余るほど大きな
+	ENDSELECT
+ENDIF
 ;触手召喚中
 IF TEQUIP:触手
 	PRINTL 胸を絞り上げるように、幾本もの触手が絡みついた……
+;アニマル
+ELSEIF TALENT:アニマル
+	PRINTL 胸を撫でて可愛がった……
 ;ニプルキャップ装着中
 ELSEIF TEQUIP:ニプルキャップ
 	PRINTL 胸で震えるローターを、押し付けるように愛撫した……
@@ -1042,20 +1279,38 @@ WAIT
 @MESSAGE_COM_自慰
 SELECTCASE PREVCOMS
 	CASE "胸自慰"
-		PRINTFORMW %CALLNAME:TARGET%は胸だけでなく、\@ PENIS(TARGET) ? ペニス # クリトリス \@も弄りながら自慰を続けた……
+		IF TEQUIP:電動エネマグラ
+			PRINTFORMW %CALLNAME:TARGET%は乳首での自慰でうずき始めた前立腺を、括約筋でエネマグラを締め上げて自慰を続けた……
+		ELSE
+			PRINTFORMW %CALLNAME:TARGET%は胸だけでなく、\@ PENIS(TARGET) ? ペニス # クリトリス \@も弄りながら自慰を続けた……
+		ENDIF
 		RETURN 0
 	CASE "自慰"
-		PRINTFORM %CALLNAME:TARGET%は
-		IF TEQUIP:バイブ || TEQUIP:アナルバイブ
-			PRINT 自らの体内で震えるバイブに身悶えしながら
-		ELSEIF ABL:Ｃ感覚 >= 3
-			PRINT 自らの与える快楽に溺れながら
+		IF TEQUIP:電動エネマグラ
+			PRINTFORMW %CALLNAME:TARGET%は呼吸を整え、電動エネマグラの刺激に集中している……
 		ELSE
-			PRINTFORM あまり気持ち良くなさそうに\@ PENIS(TARGET) ? ペニス # クリトリス \@を弄りながら
+			PRINTFORM %CALLNAME:TARGET%は
+			IF TEQUIP:バイブ || TEQUIP:アナルバイブ
+				PRINT 自らの体内で震えるバイブに身悶えしながら
+			ELSEIF ABL:Ｃ感覚 >= 3
+				PRINT 自らの与える快楽に溺れながら
+			ELSE
+				PRINTFORM あまり気持ち良くなさそうに\@ PENIS(TARGET) ? ペニス # クリトリス \@を弄りながら
+			ENDIF
+			PRINTW 自慰を続けた……
 		ENDIF
-		PRINTW 自慰を続けた……
 		RETURN 0
 ENDSELECT
+
+IF TEQUIP:電動エネマグラ
+	PRINTFORM %CALLNAME:TARGET%に電動エネマグラでの自慰を命じ
+	IF EXP:Ａ経験 <= 50
+		PRINTW たが、いまいちコツが掴めずに肛門を締めたり緩めたりを繰り返している……
+	ELSE
+		PRINTW ると、自身の前立腺に当たるように器用に括約筋を使い、アナルの快感を堪能し始めた……
+	ENDIF
+	RETURN 0
+ENDIF
 
 ;従順LV3未満
 IF ABL:従順 < 3
@@ -1093,7 +1348,15 @@ IF OVER_GENITAL(TARGET) != ""
 		ENDIF
 	;男
 	ELSEIF SEX(TARGET) == 1
-		IF !TEQUIP:下半身下着 && CFLAG:挿入可
+		;メス落ち
+		IF ABL:メス度 >= 10
+			;アナルバイブ
+			IF TEQUIP:アナルバイブ
+				PRINT アナルバイブを激しく抜き挿ししながら
+			ELSE
+				PRINT もう勃起することのない男性期を弄りながら
+			ENDIF
+		ELSEIF !TEQUIP:下半身下着 && CFLAG:挿入可
 			PRINTFORM %OVER_GENITAL(TARGET)%をたくし上げて
 			SIF CFLAG:陥落
 				PRINTFORM 誘うような目つきで
@@ -1121,8 +1384,11 @@ ELSE
 		PRINT アナルで振動するバイブを自ら抜き挿ししながら
 	;男
 	ELSEIF SEX(TARGET) == 1
+		;メス落ち
+		IF ABL:メス度 >= 10
+			PRINT 勃たなくなった男性器には触れずに両手の指で前立腺を弄りながら
 		;陥落済み
-		IF CFLAG:陥落
+		ELSEIF CFLAG:陥落
 			PRINT 自らのペニスを慣れた手つきで扱きながら
 			;Ａ感覚4以上
 			SIF ABL:Ａ感覚 >= 4
@@ -1250,7 +1516,6 @@ SELECTCASE PREVCOMS
 ENDSELECT
 
 PRINTFORM %CALLNAME:PLAYER%に命令され、%CALLNAME:TARGET%は
-
 ;露出癖
 SELECTCASE ABL:露出癖
 	;LV0,1
@@ -1334,7 +1599,6 @@ SELECTCASE ABL:露出癖
 		ENDIF
 ENDSELECT
 PRINTL 
-
 ;ケモ+濡れてる
 IF TALENT:ファーリー && PALAM:潤滑 >= PALAMLV:3
 	PRINTL 拡がる膣口から漏れ出る愛液が、膣周りを覆う体毛を濡らす……
@@ -1372,8 +1636,12 @@ ELSE
 	PRINTFORML %CALLNAME:TARGET%に自らの自慰をくまなく見せつけた……
 ENDIF
 
-SIF TALENT:恥じらい || (TALENT:恋心 == NO:PLAYER && !CFLAG:陥落)
-	PRINTFORML %CALLNAME:TARGET%は顔を真っ赤にして、目の前の情景から目を逸らしている……
+IF TALENT:アニマル
+	PRINTFORML %CALLNAME:TARGET%は目の前の人型の奇特な行動に関心を見せず、首を傾げている……
+ELSE
+	SIF TALENT:恥じらい || (TALENT:恋心 == NO:PLAYER && !CFLAG:陥落)
+		PRINTFORML %CALLNAME:TARGET%は顔を真っ赤にして、目の前の情景から目を逸らしている……
+ENDIF
 WAIT
 
 ;-------------------------------------------------
@@ -1396,7 +1664,11 @@ ENDIF
 
 PRINTFORML %CALLNAME:TARGET%に自らの膣口を左右に拡げ、くまなく見せつけた……
 
-SIF TALENT:恥じらい || (TALENT:恋心 == NO:PLAYER && !CFLAG:陥落)
-	PRINTFORML %CALLNAME:TARGET%は顔を真っ赤にして、目の前の情景から目を逸らしている……
+IF TALENT:アニマル
+	PRINTFORML %CALLNAME:TARGET%は鼻を突き出して膣口の匂いを嗅いでいる……
+ELSE
+	SIF TALENT:恥じらい || (TALENT:恋心 == NO:PLAYER && !CFLAG:陥落)
+		PRINTFORML %CALLNAME:TARGET%は顔を真っ赤にして、目の前の情景から目を逸らしている……
+ENDIF
 WAIT
 

@@ -17,6 +17,9 @@ IF PLAYER == ASSI
 	SIF ABL:ASSI:マゾっ気 < 3 && !TALENT:マゾ
 		RETURNF 0
 ENDIF
+;アニマルだと無理
+SIF TALENT:アニマル
+	RETURNF 0
 
 COMRESULT = 1
 RETURNF 1
@@ -57,12 +60,10 @@ CALL SAMEN_SHOOT_T, 0, NOWEX:射精
 ;-------------------------------------------------
 ;経験の処理
 ;-------------------------------------------------
-CALL EXPUP, 1, 1
+CALL EXPUP_BASE, 1, 1
 
-PRINTL 嗜虐快楽経験+3
-EXP:嗜虐快楽経験 += 3
-PRINTL 調教経験+3
-EXP:調教経験 += 3
+CALL EXPUP, "嗜虐快楽経験", 3
+CALL EXPUP, "調教経験", 3
 
 RETURN 1
 

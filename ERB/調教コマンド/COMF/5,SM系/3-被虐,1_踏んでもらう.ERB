@@ -6,6 +6,9 @@
 ;サド、もしくはサドっ気3以上必要
 SIF ABL:サドっ気 < 3 && !TALENT:サド
 	RETURNF 0
+;足使用不可だとできない
+SIF TALENT:足使用不可
+	RETURNF 0
 ;拘束中はダメ
 SIF TEQUIP:縄
 	RETURNF 0
@@ -17,6 +20,9 @@ IF PLAYER == ASSI
 	SIF ABL:ASSI:マゾっ気 < 3 && !TALENT:マゾ
 		RETURNF 0
 ENDIF
+;アニマルだと無理
+SIF TALENT:アニマル
+	RETURNF 0
 
 COMRESULT = 1
 RETURNF 1
@@ -57,12 +63,10 @@ CALL SAMEN_SHOOT_T, 0, NOWEX:射精
 ;-------------------------------------------------
 ;経験の処理
 ;-------------------------------------------------
-CALL EXPUP, 1, 1
+CALL EXPUP_BASE, 1, 1
 
-PRINTL 嗜虐快楽経験+3
-EXP:嗜虐快楽経験 += 3
-PRINTL 調教経験+3
-EXP:調教経験 += 3
+CALL EXPUP, "嗜虐快楽経験", 3
+CALL EXPUP, "調教経験", 3
 
 RETURN 1
 

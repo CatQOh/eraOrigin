@@ -495,23 +495,6 @@ SELECTCASE ABL:性交中毒
 		TIMES SOURCE:中毒 , 5.00
 ENDSELECT
 
-;対象の魔力を0.{回復率}%回復させる関数
-@魔力回復, 回復率, 対象 = -1
-#DIM DYNAMIC 回復率
-#DIM DYNAMIC 回復量
-#DIM DYNAMIC 対象
-
-SIF 対象 == -1
-	対象 = TARGET
-
-SIF !TALENT:対象:魔術師
-	RETURN
-
-回復量 = MAXBASE:対象:魔力*回復率/1000
-BASE:対象:魔力 = LIMIT(BASE:対象:魔力+回復量, 0, MAXBASE:対象:魔力)
-
-RETURN
-
 ;獣人、獣のフェロモンによる催淫の関数
 @獣人催淫, 催淫強度 = 1, 対象 = -1, 催淫主 = -1
 #DIM DYNAMIC 催淫強度

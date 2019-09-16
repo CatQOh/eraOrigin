@@ -19,14 +19,19 @@ SIF SEX(ASSI) == 1 && ABL:ASSI:Ａ感覚 < 3
 ;それ以外の場合は助手が小人体型のとき主人が禁断の知識持ちじゃないとダメ
 SIF TALENT:ASSI:小人体型 && !TALENT:MASTER:禁断の知識 && !TALENT:MASTER:小人体型
 	RETURNF 0
-;主人がペニスないとダメ
-SIF !PENIS(MASTER)
+;主人がペニス有り、もしくはペニスバンドがないとダメ
+SIF !PENIS(MASTER) && !TEQUIP:MASTER:ペニスバンド
+	RETURNF 0
+SIF Ｐ使用不可(MASTER)
 	RETURNF 0
 ;触手調教中はダメ
 SIF TEQUIP:触手
 	RETURNF 0
 ;新妻プレイ中はダメ
 SIF TEQUIP:エプロン
+	RETURNF 0
+;助手がＶ使用中はダメ
+SIF Ｖ使用中(ASSI)
 	RETURNF 0
 
 COMRESULT = 1
@@ -133,6 +138,10 @@ SELECTCASE ABL:PLAYER:Ｃ感覚
 		LOCAL += LOCAL*(ABL:PLAYER:Ｃ感覚-1)
 ENDSELECT
 
+;子供は締まりが良いので増える
+SIF TALENT:ASSI:小柄体型
+	TIMES LOCAL , 1.20
+
 CALL 射精ゲージ増加, LOCAL, MASTER
 
 ;-------------------------------------------------
@@ -198,6 +207,7 @@ LOSEBASE:気力 += 150
 SOURCE:情愛 = 100
 SOURCE:液体 = 100
 SOURCE:屈従 = 500
+SOURCE:欲情 = 200
 SOURCE:逸脱 = 700
 SOURCE:反感 = 1000
 
@@ -214,7 +224,17 @@ IF TALENT:ASSI:処女
 	TIMES SOURCE:屈従 , 3.00
 ENDIF
 
-;助手と奴隷の相性によって、全体のソースが変化
+;助手が気持ちよさそうにしてれば欲情増加
+SELECTCASE TFLAG:主人挿入箇所
+	CASE 1
+		SOURCE:欲情 += MIN(ABL:ASSI:Ｖ感覚, 10)*SOURCE:欲情/5
+	CASE 2
+		SOURCE:欲情 += MIN(ABL:ASSI:Ａ感覚, 10)*SOURCE:欲情/5
+ENDSELECT
+SIF CFLAG:ASSI:陥落
+	TIMES SOURCE:欲情, 1.50
+
+;助手と奴隷の相性によって、全体のソースが変化 欲情は例外
 LOCAL = RELATION:(NO:ASSI)
 SOURCE:情愛 *= LOCAL
 SOURCE:液体 *= LOCAL
@@ -271,15 +291,16 @@ SELECTCASE TFLAG:主人挿入箇所
 		IF TALENT:ASSI:処女
 			TALENT:ASSI:処女 = 0
 			PRINTL ＜助手処女喪失＞
-			IF RELATION:(NO:ASSI) > 100
-				PRINTL 異常経験+2
-				EXP:異常経験 += 2
-			ELSE
-				PRINTL 異常経験+1
-				EXP:異常経験++
+			IF !CFLAG:助手の処女喪失を見せつけられた経験
+				PRINTL ＜公開処女喪失＞
+				IF RELATION:(NO:ASSI) > 100
+					CALL EXPUP, "異常経験", 2
+				ELSE
+					CALL EXPUP, "異常経験", 1
+				ENDIF
 			ENDIF
-			PRINTFORML 異常経験+1(%CALLNAME:ASSI%)
-			EXP:ASSI:異常経験++
+			CFLAG:助手の処女喪失を見せつけられた経験++
+			CALL EXPUP, "異常経験", 1, ASSI
 			IF TALENT:ASSI:性転換済
 				CFLAG:ASSI:性転換処女の奪われ方 = 2
 				VIRGIN:ASSI:11 = %NAME:MASTER%
@@ -298,32 +319,33 @@ SELECTCASE TFLAG:主人挿入箇所
 		ENDIF
 
 		;助手のＶ経験
-		PRINTFORML Ｖ経験+1(%CALLNAME:ASSI%)
-		EXP:ASSI:Ｖ経験++
+		CALL EXPUP, "Ｖ経験", 2, ASSI
+		CALL EXPUP, "性交経験", 1, ASSI
+		CALL EXPUP, "性交経験", 1, MASTER
 	CASE 2
-		;助手のＶ経験
-		PRINTFORML Ａ経験+1(%CALLNAME:ASSI%)
-		EXP:ASSI:Ａ経験++
+		;助手のＡ経験
+		CALL EXPUP, "Ａ経験", 2, ASSI
+		CALL EXPUP, "性交経験", 1, ASSI
+		CALL EXPUP, "性交経験", 1, MASTER
 ENDSELECT
 
 ;助手の同性愛経験
 IF SEX(MASTER) == SEX(ASSI)
 	SELECTCASE SEX(ASSI)
 		CASE 1
-			PRINTFORML ゲイ経験+3(%CALLNAME:ASSI%)
-			EXP:ASSI:ゲイ経験 += 3
+			CALL EXPUP, "ゲイ経験", 3, ASSI
+			CALL EXPUP, "ゲイ経験", 3, MASTER
 		CASE 2
-			PRINTFORML レズ経験+3(%CALLNAME:ASSI%)
-			EXP:ASSI:レズ経験 += 3
+			CALL EXPUP, "レズ経験", 3, ASSI
+			CALL EXPUP, "レズ経験", 3, MASTER
 	ENDSELECT
 ENDIF
 
-;依存度補正値(助手との相性100↑かつ淫乱で1、娼婦で2）
-IF TALENT:淫乱 && RELATION:(NO:ASSI) > 100
-	TFLAG:依存度補正 += 1
-ELSEIF TALENT:娼婦 && RELATION:(NO:ASSI) > 100
-	TFLAG:依存度補正 += 2
-ENDIF
+SIF !避妊具(MASTER)
+	CALL 獣人催淫, 1, ASSI, MASTER
+
+経験回数:MASTER:(NO:ASSI) += 1
+経験回数:ASSI:(NO:MASTER) += 1
 
 RETURN 1
 

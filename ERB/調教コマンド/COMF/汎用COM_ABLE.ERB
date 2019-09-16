@@ -1,12 +1,6 @@
 ﻿
 @USERCOM_ABLE_性交, ARG
 #FUNCTION
-;ゲーセンに居る場合はトイレじゃないとできない
-SIF TEQUIP:ゲームセンター && !TEQUIP:トイレ
-	RETURNF 0
-;上級売春中は方針がハード、SMじゃないとダメ
-SIF 上級売春中 && !GROUPMATCH(娼館方針, 2, 3)
-	RETURNF 0
 ;調教者がペニス有り、もしくはペニスバンドがないとダメ
 SIF !PENIS(PLAYER) && !TEQUIP:PLAYER:ペニスバンド
 	RETURNF 0
@@ -26,11 +20,6 @@ SIF TALENT:小人体型 && !TALENT:MASTER:禁断の知識 && !TALENT:PLAYER:小�
 ;触手調教中はダメ
 SIF TEQUIP:触手
 	RETURNF 0
-;お風呂場プレイ中はプレイマットが無いとダメ
-IF TEQUIP:お風呂場
-	SIF !ITEM:プレイマット
-		RETURNF 0
-ENDIF
 
 RETURNF 1
 
@@ -52,14 +41,6 @@ RETURNF 1
 
 @USERCOM_ABLE_Ａ性交, ARG
 #FUNCTION
-;ゲーセンに居る場合はトイレじゃないとできない
-SIF TEQUIP:ゲームセンター && !TEQUIP:トイレ
-	RETURNF 0
-;上級売春中は方針がハード、SMじゃないとダメ 男ならゲイじゃないとダメ
-IF 上級売春中
-	SIF !GROUPMATCH(娼館方針, 2, 3) || (SEX(TARGET) == 1 && !ABL:ゲイ中毒)
-		RETURNF 0
-ENDIF
 ;調教者がペニス有り、もしくはペニスバンドがないとダメ
 SIF !PENIS(PLAYER) && !TEQUIP:PLAYER:ペニスバンド
 	RETURNF 0
@@ -76,11 +57,6 @@ SIF TALENT:小人体型 && !TALENT:MASTER:禁断の知識 && !TALENT:PLAYER:小�
 ;触手調教中はダメ
 SIF TEQUIP:触手
 	RETURNF 0
-;お風呂場プレイ中はプレイマットが無いとダメ
-IF TEQUIP:お風呂場
-	SIF !ITEM:プレイマット
-		RETURNF 0
-ENDIF
 
 RETURNF 1
 
@@ -96,15 +72,6 @@ RETURNF 1
 
 @USERCOM_ABLE_性交させる, ARG
 #FUNCTION
-;ゲーセンに居る場合はトイレじゃないとできない
-SIF TEQUIP:ゲームセンター && !TEQUIP:トイレ
-	RETURNF 0
-;上級売春中は方針がハード、SMじゃないとダメ
-SIF 上級売春中 && !GROUPMATCH(娼館方針, 2, 3)
-	RETURNF 0
-;上級売春中で方針がSM、それでもって客がマゾだと実行できない
-SIF 上級売春中 && TALENT:マゾ
-	RETURNF 0
 ;対象がペニス有り、もしくはペニスバンドがないとダメ
 SIF !PENIS(TARGET) && !TEQUIP:ペニスバンド
 	RETURNF 0
@@ -120,9 +87,6 @@ SIF Ｐ使用中(TARGET) || Ｐ使用不可(TARGET)
 ;触手調教中はダメ
 SIF TEQUIP:触手
 	RETURNF 0
-;お風呂場プレイ中はプレイマットが無いとダメ
-SIF TEQUIP:お風呂場 && !ITEM:プレイマット
-	RETURNF 0
 ;新妻プレイ中はダメ
 SIF TEQUIP:エプロン
 	RETURNF 0
@@ -137,12 +101,6 @@ RETURNF 1
 
 @USERCOM_ABLE_Ｐ奉仕, ARG
 #FUNCTION
-;ゲーセンに居る場合はトイレじゃないとできない
-SIF TEQUIP:ゲームセンター && !TEQUIP:トイレ
-	RETURNF 0
-;上級売春中は客が男嫌いだとダメ
-SIF 上級売春中 && TALENT:男嫌い
-	RETURNF 0
 ;調教者がペニス無いとダメ
 SIF !PENIS(PLAYER)
 	RETURNF 0

@@ -124,8 +124,18 @@ ENDIF
 ;屈服刻印
 LOCAL += MARK:屈服刻印
 
+;ヤンデレなら依存度1.5倍
+SIF TALENT:ヤンデレ
+	TIMES LOCAL, 1.50
+
 ;依存度補正を加算
 LOCAL += TFLAG:依存度補正
+
+;アニマルなら3倍
+;アニマルだと無理
+SIF TALENT:アニマル
+	LOCAL *= 3
+
 
 ;同族嫌悪&同種族
 SIF TALENT:同族嫌悪 && CSTR:種族 == CSTR:PLAYER:種族
@@ -188,7 +198,12 @@ LOCAL -= MARK:反発刻印
 CFLAG:依存度 += LOCAL
 
 IF LOCAL > 0
-	PRINTL <依存度増加>
+	IF CFLAG:依存度 >= 5000
+		PRINTL <依存度最大>
+		CFLAG:依存度 = 5000
+	ELSE
+		PRINTL <依存度増加>
+	ENDIF
 ELSEIF LOCAL < 0
 	PRINTL <依存度減少>
 ELSE
@@ -198,4 +213,3 @@ ENDIF
 TFLAG:依存度補正 = 0
 
 RETURN 0
-

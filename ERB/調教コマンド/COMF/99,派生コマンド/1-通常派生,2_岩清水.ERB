@@ -43,11 +43,17 @@ SIF !VAGINA(TARGET)
 ;触手調教中はダメ
 SIF TEQUIP:触手
 	RETURNF 0
+;Ｖ使用中はダメ
+SIF Ｖ使用中(TARGET)
+	RETURNF 0
 
 COMRESULT = 1
 RETURNF 1
 
 @COM_岩清水
+;実績「野増菜かなでの愛液を岩清水で啜り上げる」
+SIF CHARANAMEF(TARGET) == "野増菜かなで"
+	CALL 実績解除, "「ごちそうさまでした」をちゃーんとゆってね"
 PRINTL 岩清水
 SELECTCOMS = 岩清水
 SELECTCOM = GETNUM(TRAINNAME, "岩清水")
@@ -102,15 +108,9 @@ STAIN:ヴァギナ = 0
 ;-------------------------------------------------
 ;経験の処理
 ;-------------------------------------------------
-CALL EXPUP, 2, 1
+CALL EXPUP_BASE, 2, 1
 
-;獣人、獣による催淫
-SELECTCASE CSTR:種族
-	CASE "獣人", "獣"
-		CFLAG:PLAYER:媚薬++
-		SIF CFLAG:PLAYER:媚薬%5 == 0
-			CFLAG:PLAYER:残数++
-ENDSELECT
+CALL 獣人催淫, 1, PLAYER
 
 RETURN 1
 

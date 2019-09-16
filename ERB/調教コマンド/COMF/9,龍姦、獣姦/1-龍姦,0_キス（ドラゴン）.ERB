@@ -18,6 +18,9 @@ SIF !TALENT:PLAYER:ドラゴン使い
 ;PLAYERが助手で未陥落だとダメ
 SIF PLAYER == ASSI && !CFLAG:PLAYER:陥落
 	RETURNF 0
+;アニマルは無理
+SIF TALENT:アニマル
+	RETURNF 0
 
 COMRESULT = 1
 RETURNF 1
@@ -29,7 +32,8 @@ RETURNF 1
 ;技巧が高いとキス・オブ・ザ・ドラゴンに派生
 IF ABL:PLAYER:技巧 >= 3
 	PRINTL キス・オブ・ザ・ドラゴン
-	TFLAG:実行判定無視 = 1
+	;このターンで-1されるので2
+	TFLAG:実行判定無視 = 2
 ELSE
 	PRINTL キス（ドラゴン）
 ENDIF
@@ -76,11 +80,7 @@ IF PLAYER == MASTER
 		TIMES LOCAL , 3.00
 ENDIF
 
-;再装填処理中は射精ゲージは20分の1に
-SIF CFLAG:賢者タイム > 0
-	LOCAL /= 20
-
-BASE:射精 += LOCAL
+CALL 射精ゲージ増加, LOCAL, TARGET
 
 ;-------------------------------------------------
 ;ソース追加処理
@@ -125,7 +125,7 @@ CALL SAMEN_SHOOT_T, 0, NOWEX:射精
 ;-------------------------------------------------
 ;経験の処理
 ;-------------------------------------------------
-CALL EXPUP, 0, 1
+CALL EXPUP_BASE, 0, 1
 
 RETURN 1
 

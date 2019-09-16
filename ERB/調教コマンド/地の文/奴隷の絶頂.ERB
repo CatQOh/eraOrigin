@@ -18,6 +18,56 @@ ELSEIF NOWEX:射精
 		ELSE
 			PRINTFORML %CALLNAME:TARGET%の勃起したペニスから放たれた精液が、避妊具の中に溜まっていく……
 		ENDIF
+	;搾精器
+	ELSEIF TEQUIP:搾精器
+		PRINTFORML %CALLNAME:TARGET%の精液は搾精器に搾り取られ、瓶の中に白濁液が溜まっていく……
+;			IF TEQUIP:全身上着
+;				PRINTFORML %CSTR:全身上着%の中で苦しそうに膨らむ%CALLNAME:TARGET%のペニスが、避妊具に包まれながら射精したようだ……
+;			ELSEIF TEQUIP:下半身上着
+;				PRINTFORML 服を着たまま射精してしまった%CALLNAME:TARGET%だが、避妊具が衣服を汚すのを防いだ
+;			ENDIF
+;		;ペニス露出時
+;		ELSE
+;			PRINTFORML %CALLNAME:TARGET%の勃起したペニスから放たれた精液が、避妊具の中に溜まっていく……
+;		ENDIF
+;	;下半身がちゃんと服着てる状態（誰かに中出したとき以外）
+;	ELSEIF (TEQUIP:下半身上着 || TEQUIP:全身上着) && SELECTCOMS != "逆レイプ" && SELECTCOMS != "助手を犯させる"
+;		;下半身上着着てる
+;		IF TEQUIP:下半身上着
+;			;スカートなど下が空いてる服
+;			IF CFLAG:下半身上着 == 1
+;				;ノーパン
+;				IF TEQUIP:下半身下着 == 0
+;					PRINTFORML %CSTR:下半身上着%の裾を持ち上げるペニスがびくびくと震え、隠れた先端から精液が零れ落ちる……
+;				;穿いてる
+;				ELSE
+;					PRINTFORML ひらひらと揺れる%CSTR:下半身上着%の中で、服に似合わぬ%CALLNAME:TARGET%のいちもつが精液を吐き出した……
+;				ENDIF
+;			;ズボンなど密着している服
+;			ELSE
+;				PRINTFORML びくんびくんと体を震わせる%CALLNAME:TARGET%の股間は%CSTR:下半身上着%の中で膨れ上がり、
+;				PRINTFORML 行き場を失った精液が染みとなって衣服を汚している……
+;			ENDIF
+;		;全身上着着てる(下半身上着は着てない)
+;		ELSEIF TEQUIP:全身上着
+;			;和服など下が空いてる服
+;			IF CFLAG:全身上着 == 1
+;				;ノーパン
+;				IF TEQUIP:下半身下着 == 0
+;					PRINTFORML %CSTR:全身上着%の裾を持ち上げるペニスがびくびくと震え、隠れた先端から精液が零れ落ちる……
+;				;穿いてる
+;				ELSE
+;					PRINTFORML ひらひらと揺れる%CSTR:全身上着%の中で、服に似合わぬ%CALLNAME:TARGET%のいちもつが精液を吐き出した……
+;				ENDIF
+;			;その他密着している服
+;			ELSE
+;				PRINTFORML びくんびくんと体を震わせる%CALLNAME:TARGET%の股間は%CSTR:全身上着%の中で膨れ上がり、
+;				PRINTFORML 行き場を失った精液が染みとなって衣服を汚している……
+;			ENDIF
+;		ENDIF
+;	;下着丸見え
+;	ELSEIF TEQUIP:下半身下着
+;		PRINTFORML 布一枚を隔てて男性器から漏れた精液が下着を汚し、濡れた%CSTR:下半身下着%にくっきりと%CALLNAME:TARGET%の陰茎の形が浮かび上がっている……
 ;	;服も避妊具も無し
 	ELSE
 		SELECTCASE SELECTCOMS
@@ -43,10 +93,20 @@ ELSEIF NOWEX:射精
 					PRINTFORM \@ TEQUIP:下半身下着 ? %CSTR:下半身下着% # %OVER_GENITAL(TARGET)% \@の中に
 				PRINTL 射精した……
 			CASE "自慰"
-				IF OVER_GENITAL(TARGET) != ""
-					PRINTFORML 服の上から股間を弄り続ける%CALLNAME:TARGET%の体が震える。どうやら\@ TEQUIP:下半身下着 ? %CSTR:下半身下着% # %OVER_GENITAL(TARGET)% \@の中に射精してしまったようだ……
+				IF TEQUIP:電動エネマグラ
+					IF OVER_GENITAL(TARGET) != ""
+						PRINTFORML %CALLNAME:TARGET%の%OVER_GENITAL(TARGET)%に精液が滲んでいる。どうやらエネマグラの刺激で射精に達してしまったようだ……
+					ELSE
+						PRINTFORML %CALLNAME:TARGET%は肛門の締め付けで器用に自身の前立腺を責め続け、射精にまで達してしまった。勢い無く精液が垂れ出ている……
+					ENDIF
 				ELSE
-					PRINTFORML %CALLNAME:TARGET%は%CALLNAME:PLAYER%に見られながら自分の指で射精した……
+					IF CFLAG:貞操帯
+						PRINTFORML 貞操帯を着けられてペニスを触れない%CALLNAME:TARGET%は、アナルでの自慰でなんとか射精に達したようだ。貞操帯の隙間から白濁液が溢れている……
+					ELSEIF OVER_GENITAL(TARGET) != ""
+						PRINTFORML 服の上から股間を弄り続ける%CALLNAME:TARGET%の体が震える。どうやら\@ TEQUIP:下半身下着 ? %CSTR:下半身下着% # %OVER_GENITAL(TARGET)% \@の中に射精してしまったようだ……
+					ELSE
+						PRINTFORML %CALLNAME:TARGET%は%CALLNAME:PLAYER%に見られながら自分の指で射精した……
+					ENDIF
 				ENDIF
 			CASE "下着扱きする"
 				PRINTFORML %CALLNAME:PLAYER%の%CSTR:PLAYER:下半身下着%に包まれる%CALLNAME:TARGET%のペニスが精液を吐き出し、%CALLNAME:PLAYER%の指と下着に粘つく白濁液が絡みついた……
@@ -95,9 +155,9 @@ ELSEIF NOWEX:射精
 				ENDIF
 			CASE "アナルビーズ"
 				IF !TEQUIP:アナルビーズ
-					PRINTFORML 勢い良く抜かれて腸内を暴れまわる玉に刺激され、%CALLNAME:TARGET%は足をがくがくさせながら精液を飛ばした……
+					PRINTFORML 勢い良く抜かれて腸内を暴れまわる珠に刺激され、%CALLNAME:TARGET%は\@ TALENT:足使用不可 ? 身を捩らせながら # 足をがくがくさせながら \@精液を飛ばした……
 				ELSE
-					PRINTFORML 肛門がひと粒ずつ玉を飲み込んでいる傍ら、前の口は粘着く白い液をだらしなく垂れ流している……
+					PRINTFORML 肛門がひと粒ずつ珠を飲み込んでいる傍ら、前の口は粘つく白い液をだらしなく垂れ流している……
 				ENDIF
 			CASE "正常位", "挿入Gスポ責め"
 				IF NOWEX:PLAYER:射精 && !GETBIT(TFLAG:避妊具射精, 0) && !GETBIT(TFLAG:避妊具射精, 1)
@@ -119,7 +179,7 @@ ELSEIF NOWEX:射精
 				IF OVER_GENITAL(TARGET) != ""
 					PRINTFORML %OVER_GENITAL(TARGET)%の中でペニスをびくびくと震わせて射精している……
 				ELSE
-					IF PALAM:欲情 <= PALAMLV:3
+					IF PALAM:勃起 <= PALAMLV:3
 						PRINTL 勃ちきっていないペニスから精液を零している……
 					ELSE
 						PRINTL 腹に触れそうなほど反り返ったペニスから勢い良く精液を飛ばしている……
@@ -133,7 +193,7 @@ ELSEIF NOWEX:射精
 				ENDIF
 				IF OVER_GENITAL(TARGET) != "" && PALAM:欲情 >= PALAMLV:3
 					PRINTFORML %OVER_GENITAL(TARGET)%の裾を持ち上げるペニスを射精させて%CALLNAME:PLAYER%の腹に熱い精液を零している……
-				ELSEIF PALAM:欲情 <= PALAMLV:3
+				ELSEIF PALAM:勃起 <= PALAMLV:3
 					PRINTFORML まだ勃起していないペニスの先端を%CALLNAME:PLAYER%の腹に擦り付けながら射精している……
 				ELSE
 					PRINTFORML 硬く反り返ったペニスを射精させて%CALLNAME:PLAYER%の体を白く汚している……
@@ -162,7 +222,7 @@ ELSEIF NOWEX:射精
 				ENDIF
 				IF OVER_GENITAL(TARGET) != "" && PALAM:欲情 >= PALAMLV:3
 					PRINTFORML %OVER_GENITAL(TARGET)%の裾を持ち上げるペニスを射精させて衣服を汚している……
-				ELSEIF PALAM:欲情 <= PALAMLV:3
+				ELSEIF PALAM:勃起 <= PALAMLV:3
 					PRINTFORML まだ柔らかい自らの男性器からだらしなく精液を漏らしている……
 				ELSE
 					PRINTFORML 硬く反り返るペニスから精液を噴き出して自らの体を汚している……
@@ -184,7 +244,11 @@ ELSEIF NOWEX:射精
 					CASE 1
 						IF NOWEX:PLAYER:射精 && !GETBIT(TFLAG:避妊具射精, 0) && !GETBIT(TFLAG:避妊具射精, 1)
 							IF CFLAG:陥落
-								PRINTFORML 尻穴に%CALLNAME:PLAYER%の熱い精液を注がれながら前立腺を擦られる%CALLNAME:TARGET%も、\@ TEQUIP:縄 ? 拘束される手足をびくびくと震わせながら # %CALLNAME:PLAYER%に腕と足で抱きついて \@射精している……
+								IF TALENT:足使用不可
+									PRINTFORML 尻穴に%CALLNAME:PLAYER%の熱い精液を注がれながら前立腺を擦られる%CALLNAME:TARGET%も、\@ TEQUIP:縄 ? 拘束される手をびくびくと震わせながら # %CALLNAME:PLAYER%に抱きついて \@射精している……
+								ELSE
+									PRINTFORML 尻穴に%CALLNAME:PLAYER%の熱い精液を注がれながら前立腺を擦られる%CALLNAME:TARGET%も、\@ TEQUIP:縄 ? 拘束される手足をびくびくと震わせながら # %CALLNAME:PLAYER%に腕と足で抱きついて \@射精している……
+								ENDIF
 							ELSE
 								PRINTFORML 前立腺を熱い精液で汚される%CALLNAME:TARGET%もくぐもった声を上げながら射精してしまっている……
 							ENDIF
@@ -195,7 +259,7 @@ ELSEIF NOWEX:射精
 						IF NOWEX:PLAYER:射精 && !GETBIT(TFLAG:避妊具射精, 0) && !GETBIT(TFLAG:避妊具射精, 1)
 							PRINTFORML 腸内に射精される%CALLNAME:TARGET%も、膣口から愛液を垂らしながら射精している……
 						ELSE
-							PRINTFORML %CALLNAME:PLAYER%に覆い被さられて尻穴を突かれる%CALLNAME:PLAYER%は、掴まれた足をびくびくと震わせて射精している……
+							PRINTFORML %CALLNAME:PLAYER%に覆い被さられて尻穴を突かれる%CALLNAME:PLAYER%は、\@ TALENT:足使用不可 ? 体 # 掴まれた足 \@をびくびくと震わせて射精している……
 						ENDIF
 				ENDSELECT
 			CASE "後背位アナル"
@@ -279,20 +343,28 @@ ELSEIF NOWEX:射精
 				;受けが射精してる場合はそっちで表示してるのでスルー
 				IF !NOWEX:PLAYER:射精 || GETBIT(TFLAG:避妊具射精, 0) || GETBIT(TFLAG:避妊具射精, 1)
 					PRINTFORM %CALLNAME:PLAYER%の膣肉にペニスを締め付けられる%CALLNAME:TARGET%は、
-					IF CFLAG:陥落
-						PRINTFORM 何度も%CALLNAME:PLAYER%の名前を呼びながら
+					IF TALENT:アニマル
+						PRINTFORM 動きを止めてペニスを大きく膨らませながら
 					ELSE
-						PRINT 少し不安な表情を浮かべながら
+						IF CFLAG:陥落
+							PRINTFORM 何度も%CALLNAME:PLAYER%の名前を呼びながら
+						ELSE
+							PRINT 少し不安な表情を浮かべながら
+						ENDIF
 					ENDIF
 					PRINTL 膣内に射精した……
 				ENDIF
 			CASE "正常位アナルさせる", "後背位アナルさせる"
 				IF !NOWEX:PLAYER:射精 || GETBIT(TFLAG:避妊具射精, 0) || GETBIT(TFLAG:避妊具射精, 1)
 					PRINTFORM %CALLNAME:PLAYER%の尻穴にペニスを突き入れる%CALLNAME:TARGET%は、
-					IF CFLAG:陥落
-						PRINTFORM 何度も%CALLNAME:PLAYER%の名前を呼びながら
+					IF TALENT:アニマル
+						PRINTFORM 動きを止めてペニスを大きく膨らませながら
 					ELSE
-						PRINT 半ば快感に意識を飲まれながら
+						IF CFLAG:陥落
+							PRINTFORM 何度も%CALLNAME:PLAYER%の名前を呼びながら
+						ELSE
+							PRINT 半ば快感に意識を飲まれながら
+						ENDIF
 					ENDIF
 					PRINTL 腸内に射精した……
 				ENDIF
@@ -352,7 +424,7 @@ ELSEIF NOWEX:射精
 			CASE "触手ペニス責め", "触手搾精"
 				PRINTFORML 根元まで触手に咥えられたペニスが射精すると、触手は中身を搾りつくすかのように汚い水音を立てながら吸い上げている……
 			CASE "キス（ドラゴン）"
-				PRINTFORML %CSTR:PLAYER:ドラゴン%との濃厚な口吻で思考が蕩ける%CALLNAME:PLAYER%は、体に熱を篭もらせながら気持ち良さそうに射精した……
+				PRINTFORML %CSTR:PLAYER:ドラゴン%との濃厚な口づけで思考が蕩ける%CALLNAME:PLAYER%は、体に熱を篭もらせながら気持ち良さそうに射精した……
 			CASE "舐め回す（ドラゴン）"
 				PRINTFORML %CSTR:PLAYER:ドラゴン%に舐め回される%CALLNAME:PLAYER%は、体にまとわりつく熱い唾液と舌から抵抗できずに射精した……
 			CASE "膣を犯す（ドラゴン）"
@@ -394,7 +466,7 @@ ELSEIF NOWEX:射精
 				IF NOWEX:PLAYER:射精 && !GETBIT(TFLAG:避妊具射精, 0) && !GETBIT(TFLAG:避妊具射精, 1)
 					PRINTFORML %CALLNAME:PLAYER%の射精と同時に、%CALLNAME:TARGET%も%CALLNAME:PLAYER%の口の中に射精した……
 				ELSE
-					PRINTFORML %CALLNAME:PLAYER%の性器に荒っぽい息を吐きかけながら、%CALLNAME:TARGET%は足を震わせて%CALLNAME:PLAYER%の顔に射精した……
+					PRINTFORML %CALLNAME:PLAYER%の性器に荒っぽい息を吐きかけながら、%CALLNAME:TARGET%は\@ !TALENT:足使用不可 ? 足を震わせて #\@%CALLNAME:PLAYER%の顔に射精した……
 				ENDIF
 			CASE "正常位首絞め", "後背位首絞め", "正常位アナル首絞め", "後背位アナル首絞め"
 				PRINTFORML 首を締め上げられる苦しさの中、%CALLNAME:TARGET%\@ NOWEX:PLAYER:射精 ? も # は \@陰茎をきつく締め付け断末魔のように大量の精液を射精し続けた……
@@ -449,8 +521,36 @@ ELSEIF NOWEX:射精
 					CASE 4, 5
 						PRINTFORML %CALLNAME:PLAYER%が乳房で持ち上げるようにして咥えていた%CALLNAME:TARGET%のペニスは射精を迎え、%CALLNAME:PLAYER%の口内を精液で満たした……
 				ENDSELECT
+			CASE "後背位手淫", "後背位アナル手淫"
+				PRINTFORM %CALLNAME:TARGET%は後ろから突かれながら%CALLNAME:PLAYER%の手の中で射精する。扱く手を止めずに
+				SELECTCASE SEX(TARGET)
+					CASE 1
+						PRINT 前立腺を擦り続けると、
+					CASE 2
+						PRINT 挿入を繰り返すと、
+				ENDSELECT
+				PRINTL そのたびにペニスが震えて精液を漏らし続けた……
+			CASE "騎乗位手淫", "騎乗位アナル手淫"
+				IF FALLTYPE(TARGET) == 2
+					PRINTFORML %CALLNAME:TARGET%は射精に達しつつも騎乗位を止めることなく、腰を落として深くまで飲み込むたびに噴き出る精液が%CALLNAME:PLAYER%の体に降り掛かっている……
+				ELSE
+					PRINTFORML %CALLNAME:TARGET%は騎乗位の動きを止め、射精を迎える。%CALLNAME:PLAYER%は腰を揺すりながら手淫を続け、%CALLNAME:TARGET%の精液を存分に搾り取った……
+				ENDIF
+			CASE "前立腺刺激"
+				PRINTFORML %CALLNAME:TARGET%は腸内にある雄の性感帯を撫でられて射精に達した……
+			CASE "ペットに舐めさせる"
+				PRINTFORML %CALLNAME:TARGET%は%CALLNAME:ASSI%に舐められながら射精したが、%CALLNAME:ASSI%は執拗に舐めるのをやめずにいた……
+			CASE "ペットに犯させる"
+				PRINTFORML %CALLNAME:TARGET%は%CALLNAME:ASSI%との交尾に快楽を得たのか、射精してしまっている……
+			CASE "電動エネマグラ"
+				IF !TEQUIP:電動エネマグラ
+					PRINTFORML %CALLNAME:TARGET%の尻穴から電動エネマグラを引き抜くと、その拍子に精液が溢れ出してきた……
+				ELSE
+					PRINTFORML %CALLNAME:TARGET%は電動エネマグラを挿入された途端、それだけで感じたのか射精してしまった……
+				ENDIF
 			;コマンドで射精する部分は上で網羅しているので、ここではオナホ等装備中にどうでもいいコマンドで射精した場合を参照
 			CASEELSE
+				$ELSECUM
 				REPEAT VARSIZE("TEQUIP")
 					SIF TEQUIP:COUNT == 0
 						CONTINUE
@@ -461,24 +561,33 @@ ELSEIF NOWEX:射精
 							ELSE
 								PRINTFORML %CALLNAME:TARGET%はオナホールにペニスを包み込まれる刺激で射精してしまった……
 							ENDIF
+							BREAK
 						CASE "バイブ"
 							IF TEQUIP:触手
 								PRINTFORML %CALLNAME:TARGET%は膣内を掻き回す触手に堪え切れず射精してしまった……
 							ELSE
 								PRINTFORML %CALLNAME:TARGET%は膣内で震えるバイブの刺激で射精してしまった……
 							ENDIF
+							BREAK
 						CASE "アナルバイブ"
 							IF TEQUIP:触手
 								PRINTFORML %CALLNAME:TARGET%は腸内を掻き回す触手に堪え切れず射精してしまった……
 							ELSE
 								PRINTFORML %CALLNAME:TARGET%は腸内で震えるバイブの刺激で射精してしまった……
 							ENDIF
+							BREAK
 						CASE "アナルビーズ"
 							PRINTFORML %CALLNAME:TARGET%は腸内を圧迫するアナルビーズの刺激で射精してしまった……
+							BREAK
 						CASE "Ｖ異物"
 							PRINTFORML %CALLNAME:TARGET%はヴァギナに挿入された異物の刺激で射精してしまった……
+							BREAK
 						CASE "Ａ異物"
 							PRINTFORML %CALLNAME:TARGET%はアナルに挿入された異物の刺激で射精してしまった……
+							BREAK
+						CASE "電動エネマグラ"
+							PRINTFORML %CALLNAME:TARGET%は肛門を締め付け、エネマグラの先端を前立腺に強く擦りつけながら射精してしまった……
+							BREAK
 					ENDSELECT
 				REND
 		ENDSELECT
@@ -514,6 +623,8 @@ IF NOWEX:射精
 				PRINTFORML 媚薬により絶頂が止まらない%CALLNAME:TARGET%は、いつもより多量の精液を出しているようだ
 			CASE "新妻プレイ"
 				PRINTFORML エプロンの下で%CALLNAME:TARGET%のペニスが震えている……
+			CASE "搾精器"
+				PRINTFORML 射精が終わっても搾精器は動きを止めずに%CALLNAME:TARGET%から精液を吸い出そうとしている……
 		ENDSELECT
 	REND
 ENDIF
@@ -675,11 +786,16 @@ IF LOCAL:1
 					IF TALENT:無機物
 						PRINTFORML ヴァギナでの絶頂で%CALLNAME:TARGET%の無機質な体に電流が走るように震えている……
 					ELSE
-						PRINTFORML ヴァギナでの絶頂で%CALLNAME:TARGET%は断続的に透明な潮を噴き出している……
+						SIF !NOWEX:放尿
+							PRINTFORML ヴァギナでの絶頂で%CALLNAME:TARGET%は断続的に透明な潮を噴き出している……
 					ENDIF
 				;尻イキ
 				ELSEIF NOWEX:Ａ絶頂
-					PRINTFORML %CALLNAME:TARGET%はアナルでの絶頂に肛門を蠢かせている……
+					IF TEQUIP:電動エネマグラ
+						PRINTFORML %CALLNAME:TARGET%はアナルを締めれば締めるほど深く前立腺を抉るエネマグラの快感に、絶頂が止まらないようだ……
+					ELSE
+						PRINTFORML %CALLNAME:TARGET%はアナルでの絶頂に肛門を蠢かせている……
+					ENDIF
 				;胸イキ
 				ELSEIF NOWEX:Ｂ絶頂 && !NOWEX:噴乳
 					SELECTCASE SELECTCOMS
@@ -739,135 +855,152 @@ IF NOWEX:放尿
 	SIF TALENT:おもらし癖
 		LOCAL:1++
 
-	SELECTCASE SELECTCOMS
-		CASE "クンニ", "岩清水", "シックスナイン", "69パイズリ"
-			PRINTFORML %CALLNAME:TARGET%は秘所を舐められながらの絶頂で、%CALLNAME:PLAYER%の顔に尿を漏らしてしまった……
-		CASE "指挿入れ", "Gスポット刺激"
-			PRINTFORM %CALLNAME:TARGET%は膣内を指で弄られながら漏らしてしまい、%CALLNAME:PLAYER%の手
-			SIF OVER_GENITAL(TARGET) != ""
-				PRINTFORM と%OVER_GENITAL(TARGET)%
-			PRINTL を汚した……
-		CASE "秘貝開帳"
-			PRINTFORML %CALLNAME:TARGET%は強い絶頂に自らの指で拡げた陰唇から尿を漏らした……
-		CASE "自慰"
-			PRINTFORM %CALLNAME:TARGET%は自慰での絶頂に堪え切れず漏らしてしまい、
-			IF OVER_GENITAL(TARGET) != ""
-				IF !CFLAG:挿入可
-					PRINTFORM %OVER_GENITAL(TARGET)%から滲みでた尿が
-				ELSEIF TEQUIP:下半身下着
-					PRINTFORM %CSTR:下半身下着%から滲みでた尿が
-				ENDIF
-			ENDIF
-			PRINTL 自らの指を汚した……
-		CASE "正常位", "正常位アナル"
-			PRINTFORML セックスでの絶頂に感極まった%CALLNAME:TARGET%は、ペニスを突き入れられながら尿を漏らした……
-		CASE "後背位", "後背位アナル"
-			PRINTFORML 後ろからの交尾で達した%CALLNAME:TARGET%は、絶頂に緩まった尿道から尿を漏らして\@ TEQUIP:野外プレイ ? 地面 # 床 \@を汚した……
-		CASE "騎乗位", "騎乗位アナル"
-			PRINTFORML %CALLNAME:PLAYER%のペニスを咥え込みながら絶頂に達する%CALLNAME:TARGET%は、快感のあまり陰唇から尿を漏らして%CALLNAME:PLAYER%の体を濡らした……
-		CASE "対面座位", "対面座位アナル"
-			PRINTFORML %CALLNAME:PLAYER%に抱かれる%CALLNAME:TARGET%は絶頂と同時に尿を漏らしてしまい、互いの体を生温かい汚液で濡らした……
-		CASE "背面座位", "背面座位アナル"
-			PRINTFORML %CALLNAME:PLAYER%に抱きかかえられて絶頂に達した%CALLNAME:TARGET%は、無造作に垂れ流した尿で二人の結合部を濡らした……
-		CASE "素股"
-			PRINTFORM %CALLNAME:PLAYER%のペニスを股で挟み込んだ%CALLNAME:TARGET%は絶頂と同時に尿を漏らし、
-			IF OVER_GENITAL(TARGET) != ""
-				IF !CFLAG:挿入可
-					PRINTFORM %OVER_GENITAL(TARGET)%から滲みでた尿が
-				ELSEIF TEQUIP:下半身下着
-					PRINTFORM %CSTR:下半身下着%から滲みでた尿が
-				ENDIF
-			ENDIF
-			PRINTFORML %CALLNAME:PLAYER%のペニスを濡らした……
-		CASE "足扱き"
-			PRINTFORM %CALLNAME:PLAYER%のペニスを足で扱く%CALLNAME:TARGET%の顔は絶頂の快感に紅く染まり、
-			IF OVER_GENITAL(TARGET) != ""
-				IF CFLAG:挿入可
-					IF TEQUIP:下半身下着
-						PRINTFORML %CALLNAME:TARGET%が漏らした尿が%CSTR:下半身下着%からぽたぽたと垂れ落ちた……
-					ELSE
-						PRINTFORML %OVER_GENITAL(TARGET)%の中から尿を漏らした……
+	;浴槽内で漏らすと少し分岐する
+	IF TEQUIP:お風呂場
+		SELECTCASE SELECTCOMS
+			CASE "ローター", "電気按摩"
+				PRINTFORML %CALLNAME:TARGET%の秘部を%SELECTCOMS%で責め続けると、絶頂の声を上げながらお湯の色が染まっていく
+				PRINTFORML どうやら我慢できずにお風呂の中で漏らしてしまったようだ……
+			CASE "指挿入れ", "Gスポット刺激"
+				PRINTFORML 温かいお風呂の中で%CALLNAME:TARGET%の膣内をかき回すていると、何かが吹き出す感触が手に伝わる
+				PRINTFORML どうやら絶頂と同時にお風呂の中で漏らしてしまったようだ……
+			CASEELSE
+				GOTO 通常おもらし
+		ENDSELECT
+	ELSE
+		$通常おもらし
+		SELECTCASE SELECTCOMS
+			CASE "クンニ", "岩清水", "シックスナイン", "69パイズリ"
+				PRINTFORML %CALLNAME:TARGET%は秘所を舐められながらの絶頂で、%CALLNAME:PLAYER%の顔に尿を漏らしてしまった……
+			CASE "指挿入れ", "Gスポット刺激"
+				PRINTFORM %CALLNAME:TARGET%は膣内を指で弄られながら漏らしてしまい、%CALLNAME:PLAYER%の手
+				SIF OVER_GENITAL(TARGET) != ""
+					PRINTFORM と%OVER_GENITAL(TARGET)%
+				PRINTL を汚した……
+			CASE "秘貝開帳"
+				PRINTFORML %CALLNAME:TARGET%は強い絶頂に自らの指で拡げた陰唇から尿を漏らした……
+			CASE "自慰"
+				PRINTFORM %CALLNAME:TARGET%は自慰での絶頂に堪え切れず漏らしてしまい、
+				IF OVER_GENITAL(TARGET) != ""
+					IF !CFLAG:挿入可
+						PRINTFORM %OVER_GENITAL(TARGET)%から滲みでた尿が
+					ELSEIF TEQUIP:下半身下着
+						PRINTFORM %CSTR:下半身下着%から滲みでた尿が
 					ENDIF
-				ELSEIF TEQUIP:下半身下着
-					PRINTFORML %CALLNAME:TARGET%が漏らした尿が%OVER_GENITAL(TARGET)%からぽたぽたと垂れ落ちた……
+				ENDIF
+				PRINTL 自らの指を汚した……
+			CASE "正常位", "正常位アナル"
+				PRINTFORML セックスでの絶頂に感極まった%CALLNAME:TARGET%は、ペニスを突き入れられながら尿を漏らした……
+			CASE "後背位", "後背位アナル"
+				PRINTFORML 後ろからの交尾で達した%CALLNAME:TARGET%は、絶頂に緩まった尿道から尿を漏らして\@ TEQUIP:野外プレイ ? 地面 # 床 \@を汚した……
+			CASE "騎乗位", "騎乗位アナル"
+				PRINTFORML %CALLNAME:PLAYER%のペニスを咥え込みながら絶頂に達する%CALLNAME:TARGET%は、快感のあまり陰唇から尿を漏らして%CALLNAME:PLAYER%の体を濡らした……
+			CASE "対面座位", "対面座位アナル"
+				PRINTFORML %CALLNAME:PLAYER%に抱かれる%CALLNAME:TARGET%は絶頂と同時に尿を漏らしてしまい、互いの体を生温かい汚液で濡らした……
+			CASE "背面座位", "背面座位アナル"
+				PRINTFORML %CALLNAME:PLAYER%に抱きかかえられて絶頂に達した%CALLNAME:TARGET%は、無造作に垂れ流した尿で二人の結合部を濡らした……
+			CASE "素股"
+				PRINTFORM %CALLNAME:PLAYER%のペニスを股で挟み込んだ%CALLNAME:TARGET%は絶頂と同時に尿を漏らし、
+				IF OVER_GENITAL(TARGET) != ""
+					IF !CFLAG:挿入可
+						PRINTFORM %OVER_GENITAL(TARGET)%から滲みでた尿が
+					ELSEIF TEQUIP:下半身下着
+						PRINTFORM %CSTR:下半身下着%から滲みでた尿が
+					ENDIF
+				ENDIF
+				PRINTFORML %CALLNAME:PLAYER%のペニスを濡らした……
+			CASE "足扱き"
+				PRINTFORM %CALLNAME:PLAYER%のペニスを足で扱く%CALLNAME:TARGET%の顔は絶頂の快感に紅く染まり、
+				IF OVER_GENITAL(TARGET) != ""
+					IF CFLAG:挿入可
+						IF TEQUIP:下半身下着
+							PRINTFORML %CALLNAME:TARGET%が漏らした尿が%CSTR:下半身下着%からぽたぽたと垂れ落ちた……
+						ELSE
+							PRINTFORML %OVER_GENITAL(TARGET)%の中から尿を漏らした……
+						ENDIF
+					ELSEIF TEQUIP:下半身下着
+						PRINTFORML %CALLNAME:TARGET%が漏らした尿が%OVER_GENITAL(TARGET)%からぽたぽたと垂れ落ちた……
+					ELSE
+						PRINTFORML 弧を描いて流れ出る尿が%CALLNAME:PLAYER%にぴちゃぴちゃと降り掛かっていた……
+					ENDIF
+				ENDIF
+			CASE "泡踊り"
+				PRINTFORML %CALLNAME:TARGET%は絶頂の快感から泡だらけの体で%CALLNAME:PLAYER%にすがるように抱きつくと、股の間から熱い液体を流した……
+			CASE "スパンキング"
+				PRINTFORM %CALLNAME:TARGET%は尻を叩かれながら絶頂に達してしまい、
+				IF OVER_GENITAL(TARGET) != ""
+					PRINTFORML それと同時に%OVER_GENITAL(TARGET)%に尿が染み渡った……
 				ELSE
-					PRINTFORML 弧を描いて流れ出る尿が%CALLNAME:PLAYER%にぴちゃぴちゃと降り掛かっていた……
+					PRINTFORML 叩かれる度に潮を噴くように断続的に尿を飛ばした……
 				ENDIF
-			ENDIF
-		CASE "泡踊り"
-			PRINTFORML %CALLNAME:TARGET%は絶頂の快感から泡だらけの体で%CALLNAME:PLAYER%にすがるように抱きつくと、股の間から熱い液体を流した……
-		CASE "スパンキング"
-			PRINTFORM %CALLNAME:TARGET%は尻を叩かれながら絶頂に達してしまい、
-			IF OVER_GENITAL(TARGET) != ""
-				PRINTFORML それと同時に%OVER_GENITAL(TARGET)%に尿が染み渡った……
-			ELSE
-				PRINTFORML 叩かれる度に潮を噴くように断続的に尿を飛ばした……
-			ENDIF
-		CASE "貝あわせ"
-			PRINTFORML %CALLNAME:TARGET%は重ねた秘貝から絶頂と同時に尿を漏らし、互いの秘所を濡らした……
-		CASE "浣腸器"
-			IF TEQUIP:浣腸器
-				PRINTFORML 浣腸液を注がれて激しい便意に襲われる%CALLNAME:TARGET%は、一足先に尿を漏らし始めた……
-			ELSE
-				PRINTFORML %CALLNAME:TARGET%は尻穴から浣腸液に中和されてどろどろになった糞便を撒き散らし、同時に尿を迸らせて排泄行為を続けた……
-			ENDIF
-		CASE "裸締め", "首を絞める", "正常位首絞め", "後背位首絞め", "正常位アナル首絞め", "後背位アナル首絞め"
-			PRINTFORML 首を絞められながら絶頂に達する%CALLNAME:TARGET%の股間からは勢いの無い尿がちょろちょろと長時間垂れ流されていた……
-		CASEELSE
-			;絶頂とおもらし
-			SELECTCASE NOWEX:放尿
-				CASE 5
-					PRINTFORM %CALLNAME:TARGET%はガクガクと身体を痙攣させながら
-					IF OVER_GENITAL(TARGET) != "" && !CFLAG:挿入可
-						PRINTFORML %OVER_GENITAL(TARGET)%がずぶ濡れになるほどの尿を垂れ流した
-					ELSEIF TEQUIP:下半身下着
-						PRINTFORML %CSTR:下半身下着%から滝のように滴り落ちるほどの尿を垂れ流した
-					ELSE
-						PRINTL 止め処なく尿を垂れ流した
-					ENDIF
-					PRINTFORML どうやら排尿行為そのものに快楽を感じているようだ……
-				CASE 4
-					PRINTFORM %CALLNAME:TARGET%は絶頂に合わせて
-					IF OVER_GENITAL(TARGET) != "" && !CFLAG:挿入可
-						PRINTFORML %OVER_GENITAL(TARGET)%の中で大量の尿を漏らした
-					ELSEIF TEQUIP:下半身下着
-						PRINTFORML %CSTR:下半身下着%の中で大量の尿を漏らした
-					ELSE
-						PRINTL 大量の尿を漏らした
-					ENDIF
-					PRINTFORML 絶頂が引いても%CALLNAME:TARGET%の排尿は収まらず、ぐったりとしたままその場で漏らし続けた……
-				CASE 3
-					PRINTFORM %CALLNAME:TARGET%は強い絶頂と共に
-					IF OVER_GENITAL(TARGET) != "" && !CFLAG:挿入可
-						PRINTFORML %OVER_GENITAL(TARGET)%の中で尿を漏らした
-					ELSEIF TEQUIP:下半身下着
-						PRINTFORML %CSTR:下半身下着%を穿いたまま尿を漏らした
-					ELSE
-						PRINTL 尿を迸らせた
-					ENDIF
-					PRINTFORML 当の%CALLNAME:TARGET%はあまりの快感に自分がどこから何を漏らしているのかもよくわかっていないようだ……
-				CASE 2
-					PRINTFORM %CALLNAME:TARGET%は絶頂に合わせた不意の放尿に
-					IF OVER_GENITAL(TARGET) != "" && !CFLAG:挿入可
-						PRINTFORML %OVER_GENITAL(TARGET)%の染みを広げていた……
-					ELSEIF TEQUIP:下半身下着
-						PRINTFORML %CSTR:下半身下着%を汚した……
-					ELSE
-						PRINTL 焦ってか頬を赤らめた……
-					ENDIF
-				CASE 1
-					PRINTFORM %CALLNAME:TARGET%は絶頂に感極まってか、
-					IF OVER_GENITAL(TARGET) != "" && !CFLAG:挿入可
-						PRINTFORML %OVER_GENITAL(TARGET)%を着たまま漏らしてしまった……
-					ELSEIF TEQUIP:下半身下着
-						PRINTFORML %CSTR:下半身下着%を穿いたまま漏らしてしまった……
-					ELSE
-						PRINTL 黄金色の尿を漏らした……
-					ENDIF
-			ENDSELECT
-	ENDSELECT
-	SIF TEQUIP:下半身下着
-		PRINTFORML %CALLNAME:TARGET%が穿いている%CSTR:下半身下着%は尿でぐしょ濡れになってしまっている……
+			CASE "貝あわせ"
+				PRINTFORML %CALLNAME:TARGET%は重ねた秘貝から絶頂と同時に尿を漏らし、互いの秘所を濡らした……
+			CASE "浣腸器"
+				IF TEQUIP:浣腸器
+					PRINTFORML 浣腸液を注がれて激しい便意に襲われる%CALLNAME:TARGET%は、一足先に尿を漏らし始めた……
+				ELSE
+					PRINTFORML %CALLNAME:TARGET%は尻穴から浣腸液に中和されてどろどろになった糞便を撒き散らし、同時に尿を迸らせて排泄行為を続けた……
+				ENDIF
+			CASE "裸締め", "首を絞める", "正常位首絞め", "後背位首絞め", "正常位アナル首絞め", "後背位アナル首絞め"
+				PRINTFORML 首を絞められながら絶頂に達する%CALLNAME:TARGET%の股間からは勢いの無い尿がちょろちょろと長時間垂れ流されていた……
+			CASE "触手強制放尿"
+				PRINTFORML 尿道に差し込まれた触手が引き抜かれると、膀胱に注ぎ込まれた触手の体液が勢いよく迸った……
+			CASEELSE
+				;絶頂とおもらし
+				SELECTCASE NOWEX:放尿
+					CASE 5
+						PRINTFORM %CALLNAME:TARGET%はガクガクと身体を痙攣させながら
+						IF OVER_GENITAL(TARGET) != "" && !CFLAG:挿入可
+							PRINTFORML %OVER_GENITAL(TARGET)%がずぶ濡れになるほどの尿を垂れ流した
+						ELSEIF TEQUIP:下半身下着
+							PRINTFORML %CSTR:下半身下着%から滝のように滴り落ちるほどの尿を垂れ流した
+						ELSE
+							PRINTL 止め処なく尿を垂れ流した
+						ENDIF
+						PRINTFORML どうやら排尿行為そのものに快楽を感じているようだ……
+					CASE 4
+						PRINTFORM %CALLNAME:TARGET%は絶頂に合わせて
+						IF OVER_GENITAL(TARGET) != "" && !CFLAG:挿入可
+							PRINTFORML %OVER_GENITAL(TARGET)%の中で大量の尿を漏らした
+						ELSEIF TEQUIP:下半身下着
+							PRINTFORML %CSTR:下半身下着%の中で大量の尿を漏らした
+						ELSE
+							PRINTL 大量の尿を漏らした
+						ENDIF
+						PRINTFORML 絶頂が引いても%CALLNAME:TARGET%の排尿は収まらず、ぐったりとしたままその場で漏らし続けた……
+					CASE 3
+						PRINTFORM %CALLNAME:TARGET%は強い絶頂と共に
+						IF OVER_GENITAL(TARGET) != "" && !CFLAG:挿入可
+							PRINTFORML %OVER_GENITAL(TARGET)%の中で尿を漏らした
+						ELSEIF TEQUIP:下半身下着
+							PRINTFORML %CSTR:下半身下着%を穿いたまま尿を漏らした
+						ELSE
+							PRINTL 尿を迸らせた
+						ENDIF
+						PRINTFORML 当の%CALLNAME:TARGET%はあまりの快感に自分がどこから何を漏らしているのかもよくわかっていないようだ……
+					CASE 2
+						PRINTFORM %CALLNAME:TARGET%は絶頂に合わせた不意の放尿に
+						IF OVER_GENITAL(TARGET) != "" && !CFLAG:挿入可
+							PRINTFORML %OVER_GENITAL(TARGET)%の染みを広げていた……
+						ELSEIF TEQUIP:下半身下着
+							PRINTFORML %CSTR:下半身下着%を汚した……
+						ELSE
+							PRINTL 焦ってか頬を赤らめた……
+						ENDIF
+					CASE 1
+						PRINTFORM %CALLNAME:TARGET%は絶頂に感極まってか、
+						IF OVER_GENITAL(TARGET) != "" && !CFLAG:挿入可
+							PRINTFORML %OVER_GENITAL(TARGET)%を着たまま漏らしてしまった……
+						ELSEIF TEQUIP:下半身下着
+							PRINTFORML %CSTR:下半身下着%を穿いたまま漏らしてしまった……
+						ELSE
+							PRINTL 黄金色の尿を漏らした……
+						ENDIF
+				ENDSELECT
+		ENDSELECT
+		SIF TEQUIP:下半身下着
+			PRINTFORML %CALLNAME:TARGET%が穿いている%CSTR:下半身下着%は尿でぐしょ濡れになってしまっている……
+	ENDIF
 ENDIF
 
 ;テキストを読むためのウエイト

@@ -229,6 +229,8 @@ IF ORG_C && ORG_V && ORG_A && ORG_B
 	ORG_A *= 8
 	ORG_B *= 8
 	絶頂倍率 = 8
+	;実績「四重絶頂させる」
+	CALL 実績解除, "Insane Techniques"
 ELSEIF ORG_C && ORG_V && ORG_A
 	PRINTL Ｃ＆Ｖ＆Ａ絶頂
 	PRINTL (それぞれ4倍の珠が得られます)
@@ -359,6 +361,18 @@ IF ORG_A
 	SOURCE:恭順 += 300 * ORG_A
 	SOURCE:露出 += 300 * ORG_A
 	SOURCE:屈従 += 1000 * ORG_A
+	;エネマでイったらボーナス
+	IF TEQUIP:電動エネマグラ
+		SOURCE:欲情 += 200 * ORG_A
+		SOURCE:屈従 += 500 * ORG_A
+		SOURCE:中毒 += 300 * ORG_A
+		SOURCE:性行動 += 100 * ORG_A
+	ENDIF
+	;メス度に応じてボーナス 最大2.5倍
+	SOURCE:欲情 += 75*MIN(ABL:メス度, 10) * ORG_A
+	SOURCE:屈従 += 125*MIN(ABL:メス度, 10) * ORG_A
+	SOURCE:中毒 += 75*MIN(ABL:メス度, 10) * ORG_A
+	SOURCE:性行動 += 25*MIN(ABL:メス度, 10) * ORG_A
 	IF TALENT:快感の否定
 		SOURCE:反感 += 600 * ORG_A
 	ELSE
@@ -376,6 +390,9 @@ IF ORG_A
 	ENDIF
 	SIF TEQUIP:アナルビーズ
 		CFLAG:アナルビーズ絶頂経験++
+	;実績:ルシェをメスイキさせる
+	SIF CHARANAMEF(TARGET) == "ルシェ"
+		CALL 実績解除, "「僕は■なのに……」"
 ENDIF
 IF ORG_B
 	LOSEBASE:体力 += 10
@@ -402,6 +419,10 @@ ENDIF
 
 SIF TFLAG:絶頂強度 && TEQUIP:ビデオカメラ
 	CFLAG:絶頂を撮影された経験++
+
+;天使による感度アップ
+SIF CSTR:種族 == "天使"
+	TFLAG:天使の感度ボーナス++
 
 ;絶頂による欲望LVアップ
 LOCAL = 0
@@ -453,7 +474,7 @@ RETURN 1
 @REACT_DRUG
 ;仕様説明：
 ;@ECST_CANCELでEX:Ｃ絶頂～EX:Ｂ絶頂に記録してきた絶頂回数を解放します。
-;記録してきた絶頂回数１回につき、該当する部位の快ソース（UP:快Ｃ,1,2,3）を２倍にします。
+;記録してきた絶頂回数１回につき、該当する部位の快ソース（UP:快Ｃ,快Ｖ,快Ａ,快Ｂ）を２倍にします。
 ;１回のコマンドでひとつの部位につき１回ずつこの倍化処理を行い、
 ;EX:Ｃ絶頂～EX:Ｂ絶頂の合計が０になったとき、反動が解除されます。
 ;-------------------------------------------------
@@ -572,6 +593,9 @@ IF SQUIRT/10000 >= 1
 	NOWEX:潮噴き = SQUIRT / 10000
 	EX:潮噴き++
 	CFLAG:ペニスで潮を噴いた経験++
+	;天使による感度アップ
+	SIF CSTR:種族 == "天使"
+		TFLAG:天使の感度ボーナス++
 	;PALAMのDOWN処理は上の絶頂系で済ませてあるのでやらない
 	LOSEBASE:体力 += 10*NOWEX:潮噴き
 	LOSEBASE:気力 += 15*NOWEX:潮噴き

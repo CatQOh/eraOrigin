@@ -107,18 +107,6 @@ LOOP 1
 #DIM DYNAMIC PAGE
 #DIM DYNAMIC ドラゴンに処女, 2
 #DIM DYNAMIC LCOUNT
-#DIM DYNAMIC 家族人数
-#DIM DYNAMIC 兄数
-#DIM DYNAMIC 弟数
-#DIM DYNAMIC 姉数
-#DIM DYNAMIC 妹数
-#DIM DYNAMIC 息子娘数
-#DIM DYNAMIC 孫数
-#DIM DYNAMIC 父親
-#DIM DYNAMIC 母親
-#DIM DYNAMIC 尊属
-#DIM DYNAMIC 家族番号簡易版
-#DIM DYNAMIC 兄弟姉妹番号簡易版
 
 ;処女が主人のドラゴンとなっている場合は、現在のドラゴンの名前を入れて後で戻す
 IF VIRGIN:ARG:1 == "主人のドラゴン"
@@ -147,7 +135,7 @@ ELSEIF CSTR:ARG:種族 != CSVCSTR(NO:ARG, 110)
 ENDIF
 IF ARG != MASTER
 	PRINTFORM (依存度:{CFLAG:ARG:依存度} ストレス値{CFLAG:ARG:ストレス値})　
-ELSEIF ARG == MASTER && FLAG:ゲームモード != 7
+ELSEIF ARG == MASTER
 	PRINTFORM 堕した人数:{FLAG:累計恋慕+FLAG:累計淫乱+FLAG:累計服従}人　
 ENDIF
 PRINTL 
@@ -155,8 +143,6 @@ PRINTL □ その他情報
 IF ARG == MASTER
 	PRINTFORML 　{REALTIME:0}年{REALTIME:1}月{REALTIME:2}日にこの世界へと迷いこむ
 	PRINTFORML 　現在は{CHARANUM-1}人の奴隷を扱う調教師
-	SIF FLAG:周回数 >= 2
-		PRINTFORML 　{FLAG:周回数}周目のゲームであり、この世界を積極的に楽しんでいる
 	SIF FLAG:累計恋慕
 		PRINTFORML 　累計{FLAG:累計恋慕}人の奴隷の心を奪った
 	SIF FLAG:累計淫乱
@@ -164,13 +150,8 @@ IF ARG == MASTER
 	SIF FLAG:累計服従
 		PRINTFORML 　累計{FLAG:累計服従}人の奴隷が%CALLNAME:MASTER%に服従した
 ELSE
-	IF NO:ARG == 0
+	SIF NO:ARG == 0
 		PRINTFORML 　%CALLNAME:MASTER%が調教師を始めたと聞いて、自ら奴隷になりたいと志願してきた変人である
-	ELSEIF NO:ARG >= 10000
-		PRINTFORML 　%CSVNAMEF(CFLAG:ARG:血縁コード/100000)%と%CSVNAMEF(CFLAG:ARG:血縁コード%100000)%の\@ CFLAG:ARG:近親交配 ? 近親交配で # 間に \@産まれた\@ SEX(ARG) == 1 ? 息子 # 娘 \@だ
-	ELSE
-		;PRINTFORML 　{BUYY:ARG:0}年{BUYM:ARG:0}月{BUYD:ARG:0}日に購入
-	ENDIF
 ENDIF
 IF CFLAG:ARG:嫁
 	PRINTFORML 　現在は%CALLNAME:MASTER%の嫁である
@@ -201,9 +182,9 @@ IF ARG != MASTER
 		ENDIF
 	ELSE
 		IF TALENT:ARG:小人体型 || TALENT:ARG:小柄体型
-			PRINTFORML しかしそれなりに頑丈なのか、それなり\@FLAG:ゲームモード == 7 ? に激しい行為でも # の調教なら \@耐えられるだろう
+			PRINTFORML しかしそれなりに頑丈なのか、それなりの調教なら耐えられるだろう
 		ELSE
-			PRINTFORML 人並みの体が\@ FLAG:ゲームモード == 7 ? 激しい行為 # 調教 \@に耐えられるかどうか、心の問題だ
+			PRINTFORML 人並みの体が調教に耐えられるかどうか、心の問題だ
 		ENDIF
 	ENDIF
 ENDIF
@@ -815,42 +796,62 @@ PRINTFORML 　気力%BARBASE("気力", ARG)%
 ;パラメータ表示
 @SHOW_INFO_PALAM
 #DIMS DYNAMIC 記号
+#DIM DYNAMIC LCOUNT
 LOCAL = 0
 VARSET LOCALS
-REPEAT 15
+FOR LCOUNT, 0, VARSIZE("PALAM")
 	;LOCAL:0 = 表示されるパラメータの数値。kMGT等と一緒に表示される
-	;LOCALS:0 = LOCAL:0に続くkMGT等の単位(小数点表記をする場合".N"も前に付く)
+	;LOCALS:0 = いろいろな文字を組み合わせて最終的に表示される1文
+	SIF PALAMNAME:LCOUNT == ""
+		BREAK
 
 	;ヴァギナ無いなら快Ｖは灰色表示
-	IF !VAGINA(TARGET) && PALAMNAME:COUNT == "快Ｖ"
-		SETCOLORBYNAME gray
-	ELSE
-		SETCOLORBYNAME silver
+	IF PALAMNAME:LCOUNT == "快Ｖ"
+		IF !VAGINA(TARGET)
+			SETCOLORBYNAME gray
+		ELSE
+			SETCOLORBYNAME silver
+		ENDIF
+	ENDIF
+	;ペニス無いなら勃起は灰色表示
+	IF PALAMNAME:LCOUNT == "勃起"
+		IF !PENIS(TARGET)
+			SETCOLORBYNAME gray
+		ELSE
+			SETCOLORBYNAME silver
+		ENDIF
 	ENDIF
 
-	SIF COUNT%3 == 0
+	SIF LCOUNT%3 == 0
 		LOCALS = "　"
 	;パラメータの名前・パラメータレベル
-	IF !VAGINA(TARGET) && PALAMNAME:COUNT == "快Ｖ"
-		LOCALS = %PALAMNAME:COUNT%Lv-
+	IF !VAGINA(TARGET) && PALAMNAME:LCOUNT == "快Ｖ"
+		LOCALS = %PALAMNAME:LCOUNT%Lv-
 	ELSE
-		LOCALS = %PALAMNAME:COUNT%Lv{GETPALAMLV(PALAM:COUNT, 9)}
+		LOCALS = %PALAMNAME:LCOUNT%Lv{GETPALAMLV(PALAM:LCOUNT, 9)}
 	ENDIF
 
 	;ゲージ処理 パラメータレベルが9以上なら余計な処理は飛ばす
-	IF GETPALAMLV(PALAM:COUNT, 9) >= 9
+	IF GETPALAMLV(PALAM:LCOUNT, 9) >= 9
+		LOCALS += "[**********] "
+	ELSEIF PALAMNAME:LCOUNT == "潤滑" && PALAM:LCOUNT >= 20000
+		LOCALS += "[**********] "
+	ELSEIF PALAMNAME:LCOUNT == "勃起" && PALAM:LCOUNT >= PALAMLV:3
 		LOCALS += "[**********] "
 	ELSE
-		LOCALS += @"%BARSTR(PALAM:COUNT, PALAMLV:(GETPALAMLV(PALAM:COUNT, 9)+1), 10)% "
+		LOCALS += @"%BARSTR(PALAM:LCOUNT, PALAMLV:(GETPALAMLV(PALAM:LCOUNT, 9)+1), 10)% "
 	ENDIF
 
 	;これだけ特殊
-	IF PALAMNAME:COUNT == "潤滑" && PALAM:COUNT >= 20000
+	IF PALAMNAME:LCOUNT == "潤滑" && PALAM:LCOUNT >= 20000
 		LOCALS += "濡                "
 		GOTO SET
 	ENDIF
-
-;	STRLENFORM {PALAM:COUNT}
+	;これも特殊
+	IF PALAMNAME:LCOUNT == "勃起" && PALAM:LCOUNT >= PALAMLV:3
+		LOCALS += "勃                "
+		GOTO SET
+	ENDIF
 
 	; 1,000,000,000,000,000,000
 	;  E   P   T   G   M   k
@@ -865,47 +866,47 @@ REPEAT 15
 	;2^63≒9223P (9.223E)
 	;9,12,15,18桁を直すと残りが3桁になって寂しいので小数点表記を追加
 	記号 = 
-	STRLENS TOSTR(PALAM:COUNT)
+	STRLENS TOSTR(PALAM:LCOUNT)
 	SELECTCASE RESULT
 		CASE IS >= 18
-			LOCAL = PALAM:COUNT / POWER(10,15)
+			LOCAL = PALAM:LCOUNT / POWER(10,15)
 			IF RESULT == 18
-				記号 = .%CHARATU(TOSTR(PALAM:COUNT),3)%P
+				記号 = .%CHARATU(TOSTR(PALAM:LCOUNT),3)%P
 			ELSE
 				記号 = P
 			ENDIF
 		CASE IS >= 15
-			LOCAL = PALAM:COUNT / POWER(10,12)
+			LOCAL = PALAM:LCOUNT / POWER(10,12)
 			IF RESULT == 15
-				記号 = .%CHARATU(TOSTR(PALAM:COUNT),3)%T
+				記号 = .%CHARATU(TOSTR(PALAM:LCOUNT),3)%T
 			ELSE
 				記号 = T
 			ENDIF
 		CASE IS >= 12
-			LOCAL = PALAM:COUNT / POWER(10,9)
+			LOCAL = PALAM:LCOUNT / POWER(10,9)
 			IF RESULT == 12
-				記号 = .%CHARATU(TOSTR(PALAM:COUNT),3)%G
+				記号 = .%CHARATU(TOSTR(PALAM:LCOUNT),3)%G
 			ELSE
 				記号 = G
 			ENDIF
 		CASE IS >= 9
-			LOCAL = PALAM:COUNT / POWER(10,6)
+			LOCAL = PALAM:LCOUNT / POWER(10,6)
 			IF RESULT == 9
-				記号 = .%CHARATU(TOSTR(PALAM:COUNT),3)%M
+				記号 = .%CHARATU(TOSTR(PALAM:LCOUNT),3)%M
 			ELSE
 				記号 = M
 			ENDIF
 		CASE IS >= 7
-			LOCAL = PALAM:COUNT / POWER(10,3)
+			LOCAL = PALAM:LCOUNT / POWER(10,3)
 			記号 = k
 		CASEELSE
-			LOCAL = PALAM:COUNT
+			LOCAL = PALAM:LCOUNT
 	ENDSELECT
 
-	IF !VAGINA(TARGET) && PALAMNAME:COUNT == "快Ｖ"
+	IF !VAGINA(TARGET) && PALAMNAME:LCOUNT == "快Ｖ"
 		LOCALS += "------"
 	ELSE
-		IF PALAM:COUNT <= 999999
+		IF PALAM:LCOUNT <= 999999
 			LOCALS += @"{LOCAL, 6, LEFT}"
 		ELSE
 			LOCALS += @"%TOSTR(LOCAL)+記号, 6, LEFT%"
@@ -913,31 +914,35 @@ REPEAT 15
 	ENDIF
 
 	;カンストしてたら特殊表示
-	IF PALAM:COUNT == __INT_MAX__
+	IF PALAM:LCOUNT == __INT_MAX__
 		LOCALS += " CounterStop"
 	ELSE
 		LOCALS += " Next/"
 
 		;ヴァギナ無ければ快Ｖは表示しない
-		IF !VAGINA(TARGET) && PALAMNAME:COUNT == "快Ｖ"
+		IF !VAGINA(TARGET) && PALAMNAME:LCOUNT == "快Ｖ"
+			LOCALS += "------"
+		;ペニス無ければ勃起は表示しない
+		ELSEIF !PENIS(TARGET) && PALAMNAME:LCOUNT == "勃起"
 			LOCALS += "------"
 		ELSE
-			IF GETPALAMLV(PALAM:COUNT, 9) >= 9
+			IF GETPALAMLV(PALAM:LCOUNT, 9) >= 9
 				LOCALS += "MAXLV!"
 			ELSE
-				LOCALS += @"{PALAMLV:(GETPALAMLV(PALAM:COUNT, 9)+1)-PALAM:COUNT, 6, LEFT}"
+				LOCALS += @"{PALAMLV:(GETPALAMLV(PALAM:LCOUNT, 9)+1)-PALAM:LCOUNT, 6, LEFT}"
 			ENDIF
 		ENDIF
 	ENDIF
-
 	$SET
-	LOCALS:(COUNT%3+1) = %SET_TOOLTIP(LOCALS, PALAM_COMMENT(PALAMNAME:COUNT))%
+	LOCALS:(LCOUNT%3+1) = %SET_TOOLTIP(LOCALS, PALAM_COMMENT(PALAMNAME:LCOUNT))%
+	RESETCOLOR
 
-	;COUNT仕様の都合で2
-	SIF COUNT%3 == 2
+	;LCOUNT仕様の都合で2
+	SIF LCOUNT%3 == 2
 		HTML_PRINT LOCALS:1+LOCALS:2+LOCALS:3
-
-REND
+NEXT
+;現在はPALAMの数が16あるのでここでも表示しておく
+HTML_PRINT LOCALS:1
 SIF !LINEISEMPTY()
 	PRINTL 
 
@@ -945,14 +950,15 @@ SIF !LINEISEMPTY()
 ;能力表示
 @SHOW_INFO_ABL, ARG
 #DIMS DYNAMIC 表示用レベル
+#DIM DYNAMIC LCOUNT
 
 LOCAL = 0
 VARSET LOCALS, 
-REPEAT VARSIZE("ABL")
-	IF COUNT == VARSIZE("ABL")-1
+FOR LCOUNT, 0, VARSIZE("ABL")
+	IF LCOUNT == VARSIZE("ABL")-1
 		HTML_PRINT LOCALS+LOCALS:1+LOCALS:2+LOCALS:3+LOCALS:4+LOCALS:5
 		BREAK
-	ELSEIF ABLNAME:COUNT == ""
+	ELSEIF ABLNAME:LCOUNT == ""
 		CONTINUE
 	ENDIF
 
@@ -965,7 +971,7 @@ REPEAT VARSIZE("ABL")
 	SELECTCASE SEX(ARG)
 		CASE 1
 			;男ならレズっ気、レズ中毒、噴乳中毒は灰色表示
-			SELECTCASE ABLNAME:COUNT
+			SELECTCASE ABLNAME:LCOUNT
 				CASE "レズっ気", "レズ中毒", "噴乳中毒"
 					SETCOLORBYNAME gray
 					表示用レベル = -----
@@ -973,34 +979,34 @@ REPEAT VARSIZE("ABL")
 					;ヴァギナ無ければＶ感覚も灰色
 					IF VAGINA(ARG)
 						SETCOLORBYNAME silver
-						表示用レベル = {ABL:ARG:COUNT, 5, LEFT}
+						表示用レベル = {ABL:ARG:LCOUNT, 5, LEFT}
 					ELSE
 						SETCOLORBYNAME gray
 						表示用レベル = -----
 					ENDIF
 				CASEELSE
 					SETCOLORBYNAME silver
-					表示用レベル = {ABL:ARG:COUNT, 5, LEFT}
+					表示用レベル = {ABL:ARG:LCOUNT, 5, LEFT}
 			ENDSELECT
 		CASE 2
-			;女ならホモっ気、ゲイ中毒は灰色表示
-			SELECTCASE ABLNAME:COUNT
-				CASE "ホモっ気", "ゲイ中毒"
+			;女ならホモっ気、ゲイ中毒、メス度は灰色表示
+			SELECTCASE ABLNAME:LCOUNT
+				CASE "ホモっ気", "ゲイ中毒", "メス度"
 					SETCOLORBYNAME gray
 					表示用レベル = -----
 				CASEELSE
 					SETCOLORBYNAME silver
-					表示用レベル = {ABL:ARG:COUNT, 5, LEFT}
+					表示用レベル = {ABL:ARG:LCOUNT, 5, LEFT}
 			ENDSELECT
 	ENDSELECT
 
-	LOCALS:(LOCAL%6) = %SET_TOOLTIP(@"　%ABLNAME:COUNT, 8%:LV%表示用レベル%", ABL_COMMENT(ABLNAME:COUNT, ARG))%
+	LOCALS:(LOCAL%6) = %SET_TOOLTIP(@"　%ABLNAME:LCOUNT, 8%:LV%表示用レベル%", ABL_COMMENT(ABLNAME:LCOUNT, ARG))%
+	RESETCOLOR
 	LOCAL++
-REND
+NEXT
 
 SIF !LINEISEMPTY()
 	PRINTL 
-
 
 ;=============================================================================
 ;素質表示
@@ -1074,57 +1080,64 @@ SIF !LINEISEMPTY()
 @SHOW_INFO_EXP, ARG
 #DIMS DYNAMIC 表示用経験
 #DIMS DYNAMIC 経験名
+#DIM DYNAMIC LCOUNT
 VARSET LOCALS
 LOCAL = 0
-REPEAT VARSIZE("EXP")
-	IF COUNT == VARSIZE("EXP")-1
-		HTML_PRINT LOCALS+LOCALS:1+LOCALS:2+LOCALS:3+LOCALS:4+LOCALS:5
+FOR LCOUNT, 0, VARSIZE("EXP")
+	IF LCOUNT == VARSIZE("EXP")-1
+		HTML_PRINT LOCALS+LOCALS:1+LOCALS:2+LOCALS:3+LOCALS:4
 		BREAK
-	ELSEIF EXPNAME:COUNT == ""
+	ELSEIF EXPNAME:LCOUNT == ""
 		CONTINUE
 	ENDIF
 
 	;改行するのか？ 続けて出力するのか？
-	IF LOCAL%6 == 0 && LOCAL != 0
-		HTML_PRINT LOCALS+LOCALS:1+LOCALS:2+LOCALS:3+LOCALS:4+LOCALS:5
+	IF LOCAL%5 == 0 && LOCAL != 0
+		HTML_PRINT LOCALS+LOCALS:1+LOCALS:2+LOCALS:3+LOCALS:4
 		VARSET LOCALS
 	ENDIF
 
-	表示用経験 = %TOSTR(EXP:ARG:COUNT), 7%
+	表示用経験 = %TOSTR(EXP:ARG:LCOUNT), 12%
+	;試したけど予想以上に見た目がウザかった
+	;表示用経験 = %REPLACE(表示用経験, " ", "_")%
 
-	SELECTCASE EXPNAME:COUNT
+	SELECTCASE EXPNAME:LCOUNT
 		CASE "レズ経験", "噴乳経験"
 			;男ならレズ経験、噴乳経験は灰色表示
 			IF SEX(ARG) == 1
 				SETCOLORBYNAME gray
-				表示用経験 = -------
+				表示用経験 = ------------
 			ENDIF
 		;女ならゲイ経験は灰色表示
 		CASE "ゲイ経験"
 			IF SEX(ARG) == 2
 				SETCOLORBYNAME gray
-				表示用経験 = -------
+				表示用経験 = ------------
 			ENDIF
 		;膣が無ければＶ経験、膣射経験、Ｖ拡張経験。出産経験、流産経験も灰色
 		CASE "Ｖ経験", "膣射経験", "Ｖ拡張経験", "流産経験"
 			IF !VAGINA(ARG)
 				SETCOLORBYNAME gray
-				表示用経験 = -------
+				表示用経験 = ------------
 			ENDIF
 		;ペニス無ければ射精経験も灰色
-		CASE "射精経験"
+		CASE "射精経験", "射精管理経験"
 			IF !PENIS(ARG)
 				SETCOLORBYNAME gray
-				表示用経験 = -------
+				表示用経験 = ------------
 			ENDIF
 	ENDSELECT
 
 
-	SELECTCASE EXPNAME:COUNT
+	SELECTCASE EXPNAME:LCOUNT
 		CASE "奉仕快楽経験"
 			経験名 = 奉快経験
 		CASE "フェラ経験"
 			経験名 = 口淫経験
+		CASE "パイズリ経験"
+			経験名 = 乳擦経験
+		CASE "射精管理経験"
+			経験名 = 射精管理
 		CASE "苦痛快楽経験"
 			経験名 = 痛楽経験
 		CASE "嗜虐快楽経験"
@@ -1138,34 +1151,38 @@ REPEAT VARSIZE("EXP")
 		CASE "Ａ拡張経験"
 			経験名 = Ａ拡経験
 		CASEELSE
-			経験名 = %EXPNAME:COUNT%
+			経験名 = %EXPNAME:LCOUNT%
 	ENDSELECT
 
-	LOCALS:(LOCAL%6) = %SET_TOOLTIP(@"　%経験名, 8%:%表示用経験%", EXP_COMMENT(EXPNAME:COUNT), ARG)%
+	LOCALS:(LOCAL%5) = %SET_TOOLTIP(@"　%経験名, 8%:%表示用経験%", EXP_COMMENT(EXPNAME:LCOUNT, ARG))%
+	RESETCOLOR
 	LOCAL++
-REND
+NEXT
 SIF !LINEISEMPTY()
 	PRINTL 
 
 ;=============================================================================
 ;珠表示
 @SHOW_INFO_JUEL, ARG
+#DIM DYNAMIC LCOUNT
 LOCAL = 0
-REPEAT 12
-	SIF PALAMNAME:COUNT == ""
+FOR LCOUNT, 0, VARSIZE("PALAM")
+	SIF PALAMNAME:LCOUNT == ""
 		CONTINUE
-	SIF PALAMNAME:COUNT == "潤滑"
+	SIF PALAMNAME:LCOUNT == "潤滑"
+		CONTINUE
+	SIF PALAMNAME:LCOUNT == "勃起"
 		CONTINUE
 	;改行するのか？ 続けて出力するのか？
-	SIF LOCAL % 6 == 0 && LOCAL != 0
+	SIF LOCAL%5 == 0 && LOCAL != 0
 		PRINTL 
 	
-	PRINTFORM 　%PALAMNAME:COUNT, 4%の珠:
-	PRINTFORM {JUEL:ARG:COUNT, 7}
+	PRINTFORM 　%PALAMNAME:LCOUNT, 4%の珠:
+	PRINTFORM {JUEL:ARG:LCOUNT, 12}
 	LOCAL++
-REND
-PRINTFORM 　%PALAMNAME:100, 4%の珠:
-PRINTFORM {JUEL:ARG:100, 7}
+NEXT
+;PRINT 　否定の珠:
+;PRINTFORM {JUEL:ARG:否定, 10}
 SIF !LINEISEMPTY()
 	PRINTL 
 

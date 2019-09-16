@@ -15,11 +15,25 @@ IF CFLAG:残数 == 0
 ENDIF
 
 LOCAL = BASE:射精/MAXBASE:射精
-SIF LOCAL <= 0
+;射精していない
+IF LOCAL <= 0
+	;対象の実行フラグが立ってない場合
+	IF !TFLAG:奴隷実行
+		;スキンシップはランダムなので例外
+		SIF SELECTCOMS == "スキンシップ"
+			RETURN 0
+		;MAXBASE:射精-(MAXBASE:射精/20*ABL:PLAYER:技巧)以上なら寸止め可能フラグを立てる
+		;MASBASE:射精が10000として、技巧1で9500、技巧5で7500、技巧10で5000以上
+		SIF BASE:射精 >= MAXBASE:射精-(MAXBASE:射精/20*ABL:PLAYER:技巧)
+			TFLAG:寸止め = 1
+	ENDIF
 	RETURN 0
+ENDIF
 
 IF TEQUIP:射精止め
 	PRINTFORML %CALLNAME:TARGET%空イキ（射精止め中）
+	PRINTL 射精管理経験+2
+	EXP:射精管理経験 += 2
 	RETURN 0
 ELSE
 	;射精止め解放してれば特殊表示
@@ -157,7 +171,13 @@ ELSE
 			PRINTFORML %CALLNAME:TARGET%強制射精
 		;その他
 		CASEELSE
-			IF TEQUIP:コンドーム
+			IF TEQUIP:搾精器
+				IF LOCAL >= 2
+					PRINTFORML %CALLNAME:TARGET%大量搾精
+				ELSE
+					PRINTFORML %CALLNAME:TARGET%搾精
+				ENDIF
+			ELSEIF TEQUIP:コンドーム
 				IF LOCAL >= 2
 					PRINTFORML %CALLNAME:TARGET%大量射精（避妊具）
 				ELSE
@@ -205,6 +225,7 @@ SIF 射精量 <= 0
 ;6 = 主人の腸内に射精
 ;7 = 助手の腸内に射精
 ;8 = 触手による強制射精
+;9 = パイズリで射精
 ;0 = その他
 
 SELECTCASE ARG
@@ -215,8 +236,8 @@ SELECTCASE ARG
 			PRINTFORML 膣内射精経験+{計算用射精量}（%CALLNAME:MASTER%）
 			EXP:MASTER:膣射経験 += 計算用射精量
 			PREG:4++
-			中出し人数:(NO:MASTER)++
-			中出され人数:MASTER:(NO:TARGET)++
+			中出し回数:(NO:MASTER)++
+			中出され回数:MASTER:(NO:TARGET)++
 			CFLAG:主人への膣射経験++
 			;獣人、獣による催淫
 			SELECTCASE CSTR:種族
@@ -232,8 +253,8 @@ SELECTCASE ARG
 			PRINTFORML 膣内射精経験+{計算用射精量}（%CALLNAME:ASSI%）
 			EXP:ASSI:膣射経験 += 計算用射精量
 			PREG:ASSI:2++
-			中出し人数:(NO:ASSI)++
-			中出され人数:ASSI:(NO:TARGET)++
+			中出し回数:(NO:ASSI)++
+			中出され回数:ASSI:(NO:TARGET)++
 			CFLAG:助手への膣射経験++
 			;獣人、獣による催淫
 			SELECTCASE CSTR:種族
@@ -291,9 +312,12 @@ SELECTCASE ARG
 					CFLAG:ASSI:媚薬 += 計算用射精量
 			ENDSELECT
 		ENDIF
+	;触手による強制射精
+	CASE 8
+		PRINTL 射精管理経験+3
+		EXP:射精管理経験 += 3
 	;その他
 	CASEELSE
-		;
 ENDSELECT
 
 SELECTCASE SELECTCOMS
@@ -308,6 +332,8 @@ SELECTCASE SELECTCOMS
 	CASE "正常位アナル", "後背位アナル", "騎乗位アナル", "背面座位アナル", "対面座位アナル"
 		SIF PLAYER == MASTER
 			CFLAG:アナルを犯されて射精した経験++
+	CASE "ペットに舐めさせる"
+		CFLAG:動物に舐められて射精した経験++
 ENDSELECT
 SIF TEQUIP:ビデオカメラ
 	CFLAG:射精を撮影された経験++
@@ -339,6 +365,11 @@ ENDIF
 PRINTFORML 射精経験+{計算用射精量}
 EXP:射精経験 += 計算用射精量
 
+IF CFLAG:貞操帯
+	PRINTFORML 射精管理経験+{CFLAG:貞操帯}
+	EXP:射精管理経験 += CFLAG:貞操帯
+ENDIF
+
 ;精液汚れの設定
 SETBIT STAIN:ペニス, 2
 
@@ -356,6 +387,8 @@ LOSEBASE:気力 += 30*LIMIT(射精量, 1, 2)
 ;ビデオ撮影時はボーナスカウント
 SIF TEQUIP:ビデオカメラ
 	VIDEOBONUS:4++
+
+VARSET LOCAL
 
 ;ソース追加
 ;射精経験多いほど恥ずかしくなくなって気持ち良くなる
@@ -396,7 +429,11 @@ SELECTCASE 射精量
 	CASE IS >= 2
 		CFLAG:賢者タイム += 5
 ENDSELECT
-CFLAG:残数 -= 1
+CFLAG:残数--
+
+;搾精器
+SIF TEQUIP:搾精器
+	TFLAG:搾精量 += 射精量
 
 IF TEQUIP:コンドーム
 	SIF TEQUIP:コンドーム
@@ -407,6 +444,10 @@ IF TEQUIP:コンドーム
 	SIF GETBIT(FLAG:避妊具設定, 2)
 		TEQUIP:コンドーム = 1
 ENDIF
+
+;天使による感度アップ
+SIF CSTR:種族 == "天使"
+	TFLAG:天使の感度ボーナス++
 
 ;-------------------------------------------------
 ;調教対象の噴乳チェック
@@ -543,7 +584,6 @@ IF LOCAL
 
 	;搾乳器で母乳が集められているかチェック
 	IF TEQUIP:搾乳器
-		TFLAG:搾乳量 += LOCAL
 		CFLAG:搾乳された経験++
 	ELSE
 		;獣人、獣による催淫
@@ -553,7 +593,5 @@ IF LOCAL
 				CFLAG:PLAYER:媚薬 += LIMIT(LOCAL, 1, 5)
 		ENDSELECT
 	ENDIF
-	
-	LOCAL = 0
 ENDIF
 

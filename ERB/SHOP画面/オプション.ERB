@@ -5,7 +5,6 @@ PRINTL □設定項目を選択してください
 PRINTL 　[0] - テキスト設定
 PRINTL 　[1] - 着衣関連設定
 PRINTL 　[2] - イベント関連の設定
-;PRINTL 　[3] - チュートリアル受講
 SIF TALENT:MASTER:ドラゴン使い
 	PRINTL 　[4] - ドラゴンの名前変更
 DRAWLINE
@@ -23,13 +22,6 @@ DO
 		CASE 2
 			CALL EVENT_SETTING
 			BREAK
-;		CASE 3
-;			IF FLAG:ゲームモード == 8
-;				CALL TEST_TUTORIAL
-;			ELSE
-;				CALL TUTORIAL
-;			ENDIF
-;			DRAWLINE
 		CASE 4
 			IF TALENT:MASTER:ドラゴン使い
 				DO

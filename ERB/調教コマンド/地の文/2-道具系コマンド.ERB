@@ -47,6 +47,8 @@ ELSE
 				ENDIF
 			ENDIF
 	ENDSELECT
+	SIF TEQUIP:お風呂場
+		PRINTL 浴槽内で震えるローターが鈍い音を響かせている……
 ENDIF
 WAIT
 
@@ -56,27 +58,51 @@ WAIT
 @MESSAGE_COM_電気按摩
 SIF OVER_GENITAL(TARGET) != ""
 	PRINTFORM %OVER_GENITAL(TARGET)%の上から
+SIF TEQUIP:お風呂場
+	PRINT 湯船の中で
 PRINTFORML %CALLNAME:TARGET%の\@ SEX(TARGET) == 1 ? 股間 # 秘所 \@に振動している電気按摩を押しつけた
 PRINTFORM %CALLNAME:TARGET%は
 ;Ｃ感覚LV3未満
 IF ABL:Ｃ感覚 < 3
-	;欲情のPALAMLV3未満
-	IF PALAM:欲情 < PALAMLV:3
-		PRINTL とてもくすぐったがっているらしく、唇を噛み締めて震えている……
-	;欲情のPALAMLV3以上
+	IF TALENT:アニマル
+		PRINTL 半ば苦痛になっているのか、痛がるような鳴き声を上げている……
 	ELSE
-		PRINTL 、……何も言えなくなっているようだ……
+		;欲情のPALAMLV3未満
+		IF PALAM:欲情 < PALAMLV:3
+			PRINTL とてもくすぐったがっているらしく、唇を噛み締めて震えている……
+		;欲情のPALAMLV3以上
+		ELSE
+			PRINTL 、……何も言えなくなっているようだ……
+		ENDIF
 	ENDIF
-;陥落済
-ELSEIF CFLAG:陥落
+ELSEIF TALENT:アニマル
 	;欲情レベル
 	SELECTCASE PALAM:欲情
 		;LV3未満
 		CASE IS < PALAMLV:3
-			PRINTL 待ちわびたように足を開き、刺激を一身に受け入れている……
+			PRINTL 明らかに快感を得ている様子で、大人しく電気按摩での調教を受け入れている……
 		;LV3以上 LV5未満
 		CASE PALAMLV:3 TO PALAMLV:5
-			PRINTFORML 快楽に涎をたらしながら、何度も%CALLNAME:PLAYER%の名を呼んだ……
+			PRINTL 舌を出して涎を零しながら、低く唸っている……
+		;LV5以上
+		CASE IS >= PALAMLV:5
+			PRINTL 自ら腹部をさらけ出して前膝を折り曲げ、快感に身を委ねている……
+	ENDSELECT
+;陥落済
+ELSEIF CFLAG:陥落 || (TALENT:アニマル && CFLAG:依存度 >= 1500)
+	;欲情レベル
+	SELECTCASE PALAM:欲情
+		;LV3未満
+		CASE IS < PALAMLV:3
+			IF TALENT:足使用不可
+				PRINT 待ちわびたように足を開き、
+			ELSE
+				PRINT %CALLNAME:PLAYER%に身を委ね、
+			ENDIF
+			PRINTL 刺激を一身に受け入れている……
+		;LV3以上 LV5未満
+		CASE PALAMLV:3 TO PALAMLV:5
+			PRINTFORML 快楽に涎をたらしながら、\@ TALENT:アニマル ? うめき声を上げた…… # 何度も%CALLNAME:PLAYER%の名を呼んだ…… \@
 		;LV5以上
 		CASE IS >= PALAMLV:5
 			PRINTFORML %CALLNAME:PLAYER%を掻き抱きながら至高の恍惚感に浸っている……
@@ -116,7 +142,7 @@ ENDIF
 ;-------------------------------------------------
 @MESSAGE_COM_バイブ
 ;服着てる
-SIF OVER_GENITAL(TARGET) != ""
+SIF OVER_GENITAL(TARGET) != "" && OVER_GENITAL(TARGET) != "貞操帯"
 	PRINTFORM %OVER_GENITAL(TARGET)%を捲り、
 ;解除時
 IF TEQUIP:バイブ
@@ -189,62 +215,120 @@ ELSE
 			PRINTL を震える張り型でゆっくりと貫いていく……
 	ENDSELECT
 
-	PRINTFORM %CALLNAME:TARGET%は
-	;処女
-	IF TALENT:処女
-		;娼婦 処女ビッチ
-		IF TALENT:娼婦
-			PRINTL 女性器に入り込んでくるバイブを見つめては、自分が処女である事を忘れているかのような笑みを浮かべている……
-		;恋慕or親愛
-		ELSEIF TALENT:恋慕 || TALENT:親愛
-			PRINTFORML 初めてを散らすのがその淫具であることを悟ると、少し寂しそうな目で%CALLNAME:PLAYER%を見つめた……
-		;淫乱
-		ELSEIF TALENT:淫乱
-			PRINTL 自分が処女である事もお構いなしに、股を開いては挿入をせがんでいる……
-		;服従or隷属
-		ELSEIF TALENT:服従 || TALENT:隷属
-			PRINTFORML 処女を捨てる覚悟はとうに出来ていたかのように、力を抜いて%CALLNAME:PLAYER%に体を委ねた……
-		;一線越えない 貞操観念
-		ELSEIF TALENT:一線越えない || TALENT:貞操観念
-			PRINTL 何かを諦めた表情で目にうっすら涙を浮かべ、振動するバイブを受け入れた……
-		;その他
-		ELSE
-			PRINTL それで処女を散らすことを察すると、喪失の恐怖に怯えながら震えている……
-		ENDIF
+	IF TALENT:アニマル
+		PRINTFORML %CALLNAME:TARGET%はバイブの挿入を生殖行為と錯覚してか、舌を出して息を荒げて大人しくしている……
 	ELSE
-		;服従or隷属 Ｖ経験70以上
-		IF FALLTYPE(TARGET) == 3 && EXP:Ｖ経験 >= 70
-			;Ｖ経験
-			SELECTCASE EXP:Ｖ経験
-				;200以上
-				CASE IS >= 200
-					PRINTL 挿入への期待だけでガクガクと腰を震わせてイきそうになっている……
-				;150以上
-				CASE IS >= 150
-					PRINTFORML とろけきった目で%CALLNAME:PLAYER%を見つめ、自分から陰唇を擦りつけて受け入れた……
-				;120以上
-				CASE IS >= 120
-					PRINTL 恍惚とした表情で待ちきれないように腰をくねらせている……
-				;70以上
-				CASE IS >= 70
-					PRINTFORML もの欲しそうに目を潤ませ%CALLNAME:PLAYER%を見つめながら、膣内を掻き回される快感に悦んでいる……
-			ENDSELECT
-		;服従隷属無し もしくはＶ経験70未満
+		PRINTFORM %CALLNAME:TARGET%は
+		;処女
+		IF TALENT:処女
+			;娼婦 処女ビッチ
+			IF TALENT:娼婦
+				PRINTL 女性器に入り込んでくるバイブを見つめては、自分が処女である事を忘れているかのような笑みを浮かべている……
+			;恋慕or親愛
+			ELSEIF TALENT:恋慕 || TALENT:親愛
+				PRINTFORML 初めてを散らすのがその淫具であることを悟ると、少し寂しそうな目で%CALLNAME:PLAYER%を見つめた……
+			;淫乱
+			ELSEIF TALENT:淫乱
+				PRINTL 自分が処女である事もお構いなしに、股を開いては挿入をせがんでいる……
+			;服従or隷属
+			ELSEIF TALENT:服従 || TALENT:隷属
+				PRINTFORML 処女を捨てる覚悟はとうに出来ていたかのように、力を抜いて%CALLNAME:PLAYER%に体を委ねた……
+			;一線越えない 貞操観念
+			ELSEIF TALENT:一線越えない || TALENT:貞操観念
+				PRINTL 何かを諦めた表情で目にうっすら涙を浮かべ、振動するバイブを受け入れた……
+			;その他
+			ELSE
+				PRINTL それで処女を散らすことを察すると、喪失の恐怖に怯えながら震えている……
+			ENDIF
 		ELSE
-			;Ｖ経験
-			SELECTCASE EXP:Ｖ経験
-				;40以上
-				CASE IS >= 40
-					PRINTL 膣内を抉るバイブの感触に陶酔しきった吐息をついて、揺さぶられる膣穴から愛液を止め処なく垂れ流している……
-				;20以上
-				CASE IS >= 20
-					PRINTL 敏感な膣壁をバイブでくすぐられる感触に身をよじらせ愛液を溢れさせている……
-				;20未満
-				CASE IS < 20
-					PRINTL バイブの擦れる感触に陰唇をひくつかせている……
-			ENDSELECT
+			;服従or隷属 Ｖ経験70以上
+			IF FALLTYPE(TARGET) == 3 && EXP:Ｖ経験 >= 70
+				;Ｖ経験
+				SELECTCASE EXP:Ｖ経験
+					;200以上
+					CASE IS >= 200
+						PRINTL 挿入への期待だけでガクガクと腰を震わせてイきそうになっている……
+					;150以上
+					CASE IS >= 150
+						PRINTFORML とろけきった目で%CALLNAME:PLAYER%を見つめ、自分から陰唇を擦りつけて受け入れた……
+					;120以上
+					CASE IS >= 120
+						PRINTL 恍惚とした表情で待ちきれないように腰をくねらせている……
+					;70以上
+					CASE IS >= 70
+						PRINTFORML もの欲しそうに目を潤ませ%CALLNAME:PLAYER%を見つめながら、膣内を掻き回される快感に悦んでいる……
+				ENDSELECT
+			;服従隷属無し もしくはＶ経験70未満
+			ELSE
+				;Ｖ経験
+				SELECTCASE EXP:Ｖ経験
+					;40以上
+					CASE IS >= 40
+						PRINTL 膣内を抉るバイブの感触に陶酔しきった吐息をついて、揺さぶられる膣穴から愛液を止め処なく垂れ流している……
+					;20以上
+					CASE IS >= 20
+						PRINTL 敏感な膣壁をバイブでくすぐられる感触に身をよじらせ愛液を溢れさせている……
+					;20未満
+					CASE IS < 20
+						PRINTL バイブの擦れる感触に陰唇をひくつかせている……
+				ENDSELECT
+			ENDIF
 		ENDIF
 	ENDIF
+ENDIF
+WAIT
+
+;-------------------------------------------------
+;ペニスバンド
+;-------------------------------------------------
+@MESSAGE_COM_ペニスバンド
+IF FINDCHARA(TEQUIP:ペニスバンド, 1) >= 0
+	PRINTFORML %CALLNAME:FINDCHARA(TEQUIP:ペニスバンド, 1)%はペニスバンドを外した
+ELSE
+	SELECTCASE TFLAG:ペニバン着用者
+		CASE MASTER
+			PRINTFORM %CALLNAME:MASTER%は
+			;着衣中
+			IF TEQUIP:MASTER:下半身上着 || (TEQUIP:MASTER:全身上着 && CFLAG:MASTER:着衣併用 != 1)
+				IF CFLAG:MASTER:挿入可
+					SIF TEQUIP:MASTER:下半身下着
+						PRINTFORM %CSTR:MASTER:下半身下着%を下ろし、
+					PRINTFORML 股間にペニスバンドを取り付けて%OVER_GENITAL(MASTER)%の裾を持ち上げた……
+				ELSE
+					PRINTFORM %OVER_GENITAL(MASTER)%
+					SIF TEQUIP:MASTER:下半身下着
+						PRINTFORM と%CSTR:MASTER:下半身下着%
+					PRINTL を脱いで、股間にペニスバンドを取り付けた……
+				ENDIF
+			ELSE
+				SIF TEQUIP:MASTER:下半身下着
+					PRINTFORM %CSTR:MASTER:下半身下着%を下ろし、
+				PRINTFORML 股間にペニスバンドを取り付けた……
+			ENDIF
+		CASE ASSI
+			PRINTFORM %CALLNAME:ASSI%は
+			;着衣中
+			IF TEQUIP:ASSI:下半身上着 || (TEQUIP:ASSI:全身上着 && CFLAG:ASSI:着衣併用 != 1)
+				IF CFLAG:ASSI:挿入可
+					SIF TEQUIP:ASSI:下半身下着
+						PRINTFORM %CSTR:ASSI:下半身下着%を下ろし、
+					PRINTFORML 股間にペニスバンドを取り付けて%OVER_GENITAL(ASSI)%の裾を持ち上げた……
+				ELSE
+					PRINTFORM %OVER_GENITAL(ASSI)%
+					SIF TEQUIP:ASSI:下半身下着
+						PRINTFORM と%CSTR:ASSI:下半身下着%
+					PRINTL を脱いで、股間にペニスバンドを取り付けた……
+				ENDIF
+			ELSE
+				SIF TEQUIP:ASSI:下半身下着
+					PRINTFORM %CSTR:ASSI:下半身下着%を下ろし、
+				PRINTFORML 股間にペニスバンドを取り付けた……
+			ENDIF
+		CASE TARGET
+			PRINTFORML %CALLNAME:TARGET%にペニスバンドを装着させた
+			SIF FALLTYPE(TARGET) == 2
+				PRINTFORML %CALLNAME:TARGET%は自らの剛直を撫でながら%CALLNAME:PLAYER%を見つめ、舌なめずりしている……
+	ENDSELECT
 ENDIF
 WAIT
 
@@ -272,12 +356,16 @@ ELSE
 		CASE 1
 			PRINTFORML %CALLNAME:TARGET%のペニスに柔らかなオナホールを被せた
 	ENDSELECT
-	SELECTCASE RAND:2
-		CASE 0
-			PRINTFORMW 敏感なモノを包まれる感覚に%CALLNAME:TARGET%は悶えている……
-		CASE 1
-			PRINTFORMW オナホールにペニスを飲み込まれた%CALLNAME:TARGET%は気持ち良さそうな表情をしている……
-	ENDSELECT
+	IF TALENT:アニマル
+		PRINTFORMW %CALLNAME:TARGET%は自らの生殖器に嵌められた道具が気になり、身をよじらせてペニスの先端を舐めている……
+	ELSE
+		SELECTCASE RAND:2
+			CASE 0
+				PRINTFORMW 敏感なモノを包まれる感覚に%CALLNAME:TARGET%は悶えている……
+			CASE 1
+				PRINTFORMW オナホールにペニスを飲み込まれた%CALLNAME:TARGET%は気持ち良さそうな表情をしている……
+		ENDSELECT
+	ENDIF
 ENDIF
 
 ;-------------------------------------------------
@@ -434,97 +522,142 @@ SELECTCASE ABL:精液中毒
 ENDSELECT
 
 ;-------------------------------------------------
+;搾精器
+;-------------------------------------------------
+@MESSAGE_COM_搾精器
+IF !TEQUIP:搾精器
+	PRINTFORMW %CALLNAME:TARGET%のペニスに搾精器を取り付けた……
+ELSE
+	PRINTFORMW %CALLNAME:TARGET%のペニスから搾精器を取り外した……
+ENDIF
+
+;-------------------------------------------------
+;貞操帯
+;-------------------------------------------------
+@MESSAGE_COM_貞操帯
+IF !CFLAG:貞操帯
+	PRINTFORMW %CALLNAME:TARGET%のペニスに貞操帯を取り付けた……
+ELSE
+	PRINTFORMW %CALLNAME:TARGET%のペニスから貞操帯を取り外した……
+ENDIF
+
+;-------------------------------------------------
 ;アナルバイブ
 ;-------------------------------------------------
 @MESSAGE_COM_アナルバイブ
 ;服着てる
-SIF OVER_GENITAL(TARGET) != ""
+SIF OVER_GENITAL(TARGET) != "" && OVER_GENITAL(TARGET) != "貞操帯"
 	PRINTFORM %OVER_GENITAL(TARGET)%を捲り、
 ;解除時
 IF TEQUIP:アナルバイブ
 	PRINTFORML %CALLNAME:TARGET%のアヌスからアナルバイブを引き抜いた
 	PRINTFORM %CALLNAME:TARGET%は
-	;淫乱or娼婦 Ａ経験70以上
-	IF FALLTYPE(TARGET) == 2 && EXP:Ａ経験 >= 70
-		;Ａ経験
-		SELECTCASE EXP:Ａ経験
-			;180以上
-			CASE IS >= 180
-				;男
-				IF SEX(TARGET) == 1
-					SELECTCASE RAND:2
-						CASE 0
-							PRINTL 亀頭から前立腺液をたらしながら、尻穴を埋めるモノを求めている……
-						CASE 1
-							PRINTL くぐもった声を上げながら、ペニスの先端から先走りを垂らしている……
-					ENDSELECT
-				ELSE
-					PRINTL 秘唇と口から涎をたらしながら、アナルを広げ続けている……
-				ENDIF
-			;140以上
-			CASE IS >= 140
-				PRINTL 潤んだ瞳で懇願するようにお尻を振っている……
-			;100以上
-			CASE IS >= 100
-				PRINTL 物足りなさそうにお尻を突き出している……
-			;70以上
-			CASE IS >= 70
-				PRINTL 少し名残惜しそうにお尻を揺らしている……
-		ENDSELECT
-	;淫乱娼婦無し もしくはＡ経験70未満
-	ELSE
-		;Ａ経験
-		SELECTCASE EXP:Ａ経験
-			;40以上
-			CASE IS >= 40
-				PRINTL お尻をもじもじさせつつも、どこかほっとした表情をうかべている……
-			;20以上
-			CASE IS >= 20
-				PRINTL 排泄感に似たような異物感に頬を染めている……
-			;20未満
-			CASE IS < 20
-				PRINTL まだ小慣れていない尻穴をひくつかせながら苦痛に悶えている……
-		ENDSELECT
+	IF !TALENT:アニマル
+		;淫乱or娼婦 Ａ経験70以上
+		IF FALLTYPE(TARGET) == 2 && EXP:Ａ経験 >= 70
+			;Ａ経験
+			SELECTCASE EXP:Ａ経験
+				;180以上
+				CASE IS >= 180
+					;男
+					IF SEX(TARGET) == 1
+						SELECTCASE RAND:2
+							CASE 0
+								PRINTL 亀頭から前立腺液をたらしながら、尻穴を埋めるモノを求めている……
+							CASE 1
+								PRINTL くぐもった声を上げながら、ペニスの先端から先走りを垂らしている……
+						ENDSELECT
+					ELSE
+						PRINTL 秘唇と口から涎をたらしながら、アナルを広げ続けている……
+					ENDIF
+				;140以上
+				CASE IS >= 140
+					PRINTL 潤んだ瞳で懇願するようにお尻を振っている……
+				;100以上
+				CASE IS >= 100
+					PRINTL 物足りなさそうにお尻を突き出している……
+				;70以上
+				CASE IS >= 70
+					PRINTL 少し名残惜しそうにお尻を揺らしている……
+			ENDSELECT
+		;淫乱娼婦無し もしくはＡ経験70未満
+		ELSE
+			IF TALENT:アニマル
+				PRINTL 拡がった尻穴の上で尻尾を振っている……
+			ELSE
+				;Ａ経験
+				SELECTCASE EXP:Ａ経験
+					;40以上
+					CASE IS >= 40
+						PRINTL お尻をもじもじさせつつも、どこかほっとした表情をうかべている……
+					;20以上
+					CASE IS >= 20
+						PRINTL 排泄感に似たような異物感に頬を染めている……
+					;20未満
+					CASE IS < 20
+						PRINTL まだ小慣れていない尻穴をひくつかせながら苦痛に悶えている……
+				ENDSELECT
+			ENDIF
+		ENDIF
 	ENDIF
 ELSE
+	PRINTFORM %CALLNAME:TARGET%の尻穴に
 	SELECTCASE SEX(TARGET)
 		CASE 1
-			PRINTFORML %CALLNAME:TARGET%の尻穴にアナルバイブをあてがうと、ペニスがびくんと揺れる……
+			PRINTL アナルバイブをあてがうと、ペニスがびくんと揺れる……
 		CASE 2
-			PRINTFORML %CALLNAME:TARGET%の菊穴にアナルバイブをあてがった……
+			PRINTL アナルバイブをあてがった……
 	ENDSELECT
-	PRINTFORM %CALLNAME:TARGET%は
-	;淫乱or娼婦 Ａ経験70以上
-	IF FALLTYPE(TARGET) == 2 && EXP:Ａ経験 >= 70
-		;Ａ経験
+	PRINTFORM %CALLNAME:TARGET%
+	IF TALENT:アニマル
 		SELECTCASE EXP:Ａ経験
-			;180以上
-			CASE IS >= 180
-				PRINTL とろけきった表情で自らの尻穴を広げ、太いバイブを奥まで誘い込んだ……
-			;140以上
-			CASE IS >= 140
-				PRINTL 挿入を待ち焦がれるように腰をくねらせ、ゆっくりとバイブを飲み込んでいった……
-			;100以上
-			CASE IS >= 100
-				PRINTL 頬を染め、期待にお尻を揺らめかせながら、作り物の亀頭を受け入れていく……
-			;70以上
-			CASE IS >= 70
-				PRINTL すぼまりに与えられるバイブの刺激に身体を震わせながら、挿入されるバイブを締め付けている……
+			CASE IS <= 30
+				PRINTL 痛みを感じているのか、挿入時に甲高い鳴き声を上げた……
+			CASE IS <= 100
+				PRINTL アナルも大分解れ、鳴き声を上げることもなくそれを受け入れた……
+			CASE IS <= 200
+				PRINT すっかりアナルを弄られることにも慣れ、
+				SELECTCASE SEX(TARGET)
+					CASE 1
+						PRINTL 獣のペニスの先端から先走りを溢れさせている……
+					CASE 2
+						PRINTL 膣周りを濡らしている……
+				ENDSELECT
 		ENDSELECT
-	;淫乱娼婦無し もしくはＡ経験70未満
 	ELSE
-		;Ａ経験
-		SELECTCASE EXP:Ａ経験
-			;40以上
-			CASE IS >= 40
-				PRINTL 期待と否定の入り混じったような複雑な表情をしながら、肛内で震えるそれを締め付けている……
-			;20以上
-			CASE IS >= 20
-				PRINTL 自らの尻穴で震えるバイブの音を聞いては、恥じらいに染まった顔を伏せている……
-			;20未満
-			CASE IS < 20
-				PRINTL 不浄の穴を犯される恥辱と屈辱感にまみれた表情をしている……
-		ENDSELECT
+		PRINT は
+		;淫乱or娼婦 Ａ経験70以上
+		IF FALLTYPE(TARGET) == 2 && EXP:Ａ経験 >= 70
+			;Ａ経験
+			SELECTCASE EXP:Ａ経験
+				;180以上
+				CASE IS >= 180
+					PRINTL とろけきった表情で自らの尻穴を広げ、バイブを奥まで誘い込んだ……
+				;140以上
+				CASE IS >= 140
+					PRINTL 挿入を待ち焦がれるように腰をくねらせ、ゆっくりとバイブを飲み込んでいった……
+				;100以上
+				CASE IS >= 100
+					PRINTL 頬を染め、期待にお尻を揺らめかせながら、作り物の亀頭を受け入れていく……
+				;70以上
+				CASE IS >= 70
+					PRINTL すぼまりに与えられるバイブの刺激に身体を震わせながら、挿入されるバイブを締め付けている……
+			ENDSELECT
+		;淫乱娼婦無し もしくはＡ経験70未満
+		ELSE
+			;Ａ経験
+			SELECTCASE EXP:Ａ経験
+				;40以上
+				CASE IS >= 40
+					PRINTL 期待と否定の入り混じったような複雑な表情をしながら、肛内で震えるそれを締め付けている……
+				;20以上
+				CASE IS >= 20
+					PRINTL 自らの尻穴で震えるバイブの音を聞いては、恥じらいに染まった顔を伏せている……
+				;20未満
+				CASE IS < 20
+					PRINTL 不浄の穴を犯される恥辱と屈辱感にまみれた表情をしている……
+			ENDSELECT
+		ENDIF
 	ENDIF
 ENDIF
 WAIT
@@ -534,13 +667,14 @@ WAIT
 ;-------------------------------------------------
 @MESSAGE_COM_アナルビーズ
 ;服着てる
-SIF OVER_GENITAL(TARGET) != ""
+SIF OVER_GENITAL(TARGET) != "" && OVER_GENITAL(TARGET) != "貞操帯"
 	PRINTFORM %OVER_GENITAL(TARGET)%を捲り、
 IF TEQUIP:アナルビーズ
-	PRINTFORMW %CALLNAME:TARGET%のアヌスからアナルビーズを勢い良く引き抜いた……
+	PRINTFORML %CALLNAME:TARGET%のアヌスからアナルビーズを勢い良く引き抜いた……
 ELSE
-	PRINTFORMW %CALLNAME:TARGET%の菊穴にアナルビーズをひとつづつ飲み込ませていった……
+	PRINTFORML %CALLNAME:TARGET%の菊穴にアナルビーズをひとつづつ飲み込ませていった……
 ENDIF
+WAIT
 
 ;-------------------------------------------------
 ;浣腸器
@@ -548,42 +682,47 @@ ENDIF
 @MESSAGE_COM_浣腸器
 ;解除時
 IF TEQUIP:浣腸器
-	PRINTFORM %CALLNAME:TARGET%は肛門栓を抜かれ、
-	PRINTL 腸内の汚物を肛門から撒き散らした
-	;マゾっ気
-	SELECTCASE ABL:マゾっ気
-		CASE 0
-			PRINTFORMW %CALLNAME:TARGET%は苦悶と恥辱の表情を浮かべている
-		CASE 1
-			PRINTFORMW %CALLNAME:TARGET%は脂汗を浮かべ、いまだ下腹に残る排泄感に堪えている
-		CASE 2
-			PRINTFORMW %CALLNAME:TARGET%は恥ずかしがりながらも、開放感にほっとした表情を浮かべている
-		CASE 3
-			PRINTFORMW %CALLNAME:TARGET%は肛門を通り過ぎる排泄物の感覚に時折艶っぽい喘ぎ声を上げている
-		CASE 4
-			PRINTFORMW %CALLNAME:TARGET%はうっとりした表情を浮かべ、排泄感を愉しんでいる
-		CASE IS >= 5
-			PRINTFORML %CALLNAME:TARGET%は排泄感と恥辱を心ゆくまで味わっている
-			PRINTFORMW %CALLNAME:TARGET%の表情は快感にだらしなく緩み、肛門以外の穴からもだらだらと体液を垂らしている
-	ENDSELECT
+	PRINTFORML %CALLNAME:TARGET%は肛門栓を抜かれ、腸内の汚物を肛門から撒き散らした
+	IF TALENT:アニマル
+		PRINTFORMW %CALLNAME:TARGET%は獣ゆえか恥ずかしげもなく、体勢を変えて排泄を続けている……
+	ELSE
+		;マゾっ気
+		SELECTCASE ABL:マゾっ気
+			CASE 0
+				PRINTFORMW %CALLNAME:TARGET%は苦悶と恥辱の表情を浮かべている
+			CASE 1
+				PRINTFORMW %CALLNAME:TARGET%は脂汗を浮かべ、いまだ下腹に残る排泄感に堪えている
+			CASE 2
+				PRINTFORMW %CALLNAME:TARGET%は恥ずかしがりながらも、開放感にほっとした表情を浮かべている
+			CASE 3
+				PRINTFORMW %CALLNAME:TARGET%は肛門を通り過ぎる排泄物の感覚に時折艶っぽい喘ぎ声を上げている
+			CASE 4
+				PRINTFORMW %CALLNAME:TARGET%はうっとりした表情を浮かべ、排泄感を愉しんでいる
+			CASE IS >= 5
+				PRINTFORML %CALLNAME:TARGET%は排泄感と恥辱を心ゆくまで味わっている
+				PRINTFORMW %CALLNAME:TARGET%の表情は快感にだらしなく緩み、肛門以外の穴からもだらだらと体液を垂らしている
+		ENDSELECT
+	ENDIF
 ELSE
-	PRINTFORML %CALLNAME:TARGET%の菊穴に浣腸液を流し込み、栓をした
-	;マゾっ気
-	SELECTCASE ABL:マゾっ気
-		CASE 0
-			PRINTFORMW %CALLNAME:TARGET%は苦悶の表情を浮かべている
-		CASE 1
-			PRINTFORMW %CALLNAME:TARGET%は脂汗を浮かべ、排泄感に堪えている
-		CASE 2
-			PRINTFORMW %CALLNAME:TARGET%は苦しそうな表情をしながらも、顔を紅潮させもじもじとお尻を振っている
-		CASE 3
-			PRINTFORMW %CALLNAME:TARGET%は、排泄感に苛まれながらも、時折恍惚とした表情を浮かべている
-		CASE 4
-			PRINTFORMW %CALLNAME:TARGET%は、うっとりした表情を浮かべ、排泄感と腹痛を愉しんでいる
-		CASE IS >= 5
-			PRINTFORML %CALLNAME:TARGET%は、排泄感を心ゆくまで味わっている
-			PRINTFORMW %CALLNAME:TARGET%の表情は快感にだらしなく緩み、その口の端からは涎を滴らせている
-	ENDSELECT
+	PRINTFORML %CALLNAME:TARGET%の直腸に浣腸液を流し込み、栓をした
+	IF !TALENT:アニマル
+		;マゾっ気
+		SELECTCASE ABL:マゾっ気
+			CASE 0
+				PRINTFORMW %CALLNAME:TARGET%は苦悶の表情を浮かべている
+			CASE 1
+				PRINTFORMW %CALLNAME:TARGET%は脂汗を浮かべ、排泄感に堪えている
+			CASE 2
+				PRINTFORMW %CALLNAME:TARGET%は苦しそうな表情をしながらも、顔を紅潮させもじもじとお尻を振っている
+			CASE 3
+				PRINTFORMW %CALLNAME:TARGET%は、排泄感に苛まれながらも、時折恍惚とした表情を浮かべている
+			CASE 4
+				PRINTFORMW %CALLNAME:TARGET%は、うっとりした表情を浮かべ、排泄感と腹痛を愉しんでいる
+			CASE IS >= 5
+				PRINTFORML %CALLNAME:TARGET%は、排泄感を心ゆくまで味わっている
+				PRINTFORMW %CALLNAME:TARGET%の表情は快感にだらしなく緩み、その口の端からは涎を滴らせている
+		ENDSELECT
+	ENDIF
 ENDIF
 
 ;-------------------------------------------------
@@ -603,27 +742,29 @@ PRINTFORMW しばらくしてから栓を抜くと、%CALLNAME:TARGET%の菊穴�
 ;解除時
 IF TEQUIP:拡張バルーン
 	PRINTFORM %CALLNAME:TARGET%の
-	SIF OVER_GENITAL(TARGET) != ""
+	SIF OVER_GENITAL(TARGET) != "" && OVER_GENITAL(TARGET) != "貞操帯"
 		PRINTFORM %OVER_GENITAL(TARGET)%を捲り上げ、
 	PRINTL 広がりきった菊穴からバルーンを抜いてやった……
-	;Ａ感覚
-	SELECTCASE ABL:Ａ感覚
-		CASE 0
-			PRINTFORMW 異物を失った%CALLNAME:TARGET%の肛門はゆっくりと閉じていった
-		CASE 1
-			PRINTFORMW %CALLNAME:TARGET%の肛門はひくつきながらゆるゆると閉じていった
-		CASE 2
-			PRINTFORMW %CALLNAME:TARGET%の肛門はぽっかり口を開いている
-		CASE 3
-			PRINTFORMW %CALLNAME:TARGET%の肛門は拡がったままなかなか戻らないようだ
-		CASE 4
-			PRINTFORMW %CALLNAME:TARGET%の肛門から腸の中が丸見えになっている
-		CASE IS >= 5
-			PRINTFORMW %CALLNAME:TARGET%は、自分の肛門を指で拡げ、恍惚としている
-	ENDSELECT
+	IF !TALENT:アニマル
+		;Ａ感覚
+		SELECTCASE ABL:Ａ感覚
+			CASE 0
+				PRINTFORMW 異物を失った%CALLNAME:TARGET%の肛門はゆっくりと閉じていった
+			CASE 1
+				PRINTFORMW %CALLNAME:TARGET%の肛門はひくつきながらゆるゆると閉じていった
+			CASE 2
+				PRINTFORMW %CALLNAME:TARGET%の肛門はぽっかり口を開いている
+			CASE 3
+				PRINTFORMW %CALLNAME:TARGET%の肛門は拡がったままなかなか戻らないようだ
+			CASE 4
+				PRINTFORMW %CALLNAME:TARGET%の肛門から腸の中が丸見えになっている
+			CASE IS >= 5
+				PRINTFORMW %CALLNAME:TARGET%は、自分の肛門を指で拡げ、恍惚としている
+		ENDSELECT
+	ENDIF
 ELSE
 	PRINTFORM %CALLNAME:TARGET%の
-	SIF OVER_GENITAL(TARGET) != ""
+	SIF OVER_GENITAL(TARGET) != "" && OVER_GENITAL(TARGET) != "貞操帯"
 		PRINTFORM %OVER_GENITAL(TARGET)%を捲り上げ、
 	PRINTL 菊穴にエアバルーンを挿入し、空気を送り込んだ……
 ENDIF
@@ -635,14 +776,32 @@ ENDIF
 ;解除時
 IF TEQUIP:アナル電極
 	PRINTFORM %CALLNAME:TARGET%の
-	SIF OVER_GENITAL(TARGET) != ""
+	SIF OVER_GENITAL(TARGET) != "" && OVER_GENITAL(TARGET) != "貞操帯"
 		PRINTFORM %OVER_GENITAL(TARGET)%を捲り上げ、
 	PRINTL アヌスから電極を抜いてやった……
 ELSE
 	PRINTFORM %CALLNAME:TARGET%の
-	SIF OVER_GENITAL(TARGET) != ""
+	SIF OVER_GENITAL(TARGET) != "" && OVER_GENITAL(TARGET) != "貞操帯"
 		PRINTFORM %OVER_GENITAL(TARGET)%を捲り上げ、
 	PRINTL 菊穴に電極を挿入してスイッチを入れた……
+ENDIF
+WAIT
+
+;-------------------------------------------------
+;電動エネマグラ
+;-------------------------------------------------
+@MESSAGE_COM_電動エネマグラ
+;解除時
+IF TEQUIP:電動エネマグラ
+	PRINTFORM %CALLNAME:TARGET%の
+	SIF OVER_GENITAL(TARGET) != "" && OVER_GENITAL(TARGET) != "貞操帯"
+		PRINTFORM %OVER_GENITAL(TARGET)%を捲り上げ、
+	PRINTL 尻穴から電動エネマグラを引き抜いた……
+ELSE
+	PRINTFORM %CALLNAME:TARGET%の
+	SIF OVER_GENITAL(TARGET) != "" && OVER_GENITAL(TARGET) != "貞操帯"
+		PRINTFORM %OVER_GENITAL(TARGET)%を捲り上げ、
+	PRINTL 尻穴に電動エネマグラを挿入した……
 ENDIF
 WAIT
 
@@ -675,6 +834,8 @@ ELSE
 	SIF PALAM:欲情 >= PALAMLV:3
 		PRINT 期待に硬く尖った
 	PRINTFORML 乳首に震えるローターを押し当てた……
+	SIF TEQUIP:お風呂場
+		PRINTL 浴槽内で震えるローターが鈍い音を響かせている……
 ENDIF
 WAIT
 
@@ -713,6 +874,9 @@ PRINTFORMW %CALLNAME:TARGET%にローションをぬりたくった……
 ;触手召喚中
 IF TEQUIP:触手
 	PRINTFORML 催淫効果のある液体が触手から染み出してきた
+ELSEIF TALENT:アニマル
+	PRINTFORMW %CALLNAME:TARGET%に媚薬を混ぜた水を飲ませた……
+	RETURN
 ELSE
 	PRINTFORM %CALLNAME:TARGET%に
 	;調教者の技巧LV3以上
@@ -801,8 +965,8 @@ ENDIF
 ;-------------------------------------------------
 @MESSAGE_COM_写真撮影
 PRINTFORML %CALLNAME:PLAYER%はセットしていたカメラで%CALLNAME:TARGET%の痴態を写真に収めた
-;感情乏しいor淫乱or娼婦or恥薄い
-IF TALENT:感情乏しい || FALLTYPE(TARGET) == 2 || TALENT:恥薄い
+;感情乏しいor淫乱or娼婦or恥薄いorアニマル
+IF TALENT:感情乏しい || FALLTYPE(TARGET) == 2 || TALENT:恥薄い || TALENT:アニマル
 	PRINTFORMW %CALLNAME:TARGET%は恥ずかしい格好のまま写真を撮られたことを全く気にしていないようだ……
 ;恥じらいor露出癖LV3未満
 ELSEIF TALENT:恥じらい || ABL:露出癖 < 3

@@ -6,6 +6,9 @@
 ;サドじゃないとできない
 SIF !TALENT:PLAYER:サド
 	RETURNF 0
+;アニマルだと無理
+SIF TALENT:アニマル
+	RETURNF 0
 
 COMRESULT = 1
 RETURNF 1
@@ -54,14 +57,11 @@ CALL SAMEN_SHOOT_T, 0, NOWEX:射精
 ;-------------------------------------------------
 ;経験の処理
 ;-------------------------------------------------
-CALL EXPUP, 1, 3
+CALL EXPUP_BASE, 1, 3
 
-;依存度補正値(服従で1、隷属で2）
-IF TALENT:服従 && PLAYER == MASTER
-	TFLAG:依存度補正 += 1
-ELSEIF TALENT:隷属 && PLAYER == MASTER
-	TFLAG:依存度補正 += 2
-ENDIF
+;実績:大犬のお姉さんに暴力を振るう
+SIF CHARANAMEF(TARGET) == "大犬のお姉さん"
+	CALL 実績解除, "何をするだァーッ！"
 
 RETURN 1
 

@@ -3,6 +3,9 @@
 ;-------------------------------------------------
 @USERCOM_ABLE_顔面騎乗する, ARG
 #FUNCTION
+;足使用不可だとできない
+SIF TALENT:PLAYER:足使用不可
+	RETURNF 0
 ;調教者がヴァギナ無いとダメ
 SIF !VAGINA(PLAYER)
 	RETURNF 0
@@ -17,6 +20,9 @@ IF TEQUIP:PLAYER:下半身上着 || (TEQUIP:PLAYER:全身上着 && CFLAG:PLAYER:
 	SIF !CFLAG:PLAYER:挿入可 && !CFLAG:PLAYER:着衣併用 != 2
 		RETURNF 0
 ENDIF
+;PLAYERがペニスバンド装着中はダメ
+SIF TEQUIP:PLAYER:ペニスバンド
+	RETURNF 0
 
 COMRESULT = 1
 RETURNF 1
@@ -31,45 +37,7 @@ TFLAG:奴隷実行 = 1
 ;-------------------------------------------------
 ;射精ゲージチェック（ふたなりの場合）
 ;-------------------------------------------------
-LOCAL = 100
-
-;ABL:技巧をみる
-LOCAL += (LOCAL/5)*ABL:技巧
-
-;ABL:従順をみる
-LOCAL += (LOCAL/10)*ABL:従順 - (LOCAL/10)*2
-
-;ABL:奉仕精神をみる
-SELECTCASE ABL:奉仕精神
-	CASE 0
-		TIMES LOCAL , 0.50
-	CASE 1
-		TIMES LOCAL , 0.80
-	CASE 2
-		TIMES LOCAL , 1.20
-	CASE 3
-		TIMES LOCAL , 1.50
-	CASE 4
-		TIMES LOCAL , 1.80
-	CASEELSE
-		LOCAL += LOCAL/3*ABL:奉仕精神
-ENDSELECT
-
-;プレイヤーのABL:Ｃ感覚をみる
-SELECTCASE ABL:PLAYER:Ｃ感覚
-	CASE 0
-		TIMES LOCAL , 1.00
-	CASE 1
-		TIMES LOCAL , 1.50
-	CASE 2
-		TIMES LOCAL , 2.00
-	CASE 3
-		TIMES LOCAL , 2.50
-	CASE 4
-		TIMES LOCAL , 3.50
-	CASEELSE
-		LOCAL += LOCAL*(ABL:PLAYER:Ｃ感覚-1)
-ENDSELECT
+LOCAL = 射精ゲージ計算_奉仕(100)
 
 ;TALENT:舌使いをみる
 SIF TALENT:舌使い
@@ -119,31 +87,25 @@ CALL SAMEN_SHOOT_T, 0, NOWEX:射精
 ;-------------------------------------------------
 ;経験の処理
 ;-------------------------------------------------
-CALL EXPUP, 3, 2
+CALL EXPUP_BASE, 3, 2
 
-;奴隷が猫舌持ちの場合は、調教者に嗜虐快楽経験を追加
-IF TALENT:猫舌
-	EXP:嗜虐快楽経験 += 1
-	PRINTL 嗜虐快楽経験+1
-ENDIF
+;奴隷が猫舌持ちの場合は嗜虐快楽経験を追加
+SIF TALENT:猫舌
+	CALL EXPUP, "嗜虐快楽経験", 1
 
-;獣人、獣による催淫
-SELECTCASE CSTR:PLAYER:種族
-	CASE "獣人", "獣"
-		CFLAG:媚薬++
-		SIF CFLAG:媚薬%5 == 0
-			CFLAG:残数++
-ENDSELECT
-
-;依存度補正値(相性100↑かつ淫乱で1、娼婦で2）
-IF TALENT:淫乱 && RELATION:(NO:PLAYER) > 100
-	TFLAG:依存度補正 += 1
-ELSEIF TALENT:娼婦 && RELATION:(NO:PLAYER) > 100
-	TFLAG:依存度補正 += 2
-ENDIF
+CALL 獣人催淫, 1
 
 ;奉仕快楽フラグ
 TFLAG:奉仕快楽 = 1
+
+;実績:紗矢で士朗を中出しさせた後に顔面騎乗する
+IF CHARANAMEF(TARGET) == "神崎 士朗" && CHARANAMEF(PLAYER) == "神崎 紗矢"
+	IF PLAYER == MASTER && GETBIT(TFLAG:中出し, 4)
+		CALL 実績解除, "「士朗ちゃん、どう責任取ってくれるのかしら？」"
+	ELSEIF PLAYER == ASSI && PREG:2
+		CALL 実績解除, "「士朗ちゃん、どう責任取ってくれるのかしら？」"
+	ENDIF
+ENDIF
 
 RETURN 1
 

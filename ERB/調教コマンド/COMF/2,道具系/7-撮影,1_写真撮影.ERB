@@ -3,17 +3,8 @@
 ;-------------------------------------------------
 @USERCOM_ABLE_写真撮影, ARG
 #FUNCTION
-;ゲーセンに居る場合はできない
-SIF TEQUIP:ゲームセンター
-	RETURNF 0
-;上級売春中は不可
-SIF 上級売春中
-	RETURNF 0
-;カメラを持っていないとダメ
-SIF !ITEM:カメラ
-	RETURNF 0
 ;撮影上限突破してるとダメ
-SIF TFLAG:カメラ撮影回数 > ABL:PLAYER:撮影技能+2 || TFLAG:カメラ撮影回数 >= 10
+SIF TFLAG:カメラ撮影回数 > 10
 	RETURNF 0
 ;調教の始めには実行できない
 SIF PREVCOMS == ""

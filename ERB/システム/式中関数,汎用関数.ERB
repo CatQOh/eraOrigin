@@ -27,9 +27,6 @@ RETURNF TALENT:ARG:性別
 ;式中関数「CHECK_CHILD_CARE」
 ;育児室に居るかどうか判別するための関数
 ;引数で指定されたキャラを対象に判別する
-;オリコ「くノ一忍法帖」ならスルー
-SIF 受験段位名 == "くノ一忍法帖"
-	RETURNF 0
 SIF ARG == -1
 	RETURNF 0
 SIF (TALENT:ARG:妊娠 && PREG:ARG:10-5 <= DAY) || TALENT:ARG:育児中
@@ -409,35 +406,6 @@ PRINTFORM 1/{ARG} ({100/ARG}.{(1000/ARG)%10}\%)
 ;1/ARGまたは1/(ARG:1)が起きる確率を表示
 PRINTFORM {ARG+ARG:1+1}/{ARG*ARG:1} ({ 100*(ARG+ARG:1+1)/(ARG*ARG:1) }.{ (1000*(ARG+ARG:1+1)/(ARG*ARG:1))%10 }\%)
 
-@近親相姦, ARG, ARG:1
-#FUNCTION
-;近親相姦の判定用関数
-;1なら兄弟姉妹間、2なら親子間、それ以外なら0
-
-SIF ARG < 0 && ARG:1 < 0
-	RETURNF 0
-
-IF CFLAG:ARG:血縁コード >= 1 && CFLAG:ARG:血縁コード == CFLAG:(ARG:1):血縁コード
-	;夫婦同士なら近親相姦じゃない
-	IF GROUPMATCH(CFLAG:ARG:続柄, 1000, 1001) && GROUPMATCH(CFLAG:(ARG:1):続柄, 1000, 1001)
-		RETURNF 0
-	ELSEIF GROUPMATCH(CFLAG:ARG:続柄, 2000, 2001) && GROUPMATCH(CFLAG:(ARG:1):続柄, 2000, 2001)
-		RETURNF 0
-	ELSEIF CFLAG:ARG:続柄 >= 1000 || CFLAG:(ARG:1):続柄 >= 1000
-		RETURNF 2
-	ELSE
-		RETURNF 1
-	ENDIF
-ELSE
-	SIF NO:ARG >= 10000 && (CFLAG:ARG:血縁コード/100000 == NO:(ARG:1) || CFLAG:ARG:血縁コード%100000 == NO:(ARG:1))
-		RETURNF 2
-	SIF NO:(ARG:1) >= 10000 && (CFLAG:(ARG:1):血縁コード/100000 == NO:ARG || CFLAG:(ARG:1):血縁コード%100000 == NO:ARG)
-		RETURNF 2
-ENDIF
-
-RETURNF 0
-
-
 @Ｖ使用中, ARG = -1
 #FUNCTION
 ;膣に道具入ってるかどうかの式中関数
@@ -530,7 +498,7 @@ RETURNF 0
 
 @避妊具, ARG = -1
 #FUNCTION
-;コンドーム、搾精コンドームの使用判定
+;コンドームの使用判定
 
 SIF ARG == -1
 	RETURNF 0
@@ -555,8 +523,8 @@ SIF ARG == -1
 
 SIF CFLAG:ARG:貞操帯
 	RETURNF 1
-SIF TALENT:ARG:去勢済み
-	RETURNF 1
+;SIF TALENT:ARG:去勢済み
+;	RETURNF 1
 SIF ABL:ARG:メス度 >= 10
 	RETURNF 1
 
@@ -880,10 +848,9 @@ RETURNF @"%BARSTR(BASE:ARG:ARGS, MAXBASE:ARG:ARGS, ARG:1)%({BASE:ARG:ARGS}/{MAXB
 
 @SETBASE, ARG
 ;対象のBASEがMAXBASEより高かったり0より低かったりしたら合わせる関数
-;体力気力魔力のみ
+;体力気力のみ
 BASE:ARG:体力 = LIMIT(BASE:ARG:体力, 0, MAXBASE:ARG:体力)
 BASE:ARG:気力 = LIMIT(BASE:ARG:気力, 0, MAXBASE:ARG:気力)
-BASE:ARG:魔力 = LIMIT(BASE:ARG:魔力, 0, MAXBASE:ARG:魔力)
 
 @SLINEWAIT, ARGS
 #DIM DYNAMIC LCOUNT, 2

@@ -3,7 +3,6 @@
 ;-------------------------------------------------
 @USERCOM_ABLE_搾乳, ARG
 #FUNCTION
-;搾乳
 ;上半身下着または上半身上着または全身上着をつけているとダメ
 SIF OVER_BUST(TARGET) != ""
 	RETURNF 0
@@ -68,13 +67,15 @@ STAIN:PLAYER:手 |= STAIN:胸
 ;-------------------------------------------------
 ;経験の処理
 ;-------------------------------------------------
-CALL EXPUP, 1, 2
+CALL EXPUP_BASE, 1, 2
 
 ;愛情経験
-IF (TALENT:恋慕 || TALENT:親愛) && PLAYER == MASTER
-	PRINTL 愛情経験+1
-	EXP:愛情経験++
-ENDIF
+SIF FALLTYPE(TARGET) == 1 && PLAYER == MASTER
+	CALL EXPUP, "愛情経験", 1
+
+;実績:ラピカの乳を搾る
+SIF CHARANAMEF(TARGET) == "黄のラピカ"
+	CALL 実績解除, "地上に舞い降りたミルクサーバー"
 
 RETURN 1
 

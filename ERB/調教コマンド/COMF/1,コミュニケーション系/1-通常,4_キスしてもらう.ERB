@@ -125,8 +125,6 @@ SOURCE:恭順 = 30
 SOURCE:屈従 = 30
 SOURCE:不潔 = 30
 SOURCE:反感 = 10
-SIF TFLAG:ニコニコサンフラワーキッス
-	SOURCE:恐怖 = 300
 
 ;-------------------------------------------------
 ;特殊ソース処理
@@ -168,13 +166,6 @@ SIF FALLTYPE(TARGET) == 1 && !ASSIPLAY
 
 ;奉仕快楽フラグ
 TFLAG:奉仕快楽 = 1
-
-;魔力回復 相性良いと1.0%、そうでもないと0.5%
-IF RELATION:(NO:MASTER) > 150
-	LOCAL = 10
-ELSE
-	LOCAL = 5
-ENDIF
 
 CALL 獣人催淫, 1
 CALL 獣人催淫, 1, PLAYER

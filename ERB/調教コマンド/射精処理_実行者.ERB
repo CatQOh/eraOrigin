@@ -708,8 +708,8 @@ SELECTCASE 射精先
 				EXP:膣射経験 += 計算用射精量
 				PREG:0 += 計算用射精量
 				CFLAG:主人からの膣射経験++
-				中出し人数:MASTER:(NO:TARGET)++
-				中出され人数:(NO:MASTER)++
+				中出し回数:MASTER:(NO:TARGET)++
+				中出され回数:(NO:MASTER)++
 				;妊娠していないのであれば中田氏時の恐怖判定等
 				SIF !TALENT:妊娠
 					CALL SAMEN_SHOOT_SOURCE, 射精したキャラ
@@ -722,6 +722,11 @@ SELECTCASE 射精先
 						CFLAG:射精されるキャラ:残数 += ((CFLAG:射精されるキャラ:媚薬%5)+計算用射精量)/5
 						CFLAG:射精されるキャラ:媚薬 += 計算用射精量
 				ENDSELECT
+				;出産トラウマがあればストレスが溜まる
+				SIF CFLAG:出産トラウマ
+					CFLAG:ストレス値 += CFLAG:出産トラウマ
+				SIF CFLAG:ストレス値 >= 999
+					CFLAG:ストレス値 = 999
 			ENDIF
 		;助手による奴隷への中田氏
 		ELSEIF 射精したキャラ == ASSI
@@ -731,8 +736,8 @@ SELECTCASE 射精先
 				EXP:TARGET:膣射経験 += 計算用射精量
 				PREG:1 += 計算用射精量
 				CFLAG:助手からの膣射経験++
-				中出し人数:ASSI:(NO:TARGET)++
-				中出され人数:(NO:ASSI)++
+				中出し回数:ASSI:(NO:TARGET)++
+				中出され回数:(NO:ASSI)++
 				;妊娠していないのであれば中田氏時の恐怖判定等
 				SIF TALENT:妊娠 == 0
 					CALL SAMEN_SHOOT_SOURCE, 射精したキャラ
@@ -745,6 +750,11 @@ SELECTCASE 射精先
 						CFLAG:射精されるキャラ:残数 += ((CFLAG:射精されるキャラ:媚薬%5)+計算用射精量)/5
 						CFLAG:射精されるキャラ:媚薬 += 計算用射精量
 				ENDSELECT
+				;出産トラウマがあればストレスが溜まる
+				SIF CFLAG:出産トラウマ
+					CFLAG:ストレス値 += CFLAG:出産トラウマ
+				SIF CFLAG:ストレス値 >= 999
+					CFLAG:ストレス値 = 999
 			ENDIF
 		ENDIF
 	;アナル射精
@@ -753,8 +763,8 @@ SELECTCASE 射精先
 			IF !TEQUIP:MASTER:コンドーム
 				SETBIT TFLAG:中出し, 1
 				CFLAG:主人からの腸射経験++
-				アナル中出し人数:MASTER:(NO:TARGET)++
-				アナル中出され人数:(NO:MASTER)++
+				アナル中出し回数:MASTER:(NO:TARGET)++
+				アナル中出され回数:(NO:MASTER)++
 				;ビデオ撮影時はボーナスカウント
 				SIF TEQUIP:ビデオカメラ
 					VIDEOBONUS:1++
@@ -769,8 +779,8 @@ SELECTCASE 射精先
 			IF !TEQUIP:ASSI:コンドーム
 				SETBIT TFLAG:中出し, 1
 				CFLAG:助手からの腸射経験++
-				アナル中出し人数:ASSI:(NO:TARGET)++
-				アナル中出され人数:(NO:ASSI)++
+				アナル中出し回数:ASSI:(NO:TARGET)++
+				アナル中出され回数:(NO:ASSI)++
 				;ビデオ撮影時はボーナスカウント
 				SIF TEQUIP:ビデオカメラ
 					VIDEOBONUS:3++
@@ -830,7 +840,7 @@ SELECTCASE 射精先
 						PRINTFORML 精液経験+{計算用射精量}(%CALLNAME:ASSI%)
 						EXP:ASSI:精液経験 += 計算用射精量
 						PRINTFORML 膣内射精経験+{計算用射精量}(%CALLNAME:ASSI%)
-						EXP:膣射経験 += 計算用射精量
+						EXP:ASSI:膣射経験 += 計算用射精量
 						PREG:ASSI:0 += 計算用射精量
 						;獣人、獣による催淫
 						SELECTCASE CSTR:射精したキャラ:種族
@@ -838,6 +848,11 @@ SELECTCASE 射精先
 								CFLAG:射精されるキャラ:残数 += ((CFLAG:射精されるキャラ:媚薬%5)+計算用射精量)/5
 								CFLAG:射精されるキャラ:媚薬 += 計算用射精量
 						ENDSELECT
+						;出産トラウマがあればストレスが溜まる
+						SIF CFLAG:ASSI:出産トラウマ
+							CFLAG:ASSI:ストレス値 += CFLAG:ASSI:出産トラウマ
+						SIF CFLAG:ASSI:ストレス値 >= 999
+							CFLAG:ASSI:ストレス値 = 999
 					ENDIF
 				CASE 2
 					IF !TEQUIP:MASTER:コンドーム
@@ -875,19 +890,28 @@ IF 射精したキャラ == MASTER
 	ENDSELECT
 ENDIF
 
+SIF TALENT:アニマル && 射精先 == 4
+	CFLAG:PLAYER:動物に舐められて射精した経験++
+
 ;射精回数カウント
 EX:(射精したキャラ):射精++
 
-;助手に射精した時以外は奴隷の精液経験増加
-IF 射精先 != 7
+;奴隷に射精した時は奴隷の精液経験増加
+IF 射精されるキャラ == TARGET
 	PRINTFORML 精液経験+{LIMIT(射精量, 1, 10)}
 	EXP:精液経験 += LIMIT(射精量, 1, 10)
 ENDIF
 ;ダブルフェラ、ダブルパイズリ時、助手を犯す時は助手の精液経験も増加
-IF SELECTCOMS == "ダブルフェラ" || SELECTCOMS == "ダブルパイズリ" || 射精先 == 7
-	PRINTFORML 精液経験+{LIMIT(射精量, 1, 10)}(%CALLNAME:ASSI%)
-	EXP:ASSI:精液経験 += LIMIT(射精量, 1, 10)
-ENDIF
+SELECTCASE SELECTCOMS
+	CASE "ダブルフェラ", "ダブルパイズリ", "ダブル素股"
+		PRINTFORML 精液経験+{LIMIT(射精量, 1, 10)}(%CALLNAME:ASSI%)
+		EXP:ASSI:精液経験 += LIMIT(射精量, 1, 10)
+	CASE "数珠繋ぎ", "3P"
+		IF 射精されるキャラ == ASSI
+			PRINTFORML 精液経験+{LIMIT(射精量, 1, 10)}(%CALLNAME:ASSI%)
+			EXP:ASSI:精液経験 += LIMIT(射精量, 1, 10)
+		ENDIF
+ENDSELECT
 
 PRINTFORML 射精経験+{LIMIT(射精量, 1, 10)}(%CALLNAME:(射精したキャラ)%)
 EXP:射精したキャラ:射精経験 += LIMIT(射精量, 1, 10)
@@ -899,20 +923,20 @@ BASE:射精したキャラ:射精 -= MAXBASE:射精したキャラ:射精*射精
 SIF BASE:射精したキャラ:射精 >= MAXBASE:射精したキャラ:射精
 	BASE:射精したキャラ:射精 = MAXBASE:射精したキャラ:射精-1
 
-;射精時に中毒、達成のソースを追加
-SELECTCASE 射精先
-	;膣、アナル
-	CASE 1, 2
-		LOCAL = 射精量*400
-	;口、胸、顔射
-	CASE 4, 5, 8
-		LOCAL = 射精量*300
-	;手、その他奉仕、3P助手射精
-	CASE 3, 6, 11
-		LOCAL = 射精量*200
-ENDSELECT
-
+LOCAL = 0
 IF 射精されるキャラ == TARGET
+	;射精時に中毒、達成のソースを追加
+	SELECTCASE 射精先
+		;膣、アナル
+		CASE 1, 2
+			LOCAL = 射精量*400
+		;口、胸、顔射
+		CASE 4, 5, 8
+			LOCAL = 射精量*300
+		;手、その他奉仕、3P助手射精
+		CASE 3, 6, 11
+			LOCAL = 射精量*200
+	ENDSELECT
 	;精液中毒を見る
 	SELECTCASE ABL:精液中毒
 		CASE 0, 1
@@ -954,6 +978,14 @@ CFLAG:射精したキャラ:賢者タイム -= CFLAG:射精したキャラ:媚�
 
 CFLAG:射精したキャラ:残数--
 
+;実績:シグを相手に打ち止めまで射精する
+IF CFLAG:射精したキャラ:残数 == 0
+	SELECTCASE CHARANAMEF(TARGET)
+		CASE "赤シグ", "青シグ", "黄シグ"
+			CALL 実績解除, "「シグの勝ち！」"
+	ENDSELECT
+ENDIF
+
 IF TEQUIP:射精したキャラ:コンドーム
 	TEQUIP:射精したキャラ:コンドーム = 0
 	IF 射精したキャラ == MASTER
@@ -970,6 +1002,10 @@ IF TEQUIP:射精したキャラ:コンドーム
 		TEQUIP:ASSI:コンドーム = 1
 	ENDIF
 ENDIF
+
+;天使による感度アップ
+SIF CSTR:射精したキャラ:種族 == "天使"
+	TFLAG:天使の感度ボーナス++
 
 ;-------------------------------------------------
 ;ソースの計算
@@ -988,4 +1024,10 @@ ENDIF
 ;未陥落の場合は反発増加
 SIF !CFLAG:陥落
 	SOURCE:反感 += 1000
+
+;出産トラウマがあればさらに恐怖と鬱屈追加
+IF CFLAG:出産トラウマ
+	SOURCE:恐怖 += CFLAG:出産トラウマ*50
+	SOURCE:鬱屈 += CFLAG:出産トラウマ*300
+ENDIF
 

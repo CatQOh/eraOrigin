@@ -3,9 +3,6 @@
 ;-------------------------------------------------
 @USERCOM_ABLE_利尿剤, ARG
 #FUNCTION
-;アイテムを持っているか、触手調教中でないとダメ
-SIF !ITEM:利尿剤 && !TEQUIP:触手
-	RETURNF 0
 ;薬毒耐性の場合、直接注入以外ダメ
 SIF TALENT:薬毒耐性 && !TEQUIP:触手
 	RETURNF 0

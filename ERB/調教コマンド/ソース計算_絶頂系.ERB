@@ -1,7 +1,17 @@
 ﻿@SOURCE_CHECK_CVAB
+#DIM DYNAMIC 欲情計算用
+#DIM DYNAMIC 苦痛計算用
+
 ;SELECTCOMSにコマンド名を代入
 SIF TRAINNAME:SELECTCOM != ""
 	SELECTCOMS = %TRAINNAME:SELECTCOM%
+
+;悪魔の感度ボーナスを計算
+欲情計算用 = GETPALAMLV(PALAM:欲情, 10)
+苦痛計算用 = GETPALAMLV(PALAM:苦痛, 10)
+
+SIF CSTR:種族 == "悪魔"
+	TFLAG:悪魔の感度ボーナス = 欲情計算用*苦痛計算用
 
 ;-------------------------------------------------
 ;バイブなど付けっぱなしアイテムのチェック
@@ -49,6 +59,18 @@ SIF TALENT:Ｃ敏感
 	TIMES SOURCE:快C , 2.00
 SIF TALENT:ゾンビ && !TALENT:PLAYER:ネクロマンサー
 	TIMES SOURCE:快C , 0.70
+
+;天使による感度ボーナス
+SIF TFLAG:天使の感度ボーナス
+	SOURCE:快C += SOURCE:快C/10*TFLAG:天使の感度ボーナス
+
+;悪魔の感度ボーナス
+SIF TFLAG:悪魔の感度ボーナス
+	SOURCE:快C += SOURCE:快C/10*TFLAG:悪魔の感度ボーナス
+
+;精霊で雷雨なら感度ボーナス
+SIF CSTR:種族 == "精霊" && FLAG:天気 == 5
+	TIMES SOURCE:快C , 1.50
 
 ;C感覚
 SELECTCASE ABL:Ｃ感覚
@@ -135,6 +157,18 @@ SIF TALENT:Ｖ敏感
 	TIMES SOURCE:快V , 2.00
 SIF TALENT:ゾンビ && !TALENT:PLAYER:ネクロマンサー
 	TIMES SOURCE:快V , 0.70
+
+;天使による感度ボーナス
+SIF TFLAG:天使の感度ボーナス
+	SOURCE:快V += SOURCE:快V/10*TFLAG:天使の感度ボーナス
+
+;悪魔の感度ボーナス
+SIF TFLAG:悪魔の感度ボーナス
+	SOURCE:快V += SOURCE:快V/10*TFLAG:悪魔の感度ボーナス
+
+;精霊で雷雨なら感度ボーナス
+SIF CSTR:種族 == "精霊" && FLAG:天気 == 5
+	TIMES SOURCE:快V , 1.50
 
 ;V感覚
 SELECTCASE ABL:Ｖ感覚
@@ -262,6 +296,18 @@ SIF TALENT:ゾンビ && !TALENT:PLAYER:ネクロマンサー
 SIF TFLAG:腸洗浄済み
 	TIMES SOURCE:快A , 1.20
 
+;天使による感度ボーナス
+SIF TFLAG:天使の感度ボーナス
+	SOURCE:快A += SOURCE:快A/10*TFLAG:天使の感度ボーナス
+
+;悪魔の感度ボーナス
+SIF TFLAG:悪魔の感度ボーナス
+	SOURCE:快A += SOURCE:快A/10*TFLAG:悪魔の感度ボーナス
+
+;精霊で雷雨なら感度ボーナス
+SIF CSTR:種族 == "精霊" && FLAG:天気 == 5
+	TIMES SOURCE:快A , 1.50
+
 ;A感覚
 SELECTCASE ABL:Ａ感覚
 	CASE 0
@@ -368,6 +414,8 @@ IF TALENT:小人体型
 	TIMES LOCAL , 0.50
 	TIMES LOCAL:1 , 1.50
 ENDIF
+;メス度1につき快Ａ1割増
+LOCAL += LOCAL*MIN(ABL:メス度, 10)/10
 
 ;快Aのソースが1以上でアナル未経験で貞操観念のとき、屈服のソースを三分の一にする
 SIF !EXP:Ａ経験 && TALENT:貞操観念 && SOURCE:快A > 0
@@ -388,6 +436,18 @@ SIF TALENT:Ｂ敏感
 	TIMES SOURCE:快B , 2.00
 SIF TALENT:ゾンビ && !TALENT:PLAYER:ネクロマンサー
 	TIMES SOURCE:快B , 0.70
+
+;天使による感度ボーナス
+SIF TFLAG:天使の感度ボーナス
+	SOURCE:快B += SOURCE:快B/10*TFLAG:天使の感度ボーナス
+
+;悪魔の感度ボーナス
+SIF TFLAG:悪魔の感度ボーナス
+	SOURCE:快B += SOURCE:快B/10*TFLAG:悪魔の感度ボーナス
+
+;精霊で雷雨なら感度ボーナス
+SIF CSTR:種族 == "精霊" && FLAG:天気 == 5
+	TIMES SOURCE:快B , 1.50
 
 ;B感覚
 SELECTCASE ABL:Ｂ感覚
@@ -472,7 +532,7 @@ UP:欲情 += LOCAL:1
 ;-------------------------------------------------
 ;同じコマンドの連続実行による減少（快楽系）
 ;-------------------------------------------------
-IF SELECTCOM == PREVCOM
+IF SELECTCOMS == PREVCOMS
 	UP:快Ｃ /= 2
 	UP:快Ｖ /= 2
 	UP:快Ａ /= 2
@@ -599,12 +659,6 @@ ENDSELECT
 IF TALENT:性器破損
 	UP:苦痛 += UP:快Ｖ/5*3
 	TIMES UP:快Ｖ , 0.40
-ENDIF
-
-;指挿入れの慣らしギミック用処理、処女もしくは再生処女の時は快Vは99で最大にする
-IF (UP:快Ｖ+PALAM:快Ｖ) >= 100 && (TALENT:処女 || TALENT:再生処女)
-	UP:快Ｖ = 0
-	PALAM:快Ｖ = 99
 ENDIF
 
 ;ペニス持ちは快Ｃが20%

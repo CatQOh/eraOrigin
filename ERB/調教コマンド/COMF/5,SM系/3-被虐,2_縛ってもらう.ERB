@@ -1,7 +1,7 @@
 ﻿;-------------------------------------------------
-;鞭打ちしてもらう
+;縛ってもらう
 ;-------------------------------------------------
-@USERCOM_ABLE_鞭打ちしてもらう, ARG
+@USERCOM_ABLE_縛ってもらう, ARG
 #FUNCTION
 ;サド、もしくはサドっ気3以上必要
 SIF ABL:サドっ気 < 3 && !TALENT:サド
@@ -12,11 +12,6 @@ SIF TEQUIP:縄
 ;触手調教中はダメ
 SIF TEQUIP:触手
 	RETURNF 0
-;助手の場合はマゾかマゾっ気3以上必要
-IF PLAYER == ASSI
-	SIF ABL:ASSI:マゾっ気 < 3 && !TALENT:マゾ
-		RETURNF 0
-ENDIF
 ;アニマルだと無理
 SIF TALENT:アニマル
 	RETURNF 0
@@ -24,9 +19,11 @@ SIF TALENT:アニマル
 COMRESULT = 1
 RETURNF 1
 
-@COM_鞭打ちしてもらう
-PRINTL 鞭打ちしてもらう
+@COM_縛ってもらう
+PRINTL 縛ってもらう
 CALL KOJO_MESSAGE_COM
+
+INVERTBIT TEQUIP:PLAYER:縄, 0
 
 ;-------------------------------------------------
 ;ソース追加処理
@@ -35,15 +32,15 @@ CALL KOJO_MESSAGE_COM
 LOSEBASE:体力 += 50
 LOSEBASE:気力 += 50
 
-DOWNBASE:MASTER:体力 += 100
-DOWNBASE:MASTER:気力 += 80
+DOWNBASE:MASTER:体力 += 50
+DOWNBASE:MASTER:気力 += 50
 
-SOURCE:性行動 = 500
-SOURCE:達成 = 200
-SOURCE:中毒 = 400
+SOURCE:性行動 = 300
+SOURCE:達成 = 50
+SOURCE:中毒 = 150
 SOURCE:逸脱 = 300
 SOURCE:反感 = 100
-SOURCE:不潔 = 50
+SOURCE:不潔 = 100
 
 ;-------------------------------------------------
 ;絶頂チェック
@@ -62,8 +59,12 @@ CALL SAMEN_SHOOT_T, 0, NOWEX:射精
 ;-------------------------------------------------
 CALL EXPUP_BASE, 1, 1
 
-CALL EXPUP, "嗜虐快楽経験", 5
-CALL EXPUP, "調教経験", 5
+PRINTL 嗜虐快楽経験+3
+EXP:嗜虐快楽経験 += 3
+PRINTL 調教経験+3
+EXP:調教経験 += 3
+PRINTFORML 緊縛経験+2(%CALLNAME:PLAYER%)
+EXP:PLAYER:緊縛経験 += 3
 
 RETURN 1
 

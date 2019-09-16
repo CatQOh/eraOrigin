@@ -63,13 +63,13 @@ SELECTCASE SELECTCOMS
 		写真内容記録用 += @"%CALLNAME:PLAYER%とキスをして"
 	CASE "何もしない"
 		写真内容記録用 += "何もせずに放置されて"
-	CASE "会話", "プレゼント", "スキンシップ", "まったりする", "家事", "歌の練習", "ビデオ鑑賞"
+	CASE "会話", "プレゼント", "スキンシップ", "まったりする", "家事", "歌の練習", "ビデオ鑑賞", "尻尾を撫でる", "排卵マッサージ"
 		写真内容記録用 += @"%CALLNAME:PLAYER%とイチャついて"
 	CASE "罵倒"
 		写真内容記録用 += "罵倒に耐えて"
-	CASE "ローター", "電気按摩", "クリキャップ", "オナホール"
+	CASE "ローター", "電気按摩", "クリキャップ", "オナホール", "搾精器"
 		写真内容記録用 += @"%CALLNAME:PLAYER%に%SELECTCOMS%で\@ PENIS(TARGET) ? ペニス # クリトリス \@を責められて"
-	CASE "バイブ", "アナルバイブ", "アナルビーズ", "拡張バルーン", "アナル電極"
+	CASE "バイブ", "アナルバイブ", "アナルビーズ", "拡張バルーン", "アナル電極", "電動エネマグラ"
 		写真内容記録用 += @"%CALLNAME:PLAYER%に%SELECTCOMS%を挿入されて"
 	CASE "ニプルキャップ", "搾乳器", "乳房電極"
 		写真内容記録用 += @"%CALLNAME:PLAYER%に乳首を%SELECTCOMS%で責められて"
@@ -272,10 +272,14 @@ SELECTCASE SELECTCOMS
 		写真内容記録用 += @"触手に射精を止められて"
 	CASE "触手強制搾精"
 		写真内容記録用 += @"精嚢に無理やり粘液を注ぎ込まれて"
-	CASE ""
+	CASE "触手強制放尿"
 		写真内容記録用 += @"膀胱に無理やり体液を注ぎ込まれて"
 	CASE "腸洗浄"
 		写真内容記録用 += @"腸内を洗浄して"
+	CASE "ペットに舐めさせる"
+		写真内容記録用 += @"%CALLNAME:ASSI%に舐め回されて"
+	CASE "ペットに犯させる"
+		写真内容記録用 += @"%CALLNAME:ASSI%に犯されて"
 	CASE ""
 		写真内容記録用 += @""
 ENDSELECT
@@ -304,7 +308,7 @@ SELECTCASE SELECTCOMS
 		ENDIF
 	CASEELSE
 		;実行者が射精した
-		IF NOWEX:PLAYER:射精 || NOWEX:PLAYER:ドラゴン射精
+		IF NOWEX:PLAYER:射精 || NOWEX:PLAYER:ドラゴン射精 || (ASSI > 0 && TALENT:ASSI:アニマル && NOWEX:ASSI:射精)
 			;奴隷も射精した
 			IF NOWEX:射精
 				SELECTCASE SELECTCOMS

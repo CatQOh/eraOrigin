@@ -22,6 +22,8 @@ ELSE
 	PRINTFORML %CALLNAME:TARGET%の尻を平手で強く叩いた
 	IF TALENT:無機物
 		PRINTFORML しかし%CALLNAME:TARGET%はあまり痛がってる様子ではなく、無機質な尻を叩く%CALLNAME:PLAYER%の手が痛くなってきた……
+	ELSEIF TALENT:アニマル
+		PRINTFORML 乱暴な調教に%CALLNAME:TARGET%は低い唸り声を上げている……
 	ELSE
 		PRINTFORM 何度も何度も叩かれている内に、%CALLNAME:TARGET%の
 		;尻尾あり+マゾっ気LV3以上
@@ -84,12 +86,9 @@ WAIT
 ;144,放尿
 ;-------------------------------------------------
 @MESSAGE_COM_放尿
-;小柄体型+PLAYERがNOT小柄体型+ペニス無し
-IF TALENT:小柄体型 && !TALENT:PLAYER:小柄体型 && !PENIS(TARGET)
-	PRINTFORML 幼い子供のように%CALLNAME:TARGET%の両足を抱え上げ、放尿するように命じた
-ELSE
-	PRINTFORML %CALLNAME:TARGET%に放尿するように命じた
-ENDIF
+PRINTFORML %CALLNAME:TARGET%に放尿するように命じた
+SIF TALENT:アニマル
+	GOTO ANIMAL
 
 IF (OVER_GENITAL(TARGET) != "" && !CFLAG:挿入可) || TEQUIP:下半身下着
 	PRINTFORM 服を着たまま放尿するように命じられた%CALLNAME:TARGET%は
@@ -168,6 +167,7 @@ ELSE
 		CASE 0 TO 2
 			PRINTFORML 羞恥に頬を染めながら、その場にしゃがみこんで放尿し始めた……
 		CASE 3 TO 5
+			$ANIMAL
 			PRINTFORML 躊躇うことなく床に尿を漏らしている……
 		CASE IS >= 6
 			PRINTFORML は放尿の快感に息を荒げながら尿を漏らし続けている……
@@ -242,11 +242,10 @@ ENDIF
 ;解除時
 IF TEQUIP:縄
 	PRINTFORML %CALLNAME:TARGET%から縄をほどいた
-	WAIT
 ELSE
 	PRINTFORML %CALLNAME:TARGET%を縄で縛った
-	WAIT
 ENDIF
+WAIT
 
 ;-------------------------------------------------
 ;ボールギャグ
@@ -286,4 +285,5 @@ PRINTW 踏みにじってきた……
 ;-------------------------------------------------
 @MESSAGE_COM_鞭打ちしてもらう
 PRINTFORMW %CALLNAME:PLAYER%は%CALLNAME:TARGET%に鞭を取るように命じ、何回も叩いてもらった……
+
 

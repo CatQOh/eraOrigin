@@ -12,6 +12,10 @@ FOR LCOUNT, 0, VARSIZE("TEQUIP")
 		TRYCALLFORM EQUIP_COM_%TEQUIPNAME:LCOUNT%
 NEXT
 
+;貞操帯
+SIF CFLAG:貞操帯
+	CALL EQUIP_COM_貞操帯
+
 ;触手調教中
 SIF TEQUIP:触手
 	CALL EQUIP_COM_触手召喚
@@ -574,6 +578,9 @@ IF TALENT:処女 && TFLAG:膣コマンド
 		EXP:愛情経験 += LOCAL
 	ENDIF
 	WAIT
+	;実績:3月25日に縛り付けたちせの処女を奪う
+	SIF MONTH == 3 && DAYS == 25 && CHARANAMEF(TARGET) == "ちせ" && TEQUIP:縄
+		CALL 実績解除, "卒業式"
 ENDIF
 
 ;-------------------------------------------------

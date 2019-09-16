@@ -3,6 +3,12 @@
 ;-------------------------------------------------
 @USERCOM_ABLE_踏む, ARG
 #FUNCTION
+;足使用不可だとできない
+SIF TALENT:PLAYER:足使用不可
+	RETURNF 0
+;アニマルだと無理
+SIF TALENT:アニマル
+	RETURNF 0
 ;妊娠中は調教者がサドもしくは禁断の知識持ちじゃないとできない
 IF TALENT:MASTER:サド || TALENT:MASTER:禁断の知識
 	COMRESULT = 1
@@ -228,14 +234,15 @@ CALL SAMEN_SHOOT_T, 0, NOWEX:射精
 ;-------------------------------------------------
 ;経験の処理
 ;-------------------------------------------------
-CALL EXPUP, 1, 4
+CALL EXPUP_BASE, 1, 4
 
-;依存度補正値(服従で1、隷属で2）
-IF TALENT:服従 && PLAYER == MASTER
-	TFLAG:依存度補正 += 1
-ELSEIF TALENT:隷属 && PLAYER == MASTER
-	TFLAG:依存度補正 += 2
-ENDIF
+;実績:大犬のお姉さんに暴力を振るう
+SIF CHARANAMEF(TARGET) == "大犬のお姉さん"
+	CALL 実績解除, "何をするだァーッ！"
+
+;実績:ロミ夫の顔面を踏みつける
+SIF CHARANAMEF(TARGET) == "ロミ夫" && TFLAG:踏む部位 == 4
+	CALL 実績解除, "その綺麗な顔をフッ飛ばしてやる！"
 
 RETURN 1
 

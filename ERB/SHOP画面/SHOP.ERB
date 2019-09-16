@@ -71,7 +71,7 @@ VARSET コマンド表示用
 
 ;コマンド名は現在全角4文字の範囲で統一
 ;100番台は行動のコマンド
-LOCALS = 　
+コマンド表示用 = 　
 ;TARGETがいれば表示
 IF TARGET > 0
 	SELECTCASE FALLTYPE(TARGET)
@@ -123,6 +123,7 @@ ENDIF
 HTML_PRINT STRJOIN(コマンド表示用, "")
 
 ;300番台は購入・売却のコマンド
+VARSET コマンド表示用
 コマンド表示用 = 　
 ;無条件で表示
 コマンド表示用:1 = %SET_TOOLTIP("[300] - アイテム ", "淫具や素質追加などのアイテムを購入します")%
@@ -133,13 +134,13 @@ SIF CMATCH(TALENT:変化, 1)
 
 HTML_PRINT STRJOIN(コマンド表示用, "")
 
-VARSET コマンド表示用
 ;400番台はセーブ・ロード・オプションのシステムコマンド
+VARSET コマンド表示用
 ;セーブ・ロード・オプションは無条件で表示
-LOCALS = 　
-LOCALS:1 = %SET_TOOLTIP("[400] - SAVE     ", "現在の状況をセーブします")%
-LOCALS:2 = %SET_TOOLTIP("[401] - LOAD     ", "セーブデータをロードします。保存していない進行状況は失われます")%
-LOCALS:3 = %SET_TOOLTIP("[402] - OPTION   ", "服装やテキスト表示など、様々な設定を変更します")%
+コマンド表示用 = 　
+コマンド表示用:1 = %SET_TOOLTIP("[400] - SAVE     ", "現在の状況をセーブします")%
+コマンド表示用:2 = %SET_TOOLTIP("[401] - LOAD     ", "セーブデータをロードします。保存していない進行状況は失われます")%
+コマンド表示用:3 = %SET_TOOLTIP("[402] - OPTION   ", "服装やテキスト表示など、様々な設定を変更します")%
 
 HTML_PRINT STRJOIN(コマンド表示用, "")
 
@@ -154,6 +155,7 @@ PRINTPLAIN 　SHOP　
 #DIM DYNAMIC 助手可能
 #DIM DYNAMIC 調教可能
 #DIM DYNAMIC LCOUNT
+#DIM DYNAMIC LRESULT
 VARSET LOCAL, 0
 ;現助手＋元助手のキャラ数の確認
 FOR LCOUNT, 0, CHARANUM
@@ -222,6 +224,22 @@ SELECTCASE RESULT
 	;オプション
 	CASE 402
 		CALL OPTION
+	;キャラ変更
+	CASE 750, 751
+		LOCAL = TARGET
+		LRESULT = RESULT
+		DO
+			SELECTCASE LRESULT
+				CASE 750
+					LOCAL--
+				CASE 751
+					LOCAL++
+			ENDSELECT
+			IF !CHECK_CHILD_CARE(LOCAL) && !CFLAG:LOCAL:使用不可 && LOCAL != MASTER
+				CALL ASIGN_TARGET, LOCAL
+				BREAK
+			ENDIF
+		LOOP INRANGE(LOCAL, 1, CHARANUM-2)
 	;デバッグ用
 	;#;CASE 998
 	;#;	CALL DEBUG
@@ -233,7 +251,8 @@ ENDSELECT
 RETURN 0
 
 @SHOP_UI
-#DIM DYNAMIC 能力表示用
+#DIM DYNAMIC LCOUNT
+#DIMS DYNAMIC 能力表示用, 10
 ;ゲーム内で表示されるショップ画面
 ;□XXXX年XX月XX日(曜日) X日目(昼夜)
 ;　天気:XX 気温:XX.X℃ XXX(月齢.XXX) 
@@ -253,10 +272,6 @@ RETURN 0
 CALL CHECKDRAWLINE
 PRINT □
 CALL 日付表示
-
-SIF FLAG:周回数 > 1
-	PRINTFORM  {FLAG:周回数}周目
-CALL ゲームモード表示
 PRINTL 
 
 PRINTFORML 　天気:%天気()% 気温:%DIV10(FLAG:気温)%℃ %月齢()%(月齢:%DIV100(月齢)%)
@@ -284,6 +299,7 @@ IF TARGET > 0
 	ELSE
 		PRINTPLAIN 　　　　　　　　
 	ENDIF
+	PRINTL 
 	PRINTFORM 　No.{TARGET} %NAME:TARGET%
 	PRINTFORM %性別表示(TARGET)% 
 	SIF TALENT:ふたなり

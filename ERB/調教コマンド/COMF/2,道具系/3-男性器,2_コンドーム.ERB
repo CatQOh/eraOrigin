@@ -47,7 +47,7 @@ IF PENIS(ASSI)
 	PRINTFORML [1] %CALLNAME:ASSI%
 	LOCAL:1++
 ENDIF
-IF PENIS(TARGET) && !TEQUIP:触手 && !TEQUIP:搾精コンドーム && !TEQUIP:オナホール
+IF PENIS(TARGET) && !TEQUIP:触手 && !TEQUIP:オナホール
 	;下半身下着穿いてる場合は不可
 	IF !TEQUIP:下半身下着
 		IF (!TEQUIP:下半身上着 && !TEQUIP:全身上着) || CFLAG:挿入可
@@ -63,24 +63,18 @@ DO
 		CASE 0
 			SIF !LOCAL
 				CONTINUE
-			SIF !TEQUIP:MASTER:コンドーム && !上級売春中
-				ITEM:コンドーム--
 			INVERTBIT TEQUIP:MASTER:コンドーム, 0
 			TFLAG:避妊具着用者 = MASTER
 			BREAK
 		CASE 1
 			SIF !LOCAL:1
 				CONTINUE
-			SIF !TEQUIP:ASSI:コンドーム && !上級売春中
-				ITEM:コンドーム--
 			INVERTBIT TEQUIP:ASSI:コンドーム, 0
 			TFLAG:避妊具着用者 = ASSI
 			BREAK
 		CASE 2
 			SIF !LOCAL:2
 				CONTINUE
-			SIF !TEQUIP:コンドーム && !上級売春中
-				ITEM:コンドーム--
 			INVERTBIT TEQUIP:コンドーム, 0
 			TFLAG:避妊具着用者 = TARGET
 			BREAK

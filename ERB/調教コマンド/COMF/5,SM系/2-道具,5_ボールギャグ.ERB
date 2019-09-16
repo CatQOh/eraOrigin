@@ -14,6 +14,9 @@ ENDIF
 ;新妻プレイ中はダメ
 SIF TEQUIP:エプロン
 	RETURNF 0
+;アニマルだと無理
+SIF TALENT:アニマル
+	RETURNF 0
 
 COMRESULT = 1
 RETURNF 1
@@ -69,17 +72,9 @@ CALL SAMEN_SHOOT_T, 0, NOWEX:射精
 ;-------------------------------------------------
 ;経験の処理
 ;-------------------------------------------------
-EXP:緊縛経験 += 2
-PRINTL 緊縛経験+2
+CALL EXPUP_BASE, 1, 3
 
-CALL EXPUP, 1, 3
-
-;依存度補正値(服従で1、隷属で2）
-IF TALENT:服従 && PLAYER == MASTER
-	TFLAG:依存度補正 += 1
-ELSEIF TALENT:隷属 && PLAYER == MASTER
-	TFLAG:依存度補正 += 2
-ENDIF
+CALL EXPUP, "緊縛経験", 2
 
 RETURN 1
 
@@ -119,10 +114,8 @@ LOSEBASE:気力 += LOCAL
 ;-------------------------------------------------
 ;経験の処理
 ;-------------------------------------------------
-IF SELECTCOMS != "ボールギャグ"
-	EXP:緊縛経験 += 1
-	PRINTL 緊縛経験+1
-ENDIF
+SIF SELECTCOMS != "ボールギャグ"
+	CALL EXPUP, "緊縛経験", 1
 
 RETURN 1
 
