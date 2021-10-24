@@ -4,38 +4,40 @@
 @USERCOM_ABLE_下着扱き, ARG
 #FUNCTION
 ;なんらかの下着を着ていないとダメ
+コマンド実行条件 += "対象に下半身下着が設定されていないと実行できない/"
 SIF CSTR:下半身下着 == ""
-	RETURNF 0
+	COMRESULT = 0
 ;アニマルだと無理
+コマンド実行条件 += "対象が[アニマル]の場合は実行できない/"
 SIF TALENT:アニマル
-	RETURNF 0
+	COMRESULT = 0
 
 ;汎用COMABLE通らなかったらダメ
 SIF !USERCOM_ABLE_Ｐ奉仕()
-	RETURNF 0
+	COMRESULT = 0
 
-COMRESULT = 1
-RETURNF 1
+RETURNF COMRESULT
 
 @実行判定_下着扱き
+#DIM DYNAMIC 実効値
 ;-------------------------------------------------
 ;実行判定処理
 ;-------------------------------------------------
 ;すべての命令に共通の要素を考慮
 ;(従順が高いと命令に従いやすいなど)
 CALL COM_ORDER
-LOCAL = RESULT
+実効値 = RESULT
 
 CALL COM_ORDER_手淫
-LOCAL += RESULT
+実効値 += RESULT
 
 IF TALENT:貞操観念
-	LOCAL -= 3
+	実効値 -= 3
 	PRINT -貞操観念(3)
 ENDIF
 
 ;24以上で実行
-CALL 実効値判定, LOCAL, 24
+CALL 実効値判定, 実効値, 24
 
 RETURN RESULT
 
@@ -74,9 +76,7 @@ ENDIF
 ;-------------------------------------------------
 ;射精ゲージチェック
 ;-------------------------------------------------
-LOCAL = 射精ゲージ計算_奉仕(300)
-
-CALL 射精ゲージ増加, LOCAL, PLAYER
+CALL 射精ゲージ増加, 射精ゲージ計算_奉仕(300), PLAYER
 
 ;-------------------------------------------------
 ;ソース追加処理

@@ -4,16 +4,35 @@
 @USERCOM_ABLE_挿入子宮口責め, ARG
 #FUNCTION
 ;服着てるとダメ
+コマンド実行条件 += "性器が露出していないと実行できない/"
 SIF !性器露出(TARGET)
-	RETURNF 0
+	COMRESULT = 0
+;技巧3以上必要
+コマンド実行条件 += "実行者の技巧LV3以上が必要/"
+SIF ABL:PLAYER:技巧 < 3
+	COMRESULT = 0
+;後背位のABLE
+SIF !USERCOM_ABLE_後背位()
+	COMRESULT = 0
 
-COMRESULT = 1
-RETURNF 1
+;前回と今回の実行者が同じ
+コマンド実行条件 += "前回と今回の実行者が同じで、/"
+コマンド実行条件 += "後背位、挿入子宮口責めから派生可能/"
+IF TFLAG:前コマンド実行者 == PLAYER
+	;後背位か同コマンドなら可能
+	SELECTCASE PREVCOMS
+		CASE "後背位", "挿入子宮口責め"
+			RETURNF COMRESULT
+	ENDSELECT
+ENDIF
+
+COMRESULT = 0
+RETURNF 0
 
 @COM_挿入子宮口責め
+#DIM DYNAMIC 増加量
+
 PRINTL 挿入子宮口責め
-SELECTCOMS = 挿入子宮口責め
-SELECTCOM = GETNUM(TRAINNAME, "挿入子宮口責め")
 CALL KOJO_MESSAGE_COM
 
 ;V経験を伴うコマンドのフラグ(処女膜再生対応)
@@ -22,15 +41,15 @@ TFLAG:膣コマンド = 1
 ;-------------------------------------------------
 ;射精ゲージチェック
 ;-------------------------------------------------
-LOCAL = 射精ゲージ計算_Ｖ挿入実行者(900)
+増加量 = 射精ゲージ計算_Ｖ挿入実行者(900)
 
 ;ABL:調教者の技巧をみる
-LOCAL += (LOCAL/5)*ABL:PLAYER:技巧
+増加量 += (増加量/5)*ABL:PLAYER:技巧
 
 ;ABL:技巧をみる
-LOCAL += (LOCAL/10)*ABL:技巧
+増加量 += (増加量/10)*ABL:技巧
 
-CALL 射精ゲージ増加, LOCAL, PLAYER
+CALL 射精ゲージ増加, 増加量, PLAYER
 
 ;-------------------------------------------------
 ;射精ゲージチェック（奴隷）
@@ -118,8 +137,11 @@ SIF TALENT:恋慕 && PLAYER == MASTER
 SIF TALENT:親愛 && PLAYER == MASTER
 	CALL EXPUP, "愛情経験", 4
 
-SIF !避妊具(PLAYER)
+;魔力回復
+IF !避妊具(PLAYER)
+	CALL 魔力回復, 7
 	CALL 獣人催淫, 1
+ENDIF
 
 経験回数:PLAYER:(NO:TARGET) += 1
 経験回数:TARGET:(NO:PLAYER) += 1

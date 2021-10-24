@@ -1,0 +1,189 @@
+﻿@EXPUP_BASE, ARG, ARG:1
+IF ARG
+	IF SEX(TARGET) == 1 && SEX(PLAYER) == 1
+		CALL EXPUP, "ゲイ経験", ARG
+		CALL EXPUP, "ゲイ経験", ARG, PLAYER
+	ELSEIF SEX(TARGET) == 2 && SEX(PLAYER) == 2
+		CALL EXPUP, "レズ経験", ARG
+		CALL EXPUP, "レズ経験", ARG, PLAYER
+	ENDIF
+ENDIF
+
+IF ARG:1
+	IF PLAYER == MASTER
+		CALL EXPUP, "主人調教経験", ARG:1
+	ELSEIF PLAYER == ASSI
+		CALL EXPUP, "助手調教経験", ARG:1
+	ENDIF
+	IF TALENT:アニマル
+		CALL EXPUP, "飼育経験", ARG:1, PLAYER
+	ENDIF
+ENDIF
+
+RETURN 0
+
+;-------------------------------------------------
+;経験増加関数 メッセージ表示と増加処理を行う
+;第一引数:経験名(文字列変数) 第二引数:上昇値 第三引数:上昇させるキャラ(省略でTARGET)
+;-------------------------------------------------
+@EXPUP, 経験名, 上昇値, 対象 = -1
+#DIMS DYNAMIC 経験名
+#DIM DYNAMIC 上昇値
+#DIM DYNAMIC 対象
+
+SIF 対象 == -1
+	対象 = TARGET
+
+SIF 上昇値 == 0
+	RETURN
+
+SELECTCASE 経験名
+	CASE "レズ経験", "ゲイ経験"
+		SIF 特質("中性", 対象)
+			RETURN
+	CASE "助手調教経験"
+		SIF 特質("相貌失認", 対象)
+			RETURN
+ENDSELECT
+
+IF 上昇値 < 0
+	PRINTFORML %経験名%-{ABS(上昇値)}(%CALLNAME:対象%)
+ELSE
+	PRINTFORML %経験名%+{上昇値}(%CALLNAME:対象%)
+ENDIF
+EXP:対象:経験名 += 上昇値
+
+RETURN
+
+;-------------------------------------------------
+;珠増加関数 メッセージ表示と増加処理を行う
+;第一引数:JUEL名(文字列変数) 第二引数:上昇値 第三引数:上昇させるキャラ(省略でTARGET)
+;-------------------------------------------------
+@JUELUP, 能力名, 上昇値, 対象 = -1
+#DIMS DYNAMIC 能力名
+#DIM DYNAMIC 上昇値
+#DIM DYNAMIC 対象
+
+SIF 対象 == -1
+	対象 = TARGET
+SIF 上昇値 == 0
+	RETURN
+
+IF 上昇値 < 0
+	PRINTFORML %能力名%の珠-{ABS(上昇値)}(%CALLNAME:対象%)
+ELSE
+	PRINTFORML %能力名%の珠+{上昇値}(%CALLNAME:対象%)
+ENDIF
+JUEL:対象:能力名 += 上昇値
+
+RETURN
+
+;-------------------------------------------------
+;苦痛快楽経験、奉仕快楽経験のチェック
+;-------------------------------------------------
+@EXP_GOT_CHECK
+#DIM DYNAMIC ORG
+#DIM DYNAMIC PAIN
+#DIM DYNAMIC 経験上昇値, 2
+
+;奉仕系である、奉仕快楽のチェック
+ORG = UP:快Ｃ+UP:快Ｖ+UP:快Ａ+UP:快Ｂ
+
+SELECTCASE UP:欲情
+	CASE IS >= 10000
+		ORG *= 5
+	CASE IS >= 5000
+		ORG *= 4
+	CASE IS >= 3000
+		ORG *= 3
+	CASE IS >= 500
+		ORG *= 2
+	CASEELSE
+		ORG = 0
+ENDSELECT
+
+IF TFLAG:奉仕快楽 || TFLAG:奴隷実行
+	IF TFLAG:奉仕快楽
+		SELECTCASE ORG
+			CASE IS >= 12000
+				経験上昇値 = 16
+				TIMES UP:恐怖 , 0.65
+				TIMES UP:反感 , 0.30
+				TIMES UP:恭順 , 1.50
+			CASE IS >= 8000
+				経験上昇値 = 12
+				TIMES UP:恐怖 , 0.70
+				TIMES UP:反感 , 0.40
+				TIMES UP:恭順 , 1.40
+			CASE IS >= 5000
+				経験上昇値 = 8
+				TIMES UP:恐怖 , 0.75
+				TIMES UP:反感 , 0.50
+				TIMES UP:恭順 , 1.30
+			CASE IS >= 3000
+				経験上昇値 = 4
+				TIMES UP:恐怖 , 0.80
+				TIMES UP:反感 , 0.60
+				TIMES UP:恭順 , 1.20
+			CASE IS >= 2000
+				経験上昇値 = 2
+				TIMES UP:恐怖 , 0.85
+				TIMES UP:反感 , 0.70
+				TIMES UP:恭順 , 1.10
+			CASE IS >= 1000
+				経験上昇値 = 1
+				TIMES UP:恐怖 , 0.90
+				TIMES UP:反感 , 0.80
+				TIMES UP:恭順 , 1.05
+		ENDSELECT
+	ENDIF
+	IF TFLAG:奴隷実行
+		;通常の奉仕快楽とは別に欲情と依存度で奉仕快楽を計算
+		SELECTCASE UP:欲情+CFLAG:依存度
+			CASE IS >= 10000
+				経験上昇値:1 = 6
+			CASE IS >= 5000
+				経験上昇値:1 = 5
+			CASE IS >= 3000
+				経験上昇値:1 = 4
+			CASE IS >= 1000
+				経験上昇値:1 = 3
+			CASE IS >= 500
+				経験上昇値:1 = 2
+			CASE IS >= 100
+				経験上昇値:1 = 1
+		ENDSELECT
+	ENDIF
+	SIF MAX(経験上昇値, 経験上昇値:1)
+		CALL EXPUP, "奉仕快楽経験", MAX(経験上昇値, 経験上昇値:1)
+ENDIF
+
+;苦痛快楽のチェック
+経験上昇値 = 0
+IF UP:欲情 >= 30000 && UP:苦痛 >= 20000
+	経験上昇値 = 16
+	TIMES UP:恐怖 , 0.65
+ELSEIF UP:欲情 >= 15000 && UP:苦痛 >= 10000
+	経験上昇値 = 12
+	TIMES UP:恐怖 , 0.70
+ELSEIF UP:欲情 >= 10000 && UP:苦痛 >= 7000
+	経験上昇値 = 8
+	TIMES UP:恐怖 , 0.75
+ELSEIF UP:欲情 >= 7000 && UP:苦痛 >= 5000
+	経験上昇値 = 4
+	TIMES UP:恐怖 , 0.80
+ELSEIF UP:欲情 >= 5000 && UP:苦痛 >= 2000
+	経験上昇値 = 2
+	TIMES UP:恐怖 , 0.85
+ELSEIF UP:欲情 >= 1000 && UP:苦痛 >= 500
+	経験上昇値 = 1
+	TIMES UP:恐怖 , 0.90
+ENDIF
+IF 経験上昇値
+	CALL EXPUP, "苦痛快楽経験", 経験上昇値
+	;嗜虐快楽経験
+	経験上昇値 = (ABL:PLAYER:サドっ気+ABL:マゾっ気)/2
+	SIF 経験上昇値 > 0
+		CALL EXPUP, "嗜虐快楽経験", 経験上昇値, PLAYER
+ENDIF
+

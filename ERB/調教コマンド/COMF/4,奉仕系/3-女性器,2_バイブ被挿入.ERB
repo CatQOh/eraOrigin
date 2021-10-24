@@ -3,43 +3,63 @@
 ;-------------------------------------------------
 @USERCOM_ABLE_バイブ被挿入, ARG
 #FUNCTION
+;ゲーセンに居る場合はトイレじゃないとできない
+コマンド実行条件 += "ゲーセンではトイレじゃないと実行できない/"
+SIF TEQUIP:ゲームセンター && !TEQUIP:トイレ
+	COMRESULT = 0
+;アイテムを持っていないとダメ
+コマンド実行条件 += "アイテム[バイブ]が必要/"
+IF 上級売春中
+	SIF !ITEM:娼館バイブ
+		COMRESULT = 0
+ELSE
+	SIF ITEM:バイブ <= 0
+		COMRESULT = 0
+ENDIF
 ;調教者が膣無いとダメ
+コマンド実行条件 += "実行者に女性器が必要/"
 SIF !VAGINA(PLAYER)
-	RETURNF 0
+	COMRESULT = 0
 ;縄使用中は不可
+コマンド実行条件 += "縄で縛ってるときは実行できない/"
 SIF TEQUIP:縄
-	RETURNF 0
+	COMRESULT = 0
 ;触手調教中はダメ
+コマンド実行条件 += "触手召喚中は実行できない/"
 SIF TEQUIP:触手
-	RETURNF 0
+	COMRESULT = 0
 ;PLAYERがＶ使用中はダメ
+コマンド実行条件 += "実行者がV使用中は実行できない/"
 SIF Ｖ使用中(PLAYER)
-	RETURNF 0
+	COMRESULT = 0
 ;アニマルだと無理
+コマンド実行条件 += "対象が[アニマル]の場合は実行できない/"
 SIF TALENT:アニマル
-	RETURNF 0
+	COMRESULT = 0
 
-COMRESULT = 1
-RETURNF 1
+RETURNF COMRESULT
 
 @実行判定_バイブ被挿入
+#DIM DYNAMIC 実効値
 ;-------------------------------------------------
 ;実行判定処理
 ;-------------------------------------------------
 ;すべての命令に共通の要素を考慮
 ;(従順が高いと命令に従いやすいなど)
 CALL COM_ORDER
-LOCAL = RESULT
+実効値 = RESULT
 
 CALL COM_ORDER_奉仕
-LOCAL += RESULT
+実効値 += RESULT
 
 ;22以上で実行
-CALL 実効値判定, LOCAL, 22
+CALL 実効値判定, 実効値, 22
 
 RETURN RESULT
 
 @COM_バイブ被挿入
+#DIM DYNAMIC 増加量
+
 PRINTL バイブ被挿入
 
 SIF !TFLAG:実行判定無視
@@ -70,12 +90,12 @@ ENDIF
 ;射精ゲージチェック
 ;-------------------------------------------------
 TFLAG:奴隷挿入箇所 = 1
-LOCAL = 射精ゲージ計算_実行者受け(400)
+増加量 = 射精ゲージ計算_実行者受け(400)
 
 ;ABL:技巧をみる
-LOCAL += LOCAL/10*4*ABL:技巧
+増加量 += 増加量/10*4*ABL:技巧
 
-CALL 射精ゲージ増加, LOCAL, PLAYER
+CALL 射精ゲージ増加, 増加量, PLAYER
 
 ;-------------------------------------------------
 ;ソース追加処理
@@ -107,24 +127,24 @@ IF TALENT:PLAYER:処女
 		IF ASSIPLAY
 			IF CFLAG:ASSI:陥落
 				CFLAG:ASSI:性転換処女の奪われ方 = 2
-			ELSEIF RELATION:ASSI:(NO:TARGET)
+			ELSEIF 相性値(ASSI, TARGET)
 				CFLAG:ASSI:性転換処女の奪われ方 = 3
 			ELSE
 				CFLAG:ASSI:性転換処女の奪われ方 = 1
 			ENDIF
 		ENDIF
-		VIRGIN:PLAYER:11 = %NAME:TARGET%
+		CSTR:PLAYER:性転換処女 = %NAME:TARGET%
 	ELSE
 		IF ASSIPLAY
 			IF CFLAG:ASSI:陥落
 				CFLAG:ASSI:処女の奪われ方 = 2
-			ELSEIF RELATION:ASSI:(NO:TARGET)
+			ELSEIF 相性値(ASSI, TARGET)
 				CFLAG:ASSI:処女の奪われ方 = 3
 			ELSE
 				CFLAG:ASSI:処女の奪われ方 = 1
 			ENDIF
 		ENDIF
-		VIRGIN:PLAYER:1 = %NAME:TARGET%
+		CSTR:PLAYER:処女 = %NAME:TARGET%
 	ENDIF
 ENDIF
 
@@ -135,6 +155,12 @@ ENDIF
 
 TALENT:PLAYER:処女 = 0
 TALENT:PLAYER:再生処女 = 0
+
+;[衝動的]持ちは3分の1でアイテム破壊する（調教終了後に修復）
+IF TALENT:衝動的 && RAND:3 == 0
+	TFLAG:アイテム破壊 = 1
+	ITEM:バイブ = -1
+ENDIF
 
 ;-------------------------------------------------
 ;絶頂チェック

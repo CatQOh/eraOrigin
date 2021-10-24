@@ -3,22 +3,45 @@
 ;-------------------------------------------------
 @USERCOM_ABLE_騎乗位キス, ARG
 #FUNCTION
-;騎乗位キス
 ;陥落していないとダメ
+コマンド実行条件 += "対象が陥落済みじゃないと実行できない/"
 SIF !CFLAG:陥落
-	RETURNF 0
-
+	COMRESULT = 0
 ;服着てるとダメ
+コマンド実行条件 += "性器が露出していないと実行できない/"
 SIF !性器露出(TARGET)
-	RETURNF 0
+	COMRESULT = 0
+;拘束中はダメ
+コマンド実行条件 += "拘束中は実行できない/"
+SIF TEQUIP:アイマスク || TEQUIP:縄 || TEQUIP:ボールギャグ || TEQUIP:触手
+	COMRESULT = 0
+;猫舌の場合は技巧Lv2以上必要
+コマンド実行条件 += "対象が[猫舌]の場合は技巧LV2以上必要/"
+SIF TALENT:猫舌 && ABL:技巧 < 2
+	COMRESULT = 0
+;上級売春中は不可
+コマンド実行条件 += "上級売春中は実行不可/"
+SIF 上級売春中
+	COMRESULT = 0
 
-COMRESULT = 1
-RETURNF 1
+;前回と今回の調教者が同じ
+コマンド実行条件 += "前回と今回の実行者が同じで、/"
+コマンド実行条件 += "騎乗位、騎乗位キスから派生可能/"
+IF TFLAG:前コマンド実行者 == PLAYER
+	;対応する体位か連続実行なら派生可能
+	SELECTCASE PREVCOMS
+		CASE "騎乗位", "騎乗位キス"
+			RETURNF COMRESULT
+	ENDSELECT
+ENDIF
+
+COMRESULT = 0
+RETURNF 0
 
 @COM_騎乗位キス
+#DIM DYNAMIC 増加量
+
 PRINTL 騎乗位キス
-SELECTCOMS = 騎乗位キス
-SELECTCOM = GETNUM(TRAINNAME, "騎乗位キス")
 CALL KOJO_MESSAGE_COM
 
 ;V経験を伴うコマンドのフラグ(処女膜再生対応)
@@ -32,112 +55,112 @@ TFLAG:奴隷実行 = 1
 ;-------------------------------------------------
 ;射精ゲージチェック（主人）
 ;-------------------------------------------------
-LOCAL = 射精ゲージ計算_Ｖ挿入実行者(1000)
+増加量 = 射精ゲージ計算_Ｖ挿入実行者(1000)
 
 ;ABL:調教者の技巧をみる
-LOCAL += (LOCAL/10)*ABL:PLAYER:技巧
+増加量 += (増加量/10)*ABL:PLAYER:技巧
 
 ;ABL:技巧をみる
-LOCAL += (LOCAL/5)*ABL:技巧
+増加量 += (増加量/5)*ABL:技巧
 
 ;PALAM:欲情
 SELECTCASE GETPALAMLV(PALAM:欲情, 5)
 	CASE 0
-		TIMES LOCAL , 0.60
+		TIMES 増加量 , 0.60
 	CASE 1
-		TIMES LOCAL , 0.80
+		TIMES 増加量 , 0.80
 	CASE 2
-		TIMES LOCAL , 1.00
+		TIMES 増加量 , 1.00
 	CASE 3
-		TIMES LOCAL , 1.20
+		TIMES 増加量 , 1.20
 	CASE 4
-		TIMES LOCAL , 1.40
+		TIMES 増加量 , 1.40
 	CASE 5
-		TIMES LOCAL , 1.70
+		TIMES 増加量 , 1.70
 ENDSELECT
 
 ;ABL:奉仕精神をみる
 SELECTCASE ABL:奉仕精神
 	CASE 0
-		TIMES LOCAL , 0.50
+		TIMES 増加量 , 0.50
 	CASE 1
-		TIMES LOCAL , 0.80
+		TIMES 増加量 , 0.80
 	CASE 2
-		TIMES LOCAL , 1.20
+		TIMES 増加量 , 1.20
 	CASE 3
-		TIMES LOCAL , 1.50
+		TIMES 増加量 , 1.50
 	CASE 4
-		TIMES LOCAL , 1.80
+		TIMES 増加量 , 1.80
 	CASEELSE
-		LOCAL += LOCAL/3*ABL:奉仕精神
+		増加量 += 増加量/3*ABL:奉仕精神
 ENDSELECT
 
 ;TALENT:舌使いをみる
 SIF TALENT:舌使い
-	TIMES LOCAL , 2.00
+	TIMES 増加量 , 2.00
 
 ;相性を見る
-LOCAL *= RELATION:PLAYER:(NO:TARGET)
-LOCAL /= 100
+増加量 *= 相性値(PLAYER, TARGET)
+増加量 /= 100
 
 SIF CFLAG:嫁 || CFLAG:専属娼婦 || CFLAG:傀儡
-	LOCAL += 3
+	増加量 += 3
 
 ;子供は締まりが良いので増える
 SIF TALENT:小柄体型
-	TIMES LOCAL , 1.20
+	TIMES 増加量 , 1.20
 
-CALL 射精ゲージ増加, LOCAL, PLAYER
+CALL 射精ゲージ増加, 増加量, PLAYER
 
 ;-------------------------------------------------
 ;射精ゲージチェック（奴隷）
 ;-------------------------------------------------
-LOCAL = 射精ゲージ計算_Ｖ挿入(700)
+増加量 = 射精ゲージ計算_Ｖ挿入(700)
 
 ;ABL:調教者の技巧をみる
-LOCAL += (LOCAL/10)*ABL:PLAYER:技巧
+増加量 += (増加量/10)*ABL:PLAYER:技巧
 
 ;ABL:技巧をみる
-LOCAL += (LOCAL/5)*ABL:技巧
+増加量 += (増加量/5)*ABL:技巧
 
 ;奴隷のABL:サドっ気をみる
-LOCAL += LOCAL/5*ABL:サドっ気
+増加量 += 増加量/5*ABL:サドっ気
 
 ;ABL:奉仕精神をみる
 SELECTCASE ABL:奉仕精神
 	CASE 0
-		TIMES LOCAL , 0.50
+		TIMES 増加量 , 0.50
 	CASE 1
-		TIMES LOCAL , 0.80
+		TIMES 増加量 , 0.80
 	CASE 2
-		TIMES LOCAL , 1.20
+		TIMES 増加量 , 1.20
 	CASE 3
-		TIMES LOCAL , 1.50
+		TIMES 増加量 , 1.50
 	CASE 4
-		TIMES LOCAL , 1.80
+		TIMES 増加量 , 1.80
 	CASEELSE
-		LOCAL += (LOCAL/3)*ABL:奉仕精神
+		増加量 += (増加量/3)*ABL:奉仕精神
 ENDSELECT
 
 ;調教者のTALENT:舌使いをみる
 SIF TALENT:PLAYER:舌使い
-	TIMES LOCAL , 2.00
+	TIMES 増加量 , 2.00
 
 ;TALENT:陥落系素質をみる
 IF PLAYER == MASTER
 	SIF TALENT:淫乱 || TALENT:服従
-		TIMES LOCAL , 1.50
+		TIMES 増加量 , 1.50
 	SIF TALENT:恋慕 || TALENT:娼婦 || TALENT:隷属
-		TIMES LOCAL , 2.00
+		TIMES 増加量 , 2.00
 	SIF TALENT:親愛
-		TIMES LOCAL , 3.00
+		TIMES 増加量 , 3.00
 ENDIF
 
 ;相性を見る
-LOCAL *= RELATION:TARGET:(NO:PLAYER)
-LOCAL /= 100
+増加量 *= 相性値(TARGET, PLAYER)
+増加量 /= 100
 
-CALL 射精ゲージ増加, LOCAL, TARGET
+CALL 射精ゲージ増加, 増加量, TARGET
 
 ;-------------------------------------------------
 ;ソース追加処理
@@ -157,6 +180,8 @@ SOURCE:露出 = 200
 SOURCE:屈従 = 100
 SOURCE:逸脱 = 300
 SOURCE:反感 = 200
+SIF TFLAG:ニコニコサンフラワーキッス
+	SOURCE:恐怖 = 500
 
 ;-------------------------------------------------
 ;特殊ソース処理
@@ -208,8 +233,11 @@ SIF TALENT:恋慕 && PLAYER == MASTER
 SIF TALENT:親愛 && PLAYER == MASTER
 	CALL EXPUP, "愛情経験", 6
 
+CALL 魔力回復, 5
 SIF !避妊具(PLAYER)
-	
+	CALL 魔力回復, 3
+CALL 魔力回復, 5, PLAYER
+
 CALL 獣人催淫, 1
 CALL 獣人催淫, 1, PLAYER
 

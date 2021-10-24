@@ -1,0 +1,752 @@
+﻿;オプション設定処理
+@OPTION
+#DIM DYNAMIC LRESULT
+
+DRAWLINE
+LOADGLOBAL
+PRINTL □設定項目を選択してください
+PRINTL 　[0] - テキスト設定
+PRINTL 　[1] - 着衣関連設定
+PRINTL 　[2] - イベント関連の設定
+SIF TALENT:MASTER:ドラゴン使い
+	PRINTL 　[3] - ドラゴンの名前変更
+SIF !SP
+	PRINTL 　[4] - サウンドオプション
+PRINTFORML 　[5] - 能力表示画面の顔グラ表示(現在:\@ 顔グラ表示 == 1 ? オン # オフ \@)
+PRINTFORML 　[6] - ショートカットコマンドを使用する(現在:\@ ショートカット == 1 ? オン # オフ \@)
+DRAWLINE
+PRINTPLAIN 　OPTION　
+PRINTL [100] - 戻る
+DO
+	INPUT
+	SELECTCASE RESULT
+		CASE 0
+			CALL プレイ称号計算, "テキスト設定"
+			CALL TEXT_SETTING
+			BREAK
+		CASE 1
+			CALL プレイ称号計算, "着衣設定"
+			CALL CLOTHES_SETTING
+			BREAK
+		CASE 2
+			CALL EVENT_SETTING
+			BREAK
+		CASE 3
+			IF TALENT:MASTER:ドラゴン使い
+				DO
+					PRINTL ドラゴンの名前を入力してください(何も入力しない場合、「ドラゴン」になります)
+					INPUTS
+					SIF RESULTS == ""
+						RESULTS = ドラゴン
+					PRINTFORML %RESULTS%でよろしいですか？(後からオプション画面で変更できます)
+					PRINTL [0] - はい
+					PRINTL [1] - いいえ
+					CALL INPUTF, 0, 1
+					IF RESULT == 0
+						CSTR:MASTER:ドラゴン = %RESULTS%
+						BREAK
+					ENDIF
+					CONTINUE
+				LOOP 1
+			ENDIF
+		CASE 4
+			SIF SP
+				CONTINUE
+			DRAWLINE
+			VARLINE = LINECOUNT
+			$SOUNDOPTION
+			CLEARLINE LINECOUNT-VARLINE
+			PRINTFORML □現在の設定 サウンド再生機能:\@ サウンド == 1 ? オン # オフ \@ BGM音量:{BGM音量} SE音量:{SOUND音量}
+			PRINTFORML 　[0] - サウンド再生機能(現在:\@ サウンド == 1 ? オン # オフ \@)
+			PRINTL 　[1] - BGMの音量を上げる
+			PRINTL 　[2] - BGMの音量を下げる
+			PRINTL 　[3] - SEの音量を上げる
+			PRINTL 　[4] - SEの音量を下げる
+			DRAWLINE
+			PRINTPLAIN 　SOUND　
+			PRINTL [100] - 戻る
+			DO
+				INPUT
+				LRESULT = RESULT
+				SELECTCASE RESULT
+					CASE 0
+						INVERTBIT サウンド, 0
+						SELECTCASE サウンド
+							CASE 0
+								SETBGMVOLUME 0
+								SETSOUNDVOLUME 0
+							CASE 1
+								SETSOUNDVOLUME SOUND音量
+								SETBGMVOLUME BGM音量
+						ENDSELECT
+						GOTO SOUNDOPTION
+					CASE 1
+						BGM音量 += 10
+						CALL SETMIN(BGM音量, 100)
+					CASE 2
+						BGM音量 -= 10
+						CALL SETMAX(BGM音量, 0)
+					CASE 3
+						SOUND音量 += 10
+						CALL SETMIN(SOUND音量, 100)
+					CASE 4
+						SOUND音量 -= 10
+						CALL SETMAX(SOUND音量, 0)
+					CASE 100
+						BREAK
+					CASEELSE
+						CONTINUE
+				ENDSELECT
+
+				SETSOUNDVOLUME 0
+				SETBGMVOLUME 0
+				SETSOUNDVOLUME SOUND音量
+				SETBGMVOLUME BGM音量
+				SIF GROUPMATCH(LRESULT, 3, 4)
+					CALL SE再生, トランプドロー
+				GOTO SOUNDOPTION
+			LOOP 1
+			SAVEGLOBAL
+			RESTART
+		CASE 5
+			INVERTBIT 顔グラ表示, 0
+			SAVEGLOBAL
+			BREAK
+		CASE 6
+			INVERTBIT ショートカット, 0
+			BREAK
+		CASE 100
+			RETURN 0
+	ENDSELECT
+LOOP 1
+
+RESTART
+
+;テキスト関連
+@TEXT_SETTING
+DRAWLINE
+PRINTL □テキストの設定をしてください
+PRINT 　現在の設定：
+IF FLAG:地の文表示 && FLAG:口上表示
+	PRINTL 【口上+地の文】
+ELSEIF !FLAG:地の文表示 && FLAG:口上表示
+	PRINTL 【口上のみ】
+ELSEIF FLAG:地の文表示 && !FLAG:口上表示
+	PRINTL 【地の文のみ】
+ELSEIF !FLAG:地の文表示 && !FLAG:口上表示
+	PRINTL 【テキストを表示しない】
+ENDIF
+PRINTL 　[0] - 口上+地の文
+PRINTL 　[1] - 口上のみ
+PRINTL 　[2] - 地の文のみ
+PRINTL 　[3] - テキストを表示しない
+SIF !ORIGIN
+	PRINTFORML 　[4] - 実績解除時のメッセージ(現在:\@ FLAG:実績メッセージ ? オン # オフ \@)
+PRINTFORML 　[5] - パセリ表示(現在:\@ FLAG:パセリ表示 ? オン # オフ \@)
+PRINTFORML 　[6] - 通貨単位設定(現在:\@ 通貨単位 == "" ? [未設定] # %通貨単位% \@)
+IF !ORIGIN || FINDCHARA(CFLAG:グリム, 1)
+	PRINT 　[7] - グリムキャラの名前表示設定(現在:
+	SELECTCASE FLAG:グリムコンフィグ
+		CASE 0
+			PRINTL 通常表示)
+		CASE 1
+			PRINTL 名前の先頭に「グリム・」を付ける
+	ENDSELECT
+ENDIF
+SIF !SP
+	PRINTL 　[8] - ツールチップ(マウスカーソルを当てた時に表示されるポップアップ)の設定
+PRINTFORML 　[9] - 調教画面の数値表示の設定(現在:\@ 数値表示設定 == "" ? 設定無し # %数値表示設定% \@)
+PRINTFORML 　[10] - PAGING関数でのキャラ表示数(現在:{PAGING表示数}人)
+DRAWLINE
+PRINTPLAIN 　TEXT　
+PRINTL [100] - 戻る
+DO
+	INPUT
+	SELECTCASE RESULT
+		CASE 0
+			PRINTL 【口上+地の文】に設定しました
+			FLAG:地の文表示 = 1
+			FLAG:口上表示 = 1
+		CASE 1
+			PRINTL 【口上のみ】に設定しました
+			FLAG:地の文表示 = 0
+			FLAG:口上表示 = 1
+		CASE 2
+			PRINTL 【地の文のみ】に設定しました
+			FLAG:地の文表示 = 1
+			FLAG:口上表示 = 0
+		CASE 3
+			PRINTL 【テキストを表示しない】に設定しました
+			FLAG:地の文表示 = 0
+			FLAG:口上表示 = 0
+		CASE 4
+			INVERTBIT FLAG:実績メッセージ, 0
+		CASE 5
+			INVERTBIT FLAG:パセリ表示, 0
+		CASE 6
+			PRINTL 通貨単位を入力してください
+			PRINTBUTTON "[変更しない]", "変更しない"
+			PRINTL 
+			INPUTS
+			SIF RESULTS == "変更しない"
+				BREAK
+			通貨単位 = %RESULTS%
+		CASE 7
+			IF !ORIGIN || FINDCHARA(CFLAG:グリム, 1)
+				PRINTL グリムキャラの名前表示
+				PRINTL [0] - 通常の名前で表示する
+				PRINTL [1] - 名前の先頭に「グリム・」を付ける
+				CALL INPUTF, 0, 1
+				FLAG:グリムコンフィグ = RESULT
+			ENDIF
+		CASE 8
+			SIF SP
+				CONTINUE
+			$TOOLTIP
+			PRINTL ツールチップ設定
+			PRINTFORML [0] - ツールチップ表示(現在:\@ ツールチップ非表示 ? オフ # オン \@)
+			PRINTFORML [1] - ツールチップ表示時間(現在:\@ ツールチップ表示時間 == 0 || ツールチップ表示時間 == 10000 ? 10秒(デフォルト) # {ツールチップ表示時間/1000}.{ツールチップ表示時間%1000}秒 \@)
+			PRINTFORML [2] - ツールチップ表示ディレイ(現在:\@ ツールチップディレイ == 0 ? 無し(デフォルト) # {ツールチップディレイ/1000}.{ツールチップディレイ%1000}秒 \@)
+			PRINTL [3] - 戻る
+			DO
+				INPUT
+				SELECTCASE RESULT
+					CASE 0
+						INVERTBIT ツールチップ非表示, 0
+						BREAK
+					CASE 1
+						PRINTL ツールチップ表示時間を入力してください(ミリ秒)
+						PRINTL 1000ミリ秒=1秒 最大30000ミリ秒=30秒 デフォルトは10000ミリ秒=10秒
+						DO
+							INPUT
+							ツールチップ表示時間 = LIMIT(RESULT, 1, 30000)
+							TOOLTIP_SETDURATION ツールチップ表示時間
+							BREAK
+						LOOP 1
+						BREAK
+					CASE 2
+						PRINTL ツールチップの表示ディレイ時間を入力してください(ミリ秒)
+						PRINT 1000ミリ秒=1秒 最低500ミリ秒=0.5秒 最大30000ミリ秒=30秒 デフォルトは0=ディレイ無し
+						DO
+							INPUT
+							IF RESULT == 0
+								ツールチップディレイ = 0
+							ELSE
+								ツールチップディレイ = LIMIT(RESULT, 500, 30000)
+							ENDIF
+							TOOLTIP_SETDELAY ツールチップディレイ
+							BREAK
+						LOOP 1
+						BREAK
+					CASE 3
+						RESTART
+				ENDSELECT
+			LOOP 1
+			SAVEGLOBAL
+			GOTO TOOLTIP
+		CASE 9
+			PRINTL 調教画面の数値表示の設定
+			PRINTL [0] - 通常表示
+			PRINTL [1] - 3桁区切りで表示
+			PRINTL [2] - 漢字で桁を表示する
+			CALL INPUTF, 0, 1, 2
+			SELECTCASE RESULT
+				CASE 0
+					数値表示設定 = 
+				CASE 1
+					数値表示設定 = 3桁区切り
+				CASE 2
+					数値表示設定 = 漢字桁表示
+			ENDSELECT
+			SAVEGLOBAL
+		CASE 10
+			PRINTL 表示数を選んでください 30人までが実用的だと思います
+			PRINTL [10][20][30][40][50]
+			CALL INPUTF, 10, 20, 30, 40, 50
+			PAGING表示数 = RESULT
+		CASE 100
+			RETURN 0
+		CASEELSE
+			CONTINUE
+	ENDSELECT
+LOOP 0
+
+RESTART
+
+;初期着衣設定
+@CLOTHES_SETTING
+DRAWLINE
+PRINTL □設定する項目を選択してください
+PRINTL 　[0] - 調教時の着衣状態設定
+PRINTL 　[1] - 服装の設定
+DRAWLINE
+PRINTPLAIN 　CLOTHES　
+PRINTL [100] - 戻る
+CALL INPUTF, 0, 1, 100
+SELECTCASE RESULT
+	CASE 0
+		CALL CLOTHES_SETTING_TRAIN
+	CASE 1
+		CALL CLOTHES_SETTING_USUALLY
+	CASE 100
+		RETURN
+ENDSELECT
+
+RESTART
+
+;調教開始時の着衣設定
+@CLOTHES_SETTING_TRAIN
+DRAWLINE
+PRINTL □調教開始時の服装を設定してください
+PRINT 　現在の設定：
+SELECTCASE FLAG:着衣設定
+	CASE 0
+		PRINTL 全着
+	CASE 1
+		PRINTL 下着無し
+	CASE 2
+		PRINTL 下着姿
+	CASE 3
+		PRINTL 全裸
+ENDSELECT
+PRINTL 　[0] - 全着
+PRINTL 　[1] - 下着無し
+PRINTL 　[2] - 下着姿
+PRINTL 　[3] - 全裸
+DRAWLINE
+PRINTPLAIN 　CLOTHES SETTING　
+PRINTL [100] - 戻る
+CALL INPUTF, 0, 1, 2, 3, 100
+SELECTCASE RESULT
+	CASE 0
+		PRINTW 初期の着衣を全着に設定しました
+		FLAG:着衣設定 = 0
+	CASE 1
+		PRINTW 初期の着衣を下着無しに設定しました
+		FLAG:着衣設定 = 1
+	CASE 2
+		PRINTW 初期の着衣を下着姿に設定しました
+		FLAG:着衣設定 = 2
+	CASE 3
+		PRINTW 初期の着衣を全裸に設定しました
+		FLAG:着衣設定 = 3
+	CASE 100
+		RETURN
+ENDSELECT
+
+RESTART
+
+;着衣変更 きせかえ
+@CLOTHES_SETTING_USUALLY
+#DIM DYNAMIC LTARGET
+DRAWLINE
+PRINTL □着衣の設定をするキャラを選択してください
+FOR PAGING, 0, CHARANUM
+	CALL PAGING, 1
+NEXT
+
+SIF RESULT == -1
+	RETURN 0
+
+LTARGET = TARGET
+TARGET = RESULT
+CALL CHARA_CLOTHES_SETTING
+TARGET = LTARGET
+
+RESTART
+
+@CHARA_CLOTHES_SETTING
+#DIM DYNAMIC LCOUNT
+#DIMS DYNAMIC 選択部位
+DRAWLINE
+PRINTFORML □%NAME:TARGET%の服装設定
+SETCOLORBYNAME gray
+;特殊
+IF CFLAG:特殊 != 100
+	PRINTFORMDL 　[0] 特殊　　　：%CSTR:特殊%
+ELSE
+	PRINTL 　[-] 特殊　　　：着衣不可
+ENDIF
+;上半身上着
+IF CFLAG:上半身上着 != 100
+	PRINTFORMDL 　[1] 上半身上着：%CSTR:上半身上着%
+ELSE
+	PRINTL 　[-] 上半身上着：着衣不可
+ENDIF
+;下半身上着
+IF CFLAG:下半身上着 != 100
+	PRINTFORMDL 　[2] 下半身上着：%CSTR:下半身上着%
+ELSE
+	PRINTL 　[-] 下半身上着：着衣不可
+ENDIF
+;全身上着
+IF CFLAG:全身上着 != 100
+	PRINTFORMDL 　[3] 全身上着　：%CSTR:全身上着%
+ELSE
+	PRINTL 　[-] 全身上着　：着衣不可
+ENDIF
+;上半身下着
+IF CFLAG:上半身下着 != 100
+	PRINTFORMDL 　[4] 上半身下着：%CSTR:上半身下着%
+ELSE
+	PRINTL 　[-] 上半身下着：着衣不可
+ENDIF
+;下半身下着
+IF CFLAG:下半身下着 != 100
+	PRINTFORMDL 　[5] 下半身下着：%CSTR:下半身下着%
+ELSE
+	PRINTL 　[-] 下半身下着：着衣不可
+ENDIF
+;足元
+IF CFLAG:足元 != 100
+	PRINTFORMDL 　[6] 足元　　　：%CSTR:足元%
+ELSE
+	PRINTL 　[-] 足元　　　：着衣不可
+ENDIF
+
+;下半身上着もしくは全身上着を着用時、挿入可フラグの変更ができる
+IF CSTR:下半身上着 != "" || CSTR:全身上着 != ""
+	PRINTFORMDL 　[7] 着衣状態での性行為可否の変更(現在:\@ CFLAG:挿入可 ? 可能 # 不可能 \@)
+ELSE
+	PRINTL 　[-] 着衣状態での性行為可否の変更
+ENDIF
+
+;全身上着の着用時、全身上着の性質の変更ができる
+IF CSTR:全身上着 != ""
+	PRINTFORMD 　[8] %CSTR:全身上着%の性質の変更(現在:
+	SELECTCASE CFLAG:着衣併用
+		CASE 0
+			PRINTDL 通常の全身上着)
+		CASE 1
+			PRINTDL 上着との併用が可能)
+		CASE 2
+			PRINTDL 下着との併用が不可能)
+	ENDSELECT
+ELSE
+	PRINTL 　[-] 全身上着の性質の変更
+ENDIF
+
+RESETCOLOR
+PRINTL 　[9] 着衣設定の初期化
+DRAWLINE
+PRINTPLAIN 　COORDINATE　
+PRINTL [10] 戻る
+DO
+	INPUT
+	SELECTCASE RESULT
+		CASE 0 TO 6
+			SELECTCASE RESULT
+				CASE 0
+					選択部位 = 特殊
+				CASE 1
+					選択部位 = 上半身上着
+				CASE 2
+					選択部位 = 下半身上着
+				CASE 3
+					選択部位 = 全身上着
+				CASE 4
+					選択部位 = 上半身下着
+				CASE 5
+					選択部位 = 下半身下着
+				CASE 6
+					選択部位 = 足元
+			ENDSELECT
+			CALL CHARA_CLOTHES_SETTINGNEXT, 選択部位
+			BREAK
+		CASE 7
+			INVERTBIT CFLAG:挿入可, 0
+			RESTART
+		CASE 8
+			PRINTFORML □%CSTR:全身上着%の性質を選択してください
+			PRINTL 　[0] - 通常の全身上着(上半身上着、下半身上着との併用が不可)
+			PRINTL 　[1] - 上着の上に着用するもの(上半身上着、下半身上着との併用が可能)
+			PRINTL 　[2] - 肌着も兼ねるもの(上半身上着、下半身上着、及び下着との併用が不可能)
+			CALL INPUTF, 0, 1, 2
+			CFLAG:着衣併用 = RESULT
+			RESTART
+		CASE 9
+			;対象が「あなた」
+			IF NO:TARGET == 0
+				;「あなた」が男の場合
+				SELECTCASE SEX(TARGET)
+					CASE 1
+						FOR LCOUNT, 100, 107
+							CSTR:LCOUNT = 
+						NEXT
+						CSTR:MASTER:上半身上着 = Tシャツ
+						CSTR:MASTER:下半身上着 = ズボン
+						CSTR:MASTER:下半身下着 = トランクス
+						CFLAG:MASTER:下着パイズリ = 4
+					;「あなた」が女の場合
+					CASE 2
+						FOR LCOUNT, 100, 107
+							CSTR:LCOUNT = 
+						NEXT
+						CSTR:MASTER:全身上着 = ワンピース
+						CSTR:MASTER:上半身下着 = ブラジャー
+						CSTR:MASTER:下半身下着 = パンティ
+						CFLAG:MASTER:挿入可 = 1
+						CFLAG:MASTER:下着パイズリ = 3
+				ENDSELECT
+			ELSE
+				FOR LCOUNT, 100, 107
+					CSTR:LCOUNT = %CSVCSTR(NO:TARGET, LCOUNT, 0)%
+				NEXT
+				CFLAG:挿入可 = CSVCFLAG(NO:TARGET, GETNUM(CFLAG, "挿入可"))
+				CFLAG:着衣併用 = CSVCFLAG(NO:TARGET, GETNUM(CFLAG, "着衣併用"))
+				CFLAG:上着パイズリ = CSVCFLAG(NO:TARGET, GETNUM(CFLAG, "上着パイズリ"))
+				CFLAG:下着パイズリ = CSVCFLAG(NO:TARGET, GETNUM(CFLAG, "下着パイズリ"))
+			ENDIF
+			PRINTFORMW ＜%NAME:TARGET%の服装を初期化しました＞
+			RESTART
+		CASE 10
+			RETURN 0
+	ENDSELECT
+LOOP 1
+
+RESTART
+
+@CHARA_CLOTHES_SETTINGNEXT, 選択部位
+#DIM DYNAMIC LCOUNT
+#DIMS DYNAMIC 選択部位
+DRAWLINE
+PRINTFORML □着せたい%選択部位%の服装名を入力してください
+PRINTPLAIN 　COORDINATE　
+PRINTL [0] 戻る [1] 何も着せない
+INPUTS
+IF ISNUMERIC(RESULTS)
+	SELECTCASE TOINT(RESULTS)
+		CASE 0
+			RETURN
+		CASE 1
+			CSTR:選択部位 = 
+	ENDSELECT
+ELSE
+	CSTR:選択部位 = %RESULTS%
+	SELECTCASE 選択部位
+		CASE "上半身上着", "下半身上着"
+			SIF CFLAG:着衣併用 != 1
+				CSTR:全身上着 = 
+		CASE "上半身下着", "下半身下着"
+			SIF CFLAG:着衣併用 == 2
+				CSTR:全身上着 = 
+		CASE "全身上着"
+			IF CFLAG:着衣併用 != 1
+				CSTR:上半身上着 = 
+				CSTR:下半身上着 = 
+			ENDIF
+			IF CFLAG:着衣併用 == 2
+				CSTR:上半身下着 = 
+				CSTR:下半身下着 = 
+			ENDIF
+	ENDSELECT
+ENDIF
+
+;実績:寿々姫に和服を着せる
+SIF CHARANAMEF(TARGET) == "寿々姫" && CSTR:全身上着 == "和服"
+	CALL 実績解除, "KIMONO♥PRINCESS"
+
+;イベント関連の設定
+@EVENT_SETTING
+DRAWLINE
+PRINTL □イベントのオン/オフを設定できます
+PRINTFORML 　[0] - 主人による色仕掛け/夜這い(現在\@ FLAG:色仕掛け ? オン # オフ \@)
+IF !ORIGIN
+	PRINTFORML 　[1] - 借金がないときの新規借入 (現在\@ FLAG:借入 ? オン # オフ \@)
+	PRINTFORML 　[2] - カジノでのお誘い (現在\@ FLAG:お誘い ? オン # オフ \@)
+ENDIF
+PRINTFORML 　[3] - TSバストサイズランダム化 (現在\@ FLAG:TSBランダム ? オン # オフ \@)
+PRINTFORML 　[4] - メスイキバストサイズランダム化 (現在\@ FLAG:メスイキ豊胸ランダム ? オン # オフ \@)
+DRAWLINE
+PRINTPLAIN 　EVENT　
+PRINTL [100] - 戻る
+
+CALL INPUTF, 0, 1, 2, 3, 4, 100
+
+SELECTCASE RESULT
+	CASE 0
+		INVERTBIT FLAG:色仕掛け, 0
+	CASE 1
+		INVERTBIT FLAG:借入, 0
+	CASE 2
+		INVERTBIT FLAG:お誘い, 0
+	CASE 3
+		INVERTBIT FLAG:TSBランダム, 0
+	CASE 4
+		INVERTBIT FLAG:メスイキ豊胸ランダム, 0
+	CASE 100
+		RETURN 0
+ENDSELECT
+RESTART
+
+;デフォルトオプションの設定
+@DEFAULT_OPTION
+DRAWLINE
+LOADGLOBAL
+PRINTL □初期設定のオプションを設定することにより、ニューゲーム時のオプション設定を省略することができます
+SIF !ORIGIN
+	PRINTFORML 　[0] - チュートリアル表示(現在:\@ チュートリアル設定 == 1 ? 常時確認 # 省略 \@)
+PRINT 　[1] - 口上&地の文設定(現在:
+IF 地の文設定 && 口上設定
+	PRINTL 口上+地の文)
+ELSEIF !地の文設定 && 口上設定
+	PRINTL 口上のみ)
+ELSEIF 地の文設定 && !口上設定
+	PRINTL 地の文のみ)
+ELSEIF !地の文設定 && !口上設定
+	PRINTL テキストを表示しない)
+ENDIF
+IF !ORIGIN
+	PRINTFORML 　[2] - 実績解除メッセージ(現在:\@ 実績解除メッセージ設定 == 1 ? 表示 # 非表示 \@)
+	PRINTFORML 　[3] - PASELI表示(現在:\@ パセリ表示設定 == 1 ? オン # オフ \@)
+ENDIF
+PRINTFORML 　[4] - 調教開始時の着衣設定(現在:\@ 着衣オプション設定 ? 脱がせて始める # 着せたまま始める \@)
+SIF !SP
+	PRINTFORML 　[5] - サウンドオプション
+DRAWLINE
+PRINTPLAIN 　DEFAULT OPTION　
+PRINT [100] - 保存して戻る 
+PRINT [101] - 保存せずに戻る 
+PRINTL [102] - デフォルトオプションを使用しない
+DO
+	INPUT
+	SELECTCASE RESULT
+		CASE 100
+			デフォルトオプション = 1
+			SAVEGLOBAL
+			RETURN 0
+		CASE 101
+			LOADGLOBAL
+			IF !SP
+				SETBGMVOLUME BGM音量
+				SETSOUNDVOLUME SOUND音量
+			ENDIF
+			RETURN 0
+		CASE 102
+			PRINTW デフォルトオプションを使用しません
+			デフォルトオプション = 0
+			SAVEGLOBAL
+			RETURN 0
+		CASE 0
+			PRINTL □常にチュートリアルの表示を確認しますか？
+			PRINTL 　[0] - 確認しなくてもいいよ
+			PRINTL 　[1] - 不安だから確認して
+			CALL INPUTF, 0, 1
+			チュートリアル設定 = RESULT
+			SAVEGLOBAL
+			RESTART
+		CASE 1
+			PRINTL □口上と地の文の初期設定を選んでください
+			PRINTL 　[0] - 口上+地の文
+			PRINTL 　[1] - 口上のみ
+			PRINTL 　[2] - 地の文のみ
+			PRINTL 　[3] - テキストを表示しない
+			CALL INPUTF, 0, 1, 2, 3
+			SELECTCASE RESULT
+				CASE 0
+					地の文設定 = 1
+					口上設定 = 1
+				CASE 1
+					地の文設定 = 0
+					口上設定 = 1
+				CASE 2
+					地の文設定 = 1
+					口上設定 = 0
+				CASE 3
+					地の文設定 = 0
+					口上設定 = 0
+			ENDSELECT
+			SAVEGLOBAL
+			RESTART
+		CASE 2
+			SIF ORIGIN
+				CONTINUE
+			PRINTL □実績解除メッセージの初期設定を選んでください
+			PRINTL 　[0] - 表示しなくてもいいよ
+			PRINTL 　[1] - 表示されると嬉しいな
+			CALL INPUTF, 0, 1
+			実績解除メッセージ設定 = RESULT
+			SAVEGLOBAL
+			RESTART
+		CASE 3
+			SIF ORIGIN
+				CONTINUE
+			PRINTL □PASELI表示設定の初期設定を選んでください
+			PRINTL 　[0] - 商標権侵害だから表示しなくていい
+			PRINTL 　[1] - BEMANIやってる感あるから表示したい
+			CALL INPUTF, 0, 1
+			パセリ表示設定 = RESULT
+			SAVEGLOBAL
+			RESTART
+		CASE 4
+			PRINTL □調教開始時の着衣設定を選んでください
+			PRINTL 　[0] - 着衣プレイはエロいから着せたまま始める
+			PRINTL 　[1] - さっさとヤりたいので脱がせてから始める
+			CALL INPUTF, 0, 1
+			着衣オプション設定 = RESULT
+			SAVEGLOBAL
+			RESTART
+		CASE 5
+			SIF SP
+				CONTINUE
+			DRAWLINE
+			VARLINE = LINECOUNT
+			$SOUNDOPTION
+			CLEARLINE LINECOUNT-VARLINE
+			PRINTFORML □現在の設定 サウンド再生機能:\@ サウンド == 1 ? オン # オフ \@ BGM音量:{BGM音量} SE音量:{SOUND音量}
+			PRINTFORML 　[0] - サウンド再生機能(現在:\@ サウンド == 1 ? オン # オフ \@)
+			PRINTL 　[1] - BGMの音量を上げる
+			PRINTL 　[2] - BGMの音量を下げる
+			PRINTL 　[3] - SEの音量を上げる
+			PRINTL 　[4] - SEの音量を下げる
+			DRAWLINE
+			PRINTPLAIN 　SOUND　
+			PRINTL [100] - 戻る
+			DO
+				INPUT
+				SELECTCASE RESULT
+					CASE 0
+						INVERTBIT サウンド, 0
+						SELECTCASE サウンド
+							CASE 0
+								SETBGMVOLUME 0
+								SETSOUNDVOLUME 0
+							CASE 1
+								SETBGMVOLUME BGM音量
+								SETSOUNDVOLUME SOUND音量
+						ENDSELECT
+						GOTO SOUNDOPTION
+					CASE 1
+						BGM音量 += 10
+						CALL SETMIN(BGM音量, 100)
+						SETBGMVOLUME BGM音量
+						GOTO SOUNDOPTION
+					CASE 2
+						BGM音量 -= 10
+						CALL SETMAX(BGM音量, 0)
+						SETBGMVOLUME BGM音量
+						GOTO SOUNDOPTION
+					CASE 3
+						SOUND音量 += 10
+						CALL SETMIN(SOUND音量, 100)
+						SETSOUNDVOLUME SOUND音量
+						SIF サウンド
+							CALL SE再生, トランプドロー
+						GOTO SOUNDOPTION
+					CASE 4
+						SOUND音量 -= 10
+						CALL SETMAX(SOUND音量, 0)
+						SETSOUNDVOLUME SOUND音量
+						SIF サウンド
+							CALL SE再生, トランプドロー
+						GOTO SOUNDOPTION
+					CASE 100
+						BREAK
+					CASEELSE
+						CONTINUE
+				ENDSELECT
+			LOOP 1
+			RESTART
+	ENDSELECT
+LOOP 1
+

@@ -1,0 +1,382 @@
+﻿@CHARA_MANUAL, ARG
+#DIM DYNAMIC LCOUNT
+
+IF GETCHARA(ARG) > 0
+	IF LANGUAGE == "ENG"
+		PRINTFORMW %CSVENGNAME(ARG)% was been unlocked.
+	ELSE
+		PRINTFORMW %CSVNAMEF(ARG)%は既に購入されています
+	ENDIF
+	RETURN 1
+ELSEIF CCB:ARG
+	IF LANGUAGE == "ENG"
+		PRINTFORMW %CSVENGNAME(ARG)% is can't unlocked.
+	ELSE
+		PRINTFORMW %CSVNAMEF(ARG)%は購入できません
+	ENDIF
+	RETURN 1
+ELSEIF ARG == NO:MASTER
+	RETURN 1
+ENDIF
+
+IF LANGUAGE == "ENG"
+	PRINTFORML 【%CSVENGNAME(ARG)%（%CSVNAMEF(ARG)%）】
+ELSE
+	FOR LCOUNT, 0, 100
+		SIF CSVCSTR(ARG, LCOUNT) == ""
+			BREAK
+		CALL MANUALPRINT, CSVCSTR(ARG, LCOUNT)
+		SIF !LINEISEMPTY()
+			PRINTL 
+	NEXT
+ENDIF
+
+IF CSVTALENT(ARG, GETNUM(TALENT, "アニマル"))
+	IF LANGUAGE == "ENG"
+		PRINTL ※This character is Pet chara. If you unlocked with little money, You can't clear games.
+	ELSE
+		PRINTL ※このキャラはペット候補なので売却できません。所持金が少ない状態で購入するとゲームの攻略が不可能になる場合があります
+	ENDIF
+ENDIF
+
+IF チャレンジMOD
+	IF LANGUAGE == "ENG"
+		PRINTL ※You trying CHALLENGE mode. There has difference from this talents.
+	ELSE
+		PRINTL ※CHALLENGEモードに挑戦中です。表示されているマニュアル・素質とは齟齬がある場合があります
+	ENDIF
+ENDIF
+
+;キャラマニュアル内でタグ付けされていれば特殊表示する
+;これでCSV内でマニュアルも完結できる
+;マニュアル用と題してるが普通の文章表示でもタグ付け機能が使える その際はLINEISEMPTYでの改行を忘れずに
+@MANUALPRINT, マニュアル:0
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC 検索位置
+#DIMS DYNAMIC マニュアル, 2
+#DIM DYNAMIC 始点
+#DIM DYNAMIC 文字数
+#DIMS DYNAMIC 字体, 3
+#DIMS DYNAMIC 本文
+
+;タグを探す
+始点 = STRFINDU(マニュアル, "(", 検索位置)
+文字数 = STRFINDU(マニュアル, ")", 検索位置)-始点
+;タグ付けされてれば処理実行
+IF 始点 >= 0
+	;タグ付けまでの文章を通常表示
+	PRINTFORM %SUBSTRINGU(マニュアル, 0, 始点)%
+	;処理、内容、本文でSPLITする
+	SPLIT SUBSTRINGU(マニュアル, 始点+1, 文字数-1), ":", 字体
+	本文 = %字体:2%
+	;字体:0 = 特殊処理の種類 字体:1 = 特殊処理の内容 本文 = 本文
+	;必要に応じて追加するとよい
+	SELECTCASE 字体:0
+		;フォント変更系
+		CASE "FONT"
+			SELECTCASE 字体:1
+				;太字
+				CASE "BOLD"
+					FONTBOLD
+					CALL MANUALPRINT, 本文
+					FONTREGULAR
+				;打ち消し線
+				CASE "STRIKE"
+					FONTSTYLE 4
+					CALL MANUALPRINT, 本文
+					FONTSTYLE 0
+			ENDSELECT
+		;色指定 現時点では色名のみで数値指定はできない
+		;指定した色名が無効であればデフォルト色表示
+		CASE "COLOR"
+			IF COLOR_FROMNAME(字体:1) == -1
+				CALL MANUALPRINT, 本文
+			ELSE
+				SETCOLOR COLOR_FROMNAME(字体:1)
+				CALL MANUALPRINT, 本文
+				RESETCOLOR
+			ENDIF
+		;その他
+		CASE "OTHER"
+			SELECTCASE 字体:1
+				;反転タグ 実質シャルロット専用 ALIGHNMENT命令の仕様上、タグ重複使用は不可能
+				CASE "REVERSE"
+					マニュアル:1 =
+					FOR LCOUNT, STRLENSU(本文), -1, -1
+						SELECTCASE CHARATU(本文, LCOUNT)
+							CASE "【"
+								マニュアル:1 += "】"
+							CASE "】"
+								マニュアル:1 += "【"
+							CASE "「"
+								マニュアル:1 += "」"
+							CASE "」"
+								マニュアル:1 += "「"
+							CASE "["
+								マニュアル:1 += "]"
+							CASE "]"
+								マニュアル:1 += "["
+							CASE "（"
+								マニュアル:1 += "）"
+							CASE "）"
+								マニュアル:1 += "（"
+							CASEELSE
+								マニュアル:1 += CHARATU(本文, LCOUNT)
+						ENDSELECT
+					NEXT
+					ALIGNMENT RIGHT
+					PRINTFORML %マニュアル:1%
+					ALIGNMENT LEFT
+				;WAIT このタグを使用すると改行されるので、文末までタグに含めないと表示がおかしくなる
+				CASE "WAIT"
+					CALL MANUALPRINT, 本文
+					WAIT
+			ENDSELECT
+	ENDSELECT
+	;次の始動位置をタグ終了後の次の文字に設定
+	検索位置 = STRFINDU(マニュアル, 本文)+STRLENSU(本文)
+	IF 検索位置 < STRLENSU(マニュアル)
+		;残りの文章が閉じカッコならループ終了
+		IF 検索位置+1 == STRLENSU(マニュアル) && CHARATU(マニュアル, 検索位置) == ")"
+			RETURN
+		;残りの文章が閉じカッコ以外にもあれば再帰処理
+		ELSE
+			;閉じカッコの分+1
+			CALL MANUALPRINT, SUBSTRINGU(マニュアル, 検索位置+1)
+			RETURN
+		ENDIF
+	ENDIF
+;タグが無ければ通常表示
+ELSE
+	PRINTFORM %マニュアル%
+	RETURN
+ENDIF
+
+@CHARA_BUY_CHECK, ARG
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC 素質表示済み
+
+IF !EXISTCSV(ARG)
+	PRINTL 
+	IF LANGUAGE == "ENG"
+		PRINTW Does not exist CSV.
+	ELSE
+		PRINTW CSVが未実装です（仕様）
+	ENDIF
+	RETURN 1
+ELSEIF MONEY < CSVCFLAG(ARG, 50)
+	PRINTL 
+	IF LANGUAGE == "ENG"
+		PRINTW Your money not enough.
+	ELSE
+		PRINTW ＜金額が足りません＞
+	ENDIF
+	RETURN 1
+ELSE
+	SIF LANGUAGE == "ENG"
+		GOTO SHOW_TALENTS
+	DO
+		PRINTL 
+		IF LANGUAGE == "ENG"
+			PRINTL Are you unlock this character?
+			PRINTL [0]Yes
+			PRINTL [1]No
+		ELSE
+			PRINTL 購入しますか？
+			PRINTL [0]はい
+			PRINTL [1]いいえ
+		ENDIF
+		SIF !素質表示済み
+			PRINTL [2]素質を表示する
+		CALL INPUTF, 0, 1, 2
+		SELECTCASE RESULT
+			CASE 0
+				CALL CHARA_ADD, ARG
+				MONEY -= CSVCFLAG(ARG , GETNUM(CFLAG, "価格"))
+				IF LANGUAGE == "ENG"
+					PRINTFORMW ＜You unlocked %CSVENGNAME(ARG)%＞
+				ELSE
+					PRINTFORMW ＜%CSVNAMEF(ARG)%を解禁しました＞
+				ENDIF
+				TRYCALLFORM %CSVNAMERPS(ARG)%_CHARABUY
+				TRYCALLFORM MASTER_%CSVNAMERPS(NO:MASTER)%_CHARABUY, ARG
+				SIF CFLAG:誕生日 == (MONTH*100)+DAYS
+					CALL 実績解除, "アンハッピーバースデー"
+				SIF CHARANAMEF(TARGET) == "つらら" && MONTH == 12 && (DAYS == 24 || DAYS == 25)
+					CALL 実績解除, "クリスマス中止のお知らせ"
+				RETURN 0
+			CASE 1
+				RETURN 1
+			CASE 2
+				$SHOW_TALENTS
+				素質表示済み = 1
+				PRINTL 
+				IF LANGUAGE == "ENG"
+					PRINTFORML Race:%CSVCSTR(ARG, GETNUM(CSTR, "種族"))%
+				ELSE
+					PRINTFORML 種族:%CSVCSTR(ARG, GETNUM(CSTR, "種族"))%
+				ENDIF
+				PRINT 素質
+				FOR LCOUNT, 0, VARSIZE("TALENT")
+					SELECTCASE TALENTNAME:LCOUNT
+						CASE "性別"
+							CONTINUE
+						CASE "バストサイズ"
+							IF LANGUAGE == "ENG"
+								SELECTCASE CSVTALENT(ARG, LCOUNT)
+									CASE 1
+										PRINT 【NoneBreast】
+									CASE 2
+										PRINT 【LittleBreast】
+									CASE 3
+										PRINT 【BasicBreast】
+									CASE 4
+										PRINT 【LargeBreast】
+									CASE 5
+										PRINT 【XLargeBreast】
+									CASE 6
+										PRINT 【HugeBreast】
+								ENDSELECT
+							ELSE
+								SELECTCASE CSVTALENT(ARG, LCOUNT)
+									CASE 1
+										PRINT 【絶壁】
+									CASE 2
+										PRINT 【貧乳】
+									CASE 3
+										PRINT 【並乳】
+									CASE 4
+										PRINT 【巨乳】
+									CASE 5
+										PRINT 【豊乳】
+									CASE 6
+										PRINT 【爆乳】
+								ENDSELECT
+							ENDIF
+							CONTINUE
+					ENDSELECT
+					SIF CSVTALENT(ARG, LCOUNT)
+						PRINTFORM 【%TALENTDISP(LCOUNT)%】
+				NEXT
+				PRINTL 
+		ENDSELECT
+	LOOP 1
+ENDIF
+
+RETURN 0
+
+@CHARA_ADD, ARG, クローニング
+#DIM DYNAMIC LCOUNT
+;今のところは50人まで
+#DIMS DYNAMIC 相性設定用, 50
+#DIM DYNAMIC 名前例外処理
+#DIMS DYNAMIC 相性値, 100
+#DIM DYNAMIC クローニング
+
+SIF !クローニング
+	購入人数++
+ADDCHARA ARG
+TARGET = CHARANUM-1
+;一部のキャラは性別を選択する
+CALL 性別選択, TARGET
+
+IF !クローニング
+	CCB:ARG = 1
+	キャラ未購入 = 0
+	;マルクトとミリアは片方しか奴隷にできない
+	;めうめうと白兎先生は片方しか奴隷にできない
+	SELECTCASE ARG
+		CASE GETNO("マルクト")
+			CCB:GETNO("ア・ミリア") = 1
+		CASE GETNO("ア・ミリア")
+			CCB:GETNO("マルクト") = 1
+		CASE GETNO("芽兎 めう")
+			CCB:GETNO("白兎先生") = 1
+		CASE GETNO("白兎先生")
+			CCB:GETNO("芽兎 めう") = 1
+	ENDSELECT
+ENDIF
+BUYD = DAYS
+BUYM = MONTH
+BUYY = YEAR
+;初期フラグいろいろ
+CFLAG:生殖力担当魔術師 = -1
+CFLAG:不妊担当魔術師 = -1
+CFLAG:男性器提供者 = -1
+CFLAG:モチベーション = 50
+CFLAG:憑依 = -1
+CALL 初期経験セット, TARGET
+
+;MOD適用
+;性別不明キャラは上で選んでるので性別MODは適用されない
+IF ゲームモード() != "段位認定"
+	SIF ふたなりMOD
+		CALL APPLY_ふたなりMOD, TARGET
+
+	IF CSVTALENT(NO:TARGET, GETNUM(TALENT, "性別")) != 0
+		SIF 男性化MOD
+			CALL APPLY_男性化MOD, TARGET
+		SIF 女性化MOD
+			CALL APPLY_女性化MOD, TARGET
+		SIF 性転換MOD
+			CALL APPLY_性転換MOD, TARGET
+	ENDIF
+
+	SIF 爆乳MOD
+		CALL APPLY_爆乳MOD, TARGET
+	SIF 絶壁MOD
+		CALL APPLY_絶壁MOD, TARGET
+	SIF おもらしMOD
+		CALL APPLY_おもらしMOD, TARGET
+	SIF ロリショタMOD
+		CALL APPLY_ロリショタMOD, TARGET
+	SIF 大人化MOD
+		CALL APPLY_大人化MOD, TARGET
+ENDIF
+
+IF PENIS(TARGET)
+	CFLAG:ペニスサイズ = 2
+	SIF TALENT:小柄体型 || TALENT:小人体型
+		CFLAG:ペニスサイズ = 1
+ENDIF
+MAXBASE:魔力 = ABL:魔法技能*1000
+;アニマルなら助手可能にする
+SIF TALENT:アニマル
+	CFLAG:状態 = 2
+TFLAG:ページ数 = 0
+;チャレンジMOD導入中なら性経験を消してバージンにする
+IF チャレンジMOD
+	FOR LCOUNT, 0, 20
+		ABL:LCOUNT = 0
+	NEXT
+	FOR LCOUNT, 0, 100
+		EXP:LCOUNT = 0
+	NEXT
+	SELECTCASE SEX(TARGET)
+		CASE 1
+			TALENT:童貞 = 1
+		CASE 2
+			TALENT:処女 = 1
+	ENDSELECT
+	CALL 初期経験リセット(TARGET)
+	CSTR:適用MOD += "[チャレンジMOD]"
+ENDIF
+;相性の設定
+SPLIT CSTR:相性, "/", 相性設定用
+FOR LCOUNT, 0, RESULT
+	;なぜか行連結で行頭にスペースが入るので削る
+	相性設定用:LCOUNT = %SUBSTRINGU(相性設定用:LCOUNT, 1)%
+	SIF 相性設定用:LCOUNT == ""
+		BREAK
+	SPLIT 相性設定用:LCOUNT, "*", 相性値
+	;サタンだけ相性設定用のアスタリスク文字が名前に入ってるので例外的に処理する
+	;「サタン-P」+「L-イブリース」
+	名前例外処理 = FINDELEMENT(相性値, "サタン-P", 0, 50, 1)
+	IF 名前例外処理 >= 0
+		相性値:名前例外処理 += @"*%相性値:(名前例外処理+1)%"
+		ARRAYREMOVE 相性値, 名前例外処理+1, 1
+	ENDIF
+	SIF GETNO(相性値) >= 0
+		RELATION:GETNO(相性値) = TOINT(相性値:1)
+NEXT
+

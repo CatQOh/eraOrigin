@@ -3,33 +3,53 @@
 ;-------------------------------------------------
 @USERCOM_ABLE_乳房電極, ARG
 #FUNCTION
+#DIM DYNAMIC 条件確定
+
+;ゲーセンに居る場合はできない
+コマンド実行条件 += "ゲーセンでは実行不可/"
+SIF TEQUIP:ゲームセンター
+	COMRESULT = 0
+;上級売春中は不可
+コマンド実行条件 += "上級売春中は実行不可/"
+SIF 上級売春中
+	COMRESULT = 0
 ;奴隷が服従か隷属でないとダメ
+コマンド実行条件 += "対象が[服従][隷属]or実行者に[サド]が必要/"
 IF !TALENT:服従 && !TALENT:隷属
 	;ただしPLAYERがサドならおＫ
 	SIF !TALENT:PLAYER:サド
-		RETURNF 0
+		COMRESULT = 0
 ENDIF
 
 ;胸が露出してないとダメ
+コマンド実行条件 += "対象の乳房が露出していないと実行できない/"
 SIF OVER_BUST(TARGET) != ""
-	RETURNF 0
+	COMRESULT = 0
 ;触手調教中はダメ
+コマンド実行条件 += "触手召喚中は実行できない/"
 SIF TEQUIP:触手
-	RETURNF 0
+	COMRESULT = 0
 ;解除はいつでも可能
-IF TEQUIP:乳房電極
+SIF TEQUIP:乳房電極 && COMRESULT
+	条件確定 = 1
+;アイテムを持っていないとダメ
+コマンド実行条件 += "アイテム[電極プラグ]が必要/"
+SIF ITEM:電極プラグ <= 0
+	COMRESULT = 0
+;胸に道具ついてるとダメ
+コマンド実行条件 += "B道具使用中は実行できない/"
+SIF Ｂ使用中(TARGET)
+	COMRESULT = 0
+;お風呂場プレイ中はダメ
+コマンド実行条件 += "お風呂場では実行できない/"
+SIF TEQUIP:お風呂場
+	COMRESULT = 0
+
+IF 条件確定
 	COMRESULT = 1
 	RETURNF 1
 ENDIF
-;胸に道具ついてるとダメ
-SIF Ｂ使用中(TARGET)
-	RETURNF 0
-;お風呂場プレイ中はダメ
-SIF TEQUIP:お風呂場
-	RETURNF 0
-
-COMRESULT = 1
-RETURNF 1
+RETURNF COMRESULT
 
 @COM_乳房電極
 PRINTL 乳房電極
@@ -63,6 +83,13 @@ SIF TALENT:抑圧 || TALENT:抵抗
 SIF CSTR:種族 == "機械"
 	TIMES SOURCE:苦痛 , 4.00
 
+;[衝動的]持ちは3分の1でアイテム破壊する（調教終了後に修復）
+IF ((TALENT:衝動的 && !特質("しつけ")) || (TALENT:PLAYER:衝動的 && !特質("しつけ", PLAYER))) && RAND:3 == 0
+	TFLAG:アイテム破壊 = 1
+	ITEM:電極プラグ = -1
+	TEQUIP:乳房電極 = 0
+ENDIF
+
 ;-------------------------------------------------
 ;絶頂チェック
 ;-------------------------------------------------
@@ -85,6 +112,7 @@ IF !CFLAG:電極で責められた経験
 	PRINTL ＜初電極調教＞
 	CALL EXPUP, "異常経験", 1
 ENDIF
+CFLAG:電極で責められた経験++
 
 RETURN 1
 
@@ -113,5 +141,9 @@ SIF TALENT:抑圧 || TALENT:抵抗
 ;機械には効果が高い
 SIF CSTR:種族 == "機械"
 	TIMES SOURCE:苦痛 , 4.00
+
+;実績:ファウラに電極を使う
+SIF CHARANAMEF(TARGET) == "ファウラ"
+	CALL 実績解除, "雷龍が如く"
 
 RETURN 1

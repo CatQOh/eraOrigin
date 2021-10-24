@@ -1,0 +1,21 @@
+﻿PASELI,PASELI.png
+MODE,MODE.png
+MODEB,MODEb.png
+
+;壁系 32*32
+□,壁系.png,0,0,32,32
+┌壁,壁系.png,0,32,32,32
+┐壁,壁系.png,32,32,32,32
+└壁,壁系.png,64,32,32,32
+┘壁,壁系.png,96,32,32,32
+上壁,壁系.png,0,64,32,32
+下壁,壁系.png,32,64,32,32
+左壁,壁系.png,64,64,32,32
+右壁,壁系.png,96,64,32,32
+
+GRID_WATER,生け簀.png
+GRID_GRASS,牧場.png
+GRID_BEEHIVE,養蜂場.png
+
+NO_IMAGE,no image.png
+

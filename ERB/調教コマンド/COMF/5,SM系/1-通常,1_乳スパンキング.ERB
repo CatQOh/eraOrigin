@@ -3,17 +3,26 @@
 ;-------------------------------------------------
 @USERCOM_ABLE_乳スパンキング, ARG
 #FUNCTION
+;ゲーセンに居る場合はできない
+コマンド実行条件 += "ゲーセンでは実行不可/"
+SIF TEQUIP:ゲームセンター
+	COMRESULT = 0
+;上級売春中は方針がSMで客がマゾじゃないとダメ
+コマンド実行条件 += "上級売春中は経営方針がSMで客に[マゾ]が必要/"
+SIF 上級売春中 && (娼館方針 != 3 || !TALENT:マゾ)
+	COMRESULT = 0
 ;従順3未満のASSIの場合スパンキングはできない（サドならＯＫ）
+コマンド実行条件 += "実行者が助手の場合、助手に[サド]or従順LV3以上必要/"
 IF PLAYER == ASSI
 	SIF ABL:ASSI:従順 < 3 && !TALENT:ASSI:サド
-		RETURNF 0
+		COMRESULT = 0
 ENDIF
 ;アニマルは無理
+コマンド実行条件 += "対象が[アニマル]の場合は実行できない/"
 SIF TALENT:アニマル
-	RETURNF 0
+	COMRESULT = 0
 
-COMRESULT = 1
-RETURNF 1
+RETURNF COMRESULT
 
 @COM_乳スパンキング
 PRINTL 乳スパンキング
@@ -67,6 +76,10 @@ STAIN:PLAYER:手 |= STAIN:胸
 ;経験の処理
 ;-------------------------------------------------
 CALL EXPUP_BASE, 1, 3
+
+;実績:レイシスのち首を弾く
+SIF CHARANAMEF(TARGET) == "レイシス"
+	CALL 実績解除, "はじけっ！ギュイ～ン！"
 
 RETURN 1
 

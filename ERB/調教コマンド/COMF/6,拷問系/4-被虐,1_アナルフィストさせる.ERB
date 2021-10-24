@@ -3,67 +3,82 @@
 ;-------------------------------------------------
 @USERCOM_ABLE_アナルフィストさせる, ARG
 #FUNCTION
-;サド、もしくはサドっ気3以上必要
-SIF !TALENT:サド && ABL:サドっ気 < 3
-	RETURNF 0
+;ゲーセンに居る場合はできない
+コマンド実行条件 += "ゲーセンでは実行不可/"
+SIF TEQUIP:ゲームセンター
+	COMRESULT = 0
+;上級売春中は方針がSM、狂気じゃないとダメ
+コマンド実行条件 += "上級売春中は経営方針がSMor狂気じゃないと実行できない/"
+SIF 上級売春中 && !GROUPMATCH(娼館方針, 3, 4)
+	COMRESULT = 0
+;サド、もしくはサドっ気3以上必要(娼館方針が狂気ならスルー)
+コマンド実行条件 += "狂気方針の上級売春でない場合、対象に[サド]orサドっ気LV3が必要/"
+SIF !(上級売春中 && 娼館方針 == 4) && !TALENT:サド && ABL:サドっ気 < 3
+	COMRESULT = 0
 
 ;実行者のＡ経験100以上orＡ感覚3以上
+コマンド実行条件 += "実行者のＡ経験100以上orＡ感覚LV3以上が必要/"
 SIF EXP:PLAYER:Ａ経験 < 100 && ABL:Ａ感覚 <= 3
-	RETURNF 0
+	COMRESULT = 0
 
 ;助手の場合は助手が陥落していないとダメ
+コマンド実行条件 += "実行者が助手の場合、助手が陥落していないと実行できない/"
 SIF ASSIPLAY && !CFLAG:ASSI:陥落
-	RETURNF 0
+	COMRESULT = 0
 ;調教者が小人体型のとき主人が禁断の知識持ちじゃないとダメ
+コマンド実行条件 += "実行者が[小人体型]の場合、対象も[小人体型]か、主人に[禁断の知識]が必要/"
 SIF TALENT:PLAYER:小人体型 && !TALENT:MASTER:禁断の知識 && !TALENT:小人体型
-	RETURNF 0
+	COMRESULT = 0
 ;触手調教中はダメ
+コマンド実行条件 += "触手召喚中は実行できない/"
 SIF TEQUIP:触手
-	RETURNF 0
+	COMRESULT = 0
 ;縄使用中は出来ない
+コマンド実行条件 += "縄で縛ってるときは実行できない/"
 SIF TEQUIP:縄
-	RETURNF 0
+	COMRESULT = 0
 ;アニマルだと無理
+コマンド実行条件 += "対象が[アニマル]の場合は実行できない/"
 SIF TALENT:アニマル
-	RETURNF 0
+	COMRESULT = 0
 
-COMRESULT = 1
-RETURNF 1
+RETURNF COMRESULT
 
 @実行判定_アナルフィストさせる
+#DIM DYNAMIC 実効値, 2
 ;-------------------------------------------------
 ;実行判定処理
 ;-------------------------------------------------
 ;すべての命令に共通の要素を考慮
 ;(従順が高いと命令に従いやすいなど)
 CALL COM_ORDER
-LOCAL = RESULT
+実効値 = RESULT
 
 CALL COM_ORDER_フィストさせる
-LOCAL += RESULT
+実効値 += RESULT
 
-LOCAL:1 = 0
+実効値:1 = 0
 ;精液の汚れ
 SIF GETBIT(STAIN:PLAYER:アナル, 2)
-	LOCAL:1 += 2
+	実効値:1 += 2
 ;アナルの汚れ
 SIF GETBIT(STAIN:PLAYER:アナル, 3)
-	LOCAL:1 += 6
+	実効値:1 += 6
 ;母乳汚れ
 SIF GETBIT(STAIN:PLAYER:アナル, 4)
-	LOCAL:1 += 1
+	実効値:1 += 1
 ;尿
 SIF GETBIT(STAIN:PLAYER:アナル, 7)
-	LOCAL:1 += 3
+	実効値:1 += 3
 
 SIF TALENT:汚れ無視
-	LOCAL:1 /= 3
+	実効値:1 /= 3
 SIF TALENT:潔癖症
-	LOCAL:1 *= 2
+	実効値:1 *= 2
 
 ;汚れあり
-IF LOCAL:1
-	LOCAL -= LOCAL:1
+IF 実効値:1
+	実効値 -= 実効値:1
 	IF TALENT:汚れ無視
 		PRINT -汚れあり、汚れ無視
 	ELSEIF TALENT:潔癖症
@@ -71,15 +86,17 @@ IF LOCAL:1
 	ELSE
 		PRINT -汚れあり
 	ENDIF
-	PRINTFORM ({LOCAL:1})
+	PRINTFORM ({実効値:1})
 ENDIF
 
 ;36以上で実行
-CALL 実効値判定, LOCAL, 36
+CALL 実効値判定, 実効値, 36
 
 RETURN RESULT
 
 @COM_アナルフィストさせる
+#DIM DYNAMIC 増加量
+
 PRINTL アナルフィストさせる
 
 SIF !TFLAG:実行判定無視
@@ -112,12 +129,12 @@ ENDIF
 ;射精ゲージチェック（主人）
 ;-------------------------------------------------
 TFLAG:奴隷挿入箇所 = 2
-LOCAL = 射精ゲージ計算_実行者受け(400)
+増加量 = 射精ゲージ計算_実行者受け(400)
 
 ;ABL:技巧をみる
-LOCAL += LOCAL/10*4*ABL:技巧
+増加量 += 増加量/10*4*ABL:技巧
 
-CALL 射精ゲージ増加, LOCAL, PLAYER
+CALL 射精ゲージ増加, 増加量, PLAYER
 
 ;-------------------------------------------------
 ;ソース追加処理
@@ -135,8 +152,7 @@ SOURCE:屈従 = 300
 SOURCE:逸脱 = 1000
 SOURCE:反感 = 500
 SOURCE:中毒 = 200
-;上の方で計算した汚れ
-SOURCE:不潔 = LOCAL:1*60+100
+SOURCE:不潔 = 300
 
 ;-------------------------------------------------
 ;特殊ソース処理

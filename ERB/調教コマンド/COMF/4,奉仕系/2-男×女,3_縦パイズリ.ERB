@@ -3,56 +3,62 @@
 ;-------------------------------------------------
 @USERCOM_ABLE_縦パイズリ, ARG
 #FUNCTION
-;巨乳か爆乳じゃないと問答無用で不可
+;巨乳か豊乳か爆乳じゃないと問答無用で不可
+コマンド実行条件 += "対象が巨乳、豊乳、爆乳じゃないと実行できない/"
 SELECTCASE TALENT:バストサイズ
 	CASE 0 TO 3
-		RETURNF 0
+		COMRESULT = 0
 ENDSELECT
 ;技巧4以上必要
+コマンド実行条件 += "対象の技巧LV4以上が必要/"
 SIF ABL:技巧 < 4
-	RETURNF 0
+	COMRESULT = 0
 ;服を着ている場合正面から挿入できる構造じゃないとダメ
-IF TEQUIP:上半身上着 || (TEQUIP:全身上着 && CFLAG:着衣併用!=1)
+コマンド実行条件 += "対象の服装によっては実行できない場合がある/"
+IF TEQUIP:上半身上着 || (TEQUIP:全身上着 && CFLAG:着衣併用 != 1)
 	SELECTCASE CFLAG:上着パイズリ
 		CASE 0, 1, 4
-			RETURNF 0
+			COMRESULT = 0
 	ENDSELECT
 ENDIF
 IF TEQUIP:上半身下着
 	SELECTCASE CFLAG:下着パイズリ
 		CASE 0, 1, 4
-			RETURNF 0
+			COMRESULT = 0
 	ENDSELECT
 ENDIF
 ;アニマルだと無理
+コマンド実行条件 += "対象が[アニマル]の場合は実行できない/"
 SIF TALENT:アニマル
-	RETURNF 0
+	COMRESULT = 0
 
 ;汎用COMABLE通らなかったらダメ
 SIF !USERCOM_ABLE_Ｐ奉仕()
-	RETURNF 0
+	COMRESULT = 0
 
-COMRESULT = 1
-RETURNF 1
+RETURNF COMRESULT
 
 @実行判定_縦パイズリ
+#DIM DYNAMIC 実効値
 ;-------------------------------------------------
 ;実行判定処理
 ;-------------------------------------------------
 ;すべての命令に共通の要素を考慮
 ;(従順が高いと命令に従いやすいなど)
 CALL COM_ORDER
-LOCAL = RESULT
+実効値 = RESULT
 
 CALL COM_ORDER_フェラ
-LOCAL += RESULT
+実効値 += RESULT
 
 ;36以上で実行
-CALL 実効値判定, LOCAL, 36
+CALL 実効値判定, 実効値, 36
 
 RETURN RESULT
 
 @COM_縦パイズリ
+#DIM DYNAMIC 増加量
+
 SIF OVER_BUST(TARGET) != ""
 	PRINT 着衣
 PRINTL 縦パイズリ
@@ -73,27 +79,27 @@ TFLAG:奴隷実行 = 1
 ;-------------------------------------------------
 ;射精ゲージチェック
 ;-------------------------------------------------
-LOCAL = 射精ゲージ計算_奉仕(800)
+増加量 = 射精ゲージ計算_奉仕(800)
 
 ;TALENT:バストサイズをみる
-SIF TALENT:バストサイズ == 5
-	TIMES LOCAL, 1.40
+SIF TALENT:バストサイズ == 6
+	TIMES 増加量, 1.40
 ;PLAYERが小柄体型・小人体型なら相対的に胸が大きくなるので増やす
 SIF TALENT:PLAYER:小柄体型 || TALENT:PLAYER:小人体型
-	TIMES LOCAL , 1.40
+	TIMES 増加量 , 1.40
 
 ;機械・無機物の場合、ある程度減らす
 IF CSTR:種族 == "機械" && TALENT:無機物
-	TIMES LOCAL , 0.60
+	TIMES 増加量 , 0.60
 ELSEIF CSTR:種族 == "機械" || TALENT:無機物
-	TIMES LOCAL , 0.80
+	TIMES 増加量 , 0.80
 ENDIF
 
 ;奴隷が小柄体型・小人体型なら身体が柔らかいので増やす
 SIF TALENT:小柄体型 || TALENT:小人体型
-	TIMES LOCAL , 1.25
+	TIMES 増加量 , 1.25
 
-CALL 射精ゲージ増加, LOCAL, PLAYER
+CALL 射精ゲージ増加, 増加量, PLAYER
 
 ;-------------------------------------------------
 ;ソース追加処理

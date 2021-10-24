@@ -1,0 +1,182 @@
+﻿@モンテカルロ, カジノの種類
+
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC LCOUNT2
+#DIM DYNAMIC LNO
+#DIM DYNAMIC LNO2
+#DIM DYNAMIC LNO3
+#DIM DYNAMIC SELECTED = -1
+#DIM DYNAMIC C_COUNT
+#DIM DYNAMIC TIME_START
+#DIM DYNAMIC TIME_NOW
+#DIM DYNAMIC TIME_REMAIN = 300000
+#DIM DYNAMIC カジノの種類
+#DIM DYNAMIC MAX_RATE
+#DIM DYNAMIC 賭け金
+#DIM DYNAMIC 配当
+
+SELECTCASE カジノの種類
+	CASE 1
+		MAX_RATE = 100000
+	CASE 2
+		MAX_RATE = 1000000
+ENDSELECT
+
+IF LANGUAGE == "ENG"
+	PRINTL This game is adjacent cards with same numbers and remove them.
+	PRINTL All cards removing within the time limit, You are win.
+	PRINTW If you win, You will get reward of per remaining seconds.
+ELSE
+	PRINTL このゲームは隣り合った同じ数字のカードを選んで取り除き、
+	PRINTL 制限時間内に全てのカードを取り除くことで勝利します。
+	PRINTW 賭け金に残り時間(秒)%を掛けた額が配当されます。
+ENDIF
+CALL STAKE, MAX_RATE, カジノの種類
+賭け金 = RESULT
+MONEY -= 賭け金
+
+TIME_START = GETMILLISECOND()
+
+$MC_START
+
+CALL SE再生, トランプ配布
+
+C_COUNT = 0
+CALL SHUFFLE, 52
+FOR LCOUNT, 52, 99
+	CARD:LCOUNT = -1
+NEXT
+
+VARLINE = 0
+DO
+	CALL LOOP_CLEARLINE
+	PRINTL   | 0 | 1 | 2 | 3 | 4 |
+	FOR LCOUNT, 0, 5
+		PRINTFORM {10*LCOUNT,2}
+		FOR LCOUNT2, 0, 5
+			LNO = 5*LCOUNT + LCOUNT2
+			PRINT |
+			IF CARD:LNO != -1
+				IF SELECTED == LNO
+					CALL PRTCARD, CARD:LNO, "yellow"
+				ELSE
+					CALL PRTCARDBUTTON, CARD:LNO, 10*LCOUNT+LCOUNT2
+				ENDIF
+			ELSE
+				PRINT    
+			ENDIF
+		NEXT
+		PRINTL |
+	NEXT
+	;FOR LCOUNT, 0, 5
+	;	PRINT    
+	;	FOR LCOUNT2, 0, 5
+	;		LNO = 10*LCOUNT+LCOUNT2
+	;		LNO2 = 5*LCOUNT+LCOUNT2
+	;		IF CARD:LNO2 != -1
+	;			IF SELECTED == -1 || IS_NBH(SELECTED, LNO2)
+	;				PRINTFORM [{LNO, 2}]
+	;			ELSE
+	;				PRINTPLAINFORM [{LNO, 2}]
+	;			ENDIF
+	;		ENDIF
+	;	NEXT
+	;	PRINTL
+	;NEXT
+	IF SELECTED != -1
+		IF LANGUAGE == "ENG"
+			PRINT    [-1]Back　　　　　　
+		ELSE
+			PRINT    [-1]戻る　　　　　　
+		ENDIF
+	ELSE
+		PRINT    　　　　　　　　　　
+	ENDIF
+	IF LANGUAGE == "ENG"
+		PRINTL [77]Restart game　　　　　　　[99]Quit game
+	ELSE
+		PRINTL [77]最初からやり直す　　　　　[99]諦める
+	ENDIF
+	TIME_NOW = GETMILLISECOND()
+	TINPUT (TIME_REMAIN - (TIME_NOW-TIME_START)), 99
+	SELECTCASE RESULT
+		CASE -1
+			SELECTED = -1
+		CASE 0 TO 44
+			IF INRANGE(RESULT/10, 0, 4) && INRANGE(RESULT%10, 0, 4)
+				LNO = RESULT%10 + (RESULT/10)*5
+				IF CARD:LNO != -1
+					IF SELECTED == -1
+						SELECTED = LNO
+					ELSEIF IS_NBH(SELECTED, LNO)
+						;カードのランクが一緒なら取り除く
+						IF (CARD:SELECTED - CARD:LNO)%13 == 0
+							CALL SE再生, トランプドロー
+							C_COUNT += 2
+							CARD:SELECTED = -1
+							CARD:LNO = -1
+							SELECTED = -1
+							FOR LCOUNT2, 0, 2
+								FOR LCOUNT, 0, 51
+									SIF CARD:LCOUNT == -1
+										SWAP CARD:LCOUNT, CARD:(LCOUNT+1)
+								NEXT
+							NEXT
+						ENDIF
+					ENDIF
+				ENDIF
+			ENDIF
+		CASE 77
+			GOTO MC_START
+		CASE 99
+			GOTO FAILED
+	ENDSELECT
+LOOP C_COUNT < 52
+TIME_NOW = GETMILLISECOND()
+DRAWLINE
+TIME_REMAIN = TIME_REMAIN - (TIME_NOW-TIME_START)
+配当 = 賭け金*(TIME_REMAIN/1000)/100+賭け金
+IF LANGUAGE == "ENG"
+	CALL PASELIW ,@"You are win with {TIME_REMAIN/1000} seconds left and You got rewards:{賭け金}×{TIME_REMAIN/1000+100}\%＝{配当}＄."
+ELSE
+	CALL PASELIW ,@"残り時間{TIME_REMAIN/1000}秒でゲームに勝利し、{賭け金}×{TIME_REMAIN/1000+100}\%＝{配当}＄を配当を得ました。"
+ENDIF
+TATSUJIN++
+SAVEGLOBAL
+MONEY += 配当
+RETURN 1
+
+$FAILED
+IF LANGUAGE == "ENG"
+	PRINTFORMW You are failed the game and bets were forfeiture.
+ELSE
+	PRINTFORMW ゲームに負け、{賭け金}は没収されました。
+ENDIF
+RETURN 1
+
+;IS NEIGHBORHOOD関数
+;カードが隣り合わせなら1を返す
+@IS_NBH(ARG, ARG:1)
+#FUNCTION
+
+SELECTCASE ARG%5
+	CASE 0
+		;カードが列の左端のとき
+		SELECTCASE ARG:1-ARG
+			CASE -5, -4, 1, 5, 6
+				RETURNF 1
+		ENDSELECT
+	CASE 4
+		;カードが列の右端のとき
+		SELECTCASE ARG:1-ARG
+			CASE -6, -5, -1, 4, 5
+				RETURNF 1
+		ENDSELECT
+	CASEELSE
+		;残りの場合
+		SELECTCASE ARG:1-ARG
+			CASE -6, -5, -4, -1, 1, 4, 5, 6
+				RETURNF 1
+		ENDSELECT
+ENDSELECT
+RETURNF 0

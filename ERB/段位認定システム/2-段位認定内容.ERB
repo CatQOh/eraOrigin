@@ -1,0 +1,1166 @@
+﻿@段位内容, ARG
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC LCOUNT2
+#DIM DYNAMIC 攻略人数
+#DIM DYNAMIC 主人の性別 = 1
+#DIM DYNAMIC 要ペニス
+#DIM DYNAMIC 攻略対象, 20
+#DIMS DYNAMIC 特殊条件, 10
+
+SIF VARLINE
+	CLEARLINE LINECOUNT-VARLINE
+VARLINE = LINECOUNT
+
+SELECTCASE ARG
+	;七級
+	CASE 1
+		攻略対象:0 = GETNO("オフィーリア")
+		攻略対象:1 = GETNO("＊うさぬこ＊")
+		攻略対象:2 = GETNO("BisCo")
+		攻略対象:3 = GETNO("Bis子")
+		受験段位名 = 七級
+	;六級
+	CASE 2
+		攻略対象:0 = GETNO("エミ")
+		攻略対象:1 = GETNO("虹野 ひかり")
+		攻略対象:2 = GETNO("春日 咲子")
+		攻略対象:3 = GETNO("駄天使ちゃん")
+		受験段位名 = 六級
+	;五級
+	CASE 3
+		攻略対象:0 = GETNO("つらら")
+		攻略対象:1 = GETNO("涼")
+		攻略対象:2 = GETNO("スノーフェアリー")
+		攻略対象:3 = GETNO("夢野 みらい")
+		受験段位名 = 五級
+	;四級
+	CASE 4
+		攻略対象:0 = GETNO("マーメイドガール")
+		攻略対象:1 = GETNO("ラズ")
+		攻略対象:2 = GETNO("ニンフちゃん")
+		攻略対象:3 = GETNO("星野 そら")
+		受験段位名 = 四級
+	;三級
+	CASE 5
+		攻略対象:0 = GETNO("鈴花")
+		攻略対象:1 = GETNO("なぎさ")
+		攻略対象:2 = GETNO("野増菜 かなで")
+		攻略対象:3 = GETNO("ちせ")
+		受験段位名 = 三級
+	;二級
+	CASE 6
+		攻略対象:0 = GETNO("スペース＠マコ")
+		攻略対象:1 = GETNO("響香")
+		攻略対象:2 = GETNO("芽兎 めう")
+		攻略対象:3 = GETNO("アリス・イップ")
+		受験段位名 = 二級
+	;一級
+	CASE 7
+		攻略対象:0 = GETNO("レイシス")
+		攻略対象:1 = GETNO("黄シグ")
+		攻略対象:2 = GETNO("桃")
+		攻略対象:3 = GETNO("鹿ノ子")
+		受験段位名 = 一級
+	;初段
+	CASE 11
+		攻略対象:0 = GETNO("ミミ")
+		攻略対象:1 = GETNO("ニャミ")
+		攻略対象:2 = GETNO("北見 エリカ")
+		攻略対象:3 = GETNO("水城 セリカ")
+		受験段位名 = 初段
+	;二段
+	CASE 12
+		攻略対象:0 = GETNO("Mei")
+		攻略対象:1 = GETNO("ニーソ姫")
+		攻略対象:2 = GETNO("ノクス・カトルセ")
+		攻略対象:3 = GETNO("マタン・カトルセ")
+		受験段位名 = 二段
+	;三段
+	CASE 13
+		攻略対象:0 = GETNO("アリシア")
+		攻略対象:1 = GETNO("璃音")
+		攻略対象:2 = GETNO("シア")
+		攻略対象:3 = GETNO("ナイア")
+		受験段位名 = 三段
+	;四段
+	CASE 14
+		攻略対象:0 = GETNO("405nm")
+		攻略対象:1 = GETNO("スモモ")
+		攻略対象:2 = GETNO("ミルク")
+		攻略対象:3 = GETNO("MAD†HOLIC")
+		受験段位名 = 四段
+	;五段
+	CASE 15
+		攻略対象:0 = GETNO("寿々姫")
+		攻略対象:1 = GETNO("桔梗")
+		攻略対象:2 = GETNO("椿")
+		攻略対象:3 = GETNO("紅刃")
+		受験段位名 = 五段
+	;六段
+	CASE 16
+		攻略対象:0 = GETNO("アーシェム")
+		攻略対象:1 = GETNO("ルルスス")
+		攻略対象:2 = GETNO("シャムシール")
+		攻略対象:3 = GETNO("六")
+		受験段位名 = 六段
+	;七段
+	CASE 17
+		攻略対象:0 = GETNO("EΛΠIΣ‡煌‡")
+		攻略対象:1 = GETNO("リノン")
+		攻略対象:2 = GETNO("氷海")
+		攻略対象:3 = GETNO("ルシェ")
+		受験段位名 = 七段
+	;八段
+	CASE 18
+		攻略対象:0 = GETNO("黄のラピカ")
+		攻略対象:1 = GETNO("Aegis")
+		攻略対象:2 = GETNO("ユニ")
+		攻略対象:3 = GETNO("神崎 紗矢")
+		受験段位名 = 八段
+	;九段
+	CASE 19
+		攻略対象:0 = GETNO("雛月 理々奈")
+		攻略対象:1 = GETNO("梅桐 彩葉")
+		攻略対象:2 = GETNO("梅桐 緋浮美")
+		攻略対象:3 = GETNO("梅桐 天土")
+		受験段位名 = 九段
+	;十段
+	CASE 20
+		攻略対象:0 = GETNO("ラジェ")
+		攻略対象:1 = GETNO("ガレト")
+		攻略対象:2 = GETNO("ヴァロ")
+		攻略対象:3 = GETNO("タルタ")
+		受験段位名 = 十段
+	;中伝
+	CASE 30
+		攻略対象:0 = GETNO("モード")
+		攻略対象:1 = GETNO("リリーゼ")
+		攻略対象:2 = GETNO("青のルピカ")
+		攻略対象:3 = GETNO("鳳凰 鈴火")
+		受験段位名 = 中伝
+	;皆伝
+	CASE 573
+		攻略対象:0 = GETNO("キュベリア")
+		攻略対象:1 = GETNO("ファウラ")
+		攻略対象:2 = GETNO("赤のリピカ")
+		攻略対象:3 = GETNO("卑弥呼")
+		受験段位名 = 皆伝
+	;overjoy
+	CASE 999
+		攻略対象:0 = GETNO("大犬のお姉さん")
+		攻略対象:1 = GETNO("リヒト")
+		攻略対象:2 = GETNO("アンネース")
+		攻略対象:3 = GETNO("リノン(黒)")
+		受験段位名 = overjoy
+	;エディット
+	CASE 99
+		CALL 段位認定エディット
+		攻略対象:0 = RESULT:0
+		攻略対象:1 = RESULT:1
+		攻略対象:2 = RESULT:2
+		攻略対象:3 = RESULT:3
+		受験段位名 = EDIT
+	;段位認定 裏七級
+	CASE 50
+		特殊条件 = 難易度ANOTHERで、陥落素質をつけないと売却できません
+		攻略対象:0 = GETNO("オフィーリア")
+		攻略対象:1 = GETNO("＊うさぬこ＊")
+		攻略対象:2 = GETNO("BisCo")
+		攻略対象:3 = GETNO("Bis子")
+		受験段位名 = 裏七級
+	;ドキッ！淫乱ピンクだらけの調教大会！
+	CASE 51
+		攻略対象:0 = GETNO("アーシェム")
+		攻略対象:1 = GETNO("野増菜 しずく")
+		攻略対象:2 = GETNO("レイシス")
+		攻略対象:3 = GETNO("スミレ")
+		受験段位名 = ドキッ！淫乱ピンクだらけの調教大会！
+	;九尾狐夜行
+	CASE 52
+		特殊条件 = 夜のみ調教が可能になります
+		攻略対象:0 = GETNO("おきつ")
+		攻略対象:1 = GETNO("牡丹")
+		攻略対象:2 = GETNO("傍丹 桜子")
+		攻略対象:3 = GETNO("おコン")
+		攻略対象:4 = GETNO("山吹")
+		攻略対象:5 = GETNO("玉藻 銀丸")
+		受験段位名 = 九尾狐夜行
+	;TWINS
+	CASE 53
+		攻略対象:0 = GETNO("タルト")
+		攻略対象:1 = GETNO("タフィ")
+		攻略対象:2 = GETNO("ノクス・カトルセ")
+		攻略対象:3 = GETNO("マタン・カトルセ")
+		攻略対象:4 = GETNO("ひなた")
+		攻略対象:5 = GETNO("まゆ")
+		攻略対象:6 = GETNO("ニア")
+		攻略対象:7 = GETNO("ノア")
+		攻略対象:8 = GETNO("ラッテ")
+		攻略対象:9 = GETNO("ロッテ")
+		攻略対象:10 = GETNO("東雲 夏陽")
+		攻略対象:11 = GETNO("東雲 心菜")
+		受験段位名 = TWINS
+	;アダルトゲーム「日向美ビタースイーツ♪」
+	CASE 54
+		攻略対象:0 = GETNO("山形 まり花")
+		攻略対象:1 = GETNO("和泉 一舞")
+		攻略対象:2 = GETNO("春日 咲子")
+		攻略対象:3 = GETNO("霜月 凛")
+		攻略対象:4 = GETNO("芽兎 めう")
+		攻略対象:5 = GETNO("東雲 夏陽")
+		攻略対象:6 = GETNO("東雲 心菜")
+		受験段位名 = アダルトゲーム「日向美ビタースイーツ♪」
+	;FOXHOUND
+	CASE 55
+		攻略対象:0 = GETNO("カイロス");いっけね、カマキリと間違えてクワガタ置いちゃった！
+		攻略対象:1 = GETNO("ニャミ")
+		攻略対象:2 = GETNO("アッシュ")
+		攻略対象:3 = GETNO("ハーピア")
+		攻略対象:4 = GETNO("ター子")
+		攻略対象:5 = GETNO("ギジリ")
+		受験段位名 = FOXHOUND
+	;ぅゎょぅι゛ょェﾛぃ
+	CASE 56
+		攻略対象:0 = GETNO("梅桐 天土")
+		攻略対象:1 = GETNO("ルルスス")
+		攻略対象:2 = GETNO("リボン")
+		攻略対象:3 = GETNO("サン")
+		攻略対象:4 = GETNO("アリシア")
+		受験段位名 = ぅゎょぅι゛ょェﾛぃ
+	;Robotics Expert Course
+	CASE 57
+		特殊条件 = 主人の工作技能が10の状態で開始します
+		攻略対象:0 = GETNO("ベリゼベス")
+		攻略対象:1 = GETNO("Aegis")
+		攻略対象:2 = GETNO("エスポワール")
+		攻略対象:3 = GETNO("雨人形壱ノ妙")
+		攻略対象:4 = GETNO("シャルロット")
+		攻略対象:5 = GETNO("リノン")
+		受験段位名 = Robotics Expert Course
+	;ツンデレ五人斬り
+	CASE 58
+		攻略対象:0 = GETNO("菱宮 津軽")
+		攻略対象:1 = GETNO("リリーゼ")
+		攻略対象:2 = GETNO("グレイス")
+		攻略対象:3 = GETNO("スミレ")
+		攻略対象:4 = GETNO("氷海")
+		受験段位名 = ツンデレ五人斬り
+	;えっちなお姉さんたちが教えてア・ゲ・ル♪
+	CASE 59
+		特殊条件 = プレイヤーは無条件でショタになります
+		攻略対象:0 = GETNO("アーシェム")
+		攻略対象:1 = GETNO("ミルク")
+		攻略対象:2 = GETNO("クアトロ")
+		攻略対象:3 = GETNO("あやめ")
+		攻略対象:4 = GETNO("ミランダ")
+		攻略対象:5 = GETNO("グリム・メディア")
+		受験段位名 = えっちなお姉さんたちが教えてア・ゲ・ル♪
+	;貧乳はステータスだ 希少価値だ
+	CASE 60
+		攻略対象:0 = GETNO("シア")
+		攻略対象:1 = GETNO("野増菜 かなで")
+		攻略対象:2 = GETNO("氷雪ちゃん")
+		攻略対象:3 = GETNO("レナ")
+		攻略対象:4 = GETNO("寿々姫")
+		攻略対象:5 = GETNO("なぎさ")
+		攻略対象:6 = GETNO("マロン")
+		受験段位名 = 貧乳はステータスだ 希少価値だ
+	;INSANIO
+	CASE 61
+		攻略対象:0 = GETNO("梅桐 緋浮美")
+		攻略対象:1 = GETNO("405nm")
+		攻略対象:2 = GETNO("六")
+		攻略対象:3 = GETNO("虹霓・シエル・奈奈")
+		攻略対象:4 = GETNO("赤のリピカ")
+		受験段位名 = INSANIO
+	;神よ、ニャンコを与えたまえ!
+	CASE 62
+		特殊条件 = ゲージが22\%で始まります
+		攻略対象:0 = GETNO("ニーソ姫")
+		攻略対象:1 = GETNO("ニャミ")
+		攻略対象:2 = GETNO("なぎさ")
+		攻略対象:3 = GETNO("BisCo")
+		受験段位名 = 神よ、ニャンコを与えたまえ!
+	;戦う誇りを胸に Natus Vincere
+	CASE 63
+		攻略対象:0 = GETNO("ノクス・カトルセ")
+		攻略対象:1 = GETNO("ヴァルキリー")
+		攻略対象:2 = GETNO("オルトリンデ")
+		攻略対象:3 = GETNO("アルフィン")
+		受験段位名 = 戦う誇りを胸に Natus Vincere
+	;Roll on spring!
+	CASE 64
+		特殊条件 = 2月1日スタートになります
+		攻略対象:0 = GETNO("フローラ")
+		攻略対象:1 = GETNO("氷海")
+		攻略対象:2 = GETNO("スノーフェアリー")
+		攻略対象:3 = GETNO("氷雪ちゃん")
+		受験段位名 = Roll on spring!
+	;少女達の芳香は艶やかに、猛き賓客を癒し惑わす。
+	CASE 65
+		特殊条件 = ゲージの減りが不規則になります
+		攻略対象:0 = GETNO("野増菜 かなで")
+		攻略対象:1 = GETNO("粒焼 りむる")
+		受験段位名 = 少女達の芳香は艶やかに、猛き賓客を癒し惑わす。
+	;魅惑のサバト
+	CASE 66
+		特殊条件 = 媚薬が自動で補充されます(無制限)
+		攻略対象:0 = GETNO("雛月 理々奈")
+		攻略対象:1 = GETNO("梅桐 彩葉")
+		攻略対象:2 = GETNO("ファウラ")
+		攻略対象:3 = GETNO("ロキ")
+		攻略対象:4 = GETNO("マラリヤ")
+		受験段位名 = 魅惑のサバト
+	;くノ一忍法帖
+	CASE 67
+		特殊条件 = 全員が妊娠した状態からスタートします
+		;ただし妊娠関係のフラグは設定していないので出産することはない
+		攻略対象:0 = GETNO("神崎 紗矢")
+		攻略対象:1 = GETNO("あやめ")
+		攻略対象:2 = GETNO("グリム・ユリ")
+		攻略対象:3 = GETNO("東雲 心菜")
+		受験段位名 = くノ一忍法帖
+	;シュレーディンガーのネコ
+	CASE 68
+		特殊条件 = キャラの性別がランダムで決まります 主人はふたなり女性となります
+		攻略対象:0 = GETNO("リヒト")
+		;ノクスくん入れようと思ったけどMAYAキャラから2人入れるのはバランス悪いのでリヒトだけ
+		攻略対象:1 = GETNO("ルシェ")
+		攻略対象:2 = GETNO("青のレピカ")
+		攻略対象:3 = GETNO("山吹")
+		;ユウorグリム・ユウ
+		受験段位名 = シュレーディンガーのネコ
+	;HELL CHARGE NOTES
+	CASE 69
+		特殊条件 = ストレスに対応してゲージが減少します
+		攻略対象:0 = GETNO("ものか")
+		攻略対象:1 = GETNO("エクス")
+		攻略対象:2 = GETNO("ねむ")
+		受験段位名 = HELL CHARGE NOTES
+	;アダルトゲーム「忍々七鍵伝」
+	CASE 70
+		特殊条件 = お助け忍者の7人を全員陥落・売却して能力が上がっている状態でゲームがスタートします
+		攻略対象:0 = GETNO("火々矢")
+		攻略対象:1 = GETNO("兎々呂鬼")
+		攻略対象:2 = GETNO("風々奇")
+		攻略対象:3 = GETNO("夜々祇")
+		受験段位名 = アダルトゲーム「忍々七鍵伝」
+	;メスガキわからせる
+	CASE 71
+		特殊条件 = キャラ全員の経験が豊富で反発刻印LV3が付いています
+		攻略対象:0 = GETNO("なぎさ"); (DPアナザー)
+		攻略対象:1 = GETNO("芽兎 めう"); (援交ロリビッチ)
+		攻略対象:2 = GETNO("野増菜 かなで"); (ボルテ軒の裏の顔)
+		攻略対象:3 = GETNO("アリシア"); (なかだしプリンセス)
+		攻略対象:4 = GETNO("ホイップ"); (白濁液)
+		攻略対象:5 = GETNO("梅桐 天土"); (ロリババアは経験豊富)
+		攻略対象:6 = GETNO("グリム・アロエ"); (いつもの)
+		受験段位名 = メスガキわからせる
+	;炎の孕ませポップン学園
+	CASE 72
+		特殊条件 = 陥落+着床させないと売却できません(恋慕・親愛なら着床を教えてくれます)
+		攻略対象:0 = GETNO("ミニッツ")
+		攻略対象:1 = GETNO("ルート＠超ドー研")
+		攻略対象:2 = GETNO("翠里")
+		攻略対象:3 = GETNO("鈴花")
+		攻略対象:4 = GETNO("氷海")
+		受験段位名 = 炎の孕ませポップン学園
+		要ペニス = 1
+	;BisCoのEX-HARD☆大作戦
+	CASE 73
+		特殊条件 = ゲージが通常の5倍減少します
+		攻略対象:0 = GETNO("BisCo")
+		攻略対象:1 = GETNO("Mei")
+		攻略対象:2 = GETNO("ToRa")
+		受験段位名 = BisCoのEX-HARD☆大作戦
+	;えっちなお姉さんたちが教えてア・ゲ・ル♪ ～Girl's Side～
+	CASE 74
+		特殊条件 = プレイヤーは経験豊富なお姉さんになります。また、最初からペニスバンドを所持しています
+		特殊条件:1 = えっちなお姉さんたち(アーシェム、ミルク、クアトロ、あやめ、ミランダ、グリムメディア)が助手可能状態で始まります
+		攻略対象:0 = GETNO("刃雪 達磨")
+		攻略対象:1 = GETNO("ルシェ")
+		攻略対象:2 = GETNO("リアン")
+		攻略対象:3 = GETNO("ゼルハルト")
+		攻略対象:4 = GETNO("ラスク")
+		受験段位名 = えっちなお姉さんたちが教えてア・ゲ・ル♪ ～Girl's Side～
+	;Girls vs Tentacles in eraBEMANI
+	CASE 75
+		特殊条件 = 触手コマンドと一部愛撫コマンドのみ実行可能になります
+		攻略対象:0 = GETNO("赤のリピカ")
+		攻略対象:1 = GETNO("青のルピカ")
+		攻略対象:2 = GETNO("黄のラピカ")
+		攻略対象:3 = GETNO("あいみ")
+		攻略対象:4 = GETNO("粒焼 りむる")
+		攻略対象:5 = GETNO("ピュアクルリップ")
+		受験段位名 = Girls vs Tentacles in eraBEMANI
+	;重婚烈風刀くん
+	CASE 76
+		特殊条件 = 烈風刀がニアノアと結婚しています(片方とは事実婚です)
+		攻略対象:0 = GETNO("嬬武器 烈風刀")
+		攻略対象:1 = GETNO("ニア")
+		攻略対象:2 = GETNO("ノア")
+		受験段位名 = 重婚烈風刀くん
+	;わくわく乳搾り
+	CASE 77
+		特殊条件 = 全員の胸が大きくなり母乳体質がついています
+		攻略対象:0 = GETNO("黄のラピカ")
+		攻略対象:1 = GETNO("埴仁 虎子")
+		攻略対象:2 = GETNO("みるく")
+		受験段位名 = わくわく乳搾り
+	;THE 房中術
+	CASE 78
+		特殊条件 = 調教中に1回射精するたびにゲージが2\%減ります
+		攻略対象:0 = GETNO("ナイア")
+		攻略対象:1 = GETNO("シア")
+		攻略対象:2 = GETNO("椿")
+		攻略対象:3 = GETNO("ヤンヤン")
+		受験段位名 = THE 房中術
+		要ペニス = 1
+	;何かを間違えた房中術
+	CASE 79
+		特殊条件 = ゲージが10倍減りますが、調教中に1回射精するたびに$2000得ます
+		攻略対象:0 = GETNO("風々奇")
+		攻略対象:1 = GETNO("あやめ")
+		攻略対象:2 = GETNO("東雲 夏陽")
+		攻略対象:3 = GETNO("東雲 心菜")
+		受験段位名 = 何かを間違えた房中術
+		要ペニス = 1
+	;ヤンデレの音ゲーキャラに死ぬほど愛されて眠れないコース
+	CASE 80
+		SETCOLORBYNAME red
+		特殊条件 = 全てのキャラに「恋慕」が付いていますが、売却ができず、各キャラ間の相性が最悪になっています
+		攻略対象:0 = GETNO("神崎 紗矢")
+		攻略対象:1 = GETNO("アンネース")
+		攻略対象:2 = GETNO("恋刃")
+		攻略対象:3 = GETNO("ちぇるみん")
+		攻略対象:4 = GETNO("グリム・シャロン")
+		受験段位名 = ヤンデレの音ゲーキャラに死ぬほど愛されて眠れないコース
+	;いちかのアダルトチャンネル
+	CASE 81
+		特殊条件 = 有利な初期状態でスタートしますが、売却できず、ストックを10万貯めるとクリアになります
+		攻略対象:0 = GETNO("いちか")
+		攻略対象:1 = GETNO("のの")
+		攻略対象:2 = GETNO("みや")
+		受験段位名 = いちかのアダルトチャンネル
+	;よく躾けられたメイドさんは要りませんか？
+	CASE 82
+		特殊条件 = ストックを100万貯めるとクリアになります
+		攻略対象:0 = GETNO("菱宮 津軽")
+		攻略対象:1 = GETNO("シア")
+		攻略対象:2 = GETNO("Mei")
+		攻略対象:3 = GETNO("リエル")
+		攻略対象:4 = GETNO("柏木 咲姫")
+		攻略対象:5 = GETNO("井之原 小星")
+		攻略対象:6 = GETNO("春日 咲子")
+		受験段位名 = よく躾けられたメイドさんは要りませんか？
+	;ワガママ姫たちの接待調教プログラム
+	CASE 83
+		特殊条件 = キャラたちの希望により選べるコマンドが制限されます
+		攻略対象:0 = GETNO("ヒメル")
+		攻略対象:1 = GETNO("スモモ")
+		攻略対象:2 = GETNO("ルル")
+		攻略対象:3 = GETNO("白鳥 姫子")
+		攻略対象:4 = GETNO("乙姫")
+		受験段位名 = ワガママ姫たちの接待調教プログラム
+ENDSELECT
+
+DO
+	IF 攻略対象:LCOUNT == 0
+		攻略人数 = LCOUNT
+		BREAK
+	ENDIF
+	LCOUNT++
+LOOP 1
+
+PRINT 【段位認定 
+CALL GRADE, ARG
+PRINTL 】
+PRINTL 『クリア方法』
+PRINTFORML 指定された{攻略人数}人のキャラを売却、もしくは売却可能or助手可能でクリア
+SIF 特殊条件 != ""
+	PRINTL 『特別ルール』
+FOR LCOUNT, 0, 10
+	IF 特殊条件:LCOUNT != ""
+		PRINTFORML %特殊条件:LCOUNT%
+	ELSE
+		BREAK
+	ENDIF
+NEXT
+PRINTL 
+PRINTL 『攻略対象キャラクター』
+FOR LCOUNT, 0, 攻略人数
+	PRINTFORML 　No.{攻略対象:LCOUNT} %CSVNAMEF(攻略対象:LCOUNT)%
+NEXT
+SELECTCASE 受験段位名
+	CASE "シュレーディンガーのネコ"
+		PRINTL 　No.7520or7720 ユウorグリム・ユウ
+ENDSELECT
+DRAWLINE
+
+PRINTPLAIN 　READY?　
+PRINTLC [0] - 受験する
+PRINTLC [1] - やめる
+PRINTFORMLC [2] - 主人の性別(\@ 主人の性別 == 1 ? 男性 # 女性 \@)
+PRINTL 
+
+DO
+	INPUT
+	SELECTCASE RESULT
+		CASE 0
+			PRINTW 段位認定を開始します。
+			SELECTCASE 主人の性別
+				CASE 1
+					TALENT:MASTER:性別 = 1
+					CSTR:MASTER:上半身上着 = シャツ
+					CSTR:MASTER:下半身上着 = ズボン
+					CSTR:MASTER:下半身下着 = トランクス
+				CASE 2
+					TALENT:MASTER:性別 = 2
+					TALENT:MASTER:バストサイズ = 3
+					CSTR:MASTER:全身上着 = ワンピース
+					CSTR:MASTER:上半身下着 = ブラジャー
+					CSTR:MASTER:下半身下着 = パンティ
+					CFLAG:MASTER:挿入可 = 1
+					SIF 要ペニス
+						TALENT:MASTER:ふたなり = 1
+			ENDSELECT
+			FOR LCOUNT, 0, 攻略人数
+				CALL CHARA_ADD, 攻略対象:LCOUNT
+			NEXT
+			TARGET = -1
+			SELECTCASE 受験段位名
+				CASE "シュレーディンガーのネコ"
+					SELECTCASE RAND:2
+						CASE 0
+							CALL CHARA_ADD, GETNO("ユウ")
+						CASE 1
+							CALL CHARA_ADD, GETNO("グリム・ユウ")
+					ENDSELECT
+					;この「5」はキャラID
+					CALL 初期経験セット(5)
+				CASE "Robotics Expert Course"
+					ABL:MASTER:工作技能 = 10
+				CASE "Girls vs Tentacles in eraBEMANI"
+					ITEM:触手使役術 = 1
+					FLAG:着衣設定 = 3
+					ABL:MASTER:技巧 = 10
+				CASE "ワガママ姫たちの接待調教プログラム"
+					ITEM:触手使役術 = 1
+					TALENT:MASTER:ドラゴン使い = 1
+					CSTR:MASTER:ドラゴン = ドラゴン
+			ENDSELECT
+			FOR LCOUNT, 0, CHARANUM
+				SIF LCOUNT == 0
+					CONTINUE
+				SELECTCASE 受験段位名
+					CASE "くノ一忍法帖"
+						TALENT:LCOUNT:妊娠 = 1
+						CSTR:LCOUNT:上半身上着 = 
+						CSTR:LCOUNT:下半身上着 = 
+						CSTR:LCOUNT:全身上着 = 忍装束
+					CASE "シュレーディンガーのネコ"
+						IF CHARANAMEF(LCOUNT) != "ユウ" && CHARANAMEF(LCOUNT) != "グリム・ユウ"
+							SELECTCASE RAND(1, 3)
+								CASE 1
+									TALENT:LCOUNT:性別 = 1
+								CASE 2
+									TALENT:LCOUNT:性別 = 2
+									TALENT:LCOUNT:童貞 = 0
+									TALENT:LCOUNT:処女 = 1
+									SELECTCASE CHARANAMEF(LCOUNT)
+										CASE "リヒト", "山吹"
+											TALENT:LCOUNT:バストサイズ = 4
+										CASE "青のレピカ"
+											TALENT:LCOUNT:バストサイズ = 3
+										CASE "ルシェ"
+											TALENT:LCOUNT:バストサイズ = 2
+									ENDSELECT
+							ENDSELECT
+						ENDIF
+				ENDSELECT
+			NEXT
+			TALENT:MASTER:孔雀の瞳 = 1
+			FLAG:段位ゲージ = 50
+			;オリジナルコースの特殊な処理はここで行う
+			;ただし、ゲーム難易度は「ニューゲーム処理」で
+			SELECTCASE 受験段位名
+				CASE "えっちなお姉さんたちが教えてア・ゲ・ル♪"
+					;ショタで固定
+					TALENT:MASTER:性別 = 1
+					CSTR:MASTER:上半身上着 = シャツ
+					CSTR:MASTER:下半身上着 = ズボン
+					CSTR:MASTER:下半身下着 = トランクス
+					TALENT:MASTER:小柄体型 = 1
+					TALENT:MASTER:バストサイズ = 0
+					MAXBASE:MASTER:体力 -= 200
+					BASE:MASTER:体力 -= 200
+				CASE "神よ、ニャンコを与えたまえ!"
+					FLAG:段位ゲージ = 11
+				CASE "Roll on spring!"
+					MONTH = 2
+					DAYS = 1
+				CASE "魅惑のサバト"
+					;悪魔崇拝の儀式なので主人の種族は悪魔になる
+					CSTR:MASTER:種族 = "悪魔"
+				CASE "シュレーディンガーのネコ"
+					TALENT:MASTER:性別 = 2
+					TALENT:MASTER:バストサイズ = 3
+					TALENT:MASTER:ふたなり = 1
+					CSTR:MASTER:全身上着 = ワンピース
+					CSTR:MASTER:上半身下着 = ブラジャー
+					CSTR:MASTER:下半身下着 = パンティ
+					CFLAG:MASTER:挿入可 = 1
+					CFLAG:MASTER:下着パイズリ = 3
+				CASE "アダルトゲーム「忍々七鍵伝」"
+					;お助け忍者7人を購入済み扱いにする
+					CCB:GETNO("ルシェ") = 1
+					CCB:GETNO("ファウラ") = 1
+					CCB:GETNO("スモモ") = 1
+					CCB:GETNO("フェリーラ") = 1
+					CCB:GETNO("赤のリピカ") = 1
+					CCB:GETNO("青のルピカ") = 1
+					CCB:GETNO("黄のラピカ") = 1
+					FLAG:累計恋慕 = 7
+					ABL:MASTER:Ｃ感覚 = 5
+					ABL:MASTER:Ａ感覚 = 3
+					ABL:MASTER:技巧 = 4
+					ABL:MASTER:サドっ気 = 4
+					EXP:MASTER:Ａ経験 = 350
+					SIF PENIS(MASTER)
+						EXP:MASTER:射精経験 = 600
+					IF VAGINA(MASTER)
+						EXP:MASTER:Ｖ経験 = 1000
+						ABL:MASTER:Ｖ感覚 = 5
+					ENDIF
+					EXP:MASTER:絶頂経験 = 600
+					EXP:MASTER:性交経験 = 2100
+					EXP:MASTER:精液経験 = 200
+					SELECTCASE SEX(MASTER)
+						CASE 1
+							EXP:MASTER:ゲイ経験 = 500
+						CASE 2
+							EXP:MASTER:レズ経験 = 700
+					ENDSELECT
+					EXP:MASTER:調教経験 = 3000
+					EXP:MASTER:嗜虐快楽経験 = 1000
+					EXP:MASTER:フェラ経験 = 300
+					TALENT:MASTER:汚れ無視 = 1
+					TALENT:MASTER:サド = 1
+					TALENT:MASTER:謎の魅力 = 1
+					TALENT:MASTER:絶倫 = 1
+					FLAG:経験値 = 10
+					;初期経験の処理は男の場合だけ 手抜きともいう
+					IF SEX(MASTER) == 1
+						経験回数:MASTER:GETNO("ルシェ") = 300
+						アナル中出し回数:MASTER:GETNO("ルシェ") = 100
+						アナル中出され回数:MASTER:GETNO("ルシェ") = 70
+						経験回数:MASTER:GETNO("ファウラ") = 300
+						中出し回数:MASTER:GETNO("ファウラ") = 80
+						アナル中出し回数:MASTER:GETNO("ファウラ") = 10
+						経験回数:MASTER:GETNO("スモモ") = 300
+						中出し回数:MASTER:GETNO("スモモ") = 80
+						アナル中出し回数:MASTER:GETNO("スモモ") = 30
+						経験回数:MASTER:GETNO("フェリーラ") = 300
+						中出し回数:MASTER:GETNO("フェリーラ") = 80
+						アナル中出し回数:MASTER:GETNO("フェリーラ") = 10
+						経験回数:MASTER:GETNO("赤のリピカ") = 300
+						中出し回数:MASTER:GETNO("赤のリピカ") = 120
+						アナル中出し回数:MASTER:GETNO("赤のリピカ") = 10
+						経験回数:MASTER:GETNO("青のルピカ") = 300
+						中出し回数:MASTER:GETNO("青のルピカ") = 80
+						アナル中出し回数:MASTER:GETNO("青のルピカ") = 10
+						経験回数:MASTER:GETNO("黄のラピカ") = 300
+						中出し回数:MASTER:GETNO("黄のラピカ") = 80
+						アナル中出し回数:MASTER:GETNO("黄のラピカ") = 10
+					ENDIF
+				CASE "メスガキわからせる"
+					;全員共通の処理
+					FOR LCOUNT, 1, 8
+						TALENT:LCOUNT:処女 = 0
+						TALENT:LCOUNT:貞操観念 = 0
+						TALENT:LCOUNT:貞操無頓着 = 1
+						MARK:LCOUNT:反発刻印 = 3
+						MARK:LCOUNT:反発刻印履歴 = 3
+						ABL:LCOUNT:従順 = 0
+					NEXT
+					;なぎさ
+					;特技はDouble Penetrationな渚の大魔王
+					;屋外プレイがメインで撮られることにも慣れている
+					ABL:LCOUNT:欲望 = 3
+					ABL:1:技巧 = 1
+					ABL:1:Ｖ感覚 = 6
+					ABL:1:Ａ感覚 = 6
+					ABL:1:露出癖 = 9
+					ABL:1:精液中毒 = 2
+					ABL:1:性交中毒 = 4
+					EXP:1:Ｖ経験 = 800
+					EXP:1:Ａ経験 = 650
+					EXP:1:絶頂経験 = 400
+					EXP:1:性交経験 = 1450
+					EXP:1:膣射経験 = 750
+					EXP:1:精液経験 = 700
+					EXP:1:フェラ経験 = 100
+					EXP:1:被写経験 = 1000
+					モブ経験人数:1:0 = 800
+					モブ経験回数:1:0 = 1450
+					モブ中出され回数:1:0 = 750
+					モブアナル中出され回数:1:0 = 600
+					;めう
+					;援助交際大好きなエロ兎
+					;料金の関係から生ハメは少なめ
+					ABL:2:欲望 = 2
+					ABL:2:技巧 = 5
+					ABL:2:Ｃ感覚 = 5
+					ABL:2:Ｖ感覚 = 5
+					ABL:2:Ａ感覚 = 1
+					ABL:2:Ｂ感覚 = 7
+					ABL:2:奉仕精神 = 4
+					ABL:2:自慰中毒 = 3
+					ABL:2:精液中毒 = 4
+					ABL:2:性交中毒 = 4
+					EXP:2:Ｖ経験 = 700
+					EXP:2:Ａ経験 = 30
+					EXP:2:絶頂経験 = 500
+					EXP:2:性交経験 = 730
+					EXP:2:膣射経験 = 200
+					EXP:2:精液経験 = 2500
+					EXP:2:奉仕快楽経験 = 1000
+					EXP:2:自慰経験 = 250
+					EXP:2:フェラ経験 = 1400
+					EXP:2:パイズリ経験 = 500
+					EXP:2:被写経験 = 180
+					モブ経験人数:2:0 = 600
+					モブ経験回数:2:0 = 730
+					モブ中出され回数:2:0 = 200
+					モブアナル中出され回数:2:0 = 30
+					;かなで
+					;食事感覚で抜いてくれる看板娘
+					;客は出したらさっさと帰っていくので絶頂経験は少なめ
+					ABL:3:欲望 = 2
+					ABL:3:技巧 = 2
+					ABL:3:Ｃ感覚 = 1
+					ABL:3:Ｖ感覚 = 4
+					ABL:3:Ｂ感覚 = 2
+					ABL:3:奉仕精神 = 1
+					ABL:3:精液中毒 = 8
+					ABL:3:性交中毒 = 3
+					EXP:3:Ｖ経験 = 900
+					EXP:3:絶頂経験 = 200
+					EXP:3:性交経験 = 900
+					EXP:3:膣射経験 = 500
+					EXP:3:精液経験 = 4000
+					EXP:3:フェラ経験 = 3000
+					モブ経験人数:3:0 = 100
+					モブ経験回数:3:0 = 900
+					モブ中出され回数:3:0 = 500
+					;アリシア
+					;中に出してもらわないと満足しない生意気なプリンセス
+					;中出しにはまりすぎて子どもができてしまったほど
+					ABL:4:欲望 = 7
+					ABL:4:Ｃ感覚 = 3
+					ABL:4:Ｖ感覚 = 6
+					ABL:4:Ｂ感覚 = 3
+					ABL:4:露出癖 = 4
+					ABL:4:精液中毒 = 7
+					ABL:4:性交中毒 = 7
+					ABL:4:噴乳中毒 = 2
+					EXP:4:Ｖ経験 = 1500
+					EXP:4:絶頂経験 = 1000
+					EXP:4:性交経験 = 1500
+					EXP:4:膣射経験 = 1300
+					EXP:4:精液経験 = 1300
+					EXP:4:噴乳経験 = 300
+					EXP:4:フェラ経験 = 150
+					EXP:4:出産経験 = 2
+					TALENT:4:淫膣 = 1
+					モブ経験人数:4:0 = 1300
+					モブ経験回数:4:0 = 1500
+					モブ中出され回数:4:0 = 1300
+					モブ孕み回数:4:0 = 2
+					;ホイップ
+					;白濁液を浴びることに快感を覚えた羊の女の子
+					;体が小さいので性交経験は少ないが獣人なので出産経験もありミルクも出る
+					ABL:5:欲望 = 4
+					ABL:5:技巧 = 4
+					ABL:5:Ｃ感覚 = 8
+					ABL:5:Ｖ感覚 = 1
+					ABL:5:Ｂ感覚 = 10
+					ABL:5:露出癖 = 4
+					ABL:5:精液中毒 = 10
+					ABL:5:性交中毒 = 1
+					ABL:5:噴乳中毒 = 5
+					EXP:5:Ｖ経験 = 200
+					EXP:5:絶頂経験 = 300
+					EXP:5:性交経験 = 200
+					EXP:5:膣射経験 = 120
+					EXP:5:精液経験 = 9000
+					EXP:5:噴乳経験 = 1000
+					EXP:5:奉仕快楽経験 = 5000
+					EXP:5:フェラ経験 = 2500
+					EXP:5:出産経験 = 3
+					TALENT:5:淫乳 = 1
+					TALENT:5:母乳体質 = 1
+					モブ経験人数:5:0 = 90
+					モブ経験回数:5:0 = 200
+					モブ中出され回数:5:0 = 120
+					モブ孕み回数:5:0 = 3
+					;天土
+					;魔力の補充ゆえか非常に経験の豊富なロリババア
+					;幼いのはあくまでも見た目だけなのである
+					ABL:6:欲望 = 5
+					ABL:6:技巧 = 10
+					ABL:6:Ｃ感覚 = 7
+					ABL:6:Ｖ感覚 = 7
+					ABL:6:Ａ感覚 = 7
+					ABL:6:Ｂ感覚 = 7
+					ABL:6:精液中毒 = 5
+					ABL:6:性交中毒 = 5
+					EXP:6:Ｖ経験 = 1200
+					EXP:6:Ａ経験 = 900
+					EXP:6:絶頂経験 = 3000
+					EXP:6:性交経験 = 2100
+					EXP:6:膣射経験 = 1000
+					EXP:6:精液経験 = 6000
+					EXP:6:奉仕快楽経験 = 3000
+					EXP:6:フェラ経験 = 2000
+					EXP:6:パイズリ経験 = 900
+					TALENT:6:淫膣 = 1
+					モブ経験人数:6:0 = 300
+					モブ経験回数:6:0 = 2100
+					モブ中出され回数:6:0 = 1000
+					モブアナル中出され回数:6:0 = 750
+					;グリム・アロエ
+					;有名になりすぎたおかげでいくらでも搾精できるようになった淫魔
+					;当然の経験数
+					ABL:7:欲望 = 10
+					ABL:7:技巧 = 10
+					ABL:7:Ｃ感覚 = 8
+					ABL:7:Ｖ感覚 = 10
+					ABL:7:Ａ感覚 = 10
+					ABL:7:Ｂ感覚 = 8
+					ABL:7:精液中毒 = 10
+					ABL:7:性交中毒 = 10
+					EXP:7:Ｖ経験 = 6900
+					EXP:7:Ａ経験 = 4500
+					EXP:7:絶頂経験 = 7000
+					EXP:7:性交経験 = 11400
+					EXP:7:膣射経験 = 6600
+					EXP:7:精液経験 = 32000
+					EXP:7:フェラ経験 = 12000
+					EXP:7:パイズリ経験 = 9000
+					TALENT:7:淫膣 = 1
+					モブ経験人数:7:0 = 6600
+					モブ経験回数:7:0 = 11400
+					モブ中出され回数:7:0 = 6600
+					モブアナル中出され回数:7:0 = 4000
+				CASE "えっちなお姉さんたちが教えてア・ゲ・ル♪ ～Girl's Side～"
+					;Girl's Sideじゃないほうのメンツが助手可能状態で始まる
+					ITEM:ペニスバンド = 1
+					ABL:MASTER:技巧 = 5
+					ABL:MASTER:Ｃ感覚 = 3
+					ABL:MASTER:Ｖ感覚 = 4
+					ABL:MASTER:Ａ感覚 = 4
+					ABL:MASTER:Ｂ感覚 = 3
+					EXP:MASTER:Ｖ経験 = 300
+					EXP:MASTER:Ａ経験 = 300
+					EXP:MASTER:絶頂経験 = 1000
+					EXP:MASTER:性交経験 = 500
+					EXP:MASTER:膣射経験 = 500
+					EXP:MASTER:精液経験 = 1000
+					EXP:MASTER:フェラ経験 = 1000
+					TALENT:MASTER:性別 = 2
+					TALENT:MASTER:バストサイズ = 4
+					CSTR:MASTER:全身上着 = ワンピース
+					CSTR:MASTER:上半身下着 = ブラジャー
+					CSTR:MASTER:下半身下着 = パンティ
+					CFLAG:MASTER:挿入可 = 1
+					CFLAG:MASTER:下着パイズリ = 3
+					FOR LCOUNT, 0, 10000
+						SIF !EXISTCSV(LCOUNT)
+							CONTINUE
+						SELECTCASE CSVNAME(LCOUNT)
+							CASE "アーシェム", "ミルク", "クアトロ", "あやめ", "ミランダ", "グリム・メディア"
+								CALL CHARA_ADD, LCOUNT
+								TARGET = CHARANUM-1
+								TALENT:娼婦 = 1
+								CFLAG:状態 = 2
+								CFLAG:売却不可 = 1
+						ENDSELECT
+					NEXT
+					TARGET = -1
+				CASE "重婚烈風刀くん"
+					;烈風刀
+					ABL:1:欲望 = 1
+					ABL:1:技巧 = 3
+					ABL:1:Ｃ感覚 = 5
+					ABL:1:Ｂ感覚 = 1
+					ABL:1:性交中毒 = 3
+					EXP:1:射精経験 = 1000
+					EXP:1:絶頂経験 = 1000
+					EXP:1:性交経験 = 400
+					TALENT:1:童貞 = 0
+					経験回数:1:GETNO("ニア") = 200
+					経験回数:1:GETNO("ノア") = 200
+					中出し回数:1:GETNO("ニア") = 70
+					中出し回数:1:GETNO("ノア") = 70
+					RELATION:1:GETNO("ニア") = 300
+					RELATION:1:GETNO("ノア") = 300
+					;ニア
+					ABL:2:欲望 = 4
+					ABL:2:技巧 = 4
+					ABL:2:Ｖ感覚 = 3
+					ABL:2:Ｂ感覚 = 2
+					ABL:2:性交中毒 = 2
+					EXP:2:Ｖ経験 = 200
+					EXP:2:性交経験 = 200
+					EXP:2:膣射経験 = 70
+					EXP:2:精液経験 = 600
+					EXP:2:奉仕快楽経験 = 500
+					EXP:2:フェラ経験 = 2000
+					EXP:2:パイズリ経験 = 1000
+					TALENT:2:処女 = 0
+					経験回数:2:GETNO("嬬武器 烈風刀") = 200
+					中出され回数:2:GETNO("嬬武器 烈風刀") = 70
+					CSTR:2:処女 = 烈風刀
+					RELATION:2:GETNO("嬬武器 烈風刀") = 300
+					NAME:2 = 嬬武器 ニア
+					;ノア
+					ABL:3:欲望 = 4
+					ABL:3:技巧 = 4
+					ABL:3:Ｖ感覚 = 3
+					ABL:3:Ｂ感覚 = 2
+					ABL:3:性交中毒 = 2
+					EXP:3:Ｖ経験 = 200
+					EXP:3:性交経験 = 200
+					EXP:3:膣射経験 = 70
+					EXP:3:精液経験 = 600
+					EXP:3:奉仕快楽経験 = 500
+					EXP:3:フェラ経験 = 2000
+					EXP:3:パイズリ経験 = 1000
+					TALENT:3:処女 = 0
+					経験回数:3:GETNO("嬬武器 烈風刀") = 200
+					中出され回数:3:GETNO("嬬武器 烈風刀") = 70
+					CSTR:3:処女 = 烈風刀
+					RELATION:3:GETNO("嬬武器 烈風刀") = 300
+					NAME:3 = 嬬武器 ノア
+					;「烈風刀のはじめて」か「結婚相手」かはバラけさせている
+					IF RAND:2
+						CSTR:1:童貞 = ニア
+						TALENT:1:恋心 = GETNO("ニア")
+						TALENT:1:既婚者 = GETNO("ノア")
+						TALENT:2:恋心 = GETNO("嬬武器 烈風刀")
+						TALENT:3:既婚者 = GETNO("嬬武器 烈風刀")
+					ELSE
+						CSTR:1:童貞 = ノア
+						TALENT:1:恋心 = GETNO("ノア")
+						TALENT:1:既婚者 = GETNO("ニア")
+						TALENT:2:既婚者 = GETNO("嬬武器 烈風刀")
+						TALENT:3:恋心 = GETNO("嬬武器 烈風刀")
+					ENDIF
+				CASE "わくわく乳搾り"
+					FOR LCOUNT, 1, 4
+						TALENT:LCOUNT:バストサイズ = 6
+						TALENT:LCOUNT:母乳体質 = 1
+					NEXT
+				CASE "ヤンデレの音ゲーキャラに死ぬほど愛されて眠れないコース"
+					FOR LCOUNT, 1, CHARANUM
+						TALENT:LCOUNT:恋慕 = 1
+						CFLAG:LCOUNT:陥落 = 1
+						FOR LCOUNT2, 0, CHARANUM
+							IF LCOUNT2 == 0
+								RELATION:LCOUNT:0 = 300
+								CONTINUE
+							ENDIF
+							SIF LCOUNT != LCOUNT2
+								RELATION:LCOUNT:(NO:LCOUNT2) = 1
+						NEXT
+					NEXT
+					売却禁止 = 1
+					RESETCOLOR
+				CASE "いちかのアダルトチャンネル"
+					FOR LCOUNT, 1, 4
+						TALENT:LCOUNT:処女 = 0
+						TALENT:LCOUNT:淫乱 = 1
+						ABL:LCOUNT:Ｖ感覚 = 2
+						EXP:LCOUNT:Ｖ経験 = 30
+						EXP:LCOUNT:性交経験 = 30
+						モブ経験人数:LCOUNT:0 = 3
+						モブ経験回数:LCOUNT:0 = 30
+					NEXT
+					;アイテムなど
+					ITEM:ビデオカメラ = 1
+					ITEM:ビデオテープ = 3
+					売却禁止 = 1
+				CASE "よく躾けられたメイドさんは要りませんか？"
+					FOR LCOUNT, 1, CHARANUM
+						SELECTCASE NAME:LCOUNT
+							CASE "Mei"
+								;Mei
+								CSTR:LCOUNT:特殊 = フリルカチューシャ
+								CSTR:LCOUNT:全身上着 = メイド服
+								CSTR:LCOUNT:上半身上着 = 
+								CSTR:LCOUNT:下半身上着 = 
+								CSTR:LCOUNT:上半身下着 = ブラジャー
+								CSTR:LCOUNT:下半身下着 = パンティ
+								CSTR:LCOUNT:足元 = ガーターベルト
+								CFLAG:LCOUNT:上着パイズリ = 0
+								CFLAG:LCOUNT:下着パイズリ = 3
+								CFLAG:LCOUNT:着衣併用 = 0
+								CFLAG:LCOUNT:挿入可 = 1
+							;リエルはそのまま
+							;咲姫、ツガル
+							CASE "柏木 咲姫", "菱宮 津軽"
+								CSTR:LCOUNT:特殊 = フリルカチューシャ
+								CSTR:LCOUNT:全身上着 = メイド服
+								CSTR:LCOUNT:上半身上着 = 
+								CSTR:LCOUNT:下半身上着 = 
+								CSTR:LCOUNT:上半身下着 = ブラジャー
+								CSTR:LCOUNT:下半身下着 = パンティ
+								CSTR:LCOUNT:足元 = ハイソックス
+								CFLAG:LCOUNT:上着パイズリ = 0
+								CFLAG:LCOUNT:下着パイズリ = 3
+								CFLAG:LCOUNT:着衣併用 = 0
+								CFLAG:LCOUNT:挿入可 = 1
+							;小星
+							CASE "井之原 小星"
+								CSTR:LCOUNT:特殊 = フリルカチューシャ
+								CSTR:LCOUNT:全身上着 = メイド服
+								CSTR:LCOUNT:上半身上着 = 
+								CSTR:LCOUNT:下半身上着 = 
+								CSTR:LCOUNT:上半身下着 = キャミソール
+								CSTR:LCOUNT:下半身下着 = パンティ
+								CSTR:LCOUNT:足元 = ソックス
+								CFLAG:LCOUNT:上着パイズリ = 0
+								CFLAG:LCOUNT:下着パイズリ = 4
+								CFLAG:LCOUNT:着衣併用 = 0
+								CFLAG:LCOUNT:挿入可 = 1
+							;咲子、シア
+							CASE "春日 咲子", "シア"
+								CSTR:LCOUNT:特殊 = ネコ耳カチューシャ
+								CSTR:LCOUNT:全身上着 = メイド服
+								CSTR:LCOUNT:上半身上着 = 
+								CSTR:LCOUNT:下半身上着 = 
+								CSTR:LCOUNT:上半身下着 = 
+								CSTR:LCOUNT:下半身下着 = パンティ
+								CSTR:LCOUNT:足元 = ソックス
+								CFLAG:LCOUNT:上着パイズリ = 5
+								CFLAG:LCOUNT:着衣併用 = 0
+								CFLAG:LCOUNT:挿入可 = 1
+						ENDSELECT
+					NEXT
+			ENDSELECT
+			RETURN 0
+		CASE 1
+			VARSET CCB, 0
+			RESETCOLOR
+			JUMP 段位認定緑
+		CASE 2
+			SELECTCASE 主人の性別
+				CASE 1
+					主人の性別 = 2
+				CASE 2
+					主人の性別 = 1
+			ENDSELECT
+			RESTART
+	ENDSELECT
+LOOP 1
+
+RETURN 0
+
+;EDIT段位の入力用関数
+@段位認定エディット
+#DIM DYNAMIC EDIT, 5
+#DIM DYNAMIC LRESULT
+#DIM DYNAMIC 人数
+#DIM DYNAMIC マニュアル表示
+#DIM DYNAMIC LCOUNT
+DRAWLINE
+
+マニュアル表示 = 0
+
+PRINTL □エディット内容
+SIF 人数 >= 1
+	PRINTFORML 　一人目 %CSVNAMEF(EDIT:1)% [-1] 外す
+SIF 人数 >= 2
+	PRINTFORML 　二人目 %CSVNAMEF(EDIT:2)% [-2] 外す
+SIF 人数 >= 3
+	PRINTFORML 　三人目 %CSVNAMEF(EDIT:3)% [-3] 外す
+SIF 人数 >= 4
+	PRINTFORML 　四人目 %CSVNAMEF(EDIT:4)% [-4] 外す
+
+CALL CHARA_LIST, 4, 1
+
+SELECTCASE RESULT
+	CASE 10000
+		VARSET CCB, 0
+		VARSET EDIT, 0
+		人数 = 0
+		RESTART
+	CASE -4 TO -1
+		CCB:(EDIT:ABS(RESULT)) = 0
+		ARRAYREMOVE EDIT, ABS(RESULT), 1
+		人数--
+	CASEELSE
+		SIF !EXISTCSV(RESULT)
+			RESTART
+		LRESULT = RESULT
+		CALL CHARA_MANUAL, LRESULT
+		DO
+			PRINTL 
+			PRINTL このキャラにしますか？
+			PRINTL [0] はい
+			PRINTL [1] いいえ
+			SIF マニュアル表示 == 0
+				PRINTL [2] 素質を表示する
+			INPUT
+			SELECTCASE RESULT
+				CASE 0
+					EDIT:(人数+1) = LRESULT
+					CCB:LRESULT = 1
+					GOTO CHARA_DECIDE
+				CASE 1
+					RESTART
+				CASE 2
+					マニュアル表示 = 1
+					PRINTL 
+					PRINTFORML 種族:%CSVCSTR(LRESULT, 110)%
+					PRINT 素質
+					FOR LCOUNT, 0, VARSIZE("TALENT")
+						SELECTCASE TALENTNAME:LCOUNT
+							CASE "性別"
+								CONTINUE
+							CASE "バストサイズ"
+								SELECTCASE CSVTALENT(LRESULT, LCOUNT)
+									CASE 1
+										PRINT 【絶壁】
+									CASE 2
+										PRINT 【貧乳】
+									CASE 3
+										PRINT 【並乳】
+									CASE 4
+										PRINT 【巨乳】
+									CASE 5
+										PRINT 【豊乳】
+									CASE 6
+										PRINT 【爆乳】
+								ENDSELECT
+								CONTINUE
+						ENDSELECT
+						SIF CSVTALENT(LRESULT, LCOUNT)
+							PRINTFORM 【%TALENTNAME:LCOUNT%】
+					NEXT
+					SIF !LINEISEMPTY()
+						PRINTL 
+			ENDSELECT
+		LOOP 1
+ENDSELECT
+
+RESTART
+
+$CHARA_DECIDE
+人数++
+SIF 人数 < 4
+	RESTART
+
+RETURN EDIT:1, EDIT:2, EDIT:3, EDIT:4
+

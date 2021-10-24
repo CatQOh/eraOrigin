@@ -4,71 +4,102 @@
 @USERCOM_ABLE_シックスナイン, ARG
 #FUNCTION
 ;シックスナイン実行判定
+コマンド実行条件 += "実行者が助手の場合、助手に[小悪魔]or欲望LV3以上が必要/"
 IF ASSIPLAY
 	;欲望3以下のASSIの場合シックスナインはできない（小悪魔ならＯＫ）
 	SIF ABL:ASSI:欲望 <= 3 && !TALENT:ASSI:小悪魔
-		RETURNF 0
+		COMRESULT = 0
 ENDIF
 
 ;従順3以上、奉仕精神3以上必要
+コマンド実行条件 += "対象に従順と奉仕精神LV3以上が必要/"
 SIF ABL:従順 < 3 || ABL:奉仕精神 < 3
-	RETURNF 0
+	COMRESULT = 0
 
 ;小人体型持ちは、双方が小人体型ならOK
 ;それ以外の場合は主人が禁断の知識持ちじゃないとダメ
+コマンド実行条件 += "対象が[小人体型]の場合、実行者に[小人体型]か、主人に[禁断の知識]が必要/"
 SIF TALENT:小人体型 && !TALENT:MASTER:禁断の知識 && !TALENT:PLAYER:小人体型
-	RETURNF 0
+	COMRESULT = 0
 ;猫舌の調教者の場合は技巧Lv2以上必要
+コマンド実行条件 += "実行者が[猫舌]持ちの場合は技巧LV2以上必要/"
 SIF TALENT:PLAYER:猫舌 && ABL:PLAYER:技巧 < 2
-	RETURNF 0
+	COMRESULT = 0
 ;猫舌の奴隷の場合は技巧Lv2以上必要
+コマンド実行条件 += "対象が[猫舌]の場合は技巧LV2以上必要/"
 SIF TALENT:猫舌 && ABL:技巧 < 2
-	RETURNF 0
+	COMRESULT = 0
 ;ペニスバンド使用中はダメ
+コマンド実行条件 += "対象か実行者がペニスバンド装着中は実行できない/"
 SIF TEQUIP:ペニスバンド || TEQUIP:PLAYER:ペニスバンド
-	RETURNF 0
+	COMRESULT = 0
 
 ;オナホール使用中はダメ
+コマンド実行条件 += "対象がオナホール装着中は実行できない/"
 SIF TEQUIP:オナホール
-	RETURNF 0
+	COMRESULT = 0
 ;ボールギャグ使用中は不可
+コマンド実行条件 += "対象がボールギャグ装着中は実行できない/"
 SIF TEQUIP:ボールギャグ
-	RETURNF 0
+	COMRESULT = 0
 ;縄使用中は不可
+コマンド実行条件 += "縄で縛ってるときは実行できない/"
 SIF TEQUIP:縄
-	RETURNF 0
+	COMRESULT = 0
 ;触手調教中はダメ
+コマンド実行条件 += "触手召喚中は実行できない/"
 SIF TEQUIP:触手
-	RETURNF 0
+	COMRESULT = 0
+;お風呂場プレイ中はプレイマットが無いとダメ
+コマンド実行条件 += "お風呂場ではプレイマット(アイテム)が無いと実行できない/"
+SIF TEQUIP:お風呂場 && !ITEM:プレイマット
+	COMRESULT = 0
+;ゲームセンターでもできない
+コマンド実行条件 += "ゲーセンでは実行不可/"
+SIF TEQUIP:ゲームセンター
+	COMRESULT = 0
 
-COMRESULT = 1
-RETURNF 1
+;派生確認
+;前回と今回の調教者が同じで縄、ボールギャグ使用中でない場合
+コマンド実行条件 += "前回と今回の実行者が同じで、[縄][ボールギャグ]を使用していない場合、/"
+コマンド実行条件 += "フェラチオ、クンニ、クンニさせる、フェラする、シックスナイン、69パイズリから派生可能/"
+IF PLAYER == TFLAG:前コマンド実行者 && !TEQUIP:縄 && !TEQUIP:ボールギャグ
+	;前回のコマンド
+	SELECTCASE PREVCOMS
+		;フェラチオ、クンニ、シックスナイン系だと派生可能
+		CASE "フェラチオ", "クンニ", "クンニさせる", "フェラする", "シックスナイン", "69パイズリ"
+			RETURNF COMRESULT
+	ENDSELECT
+ENDIF
 
-@COM_シックスナイン
-PRINTL シックスナイン
+COMRESULT = 0
+RETURNF 0
 
-;-------------------------------------------------
-;実行判定処理
-;-------------------------------------------------
+@実行判定_シックスナイン
+#DIM DYNAMIC 実効値
+
 ;すべての命令に共通の要素を考慮
-;(従順が高いと命令に従いやすいなど)
 CALL COM_ORDER
-LOCAL = RESULT
+実効値 = RESULT
 
 CALL COM_ORDER_シックスナイン
-LOCAL += RESULT
+実効値 += RESULT
 
 ;33以上で実行
-CALL 実効値判定, LOCAL, 33
+CALL 実効値判定, 実効値, 33
 
-SIF RESULT == 0
+RETURN RESULT
+
+@COM_シックスナイン
+#DIM DYNAMIC 増加量
+
+PRINTL シックスナイン
+
+SIF !TFLAG:実行判定無視
+	CALLFORM 実行判定_%SELECTCOMS%
+SIF !RESULT && !TFLAG:実行判定無視
 	RETURN 0
 
-;-------------------------------------------------
-;実行決定
-;-------------------------------------------------
-SELECTCOMS = シックスナイン
-SELECTCOM = GETNUM(TRAINNAME, "シックスナイン")
 CALL KOJO_MESSAGE_COM
 
 ;実行者が奴隷であるフラグ
@@ -77,18 +108,18 @@ TFLAG:奴隷実行 = 1
 ;-------------------------------------------------
 ;射精ゲージチェック
 ;-------------------------------------------------
-LOCAL = 射精ゲージ計算_奉仕(600)
+増加量 = 射精ゲージ計算_奉仕(600)
 
 ;TALENT:舌使いをみる
 SIF TALENT:舌使い
-	TIMES LOCAL , 2.00
+	TIMES 増加量 , 2.00
 
-CALL 射精ゲージ増加, LOCAL, PLAYER
+CALL 射精ゲージ増加, 増加量, PLAYER
 
 ;-------------------------------------------------
 ;射精ゲージチェック（奴隷）
 ;-------------------------------------------------
-CALL 射精ゲージ増加, 射精ゲージ計算_フェラチオ(500), PLAYER
+CALL 射精ゲージ増加, 射精ゲージ計算_フェラチオ(500), TARGET
 
 ;-------------------------------------------------
 ;ソース追加処理
@@ -171,11 +202,13 @@ SIF TALENT:PLAYER:猫舌
 
 
 IF !避妊具(PLAYER)
-		CALL 獣人催淫, 1
+	CALL 魔力回復, 5
+	CALL 獣人催淫, 1
 ENDIF
 
 IF !避妊具(TARGET)
-		CALL 獣人催淫, 1, PLAYER
+	CALL 魔力回復, 5, PLAYER
+	CALL 獣人催淫, 1, PLAYER
 ENDIF
 
 ;奉仕快楽フラグ

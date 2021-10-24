@@ -1,0 +1,1275 @@
+﻿@EVENTFIRST
+#DIMS DYNAMIC HTML用, 3
+
+;学園モードでは別のEVENTFIRSTで処理する
+SIF ゲームモード() == "学園モード"
+	RETURN
+
+TARGET = -1
+ASSI = -1
+
+VARLINE = 0
+
+LOADGLOBAL
+
+;周回数を1に
+FLAG:周回数 = 1
+
+;コンフィグ初期設定
+FLAG:地の文表示 = 1
+FLAG:口上表示 = 1
+
+;データIDを設定
+データID = GETSECOND()
+
+;経営モードフラグの初期化
+CALL CLEAR_STRATEGY_FLAG
+
+LOADGLOBAL
+
+;ORIGINはPFREEモード
+SIF ORIGIN
+	GOTO ORIGIN
+
+;モード選択
+DRAWLINE
+;PRINTL ★★モードを選択してください★★
+;CALL PASELIL, @"[0] - STANDARD (100日期限 目標金額1,000,000＄ 経営使用不可 クリア後は可能)"
+;CALL PASELIL, @"[1] - STRATEGY (300日期限 目標金額100,000,000＄ 経営使用可能)"
+;PRINTL [7] - 新婚モード (期限なし 好きなキャラと好きなだけイチャイチャする)
+;PRINTL [8] - 段位認定 (期限あり 特定の4人を攻略)
+;PRINTL [9] - PREMIUM FREE (期限なし エンドレス)
+
+PRINT 　
+FONTBOLD
+PRINT M
+FONTREGULAR
+PRINTL ODE SELECT　　　　　　　　　　　　　　　　　＼ＳＰ／
+IF LANGUAGE == "ENG"
+	PRINTL 　　　　　　　　　　　　　　　　　　　　　　 　　＼／DP＼
+ELSE
+	PRINTL 　クリックで選択 価格はすべて税込みとなります　　＼／DP＼
+ENDIF
+
+HTML用 =<nobr><button value='7' pos='100'> <img src='MODE' srcb='MODEB' height='700'></button>
+HTML用:1 =<button value='8' pos='1700'> <img src='MODE' srcb='MODEB' height='700'></button>
+HTML用:2 =<button value='9' pos='3300'> <img src='MODE' srcb='MODEB' height='700'></button>
+
+HTML_PRINT STRJOIN(HTML用, "")
+
+FONTBOLD
+
+;SP用に調整
+IF SP
+	CALL MANUALPRINT, "　　　　(COLOR:black:WE)(COLOR:hotpink:DD)(COLOR:black:ING)　　　　　　　　　　　　 (COLOR:black:CLA)(COLOR:darkseagreen:SS)　　　　　　　　　　　　　 (COLOR:black:PRE)(COLOR:lime:M)(COLOR:black:IU)(COLOR:lime:M)"
+	PRINTL 
+	SETCOLORBYNAME black
+	IF LANGUAGE == "ENG"
+		PRINTL　　　　　　　　　　　　　　　　　　　　　 　　　　　　　　　　　　　　　　　　FREE
+		FONTREGULAR
+		PRINTL 　　　Deadline:None　　　　　　　　　 Deadline:Exist
+		PRINTL 　　　Money:300 Million　　　　　　　 Need 4 Characters 　　　        Deadline:None
+	ELSE
+		PRINTL　　　　　新婚モード　　　　　　　　　　　 段位認定　　　　　　　　　　　　FREE
+		FONTREGULAR
+		PRINTL 　　　　期限無し　　　　　　　　　　　期限あり　　　　　　　　　　
+		PRINTL 　　　　所持金:3億＄　　　　　　　　　特定の4人を攻略　　　　　　　　　期限無し
+	ENDIF
+ELSE
+	CALL MANUALPRINT, "　　　　(COLOR:black:WE)(COLOR:hotpink:DD)(COLOR:black:ING)　　　　　　　　　　 (COLOR:black:CLA)(COLOR:darkseagreen:SS)　　　　　　　　　　　 (COLOR:black:PRE)(COLOR:lime:M)(COLOR:black:IU)(COLOR:lime:M)"
+	PRINTL 
+	SETCOLORBYNAME black
+	IF LANGUAGE == "ENG"
+		PRINTL　　　　　　　　　　　　　　　　　　　 　　　　　　　　　　　　　　FREE
+		FONTREGULAR
+		PRINTL 　　　Deadline:None　　　　　　　　 Deadline:Exist
+		PRINTL 　　　Money:300 Million　　　　　　 Need 4 Characters 　　　       Deadline:None
+	ELSE
+		PRINTL　　　　　新婚モード　　　　　　　　　 段位認定　　　　　　　　　　FREE
+		FONTREGULAR
+		PRINTL 　　　　期限無し　　　　　　　　　　　期限あり　　　　　　　　　　
+		PRINTL 　　　　所持金:3億＄　　　　　　　　　特定の4人を攻略　　　　　　　　期限無し
+	ENDIF
+ENDIF
+PRINTL 
+PRINTL 
+
+VARSET HTML用
+
+HTML用 =<nobr><button value='0' pos='900'> <img src='MODE' srcb='MODEB' height='700'></button>
+HTML用:1 =<button value='1' pos='2500'> <img src='MODE' srcb='MODEB' height='700'></button>
+HTML用:2 =<button value='1' pos='4100'> <img src='MODE' srcb='MODEB' height='700'></button>
+
+HTML_PRINT STRJOIN(HTML用, "")
+
+FONTBOLD
+
+;SP用に調整
+IF SP
+	CALL MANUALPRINT, "　　　　　　　　　　　 (COLOR:black:STAN)(COLOR:darkorange:D)(COLOR:black:AR)(COLOR:darkorange:D)　　　　　　　　　　　　(COLOR:black:S)(COLOR:deepskyblue:T)(COLOR:black:RA)(COLOR:deepskyblue:T)(COLOR:black:EGY)"
+	PRINTL 
+	SETCOLORBYNAME black
+	IF LANGUAGE == "ENG"
+		PRINTL 
+		PRINTL 
+		FONTREGULAR
+		PRINTL 　　　　　　　　　　  Target:1,000,000$　　　　　　   Target:100Million$
+		PRINTL 　　　　　　　　　　  Deadline:100 Days　　　　　　　 Deadline:300 Days
+	ELSE
+		PRINTL 　　　　　　　　　　　　通常モード　　　　　　　　　　 経営モード
+		PRINTL 
+		FONTREGULAR
+		PRINTL 　　　　　　　　　　　目標:1,000,000＄　　　　　　　　 目標:100,000,000＄
+		PRINTL 　　　　　　　　　　　期限:100日　　　　　　　　　　　　期限:300日
+	ENDIF
+ELSE
+	CALL MANUALPRINT, "　　　　　　　　　　　(COLOR:black:STAN)(COLOR:darkorange:D)(COLOR:black:AR)(COLOR:darkorange:D)　　　　　　　　　　　(COLOR:black:S)(COLOR:deepskyblue:T)(COLOR:black:RA)(COLOR:deepskyblue:T)(COLOR:black:EGY)　　　　　　　　　(COLOR:black:Origin Mode)"
+	PRINTL 
+	SETCOLORBYNAME black
+	IF LANGUAGE == "ENG"
+		PRINTL 
+		PRINTL 
+		FONTREGULAR
+		PRINTL 　　　　　　　　　　 Target:1,000,000$　　　　　  Target:100Million$　　　　　　　All characters
+		PRINTL 　　　　　　　　　　 Deadline:100 Days　　　　　　 Deadline:300 Days　　　　　　　will be unlocked
+	ELSE
+		PRINTL 　　　　　　　　　　　通常モード　　　　　　　　　 経営モード
+		PRINTL 
+		FONTREGULAR
+		PRINTL 　　　　　　　　　　　目標:1,000,000＄　　　　　　 目標:100,000,000＄　　　　　　目標・期限:無し
+		PRINTL 　　　　　　　　　　　期限:100日　　　　　　　　　　期限:300日　　　　　　　　　　全キャラ解放済み
+	ENDIF
+ENDIF
+PRINTL 
+RESETCOLOR
+PRINTL CREDIT:1　　　　　　　　　　　　　　　　　┏━━━━━━┓　　　　　　　　　　　　　　　　　　CREDIT:0
+PRINTL PASELI:NO ACCOUNT　　　　　　　　　　　　 ┃EFFECTOR OFF┃　　　　　　　　　　　　　　　　　　PASELI:NO ACCOUNT
+
+;各ゲームモードごとの初期設定
+CALL INPUTF, 0, 1, 7, 8, 9
+FLAG:ゲームモード = RESULT
+
+SELECTCASE ゲームモード()
+	CASE "通常モード", "経営モード"
+		FLAG:ゲームモード = RESULT
+		CALL CHARA_ADD, 0
+		MASTER = 0
+		CALL SETUP_GAMESTART
+		CALL PLAYER_CUSTOM, 0
+		CALL SELECT_DIFFICULT
+	CASE "新婚モード"
+		FLAG:ゲームモード = 7
+		CALL SETUP_GAMESTART
+		CALL CHARA_ADD, 0
+		MASTER = 0
+		CALL START_CHARA_SELECT
+	CASE "段位認定"
+		FLAG:ゲームモード = 8
+		CALL SETUP_GAMESTART
+		CALL CHARA_ADD, 0
+		MASTER = 0
+		LOADGLOBAL
+		CALL 段位認定緑
+		SELECTCASE 受験段位名
+			CASE "EDIT"
+				CALL SELECT_DIFFICULT
+			CASE "裏七級"
+				FLAG:難易度 = 3
+			CASEELSE
+				FLAG:難易度 = 1
+		ENDSELECT
+	CASE "フリーモード"
+		$ORIGIN
+		FLAG:ゲームモード = 9
+		CALL SETUP_GAMESTART
+		CALL CHARA_ADD, 0
+		MASTER = 0
+		CALL START_CHARA_SELECT
+		CALL SELECT_DIFFICULT
+		;originなら音ゲーマー素質は抜く
+		SIF ORIGIN && NO:MASTER == 0
+			TALENT:MASTER:音ゲーマー = 0
+ENDSELECT
+
+;オープニング表示
+SELECTCASE ゲームモード()
+	CASE "通常モード"
+		IF チュートリアル設定 && デフォルトオプション && LANGUAGE == "JP"
+			DRAWLINE
+			PRINTL オープニングストーリーを表示しますか？
+			PRINTL [0] - 表示する
+			PRINTL [1] - 表示しない
+			CALL INPUTF, 0, 1
+			IF RESULT == 0
+				DRAWLINE
+				CALL OPENING
+			ENDIF
+		ENDIF
+	;STRATEGYモード専用処理
+	CASE "経営モード"
+		DRAWLINE
+		TFLAG:ページ数 = 0
+		IF LANGUAGE == "ENG"
+			PRINTL ★★Select your manager★★
+		ELSE
+			PRINTL ★★パートナーを選択してください★★
+		ENDIF
+		CALL CHARA_LIST, 3
+		CALL CHARA_ADD, RESULT
+		CCB:RESULT = 1
+		ASSI = 1
+		TARGET = -1
+		;この時点では口上表示の設定はできないので強制表示
+		TRYCCALLFORM PARTNER_%CSVNAMERPS(NO:ASSI)%
+		CATCH
+			IF LANGUAGE == "ENG"
+				PRINTFORMW %NAMEDISP(ASSI)% is your manager.
+			ELSE
+				PRINTFORMW %NAMEDISP(ASSI)%をパートナーに選択しました
+			ENDIF
+		ENDCATCH
+		IF LANGUAGE == "ENG"
+			PRINTFORML Select %CALLNAMEDISP(ASSI)%'s falltype.
+			PRINTL [0] - Affection
+			PRINTL [1] - Lewd
+			PRINTL [2] - Obey
+		ELSE
+			PRINTL 陥落状態を選択してください。
+			PRINTL [0] - 恋慕
+			PRINTL [1] - 淫乱
+			PRINTL [2] - 服従
+		ENDIF
+		CALL INPUTF, 0, 1, 2
+		SELECTCASE RESULT
+			CASE 0
+				TALENT:ASSI:恋慕 = 1
+				SIF LANGUAGE == "JP"
+					PRINTL 恋慕に設定しました。
+			CASE 1
+				TALENT:ASSI:淫乱 = 1
+				SIF LANGUAGE == "JP"
+					PRINTL 淫乱に設定しました。
+			CASE 2
+				TALENT:ASSI:服従 = 1
+				SIF LANGUAGE == "JP"
+					PRINTL 服従に設定しました。
+		ENDSELECT
+		CFLAG:ASSI:売却不可 = 1
+		CFLAG:ASSI:状態 = 2
+		CFLAG:ASSI:陥落 = 1
+		MARK:ASSI:屈服刻印 = 3
+		FLAG:パートナー = NO:ASSI
+		SIF 相性値(ASSI, MASTER) < 200
+			RELATION:ASSI:(NO:MASTER) = 200
+		SIF 相性値(MASTER, ASSI) < 200
+			RELATION:MASTER:(NO:ASSI) = 200
+		キャラ未購入 = 1
+		バンめし = 1
+ENDSELECT
+
+IF ゲームモード() != "新婚モード"
+	;チュートリアル表示
+	IF チュートリアル設定 && デフォルトオプション && LANGUAGE == "JP" && !ORIGIN
+		DRAWLINE
+		PRINTL チュートリアルを表示しますか？（オプションからでも確認できます）
+		PRINTL [0] - 表示する
+		PRINTL [1] - 表示しない
+		CALL INPUTF, 0, 1
+		IF RESULT == 0
+			DRAWLINE
+			IF ゲームモード() == "段位認定"
+				CALL TEST_TUTORIAL
+			ELSE
+				CALL TUTORIAL
+			ENDIF
+		ENDIF
+	ENDIF
+ENDIF
+
+DRAWLINE
+IF デフォルトオプション
+	FLAG:地の文表示 = 地の文設定
+	FLAG:口上表示 = 口上設定
+ELSE
+	IF LANGUAGE == "ENG"
+		PRINTL Want you dialogues?(Can change options command)
+		PRINTL [0] - Character Dialogues+General Dialogues
+		PRINTL [1] - Character Dialogues only
+		PRINTL [2] - General Dialogues only
+		PRINTL [3] - No, Don't wanna
+	ELSE
+		PRINTL 口上を表示しますか？(オプションでも変更できます)
+		PRINTL [0] - 口上+地の文を表示する
+		PRINTL [1] - 口上のみ表示する
+		PRINTL [2] - 地の文のみ表示する
+		PRINTL [3] - 口上も地の文も表示しない
+	ENDIF
+	CALL INPUTF, 0, 1, 2, 3
+	SELECTCASE RESULT
+		CASE 0
+			FLAG:地の文表示 = 1
+			FLAG:口上表示 = 1
+		CASE 1
+			FLAG:地の文表示 = 0
+			FLAG:口上表示 = 1
+		CASE 2
+			FLAG:地の文表示 = 1
+			FLAG:口上表示 = 0
+		CASE 3
+			FLAG:地の文表示 = 0
+			FLAG:口上表示 = 0
+	ENDSELECT
+ENDIF
+
+IF デフォルトオプション
+	FLAG:実績メッセージ = 実績解除メッセージ設定
+ELSEIF !ORIGIN
+	DRAWLINE
+	IF LANGUAGE == "ENG"
+		PRINTL Do you want achiivement message?(Can change onptions command)
+		PRINTL [0] - Hide
+		PRINTL [1] - Show
+	ELSE
+		PRINTL 実績解除時のメッセージを表示しますか？(オプションからでも変更できます)
+		PRINTL [0] - 表示しない
+		PRINTL [1] - 表示する
+	ENDIF
+	CALL INPUTF, 0, 1
+	FLAG:実績メッセージ = RESULT
+ENDIF
+
+IF QMA
+	通貨単位 = マジカ
+ELSEIF デフォルトオプション
+	FLAG:パセリ表示 = パセリ表示設定
+ELSEIF ORIGIN
+	通貨単位 = $
+ELSE
+	DRAWLINE
+	IF LANGUAGE == "ENG"
+		PRINTL Display the PASELI icon?(Can change options command)
+		PRINTL [0] - No
+		PRINTL [1] - Yes
+	ELSE
+		PRINTL PASELI表示をオンにしますか？(オプションからでも変更できます)
+		PRINTL [0] - オンにしない
+		PRINTL [1] - オンにする
+	ENDIF
+	CALL INPUTF, 0, 1
+	FLAG:パセリ表示 = RESULT
+ENDIF
+
+IF デフォルトオプション
+	SIF 着衣オプション設定
+		FLAG:着衣設定 = 3
+ELSE
+	DRAWLINE
+	IF LANGUAGE == "ENG"
+		PRINTL Select character's clothes at start of training(Can change options command)
+		PRINTL [0] - Wear
+		PRINTL [1] - Naked
+	ELSE
+		PRINTL 奴隷の着衣設定を変更しますか？（オプションでも変更できます）
+		PRINTL [0] - 服を着たままでいい
+		PRINTL [1] - 面倒だから脱がせてから調教始める
+	ENDIF
+	CALL INPUTF, 0, 1
+	SIF RESULT == 1
+		FLAG:着衣設定 = 3
+ENDIF
+
+;天気の決定
+CALL WEATHER
+
+CFLAG:MASTER:憑依 = -1
+
+BEGIN SHOP
+
+;ここまでがメインとなる@EVENTFIRST
+;以下@EVENTFIRST内で処理される関数
+@START_CHARA_SELECT
+#DIM DYNAMIC LRESULT
+
+LOADGLOBAL
+DRAWLINE
+IF LANGUAGE == "ENG"
+	PRINTL ★★You can change Master★★
+	PRINTL ★★Please select character★★
+ELSE
+	PRINTL ★★プレイヤーを変更できます★★
+	PRINTL ★★キャラを選択してください★★
+ENDIF
+
+CALL CHARA_LIST, 2
+
+SELECTCASE RESULT
+	CASE 10000
+		IF LANGUAGE == "ENG"
+			PRINTW Does not change Master.
+		ELSE
+			PRINTW プレイヤーを変更しませんでした
+		ENDIF
+		CALL PLAYER_CUSTOM, 0
+	CASEELSE
+		DELCHARA 0
+		CALL CHARA_ADD, RESULT
+		MASTER = 0
+		IF LANGUAGE == "ENG"
+			PRINTFORMW Master is "%NAMEDISP(MASTER)%" now.
+		ELSE
+			PRINTFORMW プレイヤーを「%NAME:MASTER%」に設定します
+		ENDIF
+		DRAWLINE
+		IF ゲームモード() == "フリーモード"
+			IF LANGUAGE == "ENG"
+				PRINTFORML Do you add "You" For want training by %CALLNAMEDISP(MASTER)%?
+				PRINTL [0] - Yes! Yes! Yes! I want!
+				PRINTL [1] - Don't wanna
+			ELSE
+				PRINTFORML %CALLNAME:MASTER%に調教されたい人向けに奴隷としてあなたを追加しますか？
+				PRINTL [0] - 調教されたい！
+				PRINTL [1] - いらん
+			ENDIF
+			CALL INPUTF, 0, 1
+			IF RESULT == 0
+				CALL CHARA_ADD, 0
+				TARGET = 1
+				CALL PLAYER_CUSTOM, TARGET
+			ENDIF
+		ENDIF
+ENDSELECT
+
+;新婚モード専用処理
+IF ゲームモード() == "新婚モード"
+	FLAG:難易度 = 1
+	TFLAG:ページ数 = 0
+	IF LANGUAGE == "ENG"
+		PRINTL ★★Select you wife or husband★★
+	ELSE
+		PRINTL ★★嫁、もしくは婿を選択してください★★
+	ENDIF
+	CALL CHARA_LIST, 1
+	CALL CHARA_ADD, RESULT
+	TARGET = 1
+	SIF NO:TARGET == 0
+		CALL PLAYER_CUSTOM, TARGET
+	;CALL 性別選択, TARGET
+	RESULT = 0
+	TRYCALLFORM WEDDING_%CSVNAMERPS(NO:TARGET)%
+	LRESULT = RESULT
+	IF LANGUAGE == "ENG"
+		PRINTW Congratulations on your wedding!
+	ELSE
+		PRINTFORMW %NAME:TARGET%とのご成婚おめでとうございます
+	ENDIF
+	CFLAG:嫁 = 1
+	CFLAG:陥落 = 1
+	TALENT:恋心 = 0
+	TALENT:親愛 = 1
+	TALENT:MASTER:恋心 = 0
+	TALENT:既婚者 = NO:MASTER
+	TALENT:MASTER:既婚者 = NO:TARGET
+	MARK:屈服刻印 = 3
+	MARK:MASTER:屈服刻印 = 3
+	CFLAG:依存度 = 5000
+	CFLAG:MASTER:依存度 = 5000
+	;経営、施設、設備アイテム
+	ITEM:医務室 = 1
+	ITEM:図書室 = 1
+	;SKIPDISPで農業用アイテムを全解禁しておく
+	SKIPDISP 1
+	CALL 栽培解禁
+	SKIPDISP 0
+	ITEM:田んぼ = 2
+	ITEM:畑 = 8
+	ITEM:プランター = 4
+	田んぼの作物:1 = 米
+	田んぼの作物:2 = 麦
+	ITEM:牧場 = 1
+	ITEM:畜舎 = 1
+	ITEM:養蜂場 = 1
+	ITEM:生け簀 = 1
+	牛の状態 = 100
+	馬の状態 = 100
+	羊の状態 = 100
+	豚の状態 = 100
+	鶏の状態 = 100
+	蜂の状態 = 100
+	牧場の予算 = 1000000
+	畜舎の予算 = 1000000
+	養蜂場の予算 = 100000
+	生け簀の予算 = 1000000
+	ITEM:風俗店営業許可証 = 1
+	ITEM:楽器セット一式 = 1
+	ITEM:事業開発オフィス = 1
+	SIF 相性値(TARGET, MASTER) < 300
+		RELATION:(NO:MASTER) = 300
+	SIF 相性値(MASTER, TARGET) < 300
+		RELATION:MASTER:(NO:TARGET) = 300
+	;WEDDING口上の返り値による
+	SELECTCASE LRESULT
+		CASE 0
+			IF LANGUAGE == "ENG"
+				PRINTFORML Did you experience with %CALLNAMEDISP(TARGET)%?
+				PRINTL [0] - Oh yes
+				PRINTL [1] - It is wrong. We are virgin.
+			ELSE
+				PRINTL ご結婚前からいろいろ経験なさりましたよね？
+				PRINTL [0] - そりゃまぁ
+				PRINTL [1] - 純潔を保ってきた
+			ENDIF
+		CASE 1
+			GOTO 経験あり
+		CASE 2
+			GOTO 経験無し
+	ENDSELECT
+	CALL INPUTF, 0, 1
+	SELECTCASE RESULT
+		CASE 0
+			$経験あり
+			SELECTCASE SEX(MASTER)
+				CASE 1
+					EXP:MASTER:射精経験 += 10
+					EXP:絶頂経験 += 10
+					EXP:MASTER:性交経験 += 10
+					TALENT:MASTER:童貞 = 0
+					EXP:性交経験 += 10
+					CSTR:MASTER:童貞 = %NAME:TARGET%
+					SELECTCASE SEX(TARGET)
+						CASE 1
+							EXP:MASTER:Ａ経験 += 10
+							EXP:射精経験 += 10
+							EXP:絶頂経験 += 10
+							TALENT:童貞 = 0
+							CSTR:童貞 = %NAME:MASTER%
+						CASE 2
+							EXP:膣射経験 += 10
+							EXP:Ｖ経験 += 10
+							TALENT:処女 = 0
+							CSTR:処女 = %NAME:MASTER%
+							CFLAG:処女の奪われ方 = 2
+					ENDSELECT
+				CASE 2
+					EXP:MASTER:Ｖ経験 += 10
+					TALENT:MASTER:処女 = 0
+					EXP:MASTER:性交経験 += 10
+					CSTR:MASTER:処女 = %NAME:TARGET%
+					CFLAG:MASTER:処女の奪われ方 = 2
+					SELECTCASE SEX(TARGET)
+						CASE 1
+							EXP:MASTER:膣射経験 += 10
+							EXP:射精経験 += 10
+							EXP:絶頂経験 += 10
+							TALENT:童貞 = 0
+							CSTR:童貞 = %NAME:MASTER%
+						CASE 2
+							EXP:Ｖ経験 += 10
+							TALENT:処女 = 0
+							CSTR:処女 = %NAME:MASTER%
+							CFLAG:処女の奪われ方 = 2
+					ENDSELECT
+			ENDSELECT
+		CASE 1
+			$経験無し
+			SELECTCASE SEX(MASTER)
+				CASE 1
+					TALENT:MASTER:童貞 = 1
+					EXP:MASTER:性交経験 = 0
+				CASE 2
+					TALENT:MASTER:処女 = 1
+					EXP:MASTER:性交経験 = 0
+					EXP:MASTER:Ｖ経験 = 0
+					EXP:MASTER:膣射経験 = 0
+			ENDSELECT
+			SELECTCASE SEX(TARGET)
+				CASE 1
+					TALENT:童貞 = 1
+					EXP:性交経験 = 0
+				CASE 2
+					TALENT:処女 = 1
+					EXP:性交経験 = 0
+					EXP:Ｖ経験 = 0
+					EXP:膣射経験 = 0
+			ENDSELECT
+	ENDSELECT
+ENDIF
+
+RETURN 0
+
+@PLAYER_CUSTOM, ARG = -1
+#DIM DYNAMIC LCOUNT
+#DIMS DYNAMIC 種族名, 50
+#DIM DYNAMIC 種族
+#DIM DYNAMIC 始点
+#DIM DYNAMIC 終点
+#DIM DYNAMIC 表示数
+#DIM DYNAMIC LRESULT
+#DIM DYNAMIC 年
+#DIM DYNAMIC 月
+#DIM DYNAMIC 日
+
+CALL LOOP_CLEARLINE
+
+SIF ARG == -1
+	ARG = MASTER
+SIF CSTR:ARG:種族 == ""
+	CSTR:ARG:種族 = 人間
+DRAWLINE
+IF LANGUAGE == "ENG"
+	PRINTL 【Basic】
+	PRINTFORM 　Name:%NAMEDISP(ARG)% [1] - Change your name
+	PRINTPLAIN  
+
+	PRINT Gender:
+	SELECTCASE SEX(ARG)
+		CASE 1
+			PRINT Male
+		CASE 2
+			PRINT Female
+	ENDSELECT
+	SIF TALENT:ARG:ふたなり
+		PRINT (Futanari)
+
+	PRINT  [2] - Change your gender 
+	PRINTPLAIN  
+	PRINTFORM Race:%RACEDISP(ARG)% [3] - Change your race
+	PRINTL 
+
+	PRINTL 【容姿】
+	PRINT 　Physical:
+	IF TALENT:ARG:小柄体型
+		PRINT Child 
+	ELSE
+		PRINT Basic 
+	ENDIF
+	PRINT [4] - Change your physical
+	PRINTPLAIN  
+	IF SEX(ARG) == 2
+		PRINT BreastSize:
+		SELECTCASE TALENT:ARG:バストサイズ
+			CASE 1
+				PRINT None 
+			CASE 2
+				PRINT Little 
+			CASE 3
+				PRINT Basic 
+			CASE 4
+				PRINT Large 
+			CASE 5
+				PRINT XLarge
+			CASE 6
+				PRINT Huge 
+		ENDSELECT
+		PRINT [5] - Change your BreastSize
+	ENDIF
+	PRINTL
+
+	PRINTFORMLC 　Animal Ear:\@ TALENT:ARG:動物耳 ? Have # None\@ [6] - Change
+	PRINTPLAIN  
+	PRINTFORMLC Tail:\@ TALENT:ARG:尻尾 ? Have # None\@ [7] - Change 
+	PRINTPLAIN  
+	PRINTFORMLC Wings:\@ TALENT:ARG:羽 ? Have # None\@ [8] - Change 
+	PRINTPLAIN  
+	PRINTL 
+	PRINTFORMLC 　Farry:\@ TALENT:ARG:ファーリー ? Have # None\@ [9] - Change 
+	PRINTPLAIN 
+	PRINTFORMLC Life:\@ !TALENT:ARG:ゾンビ ? Have # None\@ [10] - Change
+	PRINTL 
+	PRINTL 【Sexual Experience】
+	PRINTL 　[11] - None [12] - Basic [13] - Awesome
+ELSE
+	PRINTL 【基礎】
+	PRINTFORM 　名前:%NAME:ARG% [1] - 名前を変更する
+	PRINTPLAIN  
+
+	PRINT 性別:
+	SELECTCASE SEX(ARG)
+		CASE 1
+			PRINT 男性
+		CASE 2
+			PRINT 女性
+	ENDSELECT
+	SIF TALENT:ARG:ふたなり
+		PRINT (ふたなり)
+
+	PRINT [2] - 性別を変更する
+	PRINTPLAIN  
+	PRINTFORM 種族:%CSTR:ARG:種族% [3] - 種族を変更する
+	PRINTL 
+
+	PRINTL 【容姿】
+	PRINT 　体格:
+	IF TALENT:ARG:小柄体型
+		PRINT 子供 
+	ELSE
+		PRINT 普通 
+	ENDIF
+	PRINT [4] - 体格を変更する
+	PRINTPLAIN  
+	IF SEX(ARG) == 2
+		PRINT バストサイズ:
+		SELECTCASE TALENT:ARG:バストサイズ
+			CASE 1
+				PRINT 絶壁 
+			CASE 2
+				PRINT 貧乳 
+			CASE 3
+				PRINT 並乳 
+			CASE 4
+				PRINT 巨乳 
+			CASE 5
+				PRINT 豊乳
+			CASE 6
+				PRINT 爆乳 
+		ENDSELECT
+		PRINT [5] - バストサイズを変更する
+	ENDIF
+	PRINTL
+
+	PRINTFORMLC 　動物耳:\@ TALENT:ARG:動物耳 ? 有り # 無し\@ [6] - 変更
+	PRINTPLAIN  
+	PRINTFORMLC 尻尾:\@ TALENT:ARG:尻尾 ? 有り # 無し\@ [7] - 変更 
+	PRINTPLAIN  
+	PRINTFORMLC 羽:\@ TALENT:ARG:羽 ? 有り # 無し\@ [8] - 変更 
+	PRINTPLAIN  
+	PRINTL 
+	PRINTFORMLC 　もふもふ:\@ TALENT:ARG:ファーリー ? 有り # 無し\@ [9] - 変更 
+	PRINTPLAIN 
+	PRINTFORMLC 生命活動:\@ !TALENT:ARG:ゾンビ ? 有り # 無し\@ [10] - 変更
+	PRINTL 
+	PRINTL 【性経験】
+	PRINTL 　[11] - 無し [12] - 普通 [13] -すごい
+ENDIF
+表示数 = 0
+FOR LCOUNT, 0, 100
+	SELECTCASE EXPNAME:LCOUNT
+		CASE "Ｖ経験", "膣射経験", "出産経験", "流産経験"
+			SIF !VAGINA(ARG)
+				CONTINUE
+		CASE "射精経験"
+			SIF !PENIS(ARG)
+				CONTINUE
+		CASE "レズ経験", "パイズリ経験"
+			SIF SEX(ARG) != 2
+				CONTINUE
+		CASE "ゲイ経験"
+			SIF SEX(ARG) != 1
+				CONTINUE
+		CASE "Ａ経験", "絶頂経験", "性交経験", "精液経験", "フェラ経験", "自慰経験"
+		CASEELSE
+			CONTINUE
+	ENDSELECT
+	SIF 表示数 == 0
+		PRINT 　
+	IF LANGUAGE == "ENG"
+		PRINTFORMLC %EXPDISP(LCOUNT)%:{EXP:ARG:LCOUNT} [{LCOUNT+20}] - Change
+	ELSE
+		PRINTFORMLC %EXPDISP(LCOUNT)%:{EXP:ARG:LCOUNT} [{LCOUNT+20}] - 変更
+	ENDIF
+	PRINTPLAIN  
+	表示数++
+	IF 表示数%3 == 0 && 表示数 != 0
+		PRINTL 
+		表示数 = 0
+	ENDIF
+NEXT
+SIF !LINEISEMPTY()
+	PRINTL 
+DRAWLINE
+PRINTPLAIN 　PLAYER CUSTOM　
+IF LANGUAGE == "ENG"
+	PRINTL [0] - Complete [100] - Save character data [101] - Load character data
+ELSE
+	PRINTL [0] - 完了 [100] - キャラデータを保存 [101] - キャラデータをロード
+ENDIF
+
+DO
+	INPUT
+	SELECTCASE RESULT
+		CASE 0
+			IF TALENT:ARG:性別 == 0
+				IF LANGUAGE == "ENG"
+					PRINTW Please select gender
+				ELSE
+					PRINTW 性別を選択してください
+				ENDIF
+				RESTART
+			ENDIF
+			SIF VAGINA(ARG) && !EXP:ARG:Ｖ経験
+				TALENT:ARG:処女 = 1
+			SIF PENIS(ARG) && !EXP:ARG:性交経験
+				TALENT:ARG:童貞 = 1
+			IF CSTR:ARG:種族 == "スライム"
+				CFLAG:ARG:スライム度 = 30
+				TALENT:ARG:スライム = 1
+			ENDIF
+			VARLINE = 0
+			RETURN
+		CASE 1
+			CALL INPUT_NAME, ARG
+		CASE 2
+			CALL SELECT_SEX, ARG
+		CASE 3
+			VARSET 種族名
+
+			種族 = GETNUM(CSTR, "種族")
+
+			FOR LCOUNT, 1, 10000
+				SIF !EXISTCSV(LCOUNT)
+					CONTINUE
+				;変数「種族名」の配列に該当種族名がまだ入ってない場合は入れる
+				IF CSVCSTR(LCOUNT, 種族) != ""
+					SIF FINDELEMENT(種族名, ESCAPE(CSVCSTR(LCOUNT, 種族)), 0, VARSIZE("種族名"), 1) == -1
+						種族名:FINDELEMENT(種族名, "", 0, VARSIZE("種族名"), 1) = %CSVCSTR(LCOUNT, 種族)%
+				ENDIF
+			NEXT
+
+			;追加の特殊種族
+			種族名:FINDELEMENT(種族名, "", 0, VARSIZE("種族名"), 1) = スライム
+
+			FOR LCOUNT, 0, VARSIZE("種族名")
+				SIF 種族名:LCOUNT == ""
+					BREAK
+				PRINTFORMLC [{LCOUNT}] %種族名:LCOUNT%
+			NEXT
+			SIF !LINEISEMPTY()
+				PRINTL 
+			DO
+				INPUT
+				SELECTCASE RESULT
+					CASE 0 TO VARSIZE("種族名")
+						CSTR:ARG:種族 = %種族名:RESULT%
+						BREAK
+					CASEELSE
+						CONTINUE
+				ENDSELECT
+			LOOP 1
+		CASE 4
+			INVERTBIT TALENT:ARG:小柄体型, 0
+		CASE 5
+			IF LANGUAGE == "ENG"
+				PRINTL [1] - None
+				PRINTL [2] - Little
+				PRINTL [3] - Basic
+				PRINTL [4] - Large
+				PRINTL [5] - XLarge
+				PRINTL [6] - Huge
+			ELSE
+				PRINTL [1] - 絶壁にする
+				PRINTL [2] - 貧乳にする
+				PRINTL [3] - 並乳にする
+				PRINTL [4] - 巨乳にする
+				PRINTL [5] - 豊乳にする
+				PRINTL [6] - 爆乳にする
+			ENDIF
+			DO
+				INPUT
+				SELECTCASE RESULT
+					CASE 1 TO 6
+						TALENT:ARG:バストサイズ = RESULT
+						BREAK
+				ENDSELECT
+			LOOP 1
+		CASE 6
+			INVERTBIT TALENT:ARG:動物耳, 0
+		CASE 7
+			INVERTBIT TALENT:ARG:尻尾, 0
+		CASE 8
+			INVERTBIT TALENT:ARG:羽, 0
+		CASE 9
+			INVERTBIT TALENT:ARG:ファーリー, 0
+		CASE 10
+			INVERTBIT TALENT:ARG:ゾンビ, 0
+		CASE 11
+			VARSET EXP:ARG:0, 0
+		CASE 12
+			EXP:ARG:絶頂経験 = 0
+			IF VAGINA(ARG)
+				EXP:ARG:Ｖ経験 = RAND(10, 31)
+				EXP:ARG:膣射経験 = RAND(0, 6)
+				EXP:ARG:絶頂経験 += RAND(10, 21)
+				EXP:ARG:精液経験 = RAND(20, 51)+EXP:ARG:膣射経験
+			ENDIF
+			IF PENIS(ARG)
+				EXP:ARG:射精経験 = RAND(50, 101)
+				EXP:ARG:絶頂経験 += EXP:ARG:射精経験
+			ENDIF
+			IF SEX(ARG) == 2
+				EXP:ARG:パイズリ経験 = RAND(3, 11)
+				EXP:ARG:フェラ経験 = RAND(5, 21)
+			ENDIF
+			EXP:ARG:性交経験 = RAND(5, 11)
+			EXP:ARG:自慰経験 = RAND(10, 31)
+		CASE 13
+			IF VAGINA(ARG)
+				EXP:ARG:Ｖ経験 = RAND(500, 1001)
+				EXP:ARG:膣射経験 = RAND(300, 501)
+				EXP:ARG:出産経験 = RAND(1, 4)
+				SIF RAND:5 == 0
+					EXP:ARG:流産経験 = 1
+			ENDIF
+			SIF PENIS(ARG)
+				EXP:ARG:射精経験 = RAND(2000, 5001)
+			SELECTCASE SEX(ARG)
+				CASE 1
+					EXP:ARG:ゲイ経験 = RAND(500, 1001)
+				CASE 2
+					EXP:ARG:レズ経験 = RAND(500, 1001)
+					EXP:ARG:パイズリ経験 = RAND(200, 301)
+			ENDSELECT
+			EXP:ARG:Ａ経験 = RAND(500, 1001)
+			EXP:ARG:性交経験 = RAND(300, 501)
+			EXP:ARG:自慰経験 = RAND(1000, 2001)
+			EXP:ARG:フェラ経験 = RAND(500, 1001)
+			EXP:ARG:絶頂経験 = RAND(500, 1001)+EXP:ARG:射精経験
+			EXP:ARG:精液経験 = RAND(2000, 5001)+EXP:ARG:膣射経験
+		CASE 20 TO 85
+			LRESULT = RESULT-20
+			IF EXPNAME:(LRESULT) != ""
+				IF LANGUAGE == "ENG"
+					PRINTFORML Please input %EXPDISP(LRESULT)% count.
+				ELSE
+					PRINTFORML %EXPDISP(LRESULT)%の数値を入力してください
+				ENDIF
+				INPUT
+				SIF RESULT < 0
+					RESULT = 0
+				EXP:ARG:(LRESULT) = RESULT
+			ENDIF
+		CASE 100
+			FOR LCOUNT, 0, 10
+				IF CHKCHARADATA(@"CUSTOMPLAYER_{LCOUNT}") == 0
+					PRINTFORML [{LCOUNT}] - %RESULTS%
+				ELSE
+					SETCOLORBYNAME gray
+					IF LANGUAGE == "ENG"
+						PRINTFORML [{LCOUNT}] - -----------
+					ELSE
+						PRINTFORML [{LCOUNT}] - 空きスロット
+					ENDIF
+					RESETCOLOR
+				ENDIF
+			NEXT
+			DRAWLINE
+			PRINTPLAIN 　PC SAVE　
+			IF LANGUAGE == "ENG"
+				PRINTL [10] - Back
+			ELSE
+				PRINTL [10] - 戻る
+			ENDIF
+			DO
+				INPUT
+				SELECTCASE RESULT
+					CASE 10
+						RESTART
+					CASE 0 TO 9
+						LRESULT = RESULT
+						IF CHKCHARADATA(@"CUSTOMPLAYER_{RESULT}") == 0
+							IF LANGUAGE == "ENG"
+								PRINTL It was exist charadata. Overwrite sure?
+								PRINTL [0] - Yes
+								PRINTL [1] - No
+							ELSE
+								PRINTL 既にカスタムデータが存在します。上書きしてもよろしいですか？
+								PRINTL [0] - はい
+								PRINTL [1] - いいえ
+							ENDIF
+							CALL INPUTF, 0, 1
+							SIF RESULT == 1
+								BREAK
+						ENDIF
+						年 = TOINT(SUBSTRING(GETTIMES(), 0, 4))
+						月 = TOINT(SUBSTRING(GETTIMES(), 5, 2))
+						日 = TOINT(SUBSTRING(GETTIMES(), 8, 2))
+						IF LANGUAGE == "ENG"
+							SAVECHARA @"CUSTOMPLAYER_{LRESULT}", @"%NAME:ARG% Created in {年}/{月}/{日}", ARG
+						ELSE
+							SAVECHARA @"CUSTOMPLAYER_{LRESULT}", @"%NAME:ARG% {年}/{月}/{日}に作成", ARG
+						ENDIF
+						BREAK
+				ENDSELECT
+			LOOP 1
+		CASE 101
+			FOR LCOUNT, 0, 10
+				IF CHKCHARADATA(@"CUSTOMPLAYER_{LCOUNT}") == 0
+					PRINTFORML [{LCOUNT}] - %RESULTS%
+				ELSE
+					SETCOLORBYNAME gray
+					IF LANGUAGE == "ENG"
+						PRINTFORML [{LCOUNT}] - -----------
+					ELSE
+						PRINTFORML [{LCOUNT}] - 空きスロット
+					ENDIF
+					RESETCOLOR
+				ENDIF
+			NEXT
+			DRAWLINE
+			PRINTPLAIN 　PC LOAD　
+			IF LANGUAGE == "ENG"
+				PRINTL [10] - Back
+			ELSE
+				PRINTL [10] - 戻る
+			ENDIF
+			DO
+				INPUT
+				SELECTCASE RESULT
+					CASE 10
+						RESTART
+					CASE 0 TO 9
+						IF CHKCHARADATA(@"CUSTOMPLAYER_{RESULT}") == 0
+							DELCHARA ARG
+							LOADCHARA @"CUSTOMPLAYER_{RESULT}"
+							RESTART
+						ENDIF
+				ENDSELECT
+			LOOP 1
+	ENDSELECT
+	BREAK
+LOOP 1
+
+RESTART
+
+@SELECT_SEX, ARG = -1
+SIF ARG == -1
+	ARG = MASTER
+DRAWLINE
+IF LANGUAGE == "ENG"
+	PRINTL Select your gender.
+	PRINTL [0] - Male
+	PRINTL [1] - Female
+	SELECTCASE ゲームモード()
+		CASE "通常モード", "経営モード"
+		CASEELSE
+			PRINTL [2] - Male(Futanari)
+			PRINTL [3] - Female(Futanari)
+	ENDSELECT
+ELSE
+	PRINTL 性別を選択してください
+	PRINTL [0] - 男性
+	PRINTL [1] - 女性
+	SELECTCASE ゲームモード()
+		CASE "通常モード", "経営モード"
+		CASEELSE
+			PRINTL [2] - 男性(ふたなり)
+			PRINTL [3] - 女性(ふたなり)
+	ENDSELECT
+ENDIF
+CALL INPUTF, 0, 1, 2, 3
+SELECTCASE RESULT
+	CASE 0, 2
+		TALENT:ARG:性別 = 1
+		CSTR:ARG:上半身上着 = シャツ
+		CSTR:ARG:下半身上着 = ズボン
+		CSTR:ARG:下半身下着 = トランクス
+	CASE 1, 3
+		TALENT:ARG:性別 = 2
+		TALENT:ARG:バストサイズ = 3
+		CSTR:ARG:全身上着 = ワンピース
+		CSTR:ARG:上半身下着 = ブラジャー
+		CSTR:ARG:下半身下着 = パンティ
+		CFLAG:ARG:挿入可 = 1
+ENDSELECT
+SIF GROUPMATCH(RESULT, 2, 3)
+	TALENT:ARG:ふたなり = 1
+
+@INPUT_NAME, ARG = -1
+SIF ARG == -1
+	ARG = MASTER
+DRAWLINE
+DO
+	IF LANGUAGE == "ENG"
+		PRINT Please input your name(If nothing, Your name is ""
+		PRINTBUTTON "You", "You"
+		PRINTL ")
+	ELSE
+		PRINT 名前を入力してください(何も入力しない場合は「
+		PRINTBUTTON "あなた", "あなた"
+		PRINTL 」になります)
+	ENDIF
+	INPUTS
+	SELECTCASE RESULTS
+		CASE ""
+			CALLNAME:ARG = あなた
+			NAME:ARG = あなた
+			CSTR:ARG:英語名 = You
+			CSTR:ARG:英語呼び名 = You
+		CASEELSE
+			CALLNAME:ARG = %RESULTS%
+			NAME:ARG = %RESULTS%
+			CSTR:ARG:英語名 = %RESULTS%
+			CSTR:ARG:英語呼び名 = %RESULTS%
+	ENDSELECT
+	IF LANGUAGE == "ENG"
+		PRINTFORML Do you confirm "%CALLNAMEDISP(MASTER)%"?
+		PRINTL [0] - Yes
+		PRINTL [1] - No
+	ELSE
+		PRINTFORML 「%CALLNAME:ARG%」でよろしいですか？
+		PRINTL [0] - はい
+		PRINTL [1] - いいえ
+	ENDIF
+	CALL INPUTF, 0, 1
+LOOP LOOPRES(0)
+
+@SELECT_VIRGIN, ARG = -1
+SIF ARG == -1
+	ARG = MASTER
+DRAWLINE
+IF LANGUAGE == "ENG"
+	PRINTL Are you virgin?
+	PRINTL [0] - No
+	PRINTL [1] - Yes
+ELSE
+	PRINTL 性交の経験は……
+	PRINTL [0] - ある
+	PRINTL [1] - 無い
+ENDIF
+CALL INPUTF, 0, 1
+IF RESULT == 1
+	SELECTCASE SEX(ARG)
+		CASE 1
+			TALENT:ARG:童貞 = 1
+		CASE 2
+			TALENT:ARG:処女 = 1
+	ENDSELECT
+ENDIF
+
+@SELECT_DIFFICULT
+;ORIGINはNORMAL固定(暫定)
+IF ORIGIN
+	FLAG:難易度 = 1
+	RETURN
+ENDIF
+
+DRAWLINE
+IF LANGUAGE == "ENG"
+	PRINTL ★★Please select difficulty★★
+	PRINTL [0] - NORMAL
+	PRINTL [1] - HYPER
+	PRINTL [2] - ANOTHER
+ELSE
+	PRINTL ★★難易度を選択してください★★
+	IF QMA
+		PRINTL [0] - フェアリー級(初心者でも安心)
+		PRINTL [1] - ミノフェニ級(それなりに)
+		PRINTL [2] - ドラゴン級(ようこそ廃人の入口へ)
+	ELSE
+		PRINTL [0] - NORMAL
+		PRINTL [1] - HYPER
+		PRINTL [2] - ANOTHER
+	ENDIF
+ENDIF
+CALL INPUTF, 0, 1, 2
+
+FLAG:難易度 = RESULT+1
+
+@SELECT_STYLE, ARG = -1
+SIF ARG == -1
+	ARG = MASTER
+DRAWLINE
+IF LANGUAGE == "ENG"
+	PRINTL How many your tall?
+	PRINTL [0] - Basic
+	PRINTL [1] - Childlike
+ELSE
+	PRINTL 体型はどんな感じですか？
+	PRINTL [0] - 普通の人です
+	SELECTCASE SEX(ARG)
+		CASE 1
+			PRINTL [1] - ショタです
+		CASE 2
+			PRINTL [1] - ロリです
+	ENDSELECT
+ENDIF
+CALL INPUTF, 0, 1
+IF RESULT == 1
+	TALENT:ARG:小柄体型 = 1
+	MAXBASE:ARG:体力 -= 200
+	BASE:ARG:体力 -= 200
+	SIF SEX(ARG) == 2
+		TALENT:ARG:バストサイズ = 2
+ENDIF
+
+@SETUP_GAMESTART
+#DIM DYNAMIC 日数, 2
+
+;ORIGINでは仕様を説明する
+IF ORIGIN
+	PRINTL eraOrigin、及びOriginモードでは所持金の概念はありません 収入・支出の表示は全てフレーバー要素です
+	PRINTW また、難易度はNORMAL(最低難易度)固定となります
+ENDIF
+
+DAY = 1
+SELECTCASE ゲームモード()
+	CASE "通常モード"
+		MONEY = 3000
+		FLAG:価格フィルタ上限 = 3000
+		ITEM:医務室 = 1
+		ITEM:図書室 = 1
+		TARGET = -1
+	CASE "経営モード"
+		MONEY = TONUM("100万")
+		ITEM:風俗店営業許可証 = 1
+		TARGET = -1
+	CASE "新婚モード"
+		MONEY = TONUM("3億")
+	CASE "段位認定"
+		MONEY = 0
+		TARGET = -1
+	CASE "フリーモード"
+		MONEY = 30000
+		FLAG:価格フィルタ上限 = 30000
+		ITEM:風俗店営業許可証 = 1
+		TARGET = -1
+ENDSELECT
+FLAG:カスタムフィルタ１ = 1
+FLAG:カスタムフィルタ２ = 3
+FLAG:色仕掛け = 1
+FLAG:お誘い = 1
+LASTMONEY = MONEY
+購入人数 = 0
+;リアルタイム計算処理 変数REALTIMEも残しておくこと
+;リアルタイム(文字列式)からリアル西暦を抜き出して数値型に変換して代入する……
+REALTIME:0 = TOINT(SUBSTRING(GETTIMES(), 0, 4))
+REALTIME:1 = TOINT(SUBSTRING(GETTIMES(), 5, 2))
+REALTIME:2 = TOINT(SUBSTRING(GETTIMES(), 8, 2))
+
+SELECTCASE ゲームモード()
+	CASE "学園モード"
+		YEAR = REALTIME:0
+		MONTH = 4
+		DAYS = 1
+	CASEELSE
+		YEAR = REALTIME:0
+		MONTH = REALTIME:1
+		DAYS = REALTIME:2
+ENDSELECT
+
+;曜日計算
+FLAG:曜日 = ZELLER(YEAR, MONTH, DAYS)
+
+;月齢計算
+CALL 月齢逆算, 30, -1
+
+;過去19年の午前0時で最も新月に近いと思われる日と現在の日付の日数差を調べる
+日数 = GETDAYS(YEAR, MONTH, DAYS) - GETDAYS(RESULT, RESULT:1, RESULT:2)
+
+SELECTCASE 日数
+	CASE IS <= 30
+		月齢 = 日数*100
+	CASEELSE
+		日数:1 = 日数-(日数%30)
+		月齢 = ((日数:1*100000)%2953059)/1000
+		月齢 += (日数%30)*100
+ENDSELECT
+
+月齢 %= 3000
+
+VARSET SELECTCOM, -1
+SELECTCOM = 0
+CALL FADEOUTBGM
+
+;気温の算出
+CALL TEMPERATURE
+
+FLAG:TSBランダム = 1

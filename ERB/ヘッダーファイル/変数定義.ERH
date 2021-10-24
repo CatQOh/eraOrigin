@@ -1,6 +1,20 @@
 ﻿;------------------------------------------------------------
 ;システム等に使う変数
 ;------------------------------------------------------------
+;変数「ORIGIN」Originモードに使用
+#DIM SAVEDATA ORIGIN
+;変数「ISORIGIN」RESETDATAでORIGINフラグの破棄を防ぐために使う
+#DIM GLOBAL ISORIGIN
+
+;変数「SP」SPモードに使用 こちらはハードが違うのでグローバルで
+#DIM GLOBAL SAVEDATA SP
+
+;変数「KONAMI」遊び設定に使用
+#DIM SAVEDATA KONAMI, 1000
+
+;グローバル変数「LICENSE」ライセンス表示に使用
+#DIM GLOBAL SAVEDATA LICENSE
+
 ;変数「REALTIME」ゲームスタート時のリアルタイムを代入(0=年 1=月 2=日)
 #DIM SAVEDATA REALTIME, 3
 
@@ -12,6 +26,9 @@
 ;変数「月齢」 本日の月齢を記録
 #DIM SAVEDATA 月齢
 
+;グローバル変数「段位」 現在の段位を記録 グローバル変数なのでセーブデータに依存しない
+#DIM GLOBAL SAVEDATA 段位
+
 ;変数「変動値」「前の昼の気温」 気温計算に使用
 #DIM SAVEDATA 変動値
 #DIM SAVEDATA 前の昼の気温
@@ -19,11 +36,62 @@
 ;文字列変数「HOLIDAY」 祝日やイベント日の記録に使用
 #DIMS SAVEDATA HOLIDAY, 5
 
+;変数「LASTMONEY」前日の所持金が代入される
+#DIM SAVEDATA LASTMONEY
+
+;変数「借金」新婚モード・P-FREE専用 借金の残高が記録される
+#DIM SAVEDATA 借金
+
+;変数「ストック」段位モード専用 ゲージ回復が超過した際の余剰金が入る 
+#DIM SAVEDATA ストック
+
+;変数「売却禁止」段位モード専用 このフラグが立っているとき売却ができない
+#DIM SAVEDATA 売却禁止
+
+;グローバル変数「実績」実績管理用のフラグとかにお使いください
+#DIM GLOBAL SAVEDATA 実績, 200
+
+;一部の実績の判定に使われる変数
+#DIM SAVEDATA 購入人数
+#DIM SAVEDATA タルタ童貞喰い
+#DIM SAVEDATA 母乳飲んだ人数, 20000
+#DIM SAVEDATA 男性に自慰させた人数, 20000
+;0=ユーズ、1=士朗、2=エレキ
+#DIM SAVEDATA 媚薬実績用, 3
+#DIM SAVEDATA この子の七つのお祝いに
+#DIM オナホパフェ
+#DIM SAVEDATA キャラ未購入
+#DIM SAVEDATA ハットトリック, 2
+#DIM SAVEDATA MGR, 5
+#DIM SAVEDATA バンめし
+#DIM GLOBAL SAVEDATA スライム化イベント回数
+#DIM GLOBAL SAVEDATA TATSUJIN
+
+;グローバル変数「ENDING」エンディングのリプレイに使用する
+#DIM GLOBAL SAVEDATA ENDING, 100
+
+;グローバル変数「CSVCOUNT」現在実装されてるCSV数を保存
+#DIM GLOBAL SAVEDATA CSVCOUNT
+
+;グローバル変数「起動回数」その名の通り
+#DIM GLOBAL SAVEDATA 起動回数
+
+;変数「採取精液」精液を採取したキャラを記録
+#DIM SAVEDATA 採取精液, 20000
+
+;文字列変数「通貨単位」ユーザーが任意で通貨単位を決められるように
+#DIMS SAVEDATA 通貨単位
+
 ;変数「PAGING」PAGING関数で使う
 #DIM PAGING
+;変数「PAGING表示数」PAGINGで表示するキャラ数
+#DIM SAVEDATA PAGING表示数 = 10
 
 ;変数「VARLINE」関数を跨ぐCLEARLINE処理に使う 使った後は0にしてください
 #DIM VARLINE
+
+;グローバル変数「QMA」QMA仕様のフラグ
+#DIM GLOBAL SAVEDATA QMA
 
 ;文字列変数「CHILDNAME」子供の名前を記録
 #DIMS SAVEDATA CHILDNAME, 10000
@@ -37,14 +105,39 @@
 ;変数「データID」セーブデータ個別のID
 #DIM SAVEDATA データID
 
+;キャラ変数「常連客」上級売春の常連客でどの番号が埋まっているか 0は使わない
+#DIM CHARADATA SAVEDATA 常連客, 6
+
 ;デフォルトオプションのグローバル変数
 #DIM GLOBAL SAVEDATA デフォルトオプション
+#DIM GLOBAL SAVEDATA チュートリアル設定
 #DIM GLOBAL SAVEDATA 地の文設定
 #DIM GLOBAL SAVEDATA 口上設定
+#DIM GLOBAL SAVEDATA 実績解除メッセージ設定
+#DIM GLOBAL SAVEDATA パセリ表示設定
 #DIM GLOBAL SAVEDATA 着衣オプション設定
 
-;登場作品でキャラを絞るのに使用
-#DIMS SAVEDATA 登場作品フィルタ
+#DIMS SAVEDATA 受験段位名
+
+;#DIM 参照用変数, 1000, 1000
+;#DIMS 参照用変数S, 1000, 1000
+
+;以下魔法関連
+#DIM SAVEDATA フリージングアトモスフィア, 2
+#DIM SAVEDATA バーニンザフロア, 2
+#DIM SAVEDATA ストームバスター
+#DIM SAVEDATA スウィートレイン
+#DIM SAVEDATA スノープリズム
+#DIM CHARADATA SAVEDATA ビーストモード, 4
+#DIMS CHARADATA SAVEDATA ビーストモードS
+#DIM SAVEDATA リジェネレーション
+#DIM CHARADATA SAVEDATA ジェントルストレス, 2
+#DIM SAVEDATA ヒプノティッククライシス
+#DIM CHARADATA SAVEDATA ティルナノーグ
+#DIM SAVEDATA エナジードライブ, 2
+#DIM CHARADATA SAVEDATA ポゼッション, 30
+
+#DIMS 詠唱魔法
 
 ;ツールチップ関連 グローバル変数
 #DIM GLOBAL SAVEDATA ツールチップ非表示
@@ -53,6 +146,88 @@
 
 ;表示設定 グローバル変数
 #DIMS GLOBAL SAVEDATA 数値表示設定
+
+;模様替え用の座標変数
+#DIM SAVEDATA 土地, 30, 60
+#DIM SAVEDATA オブジェクト, 30, 60
+#DIMS SAVEDATA OBJECTS, 30, 60
+#DIMS OBJECTS_DATA, 1000, 4
+#DIM SAVEDATA マップバージョン
+
+;「SHOW_TARGET」変数 TARGETの能力表示中なら1になる
+#DIM SHOW_TARGET
+
+;文字列変数「所持ビデオ」変数 所持してるビデオのタイトルを表示
+#DIMS SAVEDATA 所持ビデオ, 1000
+
+;グローバル変数「LANGUAGE」 多国語オプションに使用
+#DIMS GLOBAL SAVEDATA LANGUAGE
+
+;グローバル変数「サウンド」音楽再生機能のオンオフに使用
+#DIM GLOBAL SAVEDATA サウンド
+;音量
+#DIM GLOBAL SAVEDATA BGM音量 = 50
+#DIM GLOBAL SAVEDATA SOUND音量 = 100
+;再生中のBGM
+#DIMS GLOBAL PLAYINGBGM
+;最後にセーブしたデータのゲームモードが入る タイトルBGM変更用
+#DIMS GLOBAL SAVEDATA LASTSAVEMODE
+
+;顔グラ表示のオンオフ
+#DIM GLOBAL SAVEDATA 顔グラ表示 = 1
+
+;エクストラMOD
+;性別関連
+#DIM GLOBAL SAVEDATA 男性化MOD
+#DIM GLOBAL SAVEDATA 女性化MOD
+#DIM GLOBAL SAVEDATA 性転換MOD
+
+;体質関連
+#DIM GLOBAL SAVEDATA 爆乳MOD
+#DIM GLOBAL SAVEDATA 絶壁MOD
+#DIM GLOBAL SAVEDATA 母乳MOD
+#DIM GLOBAL SAVEDATA おもらしMOD
+#DIM GLOBAL SAVEDATA ふたなりMOD
+#DIM GLOBAL SAVEDATA ロリショタMOD
+#DIM GLOBAL SAVEDATA 大人化MOD
+#DIM GLOBAL SAVEDATA チャレンジMOD
+#DIM GLOBAL SAVEDATA 人口飽和MOD
+#DIM GLOBAL SAVEDATA 百発百中MOD
+#DIM GLOBAL SAVEDATA STSMOD
+
+;人体錬成とロボットファクトリー
+#DIM SAVEDATA DNAデータ, 10000
+#DIM SAVEDATA 分析データ, 10000
+#DIM HIDE_TALENT, 200
+
+;セーブデータ作成時のバージョン
+;ハードコーディングのバージョンの仕様と異なり、再セーブで現バージョンに上がることがない
+#DIM SAVEDATA バージョン
+
+;部屋関連
+#DIM 同行者, 5
+#DIMS SAVEDATA 部屋ログ, 100
+
+;ショートカットコマンド
+#DIMS SAVEDATA LNK, 30
+#DIM SAVEDATA ショートカット
+
+;ライブ配信に使用
+#DIM SAVEDATA チャンネル登録者数
+
+;ユリア天使化に使用
+#DIM SAVEDATA GUMINDAYS
+
+;依代の有無
+#DIM SAVEDATA 依代, 1000
+;とりあえず性別とバストサイズは記録しておく
+#DIM CHARADATA SAVEDATA 憑依情報, 3
+
+;カニバリズムでの捕食手段
+#DIMS 捕食手段
+
+;ORIGINで登場作品でキャラを絞るのに使用
+#DIMS SAVEDATA 登場作品フィルタ
 
 ;------------------------------------------------------------
 ;調教に使う変数
@@ -65,6 +240,9 @@
 
 ;変数「TENTACLE」触手経験の処理に仕様
 #DIM TENTACLE
+
+;変数「調教方針」今ではもう使ってないはずなので確認後削除すること
+;#DIM SAVEDATA 調教方針
 
 ;変数「ABLUP」ABL上昇処理に使用
 #DIM ABLUP, 100
@@ -81,23 +259,67 @@
 ;文字列変数「写真内容」写真の内容を記録
 #DIMS 写真内容, 10
 
+;変数「写真価格」写真の価格を記録
+#DIM 写真価格, 10
+
 ;文字列変数「写真内容記録用」コマンド実行時には逐一ここに内容を記録しておき、写真を撮影したらここから代入する
 #DIMS 写真内容記録用
+
+;変数「写真価格記録用」上記の価格版
+#DIM 写真価格記録用
+
+;文字列変数「ハッキング命令」名前通りハッキング命令の内容を代入
+#DIMS ハッキング命令
+
+;変数「メダル」ゲームセンターで使えるメダル所持数
+#DIM SAVEDATA メダル
+
+;変数「コマンド強制」NEXTCOM相当の昨日 次に実行するコマンドをERB側で強制できる
+#DIM コマンド強制 = -1
+
+;文字列変数「服装保存用」女装時に現在の服装を退避するために使用
+#DIMS 服装保存用, 7
+#DIM 服装フラグ保存用, 4
+
+#DIMS コマンド実行条件
+
+;ライブ配信用
+#DIM 視聴者数
+#DIM LIKE
+#DIM DISLIKE
+#DIM コメント数
+#DIMS 視聴コメント, 10
+
+;フィルタ等を抜けないためのフラグ
+#DIM コマンド選択可能, 1000
 
 ;------------------------------------------------------------
 ;キャラ関連の変数
 ;------------------------------------------------------------
+;変数「CCB」CHECK CHARA BOUGHTの略。キャラの購入判定に使用
+#DIM SAVEDATA CCB, 10000
+
 ;キャラクタ変数「PREG」妊娠関係処理に使用
-#DIM CHARADATA SAVEDATA PREG, 100
+#DIM CHARADATA SAVEDATA PREG, 30
 
 ;キャラクタ変数「TRANCE」変身等の素質変化に使用
-#DIM CHARADATA SAVEDATA TRANCE, 1000
+#DIM CHARADATA SAVEDATA TRANCE, 201
+;こっちは種族
+#DIMS CHARADATA SAVEDATA TRANCERACE
 
 ;キャラクタ変数「SEX」性別を保存
 #DIM CHARADATA SAVEDATA SEX
 
 ;キャラクタ変数「VIRGIN」童貞及び処女を頂いた人物名が代入される
-#DIMS CHARADATA SAVEDATA VIRGIN, 20
+;2.10でCSTRに置き換え
+;#DIMS CHARADATA SAVEDATA VIRGIN, 20
+
+;キャラクタ変数「BUYD」「BUYM」「BUYY」そのキャラの購入日を記録
+#DIM CHARADATA SAVEDATA BUYD
+#DIM CHARADATA SAVEDATA BUYM
+#DIM CHARADATA SAVEDATA BUYY
+;ソート用に連結させる変数
+#DIM CHARADATA ソート用購入日
 
 ;以下キャラクタ変数は名前通り 10000確保してるのは相手のキャラごとにカウントするため
 #DIM CHARADATA SAVEDATA 経験回数, 20000
@@ -124,12 +346,15 @@
 
 #DIM CHARADATA SAVEDATA CHILDBIRTHDAY
 
+;キャラクタ変数「人気度」ライブでの実績によって素質:人気が付いたりする
+#DIM CHARADATA SAVEDATA 人気度
+
+;変数「自爆キャラ」自爆したキャラのNOと同じ値が1になる 子供にも対応してるが現在機械の子供は作れない
+#DIM SAVEDATA 自爆キャラ, 20000
+
 ;------------------------------------------------------------
 ;口上関連の変数
 ;------------------------------------------------------------
-;変数「CK」CHECK KOJOの略。口上の存在判定に使用
-#DIM CK, 10000
-
 ;キャラクタ変数「FCOM」コマンドの初回判定に使用
 #DIM CHARADATA SAVEDATA FCOM, 1000
 

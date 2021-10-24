@@ -3,25 +3,37 @@
 ;-------------------------------------------------
 @USERCOM_ABLE_踏む, ARG
 #FUNCTION
+;ゲーセンに居る場合はできない
+コマンド実行条件 += "ゲーセンでは実行不可/"
+SIF TEQUIP:ゲームセンター
+	COMRESULT = 0
+;上級売春中は方針がSMで客がマゾじゃないとダメ
+コマンド実行条件 += "上級売春中は経営方針がSMで客に[マゾ]が必要/"
+SIF 上級売春中 && (娼館方針 != 3 || !TALENT:マゾ)
+	COMRESULT = 0
 ;足使用不可だとできない
+コマンド実行条件 += "実行者が[足使用不可]だと実行できない/"
 SIF TALENT:PLAYER:足使用不可
-	RETURNF 0
+	COMRESULT = 0
 ;アニマルだと無理
+コマンド実行条件 += "対象が[アニマル]の場合は実行できない/"
 SIF TALENT:アニマル
-	RETURNF 0
+	COMRESULT = 0
 ;妊娠中は調教者がサドもしくは禁断の知識持ちじゃないとできない
-IF TALENT:MASTER:サド || TALENT:MASTER:禁断の知識
-	COMRESULT = 1
-	RETURNF 1
+コマンド実行条件 += "対象が妊娠中の場合、実行者が主人で[サド]or[禁断の知識]が必要/"
+IF TALENT:妊娠
+	SIF ASSIPLAY
+		COMRESULT = 0
+	SIF !TALENT:MASTER:サド && !TALENT:MASTER:禁断の知識
+		COMRESULT = 0
 ENDIF
+コマンド実行条件 += "対象が妊娠中は実行できない/"
 SIF TALENT:妊娠
-	RETURNF 0
+	COMRESULT = 0
 
-COMRESULT = 1
-RETURNF 1
+RETURNF COMRESULT
 
 @COM_踏む
-LOCAL = 0
 IF ABL:PLAYER:技巧 == 0
 	PRINTL 踏む
 	CALL KOJO_MESSAGE_COM
@@ -36,15 +48,16 @@ ELSEIF ABL:PLAYER:技巧 >= 1
 	SIF ABL:PLAYER:技巧 >= 4
 		PRINTL [4] 顔
 	DO
+		SIF ISSKIP()
+			BREAK
 		INPUT
 		SIF RESULT > ABL:PLAYER:技巧
 			CONTINUE
 	LOOP LOOPRES(0, 1, 2, 3, 4)
 
-	LOCAL = RESULT
 	TFLAG:踏む部位 = RESULT
 
-	SELECTCASE LOCAL
+	SELECTCASE TFLAG:踏む部位
 		CASE 0
 			PRINTL 腹を踏む
 		CASE 1
@@ -62,7 +75,7 @@ ENDIF
 ;-------------------------------------------------
 ;ソース追加処理
 ;-------------------------------------------------
-SELECTCASE LOCAL
+SELECTCASE TFLAG:踏む部位
 	CASE 0
 		IF TALENT:妊娠 && RAND:3 == 0
 			;消費体力、気力
@@ -235,6 +248,14 @@ CALL SAMEN_SHOOT_T, 0, NOWEX:射精
 ;経験の処理
 ;-------------------------------------------------
 CALL EXPUP_BASE, 1, 4
+
+;実績:大犬のお姉さんに暴力を振るう
+SIF CHARANAMEF(TARGET) == "大犬のお姉さん"
+	CALL 実績解除, "何をするだァーッ！"
+
+;実績:ロミ夫の顔面を踏みつける
+SIF CHARANAMEF(TARGET) == "ロミ夫" && TFLAG:踏む部位 == 4
+	CALL 実績解除, "その綺麗な顔をフッ飛ばしてやる！"
 
 RETURN 1
 

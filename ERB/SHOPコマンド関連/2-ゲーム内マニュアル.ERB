@@ -1,0 +1,544 @@
+﻿@GAME_MANUAL
+#DIM DYNAMIC LCOUNT
+{
+#DIMS DYNAMIC 項目 = "",
+"チュートリアル",
+"キャラの売却条件",
+"キャラの陥落条件",
+"その他素質の会得条件",
+"各経験が上昇するコマンド一覧",
+"異常経験の条件",
+"コマンドが実行できない！",
+"各コマンドの実行条件",
+"お金が無い！",
+"主人の能力上昇、及びスキルツリーについて",
+"こんなの俺の知ってる嫁じゃない",
+}
+;ここまで書いて飽きた
+;"経営モードの概要",
+;"施設・設備の概要",
+
+CALL CHECKDRAWLINE
+PRINTL □確認したい項目を選んでください
+FOR LCOUNT, 1, VARSIZE("項目")
+	PRINTFORML 　[{LCOUNT}] - %項目:LCOUNT%
+NEXT
+DRAWLINE
+PRINTPLAIN 　MANUAL　
+PRINTL [0] - 戻る
+
+DO
+	INPUT
+	SELECTCASE RESULT
+		CASE 0
+			RETURN
+		CASE 1 TO VARSIZE("項目")
+			DRAWLINE
+			CALLFORM MANUAL_%項目:RESULT%
+			DRAWLINE
+			RESTART
+	ENDSELECT
+LOOP 1
+
+@MANUAL_チュートリアル
+CALL プレイ称号計算, "チュートリアル"
+IF ゲームモード() == "段位認定"
+	CALL TEST_TUTORIAL
+ELSE
+	CALL TUTORIAL
+ENDIF
+DRAWLINE
+
+@MANUAL_キャラの売却条件
+PRINTL 【キャラの売却可能条件】
+PRINTL 下記の全てを満たす
+PRINTL ├従順と欲望の能力が合計で6以上
+PRINTL ├素質[反抗的][気丈]を持っている場合
+PRINTL │└従順の能力が4以上
+PRINTL ├素質[自制心][無関心]を持っている場合
+PRINTL │└欲望の能力が4以上
+PRINTL └素質[プライド高い][生意気]を持っている場合
+PRINTL 　└奉仕精神の能力が3以上
+PRINTL 
+PRINTL 上記の条件を満たしたのち、下記のいずれかを満たす
+PRINTL ├技巧の能力が3以上
+PRINTL ├奉仕精神の能力が3以上
+PRINTL ├マゾっ気の能力が3以上
+PRINTL ├各性感覚の合計が8以上
+PRINTL ├従順の能力が5以上
+PRINTL └欲望の能力が5以上
+PRINTL 
+PRINTL 売却可能条件を満たした上で、下記条件を満たすと助手として使用可能になる
+PRINTL └従順と欲望と技巧の能力が合計で14以上
+WAIT
+
+@MANUAL_キャラの陥落条件
+PRINTL 【キャラの陥落条件】
+PRINTL 恋慕
+PRINTL ├従順と奉仕精神の能力が3以上
+PRINTL ├苦痛刻印がLv0である
+PRINTL ├反発刻印がLv0である
+PRINTL ├奉仕快楽経験が100以上
+PRINTL ├依存度1000以上
+PRINTL ├主人調教経験が200以上
+PRINTL ├助手調教経験が500未満
+PRINTL └異常経験2以下、もしくは初期値からの増加無し
+PRINTL 　親愛 上記の条件に加え
+PRINTL 　├従順と奉仕精神の能力が5以上
+PRINTL 　├愛情経験200以上
+PRINTL 　├奉仕快楽経験400以上
+PRINTL 　├依存度3000以上
+PRINTL 　├主人調教経験500以上
+PRINTL 　├助手調教経験1000未満
+PRINTL 　└以上経験5未満、もしくは初期値からの増加無し
+PRINTL 
+PRINTL 淫乱
+PRINTL ├欲望の能力が3以上
+PRINTL ├各性感覚の合計が12以上
+PRINTL ├快楽刻印Lv3
+PRINTL ├絶頂経験が100以上
+PRINTL ├異常経験が2以上
+PRINTL └主人調教経験と助手調教経験が100以上
+PRINTL 　娼婦 上記の条件に加え
+PRINTL 　├欲望の能力が5以上
+PRINTL 　├各性感覚の合計が20以上
+PRINTL 　├反発刻印のLvが0である
+PRINTL 　├絶頂経験300以上
+PRINTL 　├異常経験5以上
+PRINTL 　└主人調教経験と助手調教経験が300以上
+PRINTL 
+PRINTL 服従
+PRINTL ├従順とマゾっ気の能力が3以上
+PRINTL ├屈服刻印Lv3、もしくは苦痛刻印Lv3
+PRINTL ├反発刻印のLvが0である
+PRINTL ├苦痛快楽経験と緊縛経験の合計が100以上
+PRINTL ├依存度1000以上
+PRINTL └助手調教経験が500未満
+PRINTL 　隷属 上記の条件に加え
+PRINTL 　├従順とマゾっ気の能力が5以上
+PRINTL 　├屈服刻印と苦痛刻印のLvが3である
+PRINTL 　├苦痛快楽経験と緊縛経験の合計が300以上
+PRINTL 　├依存度3000以上
+PRINTL 　├助手調教経験1000未満
+PRINTL 　└異常経験3以上
+WAIT
+
+@MANUAL_その他素質の会得条件
+PRINTL 【その他素質の会得条件】
+PRINTL 淫核
+PRINTL └Ｃ感覚6以上、露出癖4以上、自慰経験300以上、絶頂経験500以上
+PRINTL 　└男なら加えてＡ感覚4以上、Ａ経験300以上必要
+PRINTL 
+PRINTL 淫膣
+PRINTL └Ｖ感覚6以上、性交中毒4以上、性交経験1000以上、絶頂経験500以上
+PRINTL 
+PRINTL 淫尻
+PRINTL └Ａ感覚6以上、性交中毒4以上、Ａ経験1000以上、絶頂経験500以上
+PRINTL 
+PRINTL 淫乳
+PRINTL └Ｂ感覚6以上、露出癖4以上噴乳経験300以上、絶頂経験500以上
+PRINTL 
+PRINTL 男キャラのバストサイズ増加条件
+PRINTL └B感覚Lv10以上かつメス度Lv7以上で胸が膨らむ
+PRINTL 
+PRINTL 絶倫
+PRINTL └調教中の射精回数10回以上
+PRINTL 
+PRINTL サド
+PRINTL └サドっ気Lv4以上、嗜虐快楽経験300以上、技巧Lv4以上
+PRINTL 
+PRINTL マゾ
+PRINTL └マゾっ気Lv6以上
+PRINTL 
+PRINTL 音ゲーマー
+PRINTL └音ゲー経験100以上
+PRINTL 
+PRINTL 魔術師
+PRINTL └魔法技能3以上
+PRINTL 
+PRINTL サキュバス
+PRINTL └素質【小悪魔】持ち、経験人数10人以上、精液中毒5以上
+PRINTL 
+PRINTL インキュバス
+PRINTL └素質【小悪魔】持ち、経験人数10人以上、ペニスあり、性交中毒5以上、総中出し回数200以上
+WAIT
+
+
+@MANUAL_各経験が上昇するコマンド一覧
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC 参照経験
+#DIM DYNAMIC LTARGET
+#DIM DYNAMIC LASSI
+#DIM DYNAMIC 表示数
+#DIM DYNAMIC アイテム保持用, 10000
+#DIMS DYNAMIC 表示用
+
+CALL CHECKDRAWLINE
+
+FOR LCOUNT, 0, VARSIZE("EXP")
+	SIF EXPNAME:LCOUNT != ""
+		PRINTFORMLC [{LCOUNT}] - %EXPNAME:LCOUNT%
+NEXT
+
+SIF !LINEISEMPTY()
+	PRINTL
+
+DRAWLINE
+PRINTFORML [{VARSIZE("EXP")}] - 戻る
+
+DO
+	INPUT
+	SELECTCASE RESULT
+		CASE VARSIZE("EXP")
+			RETURN
+		CASE 0 TO VARSIZE("EXP")
+			SELECTCASE EXPNAME:RESULT
+				CASE "絶頂経験"
+					PRINTL 性感帯を刺激することで取得できる経験です
+					PRINTW あらゆるコマンド、イベントで得る機会があります
+					RESTART
+				CASE "膣射経験"
+					PRINTL 膣内射精されたときに取得できる経験です
+					PRINTW 性交系コマンド、イベントで得る機会があります
+					RESTART
+				CASE "精液経験"
+					PRINTL 他人の精液に接触したときに取得できる経験です
+					PRINTW 射精可能な人物とのコマンド、イベントで得る機会があります
+					RESTART
+				CASE "噴乳経験"
+					PRINTL 母乳を噴き出したときに取得できる経験です
+					PRINTW 母乳体質のキャラならコマンドやイベントで得る機会があります
+					RESTART
+				CASE "放尿経験"
+					PRINTL 尿を漏らしたときに取得できる経験です
+					PRINTW 放尿系コマンドの他、おもらし癖持ちの絶頂時に得る機会があります
+					RESTART
+				CASE "主人調教経験"
+					PRINTFORML 主人（つまり%CALLNAME:MASTER%）がコマンドを実行した場合に取得できる経験です
+					PRINTW あらゆるコマンドで得る機会があります
+					RESTART
+				CASE "助手調教経験"
+					PRINTL 助手がコマンドを実行した場合に取得できる経験です
+					PRINTW あらゆるコマンドで得る機会があります
+					RESTART
+				CASE "レズ経験"
+					PRINTL 女性同士の性的接触により取得できる経験です
+					PRINTW あらゆるコマンド、イベントで得る機会があります
+					RESTART
+				CASE "ゲイ経験"
+					PRINTL 男性同士の性的接触により取得できる経験です
+					PRINTW あらゆるコマンド、イベントで得る機会があります
+					RESTART
+				CASE "奉仕快楽経験"
+					PRINTL 快楽を伴う性奉仕をしたときに取得できる経験です
+					PRINTW 各快感PALAMの上昇と奉仕系コマンドを同時に行うコマンドで得る機会があります
+					RESTART
+				CASE "苦痛快楽経験"
+					PRINTL 快楽を伴う苦痛を感じた場合に取得できる経験です
+					PRINTW 各快感PALAMと苦痛PALAMが同時に上昇するコマンドで得る機会があります
+					RESTART
+				CASE "調教経験"
+					PRINTL 調教を"する"側が得られる経験です
+					PRINTW 助手と主人はあらゆるコマンドで得る機会があります
+					RESTART
+				CASE "異常経験"
+					PRINTL 常識を逸脱した状況で得られる経験です
+					PRINTW 取得条件は別項「異常経験の条件」をご覧ください
+					RESTART
+				CASE "出産経験"
+					PRINTL 子供を出産したときに取得できる経験です
+					PRINTW コマンドではなく、出産イベントでのみ得る機会があります
+					RESTART
+				CASE "流産経験"
+					PRINTL 子供を流産したときに取得できる経験です
+					PRINTW 妊娠中に過剰な暴力を振るうコマンドで得る機会があります
+					RESTART
+				CASE "触手経験"
+					PRINTL 触手による調教で取得できる経験です
+					PRINTW 触手召喚中であれば、あらゆるコマンドで得る機会があります
+					RESTART
+				CASE "撮影経験"
+					PRINTL 撮影"する"側が取得できる経験です
+					PRINTW 主人か助手であれば、ビデオカメラでの撮影者の場合に得る機会があります
+					RESTART
+				CASE "栽培経験"
+					PRINTL 農業を実際に行うことで栽培経験が得られます
+					PRINTW 栽培してる種類が多いほど、よく上がります
+					RESTART
+				CASE "実務経験"
+					PRINTL あらゆる経営要素に配属することで得られる経験です
+					PRINTW 働いていればすぐに上がります
+					RESTART
+			ENDSELECT
+			参照経験 = RESULT
+			;ダミーのTARGET、ASSI、保持用のMASTERを追加する
+			LTARGET = TARGET
+			LASSI = ASSI
+			ADDVOIDCHARA
+			TARGET = CHARANUM-1
+			ADDVOIDCHARA
+			ASSI = CHARANUM-1
+			;性別は両者女ふたなりで見る
+			TALENT:性別 = 2
+			TALENT:ふたなり = 1
+			MAXBASE:体力 = __INT_MAX__
+			MAXBASE:気力 = __INT_MAX__
+			MAXBASE:射精 = __INT_MAX__
+			TALENT:ASSI:性別 = 2
+			TALENT:ASSI:ふたなり = 1
+			MAXBASE:ASSI:射精 = __INT_MAX__
+
+			ADDCOPYCHARA MASTER
+			MAXBASE:MASTER:射精 = __INT_MAX__
+			MAXBASE:MASTER:ドラゴン射精 = __INT_MAX__
+
+			ARRAYCOPY "ITEM", "アイテム保持用"
+
+			表示数 = 0
+
+			IF EXPNAME:参照経験 == "射精経験"
+				PRINTFORML □%EXPNAME:参照経験%が上昇するコマンド一覧 ()内は対象者
+			ELSE
+				PRINTFORML □%EXPNAME:参照経験%が上昇するコマンド一覧 ()内は上昇値
+			ENDIF
+			FOR LCOUNT, 0, VARSIZE("TRAINNAME")
+				IF TRAINNAME:LCOUNT != ""
+					;表示を飛ばす
+					SKIPDISP 1
+					SELECTCOM = LCOUNT
+					SELECTCOMS = %TRAINNAME:LCOUNT%
+					VARSET TEQUIP
+					VARSET TFLAG
+					VARSET EXP:0
+					VARSET EX:0
+					VARSET NOWEX:0
+					VARSET NOWEX:ASSI:0
+					VARSET NOWEX:MASTER:0
+					VARSET PALAM:0
+					CVARSET BASE, GETNUM(BASE, "射精"), 0
+					CFLAG:残数 = 100
+					CFLAG:ASSI:残数 = 100
+					CFLAG:MASTER:残数 = 100
+					TFLAG:実行判定無視 = 1
+					TRYCALLFORM COM_%TRAINNAME:LCOUNT%
+					SKIPDISP 0
+					IF EXPNAME:参照経験 == "射精経験"
+						IF BASE:MASTER:射精 > 0 || BASE:射精 > 0 || BASE:ASSI:射精 > 0
+							表示用 '= @"　%TRAINNAME:LCOUNT%("
+							SIF BASE:PLAYER:射精 > 0
+								表示用 += "主人,"
+							SIF BASE:射精 > 0
+								表示用 += "調教対象,"
+							SIF BASE:ASSI:射精 > 0
+								表示用 += "助手"
+							表示用 += ")"
+							PRINTFORMLC %表示用%
+							DEBUGPRINTFORML {BASE:射精}
+							表示数++
+						ENDIF
+					ELSE
+						IF EXP:参照経験 > 0
+							PRINTFORMLC 　%TRAINNAME:LCOUNT%({EXP:参照経験})
+							;非ボタンではPRINTC系がうまく動かないので変数使う
+							表示数++
+						ENDIF
+					ENDIF
+					SIF 表示数 != 0 && 表示数%4 == 0 && !LINEISEMPTY()
+						PRINTL 
+				ENDIF
+			NEXT
+			;保持用MASTERで元に戻す
+			SWAPCHARA MASTER, CHARANUM-1
+			;用済みになった3人を消す
+			DELCHARA CHARANUM-1
+			DELCHARA ASSI
+			DELCHARA TARGET
+			TARGET = LTARGET
+			ASSI = LASSI
+			VARSET SELECTCOM
+			VARSET SELECTCOMS
+			ARRAYCOPY "アイテム保持用", "ITEM"
+
+			TFLAG:実行判定無視 = 0
+
+			SIF !LINEISEMPTY()
+				PRINTL
+			DRAWLINE
+			WAIT
+			RESTART
+	ENDSELECT
+LOOP 1
+
+@MANUAL_異常経験の条件
+PRINTL 【異常経験の取得条件】
+PRINTL ・破瓜撮影ビデオの売却
+PRINTL ・苦痛刻印LV3到達時
+PRINTL ・調教中に初めて噴乳したとき
+PRINTL ・女性キャラがふたなり化して精通したとき
+PRINTL ・初めて吸血されたとき(+2)
+PRINTL ・ビデオカメラの前で自慰させたとき
+PRINTL ・IIDX筐体をプレゼントしたとき(+3)
+PRINTL ・バイブで処女破ると+1 触手で処女破ると+2
+PRINTL ・浣腸器初解除時
+PRINTL ・膣、もしくはアナル初拡張時 両穴フィストが最初だと+2
+PRINTL ・乳房電極、アナル電極使用時
+PRINTL ・処女に逆レされたとき
+PRINTL ・Ｖ異物挿入→股間を踏むで性器破損時
+PRINTL ・嫌がる助手を犯させて処女奪ったとき
+PRINTL ・目の前で処女の助手を犯したとき 親しいと+2
+PRINTL ・同じく助手状態で調教対象の目の前で処女を奪われたとき
+PRINTL ・初めて触手召喚したとき
+PRINTL ・初めて異種姦したとき それで処女喪失すればさらに+1
+PRINTL ・強精神薬の反動で合計10回分の絶頂を一気に経験したとき
+PRINTL ・隷属、崩壊の素質が付いてない状態で初流産したとき(+3)
+PRINTL ・初めて尿道に挿入されたとき
+WAIT
+
+@MANUAL_コマンドが実行できない！
+PRINTL 【コマンドが実行できない！】
+PRINTL 灰色で表示されているコマンドは、実行に必要なポイントが足りず対象に拒否されてしまうコマンドです
+PRINTL 各能力を上昇させたり、欲情のパラメータを上げてその気にさせたり、恐怖のパラメータを上げて脅したりなどで、
+PRINTL 実行可能になるポイントを満たせます
+PRINTL 
+PRINTL そもそものコマンドが表示されていない場合、そのコマンドを実行するための前提条件が満たされていません
+PRINTL アイテムが必要なコマンド、助手が必要なコマンド、素質が必要なコマンドなど、条件はコマンドによって様々です
+PRINTL 条件を満たしているにも関わらず表示されていない場合は、服装やコマンドフィルタにより除外されています
+PRINTL 服を着せたり脱がしたり、フィルタのオプションを確認してみましょう
+WAIT
+
+@MANUAL_お金が無い！
+PRINTL 【お金が無い！】
+PRINTL お金は使うと無くなります。現実は非情である
+WAIT
+
+@MANUAL_主人の能力上昇、及びスキルツリーについて
+PRINTL 【主人の能力上昇、及びスキルツリーについて】
+CALL MANUAL_スキルツリー
+
+@MANUAL_各コマンドの実行条件
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC LRESULT
+#DIM DYNAMIC 対象生成
+#DIM DYNAMIC 助手生成
+#DIM DYNAMIC LTARGET
+#DIM DYNAMIC LASSI
+#DIMS DYNAMIC LDRAGON
+#DIM DYNAMIC ページ数
+#DIM DYNAMIC 次ページあり
+#DIM DYNAMIC 表示数
+#DIMS DYNAMIC VAR_実行条件, 100
+#DIMS DYNAMIC LLANG
+
+IF !対象生成
+	対象生成 = 1
+	LTARGET = TARGET
+	ADDVOIDCHARA
+	TARGET = CHARANUM-1
+	NAME:TARGET = 対象
+	CALLNAME:TARGET = 対象
+ENDIF
+IF !助手生成
+	助手生成 = 1
+	LASSI = ASSI
+	ADDVOIDCHARA
+	ASSI = CHARANUM-1
+	NAME:ASSI = 助手
+	CALLNAME:ASSI = 助手
+ENDIF
+LDRAGON = %CSTR:PLAYER:ドラゴン%
+CSTR:PLAYER:ドラゴン = ドラゴン
+
+CALL LOOP_CLEARLINE
+PRINTL 【各コマンドの実行条件】
+表示数 = 0
+次ページあり = 0
+FOR LCOUNT, 0, VARSIZE("TRAINNAME")
+	IF TRAINNAME:LCOUNT != ""
+		IF 表示数 >= ページ数*40+40
+			次ページあり = 1
+			BREAK
+		ENDIF
+		SIF INRANGE(表示数, ページ数*40, ページ数*40+40)
+			PRINTFORMLC [{LCOUNT, 3}]%TRAINNAME:LCOUNT%
+		表示数++
+	ENDIF
+NEXT
+
+SIF !LINEISEMPTY()
+	PRINTL 
+DRAWLINE
+PRINTPLAIN 　COM　
+IF ページ数 > 0
+	PRINT [-7] 前ページ 
+ELSE
+	PRINTPLAIN 　　　　　　　
+ENDIF
+PRINT [-1] 戻る 
+SIF 次ページあり
+	PRINT [-9] 次ページ
+PRINTL
+
+DO
+	INPUT
+	LRESULT = RESULT
+	SELECTCASE LRESULT
+		CASE -1
+			IF 助手生成
+				DELCHARA ASSI
+				ASSI = LASSI
+			ENDIF
+			IF 対象生成
+				DELCHARA TARGET
+				TARGET = LTARGET
+			ENDIF
+			CSTR:PLAYER:ドラゴン = %LDRAGON%
+			RETURN
+		CASE -7
+			SIF ページ数 > 0
+				ページ数--
+			RESTART
+		CASE -9
+			SIF 次ページあり
+				ページ数++
+			RESTART
+		CASE 0 TO VARSIZE("TRAINNAME")
+			SIF TRAINNAME:LRESULT == ""
+				CONTINUE
+			コマンド実行条件 = 
+			CALLFORMF USERCOM_ABLE_%TRAINNAME:LRESULT%
+			DRAWLINE
+			PRINTFORM □%TRAINNAME:LRESULT%
+			LLANG = %LANGUAGE%
+			LANGUAGE = ENG
+			PRINTFORML (%TRAINDISP(LRESULT)%)
+			LANGUAGE = %LLANG%
+			PRINTFORML 　%TRAIN_COMMENT(TRAINNAME:LRESULT)%
+			PRINTL 
+			PRINTFORML □実行条件
+
+			SPLIT コマンド実行条件, "/", VAR_実行条件
+			IF RESULT == 0
+				PRINTL 　無条件で実行可能
+			ELSE
+				FOR LCOUNT, 0, RESULT-1
+					PRINTFORML 　%VAR_実行条件:LCOUNT%
+				NEXT
+			ENDIF
+			DRAWLINE
+			WAIT
+			RESTART
+	ENDSELECT
+LOOP 1
+
+@MANUAL_こんなの俺の知ってる嫁じゃない
+PRINTL CSV/Charaフォルダ内にある[CharaXXX_キャラ名.csv]を書き換えることで理想のキャラに調整できます
+PRINTL ただし、既にゲーム内で解禁されてるキャラはCSVの変更では反映されません。新たにゲームを初めて解禁し直してください
+PRINTL また、服装は「オプション→着衣設定関連」からゲーム内で変更可能です。こちらはCSVをいじる必要はありません
+WAIT
+
+@MANUAL_経営モードの概要
+PRINTL 【経営モードの概要】
+PRINTL 
+
+
+@MANUAL_施設・設備の概要

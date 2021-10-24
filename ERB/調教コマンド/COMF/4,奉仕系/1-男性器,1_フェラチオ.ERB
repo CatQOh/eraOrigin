@@ -4,79 +4,40 @@
 @USERCOM_ABLE_フェラチオ, ARG
 #FUNCTION
 ;猫舌の奴隷の場合は技巧Lv2以上必要
+コマンド実行条件 += "対象が[猫舌]の場合は技巧LV2以上必要/"
 SIF TALENT:猫舌 && ABL:技巧 < 2
-	RETURNF 0
+	COMRESULT = 0
 ;ボールギャグ使用中は不可
+コマンド実行条件 += "対象がボールギャグ装着中は実行できない/"
 SIF TEQUIP:ボールギャグ
-	RETURNF 0
+	COMRESULT = 0
 
 ;汎用COMABLE通らなかったらダメ
 SIF !USERCOM_ABLE_Ｐ奉仕()
-	RETURNF 0
+	COMRESULT = 0
 
-COMRESULT = 1
-RETURNF 1
+RETURNF COMRESULT
 
 @実行判定_フェラチオ
+#DIM DYNAMIC 実効値
 ;-------------------------------------------------
 ;実行判定処理
 ;-------------------------------------------------
 ;すべての命令に共通の要素を考慮
 ;(従順が高いと命令に従いやすいなど)
 CALL COM_ORDER
-LOCAL = RESULT
+実効値 = RESULT
 
 CALL COM_ORDER_フェラ
-LOCAL += RESULT
+実効値 += RESULT
 
 ;24以上で実行
-CALL 実効値判定, LOCAL, 24
+CALL 実効値判定, 実効値, 24
 
 RETURN RESULT
 
 @COM_フェラチオ
-;-------------------------------------------------
-;特殊派生処理
-;-------------------------------------------------
-;前回の調教が3Pのとき3Pへ
-TFLAG:乱交継続中 = 0
-IF PREVCOMS == "3P"
-	IF USERCOM_ABLE_3P()
-		TFLAG:乱交継続中 = 1
-		JUMP COM_3P
-	ENDIF
-;調教者が前回:助手で今回:主人か、前回:主人で今回:助手のとき
-ELSEIF TFLAG:前コマンド実行者 != PLAYER
-	;前回の調教が正常位か後背位か背面座位かアナルセックスのときは3Pへ
-	SELECTCASE PREVCOMS
-		CASE "正常位", "後背位", "正常位アナル", "後背位アナル", "背面座位", "背面座位アナル"
-			SIF USERCOM_ABLE_3P()
-				JUMP COM_3P
-	ENDSELECT
-ENDIF
-
-;前回の調教が二本フェラのとき二本フェラへ
-IF PREVCOMS == "二本フェラ"
-	SIF USERCOM_ABLE_二本フェラ()
-		JUMP COM_二本フェラ
-;調教者が前回:助手で今回:主人か、前回:主人で今回:助手のとき
-ELSEIF TFLAG:前コマンド実行者 != PLAYER
-	;前回の調教がフェラチオだと二本フェラに
-	IF PREVCOMS == "フェラチオ"
-		SIF USERCOM_ABLE_二本フェラ()
-			JUMP COM_二本フェラ
-	ENDIF
-ENDIF
-
-;前回と今回の調教者が同じ
-IF PLAYER == TFLAG:前コマンド実行者
-	;前回の調教がクンニかフェラするかシックスナインだとシックスナインに
-	SELECTCASE PREVCOMS
-		CASE "クンニ", "フェラする", "シックスナイン" 
-			SIF USERCOM_ABLE_シックスナイン()
-				JUMP COM_シックスナイン
-	ENDSELECT
-ENDIF
+#DIM DYNAMIC 増加量
 
 PRINTL フェラチオ
 
@@ -96,13 +57,13 @@ TFLAG:奴隷実行 = 1
 ;-------------------------------------------------
 ;射精ゲージチェック
 ;-------------------------------------------------
-LOCAL = 射精ゲージ計算_奉仕(500)
+増加量 = 射精ゲージ計算_奉仕(500)
 
 ;TALENT:舌使いをみる
 SIF TALENT:舌使い
-	TIMES LOCAL , 2.00
+	TIMES 増加量 , 2.00
 
-CALL 射精ゲージ増加, LOCAL, PLAYER
+CALL 射精ゲージ増加, 増加量, PLAYER
 
 ;-------------------------------------------------
 ;ソース追加処理
@@ -170,10 +131,15 @@ SIF TALENT:猫舌
 	CALL EXPUP, "嗜虐快楽経験", 1
 
 IF !避妊具(PLAYER)
-		CALL 獣人催淫, 1
+	CALL 魔力回復, 5
+	CALL 獣人催淫, 1
 ENDIF
 
 TFLAG:奉仕快楽 = 1
+
+;実績:山吹でフェラさせる。もしくは山吹でフェラをする
+SIF CHARANAMEF(TARGET) == "山吹"
+	CALL 実績解除, "殿方の笛を鳴らすのもお得意で？"
 
 RETURN 1
 

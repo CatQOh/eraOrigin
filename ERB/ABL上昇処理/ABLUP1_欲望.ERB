@@ -1,13 +1,16 @@
 ﻿@ABLUP1
+#DIM DYNAMIC LCOUNT
 SIF ABL:欲望 == 10 && !TALENT:リミットバースト
+	RETURN 0
+SIF ABL:欲望 < 0
 	RETURN 0
 CALL NEED_JUEL_欲望
 CALL CHECK_JUEL_欲望
 IF RESULT
 	CALL NEED_JUEL_欲望
-	REPEAT 15
-		JUEL:COUNT -= ABLUP:COUNT
-	REND
+	FOR LCOUNT, 0, 15
+		JUEL:LCOUNT -= ABLUP:LCOUNT
+	NEXT
 	ABL:欲望++
 ENDIF
 
@@ -34,8 +37,7 @@ SELECTCASE ABL:欲望
 	CASE 9
 		ABLUP:GETPALAM("欲情") = 70000
 	CASE IS >= 10
-		LOCAL = ABL:欲望*ABL:欲望
-		ABLUP:GETPALAM("欲情") = 800 * LOCAL
+		ABLUP:GETPALAM("欲情") = 800 * POWER(ABL:欲望, 2)
 ENDSELECT
 
 ;LV4からは異常経験もしくは快楽刻印LV3必要 LV7からは異常経験3以上必要（陥落済みもしくは[快感に素直]なら無視できる）
@@ -69,6 +71,9 @@ SIF TALENT:ツンデレ
 ;サドマゾ
 SIF TALENT:サド || TALENT:マゾ
 	TIMES ABLUP:GETPALAM("欲情") , 0.90
+;去勢済み
+SIF TALENT:去勢済み
+	TIMES ABLUP:GETPALAM("欲情") , 2.00
 ;快楽刻印 1ごとに10%引き 最大30%オフ！
 ABLUP:GETPALAM("欲情") -= (ABLUP:GETPALAM("欲情")/10)*MARK:快楽刻印
 
@@ -105,13 +110,13 @@ RETURN 0
 SELECTCASE ABL:欲望
 	CASE 4
 		SIF EXP:異常経験 == 0 && MARK:快楽刻印 < 3
-			SETCOLOR 120, 120, 120
+			SETCOLORBYNAME gray
 		SIF ABLUPEXP:GETEXP("異常経験")
 			PRINT [異常経験1以上or快楽刻印LV3以上]
 		RESETCOLOR
 	CASE 7
 		SIF EXP:異常経験 < ABLUPEXP:GETEXP("異常経験")
-			SETCOLOR 120, 120, 120
+			SETCOLORBYNAME gray
 		SIF ABLUPEXP:GETEXP("異常経験")
 			PRINT [異常経験3以上]
 		RESETCOLOR
@@ -120,7 +125,7 @@ ENDSELECT
 SELECTCASE ABL:欲望
 	CASE 3, 5, 7
 		SIF (ABL:欲望 >= 7 && MARK:快楽刻印 < 3) || (ABL:欲望 >= 5 && MARK:快楽刻印 < 2) || (ABL:欲望 >= 3 && MARK:快楽刻印 < 1)
-			SETCOLOR 120, 120, 120
+			SETCOLORBYNAME gray
 		;LV3からは快楽刻印LV1必要 LV5からは快楽刻印LV2必要 LV7からは快楽刻印LV3必要
 		IF ABL:欲望 >= 7
 			PRINT [快楽刻印LV3]
@@ -133,7 +138,7 @@ SELECTCASE ABL:欲望
 ENDSELECT
 
 SIF JUEL:欲情 < ABLUP:GETPALAM("欲情")
-	SETCOLOR 120, 120, 120
+	SETCOLORBYNAME gray
 PRINTFORM [欲情の珠×{ABLUP:GETPALAM("欲情")}]
 RESETCOLOR
 

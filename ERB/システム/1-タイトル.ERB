@@ -1,0 +1,666 @@
+﻿@SYSTEM_TITLE
+#DIM DYNAMIC LMONTH
+#DIM DYNAMIC LDAYS
+#DIM DYNAMIC LCOUNT
+#DIMS DYNAMIC HTML用, 3
+#DIM DYNAMIC 誕生日人数
+LOADGLOBAL
+
+;eraOriginとしてリリースするならコメントアウトを外す
+ORIGIN = 1
+
+;SP(スマホ版)でリリースするならコメントアウトを外す
+;SP = 1
+;SAVEGLOBAL
+
+SIF EXISTCSV(10000)
+	THROW キャラ番号10000は当バリアントでは使用できません。別の番号に置き換えてください
+
+IF !SP
+	SELECTCASE サウンド
+		CASE 0
+			SETBGMVOLUME 0
+			SETSOUNDVOLUME 0
+		CASE 1
+			SETBGMVOLUME BGM音量
+			SETSOUNDVOLUME SOUND音量
+	ENDSELECT
+ENDIF
+
+;10秒(デフォルト)
+IF ツールチップ表示時間
+	TOOLTIP_SETDURATION ツールチップ表示時間
+ELSE
+	TOOLTIP_SETDURATION 10000
+ENDIF
+
+;ツールチップディレイ(デフォルトは無し)
+SIF ツールチップディレイ
+	TOOLTIP_SETDELAY ツールチップディレイ
+
+ENDING = 11
+CSVCOUNT = 0
+FOR LCOUNT, 0, 10000
+	SIF EXISTCSV(LCOUNT)
+		CSVCOUNT++
+NEXT
+
+SAVEGLOBAL
+
+IF LANGUAGE == ""
+	ALIGNMENT CENTER
+	PRINTL 言語を選択してください
+	PRINTL Please select a language
+	PRINTL [0] - 日本語(Japanese)
+	PRINTL [1] - 英語(English)
+	CALL INPUTF, 0, 1
+	SELECTCASE RESULT
+		CASE 0
+			LANGUAGE = JP
+		CASE 1
+			LANGUAGE = ENG
+	ENDSELECT
+ENDIF
+
+SAVEGLOBAL
+ALIGNMENT LEFT
+
+IF LICENSE == 0 && LANGUAGE == "JP" && !ORIGIN
+	HTML用 = <shape type='rect' param='1000,75,4500,575' color='white'>
+	HTML用:1 = <font color='black' bcolor='red'><button value='1'>　　　　　　　　　　[1] - 次へ</button></font>
+	HTML用:2 = <font color='black' bcolor='red'><button value='8'>　　　　　　　　　　[8] - ライセンスに同意する</button></font>　<font color='black' bcolor='red'><button value='9'>[9] - ライセンスに同意しない</button></font>
+	DRAWLINE
+	HTML_PRINT HTML用
+	SETCOLOR 0, 0, 0
+	PRINTL 　　　　　　　　　　【LICENSE】
+	PRINTL 　　　　　　　　　　eraBEMANIをDLしていただき、誠にありがとうございます
+	PRINTL 　　　　　　　　　　プレイの前に、改造や再配布のライセンスについて簡単に説明させていただきます
+	PRINTL 
+	HTML_PRINT HTML用:1
+	PRINTL 
+	CALL INPUTF, 1
+	CLEARLINE 1
+
+	HTML用 = <shape type='rect' param='1000,75,4500,1975' color='white'>
+	HTML_PRINT HTML用
+	PRINTL 　　　　　　　　　　【eraBEMANIの一部、もしくは全部を商用利用→不許可】
+	PRINTL 　　　　　　　　　　当バリアントの文章の一部や本体全部を、営利目的の作品に組み込むことを禁じます。
+	PRINTL 
+	PRINTL 　　　　　　　　　　【eraBEMANIを改変して再配布→許可】
+	PRINTL 　　　　　　　　　　eraBEMANIをベースにして新規バリアントを作った場合等に、再配布する行為を許可します。
+	PRINTL 
+	PRINTL 　　　　　　　　　　【ERBの一部を他バリアントに引用→許可】
+	PRINTL 　　　　　　　　　　eraBEMANIの処理や地の文等を、他バリアントに引用する行為を許可します。
+	PRINTL 
+	PRINTL 　　　　　　　　　　【CSVの一部を他バリアントに引用→要相談】
+	PRINTL 　　　　　　　　　　eraBEMANIのキャラクターCSVを他バリアントに使用する場合、
+	PRINTL 　　　　　　　　　　後述の連絡先にてご確認ください。
+	PRINTL 
+	PRINTL 　　　　　　　　　　【eraBEMANIで使用している音声素材の再配布→禁止】
+	PRINTL 　　　　　　　　　　当ゲームの音声のほとんどは、フリー素材として公開されているものを使用していますが、
+	PRINTL 　　　　　　　　　　各素材には配布元にて利用規約が明記されています。
+	PRINTL 　　　　　　　　　　同梱の「使用素材のクレジット.txt」に記載されている配布元のリンクをご確認ください。
+	PRINTL 
+	HTML_PRINT HTML用:1
+	PRINTL 
+	CALL INPUTF, 1
+	CLEARLINE 1
+
+	HTML用 = <shape type='rect' param='1000,75,4500,1675' color='white'>
+	HTML_PRINT HTML用
+	PRINTL 　　　　　　　　　　【eraBEMANIを他のアップローダーで配布→不許可】
+	PRINTL 　　　　　　　　　　本来、eraBEMANIはDropboxの「eraBEMANI_USERFOLDER」及び
+	PRINTL 　　　　　　　　　　「BOOTH」「GitHub」「eraBEMANIのDiscordサーバー」にて配布されています。
+	PRINTL 　　　　　　　　　　各アップロード先は作者:Enterが管理しているので、
+	PRINTL 　　　　　　　　　　管理の行き届かない他の場所で当バリアントを扱うことを禁じます。
+	PRINTL 
+	PRINTL 　　　　　　　　　　例外として、何らかの理由により「eraBEMANI_USERFOLDER」及び
+	PRINTL 　　　　　　　　　　「BOOTH」「GitHub」「eraBEMANIのDiscordサーバー」へのアクセスが不可能になり、
+	PRINTL 　　　　　　　　　　後述の連絡先にて作者:Enterとの連絡も取れなくなった場合には、
+	PRINTL 　　　　　　　　　　その経緯と事情をテキストファイルにまとめて同梱してのアップロードを許可します。
+	PRINTL 
+	PRINTL 　　　　　　　　　　上記の配布元以外で当バリアントをDLされた場合、
+	PRINTL 　　　　　　　　　　該当の文書があることをご確認ください。
+	PRINTL 　　　　　　　　　　それが無い当バリアントは不具合があっても対処出来ない場合があるのでご了承ください。
+	PRINTL 
+	HTML_PRINT HTML用:1
+	PRINTL 
+	CALL INPUTF, 1
+	CLEARLINE 1
+
+	HTML用 = <shape type='rect' param='1000,75,4500,2275' color='white'>
+	HTML_PRINT HTML用
+	PRINTL 　　　　　　　　　　【連絡先】
+	PRINTL 　　　　　　　　　　eraBEMANI開発スレ(リンクが古い場合は次スレを追ってください)
+	PRINTL 　　　　　　　　　　└http://jbbs.shitaraba.net/bbs/read.cgi/otaku/18072/1542303021/
+	PRINTL 
+	PRINTL 　　　　　　　　　　eraBEMANI_USERFOLDER
+	PRINTL 　　　　　　　　　　└https://www.dropbox.com/sh/ps1a4o62hs25k4r/vG_tytAzqY
+	PRINTL 
+	PRINTL 　　　　　　　　　　eraBEMANI専用ページ(seesaawiki)
+	PRINTL 　　　　　　　　　　└http://seesaawiki.jp/eraseries/d/eraBEMANI
+	PRINTL 
+	PRINTL 　　　　　　　　　　Twitter
+	PRINTL 　　　　　　　　　　└@eraBEMANI
+	PRINTL 
+	PRINTL 　　　　　　　　　　BOOTH
+	PRINTL 　　　　　　　　　　└https://erabemani.booth.pm/items/2217690
+	PRINTL 
+	PRINTL 　　　　　　　　　　Discordサーバー
+	PRINTL 　　　　　　　　　　└https://discord.gg/p5rb5uK
+	PRINTL 
+	PRINTL 　　　　　　　　　　当ライセンス・連絡先は同梱の「read me from Enter」でも確認できます。
+	PRINTL 
+	HTML_PRINT HTML用:2
+	PRINTL 
+	RESETCOLOR
+	CALL INPUTF, 8, 9
+	IF RESULT == 9
+		CLEARLINE 1
+		PRINTL 　　　　　　　　　　ライセンスに同意いただけないのであれば、当ゲームを終了します
+		QUIT
+	ENDIF
+	CLEARLINE 1
+	PRINTW 　　　　　　　　　　それでは引き続きeraBEMANIお楽しみください
+	CLEARLINE LINECOUNT-1
+	LICENSE = 1
+	SAVEGLOBAL
+	ALIGNMENT LEFT
+ENDIF
+
+起動回数++
+SAVEGLOBAL
+
+FLAG:実績メッセージ = 1
+
+CALL 実績解除, "Welcome to eraBEMANI!!"
+
+SIF 起動回数 >= 100
+	CALL 実績解除, "他にすることは無いのか まったく"
+
+VARLINE = LINECOUNT
+
+;最後にセーブしたモードによってBGMを変えてみる
+SELECTCASE LASTSAVEMODE
+	CASE "新婚モード"
+		CALL BGM再生, タイトルBGM2
+	CASEELSE
+		CALL BGM再生, タイトルBGM
+ENDSELECT
+
+DO
+	LMONTH = TOINT(SUBSTRING(GETTIMES(), 5, 2))
+	LDAYS = TOINT(SUBSTRING(GETTIMES(), 8, 2))
+	誕生日人数 = 0
+	DRAWLINE
+	FOR LCOUNT, 0, 10000
+		SIF !EXISTCSV(LCOUNT)
+			CONTINUE
+		IF (CSVCFLAG(LCOUNT, GETNUM(CFLAG, "誕生日"))/100) == LMONTH && (CSVCFLAG(LCOUNT, 0)%100) == LDAYS
+			IF LANGUAGE == "ENG"
+				PRINTFORML Today is %CSVENGNAME(LCOUNT)%'s birthday.
+			ELSE
+				PRINTFORML 今日は%CSVNAMEF(LCOUNT)%の誕生日です
+			ENDIF
+			誕生日人数++
+		ENDIF
+	NEXT
+	IF 誕生日人数
+		IF LANGUAGE == "ENG"
+			PRINTL Happy Birthday!
+		ELSE
+			PRINTL ハッピーバースデー！
+		ENDIF
+		DRAWLINE
+	ENDIF
+	誕生日人数 = 0
+	ALIGNMENT CENTER
+	IF ORIGIN
+		PRINTFORML eraOrigin
+	ELSE
+		PRINTFORML eraBEMANI+α
+		PRINTFORML DJ Walt-heR vs DJ Enter with DJ QhrTea
+	ENDIF
+	PRINTFORML (2013-2021)
+	PRINTFORML Ver.2021/10/15
+	PRINTFORML TOTAL CHARA {CSVCOUNT}
+
+	IF LANGUAGE == "ENG"
+		WINDOW_TITLE = %GAMEBASE_TITLE% {GAMEBASE_VERSION/1000}.{GAMEBASE_VERSION%1000/10} English Edition
+		IF !ORIGIN
+			PRINTFORM Now Grade:
+			CALL GRADE, 段位
+			PRINTL 
+			CALLFORM TITLECOMMENT
+		ENDIF
+		DRAWLINE
+		PRINTL [0] New Game
+		PRINTL [1] Load Game
+		IF !ORIGIN
+			PRINTL [2] Achievement
+			SIF MAXARRAY(ENDING, 1, 100) > 0
+				PRINTL [3] Show Epilogues
+			IF QMA
+				PRINTL [4] Set eraBEMANI mode
+			ELSE
+				PRINTL [4] Set eraQMA mode
+			ENDIF
+		ENDIF
+		PRINTL [5] Run CSV Editor
+		PRINTL [6] Option Preset
+	;#;	SIF !ORIGIN
+	;#;		PRINTL [7] School Mode
+		SIF !SP
+			PRINTFORML [8] Sound&BGM(Now:\@ サウンド == 1 ? On # Off \@)
+		PRINTL [9] Change Language - 言語変更
+		PRINTL [10] EXTRA MOD
+		PRINTL [20] Show manuals
+	ELSE
+		WINDOW_TITLE = %GAMEBASE_TITLE% {GAMEBASE_VERSION/1000}.{GAMEBASE_VERSION%1000/10}
+		;経営要素をオミットするのももったいないので注意書きを載せつつ使えるようにしてみる
+		IF ORIGIN
+			PRINTL ※eraOrigin中で表示される収入・支出は全てフレーバー要素です ゲームプレイに影響はありません
+		ELSE
+			PRINTFORM 現在の段位:
+			CALL GRADE, 段位
+			PRINTL 
+			CALLFORM TITLECOMMENT
+		ENDIF
+		DRAWLINE
+		PRINTL [0] 最初からはじめる
+		PRINTL [1] ロードしてはじめる
+		IF !ORIGIN
+			PRINTL [2] アチーブメントを確認する
+			SIF MAXARRAY(ENDING, 1, 100) > 0
+				PRINTL [3] エンディングを見る
+			IF QMA
+				PRINTL [4] eraBEMANI仕様に戻す
+			ELSE
+				PRINTL [4] eraQMA仕様にする
+			ENDIF
+		ENDIF
+		PRINTL [5] CSVエディターを開く
+		PRINTL [6] オプションの初期設定を変更する
+	;#;	SIF !ORIGIN
+	;#;		PRINTL [7] 学園モードデバッグ
+		SIF !SP
+			PRINTFORML [8] サウンド再生機能(現在:\@ サウンド == 1 ? オン # オフ \@)
+		PRINTL [9] 言語変更 - Change Language
+		PRINTL [10] エクストラMOD
+		PRINTL [20] ゲーム内マニュアルを読む
+		SIF ORIGIN
+			PRINTL [21] eraOrigin旧バージョンのCSVを再整形する
+	ENDIF
+
+	ALIGNMENT LEFT
+
+	DO
+		INPUT
+		SELECTCASE RESULT
+			CASE 0
+				;ORIGINフラグだけは維持する
+				ISORIGIN = ORIGIN
+				RESETDATA
+				ORIGIN = ISORIGIN
+				ISORIGIN = 0
+				BEGIN FIRST
+			CASE 1
+				;こちらはORIGINフラグ維持しなくても大丈夫
+				RESETDATA
+				CALL USERLOAD
+			CASE 2
+				SIF !ORIGIN
+					CALL ACHIEVEMENT
+			CASE 3
+				IF !ORIGIN
+					SIF MAXARRAY(ENDING, 1, 100) > 0
+						CALL ENDING_LIST
+				ENDIF
+			CASE 4
+				IF !ORIGIN
+					INVERTBIT QMA, 0
+					SAVEGLOBAL
+					CLEARLINE LINECOUNT-VARLINE
+				ENDIF
+			CASE 5
+				CALL CSV_EDITOR
+			CASE 6
+				CALL DEFAULT_OPTION
+			CASE 7
+				;#;	IF !ORIGIN
+				;#;		FLAG:ゲームモード = 2
+				;#;		BEGIN FIRST
+				;#;	ENDIF
+			CASE 8
+				IF !SP
+					CALL 音声切り替え
+					CLEARLINE LINECOUNT-VARLINE
+				ENDIF
+			CASE 9
+				IF LANGUAGE == "ENG"
+					LANGUAGE = JP
+				ELSE
+					LANGUAGE = ENG
+				ENDIF
+				SAVEGLOBAL
+				CLEARLINE LINECOUNT-VARLINE
+			CASE 10
+				LOADGLOBAL
+				VARLINE = 0
+				CALL EXTRA_MOD
+			CASE 20
+				ADDCHARA 0
+				MASTER = 0
+				CALL GAME_MANUAL
+				DELALLCHARA
+			CASE 21
+				CALL CSV再整形
+			CASEELSE
+				CONTINUE
+		ENDSELECT
+	LOOP 0
+LOOP 1
+
+@ENDING_LIST
+#DIM DYNAMIC LCOUNT
+CALL FADEOUTBGM
+CALL CHARA_ADD, 0
+ADDVOIDCHARA
+MASTER = 0
+TARGET = 1
+CALLNAME:1 = 奴隷
+DO
+	DRAWLINE
+	PRINTL 今まで見たエンディングを鑑賞します
+	PRINTFORML 主人:%CALLNAME:MASTER% 奴隷:%CALLNAME:TARGET%
+	PRINTL [ 0] 主人、奴隷を変更する
+	FOR LCOUNT, 1, ENDING+1
+		IF ENDING:LCOUNT
+			PRINTFORM [{LCOUNT, 2}] Ending No.{LCOUNT} 
+			SELECTCASE LCOUNT
+				CASE 1
+					PRINT ノーマルエンド
+				CASE 2
+					PRINT 親愛単体エンド
+				CASE 3
+					PRINT 娼婦単体エンド
+				CASE 4
+					PRINT 隷属単体エンド
+				CASE 5
+					PRINT ハーレムエンド
+				CASE 6
+					PRINT 菱宮家エンド
+				CASE 7
+					PRINT 菱宮姉妹エンド
+				CASE 8
+					PRINT 神崎家エンド
+				CASE 9
+					PRINT 神崎兄妹エンド
+				CASE 10
+					PRINT 梅桐家エンド
+				CASE 11
+					PRINT Lincle Kingdomエンド
+			ENDSELECT
+			SIF ENDING:LCOUNT == 1
+				PRINT  New!
+			PRINTL 
+		ENDIF
+	NEXT
+	DRAWLINE
+	PRINTPLAIN 　ENDING　
+	PRINTL [100] タイトルに戻る
+	DO
+		INPUT
+		SELECTCASE RESULT
+			CASE 100
+				SAVEGLOBAL
+				DELALLCHARA
+				RETURN 0
+			CASE 0
+				PRINTL [0] 主人の名前を変更する
+				PRINTL [1] 奴隷の名前を変更する
+				PRINTL [2] 変更しない
+				CALL INPUTF, 0, 1, 2
+				SELECTCASE RESULT
+					CASE 0
+						PRINTL 名前を入力してください
+						INPUTS
+						CALLNAME:MASTER = %RESULTS%
+						PRINTFORMW 主人の名前を「%CALLNAME:MASTER%」に変更しました
+					CASE 1
+						PRINTL 名前を入力してください
+						INPUTS
+						CALLNAME:TARGET = %RESULTS%
+						PRINTFORMW 奴隷の名前を「%CALLNAME:TARGET%」に変更しました
+				ENDSELECT
+				BREAK
+			CASE 1 TO ENDING
+				SIF ENDING:RESULT
+					CALLFORM ENDING_{RESULT}, 1
+				BREAK
+		ENDSELECT
+	LOOP 1
+LOOP 1
+
+@TITLECOMMENT
+#DIMS DYNAMIC 称号, 2
+
+SELECTCASE RAND:5
+	CASE 0
+		称号 = 爆炎の
+	CASE 1
+		称号 = 氷点の
+	CASE 2
+		称号 = 混沌の
+	CASE 3
+		称号 = 激流の
+	CASE 4
+		称号 = 大空の
+ENDSELECT
+SELECTCASE RAND:4
+	CASE 0
+		称号:1 = 姫はじめ
+	CASE 1
+		称号:1 = 足扱き
+	CASE 2
+		称号:1 = 足紳士
+	CASE 3
+		称号:1 = 足淑女
+ENDSELECT
+
+PRINTDATAL 
+	DATA 時代を震わす刻印を刻め!!
+	DATA The next variant
+	DATA 恋慕(ハート)の向こうへ駆け抜けろ。
+	DATA WELCOME TO THE CYBER-era-BEMANI
+	DATA TRIP THE DEEP KISS
+	DATA eraBEMANI OF THE NEW CENTURY
+	DATA 艶 ～ THE PRIMARY VIVID eraBEMANI
+	DATA LOTION SHOWER
+	DATA Break the Virgin!
+	DATA 「十」代重ねる快楽の血脈。「重」く響き渡る痛み。「充」たされるLIBIDO。
+	DATA 快楽に、染まりな。
+	DATA Just Got Splash Milk!
+	DATA 轟響
+	DATA Are You Ready Come on! It's Party Time!
+	DATA 「初手(トリガー)」は引かない。「焦燥」を打て。
+	DATA 超、腸、潮、煌く―。
+	DATA 嬌声の響、光悦の輝。
+	DATA Blaze through the resort party!
+	DATA 官能(ラブリー)×調教(ドライブ)=新境地(ニューリンクル)。
+	DATA 輪音転想(Next Link Various Tunes Change The World [TRI] For The Future !!!)。
+	DATA 紳士とは、孕ませることと　みつけたり。
+	DATA 竿、挿れ交う。弐つの心音
+	DATA 毎日が、喘ぐ自分への始発駅。
+	DATA この夜這 君を偲BUZZ。
+	DATA 『快』感に乗れ！享『楽』のシックスナイン！
+	DATA ギラつく男で超えてイけ！
+	DATA さぁ、HなEROになる時間だ。
+	DATA 孕ませ、全人類。
+	DATA シコれる文で、興に乗れ。
+	DATA キミのハートにレインボー　カラフルハッピーエクスタシー！
+	DATA パパパヤ～「発情ストリップ大作戦」　ビデオカメラはそのまま！！
+	DATA 奴隷対抗イベント「傅け！ シャクハチZ」
+	DATA 奴隷対抗イベント「ご主人様におねだり！」
+	DATA 奴隷対抗イベント「ポップン秘伝房中術帖」
+	DATA 奴隷対抗イベント「エクスタシー戦士 ポップン69」
+	DATA 個人ヤりこみイベント「わくわくミミニャミ発情隊」
+	DATA 個人ヤりこみイベント「あつまれ！セックスパーティー♪」
+	DATA 個人ヤりこみイベント「第１回ポップン春画祭」
+	DATA 個人ヤりこみイベント「めざせ天下統一！ポップン遊郭録」
+	DATA 個人ヤりこみイベント「それイけ！セックスクエスト」
+	DATA キミたちが作る究極の調教ゲーム
+	DATA Z Eights Line Sin C ～絶倫紳士～
+	DATA -infinite erection-
+	DATA The Lovemaking Paradise
+	DATA 性欲の塔
+	DATA 天空の夜伽明け
+	DATA ただいまダブルプレーの料金で3Pを遊ぶことができます
+	DATA わ～いアナルビーズで調教らくち～ん
+	DATA eraBEMANI赤色イベント「LEGEND ELOS」
+	DATA 店舗対抗イベント「SEXの乱」
+	DATA eraBEMANI青色イベント「Ω-ATTACK（クリトリス-アタック）」
+	DATA eraBEMANI黄色イベント「ぼくらのご奉仕戦争」
+	DATA 連動イベント「主人と奴隷のRUNRUNエキベン」
+	DATA 調教するのが怖いって？ばっかお前……奴隷商人がついてるだろ
+	DATA お風呂上りはeraBEMANI！
+	DATA 喘ぐよタッチだ気持ちいい
+	DATA このままじゃｳｨｻﾞｳﾁｭﾅｲ……
+	DATA 主人は奴隷に精を放った――
+	DATA era(ANOTHER)
+	DATA ・∀・
+	DATA おーっほっほっほ！わたしよ！わたしこそ、最強究極の公衆肉便器よ！
+	DATA サキバシリ☆ザーメンビヤクオオメ
+	DATA オレはアナルバイブかな 亀頭の部分アナルに当てたら前立腺ぶっ壊れそうｗ
+	DATA 今何部？アナルバイ部
+	DATA めうめうおむねぺったんたん！！
+	DATA オトコルンバ♪
+	DATA mura mura twins
+	DATA 其の喘ぎこそ、我の糧也。
+	DATA 子宮へと、帰れ。
+	DATA じゃあ調教後は部屋に集合な まあ一人部屋だけど！
+	DATA オ～イ、そこの新人奴隷！俺がてほどきするぜ！？
+	DATA おはよう！君、新人？僕が助手やるで！
+	DATA さぁ、「あなた」のチート性について、僕と語ろうか…
+	DATA 調教後、能力上昇やるから観に来てもいいよ。
+	DATA 君の心の「一線越えない」を、打ち消してごらん…？
+	DATA 今夜もチョメチョメ、俺とメリーゴーランデヴーしようぜ！
+	DATA コナミのみんなには内緒だよ！
+	DATA はやくこいよ、ほら…ね
+	DATA 我が名は「あなた」 背徳と絶望の最後の番人
+	DATA 奴隷の買い手だよ(*'v'*) 犯しができたらおこしてね(*'i'*)
+	DATA 今何度？アナルディル度
+	DATA 絶頂感２００％！！　究極のセックスデバイスを体感せよ。
+	DATA 弾く恥けるミュージック
+	DATA セフレの君に挿れてもらいたいんだけど　さあ、僕と一緒に快楽を貪ろうか…。
+	DATA さあ喘ぎたまえ…よがりたまえ…。
+	DATA 性交の気持ち良いやり方、そして性交をすることによるその効果。
+	DATA キミの膣口がひろがる
+	DATA 君のチンポ、とっても強いんだね！負ける気がしないね！
+	DATA 君の奴隷、とってもエロいんだね！イけない気がしないね！
+	DATA いでよ～！俺の精子～！
+	DATAFORM ハメられ%UNICODE(0x2764)%恋はモ～モク
+	DATA aa'an
+	DATA SPEED BLADE(早漏的な意味で)
+	DATA 貞操ディストピア
+	DATA セックスを知らなくてもヤれるよ！
+	DATA 「自分が大腸の中に入っていくんだなあ、肛門を探訪してるんだなあ」と感じられ、性技を彩るeraにふさわしいバリアント
+	DATA SOUND VOLSEX Ⅲ GLAMOROUS WOMANS
+	DATA 快盗BisCoの風俗嬢！！
+	DATA eraBEMANI SEXUAL DIARY 2015
+	DATA Pants Pants Revolution単独イベント「デリバーヘルスproject」
+	DATA 初めてのヒカイに、いれてみて。
+	DATA PLEASURE WITH VAGINA!!
+	DATA 作者が変態だってすぐわかったわ
+	DATA ヤりきった時の気分はサイコー！さぁ、今からセックスを始めよう！
+	DATA あの日から行為に堕ちた僕は……
+	DATA Rape*it!! Rape*it!!
+	DATA Vibration
+	DATA AM-3P -"RANKO" Special-
+	DATAFORM %称号%%称号:1%
+	DATA 男子高生のメスイキ、再び！！
+	DATA きっとシコれる！腰はモット動く！
+	DATA タチとネコとカプ厨の夢
+	DATA eraBEMANIは何故大おっぱいしたのか
+	DATA The Rise of a New eraBEMANI
+	DATA エクラルオーガズムフェスティバル
+	DATA Emuera / P●N meets EDM!
+	DATA あなたの好きな子、見つかります。
+	DATA 人気クリエイターの新たな口上を体感せよ！
+	DATA ひとつひとつのセーブデータに、物語がある。
+	DATA ペニスバンド挿入シミュレーションの爽快感がパワーアップ！
+	DATA 口上シノバズ伝
+	DATA 犯っちゃうよぉ～☆
+	DATA 今日こそ俺たちは童貞卒業します！！ウオオオオーーーーッッ！！
+	DATA ジャガー人間の受精
+	DATA ECCHIDANAA
+	DATA 精通！しこしこライン！
+	DATA 少年ニップルズ
+	DATA いつでも%CALLNAME:MASTER%あいらびゅー
+	DATA 超新星eraBEMANI、世界を濡らす！
+	DATA うおぁー！これはこれは大先パイ！おひとつよろしくパイズリお願いしまぁ～す！
+	DATA EROISM 440
+	DATA 深まる愛情が 新たな嫁を紡ぎ出す
+	DATA 自慰とは想像 自慰とは爽快
+	DATA 賢者タイムの扉
+	DATA ゼッチョーグリモワール
+	DATA 奇跡的な技巧が織り成すヘヴンリーな快感を体感せよ
+	DATA かわいくて最高に新しいキャラCSV登場！
+	DATA 世界のすべてが…性的（エロティック）になる。
+	DATA 君の棲む襠。
+	DATA わたしですまたする？
+	DATA BEMANI Samen Timpo "謎の精力"
+	DATA ペニスバンドでメスを食べるのは大変なこと。
+	DATA 烈風刀のメスイキ野菜農園
+	DATA ワタシチンコワタスカラァ
+	DATA Sikkusu9 -Clitoris-
+	DATA エコ自慰 伝えてイきたい
+	DATA Show me your penis
+	DATA 圧・倒・的・背・徳・感
+	DATA FUCK女
+	DATA S字を超えたその先へ
+	DATA eraBEMANIをプレイするときは部屋を明るくして画面から離れてプレイしてください
+	DATA New EraBEMANI
+	DATA 十二星座の性癖
+	DATA ？？？？に入る言葉を解明せよ ママ→ナモマ→竿コキ→？？？
+	DATA イロハとリリスのアダルト研究活動
+	DATA なるがちゃんなぎに色々えろい目にあわされる話
+	DATA 人間共よ、聞いてくれ。狂ったネズミの喘ぎ声を
+	DATA ひなビタ♪ Sweet Sex Collection
+	DATA 遊んじゃいなよ、禁断の貶ゲー
+	DATA 処女膜を切り開く新感覚貶ゲー
+	DATA ニンゲンどもーッ！新しい調教対象が追加されたぞ！
+	DATA 反発刻印がトップギアだぜ！！
+	DATA eraBEMANI第1話「青・春・経・営」
+	DATA eraBEMANI第2話「調教者はあくまで悪いやつ！？」
+	DATA eraBEMANI第3話「性癖ガールドロップ」
+	DATA eraBEMANI第4話「恐怖の殺人博物館」
+	DATA 淫乱共と同じ部屋に居られるか！俺はゲーセンの様子を見に行くからな！
+ENDDATA
+
+@CSV再整形
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC 出力数
+
+PRINTL 旧バージョンのeraOriginで作成されたCSVを最新版用に再整形します
+PRINTL CSV/Charaフォルダ内の全てのキャラのCSVがEmueraと同じフォルダに出力されます
+PRINTL 出力後はそのままフォルダ内にコピー、上書きで使用できます
+PRINTL 再整形を行いますか？
+PRINTL [0] - はい
+PRINTL [1] - いいえ
+CALL INPUTF, 0, 1
+SIF RESULT == 1
+	RETURN
+
+FOR LCOUNT, 0, 10000
+	IF EXISTCSV(LCOUNT)
+		CALL CHARA_ADD, LCOUNT
+		CALL CSV出力, 1
+		DELCHARA TARGET
+		出力数++
+		SIF 出力数%30 == 0
+			AWAIT
+	ENDIF
+NEXT
+
+

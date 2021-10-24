@@ -1,0 +1,230 @@
+﻿;-------------------------------------------------
+;プレゼント
+;-------------------------------------------------
+@USERCOM_ABLE_プレゼント, ARG
+#FUNCTION
+;ゲーセンに居る場合はできない
+コマンド実行条件 += "ゲーセンでは実行不可/"
+SIF TEQUIP:ゲームセンター
+	COMRESULT = 0
+;奴隷が恋慕か親愛で実行者が主人でないとダメ
+コマンド実行条件 += "[恋慕][親愛]かつ実行者が主人じゃないと実行できない/"
+SIF FALLTYPE(TARGET) != 1 || PLAYER != MASTER
+	COMRESULT = 0
+;拘束中はダメ
+コマンド実行条件 += "拘束中は実行できない/"
+SIF TEQUIP:アイマスク || TEQUIP:縄 || TEQUIP:ボールギャグ || TEQUIP:触手
+	COMRESULT = 0
+;アニマルだと無理
+コマンド実行条件 += "対象が[アニマル]の場合は実行できない/"
+SIF TALENT:アニマル
+	COMRESULT = 0
+
+RETURNF COMRESULT
+
+@COM_プレゼント
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC 依存度計算用
+#DIM DYNAMIC 価格
+#DIM DYNAMIC 増加量
+
+PRINTL プレゼント
+
+CALL PASELIL, @"何を贈りますか？(所持金{MONEY}＄)"
+PRINTFORML [0] スマイル(タダ)
+CALL PASELIL, @"[1] パセリカード(1,000＄)"
+CALL PASELIL, @"[2] 日用品(2,500＄)"
+CALL PASELIL, @"[3] アクセサリ(10,000＄)"
+CALL PASELIL, @"[4] 服(25,000＄)"
+CALL PASELIL, @"[5] 素敵な指輪(100,000＄)"
+CALL PASELIL, @"[6] 特別仕様のIIDX筐体(980,000＄)"
+SIF 材料判定("アルストロメリア") == 2
+	PRINTL [10] 育てたアルストロメリア
+SIF 材料判定("薔薇") == 2
+	PRINTL [11] 育てた薔薇
+PRINTFORML [100] やっぱりやめる
+
+DO
+	SIF ISSKIP()
+		BREAK
+	INPUT
+	SELECTCASE RESULT
+		CASE 1
+			価格 = 1000
+		CASE 2
+			価格 = 2500
+		CASE 3
+			価格 = 10000
+		CASE 4
+			価格 = 25000
+		CASE 5
+			価格 = 100000
+		CASE 6
+			価格 = 980000
+		CASE 10
+			IF 材料判定("アルストロメリア") == 2
+				RESULT = 10
+				BREAK
+			ELSE
+				CONTINUE
+			ENDIF
+		CASE 11
+			IF 材料判定("薔薇") == 2
+				RESULT = 11
+				BREAK
+			ELSE
+				CONTINUE
+			ENDIF
+	ENDSELECT
+
+	IF MONEY < 価格
+		PRINTW 所持金が足りません
+		RESTART
+	ENDIF
+LOOP LOOPRES(0, 1, 2, 3, 4, 5, 6, 100)
+
+SELECTCASE RESULT
+	CASE 0
+		;スマイルをプレゼント
+	CASE 1
+		;パセリカード(1000P)をプレゼント
+		MONEY -= 1000
+	CASE 2
+		;日用品をプレゼント
+		MONEY -= 2500
+	CASE 3
+		;アクセサリをプレゼント
+		MONEY -= 10000
+	CASE 4
+		;服をプレゼント
+		MONEY -= 25000
+	CASE 5
+		;素敵な指輪をプレゼント
+		MONEY -= 100000
+	CASE 6
+		;IIDX筐体をプレゼント
+		MONEY -= 980000
+	CASE 10
+		;アルストロメリアをプレゼント 栽培していたアルストロメリアは無くなる
+		FOR LCOUNT, 1, 5
+			IF プランターの作物:LCOUNT == "アルストロメリア"
+				プランターの作物:LCOUNT =
+				BREAK
+			ENDIF
+		NEXT
+	CASE 11
+		;薔薇をプレゼント 栽培していた薔薇は無くなる
+		FOR LCOUNT, 1, 5
+			IF プランターの作物:LCOUNT == "薔薇"
+				プランターの作物:LCOUNT =
+				BREAK
+			ENDIF
+		NEXT
+	CASE 100
+		PRINTFORMW プレゼントを渡すのを止めました
+		RETURN 0
+ENDSELECT
+
+TFLAG:プレゼント = RESULT
+
+CALL KOJO_MESSAGE_COM
+
+;-------------------------------------------------
+;ソース追加処理
+;-------------------------------------------------
+;消費体力、気力
+LOSEBASE:体力 += 10
+LOSEBASE:気力 += 20
+
+SELECTCASE TFLAG:プレゼント
+	CASE 0
+		SOURCE:情愛 = 300
+		SOURCE:恭順 = 1000
+	CASE 1
+		SOURCE:情愛 = 500
+		SOURCE:恭順 = 1500
+	CASE 2
+		SOURCE:情愛 = 1000
+		SOURCE:恭順 = 2500
+	CASE 3
+		SOURCE:情愛 = 2000
+		SOURCE:恭順 = 3500
+	CASE 4
+		SOURCE:情愛 = 2500
+		SOURCE:恭順 = 5000
+	CASE 5
+		IF TALENT:親愛
+			SOURCE:情愛 = 10000
+			SOURCE:恭順 = 15000
+		ELSE
+			SOURCE:情愛 = 5000
+			SOURCE:恭順 = 8000
+		ENDIF
+	CASE 6
+		SOURCE:恐怖 = 3000
+		SOURCE:逸脱 = 5000
+	CASE 10, 11
+		IF TALENT:親愛
+			SOURCE:情愛 = 5000
+			SOURCE:恭順 = 10000
+		ELSE
+			SOURCE:情愛 = 3000
+			SOURCE:恭順 = 5000
+		ENDIF
+ENDSELECT
+
+;愛情経験
+SELECTCASE TFLAG:プレゼント
+	CASE 0
+		増加量 = 1
+	CASE 1
+		増加量 = 5
+	CASE 2
+		増加量 = 10
+	CASE 3
+		増加量 = 15
+	CASE 4
+		増加量 = 20
+	CASE 5
+		IF TALENT:親愛
+			増加量 = 50
+		ELSE
+			増加量 = 25
+		ENDIF
+	CASE 6
+		IF CFLAG:ありえないものをプレゼントされた経験 == 0
+			PRINTL 異常経験+3
+			EXP:異常経験 += 3
+		ENDIF
+		CFLAG:ありえないものをプレゼントされた経験++
+	CASE 10, 11
+		増加量 = 10
+ENDSELECT
+
+SIF TFLAG:プレゼント != 6
+	CALL EXPUP, "愛情経験", 増加量
+
+;-------------------------------------------------
+;絶頂チェック
+;-------------------------------------------------
+CALL SOURCE_CHECK_CVAB
+
+;-------------------------------------------------
+;射精チェック
+;-------------------------------------------------
+CALL SAMEN_CHECK_T, 0
+
+CALL SAMEN_SHOOT_T, 0, NOWEX:射精
+
+SELECTCASE TFLAG:プレゼント
+	CASE 1 TO 5
+		依存度計算用 = TFLAG:プレゼント
+	CASE 10, 11
+		依存度計算用 = 10
+ENDSELECT
+
+;依存度補正値
+TFLAG:依存度補正 += 依存度計算用
+
+RETURN 1
+

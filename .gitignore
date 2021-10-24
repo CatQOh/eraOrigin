@@ -1,4 +1,4 @@
-emuera.config
+﻿emuera.config
 *.sav
 *.log
 *.lnk
@@ -7,5 +7,7 @@ debug/
 macro.txt
 *.dat
 CSV/Chara/*
-!CSV/Chara0_���Ȃ�.csv
+!CSV/Chara0_あなた.csv
+ERB/口上/*
+!ERB/口上/口上制御.ERB
 

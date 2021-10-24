@@ -4,7 +4,11 @@
 @USERCOM_ABLE_クンニ, ARG
 #FUNCTION
 #DIM DYNAMIC LCOUNT
+コマンド実行条件 += "ゲーセンではトイレじゃないと実行できない/"
+SIF TEQUIP:ゲームセンター && !TEQUIP:トイレ
+	COMRESULT = 0
 ;性器が汚れている場合（愛液、母乳の汚れ以外）
+コマンド実行条件 += "性器が汚れていると実行できない(素質[汚れ無視]なら可)/"
 FOR LCOUNT, 0, 8
 	IF GETBIT(STAIN:ヴァギナ, LCOUNT)
 		SELECTCASE LCOUNT
@@ -15,54 +19,32 @@ FOR LCOUNT, 0, 8
 					CASE MASTER
 						;汚れ無視を持っていない場合はクンニできない
 						SIF !TALENT:MASTER:汚れ無視
-							RETURNF 0
+							COMRESULT = 0
 					;助手
 					CASE ASSI
 						;汚臭敏感で従順3以下の場合クンニはできない（汚れ無視なら可能）
 						SIF ABL:ASSI:従順 <= 3 && TALENT:ASSI:汚臭敏感 && !TALENT:ASSI:汚れ無視
-							RETURNF 0
+							COMRESULT = 0
 				ENDSELECT
 				BREAK
 		ENDSELECT
 	ENDIF
 NEXT
 
-;ペニスバンド装着中はダメ
+コマンド実行条件 += "対象がペニスバンド装着中は実行不可/"
 SIF TEQUIP:ペニスバンド
-	RETURNF 0
-;猫舌の調教者の場合は技巧Lv2以上必要
+	COMRESULT = 0
+コマンド実行条件 += "実行者が[猫舌]持ちの場合は技巧2以上必要/"
 SIF TALENT:PLAYER:猫舌 && ABL:PLAYER:技巧 < 2
-	RETURNF 0
+	COMRESULT = 0
 ;対象がヴァギナ無いとダメ
+コマンド実行条件 += "対象に女性器が必要/"
 SIF !VAGINA(TARGET)
-	RETURNF 0
+	COMRESULT = 0
 
-COMRESULT = 1
-RETURNF 1
+RETURNF COMRESULT
 
 @COM_クンニ
-;-------------------------------------------------
-;特殊派生処理
-;-------------------------------------------------
-;前回と今回の調教者が同じで、縄とボールギャグを使ってない
-IF PLAYER == TFLAG:前コマンド実行者 && !TEQUIP:縄 && !TEQUIP:ボールギャグ
-	;前コマンド
-	SELECTCASE PREVCOMS
-		;フェラチオ、クンニさせる、シックスナインだとシックスナインに
-		CASE "フェラチオ", "クンニさせる", "シックスナイン"
-			SIF USERCOM_ABLE_シックスナイン()
-				JUMP COM_シックスナイン
-		;前回の調教がパイズリか縦パイズリかパイズリフェラか69パイズリだと69パイズリに
-		CASE "パイズリ", "縦パイズリ", "パイズリフェラ", "69パイズリ"
-			SIF USERCOM_ABLE_69パイズリ()
-				JUMP COM_69パイズリ
-	ENDSELECT
-ENDIF
-
-;羞恥プレイ中は岩清水に
-SIF TEQUIP:羞恥プレイ
-	JUMP COM_岩清水
-
 PRINTL クンニ
 CALL KOJO_MESSAGE_COM
 
@@ -129,6 +111,7 @@ CALL EXPUP_BASE, 2, 1
 SIF TALENT:PLAYER:猫舌
 	CALL EXPUP, "嗜虐快楽経験", 1, PLAYER
 
+CALL 魔力回復, 3, PLAYER
 CALL 獣人催淫, 1, PLAYER
 
 RETURN 1

@@ -1,0 +1,780 @@
+﻿;---------------------------------------------------------
+;射精するかのチェック
+;---------------------------------------------------------
+@SAMEN_CHECK_T, ARG
+#DIM DYNAMIC 射精強度
+
+;ARG:0内訳
+;1 = 主人の膣内に射精
+;2 = 助手の膣内に射精
+;3 = フェラ
+;4 = 被挿入
+;5 = 被アナル挿入
+;6 = 主人の腸内に射精
+;7 = 助手の腸内に射精
+;8 = 触手による強制射精
+;9 = パイズリで射精
+;0 = その他
+
+IF !PENIS(TARGET) && !TALENT:去勢済み
+	BASE:射精 = 0
+	RETURN 0
+ENDIF 
+
+;射精限界が来ている場合は射精しない 飾り値は+する
+IF CFLAG:残数 == 0
+	CFLAG:射精飾り値 += RAND:20+1
+	BASE:射精 = CFLAG:射精飾り値
+	RETURN 0
+ENDIF
+
+射精強度 = BASE:射精/MAXBASE:射精
+;射精していない
+IF 射精強度 <= 0
+	;対象の実行フラグが立ってない場合
+	IF !TFLAG:奴隷実行
+		;スキンシップはランダムなので例外
+		SIF SELECTCOMS == "スキンシップ"
+			RETURN 0
+		;MAXBASE:射精-(MAXBASE:射精/20*ABL:PLAYER:技巧)以上なら寸止め可能フラグを立てる
+		;MASBASE:射精が10000として、技巧1で9500、技巧5で7500、技巧10で5000以上
+		SIF BASE:射精 >= MAXBASE:射精-(MAXBASE:射精/20*ABL:PLAYER:技巧)
+			TFLAG:寸止め = 1
+	ENDIF
+	RETURN 0
+ENDIF
+
+IF TEQUIP:射精止め || TFLAG:ラブキャンセーブユー > 1 || TEQUIP:尿道カテーテル
+	PRINTFORML %CALLNAME:TARGET%空イキ（射精止め中）
+	PRINTL 射精管理経験+2
+	EXP:射精管理経験 += 2
+	RETURN 0
+ELSE
+	;射精止め解放してれば特殊表示
+	IF SELECTCOMS == "触手射精止め" || (SELECTCOMS == "魔法詠唱" && 詠唱魔法 == "ラブキャンセーブユー") || SELECTCOMS == "尿道カテーテル"
+		SETCOLOR 255, 255, 255
+		PRINTL 射精止め解放
+	ENDIF
+	SELECTCASE ARG
+		;奴隷→主人に中出し
+		CASE 1
+			IF TEQUIP:コンドーム && TEQUIP:搾精コンドーム
+				IF 射精強度 >= 2
+					PRINTFORML %CALLNAME:TARGET%→%CALLNAME:MASTER% 膣内大量射精（避妊具）
+				ELSE
+					PRINTFORML %CALLNAME:TARGET%→%CALLNAME:MASTER% 膣内射精（避妊具）
+				ENDIF
+			ELSE
+				IF 射精強度 >= 2
+					PRINTFORML %CALLNAME:TARGET%→%CALLNAME:MASTER% 膣内大量射精
+				ELSE
+					PRINTFORML %CALLNAME:TARGET%→%CALLNAME:MASTER% 膣内射精
+				ENDIF
+			ENDIF
+		;奴隷→助手に中出し
+		CASE 2
+			IF TEQUIP:コンドーム && TEQUIP:搾精コンドーム
+				IF 射精強度 >= 2
+					PRINTFORML %CALLNAME:TARGET%→%CALLNAME:ASSI% 膣内大量射精（避妊具）
+				ELSE
+					PRINTFORML %CALLNAME:TARGET%→%CALLNAME:ASSI% 膣内射精（避妊具）
+				ENDIF
+			ELSE
+				IF 射精強度 >= 2
+					PRINTFORML %CALLNAME:TARGET%→%CALLNAME:ASSI% 膣内大量射精
+				ELSE
+					PRINTFORML %CALLNAME:TARGET%→%CALLNAME:ASSI% 膣内射精
+				ENDIF
+			ENDIF
+		;フェラ
+		CASE 3
+			IF TEQUIP:コンドーム && TEQUIP:搾精コンドーム
+				IF 射精強度 >= 2
+					PRINTFORML %CALLNAME:TARGET%口内大量射精（避妊具）
+				ELSE
+					PRINTFORML %CALLNAME:TARGET%口内射精（避妊具）
+				ENDIF
+			ELSE
+				IF 射精強度 >= 2
+					PRINTFORML %CALLNAME:TARGET%口内大量射精
+				ELSE
+					PRINTFORML %CALLNAME:TARGET%口内射精
+				ENDIF
+			ENDIF
+		;被挿入
+		CASE 4
+			IF TEQUIP:コンドーム && TEQUIP:搾精コンドーム
+				IF 射精強度 >= 2
+					PRINTFORML %CALLNAME:TARGET%膣快楽大量射精（避妊具）
+				ELSE
+					PRINTFORML %CALLNAME:TARGET%膣快楽射精（避妊具）
+				ENDIF
+			ELSE
+				IF 射精強度 >= 2
+					PRINTFORML %CALLNAME:TARGET%膣快楽大量射精
+				ELSE
+					PRINTFORML %CALLNAME:TARGET%膣快楽射精
+				ENDIF
+			ENDIF
+		;被アナル挿入
+		CASE 5
+			SELECTCASE SEX(TARGET)
+				;男
+				CASE 1
+					IF TEQUIP:コンドーム && TEQUIP:搾精コンドーム
+						IF 射精強度 >= 2
+							PRINTFORML %CALLNAME:TARGET%前立腺大量射精（避妊具）
+						ELSE
+							PRINTFORML %CALLNAME:TARGET%前立腺射精（避妊具）
+						ENDIF
+					ELSE
+						IF 射精強度 >= 2
+							PRINTFORML %CALLNAME:TARGET%前立腺大量射精
+						ELSE
+							PRINTFORML %CALLNAME:TARGET%前立腺射精
+						ENDIF
+					ENDIF
+				;女
+				CASE 2
+					IF TEQUIP:コンドーム && TEQUIP:搾精コンドーム
+						IF 射精強度 >= 2
+							PRINTFORML %CALLNAME:TARGET%アナル快楽大量射精（避妊具）
+						ELSE
+							PRINTFORML %CALLNAME:TARGET%アナル快楽射精（避妊具）
+						ENDIF
+					ELSE
+						IF 射精強度 >= 2
+							PRINTFORML %CALLNAME:TARGET%アナル快楽大量射精
+						ELSE
+							PRINTFORML %CALLNAME:TARGET%アナル快楽射精
+						ENDIF
+					ENDIF
+			ENDSELECT
+		;奴隷→主人にアナル中出し
+		CASE 6
+			IF TEQUIP:コンドーム && TEQUIP:搾精コンドーム
+				IF 射精強度 >= 2
+					PRINTFORML %CALLNAME:TARGET%→%CALLNAME:MASTER% 腸内大量射精（避妊具）
+				ELSE
+					PRINTFORML %CALLNAME:TARGET%→%CALLNAME:MASTER% 腸内射精（避妊具）
+				ENDIF
+			ELSE
+				IF 射精強度 >= 2
+					PRINTFORML %CALLNAME:TARGET%→%CALLNAME:MASTER% 腸内大量射精
+				ELSE
+					PRINTFORML %CALLNAME:TARGET%→%CALLNAME:MASTER% 腸内射精
+				ENDIF
+			ENDIF
+		;奴隷→助手にアナル中出し
+		CASE 7
+			IF TEQUIP:コンドーム && TEQUIP:搾精コンドーム
+				IF 射精強度 >= 2
+					PRINTFORML %CALLNAME:TARGET%→%CALLNAME:ASSI% 腸内大量射精（避妊具）
+				ELSE
+					PRINTFORML %CALLNAME:TARGET%→%CALLNAME:ASSI% 腸内射精（避妊具）
+				ENDIF
+			ELSE
+				IF 射精強度 >= 2
+					PRINTFORML %CALLNAME:TARGET%→%CALLNAME:ASSI% 腸内大量射精
+				ELSE
+					PRINTFORML %CALLNAME:TARGET%→%CALLNAME:ASSI% 腸内射精
+				ENDIF
+			ENDIF
+		;触手による強制射精
+		CASE 8
+			PRINTFORML %CALLNAME:TARGET%強制射精
+		;その他
+		CASEELSE
+			IF TEQUIP:搾精器
+				IF 射精強度 >= 2
+					PRINTFORML %CALLNAME:TARGET%大量搾精
+				ELSE
+					PRINTFORML %CALLNAME:TARGET%搾精
+				ENDIF
+			ELSEIF TEQUIP:コンドーム || TEQUIP:搾精コンドーム
+				IF 射精強度 >= 2
+					PRINTFORML %CALLNAME:TARGET%大量射精（避妊具）
+				ELSE
+					PRINTFORML %CALLNAME:TARGET%射精（避妊具）
+				ENDIF
+			ELSE
+				IF 射精強度 >= 2
+					PRINTFORML %CALLNAME:TARGET%大量射精
+				ELSE
+					PRINTFORML %CALLNAME:TARGET%射精
+				ENDIF
+			ENDIF
+	ENDSELECT
+
+	NOWEX:射精 = 射精強度
+
+	;射精強度を表示
+	SIF 射精強度 >= 3
+		PRINTFORML 射精快感×{射精強度}
+	
+	RESETCOLOR
+
+	;実績:性転換、もしくはふたなり化しためうとまり花をオナホで射精させる
+	IF TEQUIP:オナホール && !TEQUIP:コンドーム && !TEQUIP:搾精コンドーム
+		SELECTCASE CHARANAMEF(TARGET)
+			CASE "芽兎 めう"
+				SETBIT オナホパフェ, 0
+			CASE "山形 まり花"
+				SETBIT オナホパフェ, 1
+		ENDSELECT
+		SIF GETBIT(オナホパフェ, 0) && GETBIT(オナホパフェ, 1)
+			CALL 実績解除, "オナホパフェだよ☆ONP"
+	ENDIF
+
+	RETURN BASE:射精 / MAXBASE:射精
+ENDIF
+
+@SAMEN_SHOOT_T, ARG, 射精量, ARG:2 = -1
+#DIM DYNAMIC 射精量
+#DIM DYNAMIC 計算用射精量
+#DIM DYNAMIC 魔力回復量
+
+;ARG:0 = 射精先
+;ARG:1 = 射精量
+;ARG:2 = 射精されるキャラ
+SIF ARG:2 == -1
+	ARG:2 = PLAYER
+SIF 射精量 <= 0
+	RETURN 0
+
+計算用射精量 = LIMIT(射精量, 1, 10)
+
+;ARG:0内訳
+;1 = 主人の膣内に射精
+;2 = 助手の膣内に射精
+;3 = フェラ
+;4 = 被挿入
+;5 = 被アナル挿入
+;6 = 主人の腸内に射精
+;7 = 助手の腸内に射精
+;8 = 触手による強制射精
+;9 = パイズリで射精
+;0 = その他
+
+SELECTCASE ARG
+	;奴隷→主人に中出し
+	CASE 1
+		IF !TEQUIP:コンドーム && !TEQUIP:搾精コンドーム
+			SETBIT TFLAG:中出し, 4
+			PRINTFORML 膣内射精経験+{計算用射精量}（%CALLNAME:MASTER%）
+			EXP:MASTER:膣射経験 += 計算用射精量
+			PREG:4++
+			中出し回数:(NO:MASTER)++
+			中出され回数:MASTER:(NO:TARGET)++
+			CFLAG:主人への膣射経験++
+			;獣人、獣による催淫
+			SELECTCASE CSTR:種族
+				CASE "獣人", "獣"
+					CFLAG:MASTER:残数 += ((CFLAG:MASTER:媚薬%5)+計算用射精量)/5
+					CFLAG:MASTER:媚薬 += 計算用射精量
+			ENDSELECT
+		ENDIF
+	;奴隷→助手に中出し
+	CASE 2
+		IF !TEQUIP:コンドーム && !TEQUIP:搾精コンドーム
+			SETBIT TFLAG:中出し, 2
+			PRINTFORML 膣内射精経験+{計算用射精量}（%CALLNAME:ASSI%）
+			EXP:ASSI:膣射経験 += 計算用射精量
+			PREG:ASSI:2++
+			中出し回数:(NO:ASSI)++
+			中出され回数:ASSI:(NO:TARGET)++
+			CFLAG:助手への膣射経験++
+			;獣人、獣による催淫
+			SELECTCASE CSTR:種族
+				CASE "獣人", "獣"
+					CFLAG:ASSI:残数 += ((CFLAG:ASSI:媚薬%5)+計算用射精量)/5
+					CFLAG:ASSI:媚薬 += 計算用射精量
+			ENDSELECT
+		ENDIF
+	;フェラ
+	CASE 3
+		SIF PLAYER == MASTER
+			CFLAG:口で射精した経験++
+		IF !TEQUIP:コンドーム && !TEQUIP:搾精コンドーム
+			IF PLAYER == MASTER
+				SETBIT TFLAG:口内射精, 2
+			ELSEIF PLAYER == ASSI
+				SETBIT TFLAG:口内射精, 1
+			ENDIF
+			;獣人、獣による催淫
+			SELECTCASE CSTR:種族
+				CASE "獣人", "獣"
+					CFLAG:PLAYER:残数 += ((CFLAG:PLAYER:媚薬%5)+計算用射精量)/5
+					CFLAG:PLAYER:媚薬 += 計算用射精量
+			ENDSELECT
+		ENDIF
+	;被挿入
+	CASE 4
+		SIF PLAYER == MASTER
+			CFLAG:膣を責められて射精した経験++
+	;被アナル挿入
+	CASE 5
+		SIF PLAYER == MASTER
+			CFLAG:アナルを責められて射精した経験++
+	;奴隷→主人にアナル中出し
+	CASE 6
+		IF !TEQUIP:コンドーム && !TEQUIP:搾精コンドーム
+			SETBIT TFLAG:中出し, 5
+			CFLAG:主人への腸射経験++
+			;獣人、獣による催淫
+			SELECTCASE CSTR:種族
+				CASE "獣人", "獣"
+					CFLAG:MASTER:残数 += ((CFLAG:MASTER:媚薬%5)+計算用射精量)/5
+					CFLAG:MASTER:媚薬 += 計算用射精量
+			ENDSELECT
+		ENDIF
+	;奴隷→助手にアナル中出し
+	CASE 7
+		IF !TEQUIP:コンドーム && !TEQUIP:搾精コンドーム
+			SETBIT TFLAG:中出し, 3
+			CFLAG:助手への腸射経験++
+			;獣人、獣による催淫
+			SELECTCASE CSTR:種族
+				CASE "獣人", "獣"
+					CFLAG:ASSI:残数 += ((CFLAG:ASSI:媚薬%5)+計算用射精量)/5
+					CFLAG:ASSI:媚薬 += 計算用射精量
+			ENDSELECT
+		ENDIF
+	;触手による強制射精
+	CASE 8
+		PRINTL 射精管理経験+3
+		EXP:射精管理経験 += 3
+	;その他
+	CASEELSE
+ENDSELECT
+
+SELECTCASE SELECTCOMS
+	CASE "キスする"
+		CFLAG:キスで射精した経験++
+	CASE "兜合わせ"
+		SIF NOWEX:MASTER:射精
+			CFLAG:兜合わせで一緒に射精した経験++
+	CASE "正常位", "後背位", "騎乗位", "背面座位", "対面座位"
+		SIF PLAYER == MASTER
+			CFLAG:犯されて射精した経験++
+	CASE "正常位アナル", "後背位アナル", "騎乗位アナル", "背面座位アナル", "対面座位アナル"
+		SIF PLAYER == MASTER
+			CFLAG:アナルを犯されて射精した経験++
+	CASE "ペットに舐めさせる"
+		CFLAG:動物に舐められて射精した経験++
+ENDSELECT
+SIF 撮影中()
+	CFLAG:射精を撮影された経験++
+IF TEQUIP:オナホール
+	IF TEQUIP:触手
+		CFLAG:触手射精経験++
+	ELSE
+		CFLAG:オナホで射精した経験++
+	ENDIF
+ENDIF
+SIF SEX(TARGET) == 1 && (TEQUIP:アナルバイブ || TEQUIP:アナルビーズ || TEQUIP:アナル電極 || TEQUIP:浣腸器 || TEQUIP:Ａ異物)
+	CFLAG:道具で前立腺射精経験++
+SIF TEQUIP:コンドーム
+	CFLAG:避妊具射精経験++
+SIF TEQUIP:搾精コンドーム
+	CFLAG:搾精経験++
+SIF TEQUIP:野外プレイ
+	CFLAG:野外で射精した経験++
+
+;経験増加
+IF EXP:射精経験 == 0 && SEX(TARGET) == 2
+	PRINTFORMW %CALLNAME:TARGET%は女性には知り得ない射精の快感を味わってしまった(異常経験+1)
+	EXP:異常経験++
+ENDIF
+
+IF ARG != 8
+	PRINTFORML 精液経験+{計算用射精量}（%CALLNAME:(ARG:2)%）
+	EXP:(ARG:2):精液経験 += 計算用射精量
+ENDIF
+
+PRINTFORML 射精経験+{計算用射精量}
+PRINTFORML 絶頂経験+{計算用射精量}
+EXP:射精経験 += 計算用射精量
+EXP:絶頂経験 += 計算用射精量
+
+IF CFLAG:貞操帯
+	PRINTFORML 射精管理経験+{CFLAG:貞操帯}
+	EXP:射精管理経験 += CFLAG:貞操帯
+ENDIF
+
+;精液汚れの設定
+SETBIT STAIN:ペニス, 2
+
+;射精カウント
+NOWEX:射精 = 射精量
+EX:射精++
+
+BASE:射精 -= MAXBASE:射精*射精量
+SIF BASE:射精 >= MAXBASE:射精
+	BASE:射精 = MAXBASE:射精-1
+SIF BASE:射精 < 0
+	BASE:射精 = 0
+
+;インキュバスなら消費1/5
+IF TALENT:インキュバス
+	LOSEBASE:体力 += 4*LIMIT(射精量, 1, 2)
+	LOSEBASE:気力 += 6*LIMIT(射精量, 1, 2)
+ELSE
+	LOSEBASE:体力 += 20*LIMIT(射精量, 1, 2)
+	LOSEBASE:気力 += 30*LIMIT(射精量, 1, 2)
+ENDIF
+
+;ビデオ撮影時はボーナスカウント
+SIF TEQUIP:ビデオカメラ
+	VIDEOBONUS:4++
+
+;魔力回復
+IF !TEQUIP:コンドーム && !TEQUIP:搾精コンドーム && !TEQUIP:搾精器
+	SELECTCASE ARG
+		;主人に中出し
+		CASE 1, 6
+			魔力回復量 = MAXBASE:MASTER:魔力/30
+			SELECTCASE CSTR:種族
+				CASE "悪魔", "神", "天使"
+					TIMES 魔力回復量, 1.10
+			ENDSELECT
+			SIF TALENT:魔術師
+				TIMES 魔力回復量, 1.10
+			魔力回復量 += 魔力回復量*LIMIT(ABL:MASTER:精液中毒, 0, 10)/10
+			BASE:MASTER:魔力 = LIMIT(BASE:MASTER:魔力+魔力回復量, 0, MAXBASE:MASTER:魔力)
+			;スライムなら感染する
+			SIF TALENT:スライム
+				CFLAG:MASTER:スライム度 += RAND(3, 6)
+			SIF TALENT:溶ける快
+				CFLAG:MASTER:スライム度 += RAND(6, 12)
+		;助手に中出し
+		CASE 2, 7
+			魔力回復量 = MAXBASE:ASSI:魔力/30
+			SELECTCASE CSTR:種族
+				CASE "悪魔", "神", "天使"
+					TIMES 魔力回復量, 1.10
+			ENDSELECT
+			SIF TALENT:魔術師
+				TIMES 魔力回復量, 1.10
+			魔力回復量 += 魔力回復量*LIMIT(ABL:ASSI:精液中毒, 0, 10)/10
+			BASE:ASSI:魔力 = LIMIT(BASE:ASSI:魔力+魔力回復量, 0, MAXBASE:ASSI:魔力)
+			;スライムなら感染する
+			SIF TALENT:スライム
+				CFLAG:ASSI:スライム度 += RAND(3, 6)
+			SIF TALENT:溶ける快
+				CFLAG:ASSI:スライム度 += RAND(6, 12)
+		;口、パイズリ
+		CASE 3, 9
+			魔力回復量 += MAXBASE:PLAYER:魔力/50
+			SELECTCASE CSTR:種族
+				CASE "悪魔", "神", "天使"
+					TIMES 魔力回復量, 1.10
+			ENDSELECT
+			SIF TALENT:魔術師
+				TIMES 魔力回復量, 1.10
+			魔力回復量 += 魔力回復量*LIMIT(ABL:PLAYER:精液中毒, 0, 10)/10
+			BASE:PLAYER:魔力 = LIMIT(BASE:PLAYER:魔力+魔力回復量, 0, MAXBASE:PLAYER:魔力)
+			;スライムなら感染する
+			SIF TALENT:スライム
+				CFLAG:PLAYER:スライム度++
+			SIF TALENT:溶ける快
+				CFLAG:PLAYER:スライム度 += RAND(3, 6)
+		CASEELSE
+			魔力回復量 += MAXBASE:PLAYER:魔力/100
+			SELECTCASE CSTR:種族
+				CASE "悪魔", "神", "天使"
+					TIMES 魔力回復量, 1.10
+			ENDSELECT
+			SIF TALENT:魔術師
+				TIMES 魔力回復量, 1.10
+			魔力回復量 += 魔力回復量*LIMIT(ABL:PLAYER:精液中毒, 0, 10)/10
+			BASE:PLAYER:魔力 = LIMIT(BASE:PLAYER:魔力+魔力回復量, 0, MAXBASE:PLAYER:魔力)
+	ENDSELECT
+ENDIF
+
+
+;ソース追加
+;射精経験多いほど恥ずかしくなくなって気持ち良くなる
+SELECTCASE GETEXPLV(EXP:射精経験, 5)
+	CASE 0
+		SOURCE:露出 += 5000 * ABL:欲望
+		SOURCE:屈従 += 150 * ABL:欲望
+		SOURCE:不潔 += 400 * ABL:欲望
+	CASE 1
+		SOURCE:露出 += 2500 * ABL:欲望
+		SOURCE:屈従 += 250 * ABL:欲望
+		SOURCE:不潔 += 300 * ABL:欲望
+	CASE 2
+		SOURCE:露出 += 1500 * ABL:欲望
+		SOURCE:屈従 += 400 * ABL:欲望
+		SOURCE:不潔 += 250 * ABL:欲望
+	CASE 3
+		SOURCE:露出 += 700 * ABL:欲望
+		SOURCE:屈従 += 700 * ABL:欲望
+		SOURCE:不潔 += 200 * ABL:欲望
+	CASE 4
+		SOURCE:露出 += 500 * ABL:欲望
+		SOURCE:屈従 += 1500 * ABL:欲望
+		SOURCE:不潔 += 150 * ABL:欲望
+	CASE 5
+		SOURCE:露出 += 150 * ABL:欲望
+		SOURCE:屈従 += 2500 * ABL:欲望
+		SOURCE:不潔 += 100 * ABL:欲望
+ENDSELECT
+
+SOURCE:中毒 += 500*射精量
+SOURCE:液体 += 100*射精量
+
+;インキュバスなら効果大&追加ソース
+SOURCE:恭順 += 300*射精量
+SOURCE:欲情 += 300*射精量
+SOURCE:中毒 += 500*射精量
+
+;射精後は再装填の時間を設ける ミッドナイトスペシャル使用時は賢者タイム無し
+IF !CFLAG:ミッドナイトスペシャル
+	SELECTCASE 射精量
+		CASE 1
+			CFLAG:賢者タイム += 3
+		CASE IS >= 2
+			CFLAG:賢者タイム += 5
+	ENDSELECT
+	;インキュバスだと-1
+	SIF TALENT:インキュバス
+		CFLAG:賢者タイム--
+	SIF 特質("精力強化")
+		CFLAG:賢者タイム -= 特質("精力強化")/10
+	SIF CFLAG:賢者タイム < 0
+		CFLAG:賢者タイム = 0
+ENDIF
+CFLAG:残数--
+;ミッドナイトスペシャル使用時は無尽蔵
+SIF CFLAG:ミッドナイトスペシャル
+	CFLAG:残数++
+;搾精器
+SIF TEQUIP:搾精器
+	TFLAG:搾精量 += 射精量
+
+IF TEQUIP:コンドーム || TEQUIP:搾精コンドーム
+	SIF TEQUIP:コンドーム
+		TFLAG:使用済み避妊具 = 3
+	SIF TEQUIP:搾精コンドーム
+		TFLAG:搾精量 += 射精量
+	TEQUIP:コンドーム = 0
+	SIF !TEQUIP:触手
+		TEQUIP:搾精コンドーム = 0
+	SETBIT TFLAG:避妊具射精, 2
+	;コンドーム自動装着処理
+	IF GETBIT(FLAG:避妊具設定, 2)
+		IF ITEM:コンドーム > 0
+			ITEM:コンドーム--
+			TEQUIP:コンドーム = 1
+		ENDIF
+		IF ITEM:コンドーム == 0
+			PRINTL <コンドームが無くなったので、自動装着を解除します>
+			CLEARBIT FLAG:避妊具設定, 2
+		ENDIF
+	ELSEIF GETBIT(FLAG:避妊具設定, 3) && !TEQUIP:触手
+		IF ITEM:搾精コンドーム > 0
+			ITEM:搾精コンドーム--
+			TEQUIP:搾精コンドーム = 1
+		ENDIF
+		IF ITEM:搾精コンドーム == 0
+			PRINTL <搾精コンドームが無くなったので、自動装着を解除します>
+			CLEARBIT FLAG:避妊具設定, 3
+		ENDIF
+	ENDIF
+ENDIF
+
+;天使による感度アップ
+SIF CSTR:種族 == "天使"
+	TFLAG:天使の感度ボーナス++
+
+;-------------------------------------------------
+;調教対象の噴乳チェック
+;-------------------------------------------------
+@TARGET_MILK_CHECK
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC 増加量
+#DIM DYNAMIC 噴乳強度
+#DIM DYNAMIC 魔力回復量
+#DIM DYNAMIC 人数
+
+SIF !TALENT:母乳体質
+	RETURN 0
+
+増加量 = UP:快Ｃ/5 + UP:快Ｖ/5 + UP:快Ａ/5 + UP:快Ｂ*3
+
+;自制心
+SIF TALENT:自制心
+	増加量 /= 2
+
+;快感に素直
+SIF TALENT:快感に素直
+	TIMES 増加量 , 1.20
+
+;快感の否定（淫乱、娼婦で無効）
+SIF TALENT:快感の否定 && (!TALENT:淫乱 && !TALENT:娼婦)
+	TIMES 増加量 , 0.80
+
+;B敏感
+SIF TALENT:Ｂ敏感
+	TIMES 増加量 , 1.20
+
+;媚薬
+SIF CFLAG:媚薬
+	増加量 += 増加量/10*CFLAG:媚薬
+
+;調教者が幼児退行
+SIF TALENT:PLAYER:幼児／幼児退行
+	TIMES 増加量 , 1.20
+
+;調教者が幼稚
+SIF TALENT:PLAYER:幼稚
+	TIMES 増加量 , 1.20
+
+SELECTCASE TALENT:バストサイズ
+	;爆乳
+	CASE 6
+		TIMES 増加量 , 1.40
+	;巨乳、豊乳
+	CASE 4, 5
+		TIMES 増加量 , 1.20
+	;普通
+	CASE 3
+		TIMES 増加量 , 1.00
+	;貧乳
+	CASE 2
+		TIMES 増加量 , 0.80
+	;絶壁
+	CASE 1
+		TIMES 増加量 , 0.60
+ENDSELECT
+
+;噴乳中毒のレベルを見る
+SELECTCASE ABL:噴乳中毒
+	CASE 0
+		TIMES 増加量 , 1.00
+	CASE 1
+		TIMES 増加量 , 1.05
+	CASE 2
+		TIMES 増加量 , 1.10
+	CASE 3
+		TIMES 増加量 , 1.20
+	CASE 4
+		TIMES 増加量 , 1.30
+	CASE IS >= 5
+		増加量 += (増加量/10) * (ABL:噴乳中毒/2+1)
+ENDSELECT
+
+増加量 = 500 + 増加量/2
+BASE:母乳 += 増加量
+
+噴乳強度 = BASE:母乳/MAXBASE:母乳
+
+;噴乳
+IF 噴乳強度
+	LOSEBASE:体力 += 10*LIMIT(噴乳強度, 1, 3)
+	LOSEBASE:気力 += 50*LIMIT(噴乳強度, 1, 3)
+	SELECTCASE GETEXPLV(EXP:噴乳経験, 5)
+		CASE 0
+			SOURCE:露出 += 300 * 噴乳強度
+			SOURCE:屈従 += 150 * 噴乳強度
+		CASE 1
+			SOURCE:露出 += 500 * 噴乳強度
+			SOURCE:屈従 += 300 * 噴乳強度
+			SOURCE:不潔 += 100 * 噴乳強度
+		CASE 2
+			SOURCE:露出 += 700 * 噴乳強度
+			SOURCE:屈従 += 400 * 噴乳強度
+			SOURCE:不潔 += 150 * 噴乳強度
+		CASE 3
+			SOURCE:露出 += 1500 * 噴乳強度
+			SOURCE:屈従 += 700 * 噴乳強度
+			SOURCE:不潔 += 200 * 噴乳強度
+		CASE 4
+			SOURCE:露出 += 2500 * 噴乳強度
+			SOURCE:屈従 += 1500 * 噴乳強度
+			SOURCE:不潔 += 250 * 噴乳強度
+		CASE 5
+			SOURCE:露出 += 5000 * 噴乳強度
+			SOURCE:屈従 += 2500 * 噴乳強度
+			SOURCE:不潔 += 300 * 噴乳強度
+	ENDSELECT
+
+	IF 噴乳強度 >= 2
+		PRINTFORML %CALLNAME:TARGET%大量噴乳
+	ELSE
+		PRINTFORML %CALLNAME:TARGET%噴乳
+	ENDIF
+;	PRINTFORML 噴乳経験+{噴乳強度}
+	IF !EXP:噴乳経験
+		EXP:異常経験++
+		PRINTL 異常経験+1
+	ENDIF
+	EXP:噴乳経験 += 噴乳強度
+	EXP:絶頂経験 += 噴乳強度
+	;Ｂに母乳汚れ
+	SETBIT STAIN:胸, 4
+
+	NOWEX:噴乳 = 噴乳強度
+	EX:噴乳++
+
+	BASE:母乳 -= MAXBASE:母乳*噴乳強度
+	SIF BASE:母乳 >= MAXBASE:母乳
+		BASE:母乳 = MAXBASE:母乳-1
+
+	;ビデオ撮影中はボーナスカウント
+	IF TEQUIP:ビデオカメラ
+		VIDEOBONUS:6++
+		CFLAG:噴乳を撮影された経験++
+	ENDIF
+
+	;搾乳器で母乳が集められているかチェック
+	IF TEQUIP:搾乳器
+		TFLAG:搾乳量 += 噴乳強度
+		CFLAG:搾乳された経験++
+	ELSE
+		;獣人、獣による催淫
+		SELECTCASE CSTR:種族
+			CASE "獣人", "獣"
+				CFLAG:PLAYER:残数 += ((CFLAG:PLAYER:媚薬%5)+LIMIT(噴乳強度, 1, 5))/5
+				CFLAG:PLAYER:媚薬 += LIMIT(噴乳強度, 1, 5)
+		ENDSELECT
+	ENDIF
+
+	SELECTCASE SELECTCOMS
+		CASE "母乳飲み", "授乳手コキ"
+			IF TALENT:PLAYER:魔術師
+				魔力回復量 = MAXBASE:PLAYER:魔力/40
+				SELECTCASE CSTR:種族
+					CASE "悪魔", "神", "天使"
+						TIMES 魔力回復量, 1.10
+				ENDSELECT
+				SIF TALENT:魔術師
+					TIMES 魔力回復量, 1.10
+				BASE:PLAYER:魔力 = LIMIT(BASE:PLAYER:魔力+魔力回復量, 0, MAXBASE:PLAYER:魔力)
+			ENDIF
+	ENDSELECT
+	
+	人数 = 0
+	;飲んでる場合
+	IF PLAYER == MASTER
+		SELECTCASE SELECTCOMS
+			CASE "母乳飲み", "授乳手コキ"
+				;不要なループを避けるための処理 CFLAGでやったほうがいいかもしれない
+				SIF !母乳飲んだ人数:(NO:TARGET)
+					人数 = 1
+				母乳飲んだ人数:(NO:TARGET)++
+		ENDSELECT
+	ENDIF
+	IF 人数
+		人数 = 0
+		FOR LCOUNT, 0, 10000
+			SIF 母乳飲んだ人数:LCOUNT
+				人数++
+		NEXT
+		SIF 人数 >= 10
+			CALL 実績解除, "母乳ソムリエ"
+	ENDIF
+ENDIF
+

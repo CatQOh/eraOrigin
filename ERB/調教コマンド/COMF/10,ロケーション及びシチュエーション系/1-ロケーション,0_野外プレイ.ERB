@@ -3,36 +3,60 @@
 ;-------------------------------------------------
 @USERCOM_ABLE_野外プレイ, ARG
 #FUNCTION
+#DIM DYNAMIC 条件確定
+
+;ゲーセンに居る場合はできない
+コマンド実行条件 += "ゲーセンでは実行不可/"
+SIF TEQUIP:ゲームセンター
+	COMRESULT = 0
+;上級売春中は不可
+コマンド実行条件 += "上級売春中は実行不可/"
+SIF 上級売春中
+	COMRESULT = 0
+;アイテム｢首輪｣を持っていないとダメ
+コマンド実行条件 += "アイテム[首輪]が必要/"
+SIF !ITEM:首輪
+	COMRESULT = 0
 ;解除はいつでも可能
-IF TEQUIP:野外プレイ
+SIF TEQUIP:野外プレイ && COMRESULT
+	条件確定 = 1
+
+;従順かマゾっ気が3以上ないとダメ
+コマンド実行条件 += "対象に従順LV3以上orマゾっ気LV3以上が必要/"
+SIF ABL:従順 < 3 && ABL:マゾっ気 < 3
+	COMRESULT = 0
+;対象か主人か助手が種族:ヴァンパイアで、時間が昼だとダメ
+コマンド実行条件 += "ヴァンパイアが居る場合、昼間は実行できない/"
+IF TIME == 0
+	SIF CSTR:種族 == "ヴァンパイア" || CSTR:MASTER:種族 == "ヴァンパイア" || (ASSI > 0 && CSTR:ASSI:種族 == "ヴァンパイア")
+		COMRESULT = 0
+ENDIF
+;触手調教中はダメ
+コマンド実行条件 += "触手召喚中は実行できない/"
+SIF TEQUIP:触手
+	COMRESULT = 0
+;お風呂場プレイ中はダメ
+コマンド実行条件 += "お風呂場では実行できない/"
+SIF TEQUIP:お風呂場
+	COMRESULT = 0
+;新妻プレイ中はダメ
+コマンド実行条件 += "エプロン使用中は実行できない/"
+SIF TEQUIP:エプロン
+	COMRESULT = 0
+;羞恥プレイ中はダメ
+コマンド実行条件 += "羞恥プレイ中は実行できない/"
+SIF TEQUIP:羞恥プレイ
+	COMRESULT = 0
+
+IF 条件確定
 	COMRESULT = 1
 	RETURNF 1
 ENDIF
-;従順かマゾっ気が3以上ないとダメ
-SIF ABL:従順 < 3 && ABL:マゾっ気 < 3
-	RETURNF 0
-;対象か主人か助手が種族:ヴァンパイアで、時間が昼だとダメ
-IF TIME == 0
-	SIF CSTR:種族 == "ヴァンパイア" || CSTR:MASTER:種族 == "ヴァンパイア" || (ASSI > 0 && CSTR:ASSI:種族 == "ヴァンパイア")
-		RETURNF 0
-ENDIF
-;触手調教中はダメ
-SIF TEQUIP:触手
-	RETURNF 0
-;お風呂場プレイ中はダメ
-SIF TEQUIP:お風呂場
-	RETURNF 0
-;新妻プレイ中はダメ
-SIF TEQUIP:エプロン
-	RETURNF 0
-;羞恥プレイ中はダメ
-SIF TEQUIP:羞恥プレイ
-	RETURNF 0
-
-COMRESULT = 1
-RETURNF 1
+RETURNF COMRESULT
 
 @COM_野外プレイ
+#DIM DYNAMIC 増加量
+
 PRINTL 野外プレイ
 CALL KOJO_MESSAGE_COM
 
@@ -72,6 +96,43 @@ SOURCE:恐怖 = 800
 SOURCE:露出 = 1000
 SOURCE:逸脱 = 500
 SOURCE:反感 = 1500
+
+IF SAVESTR:首輪 == "尻尾プラグ付き首輪"
+	LOSEBASE:体力 += 20
+	LOSEBASE:気力 += 20
+	
+	SOURCE:快A = 100
+	SOURCE:露出 += 200
+	SOURCE:反感 += 500
+ENDIF
+
+;-------------------------------------------------
+;射精ゲージチェック（奴隷）
+;-------------------------------------------------
+増加量 = 0
+SIF SAVESTR:首輪 == "尻尾プラグ付き首輪"
+	増加量 = 射精ゲージ計算_Ａ挿入(増加量)
+
+;ABL:調教者の技巧をみる
+増加量 += (増加量/5)*ABL:PLAYER:技巧
+
+;ABL:自慰中毒をみる
+SELECTCASE ABL:自慰中毒
+	CASE 0
+		TIMES 増加量 , 1.00
+	CASE 1
+		TIMES 増加量 , 1.10
+	CASE 2
+		TIMES 増加量 , 1.30
+	CASE 3
+		TIMES 増加量 , 1.50
+	CASE 4
+		TIMES 増加量 , 2.00
+	CASEELSE
+		増加量 += (増加量/3)*ABL:自慰中毒
+ENDSELECT
+
+CALL 射精ゲージ増加, 増加量, TARGET
 
 ;-------------------------------------------------
 ;特殊ソース処理
@@ -149,6 +210,13 @@ CALL SAMEN_SHOOT_T, 0, NOWEX:射精
 
 CALL EXPUP_BASE, 1, 3
 
+;実績:陥落済みのポチコと散歩する
+IF CHARANAMEF(TARGET) == "ポチコ" && CFLAG:陥落
+	CALL 実績解除, "「今さら首輪付けるなんて！逃げたりしないです?」"
+	;実績:気温5℃以下の日に全裸でポチコと散歩する
+	SIF FLAG:気温 <= 50 && TEQUIP:MASTER:特殊 == 0 && TEQUIP:MASTER:上半身上着 == 0 && TEQUIP:MASTER:下半身上着 == 0 && TEQUIP:MASTER:上半身下着 == 0 && TEQUIP:MASTER:下半身下着 == 0 && TEQUIP:MASTER:足元 == 0
+		CALL 実績解除, "「ご主人！？それは自殺行為です！」"
+ENDIF
 
 RETURN 1
 
@@ -156,6 +224,8 @@ RETURN 1
 ;装着継続の処理
 ;-------------------------------------------------
 @EQUIP_COM_野外プレイ
+#DIM DYNAMIC 増加量
+
 PRINTL ＜野外プレイ中＞
 
 LOSEBASE:体力 += 20
@@ -166,6 +236,39 @@ SOURCE:露出 += 300
 SOURCE:逸脱 += 800
 SOURCE:反感 += 800
 
+IF SAVESTR:首輪 == "尻尾プラグ付き首輪"
+	LOSEBASE:体力 += 20
+	
+	SOURCE:快A += 50
+	SOURCE:露出 += 200
+	SOURCE:反感 += 200
+ENDIF
+
+;-------------------------------------------------
+;射精ゲージチェック（奴隷）
+;-------------------------------------------------
+増加量 = 0
+SIF SAVESTR:首輪 == "尻尾プラグ付き首輪"
+	増加量 = 射精ゲージ計算_Ａ挿入(30)
+
+;ABL:自慰中毒をみる
+SELECTCASE ABL:自慰中毒
+	CASE 0
+		TIMES 増加量 , 1.00
+	CASE 1
+		TIMES 増加量 , 1.10
+	CASE 2
+		TIMES 増加量 , 1.30
+	CASE 3
+		TIMES 増加量 , 1.50
+	CASE 4
+		TIMES 増加量 , 2.00
+	CASEELSE
+		増加量 += (増加量/3)*ABL:自慰中毒
+ENDSELECT
+
+CALL 射精ゲージ増加, 増加量, TARGET
+
 ;-------------------------------------------------
 ;特殊ソース処理
 ;-------------------------------------------------
@@ -175,12 +278,12 @@ SIF TALENT:抑圧 || TALENT:抵抗
 
 ;苦痛を伴わないマゾっ気及びマゾの処理は先にしておく
 ;マゾっ気を見る
-LOCAL = 2000
+増加量 = 2000
 
 ;種族で補正
 SELECTCASE CSTR:種族
 	CASE "獣人", "獣"
-		LOCAL -= 1000
+		増加量 -= 1000
 	;人魚で雨だと消費を抑えられる
 	CASE "人魚"
 		SELECTCASE FLAG:天気
@@ -195,51 +298,54 @@ ENDSELECT
 
 SELECTCASE ABL:マゾっ気
 	CASE 0
-		TIMES LOCAL , 0.80
+		TIMES 増加量 , 0.80
 		SOURCE:液体 += 0
 		SOURCE:欲情 += 0
 	CASE 1
-		TIMES LOCAL , 1.00
+		TIMES 増加量 , 1.00
 		SOURCE:液体 += 20
 		SOURCE:欲情 += 30
 	CASE 2
-		TIMES LOCAL , 1.20
+		TIMES 増加量 , 1.20
 		SOURCE:液体 += 40
 		SOURCE:欲情 += 70
 	CASE 3
-		TIMES LOCAL , 1.40
+		TIMES 増加量 , 1.40
 		SOURCE:液体 += 70
 		SOURCE:欲情 += 120
 	CASE 4
-		TIMES LOCAL , 1.50
+		TIMES 増加量 , 1.50
 		SOURCE:液体 += 110
 		SOURCE:欲情 += 180
 	CASE 5
-		TIMES LOCAL , 1.70
+		TIMES 増加量 , 1.70
 		SOURCE:液体 += 150
 		SOURCE:欲情 += 250
 	CASE 6
-		TIMES LOCAL , 1.90
+		TIMES 増加量 , 1.90
 		SOURCE:液体 += 200
 		SOURCE:欲情 += 300
 	CASE 7
-		TIMES LOCAL , 2.10
+		TIMES 増加量 , 2.10
 		SOURCE:液体 += 250
 		SOURCE:欲情 += 350
 	CASE 8
-		TIMES LOCAL , 2.30
+		TIMES 増加量 , 2.30
 		SOURCE:液体 += 300
 		SOURCE:欲情 += 400
 	CASE 9
-		TIMES LOCAL , 2.50
+		TIMES 増加量 , 2.50
 		SOURCE:液体 += 350
 		SOURCE:欲情 += 450
 	CASE IS >= 10
-		TIMES LOCAL , 3.00
+		TIMES 増加量 , 3.00
 		SOURCE:液体 += 500
 		SOURCE:欲情 += 500
 ENDSELECT
-SOURCE:露出 += LOCAL
+SOURCE:露出 += 増加量
+
+SIF SAVESTR:首輪 == "尻尾プラグ付き首輪"
+	CALL EXPUP, "Ａ経験", 1
 
 RETURN 1
 

@@ -3,26 +3,46 @@
 ;-------------------------------------------------
 @USERCOM_ABLE_ニプルキャップ, ARG
 #FUNCTION
+#DIM DYNAMIC 条件確定
+
+;ゲーセンに居る場合はできない
+コマンド実行条件 += "ゲーセンでは実行不可/"
+SIF TEQUIP:ゲームセンター
+	COMRESULT = 0
+;上級売春中は不可
+コマンド実行条件 += "上級売春中は実行不可/"
+SIF 上級売春中
+	COMRESULT = 0
 ;触手調教中はダメ
+コマンド実行条件 += "触手召喚中は実行できない/"
 SIF TEQUIP:触手
-	RETURNF 0
+	COMRESULT = 0
 ;乳房が露出してないとダメ
+コマンド実行条件 += "対象の乳房が露出していないと実行できない/"
 SIF OVER_BUST(TARGET) != ""
-	RETURNF 0
+	COMRESULT = 0
 ;解除はいつでも可能
-IF TEQUIP:ニプルキャップ
+SIF TEQUIP:ニプルキャップ && COMRESULT
+	条件確定 = 1
+
+;アイテムを持っていないとダメ
+コマンド実行条件 += "アイテム[ニプルキャップ]が必要/"
+SIF ITEM:ニプルキャップ <= 0
+	COMRESULT = 0
+;胸を使ってる場合はダメ
+コマンド実行条件 += "B道具使用中は実行できない/"
+SIF Ｂ使用中(TARGET)
+	COMRESULT = 0
+;シャワー中はダメ
+コマンド実行条件 += "シャワー中は実行できない/"
+SIF TEQUIP:シャワー
+	COMRESULT = 0
+
+IF 条件確定
 	COMRESULT = 1
 	RETURNF 1
 ENDIF
-;胸を使ってる場合はダメ
-SIF Ｂ使用中(TARGET)
-	RETURNF 0
-;シャワー中はダメ
-SIF TEQUIP:シャワー
-	RETURNF 0
-
-COMRESULT = 1
-RETURNF 1
+RETURNF COMRESULT
 
 @COM_ニプルキャップ
 IF TEQUIP:触手
@@ -54,6 +74,13 @@ SOURCE:反感 = 30
 ;抑圧、抵抗持ちには、抑鬱ソース追加
 SIF TALENT:抑圧 || TALENT:抵抗
 	SOURCE:鬱屈 += 30
+
+;[衝動的]持ちは3分の1でアイテム破壊する（調教終了後に修復）
+IF ((TALENT:衝動的 && !特質("しつけ")) || (TALENT:PLAYER:衝動的 && !特質("しつけ", PLAYER))) && RAND:3 == 0 && !TEQUIP:触手
+	TFLAG:アイテム破壊 = 1
+	ITEM:ニプルキャップ = -1
+	TEQUIP:ニプルキャップ = 0
+ENDIF
 
 ;-------------------------------------------------
 ;絶頂チェック

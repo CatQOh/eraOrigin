@@ -4,7 +4,12 @@
 @USERCOM_ABLE_フェラする, ARG
 #FUNCTION
 #DIM DYNAMIC LCOUNT
+;ゲーセンに居る場合はトイレじゃないとできない
+コマンド実行条件 += "ゲーセンではトイレじゃないと実行できない/"
+SIF TEQUIP:ゲームセンター && !TEQUIP:トイレ
+	COMRESULT = 0
 ;性器が汚れている場合（精液、アナル、粘液、血、尿）
+コマンド実行条件 += "性器が汚れていると実行できない(技巧LV2以上or素質[汚れ無視]なら可)/"
 FOR LCOUNT, 0, 8
 	IF GETBIT(STAIN:ペニス, LCOUNT)
 		SELECTCASE LCOUNT
@@ -15,44 +20,33 @@ FOR LCOUNT, 0, 8
 					CASE MASTER
 						;汚れ無視じゃないと実行できない
 						SIF !TALENT:MASTER:汚れ無視 && ABL:MASTER:技巧 <= 2
-							RETURNF 0
+							COMRESULT = 0
 					;助手
 					CASE ASSI
 						;汚臭敏感で従順3以下の場合フェラはできない（汚れ無視なら可能）
 						SIF ABL:ASSI:従順 <= 3 && TALENT:ASSI:汚臭敏感 && !TALENT:ASSI:汚れ無視
-							RETURNF 0
+							COMRESULT = 0
 				ENDSELECT
 				BREAK
 		ENDSELECT
 	ENDIF
 NEXT
 ;猫舌の調教者の場合は技巧Lv2以上必要
+コマンド実行条件 += "実行者が[猫舌]持ちの場合は技巧LV2以上必要/"
 SIF TALENT:PLAYER:猫舌 && ABL:PLAYER:技巧 < 2
-	RETURNF 0
+	COMRESULT = 0
 ;対象がペニス無いとダメ
+コマンド実行条件 += "対象に男性器が必要/"
 SIF !PENIS(TARGET)
-	RETURNF 0
+	COMRESULT = 0
 ;Ｐ使用中はダメ
+コマンド実行条件 += "男性器に道具使用中は実行できない/"
 SIF Ｐ使用中(TARGET)
-	RETURNF 0
+	COMRESULT = 0
 
-COMRESULT = 1
-RETURNF 1
+RETURNF COMRESULT
 
 @COM_フェラする
-;-------------------------------------------------
-;特殊派生処理
-;-------------------------------------------------
-;前回と今回の調教者が同じで縄、ボールギャグ使用中でない場合
-IF PLAYER == TFLAG:前コマンド実行者 && !TEQUIP:縄 && !TEQUIP:ボールギャグ
-	;前回のコマンド
-	SELECTCASE PREVCOMS
-		;フェラチオ、クンニさせる、シックスナインだとシックスナインに
-		CASE "フェラチオ", "クンニさせる", "シックスナイン"
-			SIF USERCOM_ABLE_シックスナイン()
-				JUMP COM_シックスナイン
-	ENDSELECT
-ENDIF
 
 PRINTL フェラする
 CALL KOJO_MESSAGE_COM
@@ -119,8 +113,13 @@ SIF TALENT:PLAYER:猫舌
 	CALL EXPUP, "嗜虐快楽経験", 1, PLAYER
 
 IF !避妊具(TARGET)
-		CALL 獣人催淫, 1, PLAYER
+	CALL 魔力回復, 3, PLAYER
+	CALL 獣人催淫, 1, PLAYER
 ENDIF
+
+;実績:山吹でフェラさせる。もしくは山吹でフェラをする
+SIF CHARANAMEF(PLAYER) == "山吹"
+	CALL 実績解除, "殿方の笛を鳴らすのもお得意で？"
 
 RETURN 1
 

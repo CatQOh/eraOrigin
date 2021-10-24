@@ -3,23 +3,42 @@
 ;-------------------------------------------------
 @USERCOM_ABLE_ボールギャグ, ARG
 #FUNCTION
+#DIM DYNAMIC 条件確定
+
+;ゲーセンに居る場合はできない
+コマンド実行条件 += "ゲーセンでは実行不可/"
+SIF TEQUIP:ゲームセンター
+	COMRESULT = 0
+;上級売春中は不可
+コマンド実行条件 += "上級売春中は実行不可/"
+SIF 上級売春中
+	COMRESULT = 0
 ;触手口辱中だとダメ
+コマンド実行条件 += "触手口辱実行中は実行できない/"
 SIF TEQUIP:触手口辱
-	RETURNF 0
+	COMRESULT = 0
 ;解除はいつでも可能
-IF TEQUIP:ボールギャグ
+SIF TEQUIP:ボールギャグ && COMRESULT
+	条件確定 = 1
+
+;アイテムを持っていないとダメ
+コマンド実行条件 += "アイテム[ボールギャグ]が必要/"
+SIF !ITEM:ボールギャグ
+	COMRESULT = 0
+;新妻プレイ中はダメ
+コマンド実行条件 += "エプロン使用中は実行できない/"
+SIF TEQUIP:エプロン
+	COMRESULT = 0
+;アニマルだと無理
+コマンド実行条件 += "対象が[アニマル]の場合は実行できない/"
+SIF TALENT:アニマル
+	COMRESULT = 0
+
+IF 条件確定
 	COMRESULT = 1
 	RETURNF 1
 ENDIF
-;新妻プレイ中はダメ
-SIF TEQUIP:エプロン
-	RETURNF 0
-;アニマルだと無理
-SIF TALENT:アニマル
-	RETURNF 0
-
-COMRESULT = 1
-RETURNF 1
+RETURNF COMRESULT
 
 @COM_ボールギャグ
 PRINTL ボールギャグ
@@ -82,6 +101,8 @@ RETURN 1
 ;装着継続の処理
 ;-------------------------------------------------
 @EQUIP_COM_ボールギャグ
+#DIM DYNAMIC 消費量
+
 PRINTL ＜ボールギャグ装備中＞
 
 ;-------------------------------------------------
@@ -100,16 +121,16 @@ SOURCE:反感 += 200
 ;特殊ソース処理
 ;-------------------------------------------------
 ;緊縛経験が高いと消費減少
-LOCAL = 25
+消費量 = 25
 SELECTCASE GETEXPLV(EXP:緊縛経験, 4)
 	CASE IS <= 2
-		TIMES LOCAL , 1.00
+		TIMES 消費量 , 1.00
 	CASE 3
-		TIMES LOCAL , 0.90
+		TIMES 消費量 , 0.90
 	CASE 4
-		TIMES LOCAL , 0.70
+		TIMES 消費量 , 0.70
 ENDSELECT
-LOSEBASE:気力 += LOCAL
+LOSEBASE:気力 += 消費量
 
 ;-------------------------------------------------
 ;経験の処理

@@ -3,23 +3,32 @@
 ;-------------------------------------------------
 @USERCOM_ABLE_ペットに舐めさせる, ARG
 #FUNCTION
+;ゲーセンに居る場合はできない
+コマンド実行条件 += "ゲーセンでは実行不可/"
+SIF TEQUIP:ゲームセンター
+	COMRESULT = 0
 ;触手調教中はダメ
+コマンド実行条件 += "触手召喚中は実行できない/"
 SIF TEQUIP:触手
-	RETURNF 0
+	COMRESULT = 0
 ;お風呂場プレイ中はダメ
+コマンド実行条件 += "お風呂場では実行できない/"
 SIF TEQUIP:お風呂場
-	RETURNF 0
+	COMRESULT = 0
 ;ASSIがペットじゃないとダメ
+コマンド実行条件 += "助手に[アニマル]が必要/"
 SIF ASSI < 0 || !TALENT:ASSI:アニマル
-	RETURNF 0
+	COMRESULT = 0
 ;アニマルは無理
+コマンド実行条件 += "対象が[アニマル]の場合は実行できない/"
 SIF TALENT:アニマル
-	RETURNF 0
+	COMRESULT = 0
 
-COMRESULT = 1
-RETURNF 1
+RETURNF COMRESULT
 
 @COM_ペットに舐めさせる
+#DIM DYNAMIC 増加量
+
 PRINTL ペットに舐めさせる
 CALL KOJO_MESSAGE_COM
 
@@ -28,40 +37,40 @@ CALL KOJO_MESSAGE_COM
 ;-------------------------------------------------
 ;なつき度が低いと消極的になる
 
-LOCAL = 30
+増加量 = 30
 
-LOCAL += CFLAG:ASSI:依存度/10
+増加量 += CFLAG:ASSI:依存度/10
 
 ;ABL:助手の技巧をみる
-LOCAL += LOCAL*ABL:ASSI:技巧/2
+増加量 += 増加量*ABL:ASSI:技巧/2
 
 ;ABL:従順をみる
-LOCAL += (LOCAL/10)*ABL:従順 - (LOCAL/10)*2
+増加量 += (増加量/10)*ABL:従順 - (増加量/10)*2
 
 ;ABL:欲望をみる
-LOCAL += (LOCAL/10)*ABL:欲望
+増加量 += (増加量/10)*ABL:欲望
 
 ;奴隷のABL:Ｃ感覚をみる
 SELECTCASE ABL:Ｃ感覚
 	CASE 0
-		TIMES LOCAL , 0.50
+		TIMES 増加量 , 0.50
 	CASE 1
-		TIMES LOCAL , 0.80
+		TIMES 増加量 , 0.80
 	CASE 2
-		TIMES LOCAL , 1.00
+		TIMES 増加量 , 1.00
 	CASE 3
-		TIMES LOCAL , 1.50
+		TIMES 増加量 , 1.50
 	CASE 4
-		TIMES LOCAL , 2.00
+		TIMES 増加量 , 2.00
 	CASEELSE
-		LOCAL += LOCAL*(ABL:Ｃ感覚-3)
+		増加量 += 増加量*(ABL:Ｃ感覚-3)
 ENDSELECT
 
 ;助手のTALENT:舌使いをみる
 SIF TALENT:ASSI:舌使い
-	TIMES LOCAL , 2.00
+	TIMES 増加量 , 2.00
 
-CALL 射精ゲージ増加, LOCAL, TARGET
+CALL 射精ゲージ増加, 増加量, TARGET
 
 ;-------------------------------------------------
 ;ソース追加処理
@@ -102,6 +111,12 @@ CALL SAMEN_SHOOT_T, 0, NOWEX:射精
 ;経験の処理
 ;-------------------------------------------------
 CALL EXPUP_BASE, 1, 2
+
+;飼育経験
+CALL EXPUP, "飼育経験", 1
+
+;魔力回復
+CALL 魔力回復, 7
 
 RETURN 1
 

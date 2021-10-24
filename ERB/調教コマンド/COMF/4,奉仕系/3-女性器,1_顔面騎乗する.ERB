@@ -3,31 +3,46 @@
 ;-------------------------------------------------
 @USERCOM_ABLE_顔面騎乗する, ARG
 #FUNCTION
+;ゲーセンに居る場合はできない
+コマンド実行条件 += "ゲーセンでは実行不可/"
+SIF TEQUIP:ゲームセンター
+	COMRESULT = 0
+;上級売春中は客がマゾじゃないとダメ
+コマンド実行条件 += "上級売春中は客に素質[マゾ]が必要/"
+SIF 上級売春中 && !TALENT:マゾ
+	COMRESULT = 0
 ;足使用不可だとできない
+コマンド実行条件 += "実行者が[足使用不可]だと実行できない/"
 SIF TALENT:PLAYER:足使用不可
-	RETURNF 0
+	COMRESULT = 0
 ;調教者がヴァギナ無いとダメ
+コマンド実行条件 += "実行者に女性器が必要/"
 SIF !VAGINA(PLAYER)
-	RETURNF 0
+	COMRESULT = 0
 ;猫舌の奴隷の場合は技巧Lv2以上必要
+コマンド実行条件 += "対象が[猫舌]の場合は技巧LV2以上必要/"
 SIF TALENT:猫舌 && ABL:技巧 < 2
-	RETURNF 0
+	COMRESULT = 0
 ;ボールギャグ使用中は不可
+コマンド実行条件 += "対象がボールギャグ装着中は実行できない/"
 SIF TEQUIP:ボールギャグ
-	RETURNF 0
+	COMRESULT = 0
 ;服着てる場合は下が空いていないとダメ 下着一体型全身上着は例外
+コマンド実行条件 += "下着か性器が露出しない下半身上着を着ていると実行できない/"
 IF TEQUIP:PLAYER:下半身上着 || (TEQUIP:PLAYER:全身上着 && CFLAG:PLAYER:着衣併用 != 1)
 	SIF !CFLAG:PLAYER:挿入可 && !CFLAG:PLAYER:着衣併用 != 2
-		RETURNF 0
+		COMRESULT = 0
 ENDIF
 ;PLAYERがペニスバンド装着中はダメ
+コマンド実行条件 += "実行者がペニスバンド装着中は実行できない/"
 SIF TEQUIP:PLAYER:ペニスバンド
-	RETURNF 0
+	COMRESULT = 0
 
-COMRESULT = 1
-RETURNF 1
+RETURNF COMRESULT
 
 @COM_顔面騎乗する
+#DIM DYNAMIC 増加量
+
 PRINTL 顔面騎乗する
 CALL KOJO_MESSAGE_COM
 
@@ -37,13 +52,13 @@ TFLAG:奴隷実行 = 1
 ;-------------------------------------------------
 ;射精ゲージチェック（ふたなりの場合）
 ;-------------------------------------------------
-LOCAL = 射精ゲージ計算_奉仕(100)
+増加量 = 射精ゲージ計算_奉仕(100)
 
 ;TALENT:舌使いをみる
 SIF TALENT:舌使い
-	TIMES LOCAL , 2.00
+	TIMES 増加量 , 2.00
 
-CALL 射精ゲージ増加, LOCAL, PLAYER
+CALL 射精ゲージ増加, 増加量, PLAYER
 
 ;-------------------------------------------------
 ;ソース追加処理
@@ -93,10 +108,20 @@ CALL EXPUP_BASE, 3, 2
 SIF TALENT:猫舌
 	CALL EXPUP, "嗜虐快楽経験", 1
 
+CALL 魔力回復, 5
 CALL 獣人催淫, 1
 
 ;奉仕快楽フラグ
 TFLAG:奉仕快楽 = 1
+
+;実績:紗矢で士朗を中出しさせた後に顔面騎乗する
+IF CHARANAMEF(TARGET) == "神崎 士朗" && CHARANAMEF(PLAYER) == "神崎 紗矢"
+	IF PLAYER == MASTER && GETBIT(TFLAG:中出し, 4)
+		CALL 実績解除, "「士朗ちゃん、どう責任取ってくれるのかしら？」"
+	ELSEIF PLAYER == ASSI && PREG:2
+		CALL 実績解除, "「士朗ちゃん、どう責任取ってくれるのかしら？」"
+	ENDIF
+ENDIF
 
 RETURN 1
 

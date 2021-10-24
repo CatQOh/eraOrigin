@@ -3,60 +3,71 @@
 ;-------------------------------------------------
 @USERCOM_ABLE_ダブルフェラ, ARG
 #FUNCTION
+;ゲーセンに居る場合はトイレじゃないとできない
+コマンド実行条件 += "ゲーセンではトイレじゃないと実行できない/"
+SIF TEQUIP:ゲームセンター && !TEQUIP:トイレ
+	COMRESULT = 0
 ;助手じゃないとダメ
+コマンド実行条件 += "実行者が助手じゃないと実行できない/"
 SIF PLAYER != ASSI
-	RETURNF 0
+	COMRESULT = 0
 ;主人がペニス無いとダメ
+コマンド実行条件 += "主人に男性器が必要/"
 SIF !PENIS(MASTER)
-	RETURNF 0
+	COMRESULT = 0
 ;主人が[魅惑]か[謎の魅力]、もしくは助手と奴隷が陥落していないとダメ
-SIF !TALENT:MASTER:魅惑 && !TALENT:MASTER:謎の魅力 && (!CFLAG:陥落 || !CFLAG:ASSI:陥落)
-	RETURNF 0
+コマンド実行条件 += "主人に[魅惑]or[謎の魅力]が必要 または助手、対象共に陥落していれば実行可能/"
+SIF ASSI > 0 && !TALENT:MASTER:魅惑 && !TALENT:MASTER:謎の魅力 && (!CFLAG:陥落 || !CFLAG:ASSI:陥落)
+	COMRESULT = 0
 ;猫舌の奴隷の場合は技巧Lv2以上必要
+コマンド実行条件 += "対象が[猫舌]の場合は対象の技巧LV2以上必要/"
 SIF TALENT:猫舌 && ABL:技巧 < 2
-	RETURNF 0
-;猫舌の助手の場合は技巧Lv2以上必要
-SIF TALENT:ASSI:猫舌 && ABL:ASSI:技巧 < 2
-	RETURNF 0
+	COMRESULT = 0
 ;助手が奉仕精神LV3以上、技巧LV3以上じゃないとダメ
-SIF ABL:ASSI:技巧 < 3 || ABL:ASSI:奉仕精神 < 3
-	RETURNF 0
+コマンド実行条件 += "助手の奉仕精神と技巧LV3以上必要/"
+SIF ASSI > 0 && (ABL:ASSI:技巧 < 3 || ABL:ASSI:奉仕精神 < 3)
+	COMRESULT = 0
 ;ボールギャグ使用中は不可
+コマンド実行条件 += "対象がボールギャグ装着中は実行できない/"
 SIF TEQUIP:ボールギャグ
-	RETURNF 0
+	COMRESULT = 0
 ;縄使用中は不可
+コマンド実行条件 += "縄で縛ってるときは実行できない/"
 SIF TEQUIP:縄
-	RETURNF 0
+	COMRESULT = 0
 ;触手調教中はダメ
+コマンド実行条件 += "触手召喚中は実行できない/"
 SIF TEQUIP:触手
-	RETURNF 0
+	COMRESULT = 0
 
-COMRESULT = 1
-RETURNF 1
+RETURNF COMRESULT
 
 @実行判定_ダブルフェラ
+#DIM DYNAMIC 実効値
 ;-------------------------------------------------
 ;実行判定処理
 ;-------------------------------------------------
 ;すべての命令に共通の要素を考慮
 ;(従順が高いと命令に従いやすいなど)
 CALL COM_ORDER
-LOCAL = RESULT
+実効値 = RESULT
 
 CALL COM_ORDER_フェラ
-LOCAL += RESULT
+実効値 += RESULT
 
-IF RELATION:ASSI:(NO:TARGET) > 100 && RELATION:(NO:ASSI) > 100
-	LOCAL += 3
+IF 相性値(ASSI, TARGET) > 100 && 相性値(TARGET, ASSI) > 100
+	実効値 += 3
 	PRINTFORM +%CALLNAME:TARGET%と%CALLNAME:ASSI%の相性良好(3)
 ENDIF
 
 ;34以上で実行
-CALL 実効値判定, LOCAL, 34
+CALL 実効値判定, 実効値, 34
 
 RETURN RESULT
 
 @COM_ダブルフェラ
+#DIM DYNAMIC 増加量
+
 PRINTL ダブルフェラ
 
 SIF !TFLAG:実行判定無視
@@ -75,39 +86,39 @@ TFLAG:奴隷実行 = 1
 ;-------------------------------------------------
 ;射精ゲージチェック
 ;-------------------------------------------------
-LOCAL = 射精ゲージ計算_奉仕(400)
+増加量 = 射精ゲージ計算_奉仕(400)
 
 ;TALENT:舌使いをみる
 SIF TALENT:舌使い
-	TIMES LOCAL , 1.50
+	TIMES 増加量 , 1.50
 
 ;ABL:助手の技巧をみる
-LOCAL += (LOCAL/5)*ABL:ASSI:技巧
+増加量 += (増加量/5)*ABL:ASSI:技巧
 
 ;ABL:助手の従順をみる
-LOCAL += (LOCAL/10)*ABL:ASSI:従順 - (LOCAL/10)*2
+増加量 += (増加量/10)*ABL:ASSI:従順 - (増加量/10)*2
 
 ;ABL:助手の奉仕精神をみる
 SELECTCASE ABL:ASSI:奉仕精神
 	CASE 0
-		TIMES LOCAL , 0.50
+		TIMES 増加量 , 0.50
 	CASE 1
-		TIMES LOCAL , 0.80
+		TIMES 増加量 , 0.80
 	CASE 2
-		TIMES LOCAL , 1.20
+		TIMES 増加量 , 1.20
 	CASE 3
-		TIMES LOCAL , 1.50
+		TIMES 増加量 , 1.50
 	CASE 4
-		TIMES LOCAL , 1.80
+		TIMES 増加量 , 1.80
 	CASEELSE
-		LOCAL += LOCAL/3*ABL:奉仕精神
+		増加量 += 増加量/3*ABL:奉仕精神
 ENDSELECT
 
 ;助手のTALENT:舌使いをみる
 SIF TALENT:ASSI:舌使い
-	TIMES LOCAL , 1.50
+	TIMES 増加量 , 1.50
 
-CALL 射精ゲージ増加, LOCAL, MASTER
+CALL 射精ゲージ増加, 増加量, MASTER
 
 ;-------------------------------------------------
 ;ソース追加処理
@@ -199,7 +210,10 @@ SIF TALENT:猫舌
 SIF TALENT:ASSI:猫舌
 	CALL EXPUP, "嗜虐快楽経験", 1, ASSI
 
+;魔力回復
 IF !避妊具(MASTER)
+	CALL 魔力回復, 5
+	CALL 魔力回復, 5, ASSI
 	CALL 獣人催淫, 1, TARGET, MASTER
 	CALL 獣人催淫, 1, ASSI, MASTER
 ENDIF

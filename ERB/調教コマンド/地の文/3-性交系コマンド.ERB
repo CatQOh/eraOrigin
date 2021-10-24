@@ -18,12 +18,27 @@ IF PLAYER == TFLAG:前コマンド実行者
 		CASE "後背位", "騎乗位", "対面座位", "背面座位"
 			PRINTFORMW %CALLNAME:PLAYER%は膣内から抜き去ることなく%CALLNAME:TARGET%を仰向けに寝かせ、再び腰を動かし始めた……
 			RETURN 0
+		CASE "スライム姦"
+			IF TALENT:スライム || TALENT:溶ける快
+				PRINTFORMW %CALLNAME:PLAYER%と%CALLNAME:TARGET%は混ざりあうのを止め、繋がったままかつての形に戻ると%CALLNAME:TARGET%を仰向けに寝かせ、カタチある行為に興じている……
+			ELSE
+				PRINTFORMW %CALLNAME:PLAYER%は、膣内に自身の一部を入れたままかつての姿に戻り、%CALLNAME:TARGET%を仰向けに寝かせ、腰を動かし始めた……
+			ENDIF
+			RETURN 0
 	ENDSELECT
 ENDIF
 
+SIF 上級売春中
+	PRINTFORML %CALLNAME:TARGET%はおもむろに仰向けになっては、女の快感を求めてくる
 PRINTFORM %CALLNAME:PLAYER%は%CALLNAME:TARGET%の
 ;着衣中
-IF TEQUIP:下半身上着 || (TEQUIP:全身上着 && CFLAG:着衣併用 != 1)
+IF CSTR:種族 == "スライム" || TALENT:スライム
+	IF TEQUIP:下半身上着 || (TEQUIP:全身上着 && CFLAG:着衣併用 != 1)
+		PRINTFORM その体の表面を%OVER_GENITAL(TARGET)%に擬態させている事などお構いなしに
+	ELSEIF TEQUIP:下半身下着
+		PRINTFORM その体の大事な部分を守るかのように%CSTR:下半身下着%に擬態させている事などお構いなしに
+	ENDIF
+ELSEIF TEQUIP:下半身上着 || (TEQUIP:全身上着 && CFLAG:着衣併用 != 1)
 	IF CFLAG:挿入可
 		PRINTFORM %OVER_GENITAL(TARGET)%の中に手を忍ばせ、\@ TEQUIP:下半身下着 ? %CSTR:下半身下着%をずらして、# 裾を捲り上げ、 \@その露わになった
 	ELSE
@@ -47,6 +62,16 @@ IF TALENT:ファーリー
 			PRINT 秘部の体毛を先端で掻き分け
 		CASE 2
 			PRINT 体毛に覆われる女性器をこじ開け
+	ENDSELECT
+;スライム
+ELSEIF TALENT:スライム || TALENT:溶ける快
+	SELECTCASE RAND:3
+		CASE 0
+			PRINT ぷるぷると震えながら粘液をこぼしている割れ目を
+		CASE 1
+			PRINT 生きたオナホールと形容できそうなほどに柔らかな秘肉をこじ開け
+		CASE 2
+			PRINT 何かを求めるかのように蠢く膣口に先端をあてがい
 	ENDSELECT
 ;無機物
 ELSEIF TALENT:無機物
@@ -84,8 +109,11 @@ IF TALENT:アニマル
 ;陥落済み
 ELSEIF CFLAG:陥落
 	PRINTL 貫いた
-	SIF !TALENT:足使用不可
+	IF TALENT:スライム || TALENT:溶ける快
+		PRINTFORMW %CALLNAME:TARGET%も%CALLNAME:PLAYER%に自身を構成する粘液の一部を絡め腰を押し付けてくる……
+	ELSEIF !TALENT:足使用不可
 		PRINTFORMW %CALLNAME:TARGET%も%CALLNAME:PLAYER%に足を絡め腰を押し付けてくる……
+	ENDIF
 ELSE
 	PRINTW 貫いた……
 ENDIF
@@ -113,12 +141,31 @@ IF PLAYER == TFLAG:前コマンド実行者
 		CASE "対面座位", "背面座位", "騎乗位"
 			PRINTFORMW 挿入したまま%CALLNAME:TARGET%を寝かせて四つん這いにし、再び腰を動かし始めた……
 			RETURN 0
+		CASE "スライム姦"
+			IF TALENT:スライム || TALENT:溶ける快
+				PRINTFORMW %CALLNAME:PLAYER%と%CALLNAME:TARGET%は混ざりあうのを止め、繋がったままかつての形に戻ると%CALLNAME:TARGET%を寝かせて四つん這いにし、カタチある行為に興じている……
+			ELSE
+				PRINTFORMW %CALLNAME:PLAYER%は、膣内に自身の一部を入れたままかつての姿に戻り、%CALLNAME:TARGET%を寝かせて四つん這いにし、腰を動かし始めた……
+			ENDIF
+			RETURN 0
 	ENDSELECT
 ENDIF
 
-PRINTFORM %CALLNAME:TARGET%を四つん這いにさせ、
+SIF 上級売春中
+	PRINTFORML %CALLNAME:TARGET%の要望は自らも得たいというもので、秘部を弄り%CALLNAME:PLAYER%を誘っている
+IF TEQUIP:ゲームセンター
+	PRINTFORM %CALLNAME:TARGET%を前かがみにさせ、
+ELSE
+	PRINTFORM %CALLNAME:TARGET%を四つん這いにさせ、
+ENDIF
 ;着衣中
-IF TEQUIP:下半身上着 || (TEQUIP:全身上着 && CFLAG:着衣併用 != 1)
+IF CSTR:種族 == "スライム" || TALENT:スライム
+	IF TEQUIP:下半身上着 || (TEQUIP:全身上着 && CFLAG:着衣併用 != 1)
+		PRINTFORM その体の表面を%OVER_GENITAL(TARGET)%に擬態させている事などお構いなしに
+	ELSEIF TEQUIP:下半身下着
+		PRINTFORM その体の大事な部分を守るかのように%CSTR:下半身下着%に擬態させている事などお構いなしに
+	ENDIF
+ELSEIF TEQUIP:下半身上着 || (TEQUIP:全身上着 && CFLAG:着衣併用 != 1)
 	IF CFLAG:挿入可
 		PRINTFORM %OVER_GENITAL(TARGET)%に隠れた\@ TEQUIP:下半身下着 ? %CSTR:下半身下着%をずらして、# 秘部を暴き、 \@その露わになった
 	ELSE
@@ -142,6 +189,16 @@ IF TALENT:ファーリー
 			PRINT 秘部の体毛を先端で掻き分け
 		CASE 2
 			PRINT 体毛に覆われる女性器をこじ開け
+	ENDSELECT
+;スライム
+ELSEIF TALENT:スライム || TALENT:溶ける快
+	SELECTCASE RAND:3
+		CASE 0
+			PRINT ぷるぷると震えながら粘液をこぼしている割れ目を
+		CASE 1
+			PRINT 生きたオナホールと形容できそうなほどに柔らかな秘肉をこじ開け
+		CASE 2
+			PRINT 何かを求めるかのように蠢く膣口に先端をあてがい
 	ENDSELECT
 ;無機物
 ELSEIF TALENT:無機物
@@ -171,7 +228,7 @@ ELSE
 			PRINT 柔らかな秘肉をこじ開け
 	ENDSELECT
 ENDIF
-IF CFLAG:陥落 || (TALENT:アニマル && CFLAG:依存度 >= 1500)
+IF (CFLAG:陥落 && !TEQUIP:ゲームセンター) || (TALENT:アニマル && CFLAG:依存度 >= 1500)
 	PRINTFORML 最奥まで突き入れた
 	IF TALENT:尻尾
 		PRINTFORML %CALLNAME:TARGET%は激しく尻尾を振りながら%CALLNAME:PLAYER%との交尾を悦んでいる……
@@ -180,6 +237,16 @@ IF CFLAG:陥落 || (TALENT:アニマル && CFLAG:依存度 >= 1500)
 	ENDIF
 ELSE
 	PRINTFORML 最奥まで突き入れた……
+ENDIF
+IF TEQUIP:ゲームセンター
+	PRINTFORM %CALLNAME:TARGET%は壁に手をついて、
+	IF TALENT:スライム || TALENT:溶ける快
+		PRINTL 表面の色も含めた擬態が解けないように必死に堪えている……
+	ELSEIF ABL:Ｖ感覚 >= 5
+		PRINTL 立っているのもままらないほどの快楽に膝をがくつかせている……
+	ELSE
+		PRINTL 外に漏れないよう必死に嬌声を堪えている……
+	ENDIF
 ENDIF
 WAIT
 
@@ -206,13 +273,35 @@ IF PLAYER == TFLAG:前コマンド実行者
 		CASE "対面座位", "背面座位"
 			PRINTFORMW %CALLNAME:PLAYER%は挿入したまま%CALLNAME:TARGET%を上に載せる形で横になり、下から腰を突き上げた……
 			RETURN 0
+		CASE "スライム姦"
+			IF TALENT:スライム || TALENT:溶ける快
+				PRINTFORMW %CALLNAME:PLAYER%と%CALLNAME:TARGET%は混ざりあうのを止め、繋がったままかつての形に戻ると%CALLNAME:TARGET%を抱き上げ、下から腰を突き上げた……
+			ELSE
+				PRINTFORMW %CALLNAME:PLAYER%は、膣内に自身の一部を入れたままかつての姿に戻り、%CALLNAME:TARGET%を抱き上げ、下から腰を突き上げた……
+			ENDIF
+			RETURN 0
 	ENDSELECT
 ENDIF
 
 PRINTFORM %CALLNAME:TARGET%は
-SIF FALLTYPE(TARGET) == 2
+SIF 上級売春中 || FALLTYPE(TARGET) == 2
 	PRINTFORM %CALLNAME:PLAYER%を押し倒して跨ると、舌なめずりしながら
-IF OVER_GENITAL(TARGET) != ""
+IF (CSTR:種族 == "スライム" || TALENT:スライム) && OVER_GENITAL(TARGET) != ""
+	IF CFLAG:挿入可
+		SIF TEQUIP:下半身下着
+			PRINTFORM %CSTR:下半身下着%の擬態を解き、
+		SIF TEQUIP:下半身上着 || TEQUIP:全身上着
+			PRINTFORM %OVER_GENITAL(TARGET)%に擬態した体の表面を引っ込めて
+	ELSE
+		SIF TEQUIP:下半身上着 || TEQUIP:全身上着
+			PRINTFORM %OVER_GENITAL(TARGET)%
+		SIF TEQUIP:下半身下着 && (TEQUIP:下半身上着 || TEQUIP:全身上着)
+			PRINT と
+		SIF TEQUIP:下半身下着
+			PRINTFORM %CSTR:下半身下着%
+		PRINT の擬態を解除し
+	ENDIF
+ELSEIF OVER_GENITAL(TARGET) != ""
 	IF CFLAG:挿入可
 		SIF TEQUIP:下半身下着
 			PRINTFORM %CSTR:下半身下着%を降ろし、
@@ -228,7 +317,7 @@ IF OVER_GENITAL(TARGET) != ""
 		PRINT を脱いで
 	ENDIF
 ENDIF
-IF FALLTYPE(TARGET) == 2
+IF 上級売春中 || FALLTYPE(TARGET) == 2
 	PRINT これ見よがしに
 ELSE
 	PRINTFORM %CALLNAME:PLAYER%の上にまたがり、ゆっくりと腰を下ろし、
@@ -239,6 +328,8 @@ SIF TALENT:処女
 	PRINT 男を知らない
 SIF TALENT:ファーリー
 	PRINT 毛むくじゃらの
+SIF CSTR:種族 == "スライム"
+	PRINT ぐにゅぐにゅと蠢く
 SIF TALENT:小柄体型 && !TALENT:無機物
 	PRINT 幼い
 PRINTL 女性器でペニスを飲み込んでいった……
@@ -249,12 +340,14 @@ IF CFLAG:陥落
 	;小柄体型
 	SIF TALENT:小柄体型
 		PRINT 抑えられない欲望を満たそうと小さな身体で懸命に
+	SIF TALENT:スライム || TALENT:溶ける快
+		PRINT 粘液の身体をゼリーのように震わせ
 	SELECTCASE TALENT:バストサイズ
-		;巨乳
-		CASE 4
+		;巨乳、豊乳
+		CASE 4, 5
 			PRINT 大きく胸を揺らしながら
 		;爆乳
-		CASE 5
+		CASE 6
 			PRINT 跳ねる胸に身体ごと揺らされながら
 	ENDSELECT
 	PRINTL 自ら腰を動かしている……
@@ -292,76 +385,172 @@ IF PLAYER == TFLAG:前コマンド実行者
 			ENDIF
 			PRINTW 腰を動かし続けた……
 			RETURN 0
+		CASE "スライム姦"
+			IF TALENT:スライム || TALENT:溶ける快
+				PRINTFORMW %CALLNAME:PLAYER%と%CALLNAME:TARGET%は混ざりあうのを止め、繋がったままかつての形に戻ると%CALLNAME:TARGET%をぎゅっと抱き寄せ、腰を動かし続けた……
+			ELSE
+				PRINTFORMW %CALLNAME:PLAYER%は、膣内に自身の一部を入れたままかつての姿に戻り、%CALLNAME:TARGET%をぎゅっと抱き寄せ、腰を動かし続けた……
+			ENDIF
+			RETURN 0
 	ENDSELECT
 ENDIF
 
-IF OVER_GENITAL(TARGET) != ""
-	PRINTFORM %CALLNAME:TARGET%の
-	IF CFLAG:挿入可
-		SIF TEQUIP:下半身下着
-			PRINTFORM %CSTR:下半身下着%を降ろし、
+IF 上級売春中
+	PRINTFORML %CALLNAME:TARGET%が膝立ちで%CALLNAME:PLAYER%に手を回し、顔を覗き込みながら%CALLNAME:PLAYER%にペニスに触れる
+	PRINTFORM 十分に勃ってること確認した%CALLNAME:TARGET%はゆっくりと腰を降ろし、
+	;潤滑LV4以上
+	SIF PALAM:潤滑 >= PALAMLV:4
+		PRINT 濡れそぼつ
+	;処女
+	SIF TALENT:処女
+		PRINT 男を知らない
+	;ケモ
+	IF TALENT:ファーリー
+		SELECTCASE RAND:3
+			CASE 0
+				PRINT 毛むくじゃらの割れ目で
+			CASE 1
+				PRINT 体毛を指でで掻き分けた秘部で
+			CASE 2
+				PRINT 体毛に覆われる女性器で
+		ENDSELECT
+	;スライム
+	ELSEIF TALENT:スライム || TALENT:溶ける快
+		SELECTCASE RAND:3
+			CASE 0
+				PRINT ぷるぷると震えながら粘液をこぼしている割れ目で
+			CASE 1
+				PRINT 生きたオナホールと形容できそうなほどに柔らかな秘肉をこじ開け
+			CASE 2
+				PRINT 何かを求めるかのように蠢く膣口に先端をあてがい
+		ENDSELECT
+	;無機物
+	ELSEIF TALENT:無機物
+		SELECTCASE RAND:2
+			CASE 0
+				PRINT 無機質な膣口を指で拡げて
+			CASE 1
+				PRINT 形だけの生殖器で
+		ENDSELECT
+	;小柄体型
+	ELSEIF TALENT:小柄体型
+		SELECTCASE RAND:3
+			CASE 0
+				PRINT 幼い割れ目で
+			CASE 1
+				PRINT 未成熟な秘裂で
+			CASE 2
+				PRINT まだ毛も生えていない膣口で
+		ENDSELECT
 	ELSE
-		SIF TEQUIP:下半身上着 || TEQUIP:全身上着
-			PRINTFORM OVER_GENITAL(TARGET)
-		SIF TEQUIP:下半身下着 && (TEQUIP:下半身上着 || TEQUIP:全身上着)
-			PRINT と
-		SIF TEQUIP:下半身下着
-			PRINTFORM %CSTR:下半身下着%
-		PRINT を脱がして、
+		SELECTCASE RAND:3
+			CASE 0
+				PRINT 秘裂で
+			CASE 1
+				PRINT 先端を膣口にあてがい
+			CASE 2
+				PRINT 柔らかな秘肉で
+		ENDSELECT
 	ENDIF
-	SIF !CFLAG:陥落
-		PRINT 躊躇する
-	SIF TALENT:小柄体型
-		PRINT 小さな
-	PRINT 身体を抱き寄せながら、
+	PRINTL 咥え込んだ……
 ELSE
-	PRINTFORM %CALLNAME:TARGET%の身体を抱き上げ、ゆっくりと降ろしながら、
+	IF (CSTR:種族 == "スライム" || TALENT:スライム) && OVER_GENITAL(TARGET) != ""
+		PRINTFORM %CALLNAME:TARGET%の
+		IF CFLAG:挿入可
+			SIF TEQUIP:下半身下着
+				PRINTFORM %CSTR:下半身下着%の擬態を解除させて、
+		ELSE
+			SIF TEQUIP:下半身上着 || TEQUIP:全身上着
+				PRINTFORM %OVER_GENITAL(TARGET)%
+			SIF TEQUIP:下半身下着 && (TEQUIP:下半身上着 || TEQUIP:全身上着)
+				PRINT と
+			SIF TEQUIP:下半身下着
+				PRINTFORM %CSTR:下半身下着%
+			PRINT の擬態を解除させて、
+		ENDIF
+		SIF !CFLAG:陥落
+			PRINT 躊躇する
+		SIF TALENT:小柄体型
+			PRINT 小さな
+		PRINT 粘液の身体を抱き寄せながら、
+	ELSEIF OVER_GENITAL(TARGET) != ""
+		PRINTFORM %CALLNAME:TARGET%の
+		IF CFLAG:挿入可
+			SIF TEQUIP:下半身下着
+				PRINTFORM %CSTR:下半身下着%を降ろし、
+		ELSE
+			SIF TEQUIP:下半身上着 || TEQUIP:全身上着
+				PRINTFORM OVER_GENITAL(TARGET)
+			SIF TEQUIP:下半身下着 && (TEQUIP:下半身上着 || TEQUIP:全身上着)
+				PRINT と
+			SIF TEQUIP:下半身下着
+				PRINTFORM %CSTR:下半身下着%
+			PRINT を脱がして、
+		ENDIF
+		SIF !CFLAG:陥落
+			PRINT 躊躇する
+		SIF TALENT:小柄体型
+			PRINT 小さな
+		PRINT 身体を抱き寄せながら、
+	ELSE
+		PRINTFORM %CALLNAME:TARGET%の身体を抱き上げ、ゆっくりと降ろしながら、
+	ENDIF
+	;潤滑LV4以上
+	SIF PALAM:潤滑 >= PALAMLV:4
+		PRINT 濡れそぼつ
+	;処女
+	SIF TALENT:処女
+		PRINT 男を知らない
+	;ケモ
+	IF TALENT:ファーリー
+		SELECTCASE RAND:3
+			CASE 0
+				PRINT 毛むくじゃらの割れ目に
+			CASE 1
+				PRINT 秘部の体毛を先端で掻き分け
+			CASE 2
+				PRINT 体毛に覆われる女性器をこじ開け
+		ENDSELECT
+	;スライム
+	ELSEIF TALENT:スライム || TALENT:溶ける快
+		SELECTCASE RAND:3
+			CASE 0
+				PRINT ぷるぷると震えながら粘液をこぼしている割れ目に
+			CASE 1
+				PRINT 生きたオナホールと形容できそうなほどに柔らかな秘肉をこじ開け
+			CASE 2
+				PRINT 何かを求めるかのように蠢く膣口に先端をあてがい
+		ENDSELECT
+	;無機物
+	ELSEIF TALENT:無機物
+		SELECTCASE RAND:2
+			CASE 0
+				PRINT 無機質な膣口を指で拡げて
+			CASE 1
+				PRINT 形だけの生殖器に
+		ENDSELECT
+	;小柄体型
+	ELSEIF TALENT:小柄体型
+		SELECTCASE RAND:3
+			CASE 0
+				PRINT 幼い割れ目に
+			CASE 1
+				PRINT 未成熟な秘裂に
+			CASE 2
+				PRINT まだ毛も生えていない膣口に
+		ENDSELECT
+	ELSE
+		SELECTCASE RAND:3
+			CASE 0
+				PRINT 秘裂に
+			CASE 1
+				PRINT 膣口に先端をあてがい
+			CASE 2
+				PRINT 柔らかな秘肉をこじ開け
+		ENDSELECT
+	ENDIF
+	PRINTL 挿入した……
 ENDIF
-;潤滑LV4以上
-SIF PALAM:潤滑 >= PALAMLV:4
-	PRINT 濡れそぼつ
-;処女
-SIF TALENT:処女
-	PRINT 男を知らない
-;ケモ
-IF TALENT:ファーリー
-	SELECTCASE RAND:3
-		CASE 0
-			PRINT 毛むくじゃらの割れ目を
-		CASE 1
-			PRINT 秘部の体毛を先端で掻き分け
-		CASE 2
-			PRINT 体毛に覆われる女性器をこじ開け
-	ENDSELECT
-;無機物
-ELSEIF TALENT:無機物
-	SELECTCASE RAND:2
-		CASE 0
-			PRINT 無機質な膣口を指で拡げて
-		CASE 1
-			PRINT 形だけの生殖器に
-	ENDSELECT
-;小柄体型
-ELSEIF TALENT:小柄体型
-	SELECTCASE RAND:3
-		CASE 0
-			PRINT 幼い割れ目に
-		CASE 1
-			PRINT 未成熟な秘裂に
-		CASE 2
-			PRINT まだ毛も生えていない膣口に
-	ENDSELECT
-ELSE
-	SELECTCASE RAND:3
-		CASE 0
-			PRINT 秘裂に
-		CASE 1
-			PRINT 膣口に先端をあてがい
-		CASE 2
-			PRINT 柔らかな秘肉をこじ開け
-	ENDSELECT
-ENDIF
-PRINTL 挿入した……
 
 IF TALENT:アニマル
 	SIF CFLAG:依存度 >= 1500
@@ -385,8 +574,8 @@ ELSEIF CFLAG:陥落 && !TEQUIP:縄
 		;普通
 		CASE 3
 			PRINT ぐっと体を寄せ付けながら
-		;巨乳か爆乳
-		CASE 4, 5
+		;巨乳～爆乳
+		CASE 4 TO 6
 			PRINT 豊満な胸を擦り付けながら
 	ENDSELECT
 	PRINTL 首に手を回して抱きついてきた……
@@ -416,10 +605,38 @@ IF PLAYER == TFLAG:前コマンド実行者
 			ENDIF
 			PRINTW 激しく腰を揺さぶり始めた……
 			RETURN 0
+		CASE "スライム姦"
+			IF TALENT:スライム || TALENT:溶ける快
+				PRINTFORMW %CALLNAME:PLAYER%と%CALLNAME:TARGET%は混ざりあうのを止め、繋がったままかつての形に戻ると%CALLNAME:TARGET%の身体を背中から抱き寄せ、身体を揺さぶり始めた……
+			ELSE
+				PRINTFORMW %CALLNAME:PLAYER%は、膣内に自身の一部を入れたままかつての姿に戻り、%CALLNAME:TARGET%の身体を背中から抱き寄せ、身体を揺さぶり始めた……
+			ENDIF
+			RETURN 0
 	ENDSELECT
 ENDIF
 
-IF OVER_GENITAL(TARGET) != ""
+SIF 上級売春中
+	PRINTFORML %CALLNAME:TARGET%は後ろから抱きしめられて犯されることをご所望だ。膝立ちで背中を向けている
+IF (CSTR:種族 == "スライム" || TALENT:スライム) && OVER_GENITAL(TARGET) != ""
+	PRINTFORM %CALLNAME:TARGET%の
+	IF CFLAG:挿入可
+		SIF TEQUIP:下半身下着
+			PRINTFORM %CSTR:下半身下着%の擬態を解除させて、
+	ELSE
+		SIF TEQUIP:下半身上着 || TEQUIP:全身上着
+			PRINTFORM %OVER_GENITAL(TARGET)%
+		SIF TEQUIP:下半身下着 && (TEQUIP:下半身上着 || TEQUIP:全身上着)
+			PRINT と
+		SIF TEQUIP:下半身下着
+			PRINTFORM %CSTR:下半身下着%
+		PRINT の擬態を解除させて、
+	ENDIF
+	SIF !CFLAG:陥落
+		PRINT 躊躇する
+	SIF TALENT:小柄体型
+		PRINT 小さな
+	PRINT 粘液の背中を抱き寄せながら、
+ELSEIF OVER_GENITAL(TARGET) != ""
 	PRINTFORM %CALLNAME:TARGET%の
 	IF CFLAG:挿入可
 		SIF TEQUIP:下半身下着
@@ -457,6 +674,16 @@ IF TALENT:ファーリー
 			PRINT 秘部の体毛を先端で掻き分け
 		CASE 2
 			PRINT 体毛に覆われる女性器をこじ開け
+	ENDSELECT
+;スライム
+ELSEIF TALENT:スライム || TALENT:溶ける快
+	SELECTCASE RAND:3
+		CASE 0
+			PRINT ぷるぷると震えながら粘液をこぼしている割れ目を
+		CASE 1
+			PRINT 生きたオナホールと形容できそうなほどに柔らかな秘肉をこじ開け
+		CASE 2
+			PRINT 何かを求めるかのように蠢く膣口に先端をあてがい
 	ENDSELECT
 ;無機物
 ELSEIF TALENT:無機物
@@ -504,8 +731,8 @@ IF CFLAG:陥落
 		;普通
 		CASE 3
 			PRINT 乳房を手で愛撫すると、
-		;巨乳か爆乳
-		CASE 4, 5
+		;巨乳～爆乳
+		CASE 4 TO 6
 			PRINT 豊満な胸を揉みしだくと、
 	ENDSELECT
 	PRINTFORM %CALLNAME:TARGET%は
@@ -522,7 +749,11 @@ WAIT
 ;下着ずらし挿入
 ;-------------------------------------------------
 @MESSAGE_COM_下着ずらし挿入
-PRINTFORM %CALLNAME:PLAYER%は%CALLNAME:TARGET%の%CSTR:下半身下着%をずらして、その露になった
+IF TALENT:スライム || TALENT:溶ける快
+	PRINTFORM %CALLNAME:PLAYER%は\@ TEQUIP:ゲームセンター ? 壁に手をついた #  \@%CALLNAME:TARGET%の\@ CFLAG:着衣併用 == 2 ? %CSTR:全身上着% # %CSTR:下半身下着% \@に擬態した箇所を軽くなぞって、その浮かび上がった
+ELSE
+	PRINTFORM %CALLNAME:PLAYER%は\@ TEQUIP:ゲームセンター ? 壁に手をついた #  \@%CALLNAME:TARGET%の\@ CFLAG:着衣併用 == 2 ? %CSTR:全身上着% # %CSTR:下半身下着% \@をずらして、その露になった
+ENDIF
 ;処女
 IF TALENT:処女
 	PRINT 男を知らない
@@ -539,6 +770,16 @@ IF TALENT:ファーリー
 			PRINT 秘部の体毛を先端で掻き分け
 		CASE 2
 			PRINT 体毛に覆われる女性器をこじ開け
+	ENDSELECT
+;スライム
+ELSEIF TALENT:スライム || TALENT:溶ける快
+	SELECTCASE RAND:3
+		CASE 0
+			PRINT ぷるぷると震えながら粘液をこぼしている割れ目を
+		CASE 1
+			PRINT 生きたオナホールと形容できそうなほどに柔らかな秘肉をこじ開け
+		CASE 2
+			PRINT 何かを求めるかのように蠢く膣口に先端をあてがい
 	ENDSELECT
 ;無機物
 ELSEIF TALENT:無機物
@@ -569,10 +810,13 @@ ELSE
 	ENDSELECT
 ENDIF
 ;陥落済み
-IF CFLAG:陥落
+IF CFLAG:陥落 && !TEQUIP:ゲームセンター
 	PRINTL 貫いた
-	SIF !TALENT:足使用不可
-		PRINTFORML %CALLNAME:TARGET%は%CALLNAME:PLAYER%に足を絡め腰を押し付けてきた……
+	IF TALENT:スライム || TALENT:溶ける快
+		PRINTFORMW %CALLNAME:TARGET%も%CALLNAME:PLAYER%に自身を構成する粘液の一部を絡め腰を押し付けてきた……
+	ELSEIF !TALENT:足使用不可
+		PRINTFORMW %CALLNAME:TARGET%も%CALLNAME:PLAYER%に足を絡め腰を押し付けてきた……
+	ENDIF
 ELSE
 	PRINTL 貫いた……
 ENDIF
@@ -601,6 +845,8 @@ IF PLAYER == TFLAG:前コマンド実行者
 	ENDSELECT
 ENDIF
 
+SIF 上級売春中 && (ABL:ゲイ中毒 || SEX(TARGET) == 2)
+	PRINTFORML %CALLNAME:TARGET%はおもむろに仰向けになっては、後ろの穴を犯すよう求めてくる
 PRINTFORM %CALLNAME:TARGET%の
 IF TEQUIP:下半身上着 || (TEQUIP:全身上着 && CFLAG:着衣併用 != 1)
 	IF CFLAG:挿入可
@@ -629,6 +875,8 @@ ELSEIF CFLAG:陥落
 ELSE
 	PRINTL アナルを貫いた……
 ENDIF
+SIF 上級売春中 && !ABL:ゲイ中毒 && SEX(TARGET) == 1
+	PRINTFORML %CALLNAME:TARGET%は自分が犯されることなど想定外だったのか、戸惑って暴れながらも痛みと、僅かな快感に屈して力が抜けていく……
 WAIT
 
 ;-------------------------------------------------
@@ -657,7 +905,11 @@ IF PLAYER == TFLAG:前コマンド実行者
 	ENDSELECT
 ENDIF
 
-PRINTFORM %CALLNAME:TARGET%を四つん這いにさせ、
+IF TEQUIP:ゲームセンター
+	PRINTFORM %CALLNAME:TARGET%を前かがみにさせ、
+ELSE
+	PRINTFORM %CALLNAME:TARGET%を四つん這いにさせ、
+ENDIF
 IF TEQUIP:下半身上着 || (TEQUIP:全身上着 && CFLAG:着衣併用 != 1)
 	IF CFLAG:挿入可
 		PRINTFORM %OVER_GENITAL(TARGET)%に隠れた\@ TEQUIP:下半身下着 ? %CSTR:下半身下着%をずらして、# 秘部を暴き、 \@
@@ -673,7 +925,7 @@ ENDIF
 ;Ａ感覚LV4以上
 SIF ABL:Ａ感覚 >= 4
 	PRINT すっかり開発されきった
-IF CFLAG:陥落 || (TALENT:アニマル && CFLAG:依存度 >= 1500)
+IF (CFLAG:陥落 && !TEQUIP:ゲームセンター) || (TALENT:アニマル && CFLAG:依存度 >= 1500)
 	PRINTL 尻穴をゆっくりと貫いた……
 	IF TALENT:尻尾
 		PRINTFORML %CALLNAME:TARGET%は尻尾を振りながら尻穴をきつく締め付けている……
@@ -683,8 +935,49 @@ IF CFLAG:陥落 || (TALENT:アニマル && CFLAG:依存度 >= 1500)
 ELSE
 	PRINTL アヌスの最奥まで突き入れた……
 ENDIF
+IF 上級売春中
+	IF TALENT:マゾ
+		PRINTFORM 乱暴に犯されて喜ぶ%CALLNAME:TARGET%をさらに激しく蹂躙すると、
+		IF PENIS(TARGET)
+			PRINTL 揺れるペニスから先走りを振りまいている……
+		ELSE
+			PRINTL 膣から溢れる愛液が太腿を伝っている……
+		ENDIF
+	ELSE
+		SELECTCASE SEX(TARGET)
+			CASE 1
+				IF ABL:ゲイ中毒
+					PRINTFORML %CALLNAME:TARGET%は奥を一突きするたびにびくんと体を跳ねさせ、掘られる快感に悶えている……
+				ELSE
+					IF ABL:Ａ感覚
+						PRINTFORML 意外にもアナルの経験があるらしい%CALLNAME:TARGET%は、掘られるや否や悦びの嬌声を上げている……
+					ELSE
+						PRINTFORML 女を買いに来たにも関わらず犯されてしまった%CALLNAME:TARGET%は、男としてのプライドを砕かれて涙を浮かべている……
+					ENDIF
+				ENDIF
+			CASE 2
+				IF ABL:Ａ感覚
+					PRINTFORML 尻穴ですんなりと受け入れた%CALLNAME:TARGET%は淫らな息遣いで%CALLNAME:PLAYER%の腰使いを加速させている……
+				ELSE
+					PRINTFORML いざ後ろを使ってはみるものの、%CALLNAME:TARGET%は痛みと苦しさで息も絶え絶えだ……
+				ENDIF
+		ENDSELECT
+	ENDIF
+ENDIF
+IF TEQUIP:ゲームセンター
+	PRINTFORM %CALLNAME:TARGET%は壁に手をついて
+	IF ABL:Ａ感覚 >= 5
+		SELECTCASE SEX(TARGET)
+			CASE 1
+				PRINTL 声を押し殺そうとするが、前立腺での強烈な快楽に喘ぎを抑えきれずにいる……
+			CASE 2
+				PRINTL 快感に悶え、膣から溢れる愛液を\@ !TALENT:足使用不可 ? 太腿 #\@に滴らせている……
+		ENDSELECT
+	ELSE
+		PRINTL 必死に声を押し殺している……
+	ENDIF
+ENDIF
 WAIT
-
 ;-------------------------------------------------
 ;騎乗位アナル
 ;-------------------------------------------------
@@ -737,11 +1030,11 @@ IF CFLAG:陥落
 	SIF TALENT:小柄体型
 		PRINT 小さな身体で懸命に
 	SELECTCASE TALENT:バストサイズ
-		;巨乳
-		CASE 4
+		;巨乳、豊乳
+		CASE 4, 5
 			PRINT 大きく胸を揺らしながら
 		;爆乳
-		CASE 5
+		CASE 6
 			PRINT 跳ねる胸に身体ごと揺らされながら
 	ENDSELECT
 	PRINTL 自ら腰を動かしている……
@@ -827,8 +1120,8 @@ ELSEIF CFLAG:陥落 && !TEQUIP:縄
 		;普通
 		CASE 3
 			PRINT ぐっと体を寄せ付けながら
-		;巨乳か爆乳
-		CASE 4, 5
+		;巨乳～爆乳
+		CASE 4 TO 6
 			PRINT 豊満な胸を擦り付けながら
 	ENDSELECT
 	PRINTL 首に手を回して抱きついてきた……
@@ -910,8 +1203,8 @@ IF CFLAG:陥落
 		;普通
 		CASE 3
 			PRINT 後ろから乳房を手で愛撫すると、
-		;巨乳か爆乳
-		CASE 4, 5
+		;巨乳～爆乳
+		CASE 4 TO 6
 			PRINT 豊満な胸を揉みしだくと、
 	ENDSELECT
 	PRINTFORM %CALLNAME:TARGET%は
@@ -928,7 +1221,7 @@ WAIT
 ;下着ずらし挿入アナル
 ;-------------------------------------------------
 @MESSAGE_COM_下着ずらし挿入アナル
-PRINTFORM %CALLNAME:PLAYER%は%CALLNAME:TARGET%の%CSTR:下半身下着%をずらして、その露になった
+PRINTFORM %CALLNAME:PLAYER%は\@ TEQUIP:ゲームセンター ? 壁に手をついた #  \@%CALLNAME:TARGET%の\@ CFLAG:着衣併用 == 2 ? %CSTR:全身上着% # %CSTR:下半身下着% \@をずらして、その露になった
 ;潤滑LV4以上
 SIF PALAM:潤滑 >= PALAMLV:4
 	PRINT 粘液にまみれる
@@ -936,7 +1229,7 @@ SIF PALAM:潤滑 >= PALAMLV:4
 SIF ABL:Ａ感覚 >= 4
 	PRINT すっかり開発されきった
 ;陥落済み
-IF CFLAG:陥落
+IF CFLAG:陥落 && !TEQUIP:ゲームセンター
 	PRINTL アヌスを貫いた
 	SIF !TALENT:足使用不可
 		PRINTFORML %CALLNAME:TARGET%は%CALLNAME:PLAYER%に足を絡め腰を押し付けてきた……
@@ -953,13 +1246,44 @@ PRINTFORM %CALLNAME:PLAYER%は
 IF TFLAG:前コマンド実行者 == PLAYER
 	SELECTCASE PREVCOMS
 		CASE "正常位させる"
-			PRINTFORML セックスの快感に子宮を疼かせながら膣内を締め付け、さらに激しく自分を抱くように命じた……
+			IF 上級売春中
+				PRINTFORML %CALLNAME:TARGET%を喜ばせるために喘いでよがり、両手\@ !TALENT:足使用不可 ? 両足 #\@で%CALLNAME:TARGET%に抱きついた……
+			ELSE
+				PRINTFORML セックスの快感に子宮を疼かせながら膣内を締め付け、さらに激しく自分を抱くように命じた……
+			ENDIF
 		CASE "後背位させる"
-			PRINTFORML 後ろからの交尾に夢中になる%CALLNAME:TARGET%を制止して仰向けになり、性交を続けた……
+			IF 上級売春中
+				PRINTFORML %CALLNAME:TARGET%に言われるままに仰向けになり、行為を続けた……
+			ELSE
+				PRINTFORML 後ろからの交尾に夢中になる%CALLNAME:TARGET%を制止して仰向けになり、性交を続けた……
+			ENDIF
 		CASE "正常位アナルさせる"
-			PRINTFORML 尻穴に何度も突き入れる%CALLNAME:TARGET%を制止して、今度は膣内へと導いた……
+			IF 上級売春中
+				PRINTFORML 前の方に挿れたがる%CALLNAME:TARGET%のペニスを丁寧に拭いて、膣内に導いた……
+			ELSE
+				PRINTFORML 尻穴に何度も突き入れる%CALLNAME:TARGET%を制止して、今度は膣内へと導いた……
+			ENDIF
 		CASE "後背位アナルさせる"
-			PRINTFORML 後ろからのセックスに夢中になる%CALLNAME:TARGET%を制止して仰向けになり、次は愛液に濡れる膣口へと誘いこんだ……
+			IF 上級売春中
+				PRINTFORML アナルセックスを堪能した%CALLNAME:TARGET%のペニスを丁寧に拭いて、仰向けで膣での性交を始めた……
+			ELSE
+				PRINTFORML 後ろからのセックスに夢中になる%CALLNAME:TARGET%を制止して仰向けになり、次は愛液に濡れる膣口へと誘いこんだ……
+			ENDIF
+;		CASE "スライム姦"
+;			IF 上級売春中
+;				IF TALENT:スライム || TALENT:溶ける快
+;					PRINTFORMW スライム同士の行為を堪能した%CALLNAME:TARGET%と共にかつての姿に擬態し、仰向けで膣での性交を始めた……
+;				ELSE
+;					PRINTFORMW 膣内に繋げたまま元々の姿に擬態した%CALLNAME:TARGET%に言われるまま仰向けになり、行為を続けた……
+;				ENDIF
+;			ELSE
+;				IF TALENT:スライム || TALENT:溶ける快
+;					PRINTFORMW %CALLNAME:TARGET%を制止して、互いに元々の姿に擬態した後、仰向けで膣での性交を始めた……
+;				ELSE
+;					PRINTFORMW スライムとしての行為に溺れる%CALLNAME:TARGET%を制止して元々の姿に擬態させると、仰向けになり、膣内に導いた……
+;				ENDIF
+;				PRINTFORML 後ろからのセックスに夢中になる%CALLNAME:TARGET%を制止して仰向けになり、次は愛液に濡れる膣口へと誘いこんだ……
+;			ENDIF
 		CASEELSE
 			GOTO ELSE
 	ENDSELECT
@@ -994,36 +1318,53 @@ ELSE
 	ENDIF
 	PRINTL 自らの膣内に導いた……
 ENDIF
-IF TALENT:PLAYER:処女
-	IF TALENT:アニマル
-		PRINTFORML %CALLNAME:TARGET%は膣内から漏れ出す破瓜血を気にも留めず、交尾を続けている……
+IF 上級売春中
+	IF TALENT:PLAYER:処女
+		PRINTFORML 破瓜の血を流す%CALLNAME:PLAYER%に、%CALLNAME:TARGET%は驚きを見せている……
+	ELSEIF TALENT:童貞
+		PRINTFORML 初めての性交で緊張に息を荒げる%CALLNAME:TARGET%はうまく挿入できない。%CALLNAME:PLAYER%は互いの性器に手を添えながら優しく中へと導いた……
 	ELSE
-		IF FALLTYPE(TARGET) == 1 && PLAYER == MASTER
-			PRINTFORML %CALLNAME:TARGET%は%CALLNAME:PLAYER%の小さな悲鳴と共に膣内から漏れ出す破瓜の血に驚いたが、%CALLNAME:PLAYER%の初めての相手になれたことがこの上なく幸せのようだ……
+		IF TALENT:小柄体型 && !TALENT:PLAYER:小柄体型
+			PRINTFORML 小さな体躯でしがみつきながら腰を振る%CALLNAME:TARGET%を、%CALLNAME:PLAYER%は胸に埋めるように強く抱きしめる……
+		ELSEIF !TALENT:小柄体型 && TALENT:PLAYER:小柄体型
+			SIF !TALENT:PLAYER:足使用不可
+				PRINTFORML 細い足のつま先をぴんと伸ばす%CALLNAME:PLAYER%は、熱く太くて大きい剛直を、幼い膣でさらにきゅぅっと締め付けた……
 		ELSE
-			PRINTFORML %CALLNAME:TARGET%は%CALLNAME:PLAYER%の小さな悲鳴と共に膣内から漏れ出す破瓜の血に驚き、複雑な表情をしている……
+			PRINTFORML %CALLNAME:TARGET%もまた息を乱し、快感に浸る表情で腰を動かしている……
 		ENDIF
 	ENDIF
-ELSEIF TALENT:アニマル
-	IF CFLAG:依存度 >= 1500
-		PRINTFORML %CALLNAME:TARGET%は生温かい舌で%CALLNAME:PLAYER%の顔や体を舐めながら、交尾に夢中になっている……
-	ELSE
-		PRINTFORML %CALLNAME:TARGET%は本能のままに腰を振り続け、息を荒げている……
+ELSE
+	IF TALENT:PLAYER:処女
+		IF TALENT:アニマル
+			PRINTFORML %CALLNAME:TARGET%は膣内から漏れ出す破瓜血を気にも留めず、交尾を続けている……
+		ELSE
+			IF FALLTYPE(TARGET) == 1 && PLAYER == MASTER
+				PRINTFORML %CALLNAME:TARGET%は%CALLNAME:PLAYER%の小さな悲鳴と共に膣内から漏れ出す破瓜の血に驚いたが、%CALLNAME:PLAYER%の初めての相手になれたことがこの上なく幸せのようだ……
+			ELSE
+				PRINTFORML %CALLNAME:TARGET%は%CALLNAME:PLAYER%の小さな悲鳴と共に膣内から漏れ出す破瓜の血に驚き、複雑な表情をしている……
+			ENDIF
+		ENDIF
+	ELSEIF TALENT:アニマル
+		IF CFLAG:依存度 >= 1500
+			PRINTFORML %CALLNAME:TARGET%は生温かい舌で%CALLNAME:PLAYER%の顔や体を舐めながら、交尾に夢中になっている……
+		ELSE
+			PRINTFORML %CALLNAME:TARGET%は本能のままに腰を振り続け、息を荒げている……
+		ENDIF
+	ELSEIF TALENT:童貞
+		PRINTFORML 初めてで勝手の分からない%CALLNAME:TARGET%を、%CALLNAME:PLAYER%は腰を抱き寄せて一番奥まで誘い込んだ……
+	ELSEIF CFLAG:陥落
+		PRINTFORM %CALLNAME:TARGET%は\@ FALLTYPE(TARGET) == 1 ? 愛する #  \@%CALLNAME:PLAYER%とのセックスに、
+		IF TALENT:小柄体型 && TALENT:PLAYER:小柄体型
+			PRINT お互い子供のようにがむしゃらに抱き合いながら
+		ELSEIF TALENT:小柄体型 && !TALENT:PLAYER:小柄体型
+			PRINTFORM 小さな体躯で必死に%CALLNAME:PLAYER%の体にしがみついて
+		ELSEIF !TALENT:小柄体型 && TALENT:PLAYER:小柄体型
+			PRINT ペニスを咥え込む幼い体を気遣いながら優しく
+		ELSE
+			PRINT 夢中で
+		ENDIF
+		PRINTL 腰を振っている……
 	ENDIF
-ELSEIF TALENT:童貞
-	PRINTFORML 初めてで勝手の分からない%CALLNAME:TARGET%を、%CALLNAME:PLAYER%は腰を抱き寄せて一番奥まで誘い込んだ……
-ELSEIF CFLAG:陥落
-	PRINTFORM %CALLNAME:TARGET%は\@ FALLTYPE(TARGET) == 1 ? 愛する #  \@%CALLNAME:PLAYER%とのセックスに、
-	IF TALENT:小柄体型 && TALENT:PLAYER:小柄体型
-		PRINT お互い子供のようにがむしゃらに抱き合いながら
-	ELSEIF TALENT:小柄体型 && !TALENT:PLAYER:小柄体型
-		PRINTFORM 小さな体躯で必死に%CALLNAME:PLAYER%の体にしがみついて
-	ELSEIF !TALENT:小柄体型 && TALENT:PLAYER:小柄体型
-		PRINT ペニスを咥え込む幼い体を気遣いながら優しく
-	ELSE
-		PRINT 夢中で
-	ENDIF
-	PRINTL 腰を振っている……
 ENDIF
 WAIT
 
@@ -1061,7 +1402,11 @@ ELSE
 			PRINT を脱いで
 		ENDIF
 	ENDIF
-	PRINT 四つん這いになると、
+	IF TEQUIP:ゲームセンター
+		PRINT 壁に手をつき、
+	ELSE
+		PRINT 四つん這いになると、
+	ENDIF
 	PRINTFORM %CALLNAME:TARGET%の
 	IF TALENT:アニマル
 		PRINT ペニスの根本を掴み、
@@ -1077,32 +1422,48 @@ ELSE
 	PRINTL 自らの膣内に導いた……
 ENDIF
 
-IF TALENT:アニマル
-	IF CFLAG:依存度 >= 1500
-		PRINTFORML %CALLNAME:TARGET%は生温かい舌で%CALLNAME:PLAYER%の首や背中を舐めながら、交尾に夢中になっている……
+IF 上級売春中
+	IF TALENT:PLAYER:処女
+		PRINTFORML 破瓜の血を流す%CALLNAME:PLAYER%に、%CALLNAME:TARGET%は驚きを見せている……
+	ELSEIF TALENT:童貞
+		PRINTFORML 初めての性交で緊張に息を荒げる%CALLNAME:TARGET%はうまく挿入できない。%CALLNAME:PLAYER%は自らの秘所を両手で拡げて初めてのペニスを受け入れた……
 	ELSE
-		PRINTFORML %CALLNAME:TARGET%は本能のままに腰を振り続け、息を荒げている……
+		IF TALENT:小柄体型 && !TALENT:PLAYER:小柄体型
+			PRINTFORML 膝をがくがくとさせて腰を振る%CALLNAME:TARGET%の体に合わせて%CALLNAME:PLAYER%は腰の突き上げたり引いたりを繰り返す……
+		ELSEIF !TALENT:小柄体型 && TALENT:PLAYER:小柄体型
+			PRINTFORML %CALLNAME:TARGET%に半ば持ち上げられるように犯される%CALLNAME:PLAYER%は、よく透る高い声で%CALLNAME:TARGET%を惑わせるように喘いだ……
+		ELSE
+			PRINTFORML %CALLNAME:TARGET%もまた息を乱し、快感に浸る表情で腰を振っている……
+		ENDIF
 	ENDIF
-ELSEIF TALENT:童貞
-	PRINTFORML 初めてで勝手の分からない%CALLNAME:TARGET%を、%CALLNAME:PLAYER%は尻を振って締め付けた……
-ELSEIF CFLAG:陥落
-	PRINTFORM %CALLNAME:TARGET%は\@ FALLTYPE(TARGET) == 1 ? 愛する #  \@%CALLNAME:PLAYER%とのセックスに、
-	IF TALENT:小柄体型 && TALENT:PLAYER:小柄体型
-		PRINT 互いの幼い下半身をぶつけ合いながら
-	ELSEIF TALENT:小柄体型 && !TALENT:PLAYER:小柄体型
-		PRINTFORM 小さな体で必死に%CALLNAME:PLAYER%の体にしがみついて
-	ELSEIF !TALENT:小柄体型 && TALENT:PLAYER:小柄体型
-		PRINT ペニスを咥え込む幼い体を気遣いながら優しく
-	ELSE
-		SELECTCASE TALENT:バストサイズ
-			CASE 1, 2
-				PRINT 薄い胸を擦り付けるように覆いかぶさり
-			CASE 3, 4, 5
-				PRINT 乳房を押し付けながら
-		ENDSELECT
-		PRINT 夢中で
+ELSE
+	IF TALENT:アニマル
+		IF CFLAG:依存度 >= 1500
+			PRINTFORML %CALLNAME:TARGET%は生温かい舌で%CALLNAME:PLAYER%の首や背中を舐めながら、交尾に夢中になっている……
+		ELSE
+			PRINTFORML %CALLNAME:TARGET%は本能のままに腰を振り続け、息を荒げている……
+		ENDIF
+	ELSEIF TALENT:童貞
+		PRINTFORML 初めてで勝手の分からない%CALLNAME:TARGET%を、%CALLNAME:PLAYER%は尻を振って締め付けた……
+	ELSEIF CFLAG:陥落
+		PRINTFORM %CALLNAME:TARGET%は\@ FALLTYPE(TARGET) == 1 ? 愛する #  \@%CALLNAME:PLAYER%とのセックスに、
+		IF TALENT:小柄体型 && TALENT:PLAYER:小柄体型
+			PRINT 互いの幼い下半身をぶつけ合いながら
+		ELSEIF TALENT:小柄体型 && !TALENT:PLAYER:小柄体型
+			PRINTFORM 小さな体で必死に%CALLNAME:PLAYER%の体にしがみついて
+		ELSEIF !TALENT:小柄体型 && TALENT:PLAYER:小柄体型
+			PRINT ペニスを咥え込む幼い体を気遣いながら優しく
+		ELSE
+			SELECTCASE TALENT:バストサイズ
+				CASE 1, 2
+					PRINT 薄い胸を擦り付けるように覆いかぶさり
+				CASE 3 TO 6
+					PRINT 乳房を押し付けながら
+			ENDSELECT
+			PRINT 夢中で
+		ENDIF
+		PRINTL 腰を振っている……
 	ENDIF
-	PRINTL 腰を振っている……
 ENDIF
 WAIT
 
@@ -1132,6 +1493,8 @@ ENDIF
 PRINTFORM %CALLNAME:PLAYER%は
 SIF PLAYER == ASSI && !CFLAG:ASSI:陥落
 	PRINTFORM 横目で%CALLNAME:MASTER%の機嫌を伺いながら、命じられた通りに
+SIF 上級売春中
+	PRINTFORM 期待の視線を向ける%CALLNAME:TARGET%に見せつけるように
 IF OVER_GENITAL(PLAYER) != ""
 	IF CFLAG:PLAYER:挿入可
 		SIF TEQUIP:PLAYER:下半身下着
@@ -1148,7 +1511,11 @@ IF OVER_GENITAL(PLAYER) != ""
 		PRINT を脱いで、
 	ENDIF
 ENDIF
-PRINTFORM %CALLNAME:TARGET%のペニスを強引に
+IF 上級売春中
+	PRINTFORM 硬くそそり勃つペニスの先端へ膣口を擦りつけ、ゆっくりと
+ELSE
+	PRINTFORM %CALLNAME:TARGET%のペニスを強引に
+ENDIF
 SELECTCASE TFLAG:奴隷挿入箇所
 	;膣
 	CASE 1
@@ -1176,13 +1543,29 @@ PRINTFORM %CALLNAME:PLAYER%は
 IF TFLAG:前コマンド実行者 == PLAYER
 	SELECTCASE PREVCOMS
 		CASE "正常位させる"
-			PRINTFORML 膣内に何度も突き入れる%CALLNAME:TARGET%を制止して、今度はアナルでやらせることにした……
+			IF 上級売春中
+				PRINTFORML アナルでやりたいと言い出した%CALLNAME:TARGET%に対し、%CALLNAME:PLAYER%はさらに\@ TALENT:足使用不可 ? 体 # 足 \@を曲げて尻穴を晒して応えた……
+			ELSE
+				PRINTFORML 膣内に何度も突き入れる%CALLNAME:TARGET%を制止して、今度はアナルでやらせることにした……
+			ENDIF
 		CASE "後背位させる"
-			PRINTFORML 後ろからの交尾に夢中になる%CALLNAME:TARGET%を制止して仰向けになり、今度はアナルに挿れさせた……
+			IF 上級売春中
+				PRINTFORML 膣に飽き足らず情欲を募らせる%CALLNAME:TARGET%は、%CALLNAME:TARGET%を仰向けにして顔を合わせると今度はアナルを犯してきた……
+			ELSE
+				PRINTFORML 後ろからの交尾に夢中になる%CALLNAME:TARGET%を制止して仰向けになり、今度はアナルに挿れさせた……
+			ENDIF
 		CASE "正常位アナルさせる"
-			PRINTFORML 尻穴を犯される快感に%CALLNAME:TARGET%を抱きしめてさらに激しくするように命じた……
+			IF 上級売春中
+				PRINTFORML アナルセックスに夢中になる%CALLNAME:TARGET%に激しく抱かれ、%CALLNAME:PLAYER%はくぐもった喘ぎ声を抑えきれずにいる……
+			ELSE
+				PRINTFORML 尻穴を犯される快感に%CALLNAME:TARGET%を抱きしめてさらに激しくするように命じた……
+			ENDIF
 		CASE "後背位アナルさせる"
-			PRINTFORML 後ろからのセックスに夢中になる%CALLNAME:TARGET%を制止して仰向けになり、アナルでの性交を続けた……
+			IF 上級売春中
+				PRINTFORML %CALLNAME:TARGET%はバックで犯される%CALLNAME:PLAYER%を仰向けにして、アナルセックスの続きを楽しんだ……
+			ELSE
+				PRINTFORML 後ろからのセックスに夢中になる%CALLNAME:TARGET%を制止して仰向けになり、アナルでの性交を続けた……
+			ENDIF
 		CASEELSE
 			GOTO ELSE
 	ENDSELECT
@@ -1218,26 +1601,43 @@ ELSE
 	PRINTL 自らのアナルに導いた……
 ENDIF
 
-IF TALENT:アニマル
-	IF CFLAG:依存度 >= 1500
-		PRINTFORML %CALLNAME:TARGET%は生温かい舌で%CALLNAME:PLAYER%の顔や体を舐めながら、交尾に夢中になっている……
+IF 上級売春中
+	IF TALENT:童貞
+		PRINTFORML 童貞をアナルで捨てようとする物好きな%CALLNAME:TARGET%だが、きつい尻穴と緊張が重なり一苦労を要した……
 	ELSE
-		PRINTFORML %CALLNAME:TARGET%は本能のままに腰を振り続け、息を荒げている……
+		IF PENIS(PLAYER)
+			SELECTCASE SEX(PLAYER)
+				CASE 1
+					PRINTFORML 反り返った剛直で容赦無く前立腺を抉ってくる%CALLNAME:TARGET%の腰使いで、%CALLNAME:PLAYER%は嗚咽のような嬌声を上げている……
+				CASE 2
+					PRINTFORML %CALLNAME:TARGET%は、尻穴を突かれるたびに揺れる%CALLNAME:PLAYER%のペニスを愉快げに見つめている……
+			ENDSELECT
+		ELSE
+			PRINTFORML %CALLNAME:TARGET%は、結合部がしっかり見えるように%CALLNAME:PLAYER%の腰を持ち上げて激しく犯してくる……
+		ENDIF
 	ENDIF
-ELSEIF TALENT:童貞
-	PRINTFORML 初めてで勝手の分からない%CALLNAME:TARGET%を、%CALLNAME:PLAYER%は腰を抱き寄せて一番奥まで誘い込んだ……
-ELSEIF CFLAG:陥落
-	PRINTFORM %CALLNAME:TARGET%は\@ FALLTYPE(TARGET) == 1 ? 愛する #  \@%CALLNAME:PLAYER%とのセックスに、
-	IF TALENT:小柄体型 && TALENT:PLAYER:小柄体型
-		PRINT お互い子供のようにがむしゃらに抱き合いながら
-	ELSEIF TALENT:小柄体型 && !TALENT:PLAYER:小柄体型
-		PRINTFORM 小さな体で必死に%CALLNAME:PLAYER%の体にしがみついて
-	ELSEIF !TALENT:小柄体型 && TALENT:PLAYER:小柄体型
-		PRINT ペニスを咥え込む幼い体を気遣いながら優しく
-	ELSE
-		PRINT 夢中で
+ELSE
+	IF TALENT:アニマル
+		IF CFLAG:依存度 >= 1500
+			PRINTFORML %CALLNAME:TARGET%は生温かい舌で%CALLNAME:PLAYER%の顔や体を舐めながら、交尾に夢中になっている……
+		ELSE
+			PRINTFORML %CALLNAME:TARGET%は本能のままに腰を振り続け、息を荒げている……
+		ENDIF
+	ELSEIF TALENT:童貞
+		PRINTFORML 初めてで勝手の分からない%CALLNAME:TARGET%を、%CALLNAME:PLAYER%は腰を抱き寄せて一番奥まで誘い込んだ……
+	ELSEIF CFLAG:陥落
+		PRINTFORM %CALLNAME:TARGET%は\@ FALLTYPE(TARGET) == 1 ? 愛する #  \@%CALLNAME:PLAYER%とのセックスに、
+		IF TALENT:小柄体型 && TALENT:PLAYER:小柄体型
+			PRINT お互い子供のようにがむしゃらに抱き合いながら
+		ELSEIF TALENT:小柄体型 && !TALENT:PLAYER:小柄体型
+			PRINTFORM 小さな体で必死に%CALLNAME:PLAYER%の体にしがみついて
+		ELSEIF !TALENT:小柄体型 && TALENT:PLAYER:小柄体型
+			PRINT ペニスを咥え込む幼い体を気遣いながら優しく
+		ELSE
+			PRINT 夢中で
+		ENDIF
+		PRINTL 腰を振っている……
 	ENDIF
-	PRINTL 腰を振っている……
 ENDIF
 WAIT
 
@@ -1249,9 +1649,17 @@ PRINTFORM %CALLNAME:PLAYER%は
 IF TFLAG:前コマンド実行者 == PLAYER
 	SELECTCASE PREVCOMS
 		CASE "正常位させる"
-			PRINTFORML 膣内に挿入して腰を振る%CALLNAME:TARGET%を制して四つん這いになり、アナルに挿れるように命じた……
+			IF 上級売春中
+				PRINTFORML アナルセックスを求める%CALLNAME:TARGET%に従い四つん這いになると、剛直を抜かれて寂しくなった膣口を自分で弄りながら%CALLNAME:TARGET%を誘った……
+			ELSE
+				PRINTFORML 膣内に挿入して腰を振る%CALLNAME:TARGET%を制して四つん這いになり、アナルに挿れるように命じた……
+			ENDIF
 		CASE "後背位させる"
-			PRINTFORML 後ろから膣内に突き入れる%CALLNAME:TARGET%に、今度はアナルで抱くように命じた……
+			IF 上級売春中
+				PRINTFORML 膣内から剛直が引き抜かれたかと思うと尻穴に硬いものを当てられる感触がして、次第にそれは%CALLNAME:PLAYER%の中へと入り込んできた……
+			ELSE
+				PRINTFORML 後ろから膣内に突き入れる%CALLNAME:TARGET%に、今度はアナルで抱くように命じた……
+			ENDIF
 		CASE "正常位アナルさせる"
 			PRINTFORML 尻穴に何度も突き入れる%CALLNAME:TARGET%を制して四つん這いになり、尻を振ってアナルセックスの続きを要求した……
 		CASE "後背位アナルさせる"
@@ -1275,7 +1683,11 @@ ELSE
 			PRINT を脱いで
 		ENDIF
 	ENDIF
-	PRINT 四つん這いになると、
+	IF TEQUIP:ゲームセンター
+		PRINT 壁に手をつき
+	ELSE
+		PRINT 四つん這いになると、
+	ENDIF
 	PRINTFORM %CALLNAME:TARGET%の
 	IF TALENT:アニマル
 		PRINT ペニスの根本を掴み、
@@ -1291,32 +1703,349 @@ ELSE
 	PRINTL 自らのアナルに導いた……
 ENDIF
 
-IF TALENT:アニマル
-	IF CFLAG:依存度 >= 1500
-		PRINTFORML %CALLNAME:TARGET%は生温かい舌で%CALLNAME:PLAYER%の首や背中を舐めながら、交尾に夢中になっている……
+IF 上級売春中
+	IF TALENT:童貞
+		PRINTFORML 童貞をアナルで捨てようとする物好きな%CALLNAME:TARGET%だが、きつい尻穴と緊張が重なり一苦労を要した……
 	ELSE
-		PRINTFORML %CALLNAME:TARGET%は本能のままに腰を振り続け、息を荒げている……
-	ENDIF
-ELSEIF TALENT:童貞
-	PRINTFORML 初めてで勝手の分からない%CALLNAME:TARGET%を、%CALLNAME:PLAYER%は尻を振って締め付けた……
-ELSEIF CFLAG:陥落
-	PRINTFORM %CALLNAME:TARGET%は\@ FALLTYPE(TARGET) == 1 ? 愛する #  \@%CALLNAME:PLAYER%とのセックスに、
-	IF TALENT:小柄体型 && TALENT:PLAYER:小柄体型
-		PRINT 互いの幼い下半身をぶつけ合いながら
-	ELSEIF TALENT:小柄体型 && !TALENT:PLAYER:小柄体型
-		PRINTFORM 小さな体で必死に%CALLNAME:PLAYER%の体にしがみついて
-	ELSEIF !TALENT:小柄体型 && TALENT:PLAYER:小柄体型
-		PRINT ペニスを咥え込む幼い体を気遣いながら優しく
-	ELSE
-		SELECTCASE TALENT:バストサイズ
-			CASE 1, 2
-				PRINT 薄い胸を擦り付けるように覆いかぶさり
-			CASE 3, 4, 5
-				PRINT 乳房を押し付けながら
+		SELECTCASE SEX(PLAYER)
+			CASE 1
+				PRINTFORML %CALLNAME:TARGET%は激しく掘られて先走りを漏らす%CALLNAME:PLAYER%のペニスを手で扱き、精液を搾り出すように前立腺を責め立てている……
+			CASE 2
+				PRINTFORML %CALLNAME:TARGET%は尻穴を犯しながら秘所を弄り続け、%CALLNAME:PLAYER%は多様な快感に激しく身悶えしている……
 		ENDSELECT
-		PRINT 夢中で
 	ENDIF
-	PRINTL 腰を振っている……
+ELSE
+	IF TALENT:アニマル
+		IF CFLAG:依存度 >= 1500
+			PRINTFORML %CALLNAME:TARGET%は生温かい舌で%CALLNAME:PLAYER%の首や背中を舐めながら、交尾に夢中になっている……
+		ELSE
+			PRINTFORML %CALLNAME:TARGET%は本能のままに腰を振り続け、息を荒げている……
+		ENDIF
+	ELSEIF TALENT:童貞
+		PRINTFORML 初めてで勝手の分からない%CALLNAME:TARGET%を、%CALLNAME:PLAYER%は尻を振って締め付けた……
+	ELSEIF CFLAG:陥落
+		PRINTFORM %CALLNAME:TARGET%は\@ FALLTYPE(TARGET) == 1 ? 愛する #  \@%CALLNAME:PLAYER%とのセックスに、
+		IF TALENT:小柄体型 && TALENT:PLAYER:小柄体型
+			PRINT 互いの幼い下半身をぶつけ合いながら
+		ELSEIF TALENT:小柄体型 && !TALENT:PLAYER:小柄体型
+			PRINTFORM 小さな体で必死に%CALLNAME:PLAYER%の体にしがみついて
+		ELSEIF !TALENT:小柄体型 && TALENT:PLAYER:小柄体型
+			PRINT ペニスを咥え込む幼い体を気遣いながら優しく
+		ELSE
+			SELECTCASE TALENT:バストサイズ
+				CASE 1, 2
+					PRINT 薄い胸を擦り付けるように覆いかぶさり
+				CASE 3 TO 6
+					PRINT 乳房を押し付けながら
+			ENDSELECT
+			PRINT 夢中で
+		ENDIF
+		PRINTL 腰を振っている……
+	ENDIF
 ENDIF
 WAIT
 
+
+;-------------------------------------------------
+;スライム姦
+;-------------------------------------------------
+@MESSAGE_COM_スライム姦
+
+;前回と今回の調教者が同じ
+IF PLAYER == TFLAG:前コマンド実行者
+	;前回コマンド
+	SELECTCASE PREVCOMS
+		CASE "正常位アナル", "後背位アナル", "対面座位アナル", "背面座位アナル", "騎乗位アナル"
+			IF TALENT:スライム || TALENT:溶ける快
+				PRINTFORMW %CALLNAME:PLAYER%は菊穴に挿入したまま、自身の形を崩して包み込むように広がり、%CALLNAME:TARGET%の全身と混ざり合うように蠢いた……
+			ELSE
+				PRINTFORMW %CALLNAME:PLAYER%は菊穴に挿入したまま、自身の形を崩して包み込むように広がり、%CALLNAME:TARGET%の穴という穴を犯した……
+			ENDIF
+			RETURN 0
+		CASE "正常位", "後背位", "騎乗位", "対面座位", "背面座位"
+			IF TALENT:スライム || TALENT:溶ける快
+				PRINTFORMW %CALLNAME:PLAYER%は膣内から抜き去ることなく、自身の形を崩して包み込むように広がり、%CALLNAME:TARGET%の全身と混ざり合うように蠢いた……
+			ELSE
+				PRINTFORMW %CALLNAME:PLAYER%は膣内から抜き去ることなく、自身の形を崩して包み込むように広がり、%CALLNAME:TARGET%の穴という穴を犯した……
+			ENDIF
+			RETURN 0
+		CASE "スライム姦"
+			IF TALENT:スライム || TALENT:溶ける快
+				PRINTFORMW %CALLNAME:PLAYER%と%CALLNAME:TARGET%は、ただのスライムとして混ざり合うように蠢いている……
+			ELSE
+				PRINTFORMW %CALLNAME:PLAYER%は、執拗に%CALLNAME:TARGET%の体を包み続け、その全てを舐めるように犯し続けている……
+			ENDIF
+			RETURN 0
+		CASE "スライム姦させる"
+			PRINTFORMW %CALLNAME:TARGET%の動きが弱まったところで、%CALLNAME:PLAYER%は動きを強め、行為の主導権を握った……
+			RETURN 0
+	ENDSELECT
+ENDIF
+
+;スライムか否かで描写変化
+IF CSTR:種族 == "スライム" || TALENT:スライム
+	SIF 上級売春中
+		PRINTFORML %CALLNAME:TARGET%は、同じスライムである%CALLNAME:PLAYER%としかできない特別な行為を求めてくる
+	PRINTFORM %CALLNAME:PLAYER%は自身の形を大きく崩して、%CALLNAME:TARGET%に飛び掛かり
+	;着衣中
+	IF TEQUIP:下半身上着 || (TEQUIP:全身上着 && CFLAG:着衣併用 != 1)
+		PRINTFORM その体の表面を%OVER_GENITAL(TARGET)%に擬態させている事などお構いなしに
+	ELSEIF TEQUIP:下半身下着
+		PRINTFORM その体の大事な部分を守るかのように%CSTR:下半身下着%に擬態させている事などお構いなしに
+	ENDIF
+		SELECTCASE RAND:3
+			CASE 0
+				PRINT ぷるぷると震える
+			CASE 1
+				PRINT ぐにゅぐにゅと波打つ
+			CASE 2
+				PRINT とろとろにとろける
+		ENDSELECT
+	IF TALENT:アニマル
+		PRINTL その体の形を崩させ、溶け混ざるように犯した……
+		SIF CFLAG:依存度 >= 1500
+			PRINTFORML %CALLNAME:TARGET%は飼い主の%CALLNAME:PLAYER%に応えるように、粘液の体を激しく絡み合わせている……
+		WAIT
+	;陥落済み
+	ELSEIF CFLAG:陥落
+		PRINTL その体の形を崩させ、溶け混ざるように犯した
+		IF TALENT:溶ける快
+			PRINTFORMW %CALLNAME:TARGET%は同じスライムとして、%CALLNAME:PLAYER%と混ざり合う快楽に酔いしれている……
+		ELSE
+			PRINTFORMW %CALLNAME:TARGET%は自分が自分でなくなりそうな恐怖を感じつつも、%CALLNAME:PLAYER%の行為を受け入れている……
+		ENDIF
+	ELSE
+		PRINTL その体の形を崩させ、溶け混ざるように犯した
+		IF TALENT:溶ける快
+			PRINTFORMW %CALLNAME:TARGET%はスライムとしての本能からか、%CALLNAME:PLAYER%と混ざり合う事を受け入れている……
+		ELSE
+			PRINTFORMW %CALLNAME:TARGET%は自分が自分でなくなる恐怖と、混ざり合う行為がもたらす奇妙な快感を前に強く戸惑っている……
+		ENDIF
+	ENDIF
+ELSE
+	SIF 上級売春中
+		PRINTFORML %CALLNAME:TARGET%は、スライムである%CALLNAME:PLAYER%にしかできない特別な行為を求めてくる
+	PRINTFORM %CALLNAME:PLAYER%は自身の形を大きく崩して、%CALLNAME:TARGET%に飛び掛かり、その体を
+	;着衣中
+	IF TEQUIP:下半身上着 || (TEQUIP:全身上着 && CFLAG:着衣併用 != 1)
+		IF CFLAG:挿入可
+			PRINTFORM %OVER_GENITAL(TARGET)%ごと包み込み、\@ TEQUIP:下半身下着 ? %CSTR:下半身下着%と肌の僅かな隙間に入り込むように# 肌に沿って \@粘液を流して
+		ELSE
+			PRINTFORM %OVER_GENITAL(TARGET)%\@ TEQUIP:下半身下着 ? と%CSTR:下半身下着% #  \@ごと包み込み、肌との僅かな隙間に入り込むように粘液を流して
+		ENDIF
+	ELSEIF TEQUIP:下半身下着
+		PRINTFORM 包み込み、%CSTR:下半身下着%と肌の僅かな隙間に入り込むように粘液を流して
+	ELSE
+		PRINTFORM 覆いつくすように包み込んで
+	ENDIF
+	SELECTCASE RAND:3
+		CASE 0
+			PRINT その全てを責めるように
+		CASE 1
+			PRINT 体の自由を奪いながら
+		CASE 2
+			PRINT 感じやすいであろう部分の刺激を強めながら、
+	ENDSELECT
+	IF TALENT:アニマル
+		PRINTL 穴という穴に粘液を流し込んだ……
+		SIF CFLAG:依存度 >= 1500
+			PRINTFORML %CALLNAME:TARGET%は嬉しそうな鳴き声を上げ、舌を出して飼い主の%CALLNAME:PLAYER%に媚びている……
+		WAIT
+	;陥落済み
+	ELSEIF CFLAG:陥落
+		PRINTL 穴という穴に粘液を流し込んだ
+		PRINTFORMW %CALLNAME:TARGET%は形を捨てて犯してくる%CALLNAME:PLAYER%の行為を受け入れている……
+	ELSE
+		PRINTW 穴という穴に粘液を流し込んだ……
+	ENDIF
+ENDIF
+WAIT
+
+;-------------------------------------------------
+;スライム姦させる
+;-------------------------------------------------
+@MESSAGE_COM_スライム姦させる
+
+;前回と今回の調教者が同じ
+PRINTFORM %CALLNAME:PLAYER%は
+IF TFLAG:前コマンド実行者 == PLAYER
+	SELECTCASE PREVCOMS
+		CASE "正常位させる", "後背位させる"
+			IF TALENT:PLAYER:スライム || TALENT:PLAYER:溶ける快
+				PRINTFORMW 形を保ったままの行為よりも、ただのスライムとして%CALLNAME:TARGET%と混ざり合うように行為を求めた……
+			ELSE
+				PRINTFORMW 普通のセックスでは物足りなくなったのか、%CALLNAME:TARGET%にただのスライムとして自分を襲うように命じた……
+			ENDIF
+			RETURN 0
+		CASE "正常位アナルさせる", "後背位アナルさせる"
+			IF TALENT:PLAYER:スライム || TALENT:PLAYER:溶ける快
+				PRINTFORMW 形を保ったままの行為よりも、ただのスライムとして%CALLNAME:TARGET%と混ざり合うように行為を求めた……
+			ELSE
+				PRINTFORMW 普通のアナルセックスでは物足りなくなったのか、%CALLNAME:TARGET%にただのスライムとして自分を襲うように命じた……
+			ENDIF
+			RETURN 0
+		CASE "スライム姦させる"
+			IF TALENT:スライム || TALENT:溶ける快
+				PRINTFORMW %CALLNAME:TARGET%にそのまま自分と混ざり続けるように刺激を与えた……
+			ELSE
+				PRINTFORMW %CALLNAME:TARGET%にそのまま自分を犯し続けるように命じた……
+			ENDIF
+			RETURN 0
+		CASE "スライム姦"
+			PRINTFORMW その動きを弱めて、%CALLNAME:TARGET%に信号を送るかのように刺激を与え、主導権を譲った……
+			RETURN 0
+		CASEELSE
+			GOTO ELSE
+	ENDSELECT
+ELSE
+	$ELSE
+	;スライムか否かで描写変化
+	IF CSTR:PLAYER:種族 == "スライム" || TALENT:PLAYER:スライム
+		PRINTFORML %CALLNAME:TARGET%に形を崩し、ただのスライムとして自分と混ざり合う事を求めた……
+		IF TALENT:溶ける快
+			PRINTFORM %CALLNAME:TARGET%は躊躇する事なく、保っていたその形を変えて
+		ELSE
+			PRINTFORM 自分の形を捨てる行為を求められた%CALLNAME:TARGET%は自分が自分でなくなる事への恐怖に体をぷるぷる震わせつつも、要求に従って
+		ENDIF
+		PRINTFORML %CALLNAME:PLAYER%と混ざり合った……
+		IF 上級売春中
+			IF TALENT:PLAYER:処女
+				PRINTFORML 溶け混ざりあう過程で、%CALLNAME:PLAYER%の何かを破ったような感触を覚え、%CALLNAME:TARGET%は動揺している……
+			ELSEIF !TALENT:溶ける快
+				PRINTFORM まだスライムとしての自分を受け入れきれてない%CALLNAME:TARGET%はうまく形を崩せない。
+				IF TALENT:PLAYER:溶ける快
+					PRINTFORML %CALLNAME:PLAYER%は優しく包み込み、導くようにその形を変えさせて混ざりあった……
+				ELSE
+					PRINTFORML それは%CALLNAME:PLAYER%も同じである為か、互いに中途半端にスライムとなる前の姿を残しつつ絡み合っている……
+				ENDIF
+			ELSE
+				IF TALENT:小柄体型 && !TALENT:PLAYER:小柄体型
+					PRINTFORML 小さな体躯で可愛らしく震える%CALLNAME:TARGET%を、%CALLNAME:PLAYER%は優しく包み込んで、揺り籠のようにその中へと抱いた……
+				ELSEIF !TALENT:小柄体型 && TALENT:PLAYER:小柄体型
+					PRINTFORML %CALLNAME:PLAYER%は、その小さな体を%CALLNAME:TARGET%の中に潜り込ませて内側から刺激している……
+				ELSE
+					PRINTFORML %CALLNAME:TARGET%は、その心地良さに溺れ、スライム同士でしか味わえない快楽に溺れている……
+				ENDIF
+			ENDIF
+		ELSE
+			IF TALENT:処女
+				IF FALLTYPE(TARGET) == 1 && PLAYER == MASTER
+					IF TALENT:PLAYER:処女
+					PRINTFORML %CALLNAME:TARGET%は形を捨てての行為によって、自身から保たれていた何かが失われた事を感じたが、なんとなく幸せな事だと理解しているようだ
+					PRINTFORML それは%CALLNAME:PLAYER%も同じであると感じると、%CALLNAME:TARGET%の意識は互いに想いを添い遂げられたという喜びに満たされていた……
+					ELSE
+					PRINTFORML %CALLNAME:TARGET%は形を捨てての行為によって、自身から保たれていた何かが失われた事を感じたが、なんとなく幸せな事だと理解しているようだ……
+					ENDIF
+				ELSE
+					IF TALENT:PLAYER:処女
+					PRINTFORML %CALLNAME:TARGET%は形を捨てての行為によって、自身から保たれていた何かが失われた事を感じると、強い痛みと不快感を覚えた
+					PRINTFORML 同時に%CALLNAME:PLAYER%の何かを破ったような感触を覚え、%CALLNAME:TARGET%は何とも言えない気分のまま、行為を続けている……
+					ELSE
+					PRINTFORML %CALLNAME:TARGET%は形を捨てての行為によって、自身から保たれていた何かが失われた事を感じると、強い痛みと不快感を覚えた……
+					ENDIF
+				ENDIF
+			ELSEIF TALENT:PLAYER:処女
+				IF FALLTYPE(TARGET) == 1 && PLAYER == MASTER
+					PRINTFORML %CALLNAME:TARGET%は%CALLNAME:PLAYER%と混ざりあう中で、何かを破ったような感触を覚えたが、なんとなく幸せな事だと理解しているようだ……
+				ELSE
+					PRINTFORML %CALLNAME:TARGET%は%CALLNAME:PLAYER%と混ざりあう中で、何かを破ったような感触を覚えたが、よくわからないまま行為を続けた……
+				ENDIF
+			ELSEIF TALENT:アニマル
+				IF CFLAG:依存度 >= 1500
+					PRINTFORML %CALLNAME:TARGET%はじゃれつくように%CALLNAME:PLAYER%と激しく絡み合っている……
+				ELSE
+					PRINTFORML %CALLNAME:TARGET%はただただ本能のままに%CALLNAME:PLAYER%に絡みついている……
+				ENDIF
+			ELSEIF !TALENT:溶ける快
+				PRINTFORM まだスライムとしての自分を受け入れきれてない%CALLNAME:TARGET%は形を崩す事に抵抗があるようだ。
+				IF TALENT:PLAYER:溶ける快
+					PRINTFORML %CALLNAME:PLAYER%は、%CALLNAME:TARGET%の軽く包むように刺激し、形を崩させていった……
+				ELSE
+					PRINTFORML それは%CALLNAME:PLAYER%も同じである為か、互いに中途半端にスライムとなる前の姿を残しつつ絡み合っている……
+				ENDIF
+			ELSEIF CFLAG:陥落
+				PRINTFORM %CALLNAME:TARGET%は\@ FALLTYPE(TARGET) == 1 ? 愛する #  \@%CALLNAME:PLAYER%と
+				IF TALENT:小柄体型 && TALENT:PLAYER:小柄体型
+					PRINT お互い子スライムのように絡み合いながら
+				ELSEIF TALENT:小柄体型 && !TALENT:PLAYER:小柄体型
+					PRINTFORM 絡み合い、小さな体躯で激しく%CALLNAME:PLAYER%の体を刺激しながら
+				ELSEIF !TALENT:小柄体型 && TALENT:PLAYER:小柄体型
+					PRINTFORM 絡み合い、まるで%CALLNAME:TARGET%の子供のように包まれながら
+				ELSE
+					PRINT 夢中で
+				ENDIF
+				PRINTL 混ざりあっている……
+			ENDIF
+		ENDIF
+	ELSE
+		PRINTFORML %CALLNAME:TARGET%に形を崩し、ただのスライムとして自分を襲うように命じた……
+		IF TALENT:溶ける快
+			PRINTFORM %CALLNAME:TARGET%は躊躇する事なく、保っていたその形を変えて
+		ELSE
+			PRINTFORM 自分の形を捨てる行為を求められた%CALLNAME:TARGET%は自分が自分でなくなる事への恐怖に体をぷるぷる震わせつつも、要求に従って
+		ENDIF
+		PRINTFORML %CALLNAME:PLAYER%に絡みつき、その穴という穴を犯した……
+		IF 上級売春中
+			IF TALENT:PLAYER:処女
+				PRINTFORML %CALLNAME:TARGET%は自身を構成する粘液の一部が、%CALLNAME:PLAYER%の破瓜の血を取り込んだ事を感じ取り、動揺のあまり体全体を震わせている……
+			ELSEIF !TALENT:溶ける快
+				PRINTFORML まだスライムとしての自分を受け入れきれてない%CALLNAME:TARGET%はうまく形を崩せない。
+				PRINTFORML 中途半端にスライムとなる前の姿を残した歪な姿で、%CALLNAME:PLAYER%を犯している……
+			ELSE
+				IF TALENT:小柄体型 && !TALENT:PLAYER:小柄体型
+					PRINTFORML 小さな体躯の%CALLNAME:TARGET%では、%CALLNAME:PLAYER%を完全には包み込めない。
+					PRINTFORML 懸命に自身を構成する粘液を伸ばして%CALLNAME:PLAYER%の全ての穴に粘液を流している……
+				ELSEIF !TALENT:小柄体型 && TALENT:PLAYER:小柄体型
+					PRINTFORML %CALLNAME:PLAYER%の小柄な体は、%CALLNAME:TARGET%を構成する粘液の中に完全に沈み込んでいる……
+				ELSE
+					PRINTFORML %CALLNAME:TARGET%は、ただのスライムとして理性と形を捨て、本能のみに身を任せた行為がもたらす快楽に溺れ、%CALLNAME:PLAYER%を犯している……
+				ENDIF
+			ENDIF
+		ELSE
+			IF TALENT:処女
+				IF FALLTYPE(TARGET) == 1 && PLAYER == MASTER
+					IF TALENT:PLAYER:処女
+					PRINTFORML %CALLNAME:TARGET%は形を捨てての行為によって、自身から保たれていた何かが失われた事を感じたが、なんとなく幸せな事だと理解しているようだ
+					PRINTFORML 同時に%CALLNAME:PLAYER%の破瓜の血を取り込んだ事を感じると、%CALLNAME:TARGET%の意識は互いに想いを添い遂げられたという喜びに満たされていた……
+					ELSE
+					PRINTFORML %CALLNAME:TARGET%は形を捨てての行為によって、自身から保たれていた何かが失われた事を感じたが、なんとなく幸せな事だと理解しているようだ……
+					ENDIF
+				ELSE
+					IF TALENT:PLAYER:処女
+					PRINTFORML %CALLNAME:TARGET%は形を捨てての行為によって、自身から保たれていた何かが失われた事を感じると、強い痛みと不快感を覚えた
+					PRINTFORML 同時に%CALLNAME:PLAYER%の破瓜の血を取り込んだ事を感じた%CALLNAME:TARGET%は何とも言えない気分のまま、行為を続けている……
+					ELSE
+					PRINTFORML %CALLNAME:TARGET%は形を捨てての行為によって、自身から保たれていた何かが失われた事を感じると、強い痛みと不快感を覚えた……
+					ENDIF
+				ENDIF
+			ELSEIF TALENT:PLAYER:処女
+				IF FALLTYPE(TARGET) == 1 && PLAYER == MASTER
+					PRINTFORML %CALLNAME:TARGET%は愛する%CALLNAME:PLAYER%の膣に流し込んだ自身の一部が破瓜の血を取り込んだ事を感じ、とろけるような喜びに満たされていた……
+				ELSE
+					PRINTFORML %CALLNAME:TARGET%は%CALLNAME:PLAYER%の破瓜の血を取り込んだ事を感じて、何とも言えない気分になったがそのまま行為を続けている……
+				ENDIF
+			ELSEIF TALENT:アニマル
+				IF CFLAG:依存度 >= 1500
+					PRINTFORML %CALLNAME:TARGET%はじゃれつくように%CALLNAME:PLAYER%の体に絡みついている……
+				ELSE
+					PRINTFORML %CALLNAME:TARGET%はただただ本能のままに%CALLNAME:PLAYER%の体に絡みついている……
+				ENDIF
+			ELSEIF !TALENT:溶ける快
+				PRINTFORML まだスライムとしての自分を受け入れきれてない%CALLNAME:TARGET%は、自分を見失わないように上半身の擬態を維持しながら%CALLNAME:PLAYER%を犯している……
+			ELSEIF CFLAG:陥落
+				PRINTFORM %CALLNAME:TARGET%は\@ FALLTYPE(TARGET) == 1 ? 愛する #  \@%CALLNAME:PLAYER%を
+				IF TALENT:小柄体型 && TALENT:PLAYER:小柄体型
+					PRINT 、まるで小さなスライムが子供を襲ってるかの如く
+				ELSEIF TALENT:小柄体型 && !TALENT:PLAYER:小柄体型
+					PRINTFORM 薄く広く伸ばした体で包み
+				ELSEIF !TALENT:小柄体型 && TALENT:PLAYER:小柄体型
+					PRINT 丸ごと自身の中に取り込むように包んで
+				ELSE
+					PRINT 夢中で
+				ENDIF
+				PRINTL 犯している……
+			ENDIF
+		ENDIF
+	ENDIF
+ENDIF
+WAIT

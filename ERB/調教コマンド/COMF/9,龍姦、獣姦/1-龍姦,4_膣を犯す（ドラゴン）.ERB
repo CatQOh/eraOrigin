@@ -3,57 +3,74 @@
 ;-------------------------------------------------
 @USERCOM_ABLE_膣を犯す（ドラゴン）, ARG
 #FUNCTION
+;ゲーセンに居る場合はできない
+コマンド実行条件 += "ゲーセンでは実行不可/"
+SIF TEQUIP:ゲームセンター
+	COMRESULT = 0
+;上級売春中は方針が狂気じゃないと不可
+コマンド実行条件 += "上級売春中は経営方針が狂気じゃないと実行できない/"
+SIF 上級売春中 && 娼館方針 != 4
+	COMRESULT = 0
 ;膣使用中はダメ
+コマンド実行条件 += "対象がV使用中は実行できない/"
 SIF Ｖ使用中(TARGET)
-	RETURNF 0
+	COMRESULT = 0
 ;ヴァギナ無いとダメ
+コマンド実行条件 += "対象に女性器が必要/"
 SIF !VAGINA(TARGET)
-	RETURNF 0
+	COMRESULT = 0
 ;小人体型持ちは物理的に無理
+コマンド実行条件 += "対象が[小人体型]だと実行できない/"
 SIF TALENT:小人体型
-	RETURNF 0
+	COMRESULT = 0
 ;触手調教中はダメ
+コマンド実行条件 += "触手召喚中は実行できない/"
 SIF TEQUIP:触手
-	RETURNF 0
+	COMRESULT = 0
 ;お風呂場プレイ中はダメ
+コマンド実行条件 += "お風呂場では実行できない/"
 SIF TEQUIP:お風呂場
-	RETURNF 0
+	COMRESULT = 0
 ;PLAYERがドラゴン使い持ってないとダメ
+コマンド実行条件 += "実行者に[ドラゴン使い]が必要/"
 SIF !TALENT:PLAYER:ドラゴン使い
-	RETURNF 0
+	COMRESULT = 0
 ;PLAYERが助手で未陥落だとダメ
+コマンド実行条件 += "実行者が助手の場合は助手が陥落済みじゃないと実行できない/"
 SIF PLAYER == ASSI && !CFLAG:PLAYER:陥落
-	RETURNF 0
+	COMRESULT = 0
 ;アニマルは無理
+コマンド実行条件 += "対象が[アニマル]の場合は実行できない/"
 SIF TALENT:アニマル
-	RETURNF 0
+	COMRESULT = 0
 
-COMRESULT = 1
-RETURNF 1
+RETURNF COMRESULT
 
 @実行判定_膣を犯す（ドラゴン）
+#DIM DYNAMIC 実効値
 ;-------------------------------------------------
 ;実行判定処理
 ;-------------------------------------------------
 ;縄で縛られている場合は無視（縄が無い時のみ実行判定を行う）
-IF !TEQUIP:縄
-	;すべての命令に共通の要素を考慮
-	;(従順が高いと命令に従いやすいなど)
-	CALL COM_ORDER
-	LOCAL = RESULT
-
-	CALL COM_ORDER_セックス
-	LOCAL += RESULT
-
-	;46以上で実行
-	CALL 実効値判定, LOCAL, 46
-
-	RETURN RESULT
-ELSE
+SIF TEQUIP:縄
 	RETURN 1
-ENDIF
+
+;すべての命令に共通の要素を考慮
+;(従順が高いと命令に従いやすいなど)
+CALL COM_ORDER
+実効値 = RESULT
+
+CALL COM_ORDER_セックス
+実効値 += RESULT
+
+;46以上で実行
+CALL 実効値判定, 実効値, 46
+
+RETURN RESULT
 
 @COM_膣を犯す（ドラゴン）
+#DIM DYNAMIC 増加量
+
 PRINTL 膣を犯す（ドラゴン）
 
 SIF !TFLAG:実行判定無視
@@ -65,6 +82,10 @@ SIF !RESULT && !TFLAG:実行判定無視
 ;実行決定
 ;-------------------------------------------------
 CALL KOJO_MESSAGE_COM
+
+;実績「オルトリンデをドラゴンで犯す」
+SIF CHARANAMEF(TARGET) == "オルトリンデ"
+	CALL 実績解除, "くっ殺"
 
 ;V経験を伴うコマンドのフラグ(処女膜再生対応)
 TFLAG:膣コマンド = 1
@@ -91,41 +112,41 @@ ENDIF
 ;-------------------------------------------------
 ;射精ゲージチェック（ドラゴン）
 ;-------------------------------------------------
-LOCAL = 1000
+増加量 = 1000
 
 ;ABL:技巧をみる
-LOCAL += (LOCAL/5)*ABL:技巧
+増加量 += (増加量/5)*ABL:技巧
 
 ;ABL:従順をみる
-LOCAL += (LOCAL/10)*ABL:従順 - (LOCAL/10)*2
+増加量 += (増加量/10)*ABL:従順 - (増加量/10)*2
 
 ;ABL:欲望をみる
-LOCAL += (LOCAL/10)*ABL:欲望
+増加量 += (増加量/10)*ABL:欲望
 
 ;PALAM:潤滑をみる
-LOCAL += (GETPALAMLV(PALAM:潤滑, 4)-2)*(LOCAL/5)
+増加量 += (GETPALAMLV(PALAM:潤滑, 4)-2)*(増加量/5)
 
 ;処女だと増える
 SIF TALENT:処女
-	TIMES LOCAL , 1.50
+	TIMES 増加量 , 1.50
 
-BASE:PLAYER:ドラゴン射精 += LOCAL
+BASE:PLAYER:ドラゴン射精 += 増加量
 
 ;-------------------------------------------------
 ;射精ゲージチェック（奴隷）
 ;-------------------------------------------------
-LOCAL = 射精ゲージ計算_Ｖ挿入(500)
+増加量 = 射精ゲージ計算_Ｖ挿入(500)
 
 ;ABL:調教者の技巧をみる
-LOCAL += (LOCAL/5)*ABL:PLAYER:技巧
+増加量 += (増加量/5)*ABL:PLAYER:技巧
 
 ;ABL:技巧をみる
-LOCAL += (LOCAL/10)*ABL:技巧
+増加量 += (増加量/10)*ABL:技巧
 
 ;奴隷のABL:マゾっ気をみる
-LOCAL += (LOCAL/5)*ABL:マゾっ気
+増加量 += (増加量/5)*ABL:マゾっ気
 
-CALL 射精ゲージ増加, LOCAL, TARGET
+CALL 射精ゲージ増加, 増加量, TARGET
 
 ;-------------------------------------------------
 ;ソース追加処理
@@ -212,6 +233,7 @@ ENDIF
 
 CFLAG:異種姦経験++
 
+CALL 魔力回復, 10
 
 RETURN 1
 

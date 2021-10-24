@@ -1,0 +1,526 @@
+﻿;TRAIN内の構成に呼び出される
+@SHOW_STATUS
+DRAWLINE
+CALL 日付表示
+IF LANGUAGE == "ENG"
+	CALL PASELI, @"Money:{MONEY}＄ "
+	PRINTFORML Weather:%WEATHERDISP()% Temparature:%DIV10(FLAG:気温)%℃
+
+	PRINTFORML Target:%NAMEDISP(TARGET)% Trainer:\@ ASSIPLAY ? %NAMEDISP(ASSI)%(Assistant) # %NAMEDISP(MASTER)% \@
+
+	SIF TALENT:PLAYER:孔雀の瞳
+		PRINTFORM %CALLNAMEDISP(TARGET)%'s Depend:{CFLAG:依存度} 
+
+	PRINTFORM %CALLNAMEDISP(TARGET)%'s Stress:
+	CALL ストレス表示, TARGET
+	PRINTL 
+
+	IF 上級売春中
+		PRINTFORML □%CALLNAMEDISP(TARGET)%'s Status
+		IF PENIS(TARGET) || TALENT:去勢済み
+			PRINT 　 Ejacu
+			SIF CFLAG:残数 == 0
+				PRINT ※NO MORE※
+			PRINTFORML %BARBASE("射精", TARGET)%
+		ENDIF
+
+		CALL SHOW_INFO_PALAM
+
+		PRINTFORML □%CALLNAMEDISP(MASTER)%'s Status
+		CALL SHOW_INFO_HEALTH, MASTER
+		IF PENIS(MASTER) || TALENT:MASTER:去勢済み
+			PRINT 　 Ejacu(Mast)
+			SIF CFLAG:MASTER:残数 == 0
+				PRINT ※NO MORE※
+			PRINTFORML %BARBASE("射精", MASTER)%
+		ENDIF
+
+		IF ASSI >= 0 && (PENIS(ASSI) || TALENT:ASSI:去勢済み)
+			PRINT 　 Ejacu(Assi)
+			SIF CFLAG:ASSI:残数 == 0
+				PRINT ※NO MORE※
+			PRINTFORML %BARBASE("射精", ASSI)%
+		ENDIF
+		SIF TALENT:MASTER:魔術師
+			PRINTFORML 　MagicP(Mast)%BARBASE("魔力", MASTER)%
+		SIF ASSI > 0 && TALENT:ASSI:魔術師
+			PRINTFORML 　MagicP(Assi)%BARBASE("魔力", ASSI)%
+	ELSE
+		PRINTFORML □%CALLNAMEDISP(TARGET)%'s Status
+		CALL SHOW_INFO_HEALTH
+		IF PENIS(TARGET) || TALENT:去勢済み
+			PRINT 　 Ejacu
+			SIF CFLAG:残数 == 0
+				PRINT ※NO MORE※
+			PRINTFORML %BARBASE("射精", TARGET)%
+		ENDIF
+
+		SIF TALENT:母乳体質
+			PRINTFORML 　　Milk%BARBASE("母乳", TARGET)%
+
+		;服装
+		CALL PLAYER_CLOTHES, TARGET
+
+		CALL SHOW_INFO_PALAM
+
+		IF ゲームモード() == "新婚モード"
+			PRINTFORML □%CALLNAMEDISP(MASTER)%'s Status
+		ELSE
+			PRINTL □Master's Status and Assi's Status
+		ENDIF
+		IF PENIS(MASTER) || TALENT:MASTER:去勢済み
+			PRINT 　 Ejacu(Mast)
+			SIF CFLAG:MASTER:残数 == 0
+				PRINT ※NO MORE※
+			PRINTFORML %BARBASE("射精", MASTER)%
+		ENDIF
+
+		IF ASSI >= 0 && (PENIS(ASSI) || TALENT:ASSI:去勢済み)
+			PRINT 　 Ejacu(Assi)
+			SIF CFLAG:ASSI:残数 == 0
+				PRINT ※NO MORE※
+			PRINTFORML %BARBASE("射精", ASSI)%
+		ENDIF
+		SIF TALENT:MASTER:魔術師
+			PRINTFORML 　MagicP(Mast)%BARBASE("魔力", MASTER)%
+		SIF ASSI > 0 && TALENT:ASSI:魔術師
+			PRINTFORML 　MagicP(Assi)%BARBASE("魔力", ASSI)%
+	ENDIF
+
+	SIF TEQUIP:触手
+		PRINTFORML 　Ejacu(Tent)%BARBASE("触手射精", MASTER)%
+
+	;服装の表示
+	CALL PLAYER_CLOTHES, MASTER
+	SIF ASSI >= 0
+		CALL PLAYER_CLOTHES, ASSI
+
+	IF TALENT:MASTER:ドラゴン使い
+		PRINTFORML □%CSTR:MASTER:ドラゴン%'s Status
+		PRINTFORML 　 Ejacu　　　%BARBASE("ドラゴン射精", MASTER)%
+	ENDIF
+	IF ASSI > 0 && TALENT:ASSI:ドラゴン使い
+		PRINTFORML □%CSTR:ASSI:ドラゴン%のステータス
+		PRINTFORML 　 Ejacu　　　%BARBASE("ドラゴン射精", ASSI)%
+	ENDIF
+ELSE
+	CALL PASELI, @"所持金:{MONEY}＄ "
+	PRINTFORML 天気:%天気()% 気温:%DIV10(FLAG:気温)%℃ %月齢()%(月齢:%DIV100(月齢)%)
+
+	IF 上級売春中
+		PRINTFORML 客:%NAME:TARGET% 娼婦:\@ ASSIPLAY ? %NAME:ASSI%(助手) # %NAME:MASTER% \@
+	ELSEIF ゲームモード() == "新婚モード"
+		PRINTFORML 受け:%NAME:TARGET% 攻め:\@ ASSIPLAY ? %NAME:ASSI%(助手) # %NAME:MASTER% \@
+	ELSE
+		PRINTFORML 調教中:%NAME:TARGET% 調教者:\@ ASSIPLAY ? %NAME:ASSI%(助手) # %NAME:MASTER% \@
+	ENDIF
+	SIF TALENT:PLAYER:孔雀の瞳
+		PRINTFORM %CALLNAME:TARGET%の依存度:{CFLAG:依存度} 
+
+	PRINTFORM %CALLNAME:TARGET%のストレス値:
+	CALL ストレス表示, TARGET
+	PRINTL 
+
+	IF 上級売春中
+		PRINTFORML □%CALLNAME:TARGET%のステータス
+		IF PENIS(TARGET) || TALENT:去勢済み
+			PRINT 　射精
+			SIF CFLAG:残数 == 0
+				PRINT ※打ち止め※
+			PRINTFORML %BARBASE("射精", TARGET)%
+		ENDIF
+
+		CALL SHOW_INFO_PALAM
+
+		PRINTFORML □%CALLNAME:MASTER%のステータス
+		CALL SHOW_INFO_HEALTH, MASTER
+		IF PENIS(MASTER) || TALENT:MASTER:去勢済み
+			PRINT 　射精(主人)
+			SIF CFLAG:MASTER:残数 == 0
+				PRINT ※打ち止め※
+			PRINTFORML %BARBASE("射精", MASTER)%
+		ENDIF
+
+		IF ASSI >= 0 && (PENIS(ASSI) || TALENT:ASSI:去勢済み)
+			PRINT 　射精(助手)
+			SIF CFLAG:ASSI:残数 == 0
+				PRINT ※打ち止め※
+			PRINTFORML %BARBASE("射精", ASSI)%
+		ENDIF
+		SIF TALENT:MASTER:魔術師
+			PRINTFORML 　魔力(主人)%BARBASE("魔力", MASTER)%
+		SIF ASSI > 0 && TALENT:ASSI:魔術師
+			PRINTFORML 　魔力(助手)%BARBASE("魔力", ASSI)%
+	ELSE
+		PRINTFORML □%CALLNAME:TARGET%のステータス
+		CALL SHOW_INFO_HEALTH
+		IF PENIS(TARGET) || TALENT:去勢済み
+			PRINT 　射精
+			SIF CFLAG:残数 == 0
+				PRINT ※打ち止め※
+			PRINTFORML %BARBASE("射精", TARGET)%
+		ENDIF
+
+		SIF TALENT:母乳体質
+			PRINTFORML 　母乳%BARBASE("母乳", TARGET)%
+
+		;服装
+		CALL PLAYER_CLOTHES, TARGET
+
+		CALL SHOW_INFO_PALAM
+
+		IF ゲームモード() == "新婚モード"
+			PRINTFORML □%CALLNAME:MASTER%のステータス
+		ELSE
+			PRINTL □主人と助手のステータス
+		ENDIF
+		IF PENIS(MASTER) || TALENT:MASTER:去勢済み
+			PRINT 　射精(主人)
+			SIF CFLAG:MASTER:残数 == 0
+				PRINT ※打ち止め※
+			PRINTFORML %BARBASE("射精", MASTER)%
+		ENDIF
+
+		IF ASSI >= 0 && (PENIS(ASSI) || TALENT:ASSI:去勢済み)
+			PRINT 　射精(助手)
+			SIF CFLAG:ASSI:残数 == 0
+				PRINT ※打ち止め※
+			PRINTFORML %BARBASE("射精", ASSI)%
+		ENDIF
+		SIF TALENT:MASTER:魔術師
+			PRINTFORML 　魔力(主人)%BARBASE("魔力", MASTER)%
+		SIF ASSI > 0 && TALENT:ASSI:魔術師
+			PRINTFORML 　魔力(助手)%BARBASE("魔力", ASSI)%
+	ENDIF
+
+	SIF TEQUIP:触手
+		PRINTFORML 　射精(触手)%BARBASE("触手射精", MASTER)%
+
+	;服装の表示
+	CALL PLAYER_CLOTHES, MASTER
+	SIF ASSI >= 0
+		CALL PLAYER_CLOTHES, ASSI
+
+	IF TALENT:MASTER:ドラゴン使い
+		PRINTFORML □%CSTR:MASTER:ドラゴン%のステータス
+		PRINTFORML 　射精　　　%BARBASE("ドラゴン射精", MASTER)%
+	ENDIF
+	IF ASSI > 0 && TALENT:ASSI:ドラゴン使い
+		PRINTFORML □%CSTR:ASSI:ドラゴン%のステータス
+		PRINTFORML 　射精　　　%BARBASE("ドラゴン射精", ASSI)%
+	ENDIF
+ENDIF
+
+DRAWLINE
+
+CALL SHOW_EQUIP
+
+@PLAYER_CLOTHES, ARG
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC 着衣部位
+
+;服装の表示
+IF LANGUAGE == "ENG"
+	IF CALLNAMEDISP(ARG) == "You"
+		PRINTFORM 　Your clothes:
+	ELSE
+		PRINTFORM 　%CALLNAMEDISP(ARG)%'s clothes:
+	ENDIF
+ELSE
+	PRINTFORM 　%CALLNAMEDISP(ARG)%の服装:
+ENDIF
+着衣部位 = 0
+FOR LCOUNT, 0, 7
+	SIF !TEQUIP:ARG:LCOUNT
+		CONTINUE
+	PRINTFORM [%CSTR:ARG:(TEQUIPNAME:LCOUNT)%]
+	着衣部位++
+NEXT
+SIF 着衣部位 == 0
+	PRINTFORM [全裸]
+PRINTL 
+
+@STAIN_INFO
+;汚れ表示
+CALL SHOW_STAIN, MASTER
+CALL SHOW_STAIN, TARGET
+SIF ASSI > 0
+	CALL SHOW_STAIN, ASSI
+WAIT
+
+@SHOW_STAIN, ARG
+#DIM DYNAMIC LCOUNT
+PRINTFORML 【%CALLNAME:ARG%の汚れ】
+FOR LCOUNT, 0, 8
+	SELECTCASE STAINNAME:LCOUNT
+		CASE "ペニス"
+			SIF !PENIS(ARG)
+				CONTINUE
+		CASE "ヴァギナ", "膣内"
+			SIF !VAGINA(ARG)
+				CONTINUE
+		CASE "下着"
+			SIF CSTR:ARG:下半身下着 == ""
+				CONTINUE
+	ENDSELECT
+
+	;漢字2文字で統一
+	SELECTCASE STAINNAME:LCOUNT
+		CASE "口"
+			PRINT 　口唇：
+		CASE "手"
+			PRINT 　手指：
+		CASE "ペニス"
+			PRINT 　陰茎：
+		CASE "ヴァギナ"
+			PRINT 　膣口：
+		CASE "アナル"
+			PRINT 　肛門：
+		CASE "胸"
+			PRINT 　乳房：
+		CASEELSE
+			PRINTFORM 　%STAINNAME:LCOUNT%：
+	ENDSELECT
+	SIF GET_STAIN(STAIN:ARG:LCOUNT, "愛液")
+		PRINT <愛液>
+	SIF GET_STAIN(STAIN:ARG:LCOUNT, "先走り")
+		PRINT <先走り>
+	SIF GET_STAIN(STAIN:ARG:LCOUNT, "精液")
+		PRINT <精液>
+	SIF GET_STAIN(STAIN:ARG:LCOUNT, "アナル")
+		PRINT <アナル>
+	SIF GET_STAIN(STAIN:ARG:LCOUNT, "母乳")
+		PRINT <母乳>
+	SIF GET_STAIN(STAIN:ARG:LCOUNT, "粘液")
+		PRINT <粘液>
+	SIF GET_STAIN(STAIN:ARG:LCOUNT, "破瓜血")
+		PRINT <破瓜血>
+	SIF GET_STAIN(STAIN:ARG:LCOUNT, "尿")
+		PRINT <尿>
+	PRINTL 
+NEXT
+
+@SHOW_EQUIP
+#DIM DYNAMIC LCOUNT
+#DIMS DYNAMIC 表示用
+
+;使用中の道具・魔法を表示する
+;一度使用したら解除するまで止まらない道具や調教を
+;追加した場合はここに追加をしてください
+
+;憑依
+IF CFLAG:憑依 >= 0
+	IF ASSI > 0
+		IF TALENT:ASSI:霊感 || TALENT:ASSI:ネクロマンサー || TALENT:ASSI:孔雀の瞳
+			PRINTFORM [%CALLNAME:ASSI%は%CSVCALLNAMEF(CFLAG:憑依)%が%CSVCALLNAMEF(NO:TARGET)%に憑依されていることに気づいている]
+		ELSE
+			PRINTFORM [%CALLNAME:ASSI%は%CSVCALLNAMEF(CFLAG:憑依)%が%CSVCALLNAMEF(NO:TARGET)%に憑依されていることに気づいていない]
+		ENDIF
+	ENDIF
+ENDIF
+
+IF ASSI > 0 && CFLAG:ASSI:憑依 >= 0
+	IF TALENT:霊感 || TALENT:ネクロマンサー || TALENT:孔雀の瞳
+		PRINTFORM [%CALLNAME:TARGET%は%CSVCALLNAMEF(CFLAG:ASSI:憑依)%が%CSVCALLNAMEF(NO:ASSI)%に憑依されていることに気づいている]
+	ELSE
+		PRINTFORM [%CALLNAME:TARGET%は%CSVCALLNAMEF(CFLAG:ASSI:憑依)%が%CSVCALLNAMEF(NO:ASSI)%に憑依されていることに気づいていない]
+	ENDIF
+ENDIF
+
+;豹変は現在No.1004 紅刃とNo.1019 冷音のみ
+SIF TRANCE:200
+	PRINTFORM [%CALLNAME:TARGET%豹変中]
+SIF ASSI >= 0 && TRANCE:ASSI:200
+	PRINTFORM [%CALLNAME:ASSI%豹変中]
+SIF TFLAG:実行判定無視
+	PRINTFORM [%CALLNAME:TARGET%の意識が朦朧]
+
+SIF TEQUIP:ビデオカメラ
+	PRINTFORM [撮影中(残{10-TFLAG:ビデオ撮影回数}回　撮影者:\@ TFLAG:ビデオ撮影者 == 2 ? %CALLNAME:ASSI% # %CALLNAME:MASTER% \@)]
+
+SIF TEQUIP:触手
+	PRINT [触手召喚中] 
+SIF TEQUIP:野外プレイ
+	PRINTFORM [野外プレイ中\@ SAVESTR:首輪 == "尻尾プラグ付き首輪" ? (尻尾プラグ付き) #  \@]
+SIF TEQUIP:羞恥プレイ
+	PRINTFORM [羞恥プレイ中\@ SAVESTR:大鏡 != "大鏡" ? (%SAVESTR:大鏡%) #  \@]
+SIF TEQUIP:お風呂場
+	PRINTFORM [お風呂場プレイ中\@ TFLAG:ハニーパーティ ? (媚薬ローション風呂) #  \@]
+SIF TEQUIP:エプロン
+	PRINTFORM [新妻プレイ中\@ SAVESTR:エプロン == "玄人志向エプロン" ? (玄人志向エプロン) #  \@]
+
+;ゲームセンターにいるときはメダル所持数表示
+SIF TEQUIP:ゲームセンター
+	PRINTFORM [メダル:{メダル}枚所持]
+
+SIF CFLAG:MASTER:排卵誘発剤
+	PRINTFORM [%CALLNAME:MASTER%排卵誘発剤服用]
+SIF CFLAG:排卵誘発剤
+	PRINTFORM [%CALLNAME:TARGET%排卵誘発剤服用]
+SIF ASSI > 0 && CFLAG:ASSI:排卵誘発剤
+	PRINTFORM [%CALLNAME:ASSI%排卵誘発剤服用]
+
+SIF CFLAG:貞操帯
+	PRINTFORM [%CALLNAME:TARGET%が貞操帯装備中({CFLAG:貞操帯}日目)]
+SIF ASSI > 0 && CFLAG:ASSI:貞操帯
+	PRINTFORM [%CALLNAME:ASSI%が貞操帯装備中({CFLAG:ASSI:貞操帯}日目)]
+
+SIF CFLAG:MASTER:ミッドナイトスペシャル
+	PRINTFORM [%CALLNAME:MASTER%ミッドナイトスペシャル服用]
+SIF CFLAG:ミッドナイトスペシャル
+	PRINTFORM [%CALLNAME:TARGET%ミッドナイトスペシャル服用]
+SIF ASSI > 0 && CFLAG:ASSI:ミッドナイトスペシャル
+	PRINTFORM [%CALLNAME:ASSI%ミッドナイトスペシャル服用]
+
+SIF TEQUIP:MASTER:コンドーム
+	PRINT [主人避妊具]
+SIF ASSI >= 0 && TEQUIP:ASSI:コンドーム
+	PRINT [助手避妊具]
+IF CFLAG:酔
+	IF TALENT:下戸 && CFLAG:酔 >= 20
+		PRINTFORM [%CALLNAME:TARGET%泥酔中]
+	ELSEIF !TALENT:酒豪 && CFLAG:酔 >= 50
+		PRINTFORM [%CALLNAME:TARGET%泥酔中]
+	ELSE
+		PRINTFORM [%CALLNAME:TARGET%酒気帯び]
+	ENDIF
+ENDIF
+FOR LCOUNT, 0, 100
+	SIF ITEM:LCOUNT == -1
+		PRINTFORM [%ITEMNAME:LCOUNT%破損中]
+NEXT
+
+FOR LCOUNT, 11, 50
+	SIF TEQUIP:LCOUNT == 0
+		CONTINUE
+	SELECTCASE TEQUIPNAME:LCOUNT
+		;触手最優先
+		CASE "触手"
+			PRINT [触手召喚中]
+		;薬系は一番最初
+		CASE "媚薬"
+			PRINT [媚薬効果発揮中]
+		CASE "利尿剤"
+			PRINT [利尿剤効果発揮中]
+		CASE "強精神薬"
+			IF TEQUIP:強精神薬 == 1
+				PRINT [強精神薬反動中]
+			ELSE
+				PRINT [絶頂抑制中]
+			ENDIF
+		CASE "クリキャップ"
+			IF TEQUIP:触手
+				PRINT [触手クリ責め]
+			ELSE
+				PRINT [クリキャップ]
+			ENDIF
+		CASE "オナホール"
+			IF TEQUIP:触手
+				PRINT [触手オナホ]
+			ELSE
+				PRINTFORM [%SAVESTR:オナホール%]
+			ENDIF
+		CASE "バイブ"
+			IF TEQUIP:触手
+				PRINT [触手挿入]
+			ELSE
+				PRINTFORM [%SAVESTR:バイブ%]
+			ENDIF
+		CASE "アナルバイブ"
+			IF TEQUIP:触手
+				PRINT [触手アナル挿入]
+			ELSE
+				PRINTFORM [%SAVESTR:アナルバイブ%]
+			ENDIF
+		CASE "ニプルキャップ"
+			IF TEQUIP:触手
+				PRINT [触手乳首責め]
+			ELSE
+				PRINT [ニプルキャップ]
+			ENDIF
+		CASE "搾乳器"
+			IF TEQUIP:触手
+				PRINT [触手搾乳]
+			ELSE
+				PRINT [搾乳器]
+			ENDIF
+		{
+		CASE "アイマスク", "縄", "ボールギャグ", "拡張バルーン", "アナル電極", 
+			 "乳房電極", "シャワー", "触手口辱", "搾精器", "電動エネマグラ", "尿道カテーテル"
+		}
+			PRINTFORM [%TEQUIPNAME:LCOUNT%]
+		;改造可能アイテム
+		CASE "アナルビーズ", "浣腸器"
+			PRINTFORM [%SAVESTR:(TEQUIPNAME:LCOUNT)%]
+		CASE "搾精コンドーム"
+			IF TEQUIP:触手
+				PRINTL [触手搾精中]
+			ELSE
+				PRINTL [搾精コンドーム]
+			ENDIF
+		CASE "Ｖ異物"
+			PRINT [膣異物
+			SELECTCASE TEQUIP:Ｖ異物
+				CASE 1
+					PRINT (缶)]
+				CASE 2
+					PRINT (ボトル)]
+				CASE 3
+					PRINT (瓶)]
+				CASE 4
+					PRINT (消火器)]
+			ENDSELECT
+		CASE "Ａ異物"
+			PRINT [アナル異物
+			SELECTCASE TEQUIP:Ａ異物
+				CASE 1
+					PRINT (缶)]
+				CASE 2
+					PRINT (ボトル)]
+				CASE 3
+					PRINT (瓶)]
+				CASE 4
+					PRINT (消火器)]
+			ENDSELECT
+		CASE "女装"
+			PRINTFORM [%CALLNAME:TARGET%女装中]
+	ENDSELECT
+NEXT
+IF TEQUIP:MASTER:ペニスバンド
+	PRINTFORM [%CALLNAME:MASTER%ペニスバンド装着中]
+ELSEIF TEQUIP:ペニスバンド
+	PRINTFORM [%CALLNAME:TARGET%ペニスバンド装着中]
+ELSEIF ASSI > 0 && TEQUIP:ASSI:ペニスバンド
+	PRINTFORM [%CALLNAME:ASSI%ペニスバンド装着中]
+ENDIF
+
+FOR LCOUNT, 190, 200
+	IF TFLAGNAME:LCOUNT == "ラブキャンセーブユー"
+		IF TFLAG:LCOUNT == 2
+			PRINTFORM [ラブキャンセーブユー]
+		ELSEIF TFLAG:LCOUNT == 1
+			PRINTFORM [ラブキャンセーブユー反動中]
+		ENDIF
+	ELSEIF TFLAG:LCOUNT
+		PRINTFORM [%TFLAGNAME:LCOUNT%]
+	ENDIF
+NEXT
+
+;薬品強化
+SIF ローション強化値
+	PRINTFORM [ローション強化値:{ローション強化値}]
+SIF 媚薬強化値
+	PRINTFORM [媚薬強化値:{媚薬強化値}]
+SIF 利尿剤強化値
+	PRINTFORM [利尿剤強化値:{利尿剤強化値}]
+SIF 強精神薬強化値
+	PRINTFORM [強精神薬強化値:{強精神薬強化値}]
+
+;ライブ
+SIF TEQUIP:ライブ配信
+	PRINT [ライブ配信中]
+
+表示用 = %HTML_POPPRINTINGSTR()%
+SIF 表示用 != ""
+	PRINTFORML 現在の状態：%表示用%
+

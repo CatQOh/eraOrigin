@@ -3,97 +3,120 @@
 ;-------------------------------------------------
 @USERCOM_ABLE_対面座位アナルキス, ARG
 #FUNCTION
-;対面座位アナルキス
 ;陥落していないとダメ
+コマンド実行条件 += "対象が陥落済みじゃないと実行できない/"
 SIF !CFLAG:陥落
-	RETURNF 0
-
+	COMRESULT = 0
 ;服着てるとダメ
+コマンド実行条件 += "性器が露出していないと実行できない/"
 SIF !性器露出(TARGET)
-	RETURNF 0
+	COMRESULT = 0
+;拘束中はダメ
+コマンド実行条件 += "拘束中は実行できない/"
+SIF TEQUIP:アイマスク || TEQUIP:縄 || TEQUIP:ボールギャグ || TEQUIP:触手
+	COMRESULT = 0
+;猫舌の場合は技巧Lv2以上必要
+コマンド実行条件 += "対象が[猫舌]の場合は技巧LV2以上必要/"
+SIF TALENT:猫舌 && ABL:技巧 < 2
+	COMRESULT = 0
+;上級売春中は不可
+コマンド実行条件 += "上級売春中は実行不可/"
+SIF 上級売春中
+	COMRESULT = 0
 
-COMRESULT = 1
-RETURNF 1
+;前回と今回の調教者が同じ
+コマンド実行条件 += "前回と今回の実行者が同じで、/"
+コマンド実行条件 += "対面座位アナル、対面座位アナルキスから派生可能/"
+IF TFLAG:前コマンド実行者 == PLAYER
+	;対応する体位か連続実行なら派生可能
+	SELECTCASE PREVCOMS
+		CASE "対面座位アナル", "対面座位アナルキス"
+			RETURNF COMRESULT
+	ENDSELECT
+ENDIF
+
+COMRESULT = 0
+RETURNF 0
 
 @COM_対面座位アナルキス
+#DIM DYNAMIC 増加量
+
 PRINTL 対面座位アナルキス
-SELECTCOMS = 対面座位アナルキス
-SELECTCOM = GETNUM(TRAINNAME, "対面座位アナルキス")
 CALL KOJO_MESSAGE_COM
 
 ;-------------------------------------------------
 ;射精ゲージチェック（主人）
 ;-------------------------------------------------
-LOCAL = 射精ゲージ計算_Ａ挿入実行者(900)
+増加量 = 射精ゲージ計算_Ａ挿入実行者(900)
 
 ;ABL:調教者の技巧をみる
-LOCAL += (LOCAL/5)*ABL:PLAYER:技巧
+増加量 += (増加量/5)*ABL:PLAYER:技巧
 
 ;ABL:技巧をみる
-LOCAL += (LOCAL/10)*ABL:技巧
+増加量 += (増加量/10)*ABL:技巧
 
 ;TALENT:舌使いをみる
 SIF TALENT:舌使い
-	TIMES LOCAL , 2.00
+	TIMES 増加量 , 2.00
 
 ;相性を見る
-LOCAL *= RELATION:PLAYER:(NO:TARGET)
-LOCAL /= 100
+増加量 *= 相性値(PLAYER, TARGET)
+増加量 /= 100
 
 SIF CFLAG:嫁 || CFLAG:専属娼婦 || CFLAG:傀儡
-	LOCAL *= 3
+	増加量 *= 3
 
-CALL 射精ゲージ増加, LOCAL, PLAYER
+CALL 射精ゲージ増加, 増加量, PLAYER
 
 ;-------------------------------------------------
 ;射精ゲージチェック（奴隷）
 ;-------------------------------------------------
-LOCAL = 射精ゲージ計算_Ａ挿入(700)
+増加量 = 射精ゲージ計算_Ａ挿入(700)
 
 ;ABL:調教者の技巧をみる
-LOCAL += (LOCAL/5)*ABL:PLAYER:技巧
+増加量 += (増加量/5)*ABL:PLAYER:技巧
 
 ;ABL:技巧をみる
-LOCAL += (LOCAL/10)*ABL:技巧
+増加量 += (増加量/10)*ABL:技巧
 
 ;ABL:従順をみる
-LOCAL += (LOCAL/10)*ABL:従順
+増加量 += (増加量/10)*ABL:従順
 
 ;ABL:奉仕精神をみる
 SELECTCASE ABL:奉仕精神
 	CASE 0
-		TIMES LOCAL , 0.50
+		TIMES 増加量 , 0.50
 	CASE 1
-		TIMES LOCAL , 0.80
+		TIMES 増加量 , 0.80
 	CASE 2
-		TIMES LOCAL , 1.20
+		TIMES 増加量 , 1.20
 	CASE 3
-		TIMES LOCAL , 1.50
+		TIMES 増加量 , 1.50
 	CASE 4
-		TIMES LOCAL , 1.80
+		TIMES 増加量 , 1.80
 	CASEELSE
-		LOCAL += (LOCAL/3)*ABL:奉仕精神
+		増加量 += (増加量/3)*ABL:奉仕精神
 ENDSELECT
 
 ;調教者のTALENT:舌使いをみる
 SIF TALENT:PLAYER:舌使い
-	TIMES LOCAL , 2.00
+	TIMES 増加量 , 2.00
 
 ;TALENT:陥落系素質をみる
 IF PLAYER == MASTER
 	SIF TALENT:淫乱 || TALENT:服従
-		TIMES LOCAL , 1.50
+		TIMES 増加量 , 1.50
 	SIF TALENT:恋慕 || TALENT:娼婦 || TALENT:隷属
-		TIMES LOCAL , 2.00
+		TIMES 増加量 , 2.00
 	SIF TALENT:親愛
-		TIMES LOCAL , 3.00
+		TIMES 増加量 , 3.00
 ENDIF
 
 ;相性を見る
-LOCAL *= RELATION:TARGET:(NO:PLAYER)
-LOCAL /= 100
+増加量 *= 相性値(TARGET, PLAYER)
+増加量 /= 100
 
-CALL 射精ゲージ増加, LOCAL, TARGET
+CALL 射精ゲージ増加, 増加量, TARGET
 
 ;-------------------------------------------------
 ;ソース追加処理
@@ -110,10 +133,8 @@ SOURCE:中毒 = 400
 SOURCE:恭順 = 1000
 SOURCE:逸脱 = 500
 SOURCE:反感 = 800
-
-
-;上のほうで計算した汚れデータ
-SOURCE:不潔 = LOCAL:1*60+90
+SIF TFLAG:ニコニコサンフラワーキッス
+	SOURCE:恐怖 = 500
 
 ;-------------------------------------------------
 ;特殊ソース処理
@@ -164,8 +185,11 @@ SIF TALENT:恋慕 && PLAYER == MASTER
 SIF TALENT:親愛 && PLAYER == MASTER
 	CALL EXPUP, "愛情経験", 4
 
+CALL 魔力回復, 5
 SIF !避妊具(PLAYER)
-	
+	CALL 魔力回復, 3
+CALL 魔力回復, 5, PLAYER
+
 CALL 獣人催淫, 1
 CALL 獣人催淫, 1, PLAYER
 

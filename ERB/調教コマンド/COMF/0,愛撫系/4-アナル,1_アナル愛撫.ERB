@@ -3,41 +3,28 @@
 ;-------------------------------------------------
 @USERCOM_ABLE_アナル愛撫, ARG
 #FUNCTION
+;ゲーセンに居る場合はトイレじゃないとできない
+コマンド実行条件 += "ゲーセンではトイレじゃないと実行できない/"
+SIF TEQUIP:ゲームセンター && !TEQUIP:トイレ
+	COMRESULT = 0
 ;プレイヤーが助手で、助手と対象が同姓の場合、潤滑不足で従順3以下・レズっ気ホモっ気3以下の場合アナル愛撫はできない（サドならＯＫ）
+コマンド実行条件 += "[サド]の無い助手が実行者で同性の場合、ホモっ気、レズっ気LV3以下だと実行できない"
 IF PLAYER == ASSI
 	IF SEX(TARGET) == SEX(ASSI)
 		SIF PALAM:潤滑 < PALAMLV:2 && (ABL:ASSI:従順 <= 3 || (ABL:ASSI:レズっ気 <= 3 && ABL:ASSI:ホモっ気 <= 3)) && !TALENT:ASSI:サド
-			RETURNF 0
+			COMRESULT = 0
 	ENDIF
 ENDIF
 
 ;異物挿入中はダメ
+コマンド実行条件 += "A異物挿入中は実行できない/"
 SIF TEQUIP:Ａ異物
-	RETURNF 0
+	COMRESULT = 0
 
-COMRESULT = 1
-RETURNF 1
+RETURNF COMRESULT
 
 @COM_アナル愛撫
-;-------------------------------------------------
-;特殊派生処理
-;-------------------------------------------------
-;前コマンドと今回の実行者が同じ
-IF PLAYER == TFLAG:前コマンド実行者
-	;前コマンド
-	SELECTCASE PREVCOMS
-		;前回の調教がアナル愛撫かつ実行者の技巧3以上だと前立腺刺激に
-		CASE "アナル愛撫"
-			IF ABL:PLAYER:技巧 >= 3
-				SIF USERCOM_ABLE_前立腺刺激()
-					JUMP COM_前立腺刺激
-			ENDIF
-		;前回の調教が前立腺刺激なら続行
-		CASE "前立腺刺激"
-			SIF USERCOM_ABLE_前立腺刺激()
-				JUMP COM_前立腺刺激
-	ENDSELECT
-ENDIF
+#DIM DYNAMIC 増加量
 
 PRINTL アナル愛撫
 CALL KOJO_MESSAGE_COM
@@ -45,27 +32,27 @@ CALL KOJO_MESSAGE_COM
 ;-------------------------------------------------
 ;射精ゲージチェック（奴隷）
 ;-------------------------------------------------
-LOCAL = 射精ゲージ計算_Ａ責め(50)
+増加量 = 射精ゲージ計算_Ａ責め(50)
 
 ;奴隷が男の場合はホモっ気を見る
 IF SEX(TARGET) == 1
 	SELECTCASE ABL:ホモっ気
 		CASE 0
-			TIMES LOCAL , 0.15
+			TIMES 増加量 , 0.15
 		CASE 1
-			TIMES LOCAL , 0.30
+			TIMES 増加量 , 0.30
 		CASE 2
-			TIMES LOCAL , 0.50
+			TIMES 増加量 , 0.50
 		CASE 3
-			TIMES LOCAL , 0.75
+			TIMES 増加量 , 0.75
 		CASE 4
-			TIMES LOCAL , 1.00
+			TIMES 増加量 , 1.00
 		CASEELSE
-			LOCAL += (LOCAL/10)*ABL:ホモっ気-3
+			増加量 += (増加量/10)*ABL:ホモっ気-3
 	ENDSELECT
 ENDIF
 
-CALL 射精ゲージ増加, LOCAL, TARGET
+CALL 射精ゲージ増加, 増加量, TARGET
 
 ;-------------------------------------------------
 ;ソース追加処理

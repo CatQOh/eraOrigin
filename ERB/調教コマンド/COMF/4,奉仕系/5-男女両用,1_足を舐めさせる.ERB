@@ -3,67 +3,79 @@
 ;-------------------------------------------------
 @USERCOM_ABLE_足を舐めさせる, ARG
 #FUNCTION
+;ゲーセンに居る場合はできない
+コマンド実行条件 += "ゲーセンでは実行不可/"
+SIF TEQUIP:ゲームセンター
+	COMRESULT = 0
+;上級売春中は客がマゾじゃないとできない
+コマンド実行条件 += "上級売春中は客に素質[マゾ]が必要/"
+SIF 上級売春中 && !TALENT:マゾ
+	COMRESULT = 0
 ;足使用不可だとできない
+コマンド実行条件 += "実行者が[足使用不可]だと実行できない/"
 SIF TALENT:PLAYER:足使用不可
-	RETURNF 0
+	COMRESULT = 0
 ;ボールギャグ使用中は不可
+コマンド実行条件 += "対象がボールギャグ装着中は実行できない/"
 SIF TEQUIP:ボールギャグ
-	RETURNF 0
+	COMRESULT = 0
 ;触手調教中はダメ
+コマンド実行条件 += "触手召喚中は実行できない/"
 SIF TEQUIP:触手
-	RETURNF 0
+	COMRESULT = 0
 ;調教者が足に何か履いてる場合はダメ
 SIF TEQUIP:PLAYER:足元
-	RETURNF 0
+	COMRESULT = 0
 
-COMRESULT = 1
-RETURNF 1
+RETURNF COMRESULT
 
 @実行判定_足を舐めさせる
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC 実効値, 2
 ;-------------------------------------------------
 ;実行判定処理
 ;-------------------------------------------------
 ;すべての命令に共通の要素を考慮
 ;(従順が高いと命令に従いやすいなど)
 CALL COM_ORDER
-LOCAL = RESULT
+実効値 = RESULT
 
 CALL COM_ORDER_奉仕
-LOCAL += RESULT
+実効値 += RESULT
 
-REPEAT VARSIZE("TALENT")
-	LOCAL:1 = 0
-	SIF !TALENT:COUNT
+FOR LCOUNT, 0, VARSIZE("TALENT")
+	実効値:1 = 0
+	SIF !TALENT:LCOUNT
 		CONTINUE
-	SELECTCASE TALENTNAME:COUNT
+	SELECTCASE TALENTNAME:LCOUNT
 		CASE "隷属"
 			SIF PLAYER == MASTER
-				LOCAL:1 = 10
+				実効値:1 = 10
 		CASE "服従"
 			SIF PLAYER == MASTER
-				LOCAL:1 = 5
+				実効値:1 = 5
 		CASE "プライド高い"
-			LOCAL:1 = -12
+			実効値:1 = -12
 		CASE "プライド低い"
-			LOCAL:1 = 2
+			実効値:1 = 2
 		CASE "抵抗"
-			LOCAL:1 = -20
+			実効値:1 = -20
 		CASE "汚れ無視", "倒錯的", "サド"
-			LOCAL:1 = 2
+			実効値:1 = 2
 		CASE "潔癖症"
-			LOCAL:1 = -7
+			実効値:1 = -7
 		CASE "反抗的"
 			SIF FALLTYPE(TARGET) != 3
-				LOCAL:1 = -10
+				実効値:1 = -10
 	ENDSELECT
-	IF LOCAL:1
-		PRINTFORM \@SIGN(LOCAL:1) == 1 ? + # - \@%TALENTNAME:COUNT%({ABS(LOCAL:1)})
-		LOCAL += LOCAL:1
+	IF 実効値:1
+		PRINTFORM \@SIGN(実効値:1) == 1 ? + # - \@%TALENTNAME:LCOUNT%({ABS(実効値:1)})
+		実効値 += 実効値:1
 	ENDIF
-REND
+NEXT
 
 ;39以上で実行
-CALL 実効値判定, LOCAL, 39
+CALL 実効値判定, 実効値, 39
 
 RETURN RESULT
 

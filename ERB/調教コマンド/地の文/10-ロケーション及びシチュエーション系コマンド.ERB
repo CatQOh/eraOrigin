@@ -6,26 +6,35 @@
 IF TEQUIP:野外プレイ
 	PRINTFORMW 部屋に戻ってきた……
 ELSE
-	PRINTFORMW %CALLNAME:TARGET%に首輪をつけて外に連れ出した……
+	PRINTFORM %CALLNAME:TARGET%に首輪
+	SIF SAVESTR:首輪 == "尻尾プラグ付き首輪"
+		PRINT と動物の尻尾型のアナルプラグ
+	PRINTW をつけて外に連れ出した……
 ENDIF
 
 ;-------------------------------------------------
 ;羞恥プレイ
 ;-------------------------------------------------
 @MESSAGE_COM_羞恥プレイ
+#DIMS DYNAMIC アイテム名
 ;解除時
+アイテム名 = 鏡
+SIF SAVESTR:大鏡 == "三面鏡"
+	アイテム名 = 三面鏡
 IF TEQUIP:羞恥プレイ
 	IF TALENT:ナルシスト
 		PRINTFORML %CALLNAME:TARGET%と鏡部屋から出ると、%CALLNAME:TARGET%は少し寂しそうにしている……
 	ELSE
-		PRINTFORML %CALLNAME:TARGET%を連れて大鏡の前から離れた……
+		PRINTFORML %CALLNAME:TARGET%を連れて%アイテム名%の前から離れた……
 	ENDIF
 ELSE
 	IF TALENT:ナルシスト
-		PRINTFORML %CALLNAME:TARGET%を大鏡の前に連れてくると、心なしか%CALLNAME:TARGET%が意気揚々に見えた……
+		PRINTFORML %CALLNAME:TARGET%を%アイテム名%の前に連れてくると、心なしか%CALLNAME:TARGET%が意気揚々に見えた……
 	ELSE
-		PRINTFORML %CALLNAME:TARGET%を大鏡の前に連れて来た……
+		PRINTFORML %CALLNAME:TARGET%を%アイテム名%の前に連れて来た……
 	ENDIF
+	SIF SAVESTR:大鏡 == "マジックミラー"
+		PRINTFORML %CALLNAME:TARGET%は気づいていないが、鏡の後ろではビデオカメラが作動している
 ENDIF
 WAIT
 
@@ -69,7 +78,9 @@ IF TEQUIP:お風呂場
 ELSE
 	IF CFLAG:陥落
 		PRINTFORML %CALLNAME:TARGET%を風呂場に連れて行った
-		IF TALENT:ファーリー || CSTR:種族 == "獣人" || CSTR:種族 == "獣"
+		IF TFLAG:ハニーパーティ
+			PRINTL 浴槽には魔法の効力で錬成された媚薬ローションが貯まっている……
+		ELSEIF TALENT:ファーリー || CSTR:種族 == "獣人" || CSTR:種族 == "獣"
 			PRINTFORML %CALLNAME:TARGET%は入浴に抵抗があるようだが、%CALLNAME:MASTER%が声をかけると渋々と風呂場に入ってきた……
 		ELSEIF TALENT:幼稚 || TALENT:幼児／幼児退行
 			PRINTFORML %CALLNAME:TARGET%は%CALLNAME:MASTER%との入浴をはしゃいでいる……
@@ -82,15 +93,54 @@ ELSE
 		ELSE
 			PRINTFORML %CALLNAME:TARGET%を風呂場に連れて行った……
 		ENDIF
+		SIF TFLAG:ハニーパーティ
+			PRINTL 浴槽には魔法の効力で錬成された媚薬ローションが貯まっている……
 	ENDIF
 ENDIF
 WAIT
+
+;-------------------------------------------------
+;粘液ぶっかけ
+;-------------------------------------------------
+@MESSAGE_COM_粘液ぶっかけ
+PRINTFORML %CALLNAME:MASTER%は、大量の粘液が詰まった容器を開けると、その粘液を%CALLNAME:TARGET%に向けて放った
+PRINTFORML 放たれた粘液の塊は、まるで意思を持っているかのように%CALLNAME:TARGET%に襲い掛かり、絡みついていく
+IF TALENT:スライム
+	PRINTFORML 絡みついた粘液は、スライムとなった%CALLNAME:TARGET%の身体を刺激し、溶け混ざろうとする
+	PRINTFORMW %CALLNAME:TARGET%は戸惑いつつも、別の粘液と混ざりゆく感覚に奇妙な心地良さを感じていた……
+ELSEIF TALENT:溶ける快
+	PRINTFORMW スライムの本能のままに、%CALLNAME:TARGET%は、絡みついてきた粘液が溶け混ざろうとしているのを悦んで受け入れた……
+ELSE
+	PRINTFORML 為す術もなく、襲い掛かってきた粘液の塊に絡みつかれる%CALLNAME:TARGET%
+	PRINTFORMW 今の%CALLNAME:TARGET%には、得体の知れない恐怖と、理不尽な蹂躙を耐えるしかなかった……
+ENDIF
+
 
 ;-------------------------------------------------
 ;腸洗浄
 ;-------------------------------------------------
 @MESSAGE_COM_腸洗浄
 PRINTFORMW %CALLNAME:TARGET%の腸内をぬるま湯で綺麗に洗浄した……
+
+;-------------------------------------------------
+;ゲームセンター
+;-------------------------------------------------
+@MESSAGE_COM_ゲームセンター
+IF TEQUIP:ゲームセンター
+	PRINTFORMW %CALLNAME:MASTER%たちは%GC店名%を後にして自宅に帰ってきた
+ELSE
+	PRINTFORMW %CALLNAME:MASTER%たちは自分の経営する%GC店名%まで遊びに行くことにした……
+ENDIF
+
+;-------------------------------------------------
+;トイレに行く
+;-------------------------------------------------
+@MESSAGE_COM_トイレに行く
+IF TEQUIP:トイレ
+	PRINTFORMW %CALLNAME:PLAYER%たちは淫臭にまみれる互いの体を拭い合い、トイレを後にした……
+ELSE
+	PRINTFORMW %CALLNAME:PLAYER%は公共の場にふさわしくない淫らな行為をするべく、%CALLNAME:TARGET%をトイレに連れ込んだ……
+ENDIF
 
 ;-------------------------------------------------
 ;シャワー
@@ -112,6 +162,10 @@ ELSE
 		PRINTFORML %CALLNAME:TARGET%にシャワーを浴びせた
 	ENDIF
 ENDIF
+
+SIF TEQUIP:粘液ぶっかけ
+	PRINTFORML %CALLNAME:TARGET%の身体にまとわりついていたスライムが流されていった……
+
 WAIT
 
 ;-------------------------------------------------
@@ -123,3 +177,326 @@ IF TEQUIP:エプロン
 ELSE
 	PRINTFORMW %CALLNAME:TARGET%にエプロンを着せた……
 ENDIF
+
+;-------------------------------------------------
+;名刺を渡す
+;-------------------------------------------------
+@MESSAGE_COM_名刺を渡す
+PRINTFORML %CALLNAME:PLAYER%は%CALLNAME:TARGET%に、源氏名の書かれた彩られた名刺を渡した
+IF 上級売春中 == 2
+	PRINTFORML %CALLNAME:PLAYER%との性行為に十分満足する%CALLNAME:TARGET%は、快く次の来店を約束した……
+ELSE
+	PRINTFORML %CALLNAME:TARGET%は名刺を見つめながら、ここの常連になるか考えている様子だ……
+ENDIF
+WAIT
+
+;-------------------------------------------------
+;女装させる
+;-------------------------------------------------
+@MESSAGE_COM_女装させる
+IF TEQUIP:女装
+	PRINTFORMW %CALLNAME:TARGET%の女装をやめさせ、元の服を返した……
+ELSE
+	PRINTFORML %CALLNAME:TARGET%を女装させることにした
+	SELECTCASE ABL:メス度
+		CASE 0 TO 2
+			PRINTFORML %CALLNAME:TARGET%は女物の服を着せられ、羞恥と屈辱に耐えている……
+		CASE 3 TO 6
+			PRINTFORML %CALLNAME:TARGET%は嫌がることもなく女物の服を着こなしている……
+		CASE IS >= 7
+			PRINTFORML %CALLNAME:TARGET%はこれが自身のあるべき姿だとでも言うように、仕草まで女性になりきっている……
+	ENDSELECT
+ENDIF
+WAIT
+
+;-------------------------------------------------
+;裸体盛り
+;-------------------------------------------------
+@MESSAGE_COM_裸体盛り
+PRINTFORML 刺し身を捌き、%CALLNAME:TARGET%の裸体に盛り付けた……
+
+;-------------------------------------------------
+;IIDXをプレイする
+;-------------------------------------------------
+@MESSAGE_COM_IIDXをプレイする
+PRINTFORML %CALLNAME:TARGET%と一緒にIIDXをプレイした
+IF Ｖ使用中(TARGET)
+	PRINTFORML %CALLNAME:TARGET%は平静を装っているが、膣から来る刺激に時折喘ぎながら膝を震えさせている……
+ELSEIF Ａ使用中(TARGET)
+	PRINTFORML %CALLNAME:TARGET%は平静を装っているが、アナルから来る鈍い刺激に汗を浮かべて耐えている……
+ELSEIF Ｂ使用中(TARGET) || TEQUIP:クリキャップ
+	PRINTFORML %CALLNAME:TARGET%は服の中で動く淫具のせいで集中できず、いとも簡単に%CALLNAME:PLAYER%に負けてしまった……
+ELSE
+	IF TALENT:音ゲーマー
+		PRINTFORML %CALLNAME:TARGET%は慣れた手つきでスコアを上げている。楽しそうだ……
+	ELSE
+		IF EXP:音ゲー経験 >= 30
+			PRINTFORML %CALLNAME:TARGET%も音楽ゲームに慣れてきたらしい。以前よりは確実に上手くなっている……
+		ELSE
+			PRINTFORML %CALLNAME:TARGET%は未だにボタンの配置も覚えられずに首を傾げている……
+		ENDIF
+	ENDIF
+ENDIF
+WAIT
+
+;-------------------------------------------------
+;ポップンをプレイする
+;-------------------------------------------------
+@MESSAGE_COM_ポップンをプレイする
+PRINTFORML %CALLNAME:TARGET%と一緒にポップンミュージックをプレイした
+IF Ｖ使用中(TARGET)
+	PRINTFORML %CALLNAME:TARGET%は平静を装っているが、膣から来る刺激に時折喘ぎながら膝を震えさせている……
+ELSEIF Ａ使用中(TARGET)
+	PRINTFORML %CALLNAME:TARGET%は平静を装っているが、アナルから来る鈍い刺激に汗を浮かべて耐えている……
+ELSEIF Ｂ使用中(TARGET) || TEQUIP:クリキャップ
+	PRINTFORML %CALLNAME:TARGET%は服の中で動く淫具のせいで集中できず、いとも簡単に%CALLNAME:PLAYER%に負けてしまった……
+ELSE
+	IF TALENT:音ゲーマー
+		PRINTFORML %CALLNAME:TARGET%は慣れた手つきでスコアを上げている。楽しそうだ……
+	ELSE
+		IF EXP:音ゲー経験 >= 30
+			PRINTFORML %CALLNAME:TARGET%も音楽ゲームに慣れてきたらしい。以前よりは確実に上手くなっている……
+		ELSE
+			PRINTFORML %CALLNAME:TARGET%は未だにボタンの配置も覚えられずに首を傾げている……
+		ENDIF
+	ENDIF
+ENDIF
+WAIT
+
+;-------------------------------------------------
+;DDRをプレイする
+;-------------------------------------------------
+@MESSAGE_COM_DDRをプレイする
+PRINTFORML %CALLNAME:TARGET%と一緒にDDRをプレイした
+IF Ｖ使用中(TARGET)
+	PRINTFORML %CALLNAME:TARGET%は女性器の刺激でろくに足を動かすことも出来ず、太腿に愛液を滴らせている……
+ELSEIF Ａ使用中(TARGET)
+	PRINTFORML %CALLNAME:TARGET%はアナルから来る鈍い刺激のせいでろくに足を動かせずにいる……
+ELSEIF Ｂ使用中(TARGET) || TEQUIP:クリキャップ
+	PRINTFORML %CALLNAME:TARGET%は服の中で動く淫具のせいで集中できず、いとも簡単に%CALLNAME:PLAYER%に負けてしまった……
+ELSEIF 性器露出(TARGET)
+	IF ABL:露出癖 < 3
+		PRINTFORML %CALLNAME:TARGET%は丸見えの陰部が周囲に晒されないように、%OVER_GENITAL(TARGET)%を押さえて恥ずかしそうにプレイしている……
+	ELSE
+		PRINTFORML %CALLNAME:TARGET%は下着を履いてないことも気にせずに意気揚々と踊っている……
+	ENDIF
+ELSE
+	IF TALENT:音ゲーマー
+		PRINTFORML %CALLNAME:TARGET%は華麗な足さばきでスコアを上げている。楽しそうだ……
+	ELSE
+		IF EXP:音ゲー経験 >= 30
+			PRINTFORML %CALLNAME:TARGET%も音楽ゲームに慣れてきたらしい。以前よりは確実に上手くなっている……
+		ELSE
+			IF EXP:ダンス経験 >= 50
+				PRINTFORML %CALLNAME:TARGET%は、ゲームには慣れていないが踊ることには慣れている。初心者にしては上出来だ……
+			ELSE
+				PRINTFORML %CALLNAME:TARGET%は未だにパネルの配置も覚えられずに首を傾げている……
+			ENDIF
+		ENDIF
+	ENDIF
+ENDIF
+WAIT
+
+;-------------------------------------------------
+;ギタドラをプレイする
+;-------------------------------------------------
+@MESSAGE_COM_ギタドラをプレイする
+PRINTFORML %CALLNAME:TARGET%と一緒にギタドラをプレイした
+IF Ｖ使用中(TARGET)
+	PRINTFORML %CALLNAME:TARGET%は平静を装っているが、膣から来る刺激に時折喘ぎながら膝を震えさせている……
+ELSEIF Ａ使用中(TARGET)
+	PRINTFORML %CALLNAME:TARGET%は平静を装っているが、アナルから来る鈍い刺激に汗を浮かべて耐えている……
+ELSEIF Ｂ使用中(TARGET) || TEQUIP:クリキャップ
+	PRINTFORML %CALLNAME:TARGET%は服の中で動く淫具のせいで集中できず、いとも簡単に%CALLNAME:PLAYER%に負けてしまった……
+ELSE
+	IF TALENT:音ゲーマー
+		PRINTFORML %CALLNAME:TARGET%は慣れた手つきでスコアを上げている。楽しそうだ……
+	ELSE
+		IF EXP:音ゲー経験 >= 30
+			PRINTFORML %CALLNAME:TARGET%も音楽ゲームに慣れてきたらしい。以前よりは確実に上手くなっている……
+		ELSE
+			IF EXP:演奏経験 >= 50
+				PRINTFORML %CALLNAME:TARGET%は、ゲームには慣れていないが楽器演奏には慣れている。初心者にしては上出来だ……
+			ELSE
+				PRINTFORML %CALLNAME:TARGET%は未だにボタンの配置も覚えられずに首を傾げている……
+			ENDIF
+		ENDIF
+	ENDIF
+ENDIF
+WAIT
+
+;-------------------------------------------------
+;jubeatをプレイする
+;-------------------------------------------------
+@MESSAGE_COM_jubeatをプレイする
+PRINTFORML %CALLNAME:TARGET%と一緒にjubeatをプレイした
+IF Ｖ使用中(TARGET)
+	PRINTFORML %CALLNAME:TARGET%は平静を装っているが、膣から来る刺激に時折喘ぎながら膝を震えさせている……
+ELSEIF Ａ使用中(TARGET)
+	PRINTFORML %CALLNAME:TARGET%は平静を装っているが、アナルから来る鈍い刺激に汗を浮かべて耐えている……
+ELSEIF Ｂ使用中(TARGET) || TEQUIP:クリキャップ
+	PRINTFORML %CALLNAME:TARGET%は服の中で動く淫具のせいで集中できず、いとも簡単に%CALLNAME:PLAYER%に負けてしまった……
+ELSE
+	IF TALENT:音ゲーマー
+		PRINTFORML %CALLNAME:TARGET%は慣れた手つきでスコアを上げている。楽しそうだ……
+	ELSE
+		IF EXP:音ゲー経験 >= 30
+			PRINTFORML %CALLNAME:TARGET%も音楽ゲームに慣れてきたらしい。以前よりは確実に上手くなっている……
+		ELSE
+			PRINTFORML %CALLNAME:TARGET%は未だにボタンの配置も覚えられずに首を傾げている……
+		ENDIF
+	ENDIF
+ENDIF
+WAIT
+
+;-------------------------------------------------
+;ボルテをプレイする
+;-------------------------------------------------
+@MESSAGE_COM_ボルテをプレイする
+PRINTFORML %CALLNAME:TARGET%と一緒にサウンドボルテックスをプレイした
+IF Ｖ使用中(TARGET)
+	PRINTFORML %CALLNAME:TARGET%は平静を装っているが、膣から来る刺激に時折喘ぎながら膝を震えさせている……
+ELSEIF Ａ使用中(TARGET)
+	PRINTFORML %CALLNAME:TARGET%は平静を装っているが、アナルから来る鈍い刺激に汗を浮かべて耐えている……
+ELSEIF Ｂ使用中(TARGET) || TEQUIP:クリキャップ
+	PRINTFORML %CALLNAME:TARGET%は服の中で動く淫具のせいで集中できず、いとも簡単に%CALLNAME:PLAYER%に負けてしまった……
+ELSE
+	IF TALENT:音ゲーマー
+		PRINTFORML %CALLNAME:TARGET%は慣れた手つきでスコアを上げている。楽しそうだ……
+	ELSE
+		IF EXP:音ゲー経験 >= 30
+			PRINTFORML %CALLNAME:TARGET%も音楽ゲームに慣れてきたらしい。以前よりは確実に上手くなっている……
+		ELSE
+			PRINTFORML %CALLNAME:TARGET%は未だにボタンの配置も覚えられずに首を傾げている……
+		ENDIF
+	ENDIF
+ENDIF
+WAIT
+
+;-------------------------------------------------
+;ダンエボをプレイする
+;-------------------------------------------------
+@MESSAGE_COM_ダンエボをプレイする
+PRINTFORML %CALLNAME:TARGET%と一緒にダンエボをプレイした
+IF Ｖ使用中(TARGET)
+	PRINTFORML %CALLNAME:TARGET%は女性器の刺激でろくに体を動かすことも出来ず、太腿に愛液を滴らせている……
+ELSEIF Ａ使用中(TARGET)
+	PRINTFORML %CALLNAME:TARGET%はアナルから来る鈍い刺激のせいで、非常に不自然な動きで踊っている……
+ELSEIF Ｂ使用中(TARGET) || TEQUIP:クリキャップ
+	PRINTFORML %CALLNAME:TARGET%は服の中で動く淫具のせいで集中できず、いとも簡単に%CALLNAME:PLAYER%に負けてしまった……
+ELSEIF 性器露出(TARGET)
+	IF ABL:露出癖 < 3
+		PRINTFORML %CALLNAME:TARGET%は丸見えの陰部が周囲に晒されないように、%OVER_GENITAL(TARGET)%を押さえて恥ずかしそうにプレイしている……
+	ELSE
+		PRINTFORML %CALLNAME:TARGET%は下着を履いてないことも気にせずに意気揚々と踊っている……
+	ENDIF
+ELSE
+	IF TALENT:音ゲーマー
+		PRINTFORML %CALLNAME:TARGET%は華麗なダンスでスコアを上げている。楽しそうだ……
+	ELSE
+		IF EXP:音ゲー経験 >= 30
+			PRINTFORML %CALLNAME:TARGET%も音楽ゲームに慣れてきたらしい。以前よりは確実に上手くなっている……
+		ELSE
+			IF EXP:ダンス経験 >= 50
+				PRINTFORML %CALLNAME:TARGET%は、ゲームには慣れていないが踊ることには慣れている。初心者にしては上出来だ……
+			ELSE
+				IF ABL:露出癖 >= 2 || TALENT:目立ちたがり
+					PRINTFORML %CALLNAME:TARGET%は音楽に合わせて大胆に踊っているが、画面の動きとは似ても似つかぬダンスだ……
+				ELSE
+					;DDRのコピペしてたせいでパネルとか書かれててクソ笑った
+					PRINTFORML %CALLNAME:TARGET%は人目が気になるのかあまり大胆な動きが出来ていない様子だ……
+				ENDIF
+			ENDIF
+		ENDIF
+	ENDIF
+ENDIF
+WAIT
+
+;-------------------------------------------------
+;QMAをプレイする
+;-------------------------------------------------
+@MESSAGE_COM_QMAをプレイする
+PRINTFORML %CALLNAME:TARGET%と一緒にクイズマジックアカデミーをプレイした
+IF Ｖ使用中(TARGET)
+	PRINTFORML %CALLNAME:TARGET%は膣から来る刺激のせいで集中できず、まったく問題に答えられていない……
+ELSEIF Ａ使用中(TARGET)
+	PRINTFORML %CALLNAME:TARGET%はアナルから来る鈍い刺激のせいで集中できず、まったく問題に答えられていない……
+ELSEIF Ｂ使用中(TARGET) || TEQUIP:クリキャップ
+	PRINTFORML %CALLNAME:TARGET%は服の中で動く淫具のせいで集中できず、まったく問題に答えられていない……
+ELSE
+	PRINTFORML %CALLNAME:TARGET%は出題された問題のおかげで様々な知恵を身につけられたようだ……
+ENDIF
+WAIT
+
+;-------------------------------------------------
+;maimaiをプレイする
+;-------------------------------------------------
+@MESSAGE_COM_maimaiをプレイする
+PRINTFORML %CALLNAME:TARGET%と一緒にmaimaiをプレイした
+IF Ｖ使用中(TARGET)
+	PRINTFORML %CALLNAME:TARGET%は平静を装っているが、膣から来る刺激に時折喘ぎながら膝を震えさせている……
+ELSEIF Ａ使用中(TARGET)
+	PRINTFORML %CALLNAME:TARGET%は平静を装っているが、アナルから来る鈍い刺激に汗を浮かべて耐えている……
+ELSEIF Ｂ使用中(TARGET) || TEQUIP:クリキャップ
+	PRINTFORML %CALLNAME:TARGET%は服の中で動く淫具のせいで集中できず、いとも簡単に%CALLNAME:PLAYER%に負けてしまった……
+ELSE
+	IF TALENT:音ゲーマー
+		PRINTFORML %CALLNAME:TARGET%は慣れた手つきでスコアを上げている。楽しそうだ……
+	ELSE
+		IF EXP:音ゲー経験 >= 30
+			PRINTFORML %CALLNAME:TARGET%も音楽ゲームに慣れてきたらしい。以前よりは確実に上手くなっている……
+		ELSE
+			PRINTFORML %CALLNAME:TARGET%は未だにノーツに追いつけずに首を傾げている……
+		ENDIF
+	ENDIF
+ENDIF
+WAIT
+
+;-------------------------------------------------
+;CHUNITHMをプレイする
+;-------------------------------------------------
+@MESSAGE_COM_CHUNITHMをプレイする
+PRINTFORML %CALLNAME:TARGET%と一緒にCHUNITHMをプレイした
+IF Ｖ使用中(TARGET)
+	PRINTFORML %CALLNAME:TARGET%は平静を装っているが、膣から来る刺激に時折喘ぎながら膝を震えさせている……
+ELSEIF Ａ使用中(TARGET)
+	PRINTFORML %CALLNAME:TARGET%は平静を装っているが、アナルから来る鈍い刺激に汗を浮かべて耐えている……
+ELSEIF Ｂ使用中(TARGET) || TEQUIP:クリキャップ
+	PRINTFORML %CALLNAME:TARGET%は服の中で動く淫具のせいで集中できず、いとも簡単に%CALLNAME:PLAYER%に負けてしまった……
+ELSE
+	IF TALENT:音ゲーマー
+		PRINTFORML %CALLNAME:TARGET%は慣れた手つきでスコアを上げている。楽しそうだ……
+	ELSE
+		IF EXP:音ゲー経験 >= 30
+			PRINTFORML %CALLNAME:TARGET%も音楽ゲームに慣れてきたらしい。以前よりは確実に上手くなっている……
+		ELSE
+			PRINTFORML %CALLNAME:TARGET%は未だにノーツに追いつけずに首を傾げている……
+		ENDIF
+	ENDIF
+ENDIF
+WAIT
+
+;-------------------------------------------------
+;ビデオポーカーをプレイする
+;-------------------------------------------------
+@MESSAGE_COM_ビデオポーカーをプレイする
+PRINTFORMW %CALLNAME:MASTER%はビデオポーカーをプレイすることにした
+
+;-------------------------------------------------
+;ビデオポーカーをプレイする
+;-------------------------------------------------
+@MESSAGE_COM_ビデオポーカーをプレイする
+PRINTFORMW %CALLNAME:MASTER%はビデオポーカーをプレイすることにした
+
+;-------------------------------------------------
+;ポーカーソリティアをプレイする
+;-------------------------------------------------
+@MESSAGE_COM_ポーカーソリティアをプレイする
+PRINTFORMW %CALLNAME:MASTER%はポーカーソリティアをプレイすることにした
+
+;-------------------------------------------------
+;モンテカルロをプレイする
+;-------------------------------------------------
+@MESSAGE_COM_モンテカルロをプレイする
+PRINTFORMW %CALLNAME:MASTER%はモンテカルロをプレイすることにした
+

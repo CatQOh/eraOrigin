@@ -4,14 +4,19 @@
 @USERCOM_ABLE_触手射精止め, ARG
 #FUNCTION
 ;触手ないとダメ
+コマンド実行条件 += "触手召喚中じゃないと実行できない/"
 SIF !TEQUIP:触手
-	RETURNF 0
+	COMRESULT = 0
 ;対象にペニス無いとダメ
+コマンド実行条件 += "対象に男性器が必要/"
 SIF !PENIS(TARGET)
-	RETURNF 0
+	COMRESULT = 0
+;貞操帯装備中はダメ
+コマンド実行条件 += "対象が貞操帯装着中は実行できない/"
+SIF CFLAG:貞操帯
+	COMRESULT = 0
 
-COMRESULT = 1
-RETURNF 1
+RETURNF COMRESULT
 
 @COM_触手射精止め
 PRINTL 触手射精止め
@@ -46,8 +51,8 @@ CALL SAMEN_SHOOT_T, 0, NOWEX:射精
 ;-------------------------------------------------
 ;経験の処理
 ;-------------------------------------------------
-EXP:緊縛経験++
-PRINTL 緊縛経験+1
+CALL EXPUP, "緊縛経験", 1
+CALL EXPUP, "射精管理経験", 1
 
 TENTACLE++
 
@@ -70,8 +75,8 @@ SOURCE:反感 = 100
 ;-------------------------------------------------
 ;経験の処理
 ;-------------------------------------------------
-EXP:緊縛経験++
-PRINTL 緊縛経験+1
+SIF SELECTCOMS != "触手射精止め"
+	CALL EXPUP, "緊縛経験", 1
 
 ;触手経験加算
 TENTACLE++

@@ -1,0 +1,460 @@
+﻿@図書室
+#DIM DYNAMIC 補充費
+#DIM DYNAMIC 割引率
+#DIM DYNAMIC 司書魅力
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC 名前文字数
+
+;本の補充費と司書レベルを計算
+CALL 図書室ランク計算
+補充費 = 10000
+FOR LCOUNT, 0, CHARANUM
+	IF CSTR:LCOUNT:配属 == "図書室" && CFLAG:LCOUNT:配属完了
+		;司書の実務経験に応じて減額 一人につき最大1000パセリ
+		補充費 -= LIMIT(EXP:LCOUNT:実務経験/10*10, 0, 1000)
+		SIF TALENT:LCOUNT:買い物上手
+			割引率++
+	ENDIF
+NEXT
+;買い物上手一人につき補充費10％減
+補充費 -= 補充費/10*割引率
+
+;浪費癖一人につき補充費10%増
+補充費 += 補充費/10*浪費癖人数("図書室")
+
+;最後に*CHARANUM
+補充費 *= CHARANUM
+
+DRAWLINE
+PRINTL □図書室
+PRINTL 　知識の泉を充実させることで、利用者が様々な知識を得られるようになります
+PRINTL 　司書を配属することで効率的に新書を補充したり、珍しい奇書を手に入れることができるかもしれません
+PRINTFORM 　図書室のランク:{FLAG:図書室ランク}/30 
+SIF FLAG:本の最終補充日
+	PRINTFORM 本の最終補充日:{FLAG:本の最終補充日/10000}年{FLAG:本の最終補充日/100%100}月{FLAG:本の最終補充日%100}日
+PRINTL 
+PRINTFORML □担当司書:{CMATCH(CSTR:配属, "図書室")}/3
+IF CMATCH(CSTR:配属, "図書室")
+	FOR LCOUNT, 0, CHARANUM
+		SIF CSTR:LCOUNT:配属 == "図書室"
+			CALL SETMAX(名前文字数, STRLENS(NAME:LCOUNT))
+	NEXT
+	FOR LCOUNT, 0, CHARANUM
+		IF CSTR:LCOUNT:配属 == "図書室"
+			PRINTFORM 　%NAME:LCOUNT, 名前文字数, LEFT% 
+			IF !CFLAG:LCOUNT:配属完了
+				PRINT 【配属準備中】
+			ELSE
+				SIF 統率者("図書室") && !TALENT:LCOUNT:統率
+					PRINT  統率者ボーナス+1 
+			ENDIF
+			CALL ISTALENT, LCOUNT, "買い物上手"
+			CALL ISTALENT, LCOUNT, "潔癖症"
+			CALL ISTALENT, LCOUNT, "禁断の知識"
+			CALL ISTALENT, LCOUNT, "読書家"
+			IF TALENT:LCOUNT:謎の魅力
+				PRINT [謎の魅力]
+			ELSEIF TALENT:LCOUNT:魅力
+				PRINT [魅力]
+			ENDIF
+			CALL ISTALENT, LCOUNT, "統率"
+			PRINTL 
+		ENDIF
+	NEXT
+ELSE
+	PRINTL 　[無し]
+ENDIF
+PRINTL 
+CALL PASELIL, @"　[1] - 本を補充する\@ !ORIGIN ? （{補充費}＄必要） #\@"
+IF CMATCH(CSTR:配属, "図書室")
+	PRINTL 　[2] - 図書室ランクのボーナスを確認する
+ELSE
+	HTML_PRINT SET_TOOLTIP("　[-] - 図書室ランクのボーナスを確認する", "司書を配属する必要があります", 0, "gray")
+ENDIF
+PRINTL 　[3] - 司書を配属する
+PRINTL 　[4] - 利用履歴を確認する（過去5日分）
+PRINTL 　[5] - 図書室の説明
+DRAWLINE
+PRINTPLAIN 　図書室　
+PRINTL [0] - 戻る
+
+DO
+	INPUT
+	SELECTCASE RESULT
+		CASE 0
+			RETURN
+		CASE 1
+			IF MONEY < 補充費 && !ORIGIN
+				PRINTW 所持金が足りません
+				RESTART
+			ENDIF
+			CALL PASELIL, @"\@ !ORIGIN ? {補充費}＄の経費で #\@本を補充します。よろしいですか？"
+			PRINTL [0] はい
+			PRINTL [1] いいえ
+			CALL INPUTF, 0, 1
+			IF RESULT == 0
+				;本を補充するとキャラの本への興味が施設ランクに合わせられる
+				;どんなにランクが低くても5は保証
+				CVARSET CFLAG, GETNUM(CFLAG, "本への興味"), MAX(FLAG:図書室ランク, 5)
+				MONEY -= 補充費
+				FLAG:本の最終補充日 = YEAR*10000+MONTH*100+DAYS
+			ENDIF
+			RESTART
+		CASE 2
+			SIF CMATCH(CSTR:配属, "図書室") == 0
+				CONTINUE
+			DRAWLINE
+			司書魅力 = 0
+			PRINTL □詳細情報
+			FOR LCOUNT, 0, CHARANUM
+				SIF CSTR:LCOUNT:配属 == "図書室"
+					PRINTFORML 　%NAME:LCOUNT%の司書レベル:{司書レベル(LCOUNT)}
+				SIF TALENT:LCOUNT:魅力 && TALENT:LCOUNT:謎の魅力
+					司書魅力 = 1
+			NEXT
+			PRINTFORML 　司書一人ごとの能力上限:{30/CMATCH(CSTR:配属, "図書室")}
+			PRINTL 
+			CALL PASELIL, @"　利用者一人ごとの本の補充費：{補充費/CHARANUM}＄"
+			SIF 司書魅力
+				PRINTL 　魅力的な司書が居るため利用者増加
+			PRINTL □ランクに応じて購入可能な本
+			PRINTL 　図書室ランク10以上で購入可能な本
+			SIF FLAG:図書室ランク < 10
+				SETCOLORBYNAME gray
+			FOR LCOUNT, 250, 269
+				SIF ITEMNAME:LCOUNT != ""
+					PRINTFORML 　　%ITEMNAME:LCOUNT%
+			NEXT
+			RESETCOLOR
+			PRINTL 　図書室ランク20以上で購入可能な本
+			SIF FLAG:図書室ランク < 20
+				SETCOLORBYNAME gray
+			FOR LCOUNT, 270, 299
+				SIF ITEMNAME:LCOUNT != ""
+					PRINTFORML 　　%ITEMNAME:LCOUNT%
+			NEXT
+			RESETCOLOR
+			PRINTL 上記の本はSHOPの アイテム＞本・特殊技能 からお買い求めください
+			WAIT
+			RESTART
+		CASE 3
+			CALL STRATEGY_PERSONAL, "図書室"
+			RESTART
+		CASE 4
+			CALL 図書室利用者
+			RESTART
+		CASE 5
+			CALL MANUAL_図書室
+			RESTART
+	ENDSELECT
+LOOP 1
+
+@図書室ランク計算
+#DIM DYNAMIC LCOUNT
+FLAG:図書室ランク = 0
+FOR LCOUNT, 0, CHARANUM
+	;司書の実務経験に応じて施設ランク上昇
+	;合計最大レベルは30 配属人数に応じて一人頭の能力にキャップを設ける 一人なら30、二人なら15、三人なら10
+	SIF CSTR:LCOUNT:配属 == "図書室" && CFLAG:LCOUNT:配属完了
+		FLAG:図書室ランク += LIMIT(司書レベル(LCOUNT), 0, 30/CMATCH(CSTR:配属, "図書室"))
+NEXT
+
+@司書レベル, ARG
+#FUNCTION
+#DIM DYNAMIC レベル
+;実務経験/100
+レベル = EXP:ARG:実務経験/100
+SIF 統率者("図書室") && !TALENT:ARG:統率
+	レベル++
+;買い物上手 +1
+SIF TALENT:ARG:買い物上手
+	レベル++
+;読書家 +2
+SIF TALENT:ARG:読書家
+	レベル += 2
+;潔癖症 +2
+SIF TALENT:ARG:潔癖症
+	レベル += 2
+;禁断の知識 +2
+SIF TALENT:ARG:禁断の知識
+	レベル += 2
+;汚れ無視 -1
+SIF TALENT:ARG:汚れ無視
+	レベル--
+;サボり魔 -1
+SIF TALENT:ARG:サボり魔
+	レベル--
+
+RETURNF レベル
+
+@TURNEND_図書室
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC LCOUNT2
+#DIM DYNAMIC 司書魅力
+#DIM DYNAMIC 男性司書
+#DIM DYNAMIC 女性司書
+#DIM DYNAMIC 意欲
+#DIM DYNAMIC 興味
+#DIM DYNAMIC 利用人数
+#DIM DYNAMIC モチベ計算用
+#DIM DYNAMIC モチベ合計値
+#DIM DYNAMIC 世話好き人数
+
+;ターン終了時の口上呼び出し
+FOR LCOUNT, 0, CHARANUM
+	SIF CSTR:LCOUNT:配属 == "図書室" && !CFLAG:LCOUNT:口上非表示
+		TRYCALLFORM TURNEND_図書室_%CSVNAMERPS(NO:LCOUNT)%
+NEXT
+
+;以下の処理は日付変更時のみ
+SIF TIME == 0
+	RETURN
+
+;まず配属中のキャラの処理
+FOR LCOUNT, 0, CHARANUM
+	IF CSTR:LCOUNT:配属 == "図書室"
+		;配属完了にする
+		CFLAG:LCOUNT:配属完了 = 1
+		;実務経験加算
+		EXP:LCOUNT:実務経験 += 2
+		;習得早ければ+1
+		SIF TALENT:LCOUNT:習得早い
+			EXP:LCOUNT:実務経験++
+		;魅力・謎の魅力持ちなら利用者増える
+		SIF TALENT:LCOUNT:謎の魅力 || TALENT:LCOUNT:魅力
+			司書魅力++
+		;男女数計算
+		SELECTCASE SEX(LCOUNT)
+			CASE 1
+				男性司書++
+			CASE 2
+				女性司書++
+		ENDSELECT
+		SIF TALENT:LCOUNT:世話好き
+			世話好き人数++
+	ENDIF
+NEXT
+
+;図書室のランクを計算する
+CALL 図書室ランク計算
+
+;図書室利用履歴の変数を後ろに詰める 2次元配列ではARRAYSHIFTできないので力技
+FOR LCOUNT, 3, -1, -1
+	FOR LCOUNT2, 0, 1000
+		図書室利用履歴:(LCOUNT+1):LCOUNT2 = %図書室利用履歴:LCOUNT:LCOUNT2%
+		SIF LCOUNT == 0
+			図書室利用履歴:LCOUNT:LCOUNT2 = 
+	NEXT
+NEXT
+
+;ここからは全員の処理
+FOR LCOUNT, 0, CHARANUM
+	;MASTERは除外
+	SIF LCOUNT == MASTER
+		CONTINUE
+	;知識欲・学習意欲を計算
+	意欲 = 1
+	SIF TALENT:LCOUNT:大人しい
+		意欲++
+	SIF TALENT:LCOUNT:好奇心
+		意欲++
+	SIF TALENT:LCOUNT:悲観的
+		意欲++
+	SIF TALENT:LCOUNT:恥じらい
+		意欲++
+	SIF TALENT:LCOUNT:習得早い
+		意欲++
+	SIF ABL:LCOUNT:欲望 >= 3
+		意欲++
+	;興味を計算
+	興味 = CFLAG:LCOUNT:本への興味
+	;魅力・謎の魅力持ちの人数*5
+	興味 += 司書魅力*5
+	;男好き・女好きなら司書の数*5
+	SIF TALENT:LCOUNT:男好き
+		興味 += 男性司書*5
+	SIF TALENT:LCOUNT:女好き
+		興味 += 女性司書*5
+	;嫌いなら司書の数*-5
+	SIF TALENT:LCOUNT:男嫌い
+		興味 -= 男性司書*5
+	SIF TALENT:LCOUNT:女嫌い
+		興味 -= 女性司書*5
+	;{意欲*興味}%の確率で図書室を利用する
+	IF RAND(1, 101) <= 意欲*興味
+		;利用履歴変数に名前を入れる
+		図書室利用履歴:0:利用人数 = %NAME:LCOUNT%
+		利用人数++
+		;利用した場合は{CFLAG:本への興味*20}の習得の珠入手
+		;本への興味が皆無で司書目当てでも10は入る
+		IF CFLAG:LCOUNT:本への興味 == 0
+			JUEL:LCOUNT:習得 += 10
+		;習得遅いと半減する
+		ELSEIF TALENT:LCOUNT:習得遅い
+			JUEL:LCOUNT:習得 += CFLAG:LCOUNT:本への興味*10
+		ELSE
+			JUEL:LCOUNT:習得 += CFLAG:LCOUNT:本への興味*20
+		ENDIF
+		;利用した場合は素質に応じて興味が下がる
+		SIF TALENT:LCOUNT:反抗的
+			CFLAG:LCOUNT:本への興味--
+		SIF TALENT:LCOUNT:衝動的
+			CFLAG:LCOUNT:本への興味--
+		SIF TALENT:LCOUNT:サボり魔
+			CFLAG:LCOUNT:本への興味--
+		SIF TALENT:LCOUNT:無関心
+			CFLAG:LCOUNT:本への興味--
+		SIF TALENT:LCOUNT:保守的
+			CFLAG:LCOUNT:本への興味--
+	ENDIF
+	;利用しなくても興味は下がっていく
+	CFLAG:LCOUNT:本への興味--
+NEXT
+
+PRINTFORML {利用人数}人が図書室を利用しました
+
+;図書室配属中のキャラのモチベを計算する
+FOR LCOUNT, 1, CHARANUM
+	SIF CSTR:LCOUNT:配属 != "図書室"
+		CONTINUE
+	モチベ計算用 = 0
+	FOR LCOUNT2, 0, VARSIZE("TALENT")
+		SIF !TALENT:LCOUNT:LCOUNT2
+			CONTINUE
+		SELECTCASE TALENTNAME:LCOUNT2
+			CASE "臆病", "素直", "プライド高い", "大人しい", "冷静", "弱気", "感情乏しい", "好奇心", "習得早い", "潔癖症", "魔術師", "工学博士"
+				モチベ計算用++
+			CASE "衝動的", "ハイテンション", "保守的", "目立ちたがり", "寂しがり屋", "習得遅い", "汚れ無視", "倒錯的", "幼稚"
+				モチベ計算用--
+		ENDSELECT
+	NEXT
+	
+	モチベ合計値 = CFLAG:LCOUNT:モチベーション+モチベ計算用+世話好き人数
+	SIF TALENT:LCOUNT:世話好き
+		モチベ合計値 -= 世話好き人数
+	;配属先のキャラの相性で計算
+	モチベ合計値 += 相性モチベ補正(LCOUNT)
+	CFLAG:LCOUNT:モチベーション = LIMIT(モチベ合計値, 1, 100)
+	;利用人数に応じて習得増加
+	SIF 利用人数 > 0
+		JUEL:LCOUNT:習得 += 利用人数*10
+NEXT
+
+RETURN
+
+@図書室利用者
+#DIM DYNAMIC 年
+#DIM DYNAMIC 月
+#DIM DYNAMIC 日
+#DIM DYNAMIC 利用年, 5
+#DIM DYNAMIC 利用月, 5
+#DIM DYNAMIC 利用日, 5
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC ページ
+
+;5日遡ってその日時を入れておく
+年 = YEAR
+月 = MONTH
+日 = DAYS
+FOR LCOUNT, 0, 5
+	DO
+		日--
+		IF 日 <= 0
+			月--
+			IF 月 <= 0
+				年--
+				月 = 12
+			ENDIF
+			日 = 31
+		ENDIF
+	LOOP !EXIST_DAY(年, 月, 日)
+	利用年:LCOUNT = 年
+	利用月:LCOUNT = 月
+	利用日:LCOUNT = 日
+NEXT
+
+VARLINE = 0
+
+$LOOP
+SIF VARLINE
+	CLEARLINE LINECOUNT-VARLINE
+VARLINE = LINECOUNT
+
+DRAWLINE
+PRINTFORML □{利用年:ページ}年{利用月:ページ}月{利用日:ページ}日の図書室利用者
+FOR LCOUNT, 0, 1000
+	IF 図書室利用履歴:ページ:LCOUNT == ""
+		IF LCOUNT == 0
+			PRINTL 
+			PRINTL 利用者無し
+			PRINTL 
+		ENDIF
+		BREAK
+	ENDIF
+	PRINTFORML 　%図書室利用履歴:ページ:LCOUNT%
+NEXT
+DRAWLINE
+PRINTPLAIN 　図書室利用履歴　
+IF ページ > 0
+	PRINT [1] 翌日の履歴 
+ELSE
+	PRINTPLAIN 　　　　　　　 
+ENDIF
+PRINT [0] 戻る 
+IF ページ < 4
+	PRINT [9] 前日の履歴
+ELSE
+	PRINTPLAIN 　　　　　　　
+ENDIF
+
+DO
+	INPUT
+	SELECTCASE RESULT
+		CASE 0
+			VARLINE = 0
+			RETURN
+		CASE 1
+			SIF ページ > 0
+				ページ--
+			GOTO LOOP
+		CASE 9
+			SIF ページ < 4
+				ページ++
+			GOTO LOOP
+	ENDSELECT
+LOOP 1
+
+@MANUAL_図書室
+DRAWLINE
+PRINTL □図書室について
+PRINTL 　[1] - 図書室のシステム
+PRINTL 　[2] - 図書室ランクとは？
+DRAWLINE
+PRINTPLAIN 　図書室　
+PRINTL [0] - 戻る
+
+DO
+	INPUT
+	SELECTCASE RESULT
+		CASE 0
+			RETURN
+		CASE 1
+			PRINTL 図書室はキャラクターたちが日常的に使用する施設であり、使用者は習得の珠を得ることができます
+			PRINTL キャラクターたちもそれぞれ本に対する興味や関心を持っており、積極的に通うキャラもいれば興味の無いキャラもいます
+			PRINTL しかし本棚が代わり映えしないことにはどのキャラも次第に興味を失っていき、最終的には図書室を利用しなくなります
+			PRINTL 定期的に本を補充し、キャラクターたちの興味を惹きましょう
+			PRINTL 本の補充費は司書たちの能力（司書レベル）で変動し、仕事慣れしていたり本の扱いが丁寧なキャラは補充費を安く抑えられます
+			PRINTL その他、キャラクターたちは本だけでなく司書との交流を目的として利用することもあります
+			PRINTL いろいろなキャラで司書の適性を試してみるとよいでしょう
+			WAIT
+			RESTART
+		CASE 2
+			PRINTL 図書室ランクとは、配属した司書の実務経験に応じて上昇するランクです。司書レベルとは違うので注意してください
+			PRINTL 最大値は30で、司書の人数に応じて一人あたりの上限が変わります。少人数でランクを上げるには相応の実務経験が必要になります
+			PRINTL 逆に多人数でランクを上げるには個々の司書が実務経験を重ねていないとランクが上昇しづらくなります
+			PRINTL ランクが上昇することで、素質を取得できる本などの特別なアイテムを購入できるようになります
+			PRINTL 購入可能なアイテムは「図書室ランクのボーナスを確認する」から見てみましょう
+			WAIT
+			RESTART
+	ENDSELECT
+LOOP 1

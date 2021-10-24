@@ -3,67 +3,57 @@
 ;-------------------------------------------------
 @USERCOM_ABLE_イラマチオ, ARG
 #FUNCTION
+;上級売春中は方針がSMで対象がマゾじゃないとできない
+SIF 上級売春中 && 娼館方針 != 3 && !TALENT:マゾ
+	COMRESULT = 0
 ;ボールギャグ使用中は不可
+コマンド実行条件 += "対象がボールギャグ装着中は実行できない/"
 SIF TEQUIP:ボールギャグ
-	RETURNF 0
+	COMRESULT = 0
 ;従順、欲望の合計が6以上ないとダメ
+コマンド実行条件 += "対象の従順と欲望の合計LV6以上必要/"
 SIF ABL:従順+ABL:欲望 < 6
-	RETURNF 0
+	COMRESULT = 0
 ;猫舌、小柄体型の奴隷の場合は技巧Lv2以上必要
+コマンド実行条件 += "対象が[猫舌]or[小柄体型]の場合は技巧LV2以上必要/"
 SIF (TALENT:猫舌 || TALENT:小柄体型) && ABL:技巧 < 2
-	RETURNF 0
+	COMRESULT = 0
 ;小人体型持ちは、調教者と調教対象が小人体型ならOK
 ;それ以外の場合は主人が禁断の知識持ちじゃないとダメ
+コマンド実行条件 += "対象が[小人体型]の場合は、実行者に[小人体型]か、主人に[禁断の知識]が無いと実行できない/"
 SIF TALENT:小人体型 && !TALENT:MASTER:禁断の知識 && !TALENT:PLAYER:小人体型
-	RETURNF 0
+	COMRESULT = 0
 ;新妻プレイ中はダメ
+コマンド実行条件 += "エプロン使用中は実行できない/"
 SIF TEQUIP:エプロン
-	RETURNF 0
+	COMRESULT = 0
 
 ;汎用COMABLE通らなかったらダメ
 SIF !USERCOM_ABLE_Ｐ奉仕()
-	RETURNF 0
+	COMRESULT = 0
 
-COMRESULT = 1
-RETURNF 1
+RETURNF COMRESULT
 
 @実行判定_イラマチオ
+#DIM DYNAMIC 実効値
 ;-------------------------------------------------
 ;実行判定処理
 ;-------------------------------------------------
 ;すべての命令に共通の要素を考慮
 ;(従順が高いと命令に従いやすいなど)
 CALL COM_ORDER
-LOCAL = RESULT
+実効値 = RESULT
 
 CALL COM_ORDER_フェラ
-LOCAL += RESULT
+実効値 += RESULT
 
 ;36以上で実行
-CALL 実効値判定, LOCAL, 36
+CALL 実効値判定, 実効値, 36
 
 RETURN RESULT
 
 @COM_イラマチオ
-;-------------------------------------------------
-;特殊派生処理
-;-------------------------------------------------
-;前回の調教が3Pのとき3Pへ
-TFLAG:乱交継続中 = 0
-IF PREVCOMS == "3P"
-	IF USERCOM_ABLE_3P()
-		TFLAG:乱交継続中 = 1
-		JUMP COM_3P
-	ENDIF
-;調教者が前回:助手で今回:主人か、前回:主人で今回:助手のとき
-ELSEIF PLAYER != TFLAG:前コマンド実行者
-	;前回の調教が正常位か後背位か背面座位かアナルセックスか3Pのときは3Pへ
-	SELECTCASE PREVCOMS
-		CASE "正常位", "後背位", "背面座位", "正常位アナル", "後背位アナル", "背面座位アナル", "3P"
-			SIF USERCOM_ABLE_3P()
-				JUMP COM_3P
-	ENDSELECT
-ENDIF
+#DIM DYNAMIC 増加量
 
 PRINTL イラマチオ
 
@@ -92,13 +82,13 @@ TEQUIP:PLAYER:下半身下着 = 0
 ;-------------------------------------------------
 ;射精ゲージチェック
 ;-------------------------------------------------
-LOCAL = 射精ゲージ計算_奉仕(600)
+増加量 = 射精ゲージ計算_奉仕(600)
 
 ;TALENT:舌使いをみる
 SIF TALENT:舌使い
-	TIMES LOCAL , 2.00
+	TIMES 増加量 , 2.00
 
-CALL 射精ゲージ増加, LOCAL, PLAYER
+CALL 射精ゲージ増加, 増加量, PLAYER
 
 ;-------------------------------------------------
 ;ソース追加処理
@@ -157,7 +147,8 @@ CALL EXPUP, "フェラ経験", 1
 CALL EXPUP, "嗜虐快楽経験", 1, PLAYER
 
 IF !避妊具(TARGET)
-		CALL 獣人催淫, 1
+	CALL 魔力回復, 7
+	CALL 獣人催淫, 1
 ENDIF
 
 TFLAG:奉仕快楽 = 1

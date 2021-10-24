@@ -1,0 +1,317 @@
+﻿@ZELLER(年, 月, 日)
+#FUNCTION
+#DIM DYNAMIC 年
+#DIM DYNAMIC 月
+#DIM DYNAMIC 日
+#DIM DYNAMIC 結果
+#DIM DYNAMIC 上二桁
+#DIM DYNAMIC 下二桁
+#DIM DYNAMIC 暦補正
+#DIM DYNAMIC 日数補正
+
+;曜日を求める公式(ツェラーの公式)
+;ARG=年 ARG:1=月 ARG:2=日  に対して「1:日,2:月,3:火,4:水,5:木,6:金,0:土」で返す
+
+;1月と2月は前年の13月と14月として扱う
+IF 月 < 3
+	年--
+	月 += 12
+ENDIF
+
+;年/100で床関数を計算
+;負の数の床関数は面倒
+上二桁 = 年/100
+SIF 年 < 0 && 年%100 != 0
+	上二桁--
+
+;年と100を法として合同である値を計算
+;負の数の剰余も面倒
+;(-34)%10 は -4と出る
+下二桁 = 年%100
+SIF 年 < 0 && 年%100 != 0
+	下二桁 = 100 + 下二桁
+
+;グレゴリオ暦かユリウス暦かによる補正を計算
+IF GREGORIAN(年, 月, 日)
+	暦補正 = 5* 上二桁 + 上二桁 /4
+ELSE
+	暦補正 = 6* 上二桁 +5
+ENDIF
+
+;ユリウス暦を間違った運用をしていた期間の補正を日数補正とする
+;AD1年～AD3年は存在しない(けど計算上は存在する)AD4年2月29日のせいで+1を補正する
+IF 年 == 1 || 年 == 2 || 年 == 3
+	日数補正 = 1
+;ここから紀元前
+;同様にずれた分の補正をいれる
+;例えば、BC45年2月29日は計算上は存在するべきなのに、実際はなかったので-1日分ずらす
+ELSEIF 年 <= 0
+	;0年を紀元前1年、-1年を紀元前2年、-2年を紀元前3年……とおいて見た目を分かりやすくする
+	SELECTCASE ABS(年)+1
+		CASE 1, 21, 24, 25, 27 TO 32, 34, 35, 38
+			日数補正 = 1
+		CASE 2 TO 5, 9, 12, 13, 15 TO 20, 22, 23, 26
+			日数補正 = 2
+		CASE 6 TO 8, 10, 11, 14
+			日数補正 = 3
+		;7日ループで-1日は+6日と同じ
+		CASE 45
+			日数補正 = 6
+		CASEELSE
+			日数補正 = 0
+	ENDSELECT
+ENDIF
+
+結果 = 下二桁 + (下二桁 /4) + (26*(1+月)/10) + 日 + 暦補正 + 日数補正
+結果 %= 7
+
+RETURNF 結果
+
+
+@GREGORIAN(年, 月, 日)
+#FUNCTION
+#DIM DYNAMIC 年
+#DIM DYNAMIC 月
+#DIM DYNAMIC 日
+;ARG年 ARG:1月 ARG:2日  にグレゴリオ暦が使われているか
+;使われているなら1、そうでないなら0
+;グレゴリオ暦は1582年10月15日から施行
+;こっちもARGを年月日で置き換え
+
+IF 年 > 1582
+	RETURNF 1
+ELSEIF 年 == 1582
+	IF 月 > 10
+		RETURNF 1
+	ELSEIF 月 == 10
+		IF 日 >= 15
+			RETURNF 1
+		ELSE
+			RETURNF 0
+		ENDIF
+	ELSE
+		RETURNF 0
+	ENDIF
+ELSE
+	RETURNF 0
+ENDIF
+
+
+@DOW(ARG)
+#FUNCTIONS
+;DOWはday of week(曜日)の略
+;「1:日,2:月,3:火,4:水,5:木,6:金,0:土」を出力する
+SELECTCASE ARG
+	CASE 1
+		RETURNF "日"
+	CASE 2
+		RETURNF "月"
+	CASE 3
+		RETURNF "火"
+	CASE 4
+		RETURNF "水"
+	CASE 5
+		RETURNF "木"
+	CASE 6
+		RETURNF "金"
+	CASE 0
+		RETURNF "土"
+ENDSELECT
+
+@NO_WEEK, 年 = -1, 月 = -1, 日 = -1
+#FUNCTION
+#DIM DYNAMIC 日
+#DIM DYNAMIC 月
+#DIM DYNAMIC 年
+#DIM DYNAMIC 月始め曜日
+#DIM DYNAMIC 対象曜日
+#DIM DYNAMIC 週
+SIF 年 == -1
+	年 = YEAR
+SIF 月 == -1
+	月 = MONTH
+SIF 日 == -1
+	日 = DAYS
+
+;式中関数「NO_WEEK」
+;その日が月の何週目かを返す 週始めは日曜日
+;ZELLER関数は0が土曜日なのでずらす
+;引数を省略した場合は今日、今月、今年で計算される
+
+月始め曜日 = ZELLER(年, 月, 1)-1
+SIF 月始め曜日 == -1
+	月始め曜日 = 6
+
+週 = (日+月始め曜日-1)/7+1
+
+RETURNF 週
+
+@NO_DOW, 週, 曜日, 月 = -1 , 年 = -1
+#FUNCTION
+#DIMS DYNAMIC 曜日
+#DIM DYNAMIC 週
+#DIM DYNAMIC 月
+#DIM DYNAMIC 年
+#DIM DYNAMIC 曜日補正
+#DIM DYNAMIC 月始め曜日
+SIF 年 == -1
+	年 = YEAR
+SIF 月 == -1
+	月 = MONTH
+
+;式中関数「NO_DOW」
+;当月の指定した第何何曜日が何日かを返す式中関数
+;第三引数以降を省略した場合は今月、今年で計算される
+
+SELECTCASE 曜日
+	CASE "日"
+		曜日補正 = 1
+	CASE "月"
+		曜日補正 = 2
+	CASE "火"
+		曜日補正 = 3
+	CASE "水"
+		曜日補正 = 4
+	CASE "木"
+		曜日補正 = 5
+	CASE "金"
+		曜日補正 = 6
+	CASE "土"
+		曜日補正 = 7
+ENDSELECT
+
+月始め曜日 = ZELLER(年, 月, 1)
+
+SELECTCASE 月始め曜日
+	CASE 0
+		月始め曜日 = 6
+	CASEELSE
+		月始め曜日--
+ENDSELECT
+
+IF 曜日補正 < 月始め曜日+1
+	RETURNF 曜日補正-月始め曜日+週*7
+ELSE
+	RETURNF 曜日補正-月始め曜日+(週-1)*7
+ENDIF
+
+@PREMIUM_FRIDAY, 年, 月, 日
+#FUNCTION
+#DIM DYNAMIC 年
+#DIM DYNAMIC 月
+#DIM DYNAMIC 日
+#DIM DYNAMIC 日数
+
+;式中関数「PREMIUM_FRIDAY」 プレミアムフライデー、それはその月の最終金曜日に行われるハッピーイベントらしい
+;引数で指定した日がプレミアムフライデーかどうかを判別
+;プレミアムフライデーなら1を返す 引数の省略は非推奨
+
+;そもそも金曜日じゃなければ終了
+SIF DOW(ZELLER(年, 月, 日)) != "金"
+	RETURNF 0
+
+;21日以前なら次週が必ずあるので終了
+SIF 日 <= 21
+	RETURNF 0
+
+;プレミアムフライデーの施行日は2017年2月24日なのでそれ以前なら終了
+SIF 年 < 2017 || (年 == 2017 && 月 < 2) || (年 == 2017 && 月 == 2 && 日 < 24)
+	RETURNF 0
+
+;その月の日数を計算
+SELECTCASE MONTH
+	CASE 1, 3, 5, 7, 8, 10, 12
+		日数 = 31
+	CASE 4, 6, 9, 11
+		日数 = 30
+	CASE 2
+		;うるう年かどうかで場合分け
+		IF (YEAR%4 == 0 && YEAR%100 != 0) || YEAR%400 == 0
+			日数 = 29
+		ELSE
+			日数 = 28
+		ENDIF
+ENDSELECT
+
+;ここまで来たということは金曜日が確定してるので、日数-指定日が7以上なら次週があるのでプレミアムフライデーではない
+SIF 日数 - 日 >= 7
+	RETURNF 0
+
+;上の処理を抜けてきたならプレミアムフライデー
+RETURNF 1
+
+@EXIST_DAY, 年, 月, 日
+#FUNCTION
+#DIM DYNAMIC 年
+#DIM DYNAMIC 月
+#DIM DYNAMIC 日
+
+;式中関数「EXIST_DAY」 指定した年月日が存在するかの判定を行う
+
+;月がめちゃくちゃだとアウト
+SIF !INRANGE(月, 1, 12)
+	RETURNF 0
+
+;日がめちゃくちゃでもアウト
+SELECTCASE MONTH
+	CASE 1, 3, 5, 7, 8, 10, 12
+		SIF !INRANGE(日, 1, 31)
+			RETURNF 0
+	CASE 4, 6, 9, 11
+		SIF !INRANGE(日, 1, 30)
+			RETURNF 0
+	CASE 2
+		;うるう年かどうかで場合分け
+		SELECTCASE 年
+			;グレゴリオ暦
+			CASE IS > 1582
+				IF (年%4 == 0 && 年%100 != 0) || 年%400 == 0
+					SIF !INRANGE(日, 1, 29)
+						RETURNF 0
+				ELSE
+					SIF !INRANGE(日, 1, 28)
+						RETURNF 0
+				ENDIF
+			;間違った運用がされていた頃のユリウス暦
+			CASE -44 TO -5
+				IF ABS(年)%3 == 1
+					SIF !INRANGE(日, 1, 29)
+						RETURNF 0
+				ELSE
+					SIF !INRANGE(日, 1, 28)
+						RETURNF 0
+				ENDIF
+			;上の間違った運用のシワ寄せ期間
+			CASE -4 TO 4
+				SIF !INRANGE(日, 1, 28)
+					RETURNF 0
+			;(紀元前46年以前を含め)残りの期間すべてをユリウス暦とする
+			CASEELSE
+				IF ABS(YEAR)%4 == 0
+					SIF !INRANGE(日, 1, 29)
+						RETURNF 0
+				ELSE
+					SIF !INRANGE(日, 1, 28)
+						RETURNF 0
+				ENDIF
+		ENDSELECT
+ENDSELECT
+
+;1582年10月5日～1582年10月14日は存在しない
+SIF 年 == 1582 && 月 == 10 && INRANGE(日, 5, 14)
+	RETURNF 0
+
+;上記を抜ければ存在判定は真
+RETURNF 1
+
+;休日判定
+@ISHOLIDAY, ARG
+#FUNCTION
+
+SELECTCASE DOW(FLAG:曜日)
+	CASE "土", "日"
+		RETURNF 1
+ENDSELECT
+
+RETURNF 0
+

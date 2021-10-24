@@ -1,5 +1,5 @@
 タイトル：Emuera
-バージョン： 1.822
+バージョン： 1.824
 著作者：MinorShift, 妊）|дﾟ)の中の人
 頒布者：MinorShift
 連絡先：minorshift@hotmail.co.jp

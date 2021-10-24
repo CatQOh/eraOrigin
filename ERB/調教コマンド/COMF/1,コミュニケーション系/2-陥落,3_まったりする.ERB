@@ -3,15 +3,20 @@
 ;-------------------------------------------------
 @USERCOM_ABLE_まったりする, ARG
 #FUNCTION
+;ゲーセンに居る場合はできない
+コマンド実行条件 += "ゲーセンでは実行不可/"
+SIF TEQUIP:ゲームセンター
+	COMRESULT = 0
 ;奴隷が恋慕か親愛で実行者が主人でないとダメ
+コマンド実行条件 += "[恋慕][親愛]かつ実行者が主人じゃないと実行できない/"
 SIF FALLTYPE(TARGET) != 1 || PLAYER != MASTER
-	RETURNF 0
+	COMRESULT = 0
 ;拘束中はダメ
+コマンド実行条件 += "拘束中は実行できない/"
 SIF TEQUIP:アイマスク || TEQUIP:縄 || TEQUIP:ボールギャグ || TEQUIP:触手
-	RETURNF 0
+	COMRESULT = 0
 
-COMRESULT = 1
-RETURNF 1
+RETURNF COMRESULT
 
 @COM_まったりする
 PRINTL まったりする
@@ -42,6 +47,10 @@ CALL SAMEN_SHOOT_T, 0, NOWEX:射精
 ;愛情経験追加
 ;-------------------------------------------------
 CALL EXPUP, "愛情経験", 1
+
+;実績:鳳凰とまったりする
+SIF CHARANAMEF(TARGET) == "鳳凰 鈴火"
+	CALL 実績解除, "トリカゴノ安息"
 
 RETURN 1
 

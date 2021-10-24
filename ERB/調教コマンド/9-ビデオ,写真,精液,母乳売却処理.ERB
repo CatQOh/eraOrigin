@@ -1,0 +1,662 @@
+﻿;ビデオの重複使用を処理するために、予め値段の加算を行っておく
+@ビデオポイント, コマンド名
+#FUNCTION
+#DIMS DYNAMIC コマンド名
+#DIM DYNAMIC ポイント
+
+SELECTCASE コマンド名
+	;愛撫系
+	CASE "愛撫", "アナル愛撫", "胸愛撫", "首絞め愛撫"
+		ポイント += 30
+	CASE "クンニ", "指挿入れ", "アナル舐め", "胸揉み", "乳首責め"
+		ポイント += 60
+	CASE "フェラする", "射精寸止め", "お掃除フェラする"
+		ポイント += 90
+	CASE "秘貝開帳", "秘貝開帳見せつけ", "自慰見せつけ"
+		ポイント += 150
+	CASE "胸自慰", "足扱きする", "下着扱きする", "手淫する", "素股する"
+		ポイント += 120
+	CASE "自慰", "パイズリする", "パイズリフェラする"
+		ポイント += 200
+	;コミュニケーション系
+	CASE "キスする", "吸血する", "吸血させる", "キスしてもらう", "ふたなり化"
+		ポイント += 100
+	CASE "何もしない", "プレゼント", "まったりする", "家事", "機械の勉強", "スキンシップ", "尻尾を撫でる"
+		ポイント += 10
+	CASE "会話", "歌の練習", "料理を作る", "お菓子を作る", "楽器の練習", "ハッキング", "排卵マッサージ", "魔法詠唱", "プログラミング演習", "魔法の練習"
+		ポイント += 50
+	CASE "罵倒", "ビデオ鑑賞", "お酒を飲ませる", "情欲を煽る", "ジュースを飲ませる"
+		ポイント += 20
+	;道具系
+	CASE "ローター", "貞操帯"
+		ポイント += 90
+	CASE "電気按摩", "クリキャップ", "ニプルキャップ", "搾乳器"
+		ポイント += 120
+	CASE "オナホール", "バイブ", "アナルバイブ", "アナルビーズ", "電動エネマグラ", "搾精器"
+		ポイント += 150
+	CASE "ニプルキャップ"
+		ポイント += 120
+	CASE "乳首ローター", "ペニスバンド"
+		ポイント += 60
+	CASE "搾精コンドーム", "コンドーム", "ミッドナイトスペシャル"
+		ポイント += 30
+	;セックス系
+	CASE "正常位", "対面座位", "背面座位", "正常位アナル", "対面座位アナル", "背面座位アナル", "正常位させる", "後背位させる", "正常位アナルさせる", "後背位アナルさせる"
+		ポイント += 200
+	CASE "後背位", "後背位アナル", "下着ずらし挿入", "下着ずらし挿入アナル"
+		ポイント += 250
+	CASE "騎乗位", "騎乗位アナル", "スライム姦", "スライム姦させる"
+		ポイント += 300
+	CASE "逆レイプ", "逆レイプキス"
+		ポイント += 150
+	;奉仕系
+	CASE "手淫", "泡踊り", "足扱き", "兜合わせ", "下着扱き"
+		ポイント += 150
+	CASE "フェラチオ"
+		ポイント += 180
+	CASE "パイズリ", "オナホ扱き", "バイブ被挿入", "アナルバイブ被挿入"
+		ポイント += 200
+	CASE "素股", "ローター愛撫させる", "電気按摩愛撫させる", "アナル愛撫させる"
+		ポイント += 100
+	CASE "足を舐めさせる"
+		ポイント += 60
+	CASE "縦パイズリ", "パイズリフェラ"
+		ポイント += 250
+	CASE "母乳飲み"
+		ポイント += 90
+	;SM系
+	CASE "スパンキング", "乳スパンキング", "アイマスク", "ボールギャグ", "ビンタ", "異物挿入解除"
+		ポイント += 100
+	CASE "鞭", "蝋燭", "縄", "腹パン", "踏む", "裸締め", "鞭打ちしてもらう", "踏んでもらう", "叩いてもらう", "尿道挿入"
+		ポイント += 150
+	CASE "針", "首を絞める", "異物挿入", "採血"
+		ポイント += 200
+	;助手系、レズ系
+	CASE "クンニさせる"
+		ポイント += 100
+	CASE "貝あわせ", "ダブルフェラ"
+		ポイント += 150
+	CASE "助手を犯させる", "ダブルパイズリ", "双頭ディルド", "アナル双頭ディルド"
+		ポイント += 200
+	CASE "顔面騎乗する"
+		ポイント += 120
+	CASE "乳の揉み合い"
+		ポイント += 90
+	;ハードなコマンド
+	CASE "イラマチオ", "浣腸器", "アナル電極", "乳房電極"
+		ポイント += 150
+	CASE "フィストファック", "アナルフィスト", "乳ファック", "フィストファックさせる", "アナルフィストさせる"
+		ポイント += 200
+	CASE "両穴フィスト"
+		ポイント += 250
+	CASE "放尿", "空気浣腸", "拡張バルーン"
+		ポイント += 100
+	CASE "アナルを舐めさせる"
+		ポイント += 60
+	;触手系
+	CASE "触手召喚", "触手搾乳", "触手緊縛", "触手浣腸", "触手ペニス責め", "触手搾精"
+		ポイント += 150
+	CASE "触手挿入", "アナル触手", "触手強制搾精", "触手強制放尿"
+		ポイント += 200
+	CASE "触手クリ責め", "触手乳首責め", "触手口辱", "触手射精止め"
+		ポイント += 100
+	;その他
+	CASE "ローション", "写真撮影", "強精神薬", "尿道カテーテル", "粘液ぶっかけ", "尿道ポッキー", "ライブ配信"
+		ポイント += 30
+	CASE "媚薬", "利尿剤", "シャワー", "ローション注入", "腸洗浄", "魅惑の粘液"
+		ポイント += 60
+	CASE "野外プレイ", "羞恥プレイ", "お風呂場プレイ", "新妻プレイ", "コンドーム精飲（奴隷）", "コンドーム精飲（助手）", "女装させる", "裸体盛り"
+		ポイント += 100
+	CASE "助手を犯す"
+		ポイント += 150
+	;龍姦系
+	CASE "キス（ドラゴン）"
+		ポイント += 150
+	CASE "フェラさせる（ドラゴン）"
+		ポイント += 200
+	CASE "舐め回す（ドラゴン）", "ペットに舐めさせる"
+		ポイント += 100
+	CASE "睨みつける（ドラゴン）"
+		ポイント += 50
+	CASE "膣を犯す（ドラゴン）", "アナルを犯す（ドラゴン）", "ペットに犯させる"
+		ポイント += 300
+	;派生コマンド
+	CASE "3P", "二本フェラ", "数珠繋ぎ"
+		ポイント += 300
+	CASE "シックスナイン", "岩清水", "搾乳"
+		ポイント += 150
+	CASE "Gスポット刺激", "挿入Gスポ責め", "挿入子宮口責め", "逆レイプ首絞め", "授乳手コキ", "前立腺刺激"
+		ポイント += 200
+	CASE "乱れ牡丹", "69パイズリ", "ダブル素股", "正常位キス", "対面座位キス", "正常位アナルキス", "対面座位アナルキス"
+		ポイント += 250
+	CASE "騎乗乳房自慰", "騎乗位キス", "騎乗位アナルキス", "正常位キスさせる"
+		ポイント += 350
+	CASE "正常位首絞め", "後背位首絞め", "正常位アナル首絞め", "後背位アナル首絞め"
+		ポイント += 250
+	CASE "バイブオナニー", "アナルバイブオナニー", "シャワーオナニー", "PC筋エネマグラオナニー"
+		ポイント += 250
+	CASE "二穴バイブオナニー", "オナフェラ", "二輪挿し", "アナル二輪挿し"
+		ポイント += 300
+	CASE "後背位手淫", "騎乗位手淫", "後背位アナル手淫", "騎乗位アナル手淫", "対面座位吸血", "背面座位吸血", "正常位吸血させる", "後背位吸血させる"
+		ポイント += 250
+	CASEELSE
+		;#; DEBUGPRINTFORML %コマンド名%にビデオ価格が設定されていません
+ENDSELECT
+
+RETURNF ポイント
+
+@PRICE_VIDEO
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC 価格
+#DIM DYNAMIC 補正
+
+FOR LCOUNT, 0, TFLAG:ビデオ撮影回数
+	価格 += ビデオポイント(ビデオ撮影内容:LCOUNT)
+NEXT
+
+補正 = 100
+SIF TALENT:無関心
+	補正 -= 30
+SIF TALENT:感情乏しい
+	補正 -= 30
+SIF TALENT:恥じらい
+	補正 += 10
+
+IF TALENT:小柄体型 || TALENT:小人体型
+	;ロリ巨乳・トランジスタグラマーだとさらにボーナスが付く
+	SELECTCASE TALENT:バストサイズ
+		;絶壁
+		CASE 1
+			補正 += 15
+		;貧乳
+		CASE 2
+			補正 += 18
+		;普乳
+		CASE 3
+			補正 += 24
+		;巨乳
+		CASE 4
+			補正 += 36
+		;豊乳
+		CASE 5
+			補正 += 54
+		;爆乳
+		CASE 6
+			補正 += 90
+	ENDSELECT
+ELSE
+	SELECTCASE TALENT:バストサイズ
+		;絶壁
+		CASE 1
+			補正 -= 15
+		;貧乳
+		CASE 2
+			補正 -= 5
+		;普乳
+		CASE 3
+			補正 += 5
+		;巨乳
+		CASE 4
+			補正 += 15
+		;豊乳
+		CASE 5
+			補正 += 25
+		;爆乳
+		CASE 6
+			補正 += 35
+	ENDSELECT
+ENDIF
+
+SIF TALENT:動物耳
+	補正 += 5
+SIF TALENT:尻尾
+	補正 += 5
+SIF TALENT:ファーリー
+	補正 += 10
+SIF TALENT:人気
+	補正 += 20
+SIF TALENT:謎の魅力
+	補正 += 30
+SIF TALENT:魅力
+	補正 += 20
+
+;被写経験に応じて売却額上昇
+;淫乱・娼婦なら映像になることを意識するため売却額が伸びる
+IF TALENT:淫乱 || TALENT:娼婦
+	SELECTCASE EXP:被写経験
+		CASE IS >= EXPLV:5
+			補正 += 125
+		CASE IS >= EXPLV:4
+			補正 += 100
+		CASE IS >= EXPLV:3
+			補正 += 80
+		CASE IS >= EXPLV:2
+			補正 += 65
+		CASE IS >= EXPLV:1
+			補正 += 55
+		CASEELSE
+			補正 += 50
+	ENDSELECT
+	SIF TALENT:娼婦
+		補正 += 50
+ELSE
+	SELECTCASE EXP:被写経験
+		CASE IS >= EXPLV:5
+			補正 += 23
+		CASE IS >= EXPLV:4
+			補正 += 16
+		CASE IS >= EXPLV:3
+			補正 += 10
+		CASE IS >= EXPLV:2
+			補正 += 5
+		CASE IS >= EXPLV:1
+			補正 += 1
+		CASEELSE
+			補正 -= 2
+	ENDSELECT
+ENDIF
+
+;撮影者を見る
+;主人
+SELECTCASE TFLAG:ビデオ撮影者
+	CASE 1
+		;撮影技能を見る
+		SELECTCASE ABL:MASTER:撮影技能
+			CASE 0
+				補正 -= 20
+			CASE 1
+				補正 -= 10
+			CASE 3
+				補正 += 10
+			CASE 4
+				補正 += 30
+			CASE IS >= 5
+				補正 += 50
+		ENDSELECT
+	;助手
+	CASE 2
+		;撮影技能を見る
+		SELECTCASE ABL:ASSI:撮影技能
+			CASE 0
+				補正 -= 20
+			CASE 1
+				補正 -= 10
+			CASE 3
+				補正 += 10
+			CASE 4
+				補正 += 30
+			CASE IS >= 5
+				補正 += 50
+		ENDSELECT
+ENDSELECT
+
+;倍率処理
+SIF 補正 < 1
+	補正 = 1
+
+価格 *= 補正
+価格 /= 100
+
+;難易度処理
+SELECTCASE FLAG:難易度
+	;NORMAL
+	CASE 1
+		TIMES 価格 , 1.00
+	;HYPER
+	CASE 2
+		TIMES 価格 , 0.80
+	;ANOTHER
+	CASE 3
+		TIMES 価格 , 0.60
+ENDSELECT
+
+;ゲイビデオならボーナスが付く
+SIF SEX(MASTER) == SEX(TARGET)
+	TIMES 価格 , 1.10
+SIF ASSI > 0 && SEX(ASSI) == SEX(TARGET)
+	TIMES 価格 , 1.10
+
+;霊体の撮影なら価格は0になる
+SIF TALENT:霊体
+	価格 = 0
+
+TFLAG:ビデオ価格 += 価格
+TFLAG:ビデオ撮影回数 = 0
+
+@SELL_VIDEO
+#DIM DYNAMIC 加算額
+#DIM DYNAMIC 所持ビデオ本数
+
+;調教時に録画したビデオの売却
+;撮影中のまま売却まで来た場合はテープの数を減らす
+;テープの減数は撮影後処理のため、さらにビデオの値段および経験もここで処理をする
+IF TEQUIP:ビデオカメラ
+	ITEM:ビデオテープ--
+	CALL PRICE_VIDEO
+ENDIF
+
+;録画してなければ終了
+SIF TFLAG:ビデオ価格 == 0
+	RETURN 0
+
+DRAWLINE
+
+;ビデオボーナス、もしくは処女喪失シーンがあれば内容を表示
+IF VIDEOBONUS:0 || VIDEOBONUS:1 || VIDEOBONUS:2 || VIDEOBONUS:3 || VIDEOBONUS:4 || VIDEOBONUS:5 || VIDEOBONUS:6 || TFLAG:撮影破瓜
+	PRINTL 【ビデオ内容】
+	;処女喪失シーンがあれば加算
+	IF TFLAG:撮影破瓜
+		加算額 += 5000
+		EXP:異常経験++
+		PRINTFORML 　このビデオには%CALLNAME:TARGET%の処女喪失シーンが記録されている
+		PRINTFORML 　異常経験+1
+	ENDIF
+
+	;ビデオボーナスを見る
+	;主人→奴隷 中出し&アナル中出し
+	IF VIDEOBONUS:0 && VIDEOBONUS:1
+		PRINTFORML 　%CALLNAME:TARGET%は%CALLNAME:MASTER%に{VIDEOBONUS:0}回膣内射精され、{VIDEOBONUS:1}回アナルにも射精されている
+		加算額 += VIDEOBONUS:0*300
+		加算額 += VIDEOBONUS:1*250
+	;中出しのみ
+	ELSEIF VIDEOBONUS:0
+		PRINTFORML 　%CALLNAME:TARGET%は%CALLNAME:MASTER%に{VIDEOBONUS:0}回、膣内に射精されている
+		加算額 += VIDEOBONUS:0*300
+	;アナル中出しのみ
+	ELSEIF VIDEOBONUS:1
+		PRINTFORML 　%CALLNAME:TARGET%は%CALLNAME:MASTER%に{VIDEOBONUS:1}回、アナルに射精されている
+		加算額 += VIDEOBONUS:1*250
+	ENDIF
+
+	;助手→奴隷 中出し&アナル中出し
+	IF VIDEOBONUS:2 && VIDEOBONUS:3
+		PRINTFORML 　%CALLNAME:TARGET%は%CALLNAME:ASSI%に{VIDEOBONUS:2}回膣内射精され、{VIDEOBONUS:3}回アナルにも射精されている
+		加算額 += VIDEOBONUS:2*300
+		加算額 += VIDEOBONUS:3*250
+	;中出しのみ
+	ELSEIF VIDEOBONUS:2
+		PRINTFORML 　%CALLNAME:TARGET%は%CALLNAME:ASSI%に{VIDEOBONUS:2}回、膣内に射精されている
+		加算額 += VIDEOBONUS:2*300
+	;アナル中出しのみ
+	ELSEIF VIDEOBONUS:3
+		PRINTFORML 　%CALLNAME:TARGET%は%CALLNAME:ASSI%に{VIDEOBONUS:3}回、アナルに射精されている
+		加算額 += VIDEOBONUS:3*250
+	ENDIF
+
+	;奴隷射精
+	IF VIDEOBONUS:4
+		PRINTFORML 　{VIDEOBONUS:4}回、%CALLNAME:TARGET%が射精している
+		加算額 += VIDEOBONUS:4*150
+	ENDIF
+	;奴隷放尿
+	IF VIDEOBONUS:5
+		PRINTFORML 　{VIDEOBONUS:5}回、%CALLNAME:TARGET%が放尿している
+		加算額 += VIDEOBONUS:5*100
+	ENDIF
+	;奴隷噴乳
+	IF VIDEOBONUS:6
+		PRINTFORML 　{VIDEOBONUS:6}回、%CALLNAME:TARGET%が噴乳している
+		加算額 += VIDEOBONUS:6*100
+	ENDIF
+	;主人のドラゴン→奴隷中出し&アナル中出し
+	IF VIDEOBONUS:7 && VIDEOBONUS:8
+		IF CSTR:MASTER:ドラゴン == "ドラゴン"
+			PRINTFORML 　%CALLNAME:TARGET%は%CALLNAME:MASTER%のドラゴンに{VIDEOBONUS:7}回膣内射精され、{VIDEOBONUS:8}回アナルにも射精されている
+		ELSE
+			PRINTFORML 　%CALLNAME:TARGET%は%CSTR:MASTER:ドラゴン%に{VIDEOBONUS:7}回膣内射精され、{VIDEOBONUS:8}回アナルにも射精されている
+		ENDIF
+		加算額 += VIDEOBONUS:7*350
+		加算額 += VIDEOBONUS:8*300
+	;中出しのみ
+	ELSEIF VIDEOBONUS:7
+		IF CSTR:MASTER:ドラゴン == "ドラゴン"
+			PRINTFORML 　%CALLNAME:TARGET%は%CALLNAME:MASTER%のドラゴンに{VIDEOBONUS:7}回、膣内に射精されている
+		ELSE
+			PRINTFORML 　%CALLNAME:TARGET%は%CSTR:MASTER:ドラゴン%に{VIDEOBONUS:7}回、膣内に射精されている
+		ENDIF
+		加算額 += VIDEOBONUS:7*350
+	;アナル中出しのみ
+	ELSEIF VIDEOBONUS:8
+		IF CSTR:MASTER:ドラゴン == "ドラゴン"
+			PRINTFORML 　%CALLNAME:TARGET%は%CALLNAME:MASTER%のドラゴンに{VIDEOBONUS:8}回、アナルに射精されている
+		ELSE
+			PRINTFORML 　%CALLNAME:TARGET%は%CSTR:MASTER:ドラゴン%に{VIDEOBONUS:8}回、アナルに射精されている
+		ENDIF
+		加算額 += VIDEOBONUS:8*300
+	ENDIF
+	;助手のドラゴン→奴隷中出し&アナル中出し
+	IF VIDEOBONUS:9 && VIDEOBONUS:10
+		IF CSTR:ASSI:ドラゴン == "ドラゴン"
+			PRINTFORML 　%CALLNAME:TARGET%は%CALLNAME:ASSI%のドラゴンに{VIDEOBONUS:9}回膣内射精され、{VIDEOBONUS:10}回アナルにも射精されている
+		ELSE
+			PRINTFORML 　%CALLNAME:TARGET%は%CSTR:ASSI:ドラゴン%に{VIDEOBONUS:9}回膣内射精され、{VIDEOBONUS:10}回アナルにも射精されている
+		ENDIF
+		加算額 += VIDEOBONUS:9*350
+		加算額 += VIDEOBONUS:10*300
+	;中出しのみ
+	ELSEIF VIDEOBONUS:9
+		IF CSTR:MASTER:ドラゴン == "ドラゴン"
+			PRINTFORML 　%CALLNAME:TARGET%は%CALLNAME:ASSI%のドラゴンに{VIDEOBONUS:9}回、膣内に射精されている
+		ELSE
+			PRINTFORML 　%CALLNAME:TARGET%は%CSTR:ASSI:ドラゴン%に{VIDEOBONUS:9}回、膣内に射精されている
+		ENDIF
+		加算額 += VIDEOBONUS:9*350
+	;アナル中出しのみ
+	ELSEIF VIDEOBONUS:10
+		IF CSTR:MASTER:ドラゴン == "ドラゴン"
+			PRINTFORML 　%CALLNAME:TARGET%は%CALLNAME:ASSI%のドラゴンに{VIDEOBONUS:10}回、アナルに射精されている
+		ELSE
+			PRINTFORML 　%CALLNAME:TARGET%は%CSTR:ASSI:ドラゴン%に{VIDEOBONUS:10}回、アナルに射精されている
+		ENDIF
+		加算額 += VIDEOBONUS:10*300
+	ENDIF
+	;奴隷噴乳
+	IF VIDEOBONUS:11
+		PRINTFORML 　%CALLNAME:TARGET%が触手に{VIDEOBONUS:11}回、膣内に射精されている
+		加算額 += VIDEOBONUS:11*400
+	ENDIF
+	;奴隷噴乳
+	IF VIDEOBONUS:12
+		PRINTFORML 　%CALLNAME:TARGET%が触手に{VIDEOBONUS:11}回、アナルに射精されている
+		加算額 += VIDEOBONUS:12*350
+	ENDIF
+ENDIF
+
+DO
+	CALL PASELIL, @"録画したビデオは{TFLAG:ビデオ価格+加算額}＄程度の値が付きそうだ"
+	PRINTL 録画したビデオをどうするか選択してください
+	PRINTL [0] - 売る
+	PRINT [1] - 手元に残す
+	SIF CFLAG:所持ビデオ数
+		PRINTFORM （%CALLNAME:TARGET%のビデオは既に持っている）
+	PRINTL 
+	INPUT
+LOOP LOOPRES(0, 1)
+
+SELECTCASE RESULT
+	CASE 0
+		CALL PASELIW, @"調教時に録画したビデオを売って、{TFLAG:ビデオ価格+加算額}＄手に入れました"
+		MONEY += TFLAG:ビデオ価格+加算額
+		TFLAG:ビデオ価格 = 0
+		;ニンフちゃん出演のAVを売りさばく
+		SIF CHARANAMEF(TARGET) == "ニンフちゃん"
+			CALL 実績解除, "ニンフちゃんのファンやめます"
+		CALL KOJO_MESSAGE_EVENT, "ビデオ売却時"
+		バンめし = 0
+	CASE 1
+		PRINTFORMW %CALLNAME:TARGET%との思い出を保管した({CFLAG:所持ビデオ数+1}本目)
+		CFLAG:所持ビデオ数++
+		所持ビデオ本数 = FINDELEMENT(所持ビデオ, "", 0, VARSIZE("所持ビデオ"), 1)
+		IF INRANGE(所持ビデオ本数, 0, VARSIZE("所持ビデオ")-1)
+			PRINTL ビデオにタイトルを付けますか？
+			PRINTL [0] - はい
+			PRINTL [1] - いいえ
+			DO
+				INPUT
+				SELECTCASE RESULT
+					CASE 0
+						PRINTL タイトルを入力てください
+						INPUTS
+						SIF RESULTS == ""
+							GOTO NOTITLE
+						所持ビデオ:所持ビデオ本数 = 主演:%NAME:TARGET% \@ ASSI > 0 ? 助演:%NAME:ASSI% # \@「%RESULTS%」
+						BREAK
+					CASE 1
+						$NOTITLE
+						所持ビデオ:所持ビデオ本数 = 主演:%NAME:TARGET% \@ ASSI > 0 ? 助演:%NAME:ASSI% # \@のアダルトビデオ
+						BREAK
+				ENDSELECT
+			LOOP 1
+		ENDIF
+		;理々奈のハメ撮り中出しビデオを保管する
+		SIF CHARANAMEF(TARGET) == "雛月 理々奈" && VIDEOBONUS:0
+			CALL 実績解除, "お兄さんにビデオレター送っとこうね"
+		CALL KOJO_MESSAGE_EVENT, "ビデオ保管時"
+ENDSELECT
+
+@SELL_PICTURE
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC 総額
+
+;売れる写真が無ければ関数終了
+SIF !写真価格:0
+	RETURN 0
+DRAWLINE
+PRINTL 撮影した写真を売却します
+FOR LCOUNT, 0, 10
+	SIF !写真価格:LCOUNT
+		BREAK
+	PRINTFORML {LCOUNT+1, 2}枚目.%写真内容:LCOUNT%
+	CALL PASELIL, @"       {写真価格:LCOUNT}＄の買値が付きました"
+	総額 += 写真価格:LCOUNT
+NEXT
+
+バンめし = 0
+
+CALL PASELIL, @"計{総額}＄で売れました"
+MONEY += 総額
+WAIT
+CALL KOJO_MESSAGE_EVENT, "写真売却時"
+
+@SELL_MILK
+#DIM DYNAMIC 売却額
+#DIM DYNAMIC 採取量
+
+売却額 = TFLAG:搾乳量*50
+採取量 = TFLAG:搾乳量*10
+IF 売却額 > 0
+	SIF TALENT:淫乳
+		売却額 *= 2
+
+	;難易度処理
+	SELECTCASE FLAG:難易度
+		;NORMAL
+		CASE 1
+			TIMES 売却額 , 1.00
+		;HYPER
+		CASE 2
+			TIMES 売却額 , 0.80
+		;ANOTHER
+		CASE 3
+			TIMES 売却額 , 0.60
+	ENDSELECT
+
+	IF TALENT:スライム || TALENT:溶ける快
+		DRAWLINE
+		DO
+			PRINTFORML 今回の調教で%CALLNAME:TARGET%から{採取量}mlの粘液を採取した
+			CALL PASELIL, @"%CALLNAME:TARGET%の粘液は{売却額}＄で売れそうです。売却しますか？"
+			PRINTL [0] - 売却する
+			PRINTL [1] - 保管する
+			INPUT
+		LOOP LOOPRES(0, 1)
+
+		SELECTCASE RESULT
+			CASE 0
+				MONEY += 売却額
+				CALL PASELIW, @"所持金 {売却額}＄増加"
+				バンめし = 0
+			CASE 1
+				FLAG:保管済み粘液 += 採取量
+				採取精液:(NO:TARGET)++
+				PRINTFORMW 保管粘液量 {採取量}ml増加
+		ENDSELECT
+	ELSE
+		DRAWLINE
+		DO
+			PRINTFORML 今回の調教で%CALLNAME:TARGET%から{採取量}mlの母乳を採取した
+			CALL PASELIL, @"%CALLNAME:TARGET%の母乳は{売却額}＄で売れそうです。売却しますか？"
+			PRINTL [0] - 売却する
+			PRINTL [1] - 保管する
+			INPUT
+		LOOP LOOPRES(0, 1)
+
+		SELECTCASE RESULT
+			CASE 0
+				MONEY += 売却額
+				CALL PASELIW, @"所持金 {売却額}＄増加"
+				バンめし = 0
+			CASE 1
+				FLAG:保管済み母乳 += 採取量
+				CALL PASELIW, @"保管母乳量 {採取量}ml増加"
+		ENDSELECT
+	ENDIF
+
+	DRAWLINE
+
+ENDIF
+
+@SELL_SAMEN
+#DIM DYNAMIC 売却額
+#DIM DYNAMIC 採取量, 2
+
+売却額 = TFLAG:搾精量*250
+採取量:0 = TFLAG:搾精量 * 10
+採取量:1 = TFLAG:搾精量 * 50
+
+IF 売却額 > 0
+	IF TALENT:スライム || TALENT:溶ける快
+		DRAWLINE
+		DO
+			PRINTFORML 今回の調教で%CALLNAME:TARGET%から{採取量}mlの凝縮粘液を採取した
+			PRINTFORML （通常の粘液に換算して{採取量:1}mlに相当します）
+			CALL PASELIL, @"%CALLNAME:TARGET%の粘液は{売却額}＄で売れそうです。売却しますか？"
+			PRINTL [0] - 売却する
+			PRINTL [1] - 保管する
+			INPUT
+		LOOP LOOPRES(0, 1)
+
+		SELECTCASE RESULT
+			CASE 0
+				MONEY += 売却額
+				CALL PASELIW, @"所持金 {売却額}＄増加"
+				バンめし = 0
+			CASE 1
+				FLAG:保管済み粘液 += 採取量:1
+				採取精液:(NO:TARGET)++
+				PRINTFORMW 保管粘液量 {採取量:1}ml増加
+		ENDSELECT
+	ELSE
+		DRAWLINE
+		DO
+			PRINTFORML 今回の調教で%CALLNAME:TARGET%から{採取量}mlの精液を採取した
+			CALL PASELIL, @"%CALLNAME:TARGET%の精液は{売却額}＄で売れそうです。売却しますか？"
+			PRINTL [0] - 売却する
+			PRINTL [1] - 保管する
+			INPUT
+		LOOP LOOPRES(0, 1)
+
+		SELECTCASE RESULT
+			CASE 0
+				MONEY += 売却額
+				CALL PASELIW, @"所持金 {売却額}＄増加"
+				バンめし = 0
+			CASE 1
+				FLAG:保管済み精液 += 採取量
+				採取精液:(NO:TARGET)++
+				PRINTFORMW 保管精液量 {採取量}ml増加
+		ENDSELECT
+	ENDIF
+	
+ENDIF
+

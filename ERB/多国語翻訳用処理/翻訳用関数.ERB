@@ -1,0 +1,164 @@
+﻿;名前表示用関数
+;あくまで表示用 内部処理は今まで通り日本語を使う
+@NAMEDISP, ARG
+#FUNCTIONS
+
+;旧データ等で定義されてない場合の情報更新
+SIF CSTR:ARG:英語名 == "" && CSVENGNAME(NO:ARG) != ""
+	CSTR:ARG:英語名 = %CSVENGNAME(NO:ARG)%
+
+IF LANGUAGE == "ENG" && CSTR:ARG:英語名 != ""
+	RETURNF CSTR:ARG:英語名
+ELSE
+	RETURNF NAME:ARG
+ENDIF
+
+;呼び名表示用関数 同上
+@CALLNAMEDISP, ARG
+#FUNCTIONS
+
+;旧データ等で定義されてない場合の情報更新
+SIF CSTR:ARG:英語呼び名 == "" && CSVENGCALLNAME(NO:ARG) != ""
+	CSTR:ARG:英語呼び名 = %CSVENGCALLNAME(NO:ARG)%
+
+IF LANGUAGE == "ENG" && CSTR:ARG:英語呼び名 != ""
+	RETURNF CSTR:ARG:英語呼び名
+ELSE
+	RETURNF CALLNAME:ARG
+ENDIF
+
+;CSVからARGの英語名を返す
+@CSVENGNAME, ARG
+#FUNCTIONS
+
+;子供の名前はそのまま返す
+SELECTCASE ARG
+	CASE 0 TO 9999
+		IF EXISTCSV(ARG)
+			IF CSVCSTR(ARG, GETNUM(CSTR, "英語名")) != ""
+				RETURNF CSVCSTR(ARG, GETNUM(CSTR, "英語名"))
+			ELSE
+				RETURNF CSVNAME(ARG)
+			ENDIF
+		ENDIF
+	CASEELSE
+		RETURNF CHILDNAME:(ARG-10000)
+ENDSELECT
+
+;CSVからARGの英語呼び名を返す
+@CSVENGCALLNAME, ARG
+#FUNCTIONS
+
+;子供の名前はそのまま返す
+SELECTCASE ARG
+	CASE 0 TO 9999
+		IF EXISTCSV(ARG)
+			IF CSVCSTR(ARG, GETNUM(CSTR, "英語呼び名")) != ""
+				RETURNF CSVCSTR(ARG, GETNUM(CSTR, "英語呼び名"))
+			ELSE
+				RETURNF CSVCALLNAME(ARG)
+			ENDIF
+		ENDIF
+	CASEELSE
+		RETURNF CHILDNAME:(ARG-10000)
+ENDSELECT
+
+;CSVNAMEFとCSVENGNAMEの統合版
+@CSVNAMEDISP, ARG
+#FUNCTIONS
+
+IF LANGUAGE == "ENG"
+	RETURNF CSVENGNAME(ARG)
+ELSE
+	RETURNF CSVNAMEF(ARG)
+ENDIF
+
+
+@CSVCALLNAMEDISP, ARG
+#FUNCTIONS
+
+IF LANGUAGE == "ENG"
+	RETURNF CSVENGCALLNAME(ARG)
+ELSE
+	RETURNF CSVCALLNAMEF(ARG)
+ENDIF
+
+;曜日の英語関数
+@DOWDISP(ARG)
+#FUNCTIONS
+;DOWはday of week(曜日)の略
+;「1:日,2:月,3:火,4:水,5:木,6:金,0:土」を出力する
+SELECTCASE ARG
+	CASE 1
+		RETURNF "Sun"
+	CASE 2
+		RETURNF "Mon"
+	CASE 3
+		RETURNF "Tue"
+	CASE 4
+		RETURNF "Wed"
+	CASE 5
+		RETURNF "Thu"
+	CASE 6
+		RETURNF "Fri"
+	CASE 0
+		RETURNF "Sat"
+ENDSELECT
+
+;天気
+@WEATHERDISP(ARG)
+#FUNCTIONS
+
+SIF ARG == 0
+	ARG = FLAG:天気
+
+SELECTCASE ARG
+	CASE 1
+		RETURNF "Sunny"
+	CASE 2
+		RETURNF "Cloudy"
+	CASE 3
+		RETURNF "Rain"
+	CASE 4
+		RETURNF "Heavy Rain"
+	CASE 5
+		RETURNF "Thunderstorm"
+	CASE 6
+		RETURNF "Snow"
+	CASE 7
+		RETURNF "Heavy Snow"
+ENDSELECT
+
+;カジノゲーム名
+@GAMBLEDISP, ARGS
+#FUNCTIONS
+
+SELECTCASE ARGS
+	CASE "ルーレット"
+		RETURNF "Roulette"
+	CASE "クラップス"
+		RETURNF "Craps"
+	CASE "ブラックジャック"
+		RETURNF "Blackjack"
+	CASE "ビンゴピンボール"
+		RETURNF "Bingo Pinball"
+	CASE "ビデオポーカー"
+		RETURNF "Video Poker"
+	CASE "ポーカーソリティア"
+		RETURNF "Poker Square"
+	CASE "レットイットライド"
+		RETURNF "Let It Ride"
+	CASE "バカラ"
+		RETURNF "Baccarat"
+	CASE "サーティー"
+		RETURNF "Thirty"
+	CASE "素数ダイス"
+		RETURNF "Prime Dice"
+	CASE "モンテカルロ"
+		RETURNF "Monte Carlo"
+	CASE ""
+		RETURNF ""
+	CASE ""
+		RETURNF ""
+ENDSELECT
+

@@ -3,6 +3,8 @@
 ;-------------------------------------------------
 @MESSAGE_COM_腹パン
 PRINTFORML %CALLNAME:TARGET%の腹部を思い切り殴った
+SIF 上級売春中
+	PRINTFORML %CALLNAME:TARGET%は座り込んで苦痛に悶えるも、その表情は妖しい笑みを含んでいる……
 
 ;-------------------------------------------------
 ;踏む
@@ -55,7 +57,11 @@ PRINTFORMW %CALLNAME:TARGET%の頬を手の平で弾いた……
 ;フィストファック
 ;-------------------------------------------------
 @MESSAGE_COM_フィストファック
-PRINTFORML %CALLNAME:TARGET%の膣は%CALLNAME:PLAYER%の拳でかき回された
+IF 上級売春中
+	PRINTFORML %CALLNAME:TARGET%の願うままに、%CALLNAME:PLAYER%は拳で膣を犯した
+ELSE
+	PRINTFORML %CALLNAME:TARGET%の膣は%CALLNAME:PLAYER%の拳でかき回された
+ENDIF
 ;Ｖ感覚
 SELECTCASE ABL:Ｖ感覚
 	CASE IS <= 2
@@ -76,7 +82,11 @@ ENDSELECT
 ;アナルフィスト
 ;-------------------------------------------------
 @MESSAGE_COM_アナルフィスト
-PRINTFORML %CALLNAME:TARGET%の肛門は%CALLNAME:PLAYER%の拳でかき回された
+IF 上級売春中
+	PRINTFORML %CALLNAME:TARGET%の願うままに、%CALLNAME:PLAYER%は拳でアナルを犯した
+ELSE
+	PRINTFORML %CALLNAME:TARGET%の肛門は%CALLNAME:PLAYER%の拳でかき回された
+ENDIF
 ;Ａ感覚
 SELECTCASE ABL:Ａ感覚
 	CASE IS <= 2
@@ -97,7 +107,11 @@ ENDSELECT
 ;両穴フィスト
 ;-------------------------------------------------
 @MESSAGE_COM_両穴フィスト
-PRINTFORML %CALLNAME:TARGET%の膣と肛門は%CALLNAME:PLAYER%の拳でかき回された
+IF 上級売春中
+	PRINTFORML より激しい刺激を求める%CALLNAME:TARGET%の両穴を拳でかき回した
+ELSE
+	PRINTFORML %CALLNAME:TARGET%の膣と肛門は%CALLNAME:PLAYER%の拳でかき回された
+ENDIF
 ;Ｖ感覚かＡ感覚がLV4以下
 IF ABL:Ｖ感覚 <= 4 || ABL:Ａ感覚 <= 4
 	PRINTFORMW %CALLNAME:TARGET%は\@ !TALENT:足使用不可 ? 両足 #\@を広げぐったりしており、拡がりきった膣口と肛門から粘液が垂れ流されていた……
@@ -191,14 +205,32 @@ ENDSELECT
 PRINTFORMW %CALLNAME:TARGET%の穴から異物を抜き去ると、ぽっかりと大口を開けたままひくひくと動いていた……
 
 ;-------------------------------------------------
+;採血
+;-------------------------------------------------
+@MESSAGE_COM_採血
+IF TEQUIP:採血
+	PRINTFORMW %CALLNAME:TARGET%の腕の静脈に注射針を刺し、採血を始めた……
+ELSE
+	PRINTFORMW %CALLNAME:TARGET%の腕から注射針を引き抜き、消毒を施した……
+ENDIF
+
+;-------------------------------------------------
 ;フィストファックさせる
 ;-------------------------------------------------
 @MESSAGE_COM_フィストファックさせる
-PRINTFORMW %CALLNAME:PLAYER%は、膣を手で犯すよう%CALLNAME:TARGET%に命じた……
+IF 上級売春中
+	PRINTFORMW %CALLNAME:TARGET%は%CALLNAME:PLAYER%\@ TALENT:PLAYER:足使用不可 ? を仰向けにさせると # の足を拡げさせると \@、ゆっくりと膣に手全体を膣に挿れてきた……
+ELSE
+	PRINTFORMW %CALLNAME:PLAYER%は、膣を手で犯すよう%CALLNAME:TARGET%に命じた……
+ENDIF
 
 ;-------------------------------------------------
 ;アナルフィストさせる
 ;-------------------------------------------------
 @MESSAGE_COM_アナルフィストさせる
-PRINTFORMW %CALLNAME:PLAYER%は%CALLNAME:TARGET%に尻穴を晒し、手を奥まで挿れるように命じた……
+IF 上級売春中
+	PRINTFORMW %CALLNAME:TARGET%は%CALLNAME:PLAYER%に尻穴を晒させると、ゆっくりと手首まで突き挿れてきた……
+ELSE
+	PRINTFORMW %CALLNAME:PLAYER%は%CALLNAME:TARGET%に尻穴を晒し、手を奥まで挿れるように命じた……
+ENDIF
 

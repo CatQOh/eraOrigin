@@ -2,8 +2,7 @@
 ;調教者の射精時のテキスト
 ;-------------------------------------------
 @SHOOT_MESSAGE
-LOCAL = 0
-LOCAL:1 = 0
+#DIM DYNAMIC 中出し
 
 ;実行者が避妊具内で射精した
 IF (GETBIT(TFLAG:避妊具射精, 0) || GETBIT(TFLAG:避妊具射精, 1)) && !NOWEX:PLAYER:ドラゴン射精
@@ -15,8 +14,6 @@ ENDIF
 ;NOWEX:ASSI:射精 = 助手の射精
 ;NOWEX:PLAYER:射精 = PLAYERの射精 大半のコマンドはPLAYERが実行するのでこれを使う
 ;変数内部が1の場合は通常の射精。2以上は大量射精となる
-;LOCAL = 地の文表示したよ判定
-;LOCAL:1 = 膣内射精したよ判定
 
 IF NOWEX:PLAYER:射精
 	SELECTCASE SELECTCOMS
@@ -44,7 +41,7 @@ IF NOWEX:PLAYER:射精
 				ENDIF
 				PRINTL 大きく膨れ上がっている……
 			ENDIF
-			LOCAL:1++
+			中出し++
 		CASE "後背位", "後背位手淫"
 			SELECTCASE CSTR:種族
 				;獣人もしくは獣
@@ -61,7 +58,7 @@ IF NOWEX:PLAYER:射精
 					PRINTL は反り上がり、今にも自分の腹を先走りで汚しそうだ……
 				ENDIF
 			ENDIF
-			LOCAL:1++
+			中出し++
 		CASE "正常位アナル", "正常位アナルキス"
 			PRINTFORML %CALLNAME:TARGET%のアナルから漏れ出た精液が尻の割れ目を伝って垂れ落ちていく……
 			IF PENIS(TARGET) && !NOWEX:射精 && !NOWEX:Ａ絶頂
@@ -111,7 +108,6 @@ IF NOWEX:PLAYER:射精
 			ENDIF
 			SIF ABL:Ｃ感覚 >= 4 && !NOWEX:射精
 				PRINTFORML %CALLNAME:TARGET%は射精に同調して締め上がる%CALLNAME:PLAYER%の体内の感触に恍惚の表情を浮かべている……
-			LOCAL++
 		CASE "騎乗位", "騎乗位キス", "騎乗位手淫"
 			PRINTFORML %CALLNAME:TARGET%の子宮に納まりきらない精液が結合部から竿を伝って流れ落ちた……
 			IF PENIS(TARGET) && !NOWEX:射精 && !NOWEX:Ｖ絶頂
@@ -130,7 +126,7 @@ IF NOWEX:PLAYER:射精
 					PRINTL 先走りに濡れて鈍く輝いている
 				ENDIF
 			ENDIF
-			LOCAL:1++
+			中出し++
 		CASE "騎乗位アナル", "騎乗位アナルキス", "騎乗位アナル手淫"
 			SIF SEX(TARGET) == 1
 				PRINTFORML 男娼のように尻穴でペニスを咥え込む%CALLNAME:TARGET%の前立腺に精液を噴きかけると、口を半開きにして悶えている……
@@ -159,7 +155,7 @@ IF NOWEX:PLAYER:射精
 				SIF TALENT:小柄体型 || TALENT:小人体型
 					PRINT その小さな身体で懸命に
 				SELECTCASE TALENT:バストサイズ
-					CASE 4, 5
+					CASE 4 TO 6
 						PRINT 大きな胸を押し付けながら
 				ENDSELECT
 				PRINTL 抱きついてくる……
@@ -167,7 +163,7 @@ IF NOWEX:PLAYER:射精
 			PRINTFORML %CALLNAME:PLAYER%は%CALLNAME:TARGET%を抱きしめながら膣内に射精した……
 			SIF PENIS(TARGET) && !NOWEX:射精
 				PRINTFORML %CALLNAME:PLAYER%が射精に陰茎を膨らませる度に、二人の腹に挟まれる%CALLNAME:TARGET%のペニスも反応している……
-			LOCAL:1++
+			中出し++
 		CASE "背面座位", "乱れ牡丹"
 			IF TEQUIP:羞恥プレイ && (TALENT:小柄体型 || TALENT:小人体型)
 				PRINTFORML 小さな膣で受け止めきれずに溢れ出した精液が床に垂れ落ちるのが、鏡越しによく見える……
@@ -181,14 +177,14 @@ IF NOWEX:PLAYER:射精
 					PRINTFORML %CALLNAME:TARGET%の子宮にしっかりと注がれた種子が結びつくのを想像したのか、その顔が歪むのがはっきりとわかる……
 				ENDIF
 			ENDIF
-			LOCAL:1++
+			中出し++
 		CASE "対面座位アナル", "対面座位アナルキス"
 			IF CFLAG:陥落 && PLAYER == MASTER
 				PRINTFORM %CALLNAME:TARGET%が%CALLNAME:PLAYER%の射精を察すると、
 				SIF TALENT:小柄体型 || TALENT:小人体型
 					PRINT その小さな身体で懸命に
 				SELECTCASE TALENT:バストサイズ
-					CASE 4, 5
+					CASE 4 TO 6
 						PRINT 大きな胸を押し付けながら
 				ENDSELECT
 				PRINTL 抱きついてくる……
@@ -214,35 +210,54 @@ IF NOWEX:PLAYER:射精
 			ELSE
 				PRINTFORML %CALLNAME:PLAYER%は%CALLNAME:TARGET%の奥深くに突き入れて射精した……
 			ENDIF
-			PRINTFORML 膣内から溢れ出す精液が%CALLNAME:TARGET%の%CSTR:下半身下着%に滲んでいる……
+			PRINTFORML 膣内から溢れ出す精液が%CALLNAME:TARGET%の\@ CFLAG:着衣併用 == 2 ? %CSTR:全身上着% # %CSTR:下半身下着% \@に滲んでいる……
 			SIF PENIS(TARGET) && !NOWEX:射精 && !NOWEX:Ｖ絶頂
-				PRINTFORM 膣内に射精される%CALLNAME:TARGET%のペニスは%CSTR:下半身下着%の中で窮屈そうに膨らんでいる……
-			LOCAL:1++
+				PRINTFORM 膣内に射精される%CALLNAME:TARGET%のペニスは\@ CFLAG:着衣併用 == 2 ? %CSTR:全身上着% # %CSTR:下半身下着% \@の中で窮屈そうに膨らんでいる……
+			中出し++
 		CASE "下着ずらし挿入アナル"
-			PRINTFORML %CALLNAME:TARGET%のアナルから漏れ出た精液が%CSTR:下半身下着%に滲んでいる……
+			PRINTFORML %CALLNAME:TARGET%のアナルから漏れ出た精液が\@ CFLAG:着衣併用 == 2 ? %CSTR:全身上着% # %CSTR:下半身下着% \@に滲んでいる……
 			IF !NOWEX:射精 && !NOWEX:Ａ絶頂
 				SELECTCASE SEX(TARGET)
 					CASE 1
 						SIF PALAM:欲情 >= PALAMLV:3
-							PRINTFORML 射精に震えるペニスに前立腺を抉られる度に、%CALLNAME:TARGET%のペニスは%CSTR:下半身下着%の中でびくびくと震えている……
+							PRINTFORML 射精に震えるペニスに前立腺を抉られる度に、%CALLNAME:TARGET%のペニスは\@ CFLAG:着衣併用 == 2 ? %CSTR:全身上着% # %CSTR:下半身下着% \@の中でびくびくと震えている……
 					CASE 2
 						SIF PALAM:潤滑 >= PALAMLV:4
-							PRINTFORML 腸内への射精に感じているのか、%CALLNAME:TARGET%の%CSTR:下半身下着%は止め処なく溢れ出る愛液にぐしょ濡れになっている……
+							PRINTFORML 腸内への射精に感じているのか、%CALLNAME:TARGET%の\@ CFLAG:着衣併用 == 2 ? %CSTR:全身上着% # %CSTR:下半身下着% \@は止め処なく溢れ出る愛液にぐしょ濡れになっている……
 				ENDSELECT
 			ENDIF
+		CASE "正常位キスさせる", "正常位吸血させる", "後背位吸血させる"
+			IF TFLAG:奴隷挿入箇所 == 1
+				GOTO 正常位させる
+			ELSEIF TFLAG:奴隷挿入箇所 == 2
+				GOTO 正常位アナルさせる
+			ENDIF
+		CASE "後背位吸血させる"
+			IF TFLAG:奴隷挿入箇所 == 1
+				GOTO 後背位させる
+			ELSEIF TFLAG:奴隷挿入箇所 == 2
+				GOTO 後背位アナルさせる
+			ENDIF
 		CASE "正常位させる"
+			$正常位させる
 			IF NOWEX:射精 && !GETBIT(TFLAG:避妊具射精, 2)
 				PRINTFORML %CALLNAME:TARGET%が%CALLNAME:PLAYER%の膣内で射精を迎えると同時に、%CALLNAME:PLAYER%も子宮に熱い精液を注がれながら反り返るペニスから精液を飛ばして自分の体を汚した……
 			ELSE
 				PRINTFORML %CALLNAME:TARGET%に抱かれる%CALLNAME:PLAYER%は、膣内を擦られる刺激だけで射精に達してしまった……
 			ENDIF
+			SIF 上級売春中
+				PRINTFORML 受けの姿勢でも射精する%CALLNAME:PLAYER%の姿に、%CALLNAME:TARGET%もご満悦の様子だ……
 		CASE "後背位させる"
+			$後背位させる
 			IF NOWEX:射精 && !GETBIT(TFLAG:避妊具射精, 2)
 				PRINTFORML %CALLNAME:TARGET%の膣内射精と同時に%CALLNAME:PLAYER%も射精を迎え、膣内から漏れ出す精液と自身のペニスから溢れ出す精液が垂れ落ちるのがはっきりと見えた……
 			ELSE
 				PRINTFORML 二人の結合部の下で硬く膨らんだ%CALLNAME:PLAYER%のペニスが激しく跳ね、精液を吐き出した……
 			ENDIF
+			SIF 上級売春中
+				PRINTFORML 受けの姿勢でも射精する%CALLNAME:PLAYER%の姿に、%CALLNAME:TARGET%もご満悦の様子だ……
 		CASE "正常位アナルさせる"
+			$正常位アナルさせる
 			IF NOWEX:射精 && !GETBIT(TFLAG:避妊具射精, 2)
 				IF SEX(PLAYER) == 1
 					PRINTFORML 前立腺を擦られてこみ上げてくる快感が、%CALLNAME:TARGET%の腸内射精と共に精液となって%CALLNAME:PLAYER%のペニスから溢れ出した……
@@ -260,7 +275,10 @@ IF NOWEX:PLAYER:射精
 					PRINTFORML アナルでペニスを咥え込む%CALLNAME:PLAYER%は、あまりの快感に愛液を溢れさせながら射精した……
 				ENDIF
 			ENDIF
+			SIF 上級売春中
+				PRINTFORML 受けの姿勢でも射精する%CALLNAME:PLAYER%の姿に、%CALLNAME:TARGET%もご満悦の様子だ……
 		CASE "後背位アナルさせる"
+			$後背位アナルさせる
 			IF NOWEX:射精 && !GETBIT(TFLAG:避妊具射精, 2)
 				PRINTFORML 後ろから%CALLNAME:TARGET%の精液を尻穴に出され、%CALLNAME:PLAYER%もくぐもった声を上げながら射精した……
 			ELSE
@@ -270,6 +288,8 @@ IF NOWEX:PLAYER:射精
 					PRINTFORML %CALLNAME:PLAYER%はアナルを突かれるたびに訪れる激しい射精の絶頂に、大量の精液を漏らしている……
 				ENDIF
 			ENDIF
+			SIF 上級売春中
+				PRINTFORML 受けの姿勢でも射精する%CALLNAME:PLAYER%の姿に、%CALLNAME:TARGET%もご満悦の様子だ……
 		CASE "手淫"
 			IF NOWEX:PLAYER:射精 == 1
 				PRINTFORM %CALLNAME:TARGET%の
@@ -289,6 +309,8 @@ IF NOWEX:PLAYER:射精
 					PRINTL 床を汚した……
 				ENDIF
 			ENDIF
+			SIF 上級売春中
+				PRINTFORML %CALLNAME:TARGET%はもっと出してほしいと言わんばかりにさらに激しくペニスを扱き続けている……
 		CASE "フェラチオ"
 			IF TALENT:アニマル
 				PRINTFORML %CALLNAME:TARGET%は周囲に飛び散った精液をくまなく舐め取り、さらに%CALLNAME:PLAYER%のペニスを舐め続けた……
@@ -308,6 +330,8 @@ IF NOWEX:PLAYER:射精
 						PRINTFORML 溢れるほどの精液が%CALLNAME:TARGET%の喉に叩きつけられた……
 					ENDIF
 				ENDIF
+				SIF 上級売春中
+					PRINTFORML %CALLNAME:TARGET%は%CALLNAME:PLAYER%のペニスを丁寧にしゃぶり、心ゆくまで精液を味わっている……
 			ENDIF
 		CASE "パイズリ", "パイズリフェラ", "縦パイズリ"
 			IF OVER_BUST(TARGET) != ""
@@ -335,7 +359,7 @@ IF NOWEX:PLAYER:射精
 								PRINTFORML %CALLNAME:TARGET%の起伏の少ない胸を精液が流れ落ちていく……
 							CASE 3
 								PRINTFORML %CALLNAME:TARGET%の胸元から顔にまで精液が飛び散った……
-							CASE 4, 5
+							CASE 4 TO 6
 								PRINTFORML %CALLNAME:TARGET%の胸の中で漏れ出た精液が谷間に溜まっている……
 						ENDSELECT
 					ENDIF
@@ -386,7 +410,7 @@ IF NOWEX:PLAYER:射精
 							PRINTFORML %CALLNAME:TARGET%の華奢な胸を侵し、
 						CASE 3
 							PRINTFORML %CALLNAME:TARGET%の谷間を流れ、
-						CASE 4, 5
+						CASE 4 TO 6
 							PRINTL その大きな乳房をも汚し、
 					ENDSELECT
 					IF TALENT:小柄体型 || TALENT:小人体型
@@ -481,7 +505,7 @@ IF NOWEX:PLAYER:射精
 					PRINT 薄い胸に扱かれながら
 				CASE 3
 					PRINT 乳房の中で
-				CASE 4, 5
+				CASE 4 TO 6
 					PRINT 豊満な乳房に包み込まれて
 			ENDSELECT
 			PRINTL 射精を迎えた……
@@ -489,10 +513,10 @@ IF NOWEX:PLAYER:射精
 				PRINTFORML %CALLNAME:TARGET%の%OVER_BUST(TARGET)%は、反り返る肉棒から溢れ出した白濁液で汚れている……
 		CASE "挿入Gスポ責め"
 			PRINTFORML %CALLNAME:TARGET%の膣壁をペニスで抉ったまま、%CALLNAME:PLAYER%は絡みつく膣肉の中で射精した……
-			LOCAL:1++
+			中出し++
 		CASE "挿入子宮口責め"
 			PRINTFORML %CALLNAME:TARGET%の子宮に熱い精液が注ぎ込まれていった……
-			LOCAL:1++
+			中出し++
 		CASE "ダブル素股"
 			IF NOWEX:PLAYER:射精 == 1
 				PRINTFORML 吐き出された精液が二人の体を汚していった……
@@ -505,13 +529,13 @@ IF NOWEX:PLAYER:射精
 			ELSE
 				PRINTFORML %CALLNAME:PLAYER%はペニスを扱く手を速め、%CALLNAME:TARGET%に向かって精液を飛ばした……
 			ENDIF
-		CASE "バイブ被挿入", "フィストファックさせる"
+		CASE "バイブ被挿入", "フィストファックさせる", "双頭ディルド"
 			IF NOWEX:PLAYER:射精 == 1
 				PRINTFORML %CALLNAME:PLAYER%は膣奥に沈む異物の刺激で、ペニスから精液を垂れ流している……
 			ELSE
 				PRINTFORML %CALLNAME:PLAYER%は膣奥に沈む異物の強烈な刺激で激しくペニスを震わせ、放物線を描くまでに勢い良く射精した……
 			ENDIF
-		CASE "アナルバイブ被挿入", "フィストファックさせる"
+		CASE "アナルバイブ被挿入", "フィストファックさせる", "アナル双頭ディルド"
 			IF NOWEX:PLAYER:射精 == 1
 				PRINTFORML %CALLNAME:PLAYER%は尻穴への重く鈍い快感で、ペニスから精液を垂れ流している……
 			ELSE
@@ -519,11 +543,16 @@ IF NOWEX:PLAYER:射精
 			ENDIF
 		CASE "ローター愛撫させる", "電気按摩愛撫させる"
 			PRINTFORML %CALLNAME:PLAYER%は小刻みに振動する玩具の刺激で射精した……
+		CASE "オナフェラ"
+			;対象も射精している場合はそっちで描写
+			SIF !NOWEX:射精
+				PRINTFORML 自慰を続けながらペニスを舐る%CALLNAME:TARGET%の口内に精液を流し込んだ……
+		CASE "尿道挿入"
+			PRINTFORML %CALLNAME:PLAYER%のペニスは非常に強い尿道の締まり押し切り、%CALLNAME:TARGET%の膀胱に勢い良く精液を注いだ……
 		CASEELSE
 			;SIF SELECTCOMS != "二本フェラ" && SELECTCOMS != "3P"
 			;	PRINTFORML %CALLNAME:PLAYER%のペニスはびくびくと跳ね、精液を放出している……
 	ENDSELECT
-	LOCAL++
 ENDIF
 
 ;ドラゴンの射精
@@ -536,11 +565,10 @@ IF NOWEX:PLAYER:ドラゴン射精
 		CASE "アナルを犯す（ドラゴン）"
 			PRINTFORML %CSTR:PLAYER:ドラゴン%の太く長く硬いペニスが%CALLNAME:TARGET%のアナルを貫いたまま体を持ち上げると、人間とは比べ物にならないほど多量の精液が腸内から溢れ出した……
 	ENDSELECT
-	LOCAL++
 ENDIF
 
 ;処女喪失
-SIF TFLAG:コマンド破瓜 && LOCAL:1
+SIF TFLAG:コマンド破瓜 && 中出し
 	PRINTL 膣内から漏れ出る精液は破瓜の血が混ざり、赤みを浴びている……
 
 ;主人射精
@@ -639,23 +667,34 @@ IF ASSI > 0 && NOWEX:ASSI:射精
 				PRINTFORML %CALLNAME:ASSI%は種付けを確かなものにする本能か、%CALLNAME:TARGET%の奥まで突き挿れて動きを止めると、長く緩やかな射精を迎えた……
 			ENDIF
 	ENDSELECT
-	LOCAL++
 ENDIF
 
-IF SELECTCOMS == "二本フェラ"
-	IF NOWEX:MASTER:射精 && NOWEX:ASSI:射精
-		PRINTFORML %CALLNAME:MASTER%と%CALLNAME:ASSI%は同時に射精し、%CALLNAME:TARGET%の顔を二人分の精液で汚した……
-	ELSEIF NOWEX:MASTER:射精
-		PRINTFORML ひとつの口が二本の竿に奉仕する中、%CALLNAME:MASTER%は先に射精してしまった……
-	ELSEIF NOWEX:ASSI:射精
-		PRINTFORML いち早く絶頂に達した%CALLNAME:ASSI%が、%CALLNAME:TARGET%の顔と%CALLNAME:MASTER%のペニスに精液をぶちまけた……
-	ENDIF
-	LOCAL++
-ENDIF
-
-;廃止
-;SIF LOCAL
-;	WAIT
+SELECTCASE SELECTCOMS
+	CASE "二本フェラ"
+		IF NOWEX:MASTER:射精 && NOWEX:ASSI:射精
+			PRINTFORML %CALLNAME:MASTER%と%CALLNAME:ASSI%は同時に射精し、%CALLNAME:TARGET%の顔を二人分の精液で汚した……
+		ELSEIF NOWEX:MASTER:射精
+			PRINTFORML ひとつの口が二本の竿に奉仕する中、%CALLNAME:MASTER%は先に射精してしまった……
+		ELSEIF NOWEX:ASSI:射精
+			PRINTFORML いち早く絶頂に達した%CALLNAME:ASSI%が、%CALLNAME:TARGET%の顔と%CALLNAME:MASTER%のペニスに精液をぶちまけた……
+		ENDIF
+	CASE "二輪挿し"
+		IF NOWEX:MASTER:射精 && NOWEX:ASSI:射精
+			PRINTFORML 膣内で%CALLNAME:ASSI%の射精の脈動を感じながら%CALLNAME:MASTER%も射精する。精液を注ぎ終えた二本のペニスが引き抜かれると、%CALLNAME:TARGET%の膣内で混ざりあった二人分の精液が溢れ出た……
+		ELSEIF NOWEX:MASTER:射精
+			PRINTFORML 二輪挿しで窮屈な膣内で射精に達した%CALLNAME:MASTER%は、抜けないようにとさらに奥まで突き入れて%CALLNAME:TARGET%の子宮を潤した……
+		ELSEIF NOWEX:ASSI:射精
+			PRINTFORML %CALLNAME:ASSI%が動きを止めて%CALLNAME:TARGET%の膣内に射精する。その脈動に感応して%CALLNAME:TARGET%も、二輪挿しで拡がった膣内を収縮させている……
+		ENDIF
+	CASE "アナル二輪挿し"
+		IF NOWEX:MASTER:射精 && NOWEX:ASSI:射精
+			PRINTFORML 腸内で%CALLNAME:ASSI%の射精の脈動を感じながら%CALLNAME:MASTER%も射精する。精液を注ぎ終えた二本のペニスが引き抜かれると、%CALLNAME:TARGET%の腸内で混ざりあった二人分の精液が溢れ出た……
+		ELSEIF NOWEX:MASTER:射精
+			PRINTFORML 二輪挿しで窮屈な腸内で射精に達した%CALLNAME:MASTER%は、抜けないようにとさらに奥まで突き入れて%CALLNAME:TARGET%の直腸を潤した……
+		ELSEIF NOWEX:ASSI:射精
+			PRINTFORML %CALLNAME:ASSI%が動きを止めて%CALLNAME:TARGET%の腸内に射精する。その脈動に感応して%CALLNAME:TARGET%も、二輪挿しで拡がった菊穴を収縮させている……
+		ENDIF
+ENDSELECT
 
 ;-------------------------------------------
 ;触手の射精時のテキスト

@@ -1,0 +1,735 @@
+﻿@クラップス, カジノの種類
+
+#DIM DYNAMIC MAX_BET;クラップスの賭け金の上限
+#DIM CONST SERIES_MAX = 6;シリーズ数の上限
+#DIM DYNAMIC SERIES;現在のシリーズ数
+#DIM DYNAMIC GAMES;ゲーム回数
+#DIM DYNAMIC ODDS_BET_MAX = 3;オッズベットの上限倍率
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC DICE1
+#DIM DYNAMIC DICE2
+#DIM DYNAMIC DICE_SUM
+#DIM DYNAMIC GET_MONEY
+#DIM DYNAMIC LNO
+#DIM DYNAMIC LARG1
+#DIM DYNAMIC LARG2
+#DIM DYNAMIC CRAPS, 1000, 5
+#DIM DYNAMIC カジノの種類
+#DIM DYNAMIC BET, 28
+;2重配列CRAPSはコマンド[0],[1]に関する格納
+;X投目に対し
+;CRAPS:X:0 [0]の最初の賭け金
+;CRAPS:X:1 [0]の最終賭け金
+;CRAPS:X:2 [1]の最初の賭け金
+;CRAPS:X:3 [1]の最終賭け金
+;CRAPS:X:4 ポイント(ダイスの出目の和)
+
+;表カジノは賭け金上限12,000、裏は600,000
+SELECTCASE カジノの種類
+	CASE 1
+		MAX_BET = 12000
+	CASE 2
+		MAX_BET = 600000
+ENDSELECT
+
+FOR SERIES, 0, SERIES_MAX
+	VARSET CRAPS
+	GAMES = 1;ゲーム回数
+	;BETの4～27はすべてベットに関する変数
+	VARSET BET, 0, 4, 28
+	DO
+		$CRAPS_BET
+		DRAWLINE
+		IF LANGUAGE == "ENG"
+			PRINTFORML <Round.{GAMES} / Series:{SERIES}/{SERIES_MAX}>
+			PRINT Money:
+		ELSE
+			PRINTFORML <{GAMES}投目 / 残り{SERIES_MAX - SERIES}シリーズ>
+			PRINT 所持金:
+		ENDIF
+		IF MONEY < 0
+			SETCOLOR 0xFF0000
+			PRINT -
+		ENDIF
+		PRINTFORM ${ABS(MONEY)} 
+		RESETCOLOR
+		PRINTFORML MAXBET:${MAX_BET}
+		FOR LCOUNT, 1, GAMES
+			IF CRAPS:LCOUNT:0 > 0
+				IF LANGUAGE == "ENG"
+					IF LCOUNT == 1
+						PRINTFORM  Pass line({CRAPS:LCOUNT:4}):${CRAPS:LCOUNT:0}
+					ELSE
+						PRINTFORM  Come({CRAPS:LCOUNT:4}):${CRAPS:LCOUNT:0}
+					ENDIF
+				ELSE
+					IF CRAPS:LCOUNT:0 > 0
+						IF LCOUNT == 1
+							PRINTFORM  パスライン({CRAPS:LCOUNT:4}):${CRAPS:LCOUNT:0}
+						ELSE
+							PRINTFORM  カム({CRAPS:LCOUNT:4}):${CRAPS:LCOUNT:0}
+						ENDIF
+					ENDIF
+				ENDIF
+			ENDIF
+			IF CRAPS:LCOUNT:1 > 0
+				PRINTFORM +{CRAPS:LCOUNT:1}
+			ENDIF
+			IF CRAPS:LCOUNT:2 > 0
+				IF LANGUAGE == "ENG"
+					IF LCOUNT == 1
+						PRINTFORM  Don't Pass({CRAPS:LCOUNT:4}):${CRAPS:LCOUNT:2}
+					ELSE
+						PRINTFORM  Don't Come({CRAPS:LCOUNT:4}):${CRAPS:LCOUNT:2}
+					ENDIF
+				ELSE
+					IF LCOUNT == 1
+						PRINTFORM  ドントパス({CRAPS:LCOUNT:4}):${CRAPS:LCOUNT:2}
+					ELSE
+						PRINTFORM  ドントカム({CRAPS:LCOUNT:4}):${CRAPS:LCOUNT:2}
+					ENDIF
+				ENDIF
+			ENDIF
+			IF CRAPS:LCOUNT:3 > 0
+				PRINTFORM +{CRAPS:LCOUNT:3}
+			ENDIF
+		NEXT
+		SIF GAMES >= 2
+			PRINTL
+		IF LANGUAGE == "ENG"
+			IF GAMES == 1
+				PRINTFORML  Pass line:${CRAPS:GAMES:0} Don't Pass:${CRAPS:GAMES:2}
+			ELSE
+				PRINTFORML  Come:${CRAPS:GAMES:0} Don't Come:${CRAPS:GAMES:2}
+			ENDIF
+			SIF GAMES >= 2
+				PRINTFORML  Place ４:${BET:4} ５:${BET:5} ６:${BET:6} ８:${BET:8} ９:${BET:9} １０:${BET:10}
+			SIF MAX(BET:12, BET:13, BET:14, BET:15) > 0
+				PRINTFORML  Hard Way Hard 4:${BET:12} Hard 6:${BET:13} Hard 8:${BET:14} Hard 10:${BET:15}
+			SIF BET:21 > 0
+				PRINTFORM  Field:${BET:21}
+			SIF BET:22 > 0
+				PRINTFORM  Any:${BET:22}
+		ELSE
+			IF GAMES == 1
+				PRINTFORML  パスライン:${CRAPS:GAMES:0} ドントパス:${CRAPS:GAMES:2}
+			ELSE
+				PRINTFORML  カム:${CRAPS:GAMES:0} ドントカム:${CRAPS:GAMES:2}
+			ENDIF
+			SIF GAMES >= 2
+				PRINTFORML  プレースベット ４:${BET:4} ５:${BET:5} ６:${BET:6} ８:${BET:8} ９:${BET:9} １０:${BET:10}
+			SIF MAX(BET:12, BET:13, BET:14, BET:15) > 0
+				PRINTFORML  ハードウェー　 ハード4:${BET:12} ハード6:${BET:13} ハード8:${BET:14} ハード10:${BET:15}
+			SIF BET:21 > 0
+				PRINTFORM  フィールドベット:${BET:21}
+			SIF BET:22 > 0
+				PRINTFORM  エニークラップス:${BET:22}
+		ENDIF
+		SIF BET:23 > 0
+			PRINTFORM  ２:${BET:23}
+		SIF BET:24 > 0
+			PRINTFORM  ３:${BET:24}
+		SIF BET:25 > 0
+			PRINTFORM  １２:${BET:25}
+		SIF BET:26 > 0
+			PRINTFORM  １１:${BET:26}
+		IF LANGUAGE == "ENG"
+			SIF BET:27 > 0
+				PRINTFORM  Any 7:${BET:27}
+		ELSE
+			SIF BET:27 > 0
+				PRINTFORM  エニーセブン:${BET:27}
+		ENDIF
+		SIF MAX(BET:21, BET:22, BET:23, BET:24, BET:25, BET:26, BET:27) > 0
+			PRINTL
+		PRINTL
+		IF LANGUAGE == "ENG"
+			PRINTL How do you bets?
+			IF GAMES == 1
+				PRINTL [0]Pass line(×2) [1]Don't Pass(×2)
+			ELSE
+				PRINTL [0]Come(×2) [1]Don't Come(×2) [2]Odds
+			ENDIF
+			SIF GAMES >= 2
+				PRINTL [4]４(×2.8) [5]５(×2.4) [6]６(×2.17) [8]８(×2.17) [9]９(×2.4) [10]１０(×2.8)
+			PRINTL [12]Hard 4(×8) [13]Hard 6(×10) [14]Hard 8(×10) [15]Hard 10(×8)
+			PRINTL [21]Field(×2/Two is ×3/Twelve is ×4) [22]Any(×8)
+			PRINTL [23]２(×30) [24]３(×15) [25]１２(×30) [26]１１(×15) [27]Any 7(×5)
+			PRINTL [97]Finish bets [98]Finish series(Don't return your bets) [99]Finish game(Don't return your bets)
+		ELSE
+			PRINTL どう賭けますか？
+			IF GAMES == 1
+				PRINTL [0]パスライン(2倍) [1]ドントパス(2倍)
+			ELSE
+				PRINTL [0]カム(2倍) [1]ドントカム(2倍) [2]オッズベット
+			ENDIF
+			SIF GAMES >= 2
+				PRINTL [4]４(2.8倍) [5]５(2.4倍) [6]６(2.17倍) [8]８(2.17倍) [9]９(2.4倍) [10]１０(2.8倍)
+			PRINTL [12]ハード4(8倍) [13]ハード6(10倍) [14]ハード8(10倍) [15]ハード10(8倍)
+			PRINTL [21]フィールドベット(2倍/2は3倍/12は4倍) [22]エニークラップス(8倍)
+			PRINTL [23]２(30倍) [24]３(15倍) [25]１２(30倍) [26]１１(15倍) [27]エニーセブン(5倍)
+			PRINTL [97]ベットを終える [98]このシリーズを終える(賭け金は戻りません) [99]もうやめる(賭け金は戻りません)
+		ENDIF
+		INPUT
+		IF RESULT == 97
+			GOTO CRAPS_BET_END
+		ELSEIF RESULT == 98
+			IF LANGUAGE == "ENG"
+				PRINTL Really?
+				PRINTL [0]Continue [1]Finish series
+			ELSE
+				PRINTL 本当によろしいですか？
+				PRINTL [0]やっぱり続ける [1]このシリーズを終える
+			ENDIF
+			CALL INPUTF, 0, 1
+			SIF RESULT == 1
+				GOTO CRAPS_SERIES_END
+		ELSEIF RESULT == 99
+			IF LANGUAGE == "ENG"
+				PRINTL Really?
+				PRINTL [0]Continue [1]Finish game
+			ELSE
+				PRINTL 本当によろしいですか？
+				PRINTL [0]やっぱり続ける [1]本当にやめる
+			ENDIF
+			CALL INPUTF, 0, 1
+			SIF RESULT == 1
+				GOTO CRAPS_END
+		ELSEIF RESULT == 0 || RESULT == 1
+			LNO = RESULT*2;格納する番号
+			CALL STAKE, MAX_BET - CRAPS:GAMES:LNO, カジノの種類
+			CRAPS:GAMES:LNO += RESULT
+			MONEY -= RESULT
+		ELSEIF RESULT == 2
+			IF LANGUAGE == "ENG"
+				PRINTFORML How do you bet to odds?
+				PRINTL [0]Back
+				FOR LCOUNT, 1, GAMES
+					IF CRAPS:LCOUNT:0 > 0
+						PRINTFORM [{2*LCOUNT-1}]
+						IF LCOUNT == 1
+							PRINTFORM Pass line({CRAPS:LCOUNT:4}):${CRAPS:LCOUNT:0}
+						ELSE
+							PRINTFORM Come({CRAPS:LCOUNT:4}):${CRAPS:LCOUNT:0}
+						ENDIF
+						PRINTFORM  +${CRAPS:LCOUNT:1}
+						SELECTCASE CRAPS:LCOUNT:4
+							CASE 4, 10
+								PRINTL (×3)
+							CASE 5, 9
+								PRINTL (×2.5)
+							CASE 6, 8
+								PRINTL (×2.2)
+						ENDSELECT
+					ENDIF
+					IF CRAPS:LCOUNT:2 > 0
+						PRINTFORM [{2*LCOUNT}]
+						IF LCOUNT == 1
+							PRINTFORM Don't pass({CRAPS:LCOUNT:4}):${CRAPS:LCOUNT:2}
+						ELSE
+							PRINTFORM Don't come({CRAPS:LCOUNT:4}):${CRAPS:LCOUNT:2}
+						ENDIF
+						PRINTFORM  +${CRAPS:LCOUNT:3}
+						SELECTCASE CRAPS:LCOUNT:4
+							CASE 4, 10
+								PRINTL (×1.5)
+							CASE 5, 9
+								PRINTL (×1.67)
+							CASE 6, 8
+								PRINTL (×1.83)
+						ENDSELECT
+					ENDIF
+				NEXT
+			ELSE
+				PRINTFORML どれに追加で賭けますか？(上限は最初の賭け金の{ODDS_BET_MAX}倍)
+				PRINTL [0]やっぱりやめる
+				FOR LCOUNT, 1, GAMES
+					IF CRAPS:LCOUNT:0 > 0
+						PRINTFORM [{2*LCOUNT-1}]
+						IF LCOUNT == 1
+							PRINTFORM パスライン({CRAPS:LCOUNT:4}):${CRAPS:LCOUNT:0}
+						ELSE
+							PRINTFORM カム({CRAPS:LCOUNT:4}):${CRAPS:LCOUNT:0}
+						ENDIF
+						PRINTFORM  +${CRAPS:LCOUNT:1}
+						SELECTCASE CRAPS:LCOUNT:4
+							CASE 4, 10
+								PRINTL (3倍)
+							CASE 5, 9
+								PRINTL (2.5倍)
+							CASE 6, 8
+								PRINTL (2.2倍)
+						ENDSELECT
+					ENDIF
+					IF CRAPS:LCOUNT:2 > 0
+						PRINTFORM [{2*LCOUNT}]
+						IF LCOUNT == 1
+							PRINTFORM ドントパス({CRAPS:LCOUNT:4}):${CRAPS:LCOUNT:2}
+						ELSE
+							PRINTFORM ドントカム({CRAPS:LCOUNT:4}):${CRAPS:LCOUNT:2}
+						ENDIF
+						PRINTFORM  +${CRAPS:LCOUNT:3}
+						SELECTCASE CRAPS:LCOUNT:4
+							CASE 4, 10
+								PRINTL (1.5倍)
+							CASE 5, 9
+								PRINTL (1.67倍)
+							CASE 6, 8
+								PRINTL (1.83倍)
+						ENDSELECT
+					ENDIF
+				NEXT
+			ENDIF
+			INPUT
+			IF RESULT > 0
+				;第1引数は結果を2で割って切り上げた値
+				;第2引数は結果が奇数なら0で偶数なら2
+				LARG1 = (RESULT+1)/2
+				LARG2 = 2-2*(RESULT%2)
+				IF CRAPS:LARG1:LARG2 > 0
+					CALL STAKE, CRAPS:LARG1:LARG2 * ODDS_BET_MAX - CRAPS:LARG1:(LARG2+1), カジノの種類
+					CRAPS:LARG1:(LARG2+1) += RESULT
+					MONEY -= RESULT
+				ENDIF
+			ENDIF 
+		ELSEIF (RESULT !=7 && INRANGE(RESULT, 4, 10)) || INRANGE(RESULT, 12, 15) || INRANGE(RESULT, 21, 27)
+			LNO = RESULT
+			CALL STAKE, MAX_BET - BET:LNO, カジノの種類
+			BET:LNO += RESULT
+			MONEY -= RESULT
+		ENDIF
+		GOTO CRAPS_BET
+		$CRAPS_BET_END
+		DICE1 = RAND:6 + 1
+		DICE2 = RAND:6 + 1
+		DICE_SUM = DICE1 + DICE2
+		CRAPS:GAMES:4 = DICE_SUM
+		CALL SE再生, サイコロ
+		PRINTW ………………
+		PRINTW …………
+		PRINTW ……
+		IF LANGUAGE == "ENG"
+			PRINTFORMW "{DICE1}" and "{DICE2}", Sum "{DICE_SUM}"
+		ELSE
+			PRINTFORMW 「『{DICE1}』『{DICE2}』で『{DICE_SUM}』です。」
+		ENDIF
+		;以下、通常の賭け方についての配当
+		GET_MONEY = 0
+		;1投目限定
+		IF GAMES == 1
+			IF DICE_SUM == 7 || DICE_SUM ==11
+				MONEY += CRAPS:1:0 * 2
+				IF LANGUAGE == "ENG"
+					PRINTW Shooter win. Those who have bet on the Pass line will receive double the dividend.
+					IF CRAPS:1:0 > 0
+						CALL SE再生, カジノコイン
+						CALL PASELIW, @"You got {CRAPS:1:0 * 2}＄"
+					ENDIF
+				ELSE
+					PRINTW 「シューターの勝ちです。パスラインに賭けていた方には2倍の配当が入ります。」
+					IF CRAPS:1:0 > 0
+						CALL SE再生, カジノコイン
+						CALL PASELIW, @"{CRAPS:1:0 * 2}＄を受け取った。"
+					ENDIF
+				ENDIF
+				GOTO CRAPS_SERIES_END;シリーズ終了
+			ELSEIF DICE_SUM == 2 || DICE_SUM == 3 || DICE_SUM == 12
+				MONEY += CRAPS:1:2 * 2
+				IF LANGUAGE == "ENG"
+					PRINTW Shooter lose. Those who have bet on the Don't Pass will receive doube the dividend.
+					IF CRAPS:1:2 > 0
+						CALL SE再生, カジノコイン
+						CALL PASELIW, @"Your got {CRAPS:1:2 * 2}＄"
+					ENDIF
+				ELSE
+					PRINTW 「シューターの負けです。ドントパスに賭けていた方には2倍の配当が入ります。」
+					IF CRAPS:1:2 > 0
+						CALL SE再生, カジノコイン
+						CALL PASELIW, @"{CRAPS:1:2 * 2}＄を受け取った。"
+					ENDIF
+				ENDIF
+				GOTO CRAPS_SERIES_END;シリーズ終了
+			ENDIF
+		;2投目以降
+		ELSE
+			;7が出たらシリーズ終了
+			IF DICE_SUM == 7
+				FOR LCOUNT, 1, GAMES
+					GET_MONEY += 2 * CRAPS:GAMES:2
+					SELECTCASE CRAPS:GAMES:4
+						CASE 4, 10
+							GET_MONEY += CRAPS:GAMES:3 *3/2
+						CASE 5, 9
+							GET_MONEY += CRAPS:GAMES:3 *5/3
+						CASE 6, 8
+							GET_MONEY += CRAPS:GAMES:3 *11/6
+					ENDSELECT
+				NEXT
+				GET_MONEY += 2 * CRAPS:GAMES:0
+				MONEY += GET_MONEY
+				IF LANGUAGE == "ENG"
+					PRINTL It is Seven Out. Those who have bet on Don't Pass previous time will receive each dividend.
+					PRINTW And those who have bet on Come now will receive double dividend.
+					IF BET:27 > 0
+						GET_MONEY += 5 * BET:27
+						PRINTW Those who have bet on Any 7 will receive five dividend.
+						BET:27 = 0
+					ENDIF
+					IF GET_MONEY > 0
+						CALL SE再生, カジノコイン
+						CALL PASELIW, @"You got {GET_MONEY}＄"
+					ENDIF
+				ELSE
+					PRINTL 「セブンアウトです。前回までにドントパス・ドントカムに賭けていた方にはそれぞれの配当が入ります。
+					PRINTW 　また、たった今カムに賭けていた方にも2倍の配当が入ります。」
+					IF BET:27 > 0
+						GET_MONEY += 5 * BET:27
+						PRINTW 「エニーセブンに賭けていた方には5倍の配当が入ります。」
+						BET:27 = 0
+					ENDIF
+					IF GET_MONEY > 0
+						CALL SE再生, カジノコイン
+						CALL PASELIW, @"{GET_MONEY}＄を受け取った。"
+					ENDIF
+				ENDIF
+				GOTO CRAPS_SERIES_END;シリーズ終了
+			;7以外が出た場合はシリーズは終了しない
+			ELSEIF DICE_SUM == 2 || DICE_SUM == 3
+				GET_MONEY += 2 * CRAPS:GAMES:2
+				CRAPS:GAMES:0 = 0
+				CRAPS:GAMES:1 = 0
+				CRAPS:GAMES:2 = 0
+				CRAPS:GAMES:3 = 0
+				IF LANGUAGE == "ENG"
+					PRINTL If who have bet on Come now, Bets are forfeiture.
+					PRINTW And if who have bet on Don't Come now, Will receive double dividend.
+					MONEY += GET_MONEY
+					IF GET_MONEY > 0
+						CALL SE再生, カジノコイン
+						CALL PASELIW, @"You got {GET_MONEY}＄"
+					ENDIF
+				ELSE
+					PRINTL 「たった今カムに賭けていた場合、その賭け金は没収です。」
+					PRINTW 　また、たった今ドントカムに賭けていた場合、2倍の配当が入ります。」
+					MONEY += GET_MONEY
+					IF GET_MONEY > 0
+						CALL SE再生, カジノコイン
+						CALL PASELIW, @"{GET_MONEY}＄を受け取った。"
+					ENDIF
+				ENDIF
+			ELSEIF DICE_SUM == 11
+				GET_MONEY += 2 * CRAPS:GAMES:0
+				CRAPS:GAMES:0 = 0
+				CRAPS:GAMES:1 = 0
+				CRAPS:GAMES:2 = 0
+				CRAPS:GAMES:3 = 0
+				IF LANGUAGE == "ENG"
+					PRINTL If who have bet on Come now, Will receive double dividend.
+					PRINTW And if who hava bet on Don't Come now, Bets are forfeiture.
+					MONEY += GET_MONEY
+					IF GET_MONEY > 0
+						CALL SE再生, カジノコイン
+						CALL PASELIW, @"You got {GET_MONEY}＄"
+					ENDIF
+				ELSE
+					PRINTL 「たった今カムに賭けていた場合、2倍の配当が入ります。
+					PRINTW 　また、たった今ドントカムに賭けていた場合、その賭け金は没収です。」
+					MONEY += GET_MONEY
+					IF GET_MONEY > 0
+						CALL SE再生, カジノコイン
+						CALL PASELIW, @"{GET_MONEY}＄を受け取った。"
+					ENDIF
+				ENDIF
+			ELSEIF DICE_SUM == 12
+				GET_MONEY += CRAPS:GAMES:2
+				CRAPS:GAMES:0 = 0
+				CRAPS:GAMES:1 = 0
+				CRAPS:GAMES:2 = 0
+				CRAPS:GAMES:3 = 0
+				IF LANGUAGE == "ENG"
+					PRINTL If who have bet on Come now, Bets are forfeiture.
+					PRINTW And if who have bet on Don't Come now, Will bets are back.
+					MONEY += GET_MONEY
+					IF GET_MONEY > 0
+						CALL SE再生, カジノコイン
+						CALL PASELIW, @"You got {GET_MONEY}＄"
+					ENDIF
+				ELSE
+					PRINTL 「たった今カムに賭けていた場合、その賭け金は没収です。
+					PRINTW 　また、たった今ドントカムに賭けていた方には賭け金が戻ります。」
+					MONEY += GET_MONEY
+					IF GET_MONEY > 0
+						CALL SE再生, カジノコイン
+						CALL PASELIW, @"{GET_MONEY}＄を受け取った。"
+					ENDIF
+				ENDIF
+			;出目が4,5,6,8,9,10のとき
+			ELSE
+				;パスライン・カムへの払い戻し
+				FOR LCOUNT, 1, GAMES
+					IF CRAPS:LCOUNT:4 == DICE_SUM
+						GET_MONEY += 2 * CRAPS:LCOUNT:0
+						SELECTCASE DICE_SUM
+							CASE 4, 10
+								GET_MONEY += CRAPS:LCOUNT:1 *3
+							CASE 5, 9
+								GET_MONEY += CRAPS:LCOUNT:1 *5/2
+							CASE 6, 8
+								GET_MONEY += CRAPS:LCOUNT:1 *11/5
+						ENDSELECT
+						CRAPS:LCOUNT:0 = 0
+						CRAPS:LCOUNT:1 = 0
+						CRAPS:LCOUNT:2 = 0
+						CRAPS:LCOUNT:3 = 0
+					ENDIF
+					
+				NEXT
+				;プレースベットへの払い戻し
+				SELECTCASE DICE_SUM
+					CASE 4, 10
+						GET_MONEY += BET:(DICE_SUM) *14/5
+					CASE 5, 9
+						GET_MONEY += BET:(DICE_SUM) *12/5
+					CASE 6, 8
+						GET_MONEY += BET:(DICE_SUM) *13/6
+				ENDSELECT
+				BET:(DICE_SUM) = 0
+				IF LANGUAGE == "ENG"
+					PRINTFORML Those who have bet on {DICE_SUM}'s Pass line or Come will receive dividend,
+					PRINTFORML Those who have bet on {DICE_SUM}'s Don't Pass or Don't Come, Bets are forfeiture. 
+					PRINTFORM And if who have place bet on {DICE_SUM}, Will receive 
+					SELECTCASE DICE_SUM
+						CASE 4, 10
+							PRINT 2.8
+						CASE 5, 9
+							PRINT 2.4
+						CASE 6, 8
+							PRINT 2.17
+					ENDSELECT
+					PRINTW  times dividend.
+					MONEY += GET_MONEY
+					IF GET_MONEY > 0
+						CALL SE再生, カジノコイン
+						CALL PASELIW, @"You got {GET_MONEY}＄"
+					ENDIF
+				ELSE
+					PRINTFORML 「ポイントが『{DICE_SUM}』のパスライン・カムに賭けていた方には配当が入り、
+					PRINTFORML 　ポイントが『{DICE_SUM}』のドントパス・ドントカムへの賭け金は没収です。
+					PRINTFORM 　また、『{DICE_SUM}』へプレースベットしていた方には
+					SELECTCASE DICE_SUM
+						CASE 4, 10
+							PRINT 2.8
+						CASE 5, 9
+							PRINT 2.4
+						CASE 6, 8
+							PRINT 2.17
+					ENDSELECT
+					PRINTW 倍の配当が入ります。」
+					MONEY += GET_MONEY
+					IF GET_MONEY > 0
+						CALL SE再生, カジノコイン
+						CALL PASELIW, @"{GET_MONEY}＄を受け取った。"
+					ENDIF
+				ENDIF
+			ENDIF
+		ENDIF
+		;ミニゲーム勝利回数
+		SIF GET_MONEY > 0
+			TATSUJIN++
+		SAVEGLOBAL
+		;以下、特殊な賭け方についての配当
+		GET_MONEY = 0
+		;[12]ハード4 [13]ハード6 [14]ハード8 [15]ハード10
+		;賭けた数がゾロ目で出たら勝ち ゾロ目以外で出たら負け
+		;ハード4,6,8,10に賭けていてサイコロの出目が4,6,8,10のとき
+		IF MAX(BET:12, BET:13, BET:14, BET:15) > 0 && INRANGE(DICE_SUM, 4, 10) && DICE_SUM % 2 == 0
+			IF DICE1 == DICE2
+				IF LANGUAGE == "ENG"
+					PRINTFORM Those who have bet on Hard {DICE_SUM} will receive 
+				ELSE
+					PRINTFORM 「ハード{DICE_SUM}に賭けていた方には
+				ENDIF
+				SELECTCASE DICE_SUM
+					CASE 4
+						GET_MONEY += 8 * BET:12
+						PRINT 8
+					CASE 6
+						GET_MONEY += 10 * BET:13
+						PRINT 10
+					CASE 8
+						GET_MONEY += 10 * BET:14
+						PRINT 10
+					CASE 10
+						GET_MONEY += 8 * BET:15
+						PRINT 8
+				ENDSELECT
+				IF LANGUAGE == "ENG"
+					PRINTW  times dividend.
+				ELSE
+					PRINTW 倍の配当が入ります。」
+				ENDIF
+			ELSE
+				IF LANGUAGE == "ENG"
+					PRINTFORMW Forfeiture the Hard {DICE_SUM}'s bet.
+				ELSE
+					PRINTFORMW 「ハード{DICE_SUM}への賭け金は没収です。」
+				ENDIF
+			ENDIF
+			BET:(10 + DICE_SUM / 2) = 0
+		ENDIF
+		;[21]フィールドベット
+		;2,3,4,9,10,11,12が出たら勝ち それ以外は負け
+		;12なら4倍 2なら3倍 それ以外なら2倍
+		IF BET:21 > 0
+			IF DICE_SUM <= 4 || 9 <= DICE_SUM
+				IF LANGUAGE == "ENG"
+					PRINT Those who have bet on Field will receive 
+				ELSE
+					PRINT 「フィールドベットに賭けていた方には
+				ENDIF
+				IF DICE_SUM == 12
+					GET_MONEY += 4 * BET:21
+					PRINT 4
+				ELSEIF DICE_SUM == 2
+					GET_MONEY += 3 * BET:21
+					PRINT 3
+				ELSE
+					GET_MONEY += 2 * BET:21
+					PRINT 2
+				ENDIF
+				IF LANGUAGE == "ENG"
+					PRINTW  times dividend.
+				ELSE
+					PRINTW 倍の配当が入ります。」
+				ENDIF
+			ELSE
+				IF LANGUAGE == "ENG"
+					PRINTW Forfeiture the Field bets.
+				ELSE
+					PRINTW 「フィールドベットへの賭け金は没収です。」
+				ENDIF
+			ENDIF
+			BET:21 = 0
+		ENDIF
+		;[22]エニークラップス
+		;2,3,12なら勝ちで8倍 それ以外なら負け
+		IF BET:22 > 0
+			IF DICE_SUM <= 3 || 12 == DICE_SUM
+				GET_MONEY += 8 * BET:22
+				IF LANGUAGE == "ENG"
+					PRINTW Those who have bet on Any will receive 8 times dividend.
+				ELSE
+					PRINTW 「エニークラップスに賭けていた方には8倍の配当が入ります。」
+				ENDIF
+			ELSE
+				IF LANGUAGE == "ENG"
+					PRINTW Forfeiture the Any bets.
+				ELSE
+					PRINTW 「エニークラップスへの賭け金は没収です。」
+				ENDIF
+			ENDIF
+			BET:22 = 0
+		ENDIF
+		;[23]２
+		;2が出たら勝ちで30倍 それ以外なら負け
+		IF BET:23 > 0
+			IF DICE_SUM == 2
+				GET_MONEY += 30 * BET:23
+				IF LANGUAGE == "ENG"
+					PRINTW Those who have bet on "2" will receive 30 times dividend.
+				ELSE
+					PRINTW 「『２』に賭けていた方には30倍の配当が入ります。」
+				ENDIF
+			ELSE
+				IF LANGUAGE == "ENG"
+					PRINTW Forfeiture the 2's bets.
+				ELSE
+					PRINTW 「『２』への賭け金は没収です。」
+				ENDIF
+			ENDIF
+			BET:23 = 0
+		ENDIF
+		;[24]３
+		;3が出たら勝ちで15倍 それ以外なら負け
+		IF BET:24 > 0
+			IF DICE_SUM == 3
+				GET_MONEY += 15 * BET:24
+				IF LANGUAGE == "ENG"
+					PRINTW Those who have bet on "3" will receive 15 times dividend.
+				ELSE
+					PRINTW 「『３』に賭けていた方には15倍の配当が入ります。」
+				ENDIF
+			ELSE
+				IF LANGUAGE == "ENG"
+					PRINTW Forfeiture the 3's bets.
+				ELSE
+					PRINTW 「『３』への賭け金は没収です。」
+				ENDIF
+			ENDIF
+			BET:24 = 0
+		ENDIF
+		;[25]１２
+		;12が出たら勝ちで30倍 それ以外なら負け
+		IF BET:25 > 0
+			IF DICE_SUM == 12
+				GET_MONEY += 30 * BET:25
+				IF LANGUAGE == "ENG"
+					PRINTW Those who have bet on "12" will receive 30 times devidend.
+				ELSE
+					PRINTW 「『１２』に賭けていた方には30倍の配当が入ります。」
+				ENDIF
+			ELSE
+				IF LANGUAGE == "ENG"
+					PRINTW Forfeiture the 12's bets.
+				ELSE
+					PRINTW 「『１２』への賭け金は没収です。」
+				ENDIF
+			ENDIF
+			BET:25 = 0
+		ENDIF
+		;[26]１１
+		;11が出たら勝ちで15倍 それ以外なら負け
+		IF BET:26 > 0
+			IF DICE_SUM == 11
+				GET_MONEY += 15 * BET:26
+				IF LANGUAGE == "ENG"
+					PRINTW Those who have bet on "11" will receive 15 times dividend.
+				ELSE
+					PRINTW 「『１１』に賭けていた方には15倍の配当が入ります。」
+				ENDIF
+			ELSE
+				IF LANGUAGE == "ENG"
+					PRINTW Forfeiture the 11's bets.
+				ELSE
+					PRINTW 「『１１』への賭け金は没収です。」
+				ENDIF
+			ENDIF
+			BET:26 = 0
+		ENDIF
+		;[27]エニーセブン
+		;7が出たら勝ちで5倍 それ以外なら負け
+		IF BET:27 > 0
+			IF LANGUAGE == "ENG"
+				PRINTW Forfeiture the Any 7 bets.
+			ELSE
+				PRINTW 「エニーセブンへの賭け金は没収です。」
+			ENDIF
+			BET:27 = 0
+		ENDIF
+		MONEY += GET_MONEY
+		IF GET_MONEY > 0
+			CALL SE再生, カジノコイン
+			IF LANGUAGE == "ENG"
+				CALL PASELIW, @"You got {GET_MONEY}＄"
+			ELSE
+				CALL PASELIW, @"{GET_MONEY}＄を受け取った。"
+			ENDIF
+			TATSUJIN++
+			SAVEGLOBAL
+		ENDIF
+		;ゲーム回数の加算
+		GAMES += 1
+	LOOP 1
+	$CRAPS_SERIES_END
+NEXT
+$CRAPS_END

@@ -3,26 +3,32 @@
 ;-------------------------------------------------
 @USERCOM_ABLE_対面座位アナル, ARG
 #FUNCTION
+;ゲーセンに居る場合はできない
+コマンド実行条件 += "ゲーセンでは実行不可/"
+SIF TEQUIP:ゲームセンター
+	COMRESULT = 0
 ;縄使用中はダメ
+コマンド実行条件 += "縄で縛ってるときは実行できない/"
 SIF TEQUIP:縄
-	RETURNF 0
+	COMRESULT = 0
 ;調教者がペニス無いとダメ
 SIF !PENIS(PLAYER)
-	RETURNF 0
+	COMRESULT = 0
 ;足使用不可だとできない
+コマンド実行条件 += "対象が[足使用不可]だと実行できない/"
 SIF TALENT:足使用不可
-	RETURNF 0
+	COMRESULT = 0
 
 ;汎用COMABLEが通らなかったらダメ
 SIF !USERCOM_ABLE_Ａ性交()
-	RETURNF 0
+	COMRESULT = 0
 SIF !USERCOM_ABLE_Ａ性交助手()
-	RETURNF 0
+	COMRESULT = 0
 
-COMRESULT = 1
-RETURNF 1
+RETURNF COMRESULT
 
 @実行判定_対面座位アナル
+#DIM DYNAMIC 実効値
 ;-------------------------------------------------
 ;実行判定処理
 ;-------------------------------------------------
@@ -31,13 +37,13 @@ IF !TEQUIP:縄
 	;すべての命令に共通の要素を考慮
 	;(従順が高いと命令に従いやすいなど)
 	CALL COM_ORDER
-	LOCAL = RESULT
+	実効値 = RESULT
 
 	CALL COM_ORDER_アナルセックス
-	LOCAL += RESULT
+	実効値 += RESULT
 
 	;52以上で実行
-	CALL 実効値判定, LOCAL, 52
+	CALL 実効値判定, 実効値, 52
 
 	RETURN RESULT
 ELSE
@@ -45,6 +51,8 @@ ELSE
 ENDIF
 
 @COM_対面座位アナル
+#DIM DYNAMIC 増加量
+
 PRINTL 対面座位アナル
 
 SIF !TFLAG:実行判定無視
@@ -61,9 +69,9 @@ CALL KOJO_MESSAGE_COM
 IF TALENT:PLAYER:童貞
 	TALENT:PLAYER:童貞 = 0
 	IF TALENT:PLAYER:性転換済
-		VIRGIN:PLAYER:10 = %NAME:TARGET%
+		CSTR:PLAYER:性転換童貞 = %NAME:TARGET%
 	ELSE
-		VIRGIN:PLAYER:0 = %NAME:TARGET%
+		CSTR:PLAYER:童貞 = %NAME:TARGET%
 	ENDIF
 ENDIF
 
@@ -83,31 +91,31 @@ ENDIF
 ;-------------------------------------------------
 ;射精ゲージチェック（主人）
 ;-------------------------------------------------
-LOCAL = 射精ゲージ計算_Ａ挿入実行者(700)
+増加量 = 射精ゲージ計算_Ａ挿入実行者(700)
 
 ;ABL:調教者の技巧をみる
-LOCAL += (LOCAL/5)*ABL:PLAYER:技巧
+増加量 += (増加量/5)*ABL:PLAYER:技巧
 
 ;ABL:技巧をみる
-LOCAL += (LOCAL/10)*ABL:技巧
+増加量 += (増加量/10)*ABL:技巧
 
-CALL 射精ゲージ増加, LOCAL, PLAYER
+CALL 射精ゲージ増加, 増加量, PLAYER
 
 ;-------------------------------------------------
 ;射精ゲージチェック（奴隷）
 ;-------------------------------------------------
-LOCAL = 射精ゲージ計算_Ａ挿入(500)
+増加量 = 射精ゲージ計算_Ａ挿入(500)
 
 ;ABL:調教者の技巧をみる
-LOCAL += (LOCAL/5)*ABL:PLAYER:技巧
+増加量 += (増加量/5)*ABL:PLAYER:技巧
 
 ;ABL:技巧をみる
-LOCAL += (LOCAL/10)*ABL:技巧
+増加量 += (増加量/10)*ABL:技巧
 
 ;ABL:従順をみる
-LOCAL += (LOCAL/10)*ABL:従順
+増加量 += (増加量/10)*ABL:従順
 
-CALL 射精ゲージ増加, LOCAL, TARGET
+CALL 射精ゲージ増加, 増加量, TARGET
 
 ;-------------------------------------------------
 ;ソース追加処理
@@ -174,6 +182,10 @@ CALL EXPUP_BASE, 4, 3
 CALL EXPUP, "Ａ経験", 2
 CALL EXPUP, "性交経験", 1
 CALL EXPUP, "性交経験", 1, PLAYER
+
+;魔力回復
+SIF !避妊具(PLAYER)
+	CALL 魔力回復, 3
 
 経験回数:PLAYER:(NO:TARGET) += 1
 経験回数:TARGET:(NO:PLAYER) += 1

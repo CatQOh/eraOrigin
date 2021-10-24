@@ -3,58 +3,74 @@
 ;-------------------------------------------------
 @USERCOM_ABLE_泡踊り, ARG
 #FUNCTION
-;お風呂場プレイ中じゃないとダメ
-SIF !TEQUIP:お風呂場
-	RETURNF 0
+;上級売春中は不可
+コマンド実行条件 += "上級売春中は実行不可/"
+SIF 上級売春中
+	COMRESULT = 0
+;お風呂場プレイ中でプレイマットが無いとダメ
+コマンド実行条件 += "お風呂場ではプレイマット(アイテム)が必要/"
+SIF !TEQUIP:お風呂場 || !ITEM:プレイマット
+	COMRESULT = 0
 ;シャワー中はダメ
+コマンド実行条件 += "シャワー中は実行できない/"
 SIF TEQUIP:シャワー
-	RETURNF 0
+	COMRESULT = 0
 ;Ｖ仕様中はダメ
+コマンド実行条件 += "対象がV使用中は実行できない/"
 SIF Ｖ使用中(TARGET)
-	RETURNF 0
+	COMRESULT = 0
 ;Ａ使用中はダメ
+コマンド実行条件 += "対象がA道具使用中は実行できない/"
 SIF Ａ使用中(TARGET)
-	RETURNF 0
+	COMRESULT = 0
 ;Ｂ使用中は不可
+コマンド実行条件 += "B道具使用中は実行できない/"
 SIF Ｂ使用中(TARGET)
-	RETURNF 0
+	COMRESULT = 0
 ;オナホール使用中はダメ
+コマンド実行条件 += "対象がオナホール使用中は実行できない/"
 SIF TEQUIP:オナホール
-	RETURNF 0
+	COMRESULT = 0
 ;ボールギャグ使用中は不可
+コマンド実行条件 += "対象がボールギャグ装着中は実行できない/"
 SIF TEQUIP:ボールギャグ
-	RETURNF 0
+	COMRESULT = 0
 ;縄使用中は不可
+コマンド実行条件 += "縄で縛ってるときは実行できない/"
 SIF TEQUIP:縄
-	RETURNF 0
+	COMRESULT = 0
 ;アイマスク使用中は不可
+コマンド実行条件 += "アイマスク装着中は実行できない/"
 SIF TEQUIP:アイマスク
-	RETURNF 0
+	COMRESULT = 0
 ;アニマルだと無理
+コマンド実行条件 += "対象が[アニマル]の場合は実行できない/"
 SIF TALENT:アニマル
-	RETURNF 0
+	COMRESULT = 0
 
-COMRESULT = 1
-RETURNF 1
+RETURNF COMRESULT
 
 @実行判定_泡踊り
+#DIM DYNAMIC 実効値
 ;-------------------------------------------------
 ;実行判定処理
 ;-------------------------------------------------
 ;すべての命令に共通の要素を考慮
 ;(従順が高いと命令に従いやすいなど)
 CALL COM_ORDER
-LOCAL = RESULT
+実効値 = RESULT
 
 CALL COM_ORDER_奉仕
-LOCAL += RESULT
+実効値 += RESULT
 
 ;40以上で実行
-CALL 実効値判定, LOCAL, 40
+CALL 実効値判定, 実効値, 40
 
 RETURN RESULT
 
 @COM_泡踊り
+#DIM DYNAMIC 増加量
+
 PRINTL 泡踊り
 
 SIF !TFLAG:実行判定無視
@@ -74,18 +90,18 @@ TFLAG:奴隷実行 = 1
 ;射精ゲージチェック
 ;-------------------------------------------------
 IF CFLAG:PLAYER:貞操帯
-	LOCAL = 0
+	増加量 = 0
 ELSE
-	LOCAL = 300
+	増加量 = 300
 ENDIF
 
-LOCAL = 射精ゲージ計算_奉仕(LOCAL)
+増加量 = 射精ゲージ計算_奉仕(増加量)
 
 ;種族:人魚なら水の扱いが得意なので増やす
 SIF CSTR:種族 == "人魚"
-	TIMES LOCAL , 1.50
+	TIMES 増加量 , 1.50
 
-CALL 射精ゲージ増加, LOCAL, PLAYER
+CALL 射精ゲージ増加, 増加量, PLAYER
 
 ;-------------------------------------------------
 ;ソース追加処理
