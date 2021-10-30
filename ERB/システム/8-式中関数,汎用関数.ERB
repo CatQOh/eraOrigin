@@ -809,17 +809,20 @@ IF 括弧 != -1 && 括弧:1 != -1
 ENDIF
 
 ;文字色指定してればその文字色で
-IF 文字色 != ""
-	IF COLOR_FROMNAME(文字色) >= 0
-		タグ = <font color='%文字色%'>
-	ELSEIF ISNUMERIC(文字色)
-		タグ = <font color='#%CONVERT(TOINT(文字色), 16)%'>
+;μEmueraでは色変更がかなり怪しい挙動するのでしない
+IF !SP
+	IF 文字色 != ""
+		IF COLOR_FROMNAME(文字色) >= 0
+			タグ = <font color='%文字色%'>
+		ELSEIF ISNUMERIC(文字色)
+			タグ = <font color='#%CONVERT(TOINT(文字色), 16)%'>
+		ELSE
+			GOTO COLORELSE
+		ENDIF
 	ELSE
-		GOTO COLORELSE
+		$COLORELSE
+		タグ = <font color='#%CONVERT(GETCOLOR(), 16)%'>
 	ENDIF
-ELSE
-	$COLORELSE
-	タグ = <font color='#%CONVERT(GETCOLOR(), 16)%'>
 ENDIF
 
 SIF !ボタン化
@@ -827,20 +830,26 @@ SIF !ボタン化
 
 ;紛らわしいけどtitleがツールチップなんだよなぁ
 IF ボタン != -3189415
-	IF ツールチップ非表示
+	IF SP
+		タグ += @"<button value ='{ボタン}'>%本文%</button>"
+	ELSEIF ツールチップ非表示
 		タグ += @"<button value ='{ボタン}'>%本文%</button></font>"
 	ELSE
 		タグ += @"<button value ='{ボタン}' title = '%ツールチップ%'>%本文%</button></font>"
 	ENDIF
 ELSEIF 文字列ボタン != ""
-	IF ツールチップ非表示
+	IF SP
+		タグ += @"<button value ='%文字列ボタン%'>%本文%</button>"
+	ELSEIF ツールチップ非表示
 		タグ += @"<button value ='%文字列ボタン%'>%本文%</button></font>"
 	ELSE
 		タグ += @"<button value ='%文字列ボタン%' title = '%ツールチップ%'>%本文%</button></font>"
 	ENDIF
 ELSE
 	$NONBUTTON
-	IF ツールチップ非表示
+	IF SP
+		タグ += @"<nonbutton>%本文%</nonbutton>"
+	ELSEIF ツールチップ非表示
 		タグ += @"<nonbutton>%本文%</nonbutton></font>"
 	ELSE
 		タグ += @"<nonbutton title = '%ツールチップ%'>%本文%</nonbutton></font>"
@@ -869,28 +878,35 @@ SIF ISNUMERIC(文字列ボタン)
 	ボタン = TOINT(文字列ボタン)
 
 ;文字色指定してればその文字色で
-IF 文字色 != ""
-	IF COLOR_FROMNAME(文字色) >= 0
-		タグ = <font color='%文字色%'>
-	ELSEIF ISNUMERIC(文字色)
-		タグ = <font color='#%CONVERT(TOINT(文字色), 16)%'>
+;μEmueraでは色変更がかなり怪しい挙動するのでしない
+IF !SP
+	IF 文字色 != ""
+		IF COLOR_FROMNAME(文字色) >= 0
+			タグ = <font color='%文字色%'>
+		ELSEIF ISNUMERIC(文字色)
+			タグ = <font color='#%CONVERT(TOINT(文字色), 16)%'>
+		ELSE
+			GOTO COLORELSE
+		ENDIF
 	ELSE
-		GOTO COLORELSE
+		$COLORELSE
+		タグ = <font color='#%CONVERT(GETCOLOR(), 16)%'>
 	ENDIF
-ELSE
-	$COLORELSE
-	タグ = <font color='#%CONVERT(GETCOLOR(), 16)%'>
 ENDIF
 
 ;紛らわしいけどtitleがツールチップなんだよなぁ
 IF ボタン != -3189415
-	IF ツールチップ非表示
+	IF SP
+		タグ += @"<button value ='{ボタン}'>%本文%</button>"
+	ELSEIF ツールチップ非表示
 		タグ += @"<button value ='{ボタン}'>%本文%</button></font>"
 	ELSE
 		タグ += @"<button value ='{ボタン}' title = '%ツールチップ%'>%本文%</button></font>"
 	ENDIF
 ELSEIF 文字列ボタン != ""
-	IF ツールチップ非表示
+	IF SP
+		タグ += @"<button value ='%文字列ボタン%'>%本文%</button>"
+	ELSEIF ツールチップ非表示
 		タグ += @"<button value ='%文字列ボタン%'>%本文%</button></font>"
 	ELSE
 		タグ += @"<button value ='%文字列ボタン%' title = '%ツールチップ%'>%本文%</button></font>"
@@ -1582,29 +1598,29 @@ RETURNF @"{ARG/10}.{ABS(ARG%10)}"
 RETURNF @"{ARG/100}.\@ABS(ARG%100) < 10 ? 0 # \@{ABS(ARG%100)}"
 
 @性別選択, ARG
-;性別不明キャラの性別選択巻数
+;性別不明キャラの性別選択関数
+;TALENT:性別が0のキャラは性別不明とする
 
-SELECTCASE CHARANAMEF(ARG)
-	CASE "サタン-P*L-イヴリース", "ファントム", "ヨミ"
-		;SKIPDISP中ならランダムにしてみる
-		SIF ISSKIP()
-			GOTOFORM GENDER_{RAND(1, 3)}
-		PRINTFORML %CHARANAMEF(ARG)%の性別を選択してください
-		PRINTL [1] - 男の子
-		PRINTL [2] - 女の子
-		CALL INPUTF, 1, 2
-		SELECTCASE RESULT
-			CASE 1
-				$GENDER_1
-				TALENT:ARG:性別 = 1
-				TALENT:ARG:童貞 = 1
-			CASE 2
-				$GENDER_2
-				TALENT:ARG:性別 = 2
-				TALENT:ARG:処女 = 1
-				TALENT:ARG:バストサイズ = 1
-		ENDSELECT
-ENDSELECT
+IF TALENT:ARG:性別 == 0
+	;SKIPDISP中ならランダムにしてみる
+	SIF ISSKIP()
+		GOTOFORM GENDER_{RAND(1, 3)}
+	PRINTFORML %CHARANAMEF(ARG)%の性別を選択してください
+	PRINTL [1] - 男の子
+	PRINTL [2] - 女の子
+	CALL INPUTF, 1, 2
+	SELECTCASE RESULT
+		CASE 1
+			$GENDER_1
+			TALENT:ARG:性別 = 1
+			TALENT:ARG:童貞 = 1
+		CASE 2
+			$GENDER_2
+			TALENT:ARG:性別 = 2
+			TALENT:ARG:処女 = 1
+			TALENT:ARG:バストサイズ = 1
+	ENDSELECT
+ENDIF
 
 RETURN
 
@@ -1877,3 +1893,43 @@ SIF VARLINE > 0
 	CLEARLINE LINECOUNT-VARLINE
 VARLINE = LINECOUNT
 
+@CONV_NO(ARG)
+;英数字→漢数字に変換する式中関数 現状0～15まで
+#FUNCTIONS
+
+SELECTCASE ARG
+	CASE 0
+		RETURNF "零"
+	CASE 1
+		RETURNF "一"
+	CASE 2
+		RETURNF "二"
+	CASE 3
+		RETURNF "三"
+	CASE 4
+		RETURNF "四"
+	CASE 5
+		RETURNF "五"
+	CASE 6
+		RETURNF "六"
+	CASE 7
+		RETURNF "七"
+	CASE 8
+		RETURNF "八"
+	CASE 9
+		RETURNF "九"
+	CASE 10
+		RETURNF "十"
+	CASE 11
+		RETURNF "十一"
+	CASE 12
+		RETURNF "十二"
+	CASE 13
+		RETURNF "十三"
+	CASE 14
+		RETURNF "十四"
+	CASE 15
+		RETURNF "十五"
+	CASEELSE
+		RETURNF ""
+ENDSELECT

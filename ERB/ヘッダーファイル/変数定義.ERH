@@ -174,7 +174,7 @@
 #DIMS GLOBAL SAVEDATA LASTSAVEMODE
 
 ;顔グラ表示のオンオフ
-#DIM GLOBAL SAVEDATA 顔グラ表示 = 1
+#DIM GLOBAL SAVEDATA 顔グラ表示
 
 ;エクストラMOD
 ;性別関連
@@ -212,9 +212,6 @@
 #DIMS SAVEDATA LNK, 30
 #DIM SAVEDATA ショートカット
 
-;ライブ配信に使用
-#DIM SAVEDATA チャンネル登録者数
-
 ;ユリア天使化に使用
 #DIM SAVEDATA GUMINDAYS
 
@@ -228,6 +225,9 @@
 
 ;ORIGINで登場作品でキャラを絞るのに使用
 #DIMS SAVEDATA 登場作品フィルタ
+
+;CSCエディター起動中の判定
+#DIM CSVEDITOR
 
 ;------------------------------------------------------------
 ;調教に使う変数
@@ -284,6 +284,7 @@
 #DIMS コマンド実行条件
 
 ;ライブ配信用
+#DIM SAVEDATA チャンネル登録者数
 #DIM 視聴者数
 #DIM LIKE
 #DIM DISLIKE

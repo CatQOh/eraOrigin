@@ -76,7 +76,7 @@ IF SP
 		PRINTL 　　　　所持金:3億＄　　　　　　　　　特定の4人を攻略　　　　　　　　　期限無し
 	ENDIF
 ELSE
-	CALL MANUALPRINT, "　　　　(COLOR:black:WE)(COLOR:hotpink:DD)(COLOR:black:ING)　　　　　　　　　　 (COLOR:black:CLA)(COLOR:darkseagreen:SS)　　　　　　　　　　　 (COLOR:black:PRE)(COLOR:lime:M)(COLOR:black:IU)(COLOR:lime:M)"
+	CALL MANUALPRINT, "　　　　(COLOR:black:WE)(COLOR:hotpink:DD)(COLOR:black:ING)　　　　　　　　　　 (COLOR:black:CLA)(COLOR:darkseagreen:SS)　　　　　　　　　　　 (COLOR:black:PRE)(COLOR:lime:M)(COLOR:black:IU)(COLOR:lime:M)　　　　　　　　　(COLOR:black:Origin Mode)"
 	PRINTL 
 	SETCOLORBYNAME black
 	IF LANGUAGE == "ENG"
@@ -98,7 +98,7 @@ VARSET HTML用
 
 HTML用 =<nobr><button value='0' pos='900'> <img src='MODE' srcb='MODEB' height='700'></button>
 HTML用:1 =<button value='1' pos='2500'> <img src='MODE' srcb='MODEB' height='700'></button>
-HTML用:2 =<button value='1' pos='4100'> <img src='MODE' srcb='MODEB' height='700'></button>
+HTML用:2 =<button value='10' pos='4100'> <img src='MODE' srcb='MODEB' height='700'></button>
 
 HTML_PRINT STRJOIN(HTML用, "")
 
@@ -113,14 +113,14 @@ IF SP
 		PRINTL 
 		PRINTL 
 		FONTREGULAR
-		PRINTL 　　　　　　　　　　  Target:1,000,000$　　　　　　   Target:100Million$
-		PRINTL 　　　　　　　　　　  Deadline:100 Days　　　　　　　 Deadline:300 Days
+		PRINTL 　　　　　　　　　　  Target:1,000,000$　　　　　　   Target:100Million$　　　　　　　All characters
+		PRINTL 　　　　　　　　　　  Deadline:100 Days　　　　　　　 Deadline:300 Days　　　　　　　will be unlocked
 	ELSE
 		PRINTL 　　　　　　　　　　　　通常モード　　　　　　　　　　 経営モード
 		PRINTL 
 		FONTREGULAR
-		PRINTL 　　　　　　　　　　　目標:1,000,000＄　　　　　　　　 目標:100,000,000＄
-		PRINTL 　　　　　　　　　　　期限:100日　　　　　　　　　　　　期限:300日
+		PRINTL 　　　　　　　　　　　目標:1,000,000＄　　　　　　　　 目標:100,000,000＄　　　　　　目標・期限:無し
+		PRINTL 　　　　　　　　　　　期限:100日　　　　　　　　　　　　期限:300日　　　　　　　　　　全キャラ解放済み
 	ENDIF
 ELSE
 	CALL MANUALPRINT, "　　　　　　　　　　　(COLOR:black:STAN)(COLOR:darkorange:D)(COLOR:black:AR)(COLOR:darkorange:D)　　　　　　　　　　　(COLOR:black:S)(COLOR:deepskyblue:T)(COLOR:black:RA)(COLOR:deepskyblue:T)(COLOR:black:EGY)　　　　　　　　　(COLOR:black:Origin Mode)"
@@ -146,8 +146,14 @@ PRINTL CREDIT:1　　　　　　　　　　　　　　　　　┏━━━�
 PRINTL PASELI:NO ACCOUNT　　　　　　　　　　　　 ┃EFFECTOR OFF┃　　　　　　　　　　　　　　　　　　PASELI:NO ACCOUNT
 
 ;各ゲームモードごとの初期設定
-CALL INPUTF, 0, 1, 7, 8, 9
+CALL INPUTF, 0, 1, 7, 8, 9, 10
 FLAG:ゲームモード = RESULT
+
+;10はORIGIN
+IF FLAG:ゲームモード == 10
+	ORIGIN = 1
+	FLAG:ゲームモード = 9
+ENDIF
 
 SELECTCASE ゲームモード()
 	CASE "通常モード", "経営モード"
@@ -629,6 +635,7 @@ IF LANGUAGE == "ENG"
 	ENDSELECT
 	SIF TALENT:ARG:ふたなり
 		PRINT (Futanari)
+	PRINT  
 
 	PRINT  [2] - Change your gender 
 	PRINTPLAIN  
@@ -656,7 +663,7 @@ IF LANGUAGE == "ENG"
 			CASE 4
 				PRINT Large 
 			CASE 5
-				PRINT XLarge
+				PRINT XLarge 
 			CASE 6
 				PRINT Huge 
 		ENDSELECT
@@ -691,6 +698,7 @@ ELSE
 	ENDSELECT
 	SIF TALENT:ARG:ふたなり
 		PRINT (ふたなり)
+	PRINT  
 
 	PRINT [2] - 性別を変更する
 	PRINTPLAIN  
@@ -718,7 +726,7 @@ ELSE
 			CASE 4
 				PRINT 巨乳 
 			CASE 5
-				PRINT 豊乳
+				PRINT 豊乳 
 			CASE 6
 				PRINT 爆乳 
 		ENDSELECT
@@ -883,7 +891,7 @@ DO
 		CASE 11
 			VARSET EXP:ARG:0, 0
 		CASE 12
-			EXP:ARG:絶頂経験 = 0
+			VARSET EXP:ARG:0, 0
 			IF VAGINA(ARG)
 				EXP:ARG:Ｖ経験 = RAND(10, 31)
 				EXP:ARG:膣射経験 = RAND(0, 6)
@@ -901,6 +909,7 @@ DO
 			EXP:ARG:性交経験 = RAND(5, 11)
 			EXP:ARG:自慰経験 = RAND(10, 31)
 		CASE 13
+			VARSET EXP:ARG:0, 0
 			IF VAGINA(ARG)
 				EXP:ARG:Ｖ経験 = RAND(500, 1001)
 				EXP:ARG:膣射経験 = RAND(300, 501)

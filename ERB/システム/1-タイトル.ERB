@@ -65,7 +65,7 @@ ENDIF
 SAVEGLOBAL
 ALIGNMENT LEFT
 
-IF LICENSE == 0 && LANGUAGE == "JP" && !ORIGIN
+IF LICENSE == 0 && LANGUAGE == "JP" && !ORIGIN && !SP
 	HTML用 = <shape type='rect' param='1000,75,4500,575' color='white'>
 	HTML用:1 = <font color='black' bcolor='red'><button value='1'>　　　　　　　　　　[1] - 次へ</button></font>
 	HTML用:2 = <font color='black' bcolor='red'><button value='8'>　　　　　　　　　　[8] - ライセンスに同意する</button></font>　<font color='black' bcolor='red'><button value='9'>[9] - ライセンスに同意しない</button></font>
@@ -222,7 +222,7 @@ DO
 		PRINTFORML DJ Walt-heR vs DJ Enter with DJ QhrTea
 	ENDIF
 	PRINTFORML (2013-2021)
-	PRINTFORML Ver.2021/10/15
+	PRINTFORML Ver.2021/10/30
 	PRINTFORML TOTAL CHARA {CSVCOUNT}
 
 	IF LANGUAGE == "ENG"
@@ -305,9 +305,12 @@ DO
 				ISORIGIN = 0
 				BEGIN FIRST
 			CASE 1
-				;こちらはORIGINフラグ維持しなくても大丈夫
+				;[戻る]対策にORIGINフラグを維持する
+				ISORIGIN = ORIGIN
 				RESETDATA
 				CALL USERLOAD
+				ORIGIN = ISORIGIN
+				ORIGIN = 0
 			CASE 2
 				SIF !ORIGIN
 					CALL ACHIEVEMENT
@@ -323,7 +326,9 @@ DO
 					CLEARLINE LINECOUNT-VARLINE
 				ENDIF
 			CASE 5
+				CSVEDITOR = 1
 				CALL CSV_EDITOR
+				CSVEDITOR = 0
 			CASE 6
 				CALL DEFAULT_OPTION
 			CASE 7
