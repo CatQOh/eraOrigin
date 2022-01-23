@@ -513,8 +513,8 @@ ENDSELECT
 ;難度を下げると収入も下がってしまうので相対的に技量を上げる
 FOR LCOUNT, 0, CHARANUM
 	IF CSTR:LCOUNT:配属 == "芸能プロダクション" && ユニット担当記録用:LCOUNT
-		;サボり魔は25%の確率でサボる
-		IF TALENT:LCOUNT:サボり魔 && RAND:4 == 0 && !ワーカホリックレベル(LCOUNT)
+		;サボり魔はモチベに応じてサボる
+		IF サボり判定(LCOUNT)
 			PRINTFORMW %CALLNAME:LCOUNT%はライブをサボりました
 			CFLAG:LCOUNT:ストレス値 -= 5
 			SELECTCASE ユニット担当記録用:LCOUNT
@@ -889,6 +889,10 @@ DO
 								特殊ユニット:3++
 							CASE "三田 希少", "朝霧 春子"
 								特殊ユニット:4++
+							CASE "桜井 春菜", "早乙女 彩華"
+								特殊ユニット:5++
+							CASE "井之原 小星", "柏木 咲姫"
+								特殊ユニット:6++
 						ENDSELECT
 					NEXT
 					SIF 特殊ユニット:0 == 2
@@ -901,6 +905,10 @@ DO
 						ユニット名記録用 = ここなつ
 					SIF 特殊ユニット:4 == 2
 						ユニット名記録用 = Virtual Kiss
+					SIF 特殊ユニット:5 == 2
+						ユニット名記録用 = bitter flavor
+					SIF 特殊ユニット:6 == 2
+						ユニット名記録用 = 7EVENDAYS⇔HOLIDAYS
 				CASE 3
 					FOR LCOUNT, 0, CHARANUM
 						SIF !ユニット担当記録用:LCOUNT
@@ -926,6 +934,16 @@ DO
 								特殊ユニット:8++
 							CASE "片桐 奈々菜", "日比野 記子", "立川 美翠"
 								特殊ユニット:9++
+							CASE "ジルチ", "光伊 計名", "識"
+								特殊ユニット:10++
+							CASE "星咲 あかり", "藤沢 柚子", "三角 葵"
+								特殊ユニット:11++
+							CASE "高瀬 梨緒", "結城 莉久", "藍原 椿"
+								特殊ユニット:12++
+							CASE "九條 楓", "逢坂 茜", "珠洲島 有栖"
+								特殊ユニット:13++
+							CASE "柏木 美亜", "日向 千夏", "東雲 つむぎ"
+								特殊ユニット:14++
 						ENDSELECT
 					NEXT
 					SIF 特殊ユニット:0 == 3
@@ -948,6 +966,16 @@ DO
 						ユニット名記録用 = Rhythmixxx
 					SIF 特殊ユニット:9 == 3
 						ユニット名記録用 = ソーファンタスティック
+					SIF 特殊ユニット:10 == 3
+						ユニット名記録用 = 胃ーあーる漢方
+					SIF 特殊ユニット:11 == 3
+						ユニット名記録用 = ASTERISM
+					SIF 特殊ユニット:12 == 3
+						ユニット名記録用 = ⊿TRiEDGE
+					SIF 特殊ユニット:13 == 3
+						ユニット名記録用 = R.B.P.
+					SIF 特殊ユニット:14 == 3
+						ユニット名記録用 = マーチングポケッツ
 				CASE 4
 					FOR LCOUNT, 0, CHARANUM
 						SIF !ユニット担当記録用:LCOUNT
@@ -1180,8 +1208,8 @@ FOR LCOUNT, 1, CHARANUM
 		IF CFLAG:LCOUNT:レッスン < 0
 			CALL IDOL_MAKURA, LCOUNT
 		;0の場合はレッスンなしで、歌唱・演奏・ダンスの経験がどれか1つ増える
-		;サボり魔は25%の確率でサボる 費用はちゃんと持ってかれる
-		IF TALENT:LCOUNT:サボり魔 && RAND:4 == 0 && !ワーカホリックレベル(LCOUNT)
+		;サボり魔はモチベに応じてサボる 費用はちゃんと持ってかれる
+		IF サボり判定(LCOUNT)
 			PRINTFORML %CALLNAME:LCOUNT%はレッスンをサボりました
 			CFLAG:LCOUNT:サボり = 1
 			CFLAG:LCOUNT:ストレス値 -= 5
@@ -1291,8 +1319,8 @@ NEXT
 ;相対的に知名度が低いときの方が効果が高い
 ;基本的に言われたことを何でもするような従順な子の方が満足してもらえる
 
-;サボり魔は25%の確率でサボる
-IF TALENT:ARG:サボり魔 && RAND:4 == 0 && !ワーカホリックレベル(ARG)
+;サボり魔はモチベに応じてサボる
+IF サボり判定(ARG)
 	PRINTFORMW %CALLNAME:ARG%は枕営業をサボりました
 	CFLAG:ARG:ストレス値 -= 5
 	RETURN 0

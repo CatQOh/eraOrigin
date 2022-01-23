@@ -229,6 +229,10 @@
 ;CSCエディター起動中の判定
 #DIM CSVEDITOR
 
+#DIM SAVEDATA アイテム非表示
+
+#DIMS SAVEDATA 固定称号
+
 ;------------------------------------------------------------
 ;調教に使う変数
 ;------------------------------------------------------------
@@ -293,6 +297,14 @@
 
 ;フィルタ等を抜けないためのフラグ
 #DIM コマンド選択可能, 1000
+
+;各コマンドに対応したフィルタ
+#DIM SAVEDATA COMFILTER, 1000
+#DIM SAVEDATA GLOBAL COMFILTERG, 1000
+#DIM SAVEDATA GLOBAL USINGFILTERG
+
+;変数「PALAMOVERFLOW」PALAMがオーバーフローしたかの判定
+#DIM PALAMOVERFLOW, 100
 
 ;------------------------------------------------------------
 ;キャラ関連の変数
@@ -360,7 +372,7 @@
 #DIM CHARADATA SAVEDATA FCOM, 1000
 
 ;キャラクタ変数「FEVE」イベントの初回判定に使用
-#DIM CHARADATA SAVEDATA FEVE, 100
+#DIM CHARADATA SAVEDATA FEVE, 1000
 
 ;キャラクタ変数「FEX」絶頂の初回判定に使用
 #DIM CHARADATA SAVEDATA FEX, 10

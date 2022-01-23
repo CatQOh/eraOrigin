@@ -219,7 +219,8 @@ SELECTCASE RESULT
 					TALENT:対象:月光浴 = 1
 				CASE "スライム"
 					TALENT:対象:スライム = 1
-					CFLAG:対象:スライム度 = 30
+					CFLAG:対象:スライム度 = CFLAG:主:スライム度+30
+					CFLAG:主:スライム度 += 100
 			ENDSELECT
 		ENDIF
 		CFLAG:主:使用不可 = 7
@@ -239,8 +240,10 @@ SELECTCASE RESULT
 
 		CFLAG:主:眷属化した人数++
 		
-		CALL 相性加算, 主, 対象, 20, 500
-		CALL 相性加算, 対象, 主, 20, 500
+		SIF 相性値(主, 対象) < 500
+			CALL 相性加算, 主, 対象, 20, 500
+		SIF 相性値(対象, 主) < 500
+			CALL 相性加算, 対象, 主, 20, 500
 
 		RETURN 1
 ENDSELECT

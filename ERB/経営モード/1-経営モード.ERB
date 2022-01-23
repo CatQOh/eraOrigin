@@ -17,7 +17,7 @@ IF STSMOD
 	IF ITEM:博物館
 		PRINTL 　[6] - 博物館経営
 	ELSE
-		CALL PRINTCOLORL, "　[-] - 博物館経営（アイテム[博物館]が必要です）"
+		CALL PRINTCOLORL, "　[-] - 博物館経営（アイテム[博物館]が必要です）", "gray"
 	ENDIF
 ENDIF
 DRAWLINE
@@ -144,7 +144,10 @@ IDOL知名度 = 0
 飲食店名声 = 0
 ホテル名声 = 0
 その他業種名声 = 0
+業種 = 
 飲食店基本料金 = 0
+温泉併設 = 0
+宿併設 = 0
 
 FLAG:ゲーセン営業中 = -1
 FLAG:娼館営業中 = -1
@@ -154,4 +157,18 @@ VARSET 飲食店メニュー
 VARSET 飲食店売上
 VARSET 飲食店客数
 VARSET メニュー売上
+VARSET 飲食店帳簿
 
+@サボり判定, 対象
+#FUNCTION
+#DIM DYNAMIC 対象
+
+SIF !TALENT:対象:サボり魔 || ワーカホリックレベル(対象)
+	RETURNF 0
+;100-モチベーションの確率で、50%の確率でサボるイベントが発生する モチベ50ならつまり25%で、100ならサボらなくなる
+IF RANDPER(100-CFLAG:対象:モチベーション)
+	SIF RAND:2
+		RETURNF 1
+ENDIF
+
+RETURNF 0

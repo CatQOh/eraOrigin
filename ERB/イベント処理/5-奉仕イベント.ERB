@@ -4,6 +4,7 @@
 ;-------------------------------------------------
 @EVENT_NEWDAY_SELF
 #DIM DYNAMIC 不発確率
+#DIM DYNAMIC 不発
 ;調教対象が居ない場合は終了
 SIF TARGET <= 0
 	RETURN 0
@@ -26,19 +27,34 @@ SIF !PENIS(MASTER)
 SIF CFLAG:二日酔い
 	RETURN 0
 
-;朝騎乗位判定
-;出産トラウマがある場合は発生しない時がある
-不発確率 = CFLAG:出産トラウマ
-;RAND:(トラウマ値/10+2) <= (トラウマ値/10)だと発生しない 1あるだけでも50%で不発
-IF ((!TALENT:処女 && !TALENT:再生処女 && ABL:Ｖ感覚 >= 3) || ABL:Ａ感覚 >= 3) && ABL:奉仕精神 >= 7 && !(不発確率 && RAND:(不発確率/10+2) <= 不発確率/10)
-	CALL EVENT_CHECK, "朝騎乗位"
-;朝パイズリ判定
-ELSEIF TALENT:バストサイズ >= 2 && ABL:奉仕精神 >= 5
-	CALL EVENT_CHECK, "朝パイズリ"
-;朝フェラ判定
-ELSE
-	CALL EVENT_CHECK, "朝フェラ"
-ENDIF
+;上位イベントの条件満たしている場合に各奉仕イベントがランダムで発生するように
+DO
+	SELECTCASE RAND:3
+		CASE 0
+			;朝騎乗位判定
+			;出産トラウマがある場合は発生しない時がある
+			不発確率 = CFLAG:出産トラウマ
+			;RAND:(トラウマ値/10+2) <= (トラウマ値/10)だと発生しない 1あるだけでも50%で不発
+			IF ((!TALENT:処女 && !TALENT:再生処女 && ABL:Ｖ感覚 >= 3) || ABL:Ａ感覚 >= 3) && ABL:奉仕精神 >= 7
+				IF 不発確率 && RAND:(不発確率/10+2) <= 不発確率/10
+					不発 = 1
+				ELSEIF !不発
+					CALL EVENT_CHECK, "朝騎乗位"
+					BREAK
+				ENDIF
+			ENDIF
+		CASE 1
+			;朝パイズリ判定
+			IF TALENT:バストサイズ >= 2 && ABL:奉仕精神 >= 5
+				CALL EVENT_CHECK, "朝パイズリ"
+				BREAK
+			ENDIF
+		CASE 2
+			;朝フェラ判定
+			CALL EVENT_CHECK, "朝フェラ"
+			BREAK
+	ENDSELECT
+LOOP 1
 
 ;DISABLE_EVENTが行われていた場合は表示しない
 SIF RESULT == 0
@@ -231,18 +247,29 @@ SIF CFLAG:スライム度 <= 0 && ISSLIME(MASTER) && CSTR:種族 != "機械" && 
 
 @EVENT_朝騎乗位
 #DIM DYNAMIC CHK_V;1ならＶ、0ならＡ
+#DIM DYNAMIC CHK_A
 #DIM DYNAMIC プレイ回数
 #DIM DYNAMIC 射精回数
 
 CALL CHECKDRAWLINE
-CALL KOJO_MESSAGE_EVENT, "朝騎乗位"
 
 ;どこの穴でするか
-IF ABL:Ｖ感覚 >= 3 && VAGINA(TARGET) && !TALENT:処女 && !TALENT:再生処女
+IF ABL:Ｖ感覚 >= 3 && VAGINA(TARGET) && !処女膜(TARGET)
 	CHK_V = 1
+	TFLAG:主人挿入箇所 = 1
 ELSE
 	CHK_V = 0
+	TFLAG:主人挿入箇所 = 2
 ENDIF
+;Ａ感覚3以上ならＶとＡの感度で乱数分岐する
+IF ABL:Ａ感覚 >= 3 && CHK_V
+	IF (RAND:(ABL:Ｖ感覚+ABL:Ａ感覚))+1 > ABL:Ｖ感覚
+		CHK_V = 0
+		TFLAG:主人挿入箇所 = 2
+	ENDIF
+ENDIF
+
+CALL KOJO_MESSAGE_EVENT, "朝騎乗位"
 
 ;何回するか
 プレイ回数 = 相性値(TARGET, MASTER)/60
@@ -293,8 +320,8 @@ SIF 射精回数 > 1
 PRINTW 精液を搾り取っていった
 
 CALL EXPUP, "性交経験", プレイ回数
-経験回数:MASTER:(NO:TARGET) += 1
-経験回数:TARGET:(NO:MASTER) += 1
+経験回数:MASTER:(NO:TARGET) += プレイ回数
+経験回数:TARGET:(NO:MASTER) += プレイ回数
 
 CALL EXPUP, "精液経験", 射精回数
 
@@ -379,7 +406,7 @@ ENDIF
 $ELSE
 
 ;強精神薬の反動、調教後搾乳、調教後自慰。どれか一つ
-IF TEQUIP:強精神薬 > 2
+IF TEQUIP:強精神薬
 	CALL EVENT_CHECK, "強精神薬の反動"
 ELSEIF ABL:Ｂ感覚 >= 4 && (ABL:噴乳中毒 > ABL:自慰中毒) && TALENT:母乳体質
 	CALL EVENT_CHECK, "調教後搾乳"
@@ -708,7 +735,7 @@ IF PENIS(MASTER)
 		SIF TALENT:淫膣
 			プレイ回数 += 2
 		CALL EXPUP, "Ｖ経験", プレイ回数
-		PRINTFORML %CALLNAME:ASSI%の膣射経験(%CALLNAME:MASTER%の精液)+{射精回数基礎値:0}
+		PRINTFORML %CALLNAME:TARGET%の膣射経験(%CALLNAME:MASTER%の精液)+{射精回数基礎値:0}
 		EXP:膣射経験 += 射精回数基礎値:0
 		経験回数:MASTER:(NO:TARGET) += プレイ回数
 		経験回数:(NO:MASTER) += プレイ回数

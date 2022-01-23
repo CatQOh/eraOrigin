@@ -57,8 +57,10 @@ FOR LCOUNT, 0, CHARANUM
 		SELECTCASE FLAG:グリムコンフィグ
 			CASE 0
 				CALLNAME:LCOUNT = %CSVCALLNAME(NO:LCOUNT)%
+				CSTR:LCOUNT:英語呼び名 = %CSVCSTR(NO:LCOUNT, GETNUM(CSTR, "英語呼び名"))%
 			CASE 1
 				CALLNAME:LCOUNT = グリム・%CSVCALLNAME(NO:LCOUNT)%
+				CSTR:LCOUNT:英語呼び名 = Grim %CSVCSTR(NO:LCOUNT, GETNUM(CSTR, "英語呼び名"))%
 		ENDSELECT
 	ENDIF
 	IF TALENT:LCOUNT:魔術師
@@ -66,6 +68,12 @@ FOR LCOUNT, 0, CHARANUM
 			ABL:LCOUNT:魔法技能 = 3
 		MAXBASE:LCOUNT:魔力 = ABL:LCOUNT:魔法技能*1000
 		BASE:LCOUNT:魔力 = LIMIT(BASE:LCOUNT:魔力, 0, MAXBASE:LCOUNT:魔力)
+	ENDIF
+	IF CSTR:LCOUNT:種族 != "鳳凰" && MAXBASE:LCOUNT:鳳凰基礎体力
+		MAXBASE:LCOUNT:体力 = MAXBASE:LCOUNT:鳳凰基礎体力
+		MAXBASE:LCOUNT:気力 = MAXBASE:LCOUNT:鳳凰基礎気力
+		MAXBASE:LCOUNT:鳳凰基礎体力 = 0
+		MAXBASE:LCOUNT:鳳凰基礎気力 = 0
 	ENDIF
 NEXT
 
@@ -457,6 +465,16 @@ ENDIF
 
 DRAWLINE
 PRINTPLAIN 　SHOP　
+PRINTL 
+;PALAMのオーバーフロー警告をする
+VARLINE = LINECOUNT
+FOR LCOUNT, 0, 100
+	SIF PALAMOVERFLOW:LCOUNT
+		PRINTFORML 　前回の調教で%PALAMNAME:LCOUNT%がオーバーフローしました
+	SIF LCOUNT == 99 && VARLINE != LINECOUNT
+		PRINTW 　正常に続行するには、前回の調教対象にアイテム「リミッター制御」を使用してください
+NEXT
+VARSET PALAMOVERFLOW
 
 @SHOPCOM_ENG
 #DIM DYNAMIC 助手可能
@@ -977,7 +995,6 @@ SELECTCASE RESULT
 			CALL CHARA_SELL
 	;セーブ
 	CASE 500
-		CALL プレイ称号計算, "セーブ"
 		CALL USERSAVE
 	;ロード
 	CASE 501
@@ -1044,6 +1061,9 @@ SELECTCASE RESULT
 			PRINTFORMW %飲食店名%の経営を開始しました
 			FLAG:飲食店営業中 = DAY
 		ENDIF
+	;アイテム表示の切り替え
+	CASE 710
+		INVERTBIT アイテム非表示, 0
 	;キャラ変更
 	CASE 750, 751
 		LTARGET = TARGET
@@ -1423,7 +1443,7 @@ ELSE
 ENDIF
 
 DRAWLINE
-IF GC物件
+IF GC物件 && ゲームモード() != "通常モード"
 	IF LANGUAGE == "ENG"
 		PRINTFORML □%GC店名%
 		IF FLAG:ゲーセン営業中 > 0
@@ -1432,7 +1452,7 @@ IF GC物件
 			店長 = FINDCHARA(CFLAG:ゲーセン店長, 1)
 			SIF 店長 == -1
 				店長 = 0
-			CALL PASELIL, @"　Yesterday income:{基本収入}＄ Store manager:%NAMEDISP(店長)%"
+			CALL PASELIL, @"　Previous bussines day's income:{基本収入}＄ Store manager:%NAMEDISP(店長)%"
 		ELSE
 			PRINTPLAIN 　CLOSED 
 			PRINTL [700] - Take a open
@@ -1445,7 +1465,7 @@ IF GC物件
 			店長 = FINDCHARA(CFLAG:ゲーセン店長, 1)
 			SIF 店長 == -1
 				店長 = 0
-			CALL PASELIL, @"　前日の収入:{基本収入}＄ 店長:%NAMEDISP(店長)%"
+			CALL PASELIL, @"　前営業日の収入:{基本収入}＄ 店長:%NAMEDISP(店長)%"
 		ELSE
 			PRINTPLAIN 　休業中 
 			PRINTL [700] - 営業を開始する
@@ -1454,13 +1474,13 @@ IF GC物件
 	DRAWLINE
 ENDIF
 
-IF ITEM:風俗店営業許可証
+IF ITEM:風俗店営業許可証 && ゲームモード() != "通常モード"
 	IF LANGUAGE == "ENG"
 		PRINTFORML □%娼館店名%
 		IF FLAG:娼館営業中 > 0
 			PRINTPLAIN 　OPEN 
 			PRINTL [701] - Take a leave
-			CALL PASELIL, @"　Yesterday income:{娼館前日の収入}＄"
+			CALL PASELIL, @"　Previous bussines day's income:{娼館前日の収入}＄"
 		ELSE
 			PRINTPLAIN 　CLOSED 
 			PRINTL [701] - Take a open
@@ -1470,7 +1490,7 @@ IF ITEM:風俗店営業許可証
 		IF FLAG:娼館営業中 > 0
 			PRINTPLAIN 　営業中 
 			PRINTL [701] - 一時休業する
-			CALL PASELIL, @"　前日の収入:{娼館前日の収入}＄"
+			CALL PASELIL, @"　前営業日の収入:{娼館前日の収入}＄"
 		ELSE
 			PRINTPLAIN 　休業中 
 			PRINTL [701] - 営業を開始する
@@ -1479,13 +1499,13 @@ IF ITEM:風俗店営業許可証
 	DRAWLINE
 ENDIF
 
-IF 業種 != ""
+IF 業種 != "" && ゲームモード() != "通常モード"
 	IF LANGUAGE == "ENG"
 		PRINTFORML □%飲食店名%
 		IF FLAG:飲食店営業中 > 0
 			PRINTPLAIN 　OPEN 
 			PRINTL [702] - Take a leave
-			CALL PASELIL, @"　Yesterday income:{飲食店売上}＄"
+			CALL PASELIL, @"　Previous bussines day's income:{飲食店売上}＄"
 		ELSE
 			PRINTPLAIN 　CLOSED 
 			PRINTL [702] - Take a open
@@ -1495,7 +1515,7 @@ IF 業種 != ""
 		IF FLAG:飲食店営業中 > 0
 			PRINTPLAIN 　営業中 
 			PRINTL [702] - 一時休業する
-			CALL PASELIL, @"　前日の収入:{飲食店売上}＄"
+			CALL PASELIL, @"　前営業日の収入:{飲食店売上}＄"
 		ELSE
 			PRINTPLAIN 　休業中 
 			PRINTL [702] - 営業を開始する
@@ -1527,8 +1547,13 @@ IF 誕生日キャラ
 	ENDIF
 	DRAWLINE
 ENDIF
-PRINTL □所持アイテム
-CALL ITEMPRINT
+IF LANGUAGE == "ENG"
+	PRINTFORML □ITEM [710] \@ アイテム非表示 ? Show # Hide \@
+ELSE
+	PRINTFORML □所持アイテム [710] \@ アイテム非表示 ? 表示する # 隠す \@
+ENDIF
+SIF !アイテム非表示
+	CALL ITEMPRINT
 DRAWLINE
 
 @変化

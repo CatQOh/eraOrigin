@@ -182,6 +182,13 @@ ENDSELECT
 
 RETURNF 0
 
+@下半身着衣, ARG
+#FUNCTION
+;地の文でよく使うやつを式中関数化
+SIF TEQUIP:ARG:下半身上着 || (TEQUIP:ARG:全身上着 && CFLAG:ARG:着衣併用 != 1)
+	RETURNF 1
+RETURNF 0
+
 @生殖機能♂, ARG = -1
 #FUNCTION
 SIF ARG == -1
@@ -326,7 +333,7 @@ ELSE
 	PRINT $
 ENDIF
 
-@PASELI, ARGS
+@PASELI, ARGS, 最適化済み
 ;PRINT
 #DIM DYNAMIC LCOUNT
 #DIM DYNAMIC LCOUNT2
@@ -334,6 +341,7 @@ ENDIF
 ;上限は20くらい取っておく
 #DIMS DYNAMIC 表示用, 20
 #DIM DYNAMIC 表示数
+#DIM DYNAMIC 最適化済み
 
 SPLIT ARGS, "＄", 表示用
 
@@ -342,9 +350,12 @@ SPLIT ARGS, "＄", 表示用
 FOR LCOUNT, 0, 表示数
 	SIF LCOUNT >= 1
 		CALL 通貨単位
+	;既に数字がオプション用に最適化されてればすっ飛ばす
+	SIF 最適化済み
+		GOTO 表示
 	数字始端 = -1
 	IF ISNUMERIC(CHARATU(表示用:LCOUNT, STRLENSU(表示用:LCOUNT)-1))
-		FOR LCOUNT2, STRLENSU(表示用:LCOUNT)-1, 0, -1
+		FOR LCOUNT2, STRLENSU(表示用:LCOUNT)-1, -1, -1
 			IF ISNUMERIC(CHARATU(表示用:LCOUNT, LCOUNT2))
 				数字始端 = LCOUNT2
 			ELSE
@@ -362,6 +373,7 @@ FOR LCOUNT, 0, 表示数
 			SIF 数字始端 >= 0
 				PRINTFORM %TO漢字(TOINT(SUBSTRINGU(表示用:LCOUNT, 数字始端)))%
 		CASEELSE
+			$表示
 			PRINTFORM %表示用:LCOUNT%
 	ENDSELECT
 NEXT
@@ -394,8 +406,8 @@ FOR LCOUNT, 0, 表示数
 		CALL 通貨単位
 	数字始端 = -1
 	IF ISNUMERIC(CHARATU(表示用:LCOUNT, STRLENSU(表示用:LCOUNT)-1))
-		FOR LCOUNT2, STRLENSU(表示用:LCOUNT)-1, 0, -1
-			IF ISNUMERIC(CHARATU(表示用:LCOUNT, LCOUNT2))
+		FOR LCOUNT2, STRLENSU(表示用:LCOUNT)-1, -1, -1
+			IF ISNUMERIC(CHARATU(表示用:LCOUNT, LCOUNT2)) || LCOUNT2 == 0
 				数字始端 = LCOUNT2
 			ELSE
 				BREAK
@@ -1718,6 +1730,8 @@ SIF !INRANGE(ARG, 0, CHARANUM-1)
 
 SIF TALENT:ARG:スライム || TALENT:ARG:溶ける快
 	RETURNF 1
+SIF CSTR:ARG:種族 == "スライム"
+	RETURNF 1
 RETURNF 0
 
 ;処女or再生処女
@@ -1775,16 +1789,32 @@ RETURNF 1
 #FUNCTION
 #DIM DYNAMIC 対象
 #DIM DYNAMIC 相手
+#DIM DYNAMIC 補正値
+#DIM DYNAMIC 返り値
+
+SIF TALENT:対象:犬嫌い && TALENT:相手:犬
+	補正値 -= 30
+SIF TALENT:対象:猫嫌い && TALENT:相手:猫
+	補正値 -= 30
+SIF ISHATERACE(対象, 相手)
+	補正値 -= 30
 
 ;ネクロマンサーと霊感と孔雀の瞳なら中の人が見破れる
 IF CFLAG:相手:憑依 >= 0
 	IF TALENT:対象:霊感 || TALENT:対象:ネクロマンサー || TALENT:対象:孔雀の瞳
-		RETURNF RELATION:対象:(NO:相手)
+		返り値 = RELATION:対象:(NO:相手)+補正値
 	ELSE
-		RETURNF RELATION:対象:(CFLAG:相手:憑依)
+		返り値 = RELATION:対象:(CFLAG:相手:憑依)+補正値
 	ENDIF
 ELSE
-	RETURNF RELATION:対象:(NO:相手)
+	返り値 = RELATION:対象:(NO:相手)+補正値
+ENDIF
+
+;システムの都合上1未満にはならない
+IF 返り値 < 1
+	RETURNF 1
+ELSE
+	RETURNF 返り値
 ENDIF
 
 @相性加算, 対象, 相手, 上昇値, 上限
@@ -1800,12 +1830,18 @@ IF SIGN(上昇値) == 1
 		IF 対象 == MASTER || TALENT:対象:霊感 || TALENT:対象:ネクロマンサー || TALENT:対象:孔雀の瞳
 			GOTO NOTGHOSTUP
 		ELSE
+			;既に上限突っ切ってる場合は処理しない
+			SIF RELATION:対象:(CFLAG:相手:憑依) >= 上限
+				RETURN
 			RELATION:対象:(CFLAG:相手:憑依) += 上昇値
 			SIF 上限 && RELATION:対象:(CFLAG:相手:憑依) > 上限
 				RELATION:対象:(CFLAG:相手:憑依) = 上限
 		ENDIF
 	ELSE
 		$NOTGHOSTUP
+		;既に上限突っ切ってる場合は処理しない
+		SIF RELATION:対象:(NO:相手) >= 上限
+			RETURN
 		RELATION:対象:(NO:相手) += 上昇値
 		SIF 上限 && RELATION:対象:(NO:相手) > 上限
 			RELATION:対象:(NO:相手) = 上限
@@ -1818,12 +1854,18 @@ ELSEIF SIGN(上昇値) == -1
 			RELATION:対象:(CFLAG:相手:憑依) += 上昇値
 			SIF 上限 && RELATION:対象:(CFLAG:相手:憑依) < 上限
 				RELATION:対象:(CFLAG:相手:憑依) = 上限
+			;システムの都合上1未満にはならない
+			SIF RELATION:対象:(CFLAG:相手:憑依) < 1
+				RELATION:対象:(CFLAG:相手:憑依) = 1
 		ENDIF
 	ELSE
 		$NOTGHOSTDOWN
 		RELATION:対象:(NO:相手) += 上昇値
 		SIF 上限 && RELATION:対象:(NO:相手) < 上限
 			RELATION:対象:(NO:相手) = 上限
+		;システムの都合上1未満にはならない
+		SIF RELATION:対象:(NO:相手) < 1
+			RELATION:対象:(NO:相手) = 1
 	ENDIF
 ENDIF
 
@@ -1933,3 +1975,45 @@ SELECTCASE ARG
 	CASEELSE
 		RETURNF ""
 ENDSELECT
+
+@特定種族嫌悪, 対象, 対象種族
+#FUNCTION
+#DIM DYNAMIC 対象
+#DIMS DYNAMIC 対象種族
+#DIMS DYNAMIC 分割用, 20
+;対象がその種族を嫌っているかの判定
+
+SIF 対象 < 0
+	RETURNF 0
+
+SPLIT CSTR:対象:種族嫌悪, "/", 分割用
+
+SIF FINDELEMENT(分割用, 対象種族, 0, VARSIZE("分割用"), 1) >= 0
+	RETURNF 1
+
+RETURNF 0
+
+@ISHATERACE, 対象, 相手
+#FUNCTION
+#DIM DYNAMIC 対象
+#DIM DYNAMIC 相手
+;対象が相手の種族を嫌っているかどうかの判定
+
+SIF 対象 < 0 || 相手 < 0
+	RETURNF 0
+
+SIF 特定種族嫌悪(対象, CSTR:相手:種族)
+	RETURNF 1
+
+RETURNF 0
+
+@PRINTSPACE, 条件, 文字列
+#DIM DYNAMIC 条件
+#DIMS DYNAMIC 文字列
+;条件がtrueだった場合は文字列を、falseならPRINTPLAINで文字数分の空白を描画する
+
+IF 条件
+	PRINTFORM %文字列%
+ELSE
+	PRINTPLAINFORM %SPACESLENS(文字列)%
+ENDIF
