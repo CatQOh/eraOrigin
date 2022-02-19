@@ -13,7 +13,4 @@ Emuera-Anchor.exe
 CreatedCSV/*.csv
 CreatedDialogue/*.ERB
 CreatedDialogue/backuptxt/*.txt
-CSV/Chara/*
-!CSV/Chara0_あなた.csv
-ERB/口上/*
-!ERB/口上/口上制御.ERB
+!CreatedDialogue/backuptxt/このフォルダについて.txt

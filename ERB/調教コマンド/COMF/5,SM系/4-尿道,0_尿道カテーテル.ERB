@@ -41,6 +41,9 @@ SIF TEQUIP:搾精器
 コマンド実行条件 += "対象が避妊具装着中は実行できない/"
 SIF TEQUIP:コンドーム || TEQUIP:搾精コンドーム
 	COMRESULT = 0
+コマンド実行条件 += "尿道使用中は実行不可/"
+SIF Ｕ使用中(TARGET)
+	COMRESULT = 0
 
 IF 条件確定
 	COMRESULT = 1
