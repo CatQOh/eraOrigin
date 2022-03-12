@@ -883,9 +883,9 @@ FOR LCOUNT, 0, VARSIZE("TALENT")
 	SIF !TALENT:対象:LCOUNT
 		CONTINUE
 	SELECTCASE TALENTNAME:LCOUNT
-		CASE "狐", "妖狐", "小柄体型", "戦士", "ファーリー", "尻尾", "動物耳", "羽", "ふたなり"
+		CASE "狐", "妖狐", "小柄体型", "戦士", "ファーリー", "尻尾", "動物耳", "羽", "ふたなり", "恋慕", "淫乱", "服従"
 			価値 += 500
-		CASE "魅力", "魅惑", "足使用不可", "スライム", "溶ける快"
+		CASE "魅力", "魅惑", "足使用不可", "スライム", "溶ける快", "親愛", "娼婦", "隷属"
 			価値 += 1000
 		CASE "謎の魅力", "人気", "妊娠"
 			価値 += 1500
@@ -911,6 +911,10 @@ SIF CSTR:対象:背中の印 != ""
 SIF CSTR:対象:胴体の印 != ""
 	価値 += 300
 
+;崩壊が付いてると激減
+SIF TALENT:対象:崩壊
+	価値 /= 10
+
 FOR LCOUNT, 1, VARSIZE("MUSEUM", 0)
 	IF MUSEUM:LCOUNT:0 == ""
 		空き変数 = LCOUNT
@@ -923,6 +927,23 @@ NEXT
 
 MUSEUM:空き変数:0 = 鉱物
 MUSEUM:空き変数:1 = 鉱物化した%NAME:対象%
+
+;陥落の種類で鉱物の名称変化
+SIF TALENT:対象:恋慕
+	MUSEUM:空き変数:1 = 穏やかに微笑む%NAME:対象%の彫像
+SIF TALENT:対象:親愛
+	MUSEUM:空き変数:1 = 幸福に満ちた%NAME:対象%の彫像
+SIF TALENT:対象:淫乱
+	MUSEUM:空き変数:1 = 淫らな%NAME:対象%の裸婦像
+SIF TALENT:対象:娼婦
+	MUSEUM:空き変数:1 = 色欲に溺れた%NAME:対象%の裸婦像
+SIF TALENT:対象:服従
+	MUSEUM:空き変数:1 = 調度品として身を捧げた%NAME:対象%
+SIF TALENT:対象:隷属
+	MUSEUM:空き変数:1 = 永遠の晒し物となった%NAME:対象%
+SIF TALENT:対象:崩壊
+	MUSEUM:空き変数:1 = 今にも朽ちそうな%NAME:対象%の像
+
 MUSEUM:空き変数:2 = {NO:対象}
 MUSEUM:空き変数:3 = {価値}
 MUSEUM:空き変数:4 = {色保存用}

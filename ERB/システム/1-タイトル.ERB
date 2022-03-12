@@ -8,11 +8,37 @@
 LOADGLOBAL
 
 ;eraOriginとしてリリースするならコメントアウトを外す
-ORIGIN = 1
+;ORIGIN = 1
 
 ;SP(スマホ版)でリリースするならコメントアウトを外す
 ;SP = 1
 ;SAVEGLOBAL
+
+;更新チェックを行う
+IF !SP
+	LASTUPDATECHECK = 
+	IF LASTUPDATECHECK == ""
+		$CHECK
+		UPDATECHECK
+		SELECTCASE RESULT
+			;最新版、失敗もしくはUPDATECHECK切ってるなら何もしない
+			CASE 0, 3, 4
+				LASTUPDATECHECK = 
+			;アップデートある場合は日付を記録する
+			CASE 1, 2
+				LASTUPDATECHECK = %GETTIMES()%
+		ENDSELECT
+	ELSE
+		;前回の確認から3日以上経過してたらまた催促する
+		{
+		IF GETDAYS(TOINT(SUBSTRING(GETTIMES(), 0, 4)), TOINT(SUBSTRING(GETTIMES(), 5, 2)), TOINT(SUBSTRING(GETTIMES(), 8, 2)))-
+		GETDAYS(TOINT(SUBSTRING(LASTUPDATECHECK, 0, 4)), TOINT(SUBSTRING(LASTUPDATECHECK, 5, 2)), TOINT(SUBSTRING(LASTUPDATECHECK, 8, 2)))
+		>= 3
+		}
+			GOTO CHECK
+		ENDIF
+	ENDIF
+ENDIF
 
 SIF EXISTCSV(10000)
 	THROW キャラ番号10000は当バリアントでは使用できません。別の番号に置き換えてください
@@ -228,7 +254,7 @@ DO
 		PRINTFORML DJ Walt-heR vs DJ Enter with DJ QhrTea
 	ENDIF
 	PRINTFORML (2013-2022)
-	PRINTFORML Ver.2022/02/19
+	PRINTFORML Ver.2022/03/12
 	PRINTFORML TOTAL CHARA {CSVCOUNT}
 
 	IF LANGUAGE == "ENG"
@@ -298,6 +324,8 @@ DO
 		PRINTL [20] ゲーム内マニュアルを読む
 		SIF ORIGIN
 			PRINTL [21] eraOrigin旧バージョンのCSVを再整形する
+		SIF !SP
+			PRINTL [22] アップデートをチェックする
 	ENDIF
 
 	ALIGNMENT LEFT
@@ -371,6 +399,23 @@ DO
 				DELALLCHARA
 			CASE 21
 				CALL CSV再整形
+			CASE 22
+				SIF SP
+					BREAK
+				UPDATECHECK
+				SELECTCASE RESULT
+					CASE 0
+						PRINTW このバージョンは最新です
+					CASE 1
+						PRINTW 快適なプレイのために常に最新版にしておくことを推奨します
+					CASE 2
+						PRINTL 最新版をDLいただきありがとうございます
+						PRINTW 「CreatedCSV」「CreatedDialogue」「dat」「sav」フォルダを最新版にコピーして引き継いでください
+					CASE 3
+						PRINTW アップデートのチェックに失敗しました。ネットワークがオフでない場合、報告いただけると助かります
+					CASE 4
+						PRINTW UPDATECHECK機能が無効になっています。最新版をチェックする場合はオプションからコンフィグをオフにしてください
+				ENDSELECT
 			CASEELSE
 				CONTINUE
 		ENDSELECT
