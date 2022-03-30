@@ -4,11 +4,12 @@
 #DIM DYNAMIC LCOUNT
 #DIMS DYNAMIC HTML用, 3
 #DIM DYNAMIC 誕生日人数
+#DIM DYNAMIC HOGE, 3
 
 LOADGLOBAL
 
 ;eraOriginとしてリリースするならコメントアウトを外す
-ORIGIN = 1
+;ORIGIN = 1
 
 ;SP(スマホ版)でリリースするならコメントアウトを外す
 ;SP = 1
@@ -16,7 +17,6 @@ ORIGIN = 1
 
 ;更新チェックを行う
 IF !SP
-	LASTUPDATECHECK = 
 	IF LASTUPDATECHECK == ""
 		$CHECK
 		UPDATECHECK
@@ -254,7 +254,7 @@ DO
 		PRINTFORML DJ Walt-heR vs DJ Enter with DJ QhrTea
 	ENDIF
 	PRINTFORML (2013-2022)
-	PRINTFORML Ver.2022/03/22
+	PRINTFORML Ver.2022/03/30
 	PRINTFORML TOTAL CHARA {CSVCOUNT}
 
 	IF LANGUAGE == "ENG"
@@ -697,6 +697,8 @@ PRINTDATAL
 	DATA eraBEMANI第3話「性癖ガールドロップ」
 	DATA eraBEMANI第4話「恐怖の殺人博物館」
 	DATA 淫乱共と同じ部屋に居られるか！俺はゲーセンの様子を見に行くからな！
+	DATA 「俺の口上だけ、セリフが入ってねぇ！！」というクレームすらも一つも入らないどん底アンダーグラウンド。
+	DATA いいか！この世は犯すか、犯されるかだ！おい%CALLNAME:MASTER%くん聞いているのか！！
 ENDDATA
 
 @CSV再整形

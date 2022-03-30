@@ -12,10 +12,7 @@ SIF 娼館方針 == 0
 	娼館方針 = 1
 
 DRAWLINE
-PRINTL 
-PRINTL 【娼館経営】
-PRINTL 
-DRAWLINE
+PRINT □
 SIF 娼館店名 != "娼館"
 	PRINTFORM 娼館の店名：%娼館店名% 
 PRINTFORM 娼館レベル：{娼館レベル} 運営方針：%娼館方針名(娼館方針)%
@@ -32,9 +29,9 @@ IF 娼館方針名(娼館方針) != "ソフト方針"
 ENDIF
 PRINTL 
 
-PRINTFORML 定休日：\@ 娼館定休日 == "" ? 無し # %娼館定休日%曜日 \@
-CALL PASELIL, @"次のランクアップまであと{娼館レベルアップ必要額}＄の売上が必要"
-DRAWLINE
+PRINTFORML 　定休日：\@ 娼館定休日 == "" ? 無し # %娼館定休日%曜日 \@
+CALL PASELIL, @"　次のランクアップまであと{娼館レベルアップ必要額}＄の売上が必要"
+PRINTL 
 
 HTML_PRINT SET_TOOLTIP("　[1] - 道具配置", "娼館に道具を配置します")
 HTML_PRINT SET_TOOLTIP("　[2] - 物件増築", "娼館用の物件を改装します")
@@ -1276,31 +1273,44 @@ IF FLAG:娼館報告 && 娼館方針
 					PRINTFORML たが、一人で絶頂を迎えることはできなかったらしい。
 				ENDIF
 			ENDIF
-			SIF ヴァギナ
-				CALL EXPUP, "Ｖ経験", ヴァギナ, 娼婦
-			SIF アナル
-				CALL EXPUP, "Ａ経験", アナル, 娼婦
-			SIF 絶頂 || 射精
-				CALL EXPUP, "絶頂経験", 絶頂+射精, 娼婦
-			SIF 射精
-				CALL EXPUP, "射精経験", 射精, 娼婦
-			SIF 中出し
-				CALL EXPUP, "膣射経験", 中出し, 娼婦
-			SIF 客の射精
-				CALL EXPUP, "精液経験", 客の射精, 娼婦
-			SIF 自慰
-				CALL EXPUP, "自慰経験", 自慰, 娼婦
-			SIF フェラ
-				CALL EXPUP, "フェラ経験", フェラ, 娼婦
-			SIF レズ
-				CALL EXPUP, "レズ経験", レズ, 娼婦
-			SIF ゲイ
-				CALL EXPUP, "ゲイ経験", ゲイ, 娼婦
 		ENDCATCH
 	ELSE
 		GOTO NOTKOJO
 	ENDIF
 ENDIF
+
+SIF !FLAG:娼館報告
+	SKIPDISP 1
+
+SIF ヴァギナ
+	CALL EXPUP, "Ｖ経験", ヴァギナ, 娼婦
+SIF アナル
+	CALL EXPUP, "Ａ経験", アナル, 娼婦
+SIF ヴァギナ || アナル
+	CALL EXPUP, "性交経験", ヴァギナ+アナル, 娼婦
+SIF 絶頂 || 射精
+	CALL EXPUP, "絶頂経験", 絶頂+射精, 娼婦
+SIF 射精
+	CALL EXPUP, "射精経験", 射精, 娼婦
+IF 中出し
+	CALL EXPUP, "膣射経験", 中出し, 娼婦
+	モブ中出され回数:娼婦:0 += 中出し
+ENDIF
+SIF アナル中出し
+	モブアナル中出され回数:娼婦:0 += アナル中出し
+SIF 客の射精
+	CALL EXPUP, "精液経験", 客の射精, 娼婦
+SIF 自慰
+	CALL EXPUP, "自慰経験", 自慰, 娼婦
+SIF フェラ
+	CALL EXPUP, "フェラ経験", フェラ, 娼婦
+SIF レズ
+	CALL EXPUP, "レズ経験", レズ, 娼婦
+SIF ゲイ
+	CALL EXPUP, "ゲイ経験", ゲイ, 娼婦
+
+SKIPDISP 0
+
 IF ヴァギナ && TALENT:娼婦:処女
 	TALENT:娼婦:処女 = 0
 	IF TALENT:娼婦:性転換済
@@ -1311,6 +1321,8 @@ IF ヴァギナ && TALENT:娼婦:処女
 ENDIF
 
 TALENT:娼婦:傷物++
+モブ経験人数:娼婦:0++
+人気度:(NO:娼婦) += 10
 
 SIF !LINEISEMPTY()
 	WAIT
@@ -2166,6 +2178,8 @@ FOR LCOUNT, 0, 2
 		CALL EXPUP, "Ｖ経験", ヴァギナ:LCOUNT, 娼婦:LCOUNT
 	SIF アナル:LCOUNT
 		CALL EXPUP, "Ａ経験", アナル:LCOUNT, 娼婦:LCOUNT
+	SIF ヴァギナ:LCOUNT || アナル:LCOUNT
+		CALL EXPUP, "性交経験", ヴァギナ:LCOUNT+アナル:LCOUNT, 娼婦:LCOUNT
 	SIF 絶頂:LCOUNT || 射精:LCOUNT
 		CALL EXPUP, "絶頂経験", 絶頂:LCOUNT+射精:LCOUNT, 娼婦:LCOUNT
 	SIF 射精:LCOUNT
@@ -2199,7 +2213,9 @@ FOR LCOUNT, 0, 2
 		TALENT:(娼婦:LCOUNT):再生処女 = 0
 	ENDIF
 	TALENT:(娼婦:LCOUNT):傷物++
+	人気度:(娼婦:LCOUNT) += 10
 	モブ経験人数:(娼婦:LCOUNT):0++
+	SKIPDISP 0
 NEXT
 
 SIF !LINEISEMPTY()
