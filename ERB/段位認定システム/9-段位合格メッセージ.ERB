@@ -159,6 +159,7 @@ DO
 		ENDIF
 		CALL PASELIW, @"{換金}＄に換算しました"
 		MONEY += 換金
+		CALL 現金出納帳記録, @"段位ゲージ換金/{換金}"
 		売却禁止 = 0
 		PRINTL 難易度を選択してください
 		PRINTL 
@@ -170,6 +171,7 @@ DO
 		FLAG:難易度 = RESULT+1
 		PRINTW PREMIUM FREEに移行します
 		FLAG:ゲームモード = 9
+		CALL プレイログ記録, @"段位認定「%受験段位名%」合格"
 		BEGIN SHOP
 	ELSEIF RESULT == 1
 		PRINTW ゲームを終了します。おつかれさまでした。

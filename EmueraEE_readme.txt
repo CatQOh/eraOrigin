@@ -1,7 +1,7 @@
-﻿タイトル：EmueraEE 最終更新日:2022/03/10
-バージョン：1.824+v14+EE+v11
+﻿タイトル：EmueraEE 最終更新日:2022/04/15
+バージョン：1.824+v15+EMv2+EE+v12
 改変者：Enter
-元となったアプリケーション：Emuera1.824+v14（妊）|дﾟ)の中の人、及びMinorShift制作）、WebP-wrapper(JosePineiro制作)
+元となったアプリケーション：Emuera1.824+v15（妊）|дﾟ)の中の人、及びMinorShift制作）、WebP-wrapper(JosePineiro制作)、Emuera.EM（EvilMask制作）
 連絡先：Twitter/@eraBEMANI Discord/https://discord.gg/p5rb5uK
 
 ※eramakerの作者様及びMinorShift様、妊の人様はEmueraEEの製作には関与していません。
@@ -10,12 +10,14 @@
 ※同梱のEmuera-Anchor-EEは英語圏のeraコミュニティで使用されている「Emuera-Anchor」をEEに対応させたものです
 各UIやエラーメッセージ等が英語になっています。必要に応じて使い分けてください
 
+[v12にてEmuera.EMと機能統合。詳しくは同梱のEmuera.EM_read me.txtをご覧ください]
 
 [概要]
 Emueraをベースに改造を施したバージョンです。追加された機能は以下の通り
 
 ・PLAYSOUND "ファイル名.拡張子"
 「sound」フォルダ内にある音声ファイルを1回再生します
+v12で10チャンネルに対応。最大10個のファイルを同時再生できる
 
 ・STOPSOUND
 PLAYSOUNDで再生中の音声ファイルを停止します
@@ -102,6 +104,9 @@ CALLFORMFのTRY命令 CALLFORMF同様に返り値は破棄されるが、関数�
 
 ・FORCE_QUIT_AND_RESTART
 入力待ちせずにQUIT_AND_RESTARTする命令 入力待ちを挟まず連続実行されるとダイアログボックスで警告が出る
+
+・FORCE_BEGIN システム関数
+BEGINの制約を受けずに強制的にBEGINを実行する。フローを意図的に壊すため、予期せぬ不具合が起こる可能性があります
 
 ・WebPに対応
 がめら氏作の「src1824+v11+webp+Secure」を参考にWebP読み込み機能を追加

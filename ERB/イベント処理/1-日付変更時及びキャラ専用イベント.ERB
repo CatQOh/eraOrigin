@@ -101,6 +101,7 @@ IF TARGET >= 0
 		}
 			IF CFLAG:状態 <= 0 && ゲームモード() != "新婚モード"
 				PRINTFORMW %NAME:TARGET%が売却可能になりました
+				CALL プレイログ記録, @"%NAME:TARGET%が売却可能になる"
 				CFLAG:状態 = 1
 				;実績:愛撫コマンドのみで売却可能
 				SIF 愛撫双:TARGET:0 == 0
@@ -111,6 +112,7 @@ IF TARGET >= 0
 			IF ABL:従順+ABL:欲望+ABL:技巧 >= 14
 				IF CFLAG:状態 <= 1
 					PRINTFORMW %NAME:TARGET%が助手可能になりました
+					CALL プレイログ記録, @"%NAME:TARGET%が助手可能になる"
 					CFLAG:状態 = 2
 				ENDIF
 			ENDIF
@@ -175,6 +177,7 @@ CALL TURNEND_居住部屋
 ;新婚モード以外で所持金が5000万以上なら裏カジノへの招待状が届く
 IF ゲームモード() != "新婚モード" && MONEY >= TONUM("5000万") && !FLAG:裏カジノ
 	CALL KOJO_MESSAGE_EVENT, "裏カジノ招待"
+	CALL プレイログ記録, @"裏カジノへの招待状が届く"
 	PRINTW 裏カジノが使用可能になりました
 	FLAG:裏カジノ = 1
 ENDIF
@@ -797,6 +800,7 @@ FOR LCOUNT, 0, CHARANUM
 			治療コスト += 200
 		SIF !ORIGIN
 			CALL PASELIW, @"%CALLNAME:LCOUNT%の不妊治療薬に{治療コスト}＄の費用が発生しました"
+		CALL 現金出納帳記録, @"%NAME:LCOUNT%の不妊治療/-{治療コスト}"
 		MONEY -= 治療コスト
 		CFLAG:LCOUNT:ストレス値 += 5
 	ENDIF
@@ -817,6 +821,7 @@ ENDIF
 IF !ORIGIN
 	IF DAYS == 1 && FLAG:仕送り
 		CALL PASELIW, @"%CALLNAME:MASTER%の子供たちから{FLAG:仕送り*30000}＄の仕送りを受け取りました"
+		CALL 現金出納帳記録, @"子供たちからの仕送り/{FLAG:仕送り*30000}"
 		MONEY += FLAG:仕送り*30000
 	ENDIF
 ENDIF
