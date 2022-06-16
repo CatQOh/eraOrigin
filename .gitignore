@@ -14,3 +14,5 @@ CreatedCSV/*.csv
 CreatedDialogue/*.ERB
 CreatedDialogue/backuptxt/*.txt
 !CreatedDialogue/backuptxt/このフォルダについて.txt
+CSV/Chara
+!CSV/Chara/Chara0_あなた.csv
