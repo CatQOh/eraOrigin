@@ -34,6 +34,9 @@
 
 ;ギャンブルで借金を背負った場合の利子(難易度によって変動)
 SELECTCASE FLAG:難易度
+	;BEGINNER
+	CASE -1
+		利子 = 10
 	;NORMAL
 	CASE 1
 		利子 = 25
@@ -146,8 +149,7 @@ FOR LCOUNT, 0, VARSIZE("ゲーム名")
 		PRINTFORMLC [{LCOUNT}] %ゲーム名:LCOUNT%
 	ENDIF
 NEXT
-SIF !LINEISEMPTY()
-	PRINTL
+CALL NEWLINE
 [IF_DEBUG]
 	PRINTL [97] ナンプレ
 	PRINTL [98] ねらえ！ぴったり７
@@ -653,6 +655,9 @@ SIF 賭け金上限 <= 0
 ;ギャンブルで借金を背負った場合の利子(難易度によって変動)
 IF カジノの種類 == 1
 	SELECTCASE FLAG:難易度
+		;BEGINNER
+		CASE -1
+			利子 = 10
 		;NORMAL
 		CASE 1
 			利子 = 25

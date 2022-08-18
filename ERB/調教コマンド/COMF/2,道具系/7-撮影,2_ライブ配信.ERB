@@ -305,7 +305,6 @@ IF TALENT:霊体
 	RETURN
 ENDIF
 
-
 SELECTCASE コマンド名
 	;愛撫系
 	CASE "愛撫", "アナル愛撫", "胸愛撫"
@@ -524,6 +523,30 @@ SELECTCASE コマンド名
 			ENDDATA
 			コメント数++
 		NEXT
+	CASE "コナステで遊ぶ"
+		FOR LCOUNT, 0, RAND(0, 視聴者数)
+			ARRAYSHIFT 視聴コメント, 1, ""
+			STRDATA 視聴コメント
+				DATA あ、これヤヴァイ
+				DATA 分かれた
+				DATA やばい！これやばいよ！
+				DATA 超当たりきた！
+				DATA ほんもぁおかしい
+				DATA まさかの3000コンボイ
+				DATA 3000は行かないか
+				DATA これはもやしがあるよ
+				DATA おっおっおっ
+				DATA 裏技だｗｗｗ
+				DATA はじまた
+				DATA 自己ベ出るよ！
+				DATA こーれは・・・
+				DATA 1700ポンドかよ
+				DATA さ、財布取ろう？
+				DATA なんぼなん？
+				DATA 君ビートマニアうまいねぇ！
+			ENDDATA
+			コメント数++
+		NEXT
 	;道具系
 	{
 	CASE "ローター", "貞操帯", "電気按摩", "クリキャップ", "ニプルキャップ",
@@ -665,6 +688,7 @@ SELECTCASE コマンド名
 				DATA エロい
 				DATA バブみ
 				DATA ママ・・・
+				DATA オギャーーー！！
 			ENDDATA
 			コメント数++
 		NEXT
@@ -1186,6 +1210,10 @@ SELECTCASE TFLAG:ビデオ撮影回数
 				DATA セックスしたのか俺以外のやつと
 				DATAFORM \@ TALENT:バストサイズ >= 5 ? デ%"ッ"* RAND(2, 7)%カ # おっぱい揉みたい \@
 				DATA いっぱい出た
+				DATA この2人がついにコラボとか胸熱！
+				DATA 笑いすぎておなか痛い！
+				DATA もっとやってくれー！
+				DATA ファン登録するっ！！
 			ENDDATA
 			コメント数++
 		NEXT
@@ -1283,5 +1311,3 @@ ELSEIF NOWEX:Ｃ絶頂 || NOWEX:Ｖ絶頂 || NOWEX:Ａ絶頂 || NOWEX:Ｂ絶頂
 		コメント数++
 	NEXT
 ENDIF
-
-
