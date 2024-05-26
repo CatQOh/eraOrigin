@@ -1,0 +1,165 @@
+﻿@SHOP_SCHOOL
+#DIMS DYNAMIC SPLITVAR, 10
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC 総数
+#DIM DYNAMIC 表示数
+#DIMS 保存用
+;学園モードのSHOP画面 ここを噛ませて各ロケーション関数に飛ぶ
+
+;MaxLogを超えるとdivが崩れる不具合がまだ起きるのでERBで対応する
+;SIF LINECOUNT >= 45000
+;	CLEARLINE LINECOUNT
+
+CALL セーブデータアップデート
+
+ENUMFUNCBEGINSWITH "ロケーション条件_"
+総数 = RESULT
+表示数 = 0
+FOR LCOUNT, 0, 総数
+	VARSET SPLITVAR
+	SPLIT RESULTS:LCOUNT, "_", SPLITVAR
+	CALLFORM %RESULTS:LCOUNT%
+	IF ロケーション名記録用 != ""
+		SPLITVAR:1 = %ロケーション名記録用%
+		ロケーション名記録用 = 
+	ENDIF
+	IF RESULT && FINDELEMENTF(解禁済みロケーション, SPLITVAR:1) == -1
+		IF RESULT >= 0
+			PRINTFORML %NAME:RESULT%との交友を深め、ロケーション「%SPLITVAR:1%」に行けるようになった！
+		ELSE
+			PRINTFORML ロケーション「%SPLITVAR:1%」に行けるようになった！
+		ENDIF
+		表示数++
+		解禁済みロケーション:FINDELEMENTF(解禁済みロケーション, "") = %SPLITVAR:1%
+	ENDIF
+NEXT
+SIF 表示数
+	WAIT
+
+MAX_LINE = 32
+
+SIF CSTR:PLAYER:現在地 == ""
+	CSTR:PLAYER:現在地 = 自宅
+
+;まず「%ロケーション名%_コマンド」関数があるか確認
+IF EXISTFUNCTION(@"%RPS(CSTR:PLAYER:現在地)%_コマンド")
+	;あればそれをベースにカラム生成 セーブやロードなどの必須カラムも一緒に
+	CALL カラム生成, RPS(CSTR:PLAYER:現在地), "コマンド", "学園用_セーブカラム", "学園用_ロードカラム"
+ELSEIF FINDELEMENTF(学校名, CSTR:PLAYER:現在地) >= 0
+	;学校は学校専用カラム
+	CALL カラム生成, "学校", "コマンド", "学園用_セーブカラム", "学園用_ロードカラム"
+ELSE
+	;無ければ汎用カラム
+	CALL カラム生成, "学園用汎用カラム", "コマンド", "学園用_セーブカラム", "学園用_ロードカラム"
+ENDIF
+
+;TRYCALLFORM ロケーション_%CSTR:PLAYER:現在地%
+
+RESTART
+
+@COLUMNSHOP_SCHOOL
+;必ず呼ばれる関数なので必須処理も入れてみる
+VARSET 好感度補正
+TARGET = -1
+IF CSTR:PLAYER:現在地 == "ライブハウス"
+	DUMPRAND
+	;ライブハウスは夕方と夜のみ
+	IF ターン == "夕"
+		RANDOMIZE DAY*2
+	ELSE
+		RANDOMIZE DAY*2+1
+	ENDIF
+	CALL 学園モード_ライブユニット
+	INITRAND
+ENDIF
+
+IF GUI
+	;カレンダーは別カラムで表示する
+	CALL COLUMNCREATE, 1
+	CALL COLUMNRESIZE, 1, 1100, 1200
+	CALL COLUMNMOVE, 1, 5000, -1000
+	CALL カレンダー生成
+	;そうそうサイズは変わらないと思うのでサイズ直指定してみる
+	CALL COLUMNIMG, 1, "カレンダー", 1095, 1162
+	CALL COLUMNPRINTL, 1, ""
+ENDIF
+
+CALL COLUMNPRINT, 0, @"□%日付表示()%"
+SIF 夏休み()
+	CALL COLUMNPRINT, 0, "夏休み期間中 "
+SIF 冬休み()
+	CALL COLUMNPRINT, 0, "冬休み期間中 "
+SIF 春休み()
+	CALL COLUMNPRINT, 0, "春休み期間中 "
+CALL COLUMNPRINT, 0, @"%ゲームモード表示()% "
+CALL COLUMNPRINTL, 0, ""
+CALL COLUMNPRINTL, 0, @"　現在地:%CSTR:PLAYER:現在地% 同行者:\@ 同行者 ? %NAME:同行者% # 無し \@"
+CALL COLUMNPRINTL, 0, @"　所持金:%TOOPTIONINT(MONEY)%＄"
+CALL COLUMNDRAWLINE, 0
+CALL COLUMNPRINTL, 0, "□所持アイテム一覧"
+CALL ITEMPRINT, 1
+
+
+@学園用_セーブカラム
+CALL SHOP_セーブ
+
+@学園用_セーブカラム_INPUT
+CALL SHOP_セーブ_INPUT
+
+@学園用_ロードカラム
+CALL SHOP_ロード
+
+@学園用_ロードカラム_INPUT
+CALL SHOP_ロード_INPUT
+
+@学園用汎用カラム_コマンド
+CALL COLUMNSHOP_SCHOOL
+
+CALL COLUMNDRAWLINE, 0
+CALL COLUMNPRINTL, 0, @"□何をしよう？"
+
+;ここで0～99を使う
+TRYCALLFORM %RPS(CSTR:PLAYER:現在地)%_専用コマンド
+
+CALL COLUMNPRINTL, 0, @"　[100] - \@ 同行者 ? %CALLNAME:同行者%と #\@別の場所に行く"
+CALL COLUMNPRINTL, 0, @"　[101] - %CSTR:PLAYER:現在地%を散策する"
+CALL COLUMNPRINTL, 0, "　[102] - 家に帰る"
+IF 同行者
+	CALL COLUMNPRINTL, 0, @"　[110] - %CALLNAME:同行者%と会話する"
+	CALL COLUMNPRINTL, 0, @"　[111] - %CALLNAME:同行者%と別行動する"
+ENDIF
+CALL COLUMNPRINTL, 0, "　[500] - データベース"
+
+@学園用汎用カラム_コマンド_INPUT
+SELECTCASE CRESULT:1
+	CASE 0 TO 99
+		TRYCALLFORM %RPS(CSTR:PLAYER:現在地)%_専用コマンド_INPUT
+	CASE 100
+		CALL ロケーション選択
+	CASE 101
+		CALL ロケーション選択, 1
+	CASE 102
+		PRINTFORMW %CALLNAME:PLAYER%は\@ 同行者 ? %CALLNAME:同行者%を連れて #\@家に帰ることにした
+		CSTR:PLAYER:現在地 = 自宅
+		IF 同行者
+			CSTR:同行者:現在地 = %CALLNAME:PLAYER%の家
+			CSTR:同行者:目的 = 遊び
+			CALL SCHOOL_KOJO, 同行者, "一緒に帰宅"
+		ENDIF
+		RETURN 0
+	CASE 110
+		CALL 学園モード_汎用会話, 同行者
+	CASE 111
+		PRINTFORMW %CALLNAME:PLAYER%は%CALLNAME:同行者%と別れた
+		CALL SCHOOL_KOJO, 同行者, "別れる"
+		CSTR:同行者:現在地 = 
+		CSTR:同行者:目的 =
+		同行者 = 0
+		RETURN 0
+	CASE 500
+		CALL 学園データベース
+		RETURN 0
+ENDSELECT
+
+SIF RESULT
+	CALL TURNEND_学園

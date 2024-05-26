@@ -1,0 +1,70 @@
+﻿@ABL_CHECK_Ｂ感覚
+SELECTCASE ABL:Ｂ感覚
+	CASE 0
+		ABLUP:快Ｂ = 1
+	CASE 1
+		ABLUP:快Ｂ = 20
+	CASE 2
+		ABLUP:快Ｂ = 400
+	CASE 3
+		ABLUP:快Ｂ = 5000
+	CASE 4
+		ABLUP:快Ｂ = 15000
+	CASE 5
+		ABLUP:快Ｂ = 30000
+	CASE 6
+		ABLUP:快Ｂ = 40000
+	CASE 7
+		ABLUP:快Ｂ = 50000
+	CASE 8
+		ABLUP:快Ｂ = 60000
+	CASE 9
+		ABLUP:快Ｂ = 70000
+	CASE IS >= 10
+		ABLUP:快Ｂ = 800 * POWER(ABL:Ｂ感覚, 2)
+ENDSELECT
+
+;陥落素質、バストサイズでの補正
+;淫乱
+SIF TALENT:淫乱
+	TIMES ABLUP:快Ｂ , 0.80
+;淫魔
+SIF TALENT:淫魔
+	TIMES ABLUP:快Ｂ , 0.50
+;淫乳
+SIF TALENT:淫乳
+	TIMES ABLUP:快Ｂ , 0.80
+SELECTCASE TALENT:バストサイズ
+	;絶壁
+	CASE 1
+		TIMES ABLUP:快Ｂ , 0.65
+	;貧乳
+	CASE 2
+		TIMES ABLUP:快Ｂ , 0.85
+	;普乳
+	CASE 3
+		TIMES ABLUP:快Ｂ , 1.00
+	;巨乳
+	CASE 4
+		TIMES ABLUP:快Ｂ , 1.10
+	;豊乳
+	CASE 5
+		TIMES ABLUP:快Ｂ , 1.15
+	;爆乳
+	CASE IS >= 6
+		TIMES ABLUP:快Ｂ , 1.20
+ENDSELECT
+
+;@CHECK_JUEL_Ｂ感覚
+;快Ｂの珠で上げる
+SIF JUEL:快Ｂ >= ABLUP:快Ｂ
+	RETURN 1
+
+;上記の条件を満たせなかったら上げられない
+RETURN 0
+
+@ABLUP_MESSAGE_Ｂ感覚
+SIF JUEL:快Ｂ < ABLUP:快Ｂ
+	SETCOLORBYNAME gray
+PRINTFORM [快Ｂの珠×{ABLUP:快Ｂ}]
+RESETCOLOR

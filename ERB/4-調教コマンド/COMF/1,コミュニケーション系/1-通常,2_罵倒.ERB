@@ -1,0 +1,170 @@
+﻿;-------------------------------------------------
+;罵倒
+;-------------------------------------------------
+@USERCOM_ABLE_罵倒
+#FUNCTION
+;ゲーセンに居る場合はできない
+コマンド実行条件 += "ゲーセンでは実行不可/"
+SIF TEQUIP:ゲームセンター
+	COMRESULT = 0
+;調教者がサド持ちじゃないとダメ
+コマンド実行条件 += "実行者に[サド]が必要/"
+SIF !TALENT:PLAYER:サド
+	COMRESULT = 0
+;上級売春中は客がマゾで経営方針がSMじゃないとダメ
+コマンド実行条件 += "上級売春中は客が[マゾ]かつ経営方針がSMじゃないと実行できない/"
+SIF 上級売春中 && (!TALENT:マゾ || BR:方針 != 3)
+	COMRESULT = 0
+コマンド実行条件 += "睡眠中は実行できない/"
+SIF TEQUIP:睡眠
+	COMRESULT = 0
+IF MOD:STS
+	コマンド実行条件 += "屍姦中は実行できない/"
+	SIF CFLAG:死亡
+		COMRESULT = 0
+ENDIF
+
+RETURNF COMRESULT
+
+@COM_罵倒
+PRINTL 罵倒
+CALL KOJO_MESSAGE_COM
+
+;-------------------------------------------------
+;ソース追加処理
+;-------------------------------------------------
+;消費体力、気力
+LOSEBASE:体力 += 10
+LOSEBASE:気力 += 100
+
+DOWNBASE:MASTER:体力 += 20
+DOWNBASE:MASTER:気力 += 10
+
+SOURCE:中毒 = 700
+SOURCE:屈従 = 200
+SOURCE:逸脱 = 400
+SOURCE:反感 = 500
+
+;-------------------------------------------------
+;特殊ソース処理
+;-------------------------------------------------
+;苦痛を伴わないマゾっ気及びマゾの処理は先にしておく
+;マゾっ気を見る
+SELECTCASE ABL:マゾっ気
+	CASE 0
+		TIMES SOURCE:屈従 , 0.80
+		SOURCE:液体 += 0
+		SOURCE:欲情 += 0
+	CASE 1
+		TIMES SOURCE:屈従 , 1.00
+		SOURCE:液体 += 20
+		SOURCE:欲情 += 30
+	CASE 2
+		TIMES SOURCE:屈従 , 1.20
+		SOURCE:液体 += 40
+		SOURCE:欲情 += 70
+	CASE 3
+		TIMES SOURCE:屈従 , 1.40
+		SOURCE:液体 += 70
+		SOURCE:欲情 += 120
+	CASE 4
+		TIMES SOURCE:屈従 , 1.50
+		SOURCE:液体 += 110
+		SOURCE:欲情 += 180
+	CASE 5
+		TIMES SOURCE:屈従 , 1.70
+		SOURCE:液体 += 150
+		SOURCE:欲情 += 250
+	CASE 6
+		TIMES SOURCE:屈従 , 1.90
+		SOURCE:液体 += 200
+		SOURCE:欲情 += 300
+	CASE 7
+		TIMES SOURCE:屈従 , 2.10
+		SOURCE:液体 += 250
+		SOURCE:欲情 += 350
+	CASE 8
+		TIMES SOURCE:屈従 , 2.30
+		SOURCE:液体 += 300
+		SOURCE:欲情 += 400
+	CASE 9
+		TIMES SOURCE:屈従 , 2.50
+		SOURCE:液体 += 350
+		SOURCE:欲情 += 450
+	CASE IS >= 10
+		TIMES SOURCE:屈従 , 3.00
+		SOURCE:液体 += 500
+		SOURCE:欲情 += 500
+ENDSELECT
+
+;マゾを見る
+IF TALENT:マゾ
+	TIMES SOURCE:屈従 , 2.50
+	TIMES SOURCE:液体 , 1.20
+	TIMES SOURCE:欲情 , 1.20
+ENDIF
+
+;TALENT:反抗的をみる
+IF TALENT:反抗的
+	TIMES SOURCE:中毒 , 0.75
+	TIMES SOURCE:屈従 , 0.75
+	TIMES SOURCE:反感 , 1.50
+ENDIF
+
+;TALENT:気丈をみる
+IF TALENT:気丈
+	TIMES SOURCE:中毒 , 0.75
+	TIMES SOURCE:屈従 , 0.75
+	TIMES SOURCE:反感 , 2.50
+ENDIF
+
+;TALENT:プライド高いをみる
+IF TALENT:プライド高い
+	TIMES SOURCE:中毒 , 1.50
+	TIMES SOURCE:屈従 , 1.50
+	TIMES SOURCE:反感 , 2.00
+ENDIF
+
+;TALENT:生意気をみる
+IF TALENT:生意気
+	TIMES SOURCE:中毒 , 0.80
+	TIMES SOURCE:屈従 , 0.80
+	TIMES SOURCE:反感 , 1.80
+ENDIF
+
+;TALENT:プライド低いをみる
+IF TALENT:プライド低い
+	TIMES SOURCE:中毒 , 1.50
+	TIMES SOURCE:屈従 , 0.75
+	TIMES SOURCE:反感 , 0.75
+ENDIF
+
+;縄で緊縛中のとき効果上昇
+SIF TEQUIP:縄
+	TIMES SOURCE:屈従 , 1.50
+;ボールギャグ装着中のとき効果上昇
+SIF TEQUIP:ボールギャグ
+	TIMES SOURCE:屈従 , 1.75
+
+;-------------------------------------------------
+;絶頂チェック
+;-------------------------------------------------
+CALL SOURCE_CHECK_CVAB
+
+;-------------------------------------------------
+;射精チェック
+;-------------------------------------------------
+CALL SAMEN_CHECK_T, 0
+
+CALL SAMEN_SHOOT_T, 0, NOWEX:射精
+
+;-------------------------------------------------
+;経験の処理
+;-------------------------------------------------
+CALL EXPUP_BASE, 1, 1
+
+;愛情経験(減少）
+SIF FALLTYPE(TARGET) == 1 && !ASSIPLAY && EXP:愛情経験 > 0
+	CALL EXPUP, "愛情経験", -1
+
+RETURN 1

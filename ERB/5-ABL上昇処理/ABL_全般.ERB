@@ -1,0 +1,605 @@
+﻿@ABL上昇画面
+#DIM DYNAMIC LCOUNT
+#DIMS DYNAMIC 能力名
+#DIMS DYNAMIC マウスオーバー
+#DIMS DYNAMIC BAR作成済み, 100
+#DIMS DYNAMIC LASTM
+#DIM DYNAMIC LRESULT
+#DIMS DYNAMIC 入力欄
+#DIM DYNAMIC 前キャラ
+#DIM DYNAMIC 次キャラ
+#DIM 選択文字色
+#DIM DYNAMIC 初回
+#DIM CONST コマンド = 0x26, 0x26, 0x28, 0x28, 0x25, 0x27, 0x25, 0x27, 66, 65
+#DIM DYNAMIC コマンド状態
+
+IF !初回
+	LASTM = %MOUSEB()%
+	初回 = 1
+ENDIF
+
+GETFOCUSCOLOR
+選択文字色 = RESULT
+
+前キャラ = -1
+次キャラ = -1
+
+FOR LCOUNT, 1, CHARANUM
+	SIF 調教可能(LCOUNT) && LCOUNT < TARGET
+		前キャラ = LCOUNT
+	IF 調教可能(LCOUNT) && LCOUNT > TARGET
+		次キャラ = LCOUNT
+		BREAK
+	ENDIF
+NEXT
+
+CALL LOOP_CLEARLINE
+
+DRAWLINE
+;経験と珠の表示はそれぞれ別関数だったりする
+PRINTFORML □%I18N("経験")%
+CALL SHOW_INFO_EXP, TARGET, 1
+DRAWLINE
+PRINTFORML □%I18N("珠")%
+CALL SHOW_INFO_JUEL, TARGET
+DRAWLINE
+
+PRINTFORML □%NAMEDISP(TARGET)%%I18N("の能力")%
+FOR LCOUNT, 0, VARSIZE("ABL")
+	VARSET ABLUP, 0
+	VARSET ABLUPEXP, 0
+
+	SIF ABLNAME:LCOUNT == ""
+		CONTINUE
+	;DISABLEが有効なら表示しない
+	CALLFORM DISABLE, "ABL_" + ABLNAME:LCOUNT, TARGET
+		SIF RESULT
+			CONTINUE
+	SELECTCASE ABLNAME:LCOUNT
+		;膣が無いとＶ感覚は上げられない
+		CASE "Ｖ感覚"
+			SIF !VAGINA(TARGET)
+				CONTINUE
+		;男ならレズっ気とレズ中毒は上げられない
+		CASE "レズっ気", "レズ中毒"
+			SIF SEX(TARGET) == 1
+				CONTINUE
+		;女ならホモっ気とゲイ中毒とメス度は上げられない
+		CASE "ホモっ気", "ゲイ中毒", "メス度"
+			SIF SEX(TARGET) == 2
+				CONTINUE
+		;母乳体質がないと噴乳中毒は上げられない
+		CASE "噴乳中毒"
+			SIF !TALENT:母乳体質
+				CONTINUE
+		;グリモワールを使ってない、魔法技能初期値が設定されてないキャラは魔法技能を伸ばせない
+		CASE "魔法技能"
+			SIF !ABL:魔法技能
+				CONTINUE
+	ENDSELECT
+	;マイナスの場合は特殊表示
+	IF ABL:LCOUNT < 0
+		SETCOLOR 条件成否(0)
+		IF GUI
+			PRINTFORM 　[--] %ABLNAME:LCOUNT, 8% 
+			SIF BAR作成済み:LCOUNT == ""
+				BAR作成済み:LCOUNT = %IMGTOTAG(@"%GBAR(ABL:LCOUNT, 10, 20, BARCOLOR:能力, "gray", "LVマイナス 特殊訓練が必要です", "black")%")%
+			HTML_PRINT BAR作成済み:LCOUNT, 1
+		ELSE
+			PRINTFORML 　[--] %ABLNAME:LCOUNT, 8, LEFT% - LVマイナス 特殊訓練が必要です
+		ENDIF
+	ELSE
+		;要求される珠と経験を取得
+		CALLFORM ABL_CHECK_%ABLNAME:LCOUNT%
+		;CALLFORM NEED_JUEL_%ABLNAME:LCOUNT%
+		;条件を満たしているか確認
+		;CALLFORM CHECK_JUEL_%ABLNAME:LCOUNT%
+		;満たしていれば青色表示、満たしてなければ灰色表示
+		SETCOLOR 条件成否(RESULT)
+		;リミットバースト無しでABLがMAX(10)なら白文字
+		IF ABL:LCOUNT >= 10 && TALENT:リミットバースト == 0
+			$LIMITELSE
+			RESETCOLOR
+			IF GUI
+				SIF ISNUMERIC(マウスオーバー) && TOINT(マウスオーバー) == LCOUNT
+					SETCOLOR 選択文字色
+				PRINTFORM 　[{LCOUNT,2}] %I18N(ABLNAME:LCOUNT, "ABL"), LANGDATA:LANGUAGE:ABLLEN% 
+				SIF BAR作成済み:LCOUNT == ""
+					BAR作成済み:LCOUNT = %IMGTOTAG(@"%GBAR(ABL:LCOUNT, 10, 20, BARCOLOR:能力, "gray", @"{ABL:LCOUNT} *MAX*", "black")%")%
+				HTML_PRINT BAR作成済み:LCOUNT, 1
+				RESETCOLOR
+				PRINTL 
+			ELSE
+				PRINTFORML 　[{LCOUNT, 2}] %I18N(ABLNAME:LCOUNT, "ABL"), LANGDATA:LANGUAGE:ABLLEN, LEFT% - LV{ABL:LCOUNT} *MAX*
+			ENDIF
+			CONTINUE
+		ELSE
+			;魔法技能、飼育技能、栽培技能はリミットバースト対象外
+			SELECTCASE ABLNAME:LCOUNT
+				CASE "魔法技能", "飼育技能", "栽培技能", "医療技能"
+					SIF ABL:LCOUNT >= 10
+						GOTO LIMITELSE
+			ENDSELECT
+			IF GUI
+				SIF ISNUMERIC(マウスオーバー) && TOINT(マウスオーバー) == LCOUNT
+					SETCOLOR 選択文字色
+				PRINTFORM 　[{LCOUNT,2}] %I18N(ABLNAME:LCOUNT, "ABL"), LANGDATA:LANGUAGE:ABLLEN% 
+				SIF BAR作成済み:LCOUNT == ""
+					BAR作成済み:LCOUNT = %IMGTOTAG(@"%GBAR(ABL:LCOUNT, 10, 20, BARCOLOR:能力, "gray", @"{ABL:LCOUNT}", "black")%")%
+				HTML_PRINT BAR作成済み:LCOUNT, 1
+			ELSE
+				PRINTFORM 　[{LCOUNT, 2}] %I18N(ABLNAME:LCOUNT, "ABL"), LANGDATA:LANGUAGE:ABLLEN, LEFT% - LV{ABL:LCOUNT}
+				PRINT  
+			ENDIF
+		ENDIF
+		RESETCOLOR
+		SIF !GUI
+			CALL ABLUP_MESSAGE, LCOUNT
+	ENDIF
+	PRINTL 
+NEXT
+
+FOR LCOUNT, 0, 2
+	SELECTCASE LCOUNT
+		CASE 0
+			能力名 = 苦痛刻印
+		CASE 1
+			能力名 = 反発刻印
+	ENDSELECT
+
+	SIF MARK:能力名 == 0
+		CONTINUE
+	CALLFORM ABL_CHECK_%能力名%
+	;CALLFORM NEED_JUEL_%能力名%
+	;CALLFORM CHECK_JUEL_%能力名%
+	SETCOLOR 条件成否(RESULT)
+
+	IF GUI
+		SIF ISNUMERIC(マウスオーバー) && TOINT(マウスオーバー) == 90+LCOUNT
+			SETCOLOR 選択文字色
+		PRINTFORM 　[{90+LCOUNT}] %I18N(能力名, "MARK"), LANGDATA:LANGUAGE:ABLLEN% 
+
+		SIF BAR作成済み:(90+LCOUNT) == ""
+			BAR作成済み:(90+LCOUNT) = %IMGTOTAG(@"%GBAR(MARK:能力名, 3, 20, BARCOLOR:能力, "gray", @"{MARK:能力名}", "black")%")%
+		HTML_PRINT BAR作成済み:(90+LCOUNT), 1
+	ELSE
+		PRINTFORM 　[{90+LCOUNT}] %能力名% - LV{MARK:能力名}
+	ENDIF
+
+	IF MARK:能力名 > 0 && !GUI
+		PRINT  
+		RESETCOLOR
+		CALL ABLUP_MESSAGE, 90+LCOUNT
+	ENDIF
+
+	RESETCOLOR
+	PRINTL 
+NEXT
+
+IF GUI
+	DRAWLINE
+	PRINTFORML □%I18N("条件")%
+	PRINT 　
+
+	VARSET ABLUP, 0
+	VARSET ABLUPEXP, 0
+	IF ISNUMERIC(マウスオーバー) && INRANGE(TOINT(マウスオーバー), 0, 99)
+		SELECTCASE TOINT(マウスオーバー)
+			CASE 90
+				CALL ABL_CHECK_苦痛刻印
+				;CALL NEED_JUEL_苦痛刻印
+				CALL ABLUP_MESSAGE, TOINT(マウスオーバー)
+			CASE 91
+				CALL ABL_CHECK_反発刻印
+				;CALL NEED_JUEL_反発刻印
+				CALL ABLUP_MESSAGE, TOINT(マウスオーバー)
+			CASEELSE
+				IF ABL:TOINT(マウスオーバー) < 10 || TALENT:リミットバースト
+					TRYCALLFORM ABL_CHECK_%ABLNAME:TOINT(マウスオーバー)%
+					;TRYCALLFORM NEED_JUEL_%ABLNAME:TOINT(マウスオーバー)%
+					TRYCALL ABLUP_MESSAGE, TOINT(マウスオーバー)
+				ENDIF
+		ENDSELECT
+	ENDIF
+	PRINTL 
+ENDIF
+
+DRAWLINE
+PRINTPLAIN 　ABLUP　
+SIF GUI && ISNUMERIC(マウスオーバー) && TOINT(マウスオーバー) == 100
+	SETCOLOR 選択文字色
+PRINTFORM [100] %I18N("能力値アップの終了")% 
+RESETCOLOR
+IF FLAG:能力上昇 != 0
+	SIF GUI && ISNUMERIC(マウスオーバー) && TOINT(マウスオーバー) == 101
+		SETCOLOR 選択文字色
+	CALL PRINTSPACE, 前キャラ != -1, @"[101] %I18N("前のキャラ")% "
+	RESETCOLOR
+
+	SIF GUI && ISNUMERIC(マウスオーバー) && TOINT(マウスオーバー) == 109
+		SETCOLOR 選択文字色
+	CALL PRINTSPACE, 次キャラ != -1, @"[109] %I18N("次のキャラ")% "
+	RESETCOLOR
+ENDIF
+PRINTL 
+
+CALL TUTORIAL
+
+IF GUI
+	;IF MOUSEB() != ""
+		REDRAW 3
+	;	マウスオーバー = %MOUSEB()%
+	;ENDIF
+	DO
+		AWAIT 1
+		マウスオーバー = %MOUSEB()%
+		IF LASTM != MOUSEB()
+			LASTM = %MOUSEB()%
+			BREAK
+		ENDIF
+		LASTM = %MOUSEB()%
+		;この処理で拾えるのかなと思ったけどちゃんと拾えるのでよし PCスペック次第で拾えない可能性あり？
+		;FOR LCOUNT, 0, 10
+			;数字キーは48～57が0～9、テンキーは96～105が0～9
+			;入力した文字も反映されるので先頭1文字を消す
+			;SIF GETKEYTRIGGERED(48+LCOUNT) || GETKEYTRIGGERED(96+LCOUNT)
+			;	SETTEXTBOX @"%SUBSTRING(GETTEXTBOX(), 1)%{LCOUNT}"
+		;NEXT
+		;SIF GETKEYTRIGGERED(8)
+			;SETTEXTBOX @"%SUBSTRING(GETTEXTBOX(), 0, STRLENS(GETTEXTBOX())-1)%"
+		IF GETKEYTRIGGERED(0xD) && ISNUMERIC(GETTEXTBOX())
+			RESULT = TOINT(GETTEXTBOX())
+			GOTO BREAK
+		ENDIF
+
+		IF GETKEYTRIGGERED(0x01) && ISNUMERIC(マウスオーバー)
+			RESULT = TOINT(マウスオーバー)
+			GOTO BREAK
+		ENDIF
+		IF GETKEYTRIGGERED(コマンド:コマンド状態)
+			コマンド状態++
+			IF コマンド状態 >= VARSIZE("コマンド")
+				FOR LCOUNT, 0, VARSIZE("ABL")
+					SIF ABLNAME:LCOUNT == "" || ABLNAME:LCOUNT == "メス度"
+						CONTINUE
+					SIF ABL:LCOUNT < 10
+						ABL:LCOUNT = 10
+				NEXT
+				コマンド状態 = 0
+				CALL GIDDEL
+				VARSET BAR作成済み
+				CLEARTEXTBOX
+				実績解除不可 = 0
+				BREAK
+			ENDIF
+		ENDIF
+	LOOP 1
+	コマンド状態 = 0
+	RESTART
+ENDIF
+
+INPUT
+
+$BREAK
+SIF RESULT == 100
+	GOTO END
+
+LRESULT = RESULT
+CALL GIDDEL
+VARSET BAR作成済み
+
+VARSET ABLUP, 0
+VARSET ABLUPEXP, 0
+
+;SHOP画面から入ってきたときはターン終わらないようにBEGIN SHOPする
+SELECTCASE LRESULT
+	CASE 0 TO 99
+		IF LRESULT >= 90
+			SELECTCASE LRESULT
+				CASE 90
+					能力名 = 苦痛刻印
+				CASE 91
+					能力名 = 反発刻印
+			ENDSELECT
+			SIF MARK:能力名 == 0
+				RESTART
+			TRYCALLFORM ABL_CHECK_%能力名%
+			IF RESULT
+				FOR LCOUNT, 0, 15
+					JUEL:LCOUNT -= ABLUP:LCOUNT
+				NEXT
+				MARK:能力名--
+			ENDIF
+		ELSE
+			CALL ABLUP, ABLNAME:LRESULT
+		ENDIF
+		RESTART
+	CASE 100
+		$END
+		CLEARTEXTBOX
+		CALL ERASE_TALENT
+		FOR LCOUNT, 0, VARSIZE("ABL")
+			SIF ABL:LCOUNT >= 11
+				CALL 実績解除, "UNLIMITED FIRE"
+		NEXT
+		CALL TUTORIAL, "ABL上昇終了"
+		CALL TUTORIAL
+		CALL TUTORIAL, "施設_1"
+		VARLINE = LINECOUNT
+		SKIPLOG 0
+		;IF FLAG:能力上昇 != 0
+		;	TARGET = FLAG:能力上昇
+		;	FLAG:能力上昇 = 0
+		;	JUMP SHOP画面
+		;ELSE
+		;	JUMP ターン終了
+		;ENDIF
+	CASE 101
+		SIF 前キャラ != -1
+			TARGET = 前キャラ
+		RESTART
+	CASE 109
+		SIF 次キャラ != -1
+			TARGET = 次キャラ
+		RESTART
+	CASEELSE
+		RESTART
+ENDSELECT
+
+@ABLUP, 能力名
+#DIMS DYNAMIC 能力名
+#DIM DYNAMIC LCOUNT
+
+SIF GETNUM(ABL, 能力名) < 0
+	RETURN 0
+
+SIF ABL:能力名 < 0
+	RETURN 0
+IF ABL:能力名 == 10
+	SELECTCASE 能力名
+		CASE "魔法技能", "飼育技能", "栽培技能", "医療技能"
+			RETURN 0
+		CASEELSE
+			SIF !TALENT:リミットバースト
+				RETURN 0
+	ENDSELECT
+ENDIF
+VARSET ABLUP
+VARSET ABLUPEXP
+TRYCALLFORM ABL_CHECK_%能力名%
+IF RESULT
+	FOR LCOUNT, 0, 15
+		JUEL:LCOUNT -= ABLUP:LCOUNT
+	NEXT
+	ABL:能力名++
+	RETURN 1
+ENDIF
+
+RETURN 0
+
+;上昇不可なら灰色、上昇可能なら青色の色コードを返す
+@条件成否, BOOL
+#FUNCTION
+#DIM DYNAMIC BOOL
+
+IF BOOL == 0
+	RETURNF COLOR_FROMNAME("gray")
+ELSE
+	RETURNF COLOR_FROMRGB(100, 150, 200)
+ENDIF
+
+[SKIPSTART]
+@SHOP_ABLUP
+#DIM DYNAMIC 次ページあり
+#DIM 表示上限 = 10
+
+DRAWLINE
+PRINTL 能力を上昇させたいキャラを選んでください
+
+;見た目を整えるためのCLEARLINE処理
+CALL LOOP_CLEARLINE
+
+CALL LIFE_LIST, "通常表示", 0, 表示上限
+;RESULTにはまだ表示されてないキャラが居るかどうか
+次ページあり = RESULT
+DRAWLINE
+PRINTPLAIN 　ABLUP　
+
+CALL PRINTSPACE, TFLAG:ページ数 > 0, "[999] 前ページ "
+PRINTFORM [1000] 戻る 
+CALL PRINTSPACE, 次ページあり, "[1001] 次ページ "
+PRINTL 
+
+INPUT
+SELECTCASE RESULT
+	CASE -1
+		SIF 表示上限 > 10
+			表示上限 -= 10
+		RESTART
+	CASE -9
+		表示上限 += 10
+		RESTART
+	CASE 0
+		PRINTW 主人の能力は上げられません
+	CASE 999
+		SIF TFLAG:ページ数 > 0
+			TFLAG:ページ数--
+	CASE 1000
+		RETURN 0
+	CASE 1001
+		SIF 次ページあり
+			TFLAG:ページ数++
+	CASE 0 TO CHARANUM-1
+		FLAG:能力上昇 = TARGET
+		TARGET = RESULT
+		JUMP USER_ABLUP
+ENDSELECT
+
+RESTART
+[SKIPEND]
+
+;-------------------------------------------------
+;能力上昇条件の表示
+;-------------------------------------------------
+@ABLUP_MESSAGE, ABL番号
+#DIM DYNAMIC ABL番号
+#DIM DYNAMIC LCOUNT
+#DIMS DYNAMIC 表示用
+
+;刻印や他能力など
+IF ABL番号 < 90
+	SELECTCASE ABLNAME:ABL番号
+		CASE "欲望"
+			SIF (ABL:欲望 >= 7 && MARK:快楽刻印 < 3) || (ABL:欲望 >= 5 && MARK:快楽刻印 < 2) || (ABL:欲望 >= 3 && MARK:快楽刻印 < 1)
+				SETCOLORBYNAME gray
+			;LV3からは快楽刻印LV1必要 LV5からは快楽刻印LV2必要 LV7からは快楽刻印LV3必要
+			IF ABL:欲望 >= 7
+				表示用 = [%I18N("快楽刻印", "MARK")%LV3]
+			ELSEIF ABL:欲望 >= 5
+				表示用 = [%I18N("快楽刻印", "MARK")%LV2%I18N("以上")%]
+			ELSEIF ABL:欲望 >= 3
+				表示用 = [%I18N("快楽刻印", "MARK")%LV1%I18N("以上")%]
+			ENDIF
+		CASE "奉仕精神"
+			SIF ABL:従順 < ABL:奉仕精神
+				SETCOLORBYNAME gray
+			表示用 = [%I18N("従順", "ABL")%LV{ABL:奉仕精神}%I18N("以上")%]
+		CASE "露出癖"
+			IF ABL:露出癖 == 3
+				SIF !EXP:絶頂経験
+					SETCOLORBYNAME gray
+				PRINTFORM [%I18N("絶頂経験", "EXP")%あり]
+				RESETCOLOR
+				SIF !EXP:自慰経験
+					SETCOLORBYNAME gray
+				PRINTFORM [%I18N("自慰経験", "EXP")%あり]
+				RESETCOLOR
+			ENDIF
+			SIF ABL:欲望 < ABL:露出癖+1
+				SETCOLORBYNAME gray
+			PRINTFORM [%I18N("欲望", "ABL")%LV{ABL:露出癖+1}%I18N("以上")%]
+			RESETCOLOR
+		CASE "サドっ気"
+			SIF ABL:欲望 < ABL:サドっ気+1
+				SETCOLORBYNAME gray
+			表示用 = [%I18N("欲望", "ABL")%LV{ABL:露出癖+1}%I18N("以上")%]
+		CASE "自慰中毒"
+			SIF ABL:露出癖 < ABL:自慰中毒+1
+				SETCOLORBYNAME gray
+			表示用 = [%I18N("露出癖", "ABL")%LV{ABL:自慰中毒+1}%I18N("以上")%]
+		CASE "精液中毒"
+			SIF ABL:奉仕精神 < ABL:精液中毒+1
+				SETCOLORBYNAME gray
+			表示用 = [%I18N("奉仕精神", "ABL")%LV{ABL:精液中毒+1}%I18N("以上")%]
+		CASE "レズ中毒"
+			SIF ABL:奉仕精神 < ABL:レズ中毒+1
+				SETCOLORBYNAME gray
+			表示用 = [%I18N("奉仕精神", "ABL")%LV{ABL:レズ中毒+1}%I18N("以上")%]
+		CASE "ゲイ中毒"
+			SIF ABL:奉仕精神 < ABL:ゲイ中毒+1
+				SETCOLORBYNAME gray
+			表示用 = [%I18N("奉仕精神", "ABL")%LV{ABL:ゲイ中毒+1}%I18N("以上")%]
+		CASE "噴乳中毒"
+			SIF ABL:Ｂ感覚 < ABL:噴乳中毒+1
+				SETCOLORBYNAME gray
+			表示用 = [%I18N("Ｂ感覚", "ABL")%LV{ABL:噴乳中毒+1}%I18N("以上")%]
+	ENDSELECT
+ELSE
+	SELECTCASE ABL番号
+		CASE 90;苦痛刻印
+			SIF ABL:奉仕精神 < MARK:苦痛刻印
+				SETCOLORBYNAME gray
+			PRINTFORM [%I18N("奉仕精神", "ABL")%LV{MARK:苦痛刻印}%I18N("以上")%]
+		CASE 91;反発刻印
+			SIF ABL:従順 < MARK:反発刻印
+				SETCOLORBYNAME gray
+			PRINTFORM [%I18N("従順", "ABL")%LV{MARK:反発刻印}%I18N("以上")%]
+	ENDSELECT
+ENDIF
+SIF 表示用 != ""
+	PRINTFORM %表示用%
+RESETCOLOR
+
+;珠
+FOR LCOUNT, 0, VARSIZE("ABLUP")
+	IF ABLUP:LCOUNT > 0
+		SIF JUEL:LCOUNT < ABLUP:LCOUNT
+			SETCOLORBYNAME gray
+		表示用 = [%I18N("|0|の珠", , I18N(PALAMNAME:LCOUNT, "PALAM"))%×{ABLUP:LCOUNT}]
+	ELSE
+		表示用 = 
+	ENDIF
+	SIF 表示用 != ""
+		PRINTFORM %表示用%
+	RESETCOLOR
+NEXT
+
+;経験
+FOR LCOUNT, 0, VARSIZE("ABLUPEXP")
+	IF ABLUPEXP:LCOUNT > 0
+		SELECTCASE EXPNAME:LCOUNT
+			CASE "異常経験"
+				;刻印を要求される場合は特殊
+				SELECTCASE ABLNAME:ABL番号
+					CASE "従順"
+						IF ABL:従順 == 4
+							SIF EXP:異常経験 < ABLUPEXP:異常経験 && MARK:屈服刻印 < 3
+								SETCOLORBYNAME gray
+							SIF ABLUPEXP:異常経験
+								表示用 = [%I18N("異常経験", "EXP")%:{ABLUPEXP:異常経験}%I18N("以上")% or %I18N("屈服刻印", "MARK")%LV3]
+						ELSEIF ABL:従順 == 7
+							GOTO 汎用
+						ENDIF
+					CASE "欲望"
+						IF ABL:欲望 == 4
+							SIF EXP:異常経験 == 0 && MARK:快楽刻印 < 3
+								SETCOLORBYNAME gray
+							SIF ABLUPEXP:異常経験
+								表示用 = [%I18N("異常経験", "EXP")%1%I18N("以上")% or %I18N("快楽刻印", "MARK")%LV3]
+						ELSEIF ABL:欲望 == 7
+							GOTO 汎用
+						ENDIF
+					CASEELSE
+						GOTO 汎用
+				ENDSELECT
+			CASEELSE
+				$汎用
+				SIF EXP:LCOUNT < ABLUPEXP:LCOUNT
+					SETCOLORBYNAME gray
+				表示用 = [%I18N(EXPNAME:LCOUNT, "EXP")%\:{ABLUPEXP:LCOUNT}%I18N("以上")%]
+		ENDSELECT
+	ELSE
+		表示用 = 
+	ENDIF
+	SIF 表示用 != ""
+		PRINTFORM %表示用%
+	RESETCOLOR
+NEXT
+
+;-------------------------------------------------
+;能力の上昇による素質の消滅をチェック
+;-------------------------------------------------
+@ERASE_TALENT
+IF 陥落(TARGET) && TALENT:抵抗
+	PRINTFORML %CALLNAME:TARGET%は[抵抗]を失った
+	TALENT:抵抗 = 0
+	PRINTFORML %CALLNAME:TARGET%は[素直]を得た
+	TALENT:素直 = 1
+ENDIF
+
+IF 陥落(TARGET) && TALENT:抑圧
+	PRINTFORML %CALLNAME:TARGET%は[抑圧]を失った
+	TALENT:抑圧 = 0
+	PRINTFORMW %CALLNAME:TARGET%は[解放]を得た
+	TALENT:解放 = 1
+	CALL 実績解除, "escape"
+ENDIF
+
+@ABLマイナス打ち消し, 対象
+#DIM DYNAMIC 対象
+#DIM DYNAMIC LCOUNT
+
+FOR LCOUNT, 0, VARSIZE("ABL")
+	SIF ABL:対象:LCOUNT < 0
+		ABL:対象:LCOUNT = 0
+NEXT

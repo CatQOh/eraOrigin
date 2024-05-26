@@ -1,0 +1,64 @@
+﻿;-------------------------------------------------
+;ふたなり化
+;-------------------------------------------------
+@USERCOM_ABLE_ふたなり化
+#FUNCTION
+;スライムのみ行える
+コマンド実行条件 += "実行者か対象に[スライム][溶ける快]が必要/"
+SIF !ISSLIME(PLAYER) && !ISSLIME(TARGET)
+	COMRESULT = 0
+コマンド実行条件 += "睡眠中は実行できない/"
+SIF TEQUIP:睡眠
+	COMRESULT = 0
+IF MOD:STS
+	コマンド実行条件 += "屍姦中は実行できない/"
+	SIF CFLAG:死亡
+		COMRESULT = 0
+ENDIF
+
+RETURNF COMRESULT
+
+@COM_ふたなり化
+
+PRINTL □誰が行いますか？
+SIF ISSLIME(TARGET)
+	PRINTFORML 　[1] %CALLNAME:TARGET%(\@ TALENT:ふたなり ? ふたなり解除する # ふたなり化する \@)
+SIF ISSLIME(PLAYER)
+	PRINTFORML 　[2] %CALLNAME:PLAYER%(\@ TALENT:PLAYER:ふたなり ? ふたなり解除する # ふたなり化する \@)
+PRINTL 　[0] キャンセル
+
+SIF ISSKIP()
+	RETURN
+BINPUT
+SELECTCASE RESULT
+	CASE 0
+		RETURN 0
+	CASE 1
+		IF ISSLIME(TARGET)
+			INVERTBIT TALENT:ふたなり, 0
+			IF TALENT:ふたなり
+				IF TALENT:性転換済
+					SIF CSTR:性転換童貞 == ""
+						TALENT:童貞 = 1
+				ELSE
+					SIF CSTR:童貞 == ""
+						TALENT:童貞 = 1
+				ENDIF
+			ENDIF
+			RETURN 1
+		ENDIF
+	CASE 2
+		IF ISSLIME(PLAYER)
+			INVERTBIT TALENT:PLAYER:ふたなり, 0
+			IF TALENT:PLAYER:ふたなり
+				IF TALENT:PLAYER:性転換済
+					SIF CSTR:PLAYER:性転換童貞 == ""
+						TALENT:PLAYER:童貞 = 1
+				ELSE
+					SIF CSTR:PLAYER:童貞 == ""
+						TALENT:PLAYER:童貞 = 1
+				ENDIF
+			ENDIF
+			RETURN 1
+		ENDIF
+ENDSELECT

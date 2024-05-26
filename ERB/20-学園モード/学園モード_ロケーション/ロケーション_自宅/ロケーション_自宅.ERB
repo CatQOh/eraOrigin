@@ -1,0 +1,310 @@
+﻿;@ロケーション_自宅
+;日数表示
+;CALL カラム生成, "自宅", "コマンド"
+
+@自宅_コマンド
+#DIM DYNAMIC 滞在者
+#DIMS DYNAMIC 表示好感度
+
+CALL COLUMNSHOP_SCHOOL
+
+CALL COLUMNDRAWLINE, 0
+CALL COLUMNPRINTL, 0, @"□何をしよう？"
+
+IF 同行者 > 0
+	滞在者 = 同行者
+ELSE
+	滞在者 = FINDCHARA(CSTR:現在地, @"%CALLNAME:PLAYER%の家", 1)
+ENDIF
+IF 滞在者 > 0
+	IF !休日() && !ISHOLIDAY_SCHOOL() && ターン == "朝"
+		CALL COLUMNPRINTL, 0, @"　[105] - %CALLNAME:同行者%と一緒に登校する"
+	ELSE
+		SELECTCASE CSTR:滞在者:目的
+			CASE "看病"
+				CALL COLUMNPRINTL, 0, @"　[210] - %CALLNAME:滞在者%に面倒を見てもらう"
+				CALL COLUMNPRINTL, 0, @"　[211] - %CALLNAME:滞在者%と遊びに行く"
+				;CALL COLUMNPRINTL, 0, @"　[212] - %CALLNAME:滞在者%に過度に甘えてみる"
+				CALL COLUMNPRINTL, 0, @"　[212] - %CALLNAME:滞在者%に「体が熱い」と色気を出す"
+			CASE "セックス"
+				CALL COLUMNPRINTL, 0, @"　[220] - %CALLNAME:滞在者%と（性的に）遊ぶ"
+				CALL COLUMNPRINTL, 0, @"　[221] - %CALLNAME:滞在者%と（性的な）遊びに行く"
+				;CALL COLUMNPRINTL, 0, @"　[222] - %CALLNAME:滞在者%と健全に過ごす"
+			CASEELSE
+				CALL COLUMNPRINTL, 0, @"　[200] - %CALLNAME:滞在者%と会話する"
+				CALL COLUMNPRINTL, 0, @"　[201] - %CALLNAME:滞在者%とアダルトサイトを見る"
+				CALL COLUMNPRINTL, 0, @"　[202] - %CALLNAME:滞在者%に思い切った提案をする"
+				CALL COLUMNPRINTL, 0, @"　[203] - %CALLNAME:滞在者%と遊びに行く"
+		ENDSELECT
+		SIF ターン == "夜"
+			CALL COLUMNPRINTL, 0, @"　[204] - %CALLNAME:滞在者%に家に泊まるよう提案する"
+	ENDIF
+ELSEIF 休日() || ISHOLIDAY_SCHOOL() || GROUPMATCH(ターン, "昼", "夕")
+	CALL COLUMNPRINTL, 0, "　[110] - 遊びに行く"
+	CALL COLUMNPRINTL, 0, "　[111] - 友人と遊びに行く"
+	CALL COLUMNPRINTL, 0, "　[112] - 家に友人を呼ぶ"
+	IF バイト先 != ""
+		バイト可能 = 0
+		TRYCALLFORM バイト条件_%RPS(バイト先)%
+		IF バイト可能
+			CALL COLUMNPRINTL, 0, @"　[113] - %バイト先%のバイトに行く"
+		ELSE
+			CALL COLUMNPRINTL, 0, @"　[---] - %バイト先%のシフトは入っていません", "gray"
+		ENDIF
+		CALL COLUMNPRINTL, 0, "　[114] - 転職する"
+	ELSE
+		CALL COLUMNPRINTL, 0, "　[114] - バイトを探す"
+	ENDIF
+	IF ターン == "夜"
+		CALL COLUMNPRINTL, 0, "　[400] - 寝る"
+	ELSE
+		CALL COLUMNPRINTL, 0, "　[400] - 家で過ごす"
+	ENDIF
+	CALL COLUMNPRINTL, 0, "　[401] - 通販サイトを見る"
+ELSEIF ターン == "朝"
+	CALL COLUMNPRINTL, 0, "　[100] - 学校へ行く "
+	CALL COLUMNPRINTL, 0, "　[101] - クラスメイトと一緒に登校する"
+	CALL COLUMNPRINTL, 0, "　[102] - 学校の保健室へ行く"
+	;CALL COLUMNPRINTL, 0, "　[103] - 他の学校に行く"
+	;朝チュン後はサボれない（暫定）
+	CALL COLUMNPRINTL, 0, "　[104] - 何もせずサボる"
+ELSEIF ターン == "夜"
+	CALL COLUMNPRINTL, 0, "　[110] - 遊びに行く"
+	CALL COLUMNPRINTL, 0, "　[112] - 家に友人を呼ぶ"
+	IF バイト先 != ""
+		バイト可能 = 0
+		TRYCALLFORM バイト条件_%RPS(バイト先)%
+		IF バイト可能
+			CALL COLUMNPRINTL, 0, @"　[113] - %バイト先%のバイトに行く"
+		ELSE
+			CALL COLUMNPRINTL, 0, @"　[---] - %バイト先%のシフトは入っていません", "gray"
+		ENDIF
+		CALL COLUMNPRINTL, 0, "　[114] - 転職する"
+	ELSE
+		CALL COLUMNPRINTL, 0, "　[114] - バイトを探す"
+	ENDIF
+	CALL COLUMNPRINTL, 0, "　[400] - 寝る"
+	CALL COLUMNPRINTL, 0, "　[401] - 通販サイトを見る"
+ENDIF
+
+CALL COLUMNPRINTL, 0, "　[500] - データベース"
+CALL COLUMNPRINTL, 0, @"　[501] - 口上表示切り替え(現在:\@ OPTION:口上表示 ? オン # オフ \@)"
+CALL COLUMNPRINTL, 0, @"　[502] - 行為中の地の文表示切り替え(現在:\@ OPTION:地の文表示 ? オン # オフ \@)"
+IF ITEM:ラブスコープ
+	SELECTCASE ラブスコープ使用
+		CASE 0
+			表示好感度 = 表示しない
+		CASE 1 TO 6
+			表示好感度 = %ERDNAME(好感度, ラブスコープ使用-1)%
+		CASE 7
+			表示好感度 = 好感度合計
+		CASE 8
+			表示好感度 = 倫理観崩壊度
+	ENDSELECT
+	CALL COLUMNPRINTL, 0, @"　[503] - ラブスコープの表示切り替え(現在:\@ 表示好感度 == "舎弟" ? 舎弟or母性 # %表示好感度% \@)"
+ENDIF
+CALL COLUMNPRINTL, 0, "　[504] - スキルツリー"
+CALL COLUMNPRINTL, 0, "　[505] - 服装変更"
+
+@自宅_コマンド_INPUT
+#DIM DYNAMIC LRESULT
+#DIM DYNAMIC 滞在者
+#DIM DYNAMIC LCOUNT
+滞在者 = FINDCHARA(CSTR:現在地, @"%CALLNAME:PLAYER%の家", 1)
+
+LRESULT = CRESULT:1
+SELECTCASE LRESULT
+	CASE 100
+		CALL 学校へ行く
+	CASE 101
+		CALL クラスメイトと一緒に登校する
+	CASE 102
+		CALL 学校の保健室に行く
+	CASE 103
+		CALL 他の学校に行く
+	CASE 104
+		CALL 何もせずサボる
+	CASE 105
+		CALL 同行者と一緒に登校する
+	CASE 110
+		CALL ロケーション選択
+	CASE 111
+		CALL 友人と遊びに行く
+	CASE 112
+		CALL 家に友人を呼ぶ
+	CASE 113
+		CALL バイトに行く
+	CASE 114
+		CALL バイトを探す
+	CASE 200
+		CALL 学園モード_汎用会話, 同行者
+	CASE 201
+		CALL アダルトサイト閲覧
+	CASE 202
+		CALL 思い切った提案
+	CASE 203
+		CALL ロケーション選択
+	CASE 204
+		CALL 宿泊の提案
+	CASE 210
+		CALL 面倒を見てもらう
+	CASE 211
+		CALL 看病_遊びに行く
+	CASE 212
+		CALL 色気を出す
+	CASE 220
+		CALL 性的に遊ぶ
+	CASE 221
+		CALL ロケーション選択
+	CASE 400
+		CALL TURNEND_学園
+	CASE 401
+		CALL 学園_通販サイト
+	CASE 500
+		CALL 学園データベース
+	CASE 501
+		INVERTBIT OPTION:口上表示, 0
+		RETURN 0
+	CASE 502
+		INVERTBIT OPTION:地の文表示, 0
+		RETURN 0
+	CASE 503
+		PRINTL □ラブスコープで表示する好感度を選んでください
+		FOR LCOUNT, 0, 9
+			SELECTCASE LCOUNT
+				CASE 0
+					PRINTL 　[0] - 表示しない
+				CASE 1 TO 6
+					IF ERDNAME(好感度, LCOUNT-1) == "舎弟"
+						PRINTFORML 　[{LCOUNT}] - 舎弟or母性
+					ELSE
+						PRINTFORML 　[{LCOUNT}] - %ERDNAME(好感度, LCOUNT-1)%
+					ENDIF
+				CASE 7
+					PRINTL 　[7] - 好感度合計
+				CASE 8
+					PRINTL 　[8] - 倫理観崩壊度
+			ENDSELECT
+		NEXT
+		BINPUT
+		ラブスコープ使用 = RESULT
+		RETURN 0
+	CASE 504
+		CALL スキルツリー
+	CASE 505
+		CALL CHARA_CLOTHES_SETTING, PLAYER
+ENDSELECT
+
+SIF RESULT
+	CALL TURNEND_学園
+
+[SKIPSTART]
+@相性増加, キャラ1, キャラ2, 上昇値
+#DIM DYNAMIC 上昇値
+#DIM DYNAMIC キャラ1
+#DIM DYNAMIC キャラ2
+
+;引数の2人の間の相性を上昇させる関数
+
+RELATION:キャラ1:(キャラ2) += 上昇値
+RELATION:(キャラ2):キャラ1 += 上昇値
+[SKIPEND]
+
+@学園_通販サイト
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC 表示数
+#DIM DYNAMIC 購入アイテム
+DRAWLINE
+
+PRINTL □通販サイト おいしいツーハン生活
+PRINTL 　ツーハンでお買い物♪お部屋でのんびりゴージャス気分♪
+CALL PASELIL, @"　所持金:{MONEY}＄"
+PRINTL 
+表示数 = 0
+FOR LCOUNT, 0, VARSIZE("ITEM")
+	SELECTCASE ITEMNAME:LCOUNT
+		CASE "ローター", "電気按摩", "バイブ", "アナルバイブ", "ペニスバンド", "ラブスコープ"
+			SIF ITEM:LCOUNT
+				CONTINUE
+			PRINTFORMLC 　[{LCOUNT}] %ITEMNAME:LCOUNT% {ITEMPRICE:LCOUNT*2}円
+			表示数++
+		CASE "ローション"
+			PRINTFORMLC 　[{LCOUNT}] 個包装ローション(5個入) 1000円
+			表示数++
+		CASE "コンドーム"
+			PRINTFORMLC 　[{LCOUNT}] コンドーム(12個入) 1000円
+			表示数++
+		CASE "スーパードライ", "一番搾り", "プレミアムモルツ", "ヱビス"
+			PRINTFORMLC 　[{LCOUNT}] %ITEMNAME:LCOUNT%(6本入り) 2000円
+			表示数++
+		CASE "ほろよい", "ストロングゼロ"
+			PRINTFORMLC 　[{LCOUNT}] %ITEMNAME:LCOUNT%(6本入り) 1200円
+			表示数++
+	ENDSELECT
+	IF 表示数 == 4
+		PRINTL
+		表示数 = 0
+	ENDIF
+NEXT
+SIF !LINEISEMPTY()
+	PRINTL 
+DRAWLINE
+PRINTPLAIN 　通販　
+PRINTL [1000] - 戻る
+
+BINPUT
+SIF RESULT == 1000
+	RETURN 0
+
+購入アイテム = RESULT
+SELECTCASE ITEMNAME:RESULT
+	CASE "ローション"
+		IF MONEY < 1000
+			PRINTW 所持金が足りません
+			RESTART
+		ENDIF
+		PRINTL 個包装ローション(5個入り)を購入した
+		CALL PASELIW, @"所持金:{MONEY}＄→{MONEY-1000}＄"
+		ITEM:ローション += 5
+		MONEY -= 1000
+	CASE "コンドーム"
+		IF MONEY < 1000
+			PRINTW 所持金が足りません
+			RESTART
+		ENDIF
+		PRINTL コンドーム(12個入り)を購入した
+		CALL PASELIW, @"所持金:{MONEY}＄→{MONEY-1000}＄"
+		ITEM:コンドーム += 12
+		MONEY -= 1000
+	CASE "スーパードライ", "一番搾り", "プレミアムモルツ", "ヱビス"
+		IF MONEY < 2000
+			PRINTW 所持金が足りません
+			RESTART
+		ENDIF
+		PRINTFORML %ITEMNAME:購入アイテム%(6本入り)を購入した
+		CALL PASELIW, @"所持金:{MONEY}＄→{MONEY-2000}＄"
+		ITEM:購入アイテム += 6
+		MONEY -= 2000
+	CASE "ほろよい", "ストロングゼロ"
+		IF MONEY < 1200
+			PRINTW 所持金が足りません
+			RESTART
+		ENDIF
+		PRINTFORML %ITEMNAME:購入アイテム%(6本入り)を購入した
+		CALL PASELIW, @"所持金:{MONEY}＄→{MONEY-1200}＄"
+		ITEM:購入アイテム += 6
+		MONEY -= 1200
+	CASEELSE
+		IF MONEY < ITEMPRICE:購入アイテム*2
+			PRINTW 所持金が足りません
+			RESTART
+		ENDIF
+		PRINTFORML %ITEMNAME:購入アイテム%を購入した
+		CALL PASELIW, @"所持金:{MONEY}＄→{MONEY-(ITEMPRICE:購入アイテム*2)}＄"
+		ITEM:購入アイテム = 1
+		MONEY -= ITEMPRICE:購入アイテム*2
+		SIF ITEMNAME:購入アイテム == "ラブスコープ"
+			ラブスコープ使用 = 7
+ENDSELECT
+
+RETURN 1

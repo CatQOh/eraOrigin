@@ -1,0 +1,18 @@
+﻿@EVENT_CHECK, イベント名, 対象 = -1
+#DIMS DYNAMIC イベント名
+#DIM DYNAMIC 対象
+
+SIF 対象 == -1
+	対象 = TARGET
+
+SIF CFLAG:対象:キャラロスト
+	RETURN 0
+
+;DISABLEチェック
+CALLFORM DISABLE, "EVENT_" + イベント名, 対象
+SIF RESULT
+	RETURN 0
+
+TRYCALLFORM EVENT_%イベント名%
+
+RETURN 1

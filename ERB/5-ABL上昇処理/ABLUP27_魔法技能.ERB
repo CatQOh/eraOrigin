@@ -1,0 +1,65 @@
+﻿@ABL_CHECK_魔法技能
+;魔法技能はグリモワールが起点になるので0からは上げられない
+SIF ABL:魔法技能 == 0
+	RETURN 0
+
+SELECTCASE ABL:魔法技能
+	CASE 1
+		;ABLUP:習得 = 500
+		ABLUPEXP:詠唱経験 = 20
+	CASE 2
+		;ABLUP:習得 = 3000
+		ABLUPEXP:詠唱経験 = 50
+	CASE 3
+		;ABLUP:習得 = 9000
+		ABLUPEXP:詠唱経験 = 100
+	CASE 4
+		;ABLUP:習得 = 24000
+		ABLUPEXP:詠唱経験 = 300
+	CASE 5
+		;ABLUP:習得 = 30000
+		ABLUPEXP:詠唱経験 = 500
+	CASE 6
+		;ABLUP:習得 = 35000
+		ABLUPEXP:詠唱経験 = 700
+	CASE 7
+		;ABLUP:習得 = 40000
+		ABLUPEXP:詠唱経験 = 800
+	CASE 8
+		;ABLUP:習得 = 45000
+		ABLUPEXP:詠唱経験 = 900
+	CASE 9
+		;ABLUP:習得 = 50000
+		ABLUPEXP:詠唱経験 = 1000
+ENDSELECT
+
+;習得早い、禁断の知識
+SIF TALENT:習得早い || TALENT:禁断の知識
+	TIMES ABLUPEXP:詠唱経験 , 0.90
+;習得遅い、工学博士
+SIF TALENT:習得遅い || TALENT:工学博士
+	TIMES ABLUPEXP:詠唱経験 , 1.20
+
+;種族適性
+SELECTCASE CSTR:種族
+	CASE "魔術師"
+		TIMES ABLUPEXP:詠唱経験 , 0.50
+	CASE "神", "悪魔"
+		TIMES ABLUPEXP:詠唱経験 , 0.80
+	CASE "精霊", "天使", "妖精", "ヴァンパイア"
+		TIMES ABLUPEXP:詠唱経験 , 0.90
+ENDSELECT
+
+;@CHECK_JUEL_魔法技能
+;習得の珠、詠唱経験で上げる
+SIF EXP:詠唱経験 >= ABLUPEXP:詠唱経験
+	RETURN 1
+
+;上記の条件を満たせなかったら上げられない
+RETURN 0
+
+@ABLUP_MESSAGE_魔法技能
+SIF EXP:詠唱経験 < ABLUPEXP:詠唱経験
+	SETCOLORBYNAME gray
+PRINTFORM [詠唱経験{ABLUPEXP:詠唱経験}以上]
+RESETCOLOR

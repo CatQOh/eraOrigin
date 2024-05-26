@@ -1,0 +1,357 @@
+﻿;-------------------------------------------------
+;助手を犯させる
+;-------------------------------------------------
+@USERCOM_ABLE_助手を犯させる
+#FUNCTION
+;ゲーセンに居る場合はトイレじゃないとできない
+コマンド実行条件 += "ゲーセンではトイレじゃないと実行できない/"
+SIF TEQUIP:ゲームセンター && !TEQUIP:トイレ
+	COMRESULT = 0
+;助手が居ないとダメ
+コマンド実行条件 += "助手が必要/"
+SIF ASSI == -1
+	COMRESULT = 0
+;調教者が主人じゃないとダメ
+コマンド実行条件 += "実行者が主人じゃないと実行できない/"
+SIF PLAYER != MASTER
+	COMRESULT = 0
+;助手が小人体型の場合、主人が禁断の知識持ちじゃないとダメ
+コマンド実行条件 += "助手が小人体型の場合、主人に禁断の知識が必要/"
+SIF ASSI > 0 && TALENT:ASSI:小人体型 && !TALENT:MASTER:禁断の知識
+	COMRESULT = 0
+;奴隷がペニス無いとダメ
+コマンド実行条件 += "対象に男性器が必要/"
+SIF !PENIS(TARGET)
+	COMRESULT = 0
+;Ｐ使用中はダメ
+コマンド実行条件 += "対象の男性器に道具使用中は実行できない/"
+SIF Ｐ使用中(TARGET) || Ｐ使用不可(TARGET)
+	COMRESULT = 0
+
+;触手調教中はダメ
+コマンド実行条件 += "触手召喚中は実行できない/"
+SIF TEQUIP:触手
+	COMRESULT = 0
+;お風呂場プレイ中はプレイマットが無いとダメ
+コマンド実行条件 += "お風呂場ではプレイマット(アイテム)が無いと実行できない/"
+SIF TEQUIP:お風呂場 && !ITEM:プレイマット
+	COMRESULT = 0
+;助手がＶ使用中はダメ
+コマンド実行条件 += "助手がV使用中は実行できない/"
+SIF Ｖ使用中(ASSI)
+	COMRESULT = 0
+;アニマルだと無理
+コマンド実行条件 += "助手が[アニマル]だと実行できない/"
+SIF ASSI > 0 && TALENT:ASSI:アニマル
+	COMRESULT = 0
+コマンド実行条件 += "睡眠中は実行できない/"
+SIF TEQUIP:睡眠
+	COMRESULT = 0
+IF MOD:STS
+	コマンド実行条件 += "屍姦中は実行できない/"
+	SIF CFLAG:死亡
+		COMRESULT = 0
+ENDIF
+
+RETURNF COMRESULT
+
+@実行判定_助手を犯させる
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC 実効値, 2
+;-------------------------------------------------
+;実行判定処理
+;-------------------------------------------------
+;すべての命令に共通の要素を考慮
+;(従順が高いと命令に従いやすいなど)
+CALL COM_ORDER
+
+実効値 = RESULT
+
+;ABL:欲望
+IF ABL:欲望
+	実効値 += ABL:欲望
+	PRINTFORM +欲望LV{ABL:欲望}({ABL:欲望})
+ENDIF
+;ABL:奉仕精神
+IF ABL:奉仕精神
+	実効値 += ABL:奉仕精神*4
+	PRINTFORM +奉仕精神LV{ABL:奉仕精神}({ABL:奉仕精神*4})
+ENDIF
+;快楽刻印
+IF MARK:快楽刻印
+	実効値 += MARK:快楽刻印*2
+	PRINTFORM +快楽刻印LV{MARK:快楽刻印}({MARK:快楽刻印*2})
+ENDIF
+
+CALL COM_ORDER_欲情, 0
+実効値 += RESULT
+
+FOR LCOUNT, 0, VARSIZE("TALENT")
+	実効値:1 = 0
+	SIF !TALENT:LCOUNT
+		CONTINUE
+	SELECTCASE TALENTNAME:LCOUNT
+		CASE "淫魔"
+			実効値:1 = 10
+		CASE "淫乱"
+			実効値:1 = 5
+		CASE "恥じらい"
+			実効値:1 = -5
+		CASE "献身的"
+			実効値:1 = 6
+		CASE "快感の否定"
+			SIF FALLTYPE(TARGET) != 2
+				実効値:1 = -5
+		CASE "快感に素直"
+			実効値:1 = 3
+		CASE "貞操観念"
+			実効値:1 = -12
+	ENDSELECT
+	IF 実効値:1
+		PRINTFORM \@SIGN(実効値:1) == 1 ? + # - \@%TALENTNAME:LCOUNT%({ABS(実効値:1)})
+		実効値 += 実効値:1
+	ENDIF
+NEXT
+
+;助手との相性
+SELECTCASE 相性値(TARGET, ASSI)
+	CASE IS < 100
+		実効値 -= (100-相性値(TARGET, ASSI))/10+1
+		PRINTFORM -相性悪い({(100-相性値(TARGET, ASSI))/10+1})
+	CASE IS > 100
+		実効値 += (相性値(TARGET, ASSI)-100)/10+1
+		PRINTFORM +相性良い({(相性値(TARGET, ASSI)-100)/10+1})
+ENDSELECT
+
+;助手が処女
+IF TALENT:ASSI:処女
+	実効値 -= 15
+	PRINTFORM -助手が処女(15)
+ENDIF
+
+;40以上で実行
+CALL 実効値判定, 実効値, 40
+
+RETURN RESULT
+
+@COM_助手を犯させる
+#DIM DYNAMIC 増加量
+
+PRINTL 助手を犯させる
+
+SIF !TFLAG:実行判定無視
+	CALLFORM 実行判定_%SELECTCOMS%
+SIF !RESULT && !TFLAG:実行判定無視
+	RETURN 0
+
+;-------------------------------------------------
+;実行決定
+;-------------------------------------------------
+CALL KOJO_MESSAGE_COM
+
+;実行者が奴隷であるフラグ
+TFLAG:奴隷実行 = 1
+
+IF VAGINA(ASSI)
+	TFLAG:奴隷挿入箇所 = 1
+ELSE
+	TFLAG:奴隷挿入箇所 = 2
+ENDIF
+
+;-------------------------------------------------
+;脱衣
+;-------------------------------------------------
+TEQUIP:全身上着 = 0
+TEQUIP:下半身上着 = 0
+TEQUIP:全身上着 = 0
+
+IF !CFLAG:ASSI:挿入可
+	TEQUIP:ASSI:下半身上着 = 0
+	TEQUIP:ASSI:全身上着 = 0
+ENDIF
+TEQUIP:ASSI:下半身下着 = 0
+
+;-------------------------------------------------
+;射精ゲージチェック（奴隷）
+;-------------------------------------------------
+増加量 = 射精ゲージ計算_奴隷挿入(800)
+
+;ABL:助手の技巧をみる
+増加量 += (増加量/5)*ABL:PLAYER:技巧
+
+;ABL:技巧をみる
+増加量 += 増加量/5*ABL:技巧
+
+CALL 射精ゲージ増加, 増加量, TARGET
+
+;-------------------------------------------------
+;射精ゲージチェック（助手）
+;-------------------------------------------------
+増加量 = 500
+
+;ABL:技巧をみる
+増加量 += 増加量/10*8*ABL:技巧
+
+IF VAGINA(ASSI)
+	;助手のABL:Ｖ感覚をみる
+	SELECTCASE ABL:ASSI:Ｖ感覚
+		CASE 0
+			TIMES 増加量 , 0.50
+		CASE 1
+			TIMES 増加量 , 0.80
+		CASE 2
+			TIMES 増加量 , 1.00
+		CASE 3
+			TIMES 増加量 , 1.50
+		CASE 4
+			TIMES 増加量 , 2.00
+		CASEELSE
+			増加量 += (増加量/2)*ABL:Ｖ感覚
+	ENDSELECT
+ELSE
+	;助手のABL:Ａ感覚をみる
+	SELECTCASE ABL:ASSI:Ａ感覚
+		CASE 0
+			TIMES 増加量 , 0.50
+		CASE 1
+			TIMES 増加量 , 0.80
+		CASE 2
+			TIMES 増加量 , 1.00
+		CASE 3
+			TIMES 増加量 , 1.50
+		CASE 4
+			TIMES 増加量 , 2.00
+		CASEELSE
+			増加量 += (増加量/2)*ABL:Ａ感覚
+	ENDSELECT
+ENDIF
+
+CALL 射精ゲージ増加, 増加量, ASSI
+
+;-------------------------------------------------
+;ソース追加処理
+;-------------------------------------------------
+;消費体力、気力
+LOSEBASE:体力 += 50
+LOSEBASE:気力 += 100
+
+SOURCE:快C = 500
+SOURCE:性行動 = 1000
+SOURCE:達成 = 300
+SOURCE:屈従 = 500
+SOURCE:逸脱 = 500
+SOURCE:反感 = 300
+
+;-------------------------------------------------
+;特殊ソース処理
+;-------------------------------------------------
+;抑圧、抵抗持ちには、抑鬱ソース追加
+SIF TALENT:抑圧 || TALENT:抵抗
+	SOURCE:鬱屈 += 500
+
+;助手が処女
+IF TALENT:ASSI:処女
+	IF 陥落(ASSI)
+		IF TALENT:ASSI:性転換済
+			CFLAG:ASSI:性転換処女の奪われ方 = 2
+		ELSE
+			CFLAG:ASSI:処女の奪われ方 = 2
+		ENDIF
+	ELSEIF 相性値(ASSI, TARGET) > 100
+		IF TALENT:ASSI:性転換済
+			CFLAG:ASSI:性転換処女の奪われ方 = 3
+		ELSE
+			CFLAG:ASSI:処女の奪われ方 = 3
+		ENDIF		
+	ELSE
+		IF TALENT:ASSI:性転換済
+			CFLAG:ASSI:性転換処女の奪われ方 = 1
+		ELSE
+			CFLAG:ASSI:処女の奪われ方 = 1
+		ENDIF
+	ENDIF
+	TALENT:ASSI:処女 = 0
+	PRINTL ＜助手処女喪失＞
+	IF TALENT:ASSI:性転換済
+		CSTR:ASSI:性転換処女 = %NAME:TARGET%
+	ELSE
+		CSTR:ASSI:処女 = %NAME:TARGET%
+	ENDIF
+	;レイプ同然だった場合、屈服逸脱が倍化し、従順が2になる。ただし一度きり
+	IF (!陥落(ASSI) && 相性値(ASSI, TARGET) < 100) && !CFLAG:助手レイプ
+		TIMES SOURCE:屈従 , 5.00
+		TIMES SOURCE:逸脱 , 3.00
+		;異常経験追加（一回きり）
+		PRINTL ＜奴隷→助手強姦＞
+		CALL EXPUP, "異常経験", 1
+		IF ABL:従順 < 2
+			PRINTL そして従順が2になった
+			ABL:従順 = 2
+		ENDIF
+		CFLAG:助手レイプ++
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;絶頂チェック
+;-------------------------------------------------
+CALL SOURCE_CHECK_CVAB
+
+;-------------------------------------------------
+;射精チェック
+;-------------------------------------------------
+SELECTCASE TFLAG:奴隷挿入箇所
+	CASE 1
+		CALL SAMEN_CHECK_T, 2
+	CASE 2
+		CALL SAMEN_CHECK_T, 7
+ENDSELECT
+CALL SAMEN_CHECK_A, 6
+
+SELECTCASE TFLAG:奴隷挿入箇所
+	CASE 1
+		CALL SAMEN_SHOOT_T, 2, NOWEX:射精, ASSI
+	CASE 2
+		CALL SAMEN_SHOOT_T, 7, NOWEX:射精, ASSI
+ENDSELECT
+CALL SAMEN_SHOOT, 6, NOWEX:ASSI:射精, ASSI, TARGET
+
+;-------------------------------------------------
+;汚れの処理
+;-------------------------------------------------
+;射精に関係なく行われる処理はここから
+;奴隷のペニスにアナル汚れ
+SIF !VAGINA(ASSI)
+	SETBIT STAIN:ペニス, 3
+;奴隷のペニス⇔助手の膣内の汚れが移動
+STAIN:ペニス |= STAIN:ASSI:膣内
+STAIN:ASSI:膣内 |= STAIN:ペニス
+
+;-------------------------------------------------
+;経験の処理
+;-------------------------------------------------
+IF SEX(TARGET) == SEX(ASSI)
+	CALL EXPUP_BASE, 4, 3
+ELSE
+	CALL EXPUP_BASE, 1, 3
+ENDIF
+
+IF VAGINA(ASSI)
+	CALL EXPUP, "Ｖ経験", 2, ASSI
+ELSE
+	CALL EXPUP, "Ａ経験", 2, ASSI
+ENDIF
+CALL EXPUP, "性交経験", 1
+CALL EXPUP, "性交経験", 1, ASSI
+	
+
+;魔力回復
+IF !避妊具(TARGET)
+	CALL 魔力回復, 3, ASSI
+	CALL 獣人催淫, 1, ASSI
+ENDIF
+
+経験回数:ASSI:(NOF(TARGET)) += 1
+経験回数:TARGET:(NOF(ASSI)) += 1
+
+RETURN 1

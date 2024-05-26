@@ -1,0 +1,915 @@
+﻿@タイトル_MOD
+#DIMS DYNAMIC HTML
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC LCOUNT1
+
+SIF 安全係数設定
+	MODページ = 1
+
+SELECTCASE MODページ
+	CASE 0
+		CALL COLUMNPRINTL, 0, "□エクストラMODの設定ができます"
+		CALL COLUMNPRINTL, 0, "　エクストラMODとは、セーブデータ全体で共有されるオプションで、"
+		CALL COLUMNPRINTL, 0, "　ゲームバランスに大きな影響を及ぼしかねない機能をあえて解禁することで、遊びの幅を広げる試みです"
+		CALL COLUMNPRINTL, 0, "　必要に応じて設定してください。段位認定モードでは適用されません"
+		CALL COLUMNPRINTL, 0, "　また、体質変更MODは既に解禁済みのキャラにも適用されません。新たに解禁したキャラにのみ適用されます"
+		CALL COLUMNPRINTL, 0, ""
+		CALL COLUMNPRINTL, 0, "□性別関連MOD(新しく購入、追加したキャラにのみ適用。各MODの重複は不可)"
+		CALL COLUMNPRINTL, 0, @"　[1] - MOD:男性化(現在:\@ MOD:男性化 ? オン # オフ \@) 全てのキャラが男性になる", @"\@ MOD:男性化 ? deepskyblue #\@"
+		CALL COLUMNPRINTL, 0, @"　[2] - MOD:女性化(現在:\@ MOD:女性化 ? オン # オフ \@) 全てのキャラが女性になる", @"\@ MOD:女性化 ? deepskyblue #\@"
+		CALL COLUMNPRINTL, 0, @"　[3] - MOD:女性化TSバストサイズランダム(現在:\@ MOD:女性化TSバストサイズランダム ? オン # オフ \@) 全てのキャラが女性になりバストサイズがランダムで決定される", @"\@ MOD:女性化TSバストサイズランダム ? deepskyblue #\@"
+		CALL COLUMNPRINTL, 0, @"　[4] - MOD:性転換(現在:\@ MOD:性転換 ? オン # オフ \@) 全てのキャラが性転換する", @"\@ MOD:性転換 ? deepskyblue #\@"
+		CALL COLUMNPRINTL, 0, @"　[5] - MOD:性転換TSバストサイズランダム(現在:\@ MOD:性転換TSバストサイズランダム ? オン # オフ \@) 全てのキャラが性転換し女性化したキャラのバストサイズがランダムで決定される", @"\@ MOD:性転換TSバストサイズランダム ? deepskyblue #\@"
+		CALL COLUMNPRINTL, 0, ""
+		CALL COLUMNPRINTL, 0, "□体質関連MOD(新しく購入、追加したキャラにのみ適用)"
+		CALL COLUMNPRINTL, 0, @"　[11] - MOD:爆乳(現在:\@ MOD:爆乳 ? オン # オフ \@) 全ての女性キャラが爆乳になる。MOD:絶壁との重複不可", @"\@ MOD:爆乳 ? deepskyblue #\@"
+		CALL COLUMNPRINTL, 0, @"　[12] - MOD:絶壁(現在:\@ MOD:絶壁 ? オン # オフ \@) 全ての女性キャラが絶壁になる。MOD:爆乳との重複不可", @"\@ MOD:絶壁 ? deepskyblue #\@"
+		CALL COLUMNPRINTL, 0, @"　[13] - MOD:母乳(現在:\@ MOD:母乳 ? オン # オフ \@) 全ての女性キャラが母乳体質になる", @"\@ MOD:母乳 ? deepskyblue #\@"
+		CALL COLUMNPRINTL, 0, @"　[14] - MOD:おもらし(現在:\@ MOD:おもらし ? オン # オフ \@) 全てのキャラが漏らすようになる", @"\@ MOD:おもらし ? deepskyblue #\@"
+		CALL COLUMNPRINTL, 0, @"　[15] - MOD:ふたなり(現在:\@ MOD:ふたなり ? オン # オフ \@) 全てのキャラがふたなりになる", @"\@ MOD:ふたなり ? deepskyblue #\@"
+		CALL COLUMNPRINTL, 0, @"　[16] - MOD:ロリショタ(現在:\@ MOD:ロリショタ ? オン # オフ \@) 全てのキャラが小柄体型になる。MOD:大人化との重複不可", @"\@ MOD:ロリショタ ? deepskyblue #\@"
+		CALL COLUMNPRINTL, 0, @"　[17] - MOD:大人化(現在:\@ MOD:大人化 ? オン # オフ \@) 全てのキャラが大人体型になる。MOD:ロリショタとの重複不可", @"\@ MOD:大人化 ? deepskyblue #\@"
+		CALL COLUMNPRINTL, 0, @"　[18] - MOD:チャレンジ(現在:\@ MOD:チャレンジ ? オン # オフ \@) 全てのキャラの性経験が皆無になる 旧チャレンジモード", @"\@ MOD:チャレンジ ? deepskyblue #\@"
+		CALL COLUMNPRINTL, 0, @"　[19] - MOD:スライム(現在:\@ MOD:スライム ? オン # オフ \@) 全てのキャラがスライムになる", @"\@ MOD:スライム ? deepskyblue #\@"
+		CALL COLUMNPRINTL, 0, @"　[20] - MOD:ヤンデレ(現在:\@ MOD:ヤンデレ ? オン # オフ \@) 全てのキャラがヤンデレになる", @"\@ MOD:ヤンデレ ? deepskyblue #\@"
+		CALL COLUMNPRINTL, 0, ""
+	CASE 1
+		CALL COLUMNPRINTL, 0, "□妊娠関連MOD(既存のキャラにも適用される)"
+		CALL COLUMNPRINTL, 0, @"　[31] - MOD:人口飽和(現在:\@ MOD:人口飽和 ? オン # オフ \@) 中出しした翌日に妊娠し、すぐに出産するMOD 妊娠期間MODと併用不可", @"\@ MOD:人口飽和 ? deepskyblue #\@"
+		CALL COLUMNPRINTL, 0, @"　[32] - MOD:百発百中(現在:\@ MOD:百発百中 ? オン # オフ \@) 着床する確率が100\%になるMOD", @"\@ MOD:百発百中 ? deepskyblue #\@"
+		CALL COLUMNPRINTL, 0, @"　[33] - MOD:百発零中(現在:\@ MOD:百発零中 ? オン # オフ \@) 着床する確率が0\%になるMOD", @"\@ MOD:百発零中 ? deepskyblue #\@"
+		CALL COLUMNPRINTL, 0, @"　[34] - MOD:排卵周期(現在:\@ MOD:排卵周期 ? オン # オフ \@) 安全日・危険日の概念が発生します", @"\@ MOD:排卵周期 ? deepskyblue #\@"
+		CALL COLUMNPRINTL, 0, @"　[35] - MOD:安全係数(現在:\@ MOD:安全係数 ? オン # オフ \@) 安全日の妊娠確率の最大値を任意のものにします(オフで4.0\%)", @"\@ MOD:安全係数 ? deepskyblue #\@"
+		IF 安全係数設定
+			CALL COLUMNPRINT, 0, @"　　確率を10倍の値で入力してください　　", "orange"
+			CALL COLUMNPRINT, 0, @"[-1]戻る ", "orange"
+			CALL COLUMNPRINT, 0, @"[0]0.0\% ", "orange"
+			CALL COLUMNPRINT, 0, @"[20]2.0\% ", "orange"
+			CALL COLUMNPRINT, 0, @"[40]4.0\% ", "orange"
+			CALL COLUMNPRINT, 0, @"[60]6.0\% ", "orange"
+			CALL COLUMNPRINT, 0, @"[80]8.0\% ", "orange"
+			CALL COLUMNPRINT, 0, @"[100]10.0\%", "orange"
+			CALL COLUMNPRINTL, 0, ""
+		ELSE
+			CALL COLUMNPRINTL, 0, @"　　現在の設定…{安全日妊娠確率/10}.{安全日妊娠確率%10}\%　　[345] 設定する"
+		ENDIF
+		;CALL COLUMNPRINTL, 0, @"　[36] - MOD:妊娠確率(現在:\@ MOD:妊娠確率 ? オン # オフ \@) 妊娠確率や危険日かどうかなどを可視化します", @"\@ MOD:妊娠確率 ? deepskyblue #\@"
+		CALL COLUMNPRINTL, 0, @"　[37] - MOD:妊娠期間(現在:\@ MOD:妊娠期間上限 ? {MOD:妊娠期間下限}～{MOD:妊娠期間上限}日 # オフ \@) 妊娠期間の日数を設定します(下限～上限の日数でランダム化 人口飽和と併用不可)", @"\@ MOD:妊娠期間上限 ? deepskyblue #\@"
+		CALL COLUMNPRINTL, 0, ""
+		CALL COLUMNPRINTL, 0, "□部位感覚素質MOD(新しく購入、追加したキャラにのみ適用。また種族:宇宙人の素質変更無効化)"
+		FOR LCOUNT, GETNUM(MOD, "Ｃ素質"), GETNUM(MOD, "Ｂ素質")+1
+			CALL COLUMNPRINT, 0, @"　%ERDNAME(MOD, LCOUNT)%… "
+			CALL COLUMNPRINT, 0, @"[{LCOUNT*100+1}] なし　", @"\@ ABS(MOD:LCOUNT) == 1 ? deepskyblue #\@"
+			CALL COLUMNPRINT, 0, @"[{LCOUNT*100+2}] 敏感　", @"\@ ABS(MOD:LCOUNT) == 2 ? deepskyblue #\@"
+			CALL COLUMNPRINT, 0, @"[{LCOUNT*100+3}] 鈍感　", @"\@ ABS(MOD:LCOUNT) == 3 ? deepskyblue #\@"
+			CALL COLUMNPRINT, 0, @"[{LCOUNT*100}] オフにする　"
+			SIF ERDNAME(MOD, LCOUNT) == "Ｖ素質"
+				CALL COLUMNPRINT, 0, @"[{LCOUNT*100+99}] 男性にも適用", @"\@ SIGN(MOD:LCOUNT) == -1 ? deepskyblue #\@"
+			SIF ERDNAME(MOD, LCOUNT) == "Ｂ素質"
+				CALL COLUMNPRINT, 0, @"[{LCOUNT*100+99}] 全てオフ"
+			CALL COLUMNPRINTL, 0, ""
+		NEXT
+		CALL COLUMNPRINTL, 0, ""
+		CALL COLUMNPRINTL, 0, "□陥落素質MOD(新しく購入、追加したキャラにのみ適用。各MODの重複は不可。一度適用されたセーブでは実績解除不可)"
+		CALL COLUMNPRINTL, 0, @"　[51] MOD:恋慕(現在:\@ MOD:恋慕 ? オン # オフ \@ キャラが最初から恋慕状態になる)", @"\@ MOD:恋慕 ? deepskyblue #\@"
+		CALL COLUMNPRINTL, 0, @"　[52] MOD:淫乱(現在:\@ MOD:淫乱 ? オン # オフ \@ キャラが最初から淫乱状態になる)", @"\@ MOD:淫乱 ? deepskyblue #\@"
+		CALL COLUMNPRINTL, 0, @"　[53] MOD:服従(現在:\@ MOD:服従 ? オン # オフ \@ キャラが最初から服従状態になる)", @"\@ MOD:服従 ? deepskyblue #\@"
+		CALL COLUMNPRINTL, 0, ""
+	CASE 2
+		CALL COLUMNPRINTL, 0, "□バスト特化MOD(新しく購入、追加したキャラにのみ適用)"
+		CALL COLUMNPRINTL, 0, @"　[81] - MOD:バストサイズカスタム(現在:\@ MOD:バストサイズカスタム ? オン # オフ \@) 全ての女性キャラが元のバストサイズに応じて変化する", @"\@ MOD:バストサイズカスタム ? deepskyblue #\@"
+		CALL COLUMNPRINTL, 0, "　　現在の設定   絶壁に 貧乳に 並乳に 巨乳に 豊乳に 爆乳に 爆乳+1 爆乳+2 爆乳+3 爆乳+4 爆乳+5 爆乳+6 爆乳+7 爆乳+8 爆乳+9"
+		FOR LCOUNT, 1, 7
+			SIF バストサイズ指定:LCOUNT == 0
+				バストサイズ指定:LCOUNT = LCOUNT
+			CALL COLUMNPRINT, 0, @"　　%バストサイズ(LCOUNT)%→%バストサイズ(バストサイズ指定:LCOUNT)%"
+			SIF バストサイズ指定:LCOUNT < 7
+				CALL COLUMNPRINT, 0, "  "
+			FOR LCOUNT1, 1, 16
+				IF バストサイズ指定:LCOUNT == LCOUNT1
+					CALL COLUMNPRINT, 0, @" [{8000+100*LCOUNT+LCOUNT1}]", "deepskyblue"
+				ELSE
+					CALL COLUMNPRINT, 0, @" [{8000+100*LCOUNT+LCOUNT1}]"
+				ENDIF
+			NEXT
+			CALL COLUMNPRINTL, 0, ""
+		NEXT
+		CALL COLUMNPRINTL, 0, @"　[82] - MOD:バストサイズ限界突破(現在:\@ MOD:バストサイズ限界突破 ? オン # オフ \@) バストサイズを爆乳よりも大きくできる", @"\@ MOD:バストサイズ限界突破 ? deepskyblue #\@"
+		CALL COLUMNPRINTL, 0, @"　[83] - MOD:パイズリ奉仕特化(現在:\@ MOD:パイズリ奉仕特化 ? オン # オフ \@) パイズリによる快Ｂ取得が0になるかわりに他が微増する", @"\@ MOD:パイズリ奉仕特化 ? deepskyblue #\@"
+		CALL COLUMNPRINTL, 0, @"　[84] - MOD:朝パイズリ特化(現在:\@ MOD:朝パイズリ特化 ? オン # オフ \@) 日付変更時の奉仕イベントで可能なら必ずパイズリになりイベントが強化される", @"\@ MOD:朝パイズリ特化 ? deepskyblue #\@"
+		CALL COLUMNPRINTL, 0, @"　[85] - MOD:バスト関連ステータス表示(現在:\@ MOD:バスト関連ステータス表示 ? オン # オフ \@) バスト関連に特化したステータスが見られます", @"\@ MOD:バスト関連ステータス表示 ? deepskyblue #\@"
+		CALL COLUMNPRINTL, 0, @"　[86] - MOD:着衣パイズリ(現在:\@ MOD:着衣パイズリ ? オン # オフ \@) 着衣パイズリができるようになる", @"\@ MOD:着衣パイズリ ? deepskyblue #\@"
+		CALL COLUMNPRINTL, 0, @"　[87] - MOD:バストサイズ男性対象(現在:\@ MOD:バストサイズ男性対象 ? オン # オフ \@) バスト系MODを男性にも適用する", @"\@ MOD:バストサイズ男性対象 ? deepskyblue #\@"
+		CALL COLUMNPRINTL, 0, ""
+		CALL COLUMNPRINTL, 0, "□その他MOD"
+		HTML += COLUMNPRINTF(@"　[99] - Scrap that Slave!(現在:\@ MOD:STS ? オン # オフ \@) キャラを", @"\@ MOD:STS ? deepskyblue #\@")
+		HTML += COLUMNPRINTF("解体", "red")
+		HTML += COLUMNPRINTF("して血液やDNAデータ、その他リソースを回収できるようにする", @"\@ MOD:STS ? deepskyblue #\@")
+		CALL COLUMNPRINTL, 0, HTML	
+		CALL COLUMNPRINTL, 0, @"　[100] - MOD:Scat MOD(現在:\@ MOD:SCAT ? オン # オフ \@) 大スカトロ要素が追加される", @"\@ MOD:SCAT ? deepskyblue #\@"
+		CALL COLUMNPRINTL, 0, @"　[101] - MOD:Scat MOD2(現在:\@ MOD:SCAT2 ? オン # オフ \@) 小スカトロ要素が追加される", @"\@ MOD:SCAT2 ? deepskyblue #\@"
+		CALL COLUMNPRINTL, 0, ""
+
+		CALL COLUMNPRINTL, 0, "  [-1] - MODをすべてオフにする"
+ENDSELECT
+CALL COLUMNDRAWLINE, 0
+CALL COLUMNPRINT, 0, @"%RETURNSPACE(MODページ > 0, "[201] 前ページ ")%"
+CALL COLUMNPRINT, 0, @"%RETURNSPACE(MODページ < 2, "[209] 次ページ")%"
+CALL COLUMNPRINTL, 0, ""
+
+@タイトル_MOD_INPUT
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC サイズ7
+
+IF 安全係数設定
+	IF CRESULT:1 >= 1000
+		安全日妊娠確率 = 1000
+	ELSEIF CRESULT:1 >= 0
+		安全日妊娠確率 = CRESULT:1
+	ENDIF
+	安全係数設定 = 0
+ELSE
+	SELECTCASE CRESULT:1
+		CASE -1
+			VARSET MOD
+		CASE 201
+			MODページ--
+		CASE 209
+			MODページ++
+		CASE 1
+			INVERTBIT MOD:男性化, 0
+			MOD:女性化 = 0
+			MOD:女性化TSバストサイズランダム = 0
+			MOD:性転換 = 0
+			MOD:性転換TSバストサイズランダム = 0
+		CASE 2
+			INVERTBIT MOD:女性化, 0
+			MOD:男性化 = 0
+			MOD:女性化TSバストサイズランダム = 0
+			MOD:性転換 = 0
+			MOD:性転換TSバストサイズランダム = 0
+		CASE 3
+			INVERTBIT MOD:女性化TSバストサイズランダム, 0
+			MOD:男性化 = 0
+			MOD:女性化 = 0
+			MOD:性転換 = 0
+			MOD:性転換TSバストサイズランダム = 0
+		CASE 4
+			INVERTBIT MOD:性転換, 0
+			MOD:男性化 = 0
+			MOD:女性化 = 0
+			MOD:女性化TSバストサイズランダム = 0
+			MOD:性転換TSバストサイズランダム = 0
+		CASE 5
+			INVERTBIT MOD:性転換TSバストサイズランダム, 0
+			MOD:男性化 = 0
+			MOD:女性化 = 0
+			MOD:女性化TSバストサイズランダム = 0
+			MOD:性転換 = 0
+		CASE 11
+			INVERTBIT MOD:爆乳, 0
+			MOD:絶壁 = 0
+			MOD:バストサイズカスタム = 0
+		CASE 12
+			INVERTBIT MOD:絶壁, 0
+			MOD:爆乳 = 0
+			MOD:バストサイズカスタム = 0
+		CASE 16
+			INVERTBIT MOD:ロリショタ, 0
+			MOD:大人化 = 0
+		CASE 17
+			INVERTBIT MOD:大人化, 0
+			MOD:ロリショタ = 0
+		CASE 34
+			INVERTBIT MOD:排卵周期, 0
+			SIF !MOD:排卵周期
+				MOD:安全係数 = 0
+		CASE 35
+			INVERTBIT MOD:安全係数, 0
+			SIF MOD:安全係数
+				MOD:排卵周期 = 1
+		CASE 37
+			PRINTL 妊娠期間を指定してください
+			DO
+				PRINTFORML [1]下限({MOD:妊娠期間下限}日)～[2]上限({MOD:妊娠期間上限}日)
+				PRINTL [0]戻る
+				BINPUT
+				SELECTCASE RESULT
+					CASE 0
+						BREAK
+					CASE 1
+						PRINTL 下限を入力してください
+						INPUT
+						MOD:妊娠期間下限 = RESULT
+						SIF MOD:妊娠期間下限 > MOD:妊娠期間上限
+							MOD:妊娠期間上限 = MOD:妊娠期間下限
+					CASE 2
+						PRINTL 上限を入力してください
+						INPUT
+						MOD:妊娠期間上限 = RESULT
+						MOD:人口飽和 = 0
+				ENDSELECT
+			LOOP 1
+		CASE 345
+			安全係数設定 = 1
+		CASE 4899
+			MOD:Ｖ素質 *= -1
+		CASE 5099
+			MOD:Ｃ素質 = 0
+			MOD:Ｖ素質 = 0
+			MOD:Ａ素質 = 0
+			MOD:Ｂ素質 = 0
+		CASE 4700 TO 5003
+			IF MOD:((CRESULT:1)/100) < 0
+				MOD:((CRESULT:1)/100) = ((CRESULT:1)%100)*-1
+			ELSE
+				MOD:((CRESULT:1)/100) = (CRESULT:1)%100
+			ENDIF
+		CASE 51
+			INVERTBIT MOD:恋慕, 0
+			MOD:淫乱 = 0
+			MOD:服従 = 0
+		CASE 52
+			INVERTBIT MOD:淫乱, 0
+			MOD:恋慕 = 0
+			MOD:服従 = 0
+		CASE 53
+			INVERTBIT MOD:服従, 0
+			MOD:恋慕 = 0
+			MOD:淫乱 = 0
+		CASE 81
+			INVERTBIT MOD:バストサイズカスタム, 0
+			MOD:絶壁 = 0
+			MOD:爆乳 = 0
+			IF MOD:バストサイズカスタム
+				サイズ7 = 0
+				FOR LCOUNT, 1, 7
+					SIF バストサイズ指定:LCOUNT >= 7
+						サイズ7 = 1
+				NEXT
+				SIF サイズ7
+					MOD:バストサイズ限界突破 = 1
+			ENDIF
+		CASE 82
+			サイズ7 = 0
+			FOR LCOUNT, 1, 7
+				SIF バストサイズ指定:LCOUNT >= 7
+					サイズ7 = 1
+			NEXT
+			IF サイズ7 && MOD:バストサイズカスタム
+				MOD:バストサイズ限界突破 = 1
+			ELSE
+				INVERTBIT MOD:バストサイズ限界突破, 0
+			ENDIF
+		CASE 8101 TO 8700
+			MOD:バストサイズカスタム = 1
+			MOD:絶壁 = 0
+			MOD:爆乳 = 0
+			バストサイズ指定:((CRESULT:1-1)/100 - 80) = (CRESULT:1-1)%100 + 1
+			SIF (CRESULT:1-1)%100 + 1>= 7
+				MOD:バストサイズ限界突破 = 1
+		CASEELSE
+			INVERTBIT MOD:(CRESULT:1), 0
+			IF ERDNAME(MOD, CRESULT:1) == "人口飽和"
+				MOD:妊娠期間下限 = 0
+				MOD:妊娠期間上限 = 0
+			ENDIF
+	ENDSELECT
+	SAVEGLOBAL
+ENDIF
+
+
+@MOD情報セーブ
+SIF MOD:恋慕 || MOD:淫乱 || MOD:服従
+	実績解除不可 = 1
+
+@SHOW_MODS, カラム
+#DIMS DYNAMIC 表示用変数, 10
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC カラム
+#DIM DYNAMIC 処理数
+
+VARSET 表示用変数, "　"
+
+FOR LCOUNT, 0, VARSIZE("MOD")
+	IF MOD:LCOUNT
+		表示用変数:(処理数/6) += @"[MOD:%ERDNAME(MOD, LCOUNT)%]"
+		処理数++
+	ENDIF
+NEXT
+
+IF 表示用変数 != "　"
+	IF カラム
+		CALL COLUMNPRINTL, 0, @"%I18N("□適用中のMOD")%"
+		FOR LCOUNT, 0, VARSIZE("表示用変数")
+			SIF 表示用変数:LCOUNT != "　"
+				CALL COLUMNPRINTL, 0, @"%表示用変数:LCOUNT%"
+		NEXT
+		CALL COLUMNDRAWLINE, 0
+	ELSE
+		CALL CHECKDRAWLINE
+		PRINTFORML %I18N("□適用中のMOD")%
+		FOR LCOUNT, 0, VARSIZE("表示用変数")
+			SIF 表示用変数:LCOUNT != "　"
+				PRINTFORML %表示用変数:LCOUNT%
+		NEXT
+		DRAWLINE
+	ENDIF
+ENDIF
+
+@APPLY_MOD_男性化, 対象
+#DIM DYNAMIC 対象
+#DIM DYNAMIC LTARGET
+
+LTARGET = TARGET
+TARGET = 対象
+
+IF TALENT:性別 == 2
+	TALENT:性別 = 1
+	;以下MOD:ふたなりが入ってなければ適用
+	IF !MOD:ふたなり
+		IF TALENT:処女
+			TALENT:童貞 = 1
+			TALENT:処女 = 0
+		ELSE
+			CSTR:童貞 = %CSTR:処女%
+			CSTR:処女 = 
+		ENDIF
+		IF TALENT:濡れやすい
+			TALENT:勃ちやすい = 1
+			TALENT:濡れやすい = 0
+		ENDIF
+		IF TALENT:濡れにくい
+			TALENT:勃ちにくい = 1
+			TALENT:濡れにくい = 0
+		ENDIF
+		;消す要素
+		EXP:Ｖ経験 = 0
+		EXP:膣射経験 = 0
+		EXP:Ｖ拡張経験 = 0
+		EXP:出産経験 = 0
+		EXP:流産経験 = 0
+		ABL:Ｖ感覚 = 0
+		TALENT:Ｖ敏感 = 0
+		TALENT:Ｖ鈍感 = 0
+		;性経験履歴 経験回数、人数以外はリセットで
+		VARSET 中出し回数
+		VARSET アナル中出し回数
+		VARSET 孕ませ回数
+		VARSET 中出され回数
+		VARSET アナル中出され回数
+		VARSET 孕み回数
+		VARSET パイズリ回数
+		VARSET 挟射回数
+
+		VARSET モブ中出し回数
+		VARSET モブアナル中出し回数
+		VARSET モブ孕ませ回数
+		VARSET モブ中出され回数
+		VARSET モブアナル中出され回数
+		VARSET モブ孕み回数
+		VARSET モブパイズリ人数
+		VARSET モブパイズリ回数
+		VARSET モブ挟射回数
+	ENDIF
+	;性別変わって適応される要素
+	EXP:射精経験 += EXP:絶頂経験
+	EXP:ゲイ経験 += EXP:レズ経験
+	EXP:レズ経験 = 0
+	IF !EXP:ゲイ経験
+		EXP:精液経験 = 0
+		EXP:フェラ経験 = 0
+		EXP:Ａ拡張経験 = 0
+	ENDIF
+	ABL:ホモっ気 += ABL:レズっ気
+	ABL:レズっ気 = 0
+	ABL:ゲイ中毒 += ABL:レズ中毒
+	ABL:レズ中毒 = 0
+	
+	;消す要素
+	EXP:噴乳経験 = 0
+	EXP:パイズリ経験 = 0
+	ABL:噴乳中毒 = 0
+	TALENT:母性 = 0
+	TALENT:母乳体質 = 0
+	TALENT:バストサイズ = 0
+
+	;衣服をある程度調整
+	IF CSTR:上半身下着 == "ブラジャー"
+		IF RANDPER(80)
+			CSTR:上半身下着 = インナーシャツ
+			CFLAG:下着パイズリ = 5
+		ELSE
+			CSTR:上半身下着 = 
+			CFLAG:下着パイズリ = 0
+		ENDIF
+	ELSEIF CSTR:上半身下着 == "スポーツブラ"
+		IF RANDPER(20)
+			CSTR:上半身下着 = インナーシャツ
+			CFLAG:下着パイズリ = 5
+		ELSE
+			CSTR:上半身下着 = 
+			CFLAG:下着パイズリ = 0
+		ENDIF
+	ENDIF
+	IF CSTR:下半身下着 == "パンティ"
+		IF RANDPER(70)
+			CSTR:下半身下着 = ボクサーパンツ
+		ELSE
+			CSTR:下半身下着 = トランクス
+		ENDIF
+	ELSEIF CSTR:下半身下着 == "ショーツ"
+		IF RANDPER(70)
+			CSTR:下半身下着 = ブリーフ
+		ELSE
+			CSTR:下半身下着 = ボクサーパンツ
+		ENDIF
+	ELSEIF CSTR:下半身下着 == "ドロワーズ"
+		CSTR:下半身下着 = ブリーフ
+	ENDIF
+
+	CSTR:適用MOD += "[MOD:男性化]"
+ENDIF
+
+TARGET = LTARGET
+
+@APPLY_MOD_女性化, 対象
+#DIM DYNAMIC 対象
+#DIM DYNAMIC LTARGET
+#DIM DYNAMIC 乱数
+#DIM DYNAMIC TSバストサイズランダム化
+
+[SKIPSTART]
+;ここで選択肢入れると学園モードとかが大変なことになるのでコメントアウト
+PRINTL 女体化したキャラのバストサイズをランダム化しますか？
+PRINTL [0] - はい
+PRINTL [1] - いいえ
+選択肢 = RESULT
+SELECTCASE RESULT
+	CASE 0
+		PRINTL 女体化したキャラのバストサイズがランダム化します。
+		TSバストサイズランダム化 = 1
+	CASE 1
+		PRINTL ランダム化せず、キャラの体格に依存したバストサイズになります。
+ENDSELECT
+[SKIPEND]
+LTARGET = TARGET
+TARGET = 対象
+
+IF TALENT:性別 == 1
+	TALENT:性別 = 2
+	;以下MOD:ふたなりが入ってなければ適用
+	IF !MOD:ふたなり
+		IF TALENT:童貞
+			TALENT:処女 = 1
+			TALENT:童貞 = 0
+		ELSE
+			CSTR:処女 = %CSTR:童貞%
+			CSTR:童貞 = 
+		ENDIF
+		IF TALENT:勃ちやすい
+			TALENT:濡れやすい = 1
+			TALENT:勃ちやすい = 0
+		ENDIF
+		IF TALENT:勃ちにくい
+			TALENT:濡れにくい = 1
+			TALENT:勃ちにくい = 0
+		ENDIF
+		;性別変わって適応される要素
+		EXP:絶頂経験 += EXP:射精経験
+		EXP:射精経験 = 0
+		SIF !TALENT:処女
+			EXP:Ｖ経験 += EXP:性交経験
+		;消す要素
+		EXP:射精経験 = 0
+		;性経験履歴 経験回数、人数以外はリセットで
+		VARSET 中出し回数
+		VARSET アナル中出し回数
+		VARSET 孕ませ回数
+		VARSET 中出され回数
+		VARSET アナル中出され回数
+		VARSET 孕み回数
+
+		VARSET モブ中出し回数
+		VARSET モブアナル中出し回数
+		VARSET モブ孕ませ回数
+		VARSET モブ中出され回数
+		VARSET モブアナル中出され回数
+		VARSET モブ孕み回数
+	ENDIF
+
+	EXP:レズ経験 += EXP:ゲイ経験
+	EXP:ゲイ経験 = 0
+	ABL:レズっ気 += ABL:ホモっ気
+	ABL:ホモっ気 = 0
+	ABL:レズ中毒 += ABL:ゲイ中毒
+	ABL:ゲイ中毒 = 0
+	TALENT:バストサイズ = TALENT:体格 ? TALENT:体格 # 3
+	ABL:メス度 = 0
+
+	;衣服をある程度調整
+	IF CSTR:上半身下着 == "インナーシャツ"
+		CFLAG:下着パイズリ = 0
+		乱数 = RAND:100
+		SELECTCASE TALENT:バストサイズ
+			CASE IS >= 4
+				IF 乱数 < 15
+					CSTR:上半身下着 = スポーツブラ
+				ELSE
+					CSTR:上半身下着 = ブラジャー
+				ENDIF
+			CASE 3
+				IF 乱数 < 25
+					CSTR:上半身下着 = スポーツブラ
+				ELSE
+					CSTR:上半身下着 = ブラジャー
+				ENDIF
+			CASE 2
+				IF 乱数 >= 20
+					CSTR:上半身下着 = スポーツブラ
+				ELSEIF 乱数 >= 10
+					CSTR:上半身下着 = ブラジャー
+				ELSE
+					CSTR:上半身下着 = 
+				ENDIF
+			CASE 1
+				IF 乱数 >= 40
+					CSTR:上半身下着 = スポーツブラ
+				ELSE
+					CSTR:上半身下着 = 
+				ENDIF
+		ENDSELECT
+		SIF CSTR:上半身下着 == "ブラジャー"
+			CFLAG:下着パイズリ = 4
+	ENDIF
+	IF CSTR:下半身下着 == "ボクサーパンツ" || CSTR:下半身下着 == "ボクサーブリーフ" || CSTR:下半身下着 == "トランクス"
+		SIF RANDPER(95)
+			CSTR:下半身下着 = パンティ
+	ELSEIF CSTR:下半身下着 == "ブリーフ"
+		IF RANDPER(80)
+			CSTR:下半身下着 = ショーツ
+		ELSE
+			CSTR:下半身下着 = パンティ
+		ENDIF
+	ENDIF
+
+	CSTR:適用MOD += "[MOD:女性化]"
+ENDIF
+
+TARGET = LTARGET
+
+@APPLY_MOD_女性化TSバストサイズランダム, 対象
+#DIM DYNAMIC 対象
+#DIM DYNAMIC LTARGET
+#DIM DYNAMIC 乱数
+
+LTARGET = TARGET
+TARGET = 対象
+
+IF TALENT:性別 == 1
+	TALENT:性別 = 2
+	;以下MOD:ふたなりが入ってなければ適用
+	IF !MOD:ふたなり
+		IF TALENT:童貞
+			TALENT:処女 = 1
+			TALENT:童貞 = 0
+		ELSE
+			CSTR:処女 = %CSTR:童貞%
+			CSTR:童貞 = 
+		ENDIF
+		IF TALENT:勃ちやすい
+			TALENT:濡れやすい = 1
+			TALENT:勃ちやすい = 0
+		ENDIF
+		IF TALENT:勃ちにくい
+			TALENT:濡れにくい = 1
+			TALENT:勃ちにくい = 0
+		ENDIF
+		;性別変わって適応される要素
+		EXP:絶頂経験 += EXP:射精経験
+		EXP:射精経験 = 0
+		SIF !TALENT:処女
+			EXP:Ｖ経験 += EXP:性交経験
+		;消す要素
+		EXP:射精経験 = 0
+		;性経験履歴 経験回数、人数以外はリセットで
+		VARSET 中出し回数
+		VARSET アナル中出し回数
+		VARSET 孕ませ回数
+		VARSET 中出され回数
+		VARSET アナル中出され回数
+		VARSET 孕み回数
+
+		VARSET モブ中出し回数
+		VARSET モブアナル中出し回数
+		VARSET モブ孕ませ回数
+		VARSET モブ中出され回数
+		VARSET モブアナル中出され回数
+		VARSET モブ孕み回数
+	ENDIF
+
+	EXP:レズ経験 += EXP:ゲイ経験
+	EXP:ゲイ経験 = 0
+	ABL:レズっ気 += ABL:ホモっ気
+	ABL:ホモっ気 = 0
+	ABL:レズ中毒 += ABL:ゲイ中毒
+	ABL:ゲイ中毒 = 0
+
+	IF TALENT:体格 <= 2
+		SELECTCASE RAND:100
+			;小柄体型は15%で絶壁
+			CASE IS < 15
+				TALENT:バストサイズ = 1
+			;小柄体型は40%で貧乳
+			CASE IS < 55
+				TALENT:バストサイズ = 2
+			;小柄体型は25%で普乳
+			CASE IS < 80
+				TALENT:バストサイズ = 3
+			;小柄体型は8%で巨乳
+			CASE IS < 88
+				TALENT:バストサイズ = 4
+			;小柄体型は7%で豊乳
+			CASE IS < 95
+				TALENT:バストサイズ = 5
+			;小柄体型は5%で爆乳
+			CASEELSE
+				TALENT:バストサイズ = 6
+		ENDSELECT
+	ELSE
+		SELECTCASE RAND:100
+			;普通体型は10%で絶壁
+			CASE IS < 10
+				TALENT:バストサイズ = 1
+			;普通体型は23%で貧乳
+			CASE IS < 33
+				TALENT:バストサイズ = 2
+			;普通体型は34%で普乳
+			CASE IS < 67
+				TALENT:バストサイズ = 3
+			;普通体型は13%で巨乳
+			CASE IS < 80
+				TALENT:バストサイズ = 4
+			;普通体型は10%で豊乳
+			CASE IS < 90
+				TALENT:バストサイズ = 5
+			;普通体型は10%で爆乳
+			CASEELSE
+				TALENT:バストサイズ = 6
+		ENDSELECT
+	ENDIF
+
+	ABL:メス度 = 0
+
+	;衣服をある程度調整
+	IF CSTR:上半身下着 == "インナーシャツ"
+		CFLAG:下着パイズリ = 0
+		乱数 = RAND:100
+		SELECTCASE TALENT:バストサイズ
+			CASE IS >= 4
+				IF 乱数 < 15
+					CSTR:上半身下着 = スポーツブラ
+				ELSE
+					CSTR:上半身下着 = ブラジャー
+				ENDIF
+			CASE 3
+				IF 乱数 < 25
+					CSTR:上半身下着 = スポーツブラ
+				ELSE
+					CSTR:上半身下着 = ブラジャー
+				ENDIF
+			CASE 2
+				IF 乱数 >= 20
+					CSTR:上半身下着 = スポーツブラ
+				ELSEIF 乱数 >= 10
+					CSTR:上半身下着 = ブラジャー
+				ELSE
+					CSTR:上半身下着 = 
+				ENDIF
+			CASE 1
+				IF 乱数 >= 40
+					CSTR:上半身下着 = スポーツブラ
+				ELSE
+					CSTR:上半身下着 = 
+				ENDIF
+		ENDSELECT
+		SIF CSTR:上半身下着 == "ブラジャー"
+			CFLAG:下着パイズリ = 4
+	ENDIF
+	IF CSTR:下半身下着 == "ボクサーパンツ" || CSTR:下半身下着 == "ボクサーブリーフ" || CSTR:下半身下着 == "トランクス"
+		SIF RANDPER(95)
+			CSTR:下半身下着 = パンティ
+	ELSEIF CSTR:下半身下着 == "ブリーフ"
+		IF RANDPER(80)
+			CSTR:下半身下着 = ショーツ
+		ELSE
+			CSTR:下半身下着 = パンティ
+		ENDIF
+	ENDIF
+
+	CSTR:適用MOD += "[MOD:女性化TSバストサイズランダム]"
+ENDIF
+
+TARGET = LTARGET
+
+@APPLY_MOD_性転換, 対象
+#DIM DYNAMIC 対象
+#DIM DYNAMIC LTARGET
+
+LTARGET = TARGET
+TARGET = 対象
+
+SELECTCASE TALENT:性別
+	CASE 1
+		CALL APPLY_MOD_女性化, TARGET
+	CASE 2
+		CALL APPLY_MOD_男性化, TARGET
+ENDSELECT
+
+CSTR:適用MOD += "[MOD:性転換]"
+
+TARGET = LTARGET
+
+@APPLY_MOD_性転換TSバストサイズランダム, 対象
+#DIM DYNAMIC 対象
+#DIM DYNAMIC LTARGET
+
+LTARGET = TARGET
+TARGET = 対象
+
+SELECTCASE TALENT:性別
+	CASE 1
+		CALL APPLY_MOD_女性化TSバストサイズランダム, TARGET
+	CASE 2
+		CALL APPLY_MOD_男性化, TARGET
+ENDSELECT
+
+CSTR:適用MOD += "[MOD:性転換TSバストサイズランダム]"
+
+TARGET = LTARGET
+
+@APPLY_MOD_ふたなり, 対象
+#DIM DYNAMIC 対象
+
+IF !TALENT:対象:ふたなり
+	TALENT:対象:ふたなり = 1
+	SELECTCASE SEX(対象)
+		CASE 1
+			TALENT:対象:処女 = 1
+		CASE 2
+			TALENT:対象:童貞 = 1
+	ENDSELECT
+	CSTR:対象:適用MOD += "[MOD:ふたなり]"
+ENDIF
+
+@APPLY_MOD_爆乳, 対象
+#DIM DYNAMIC 対象
+
+IF SEX(対象) == 2 && TALENT:対象:バストサイズ < 6
+	TALENT:対象:バストサイズ = 6
+	CSTR:対象:適用MOD += "[MOD:爆乳]"
+ENDIF
+IF SEX(対象) == 1 && MOD:バストサイズ男性対象
+	TALENT:対象:バストサイズ = 6
+	CSTR:対象:適用MOD += "[MOD:爆乳]"
+ENDIF
+
+@APPLY_MOD_絶壁, 対象
+#DIM DYNAMIC 対象
+
+IF (SEX(対象) == 2 && TALENT:対象:バストサイズ > 1)
+	TALENT:対象:バストサイズ = 1
+	CSTR:対象:適用MOD += "[MOD:絶壁]"
+ENDIF
+IF SEX(対象) == 1 && MOD:バストサイズ男性対象
+	TALENT:対象:バストサイズ = 1
+	CSTR:対象:適用MOD += "[MOD:絶壁]"
+ENDIF
+
+@APPLY_MOD_バストサイズカスタム, 対象
+#DIM DYNAMIC 対象
+#DIM DYNAMIC LCOUNT
+
+IF SEX(対象) == 2 || MOD:バストサイズ男性対象
+	SIF MOD:バストサイズ男性対象 && TALENT:対象:バストサイズ == 0
+		TALENT:対象:バストサイズ = 1
+	FOR LCOUNT, 1, 7
+		IF LCOUNT == TALENT:対象:バストサイズ
+			TALENT:対象:バストサイズ = バストサイズ指定:LCOUNT
+			CSTR:対象:適用MOD += "[MOD:胸囲指定]"
+			BREAK
+		ENDIF
+	NEXT
+ENDIF
+
+@APPLY_MOD_母乳, 対象
+#DIM DYNAMIC 対象
+
+;IF SEX(対象) == 2 && !MOD:バストサイズ男性対象
+	TALENT:対象:母乳体質 = 1
+	CSTR:対象:適用MOD += "[MOD:母乳]"
+;ENDIF
+
+@APPLY_MOD_おもらし, 対象
+#DIM DYNAMIC 対象
+
+IF !TALENT:対象:おもらし癖
+	TALENT:対象:おもらし癖 = 1
+	CSTR:対象:適用MOD += "[MOD:おもらし]"
+ENDIF
+
+@APPLY_MOD_ロリショタ, 対象
+#DIM DYNAMIC 対象
+
+IF TALENT:対象:体格 > 1
+	TALENT:対象:体格 = 1
+	CSTR:対象:適用MOD += "[MOD:ロリショタ]"
+ENDIF
+
+@APPLY_MOD_大人化, 対象
+#DIM DYNAMIC 対象
+
+IF TALENT:対象:体格 < 3
+	TALENT:対象:体格 = 3
+	CSTR:対象:適用MOD += "[MOD:大人化]"
+ENDIF
+
+@APPLY_MOD_スライム, 対象
+#DIM DYNAMIC 対象
+
+IF !ISSLIME(対象)
+	TALENT:対象:スライム = 1
+	CSTR:対象:種族 = スライム
+	CSTR:対象:適用MOD += "[MOD:スライム]"
+ENDIF
+
+@APPLY_MOD_ヤンデレ, 対象
+#DIM DYNAMIC 対象
+
+IF !TALENT:対象:ヤンデレ
+	TALENT:対象:ヤンデレ = 1
+	CSTR:対象:適用MOD += "[MOD:ヤンデレ]"
+ENDIF
+
+
+@APPLY_MOD_部位素質MOD総合, 対象, 部位
+#DIM DYNAMIC 対象
+#DIMS DYNAMIC 部位
+SELECTCASE ABS(MOD:@"%部位%素質")
+	CASE 1
+		SIF !TALENT:@"%部位%敏感" && !TALENT:@"%部位%鈍感"
+			RETURN
+		TALENT:@"%部位%敏感" = 0
+		TALENT:@"%部位%鈍感" = 0
+	CASE 2
+		SIF TALENT:@"%部位%敏感"
+			RETURN
+		TALENT:@"%部位%敏感" = 1
+		TALENT:@"%部位%鈍感" = 0
+	CASE 3
+		SIF TALENT:@"%部位%鈍感"
+			RETURN
+		TALENT:@"%部位%敏感" = 0
+		TALENT:@"%部位%鈍感" = 1
+ENDSELECT
+CSTR:対象:適用MOD += @"[MOD:%部位%素質]"
+
+@APPLY_MOD_Ｃ素質, 対象
+#DIM DYNAMIC 対象
+CALL APPLY_MOD_部位素質MOD総合, 対象, "Ｃ"
+
+@APPLY_MOD_Ｖ素質, 対象
+#DIM DYNAMIC 対象
+SIF !VAGINA(対象) && SIGN(MOD:Ｖ素質) == 1
+	RETURN
+CALL APPLY_MOD_部位素質MOD総合, 対象, "Ｖ"
+
+@APPLY_MOD_Ａ素質, 対象
+#DIM DYNAMIC 対象
+CALL APPLY_MOD_部位素質MOD総合, 対象, "Ａ"
+
+@APPLY_MOD_Ｂ素質, 対象
+#DIM DYNAMIC 対象
+CALL APPLY_MOD_部位素質MOD総合, 対象, "Ｂ"
+
+
+@APPLY_MOD_恋慕, 対象
+#DIM DYNAMIC 対象
+IF 対象
+	TALENT:対象:恋慕 = 1
+	CSTR:対象:適用MOD += "[MOD:恋慕]"
+ENDIF
+
+@APPLY_MOD_淫乱, 対象
+#DIM DYNAMIC 対象
+IF 対象
+	TALENT:対象:淫乱 = 1
+	CSTR:対象:適用MOD += "[MOD:淫乱]"
+ENDIF
+
+@APPLY_MOD_服従, 対象
+#DIM DYNAMIC 対象
+IF 対象
+	TALENT:対象:服従 = 1
+	CSTR:対象:適用MOD += "[MOD:服従]"
+ENDIF

@@ -1,0 +1,857 @@
+﻿@CHARA_MANUAL, 対象, 価格表示
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC 開発難易度PT
+#DIM DYNAMIC 性経験PT
+#DIM DYNAMIC 売却額PT
+#DIM DYNAMIC 屈服難易度PT
+#DIM DYNAMIC 対象
+#DIM DYNAMIC 価格表示
+
+IF GETCHARA(対象) > 0
+	PRINTFORMW %I18N("|0|は既に購入されています", , CSVNAMEDISP(対象))%
+	RETURN 1
+ELSEIF CCB:対象
+	PRINTFORMW %I18N("|0|は購入できません", , CSVNAMEDISP(対象))%
+	RETURN 1
+ELSEIF 対象 == NOF(MASTER)
+	RETURN 1
+ENDIF
+
+IF LANGUAGE != "JP"
+	PRINTFORML 【%CSVNAMEDISP(対象)%（%CSVNAMEF(対象)%）】
+ELSE
+	FOR LCOUNT, 0, 100
+		SIF CSVCSTR(対象, LCOUNT) == ""
+			BREAK
+		CALL MANUALPRINT, CSVCSTR(対象, LCOUNT)
+		CALL NEWLINE
+	NEXT
+ENDIF
+PRINTFORM %I18N("登場作品")%：
+SIF CSVCSTR(対象, GETNUM(CSTR, "登場作品")) != ""
+	PRINTFORM 「%CSVCSTR(対象, GETNUM(CSTR, "登場作品"))%」
+SIF CSVCSTR(対象, GETNUM(CSTR, "登場作品２")) != ""
+	PRINTFORM 「%CSVCSTR(対象, GETNUM(CSTR, "登場作品２"))%」
+SIF CSVCSTR(対象, GETNUM(CSTR, "登場作品３")) != ""
+	PRINTFORM 「%CSVCSTR(対象, GETNUM(CSTR, "登場作品３"))%」
+PRINTL 
+SIF 価格表示
+	CALL PASELIL, @"価格：{CSVCFLAG(対象, GETNUM(CFLAG, "価格"))}＄"
+
+開発難易度PT = LIMIT(開発難易度PT計算(対象)+50, 1, 100)
+性経験PT = LIMIT(性経験PT計算(対象), 1, 100)
+CALL 売却額PT計算, 対象
+売却額PT = LIMIT(RESULT, 1, 100)
+屈服難易度PT = LIMIT(屈服難易度PT計算(対象)+50, 1, 100)
+
+HTML_PRINT IMGTOTAG(CREATE_RADOR(開発難易度PT, 性経験PT, 売却額PT, 屈服難易度PT), 1000, 1000)
+FOR LCOUNT, 0, 9
+	PRINTL
+NEXT
+
+SIF CSVTALENT(対象, GETNUM(TALENT, "アニマル"))
+	PRINTFORML ※%I18N("このキャラはペット候補なので売却できません。所持金が少ない状態で購入するとゲームの攻略が不可能になる場合があります")%
+SIF MOD:チャレンジ
+	PRINTFORML ※%I18N("MOD:チャレンジを導入中です。表示されているマニュアル・素質とは齟齬がある場合があります")%
+
+;キャラマニュアル内でタグ付けされていれば特殊表示する
+;これでCSV内でマニュアルも完結できる
+;マニュアル用と題してるが普通の文章表示でもタグ付け機能が使える その際はLINEISEMPTYでの改行を忘れずに
+@MANUALPRINT, マニュアル:0, カラム
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC 検索位置
+#DIMS DYNAMIC マニュアル, 2
+#DIM DYNAMIC 始点
+#DIM DYNAMIC 文字数
+#DIMS DYNAMIC 字体, 3
+#DIMS DYNAMIC 本文
+#DIM DYNAMIC カラム
+
+;タグを探す
+始点 = STRFINDU(マニュアル, "(", 検索位置)
+文字数 = STRFINDU(マニュアル, ")", 検索位置)-始点
+;タグ付けされてれば処理実行
+IF 始点 >= 0
+	;タグ付けまでの文章を通常表示
+	IF カラム
+		CALL MCOLUMNPRINT, @"%SUBSTRINGU(マニュアル, 0, 始点)%", "", 1
+	ELSE
+		PRINTFORM %SUBSTRINGU(マニュアル, 0, 始点)%
+	ENDIF
+	;処理、内容、本文でSPLITする
+	SPLIT SUBSTRINGU(マニュアル, 始点+1, 文字数-1), ":", 字体
+	本文 = %字体:2%
+	;字体:0 = 特殊処理の種類 字体:1 = 特殊処理の内容 本文 = 本文
+	;必要に応じて追加するとよい
+	SELECTCASE 字体:0
+		;フォント変更系
+		CASE "FONT"
+			SELECTCASE 字体:1
+				;太字
+				CASE "BOLD"
+					FONTBOLD
+					CALL MANUALPRINT, 本文, カラム
+					FONTREGULAR
+				;打ち消し線
+				CASE "STRIKE"
+					FONTSTYLE 4
+					CALL MANUALPRINT, 本文, カラム
+					FONTSTYLE 0
+			ENDSELECT
+		;色指定 現時点では色名のみで数値指定はできない
+		;指定した色名が無効であればデフォルト色表示
+		CASE "COLOR"
+			IF COLOR_FROMNAME(字体:1) == -1
+				CALL MANUALPRINT, 本文, カラム
+			ELSE
+				SETCOLOR COLOR_FROMNAME(字体:1)
+				CALL MANUALPRINT, 本文, カラム
+				RESETCOLOR
+			ENDIF
+		;その他
+		CASE "OTHER"
+			SELECTCASE 字体:1
+				;反転タグ 実質シャルロット専用 ALIGHNMENT命令の仕様上、タグ重複使用は不可能
+				CASE "REVERSE"
+					マニュアル:1 =
+					FOR LCOUNT, STRLENSU(本文), -1, -1
+						SELECTCASE CHARATU(本文, LCOUNT)
+							CASE "【"
+								マニュアル:1 += "】"
+							CASE "】"
+								マニュアル:1 += "【"
+							CASE "「"
+								マニュアル:1 += "」"
+							CASE "」"
+								マニュアル:1 += "「"
+							CASE "["
+								マニュアル:1 += "]"
+							CASE "]"
+								マニュアル:1 += "["
+							CASE "（"
+								マニュアル:1 += "）"
+							CASE "）"
+								マニュアル:1 += "（"
+							CASEELSE
+								マニュアル:1 += CHARATU(本文, LCOUNT)
+						ENDSELECT
+					NEXT
+					;カラムでは諦める
+					IF カラム
+						CALL MCOLUMNPRINTL, @"%" "*MAX(COLUMNDRAW-STRLENS(マニュアル:1)-2, 0)%%マニュアル:1%"
+					ELSE
+						ALIGNMENT RIGHT
+						PRINTFORML %マニュアル:1%
+						ALIGNMENT LEFT
+					ENDIF
+				;WAIT このタグを使用すると改行されるので、文末までタグに含めないと表示がおかしくなる
+				CASE "WAIT"
+					CALL MANUALPRINT, 本文, カラム
+					SIF !カラム
+						WAIT
+			ENDSELECT
+	ENDSELECT
+	;次の始動位置をタグ終了後の次の文字に設定
+	検索位置 = STRFINDU(マニュアル, 本文)+STRLENSU(本文)
+	IF 検索位置 < STRLENSU(マニュアル)
+		;残りの文章が閉じカッコならループ終了
+		IF 検索位置+1 == STRLENSU(マニュアル) && CHARATU(マニュアル, 検索位置) == ")"
+			RETURN
+		;残りの文章が閉じカッコ以外にもあれば再帰処理
+		ELSE
+			;閉じカッコの分+1
+			CALL MANUALPRINT, SUBSTRINGU(マニュアル, 検索位置+1), カラム
+			RETURN
+		ENDIF
+	ENDIF
+;タグが無ければ通常表示
+ELSE
+	IF カラム
+		CALL MCOLUMNPRINT, @"%マニュアル%", "", 1
+	ELSE
+		PRINTFORM %マニュアル%
+	ENDIF
+	RETURN
+ENDIF
+
+@CHARA_BUY_CHECK, 対象
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC LTARGET
+#DIM DYNAMIC 素質表示済み
+#DIM DYNAMIC 対象
+#DIM DYNAMIC 素質表示数
+#DIM DYNAMIC 曲表示済み
+
+IF !EXISTCSV(対象)
+	PRINTL 
+	PRINTFORMW ＜%I18N("CSVが未実装です")%＞
+	RETURN 1
+ELSEIF MONEY < CSVCFLAG(対象, 50)
+	PRINTL 
+	PRINTFORMW ＜%I18N("金額が足りません")%＞
+	RETURN 1
+ELSE
+	SIF LANGUAGE != "JP"
+		GOTO SHOW_TALENTS
+	$DISPLAYEDTALENTS
+	PRINTL 
+	PRINTFORML %I18N("購入しますか？")%
+	PRINTFORML [0] %I18N("はい")%
+	PRINTFORML [1] %I18N("いいえ")%
+	SIF !素質表示済み
+		PRINTL [2] 素質を表示する
+	SIF !曲表示済み
+		PRINTL [3] 担当曲・出演曲を表示する
+	BINPUT
+	SELECTCASE RESULT
+		CASE 0
+			CALL CHARA_ADD, 対象
+			CALL PAYMENT, -CSVCFLAG(対象, GETNUM(CFLAG, "価格")), @"キャラクター「%CSVNAMEF(対象)%」購入"
+			CALL プレイログ記録, @"%CSVNAMEF(対象)%を購入"
+			PRINTFORMW ＜%I18N("|0|を解禁しました", , CSVNAMEDISP(対象))%＞
+			TRYCALLFORM %CSVNAMERPS(対象)%_CHARABUY
+			TRYCALLFORM MASTER_%CSVNAMERPS(NOF(MASTER))%_CHARABUY, 対象
+			IF パートナー != ""
+				IF OPTION:口上表示 && !CFLAG:GETCHARANAME(パートナー):口上非表示
+					LTARGET = TARGET
+					TARGET = GETCHARANAME(パートナー)
+					TRYCALLFORM PARTNER_%CSVNAMERPS(GETNO(パートナー))%_CHARABUY, 対象
+					TARGET = LTARGET
+				ENDIF
+			ENDIF
+			SIF CFLAG:誕生日 == (MONTH*100)+DAYS
+				CALL 実績解除, "アンハッピーバースデー"
+			SIF CHARANAMEF(TARGET) == "つらら" && MONTH == 12 && (DAYS == 24 || DAYS == 25)
+				CALL 実績解除, "クリスマス中止のお知らせ"
+			SIF CHARANAMEF(TARGET) == "小野 美苗"
+				美苗チェック = DAY
+			FOR LCOUNT, 0, VARSIZE("MOD")
+				SIF ERDNAME(MOD, LCOUNT) == ""
+					CONTINUE
+				SIF !MOD:LCOUNT
+					CONTINUE
+				SELECTCASE ERDNAME(MOD, LCOUNT)
+					CASE "性転換"
+						SIF CSVTALENT(NOF(TARGET), TALENTF("性別")) != 0
+							CALL 実績解除, "なんか変だ！"
+					CASE "性転換TSバストサイズランダム"
+						SIF CSVTALENT(NOF(TARGET), TALENTF("性別")) != 0
+							CALL 実績解除, "なんか変だ！"
+					CASE "男性化"
+						SIF CSVTALENT(NOF(TARGET), TALENTF("性別")) == 2
+							CALL 実績解除, "なんか変だ！"
+					CASE "女性化"
+						SIF CSVTALENT(NOF(TARGET), TALENTF("性別")) == 1
+							CALL 実績解除, "なんか変だ！"
+					CASE "女性化TSバストサイズランダム"
+						SIF CSVTALENT(NOF(TARGET), TALENTF("性別")) == 1
+							CALL 実績解除, "なんか変だ！"
+					CASE "おもらし"
+						SIF !CSVTALENT(NOF(TARGET), TALENTF("おもらし癖"))
+							CALL 実績解除, "なんか変だ！"
+					CASE "ふたなり"
+						SIF !CSVTALENT(NOF(TARGET), TALENTF("ふたなり"))
+							CALL 実績解除, "なんか変だ！"
+					CASE "ロリショタ"
+						SIF CSVTALENT(NOF(TARGET), TALENTF("体格")) >= 3
+							CALL 実績解除, "なんか変だ！"
+					CASE "大人化"
+						SIF CSVTALENT(NOF(TARGET), TALENTF("体格")) <= 2
+							CALL 実績解除, "なんか変だ！"
+					CASEELSE
+						SIF CSVTALENT(NOF(TARGET), TALENTF("バストサイズ")) != TALENT:バストサイズ
+							CALL 実績解除, "なんか変だ！"
+				ENDSELECT
+			NEXT
+			RETURN 0
+		CASE 1
+			RETURN 1
+		CASE 2
+			$SHOW_TALENTS
+			素質表示済み = 1
+			PRINTL 
+			PRINTFORM 【%I18N("性別")%】
+			SELECTCASE CSVTALENT(対象, GETNUM(TALENT, "性別"))
+				CASE 0
+					PRINTFORM %I18N("不明")%
+				CASE 1
+					SIF MOD:性転換 || MOD:性転換TSバストサイズランダム || MOD:女性化 || MOD:女性化TSバストサイズランダム
+						GOTO MODFEMALE
+					PRINTFORM %I18N("男性")%
+				CASE 2
+					SIF MOD:性転換 || MOD:男性化
+						GOTO MODMALE
+					PRINTFORM %I18N("女性")%
+				CASE 1000
+					$MODMALE
+					CALL PRINTCOLOR, @"%I18N("男性")%(%I18N("MOD適用中")%)", "coral"
+				CASE 1001
+					$MODFEMALE
+					CALL PRINTCOLOR, @"%I18N("女性")%(%I18N("MOD適用中")%)", "coral"
+			ENDSELECT
+			PRINTFORM  【%I18N("種族")%】%I18N(CSVCSTR(対象, GETNUM(CSTR, "種族")), "RACE")%
+			PRINTFORM  【%I18N("体格", "TALENT")%】
+			IF CSVTALENT(対象, GETNUM(TALENT, "小人体型"))
+				PRINTFORM %I18N("小人体型", "TALENT")%
+			ELSEIF !CSVTALENT(対象, GETNUM(TALENT, "体格"))
+				PRINTFORM %I18N("普通", "TALENT")%
+			ELSE
+				PRINTFORM %I18N(体格(CSVTALENT(対象, GETNUM(TALENT, "体格"))), "TALENT")%
+			ENDIF
+			SIF CSVTALENT(対象, GETNUM(TALENT, "バストサイズ"))
+				PRINTFORM  【%I18N("バストサイズ", "TALENT")%】%I18N(バストサイズ(CSVTALENT(対象, GETNUM(TALENT, "バストサイズ"))), "TALENT")%
+			PRINTL 
+			PRINTFORML 【%I18N("素質")%】
+			PRINT 　
+			IF CSVCSTR(対象, GETNUM(CSTR, "恋心")) != ""
+				PRINTPLAINFORM [%I18N("恋心", "TALENT")%]
+				素質表示数++
+			ENDIF
+			IF CSVCSTR(対象, GETNUM(CSTR, "既婚者")) != ""
+				PRINTPLAINFORM [%I18N("既婚者", "TALENT")%]
+				素質表示数++
+			ENDIF
+			FOR LCOUNT, 0, VARSIZE("TALENT")
+				SELECTCASE TALENTNAME:LCOUNT
+					CASE "性別", "バストサイズ", "体格", "小人体型"
+						CONTINUE
+					CASEELSE
+						IF CSVTALENT(対象, LCOUNT)
+							SIF LINEISEMPTY()
+								PRINT 　
+							PRINTPLAINFORM [%I18N(TALENTNAME:LCOUNT, "TALENT")%]
+							素質表示数++
+							SIF 素質表示数%8 == 0
+								PRINTL
+						ENDIF
+				ENDSELECT
+			NEXT
+			CALL NEWLINE
+			GOTO DISPLAYEDTALENTS
+		CASE 3
+			PRINTL □担当曲・出演曲
+			CALL 担当曲表示, 対象
+			曲表示済み = 1
+			GOTO DISPLAYEDTALENTS
+	ENDSELECT
+ENDIF
+
+RETURN 0
+
+@CHARA_ADD, 対象, クローニング, 高速化
+#DIM DYNAMIC LCOUNT
+;今のところは100人まで
+#DIMS DYNAMIC 相性設定用, 100
+#DIM DYNAMIC 名前例外処理
+#DIMS DYNAMIC 相性値, 200
+#DIM DYNAMIC クローニング
+#DIM DYNAMIC 高速化
+#DIM DYNAMIC 適正ABL
+#DIM DYNAMIC 適正EXP
+#DIM DYNAMIC 対象
+{
+#DIMS DYNAMIC 択一キャラリスト = 
+"マルクト", "ア・ミリア", 
+"芽兎 めう", "白兎先生", 
+"DJつよし", "OJつよし", 
+"テスタメントネメシス", "ミィム・ミクラー", 
+"ジュナ・サラキア", "ジュナ・フェリクス", 
+"MIR-202【アルテミス・レナ】", "レナ・イシュメイル",
+}
+;↑同一人物などの片方しか奴隷にできないキャラのNAMEを二人並べて記述する
+
+SIF !クローニング
+	購入人数++
+ADDCHARA 対象
+TARGET = CHARANUM-1
+SIF CSTR:種族 == ""
+	DEBUGPRINTFORML %NAME:TARGET%に種族が設定されてない
+SIF CSTR:英語名 == ""
+	DEBUGPRINTFORML %NAME:TARGET%に英語名が設定されてない
+;一部のキャラは性別を選択する
+SIF (データID != 0) && (対象 != 0)
+	CALL 性別選択, TARGET
+
+IF !クローニング
+	CCB:対象 = 1
+	キャラ未購入 = 0
+	IF !ORIGIN
+		FOR LCOUNT, 0, VARSIZE("択一キャラリスト")
+			SIF GETNO(択一キャラリスト:LCOUNT) != 対象
+				CONTINUE
+			IF LCOUNT%2 == 0
+				CCB:GETNO(択一キャラリスト:(LCOUNT+1)) = 1
+			ELSE
+				CCB:GETNO(択一キャラリスト:(LCOUNT-1)) = 1
+			ENDIF
+			BREAK
+		NEXT
+	ENDIF
+ENDIF
+
+[IF RELEASE_ORIGIN]
+[ELSE]
+	;ハートに砂時計使っていた場合の処理
+	IF 対象 == GETNO("マッドラット") && GETCHARANAME("ハート") >= 0 && TRANCERACE:GETCHARANAME("ハート"):0 != ""
+		TALENT:回復早い = 0
+		TALENT:回復遅い = 1
+		TRANCE:TALENTF("回復早い") = 1
+		TRANCE:TALENTF("回復遅い") = 1
+	ENDIF
+[ENDIF]
+
+
+;グローバルタグ色設定の反映 学園モードは意味がないので飛ばす
+IF ゲームモード() != "学園モード"
+	LOADGLOBAL
+	SIF Gタグ色:NOF(TARGET)
+		CFLAG:タグ色 = Gタグ色:NOF(TARGET)
+ENDIF
+
+;MOD適用
+;性別不明キャラは上で選んでるので性別MODは適用されない
+IF ゲームモード() != "段位認定" && !GETBIT(高速化, 1)
+	FOR LCOUNT, 0, VARSIZE("MOD")
+		SIF ERDNAME(MOD, LCOUNT) == ""
+			CONTINUE
+		SELECTCASE ERDNAME(MOD, LCOUNT)
+			CASE "男性化", "女性化", "性転換"
+				IF CSVTALENT(NOF(TARGET), GETNUM(TALENT, "性別")) != 0
+					SIF MOD:LCOUNT
+						CALLFORM APPLY_MOD_%ERDNAME(MOD, LCOUNT)%, TARGET
+				ENDIF
+			CASEELSE
+				SIF MOD:LCOUNT
+					TRYCALLFORM APPLY_MOD_%ERDNAME(MOD, LCOUNT)%, TARGET
+		ENDSELECT
+	NEXT
+ENDIF
+
+CALL キャラ生成初期フラグ
+CALL 初期経験セット, TARGET
+
+;上昇可能なABLは上げておく
+IF !GETBIT(高速化, 0)
+	FOR LCOUNT, 0, VARSIZE("ABL")
+		SIF ABLNAME:LCOUNT == "魔法技能"
+			CONTINUE
+		適正ABL = 0
+		適正EXP = 0
+		REPEAT 10
+			VARSET ABLUP
+			VARSET ABLUPEXP
+			TRYCALLFORM ABL_CHECK_%ABLNAME:LCOUNT%
+			CALL ABLUP, ABLNAME:LCOUNT
+			IF RESULT
+				適正ABL = ABL:LCOUNT
+				SIF !適正EXP
+					適正EXP = MAXARRAY(ABLUPEXP)
+			ENDIF
+		REND
+		SIF 適正ABL && LCOUNT >= GETNUM(ABL, "料理技能") && ABLNAME:LCOUNT != "栽培技能"
+			DEBUGPRINTFORML %NAME:TARGET%の%ABLNAME:LCOUNT%は不適正 適正ABL:{適正ABL} 適正EXP:{適正EXP}
+	NEXT
+ENDIF
+
+MAXBASE:魔力 = ABL:魔法技能*1000
+;アニマルなら助手可能にする
+SIF TALENT:アニマル
+	CFLAG:助手可能 = 1
+TFLAG:ページ数 = 0
+;MOD:チャレンジ導入中なら性経験を消してバージンにする
+IF MOD:チャレンジ
+	FOR LCOUNT, 0, 20
+		ABL:LCOUNT = 0
+	NEXT
+	FOR LCOUNT, 0, 100
+		EXP:LCOUNT = 0
+	NEXT
+	SELECTCASE SEX(TARGET)
+		CASE 1
+			TALENT:童貞 = 1
+		CASE 2
+			TALENT:処女 = 1
+	ENDSELECT
+	CALL 初期経験リセット(TARGET)
+	CSTR:適用MOD += "[MOD:チャレンジ]"
+ENDIF
+;相性の設定
+SPLIT CSTR:相性, "/", 相性設定用
+FOR LCOUNT, 0, RESULT
+	;なぜか行連結で行頭にスペースが入るので削る
+	SIF SUBSTRINGU(相性設定用:LCOUNT, 0, 1) == " "
+		相性設定用:LCOUNT = %SUBSTRINGU(相性設定用:LCOUNT, 1)%
+	SIF 相性設定用:LCOUNT == ""
+		BREAK
+	SPLIT 相性設定用:LCOUNT, "*", 相性値
+	;サタンだけ相性設定用のアスタリスク文字が名前に入ってるので例外的に処理する
+	;「サタン-P」+「L-イブリース」
+	名前例外処理 = FINDELEMENTF(相性値, "サタン-P")
+	IF 名前例外処理 >= 0
+		相性値:名前例外処理 += @"*%相性値:(名前例外処理+1)%"
+		ARRAYREMOVE 相性値, 名前例外処理+1, 1
+	ENDIF
+	SIF GETNO(相性値) >= 0
+		RELATION:GETNO(相性値) = TOINT(相性値:1)
+NEXT
+
+IF MOD:SCAT
+	CALL INITIALIZE_AMOUNT_FOR_DEFECATE, TARGET
+	CALL INITIALIZE_AMOUNT_FOR_FECES, TARGET
+ENDIF
+
+@キャラ生成初期フラグ
+BUYD = DAYS
+BUYM = MONTH
+BUYY = YEAR
+SIF TALENT:体格 == 0
+	TALENT:体格 = 3
+CFLAG:生殖力担当魔術師 = -1
+CFLAG:不妊担当魔術師 = -1
+CFLAG:男性器提供者 = -1
+CFLAG:モチベーション = 50
+CFLAG:憑依 = -1
+SIF ゲームモード() != "学園モード"
+	CFLAG:本への興味 = MAX(図書室ランク(), 5)
+排卵からの経過時間:TARGET:0 = 1+RAND:280
+;獣以外でも獣化したときのために発情期フラグは設定する
+;段位なら固定
+SIF 受験段位名 == ""
+	CFLAG:発情周期 = RAND:26
+
+;人気持ちは予め人気度が付く
+SIF TALENT:人気
+	人気度:(NOF(TARGET)) += 100
+IF PENIS(TARGET)
+	CFLAG:ペニスサイズ = 2
+	SIF TALENT:体格 <= 2 || TALENT:小人体型
+		CFLAG:ペニスサイズ = 1
+ENDIF
+
+;;;簡単なほどPTは低くなる
+@開発難易度PT計算, 対象
+#FUNCTION
+#DIM DYNAMIC 対象
+#DIM DYNAMIC PT
+#DIM DYNAMIC LCOUNT
+#DIM 計算済み, 10000
+
+SIF 計算済み:対象
+	RETURNF 計算済み:対象
+
+;体力 男なら2000、女なら1800を基準にする
+SELECTCASE CSVTALENT(対象, GETNUM(TALENT, "性別"))
+	CASE 1
+		PT -= (CSVBASE(対象, GETNUM(BASE, "体力"))-2000)/100
+	CASE 2
+		PT -= (CSVBASE(対象, GETNUM(BASE, "体力"))-1800)/100
+ENDSELECT
+
+;気力 男女ともに1600を基準にする
+PT -= (CSVBASE(対象, GETNUM(BASE, "気力"))-1600)/100
+
+FOR LCOUNT, 0, VARSIZE("TALENT")
+	SIF !CSVTALENT(対象, LCOUNT)
+		CONTINUE
+	SELECTCASE TALENTNAME:LCOUNT
+		CASE "バストサイズ"
+			SELECTCASE CSVTALENT(対象, LCOUNT)
+				CASE 1
+					PT -= 3
+				CASE 2
+					PT -= 2
+			ENDSELECT
+		CASE "体格"
+			SELECTCASE CSVTALENT(対象, LCOUNT)
+				CASE 1
+					PT += 2
+				CASE 2
+					PT += 1
+			ENDSELECT
+		CASE "霊体"
+			PT += 30
+		CASE "ゾンビ", "無機物"
+			PT += 15
+		CASE "一線越えない", "Ｃ鈍感", "Ｖ鈍感", "Ａ鈍感", "Ｂ鈍感", "小人体型"
+			PT += 10
+		CASE "無関心", "痛みに弱い", "快感の否定"
+			PT += 5
+		CASE "自制心", "感情乏しい", "解放", "濡れにくい", "勃ちにくい", "回復遅い"
+			PT += 3
+		CASE "保守的", "悲観的", "恥じらい", "暑さに弱い", "寒さに弱い"
+			PT += 2
+		CASE "習得遅い", "男嫌い", "女嫌い", "同族嫌悪"
+			PT += 1
+		CASE "恥薄い", "おもらし癖", "両刀", "男好き", "女好き", "子供好き", "吸血鬼", "日光浴", "月光浴"
+			PT -= 1
+		{
+		CASE "好奇心", "楽観的", "目立ちたがり", "濡れやすい", "勃ちやすい", "習得早い", "自慰しやすい",
+			 "マゾ", "母乳体質"
+		}
+			PT -= 2
+		{
+		CASE "痛みに強い", "快感に素直", "サキュバス", "インキュバス", "ふたなり", "去勢済み",
+			 "スライム", "回復早い"
+		}
+			PT -= 3
+		CASE "Ｃ敏感", "Ｖ敏感", "Ａ敏感", "Ｂ敏感", "溶ける快"
+			PT -= 10
+		;これは初期素質には無いはず
+		CASE "淫膣", "淫尻", "淫核", "淫乳"
+			PT -= 20
+		CASE "即落ち"
+			PT -= 30
+	ENDSELECT
+NEXT
+
+計算済み:対象 = PT
+
+RETURNF PT
+
+;;;豊富なほどPTは大きくなる
+@性経験PT計算, 対象
+#FUNCTION
+#DIM DYNAMIC 対象
+#DIM DYNAMIC PT = 1
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC 経験
+#DIM 計算済み, 10000
+
+SIF 計算済み:対象
+	RETURNF 計算済み:対象
+
+SIF !CSVTALENT(対象, GETNUM(TALENT, "処女")) && CSVTALENT(対象, GETNUM(TALENT, "性別")) == 2
+	PT += 20
+SIF !CSVTALENT(対象, GETNUM(TALENT, "童貞")) && CSVTALENT(対象, GETNUM(TALENT, "性別")) == 1
+	PT += 20
+
+FOR LCOUNT, 0, VARSIZE("EXP")
+	経験 = CSVEXP(対象,LCOUNT)
+	SIF !経験
+		CONTINUE
+	SELECTCASE EXPNAME:LCOUNT
+		CASE "性交経験", "膣射経験"
+			PT += 経験/3
+		CASE "Ｖ経験", "Ａ経験", "レズ経験", "ゲイ経験", "Ｖ拡張経験", "Ａ拡張経験", "触手経験"
+			PT += 経験/5
+		CASE "フェラ経験", "パイズリ経験", "射精管理経験", "尿道経験"
+			PT += 経験/10
+		CASE "絶頂経験", "射精経験", "自慰経験", "噴乳経験", "放尿経験"
+			PT += 経験/30
+	ENDSELECT
+NEXT
+
+計算済み:対象 = PT
+
+RETURNF PT
+
+@売却額PT計算, 対象
+#DIM DYNAMIC 対象
+#DIM DYNAMIC 売却額補正
+#DIM DYNAMIC LTARGET
+#DIM 計算済み, 10000
+
+SIF 計算済み:対象
+	RETURN 計算済み:対象
+
+SKIPDISP 1
+ADDCHARA 対象
+LTARGET = TARGET
+TARGET = CHARANUM-1
+CALL 売却額補正計算, 1
+売却額補正 = RESULT
+SKIPDISP 0
+;DEBUGPRINTFORML 計算完了:%NAME:TARGET%
+DELCHARA TARGET
+TARGET = LTARGET
+
+計算済み:対象 = 売却額補正*100/700
+
+;4桁族を除くと700あたりが最高なので10～700で計算する
+RETURN 売却額補正*100/700
+
+;;;簡単なほどPTは低くなる
+@屈服難易度PT計算, 対象
+#FUNCTION
+#DIM DYNAMIC 対象
+#DIM DYNAMIC PT
+#DIM DYNAMIC LCOUNT
+#DIM 計算済み, 10000
+
+SIF 計算済み:対象
+	RETURNF 計算済み:対象
+
+SIF CSVCSTR(対象, GETNUM(CSTR, "恋心")) != ""
+	PT += 15
+SIF CSVCSTR(対象, GETNUM(CSTR, "既婚者")) != ""
+	PT += 30
+
+FOR LCOUNT, 0, VARSIZE("TALENT")
+	SIF !CSVTALENT(対象, LCOUNT)
+		CONTINUE
+	SELECTCASE TALENTNAME:LCOUNT
+		CASE "体格"
+			SELECTCASE CSVTALENT(対象, LCOUNT)
+				CASE 1
+					PT -= 5
+				CASE 2
+					PT -= 4
+				CASE 4
+					PT += 2
+			ENDSELECT
+		CASE "一線越えない"
+			PT += 10
+		CASE "気丈", "生意気", "プライド高い", "自制心", "無関心", "快感の否定"
+			PT += 5
+		CASE "反抗的", "ツンデレ", "貞操観念", "抵抗"
+			PT += 4
+		{
+		CASE "大人しい", "強気", "保守的", "抑圧", "中毒しやすい", "男嫌い", "女嫌い",
+			 "同族嫌悪", "戦士"
+		}
+			PT += 3
+		CASE "サボり魔", "感情乏しい", "汚臭敏感", "潔癖症", "サド"
+			PT += 2
+		CASE "ハイテンション", "目立ちたがり", "汚臭鈍感", "汚れ無視", "サキュバス", "インキュバス", "幼稚"
+			PT -= 3
+		{
+		CASE "臆病", "弱気", "好奇心", "楽観的", "貞操無頓着", "弱味", "寂しがり屋", "倒錯的",
+			 "両刀", "男好き", "女好き", "マゾ", "子供好き"
+		}
+			PT -= 4
+		CASE "素直", "プライド低い", "解放", "献身的", "快感に素直", "妄信"
+			PT -= 5
+		CASE "即落ち"
+			PT -= 90
+	ENDSELECT
+NEXT
+
+計算済み:対象 = PT
+
+RETURNF PT
+
+@CREATE_RADOR, CORNER:0, CORNER:1, CORNER:2, CORNER:3
+#FUNCTIONS
+#DIM DYNAMIC XCOUNT
+#DIM DYNAMIC YCOUNT
+;四角形の各角の値 時計回りに0～3
+#DIM DYNAMIC CORNER, 4
+#DIM DYNAMIC DELAY
+#DIM 生成済み
+
+
+#DIM DYNAMIC CM, 5, 5
+
+DELAY = GETMILLISECOND()
+
+CM:0:0 = 0xFF, 0, 0, 0, 0
+CM:1:0 = 0, 0xFF, 0, 0, 0
+CM:2:0 = 0, 0, 0xFF, 0, 0
+CM:3:0 = 0, 0, 0, 0xFF, 0
+CM:4:0 = 0, 0x28, 0xFF, 0, 0
+
+[SKIPSTART]
+GDISPOSE 10
+GDISPOSE 11
+GDISPOSE 12
+GDISPOSE 13
+GDISPOSE 20
+GDISPOSE 21
+GDISPOSE 22
+[SKIPEND]
+
+;1000番台を作ってみる
+
+;DEBUGPRINTFORML {GETMILLISECOND()-DELAY}
+
+IF !SPRITECREATED("右下")
+	GDISPOSE 1000
+	GCREATE 1000, 100, 100
+	FOR XCOUNT, 0, 100
+		FOR YCOUNT, 0, 100
+			SIF XCOUNT+YCOUNT < 100
+				GSETCOLOR 1000, 0xA0FFD700, XCOUNT, YCOUNT
+		NEXT
+	NEXT
+	SPRITECREATE "右下", 1000
+ENDIF
+
+IF !SPRITECREATED("右上")
+	GDISPOSE 1001
+	GCREATE 1001, 100, 100
+	GDRAWGWITHROTATE 1001, 1000, -90
+	SPRITECREATE "右上", 1001
+ENDIF
+IF !SPRITECREATED("左下")
+	GDISPOSE 1002
+	GCREATE 1002, 100, 100
+	GDRAWGWITHROTATE 1002, 1000, 90
+	SPRITECREATE "左下", 1002
+ENDIF
+IF !SPRITECREATED("左上")
+	GDISPOSE 1003
+	GCREATE 1003, 100, 100
+	GDRAWGWITHROTATE 1003, 1000, 180
+	SPRITECREATE "左上", 1003
+ENDIF
+
+;レーダー生成
+GDISPOSE 1004
+GCREATE 1004, 2000, 2000
+GDRAWSPRITE 1004, "右上", 1000, 1000-CORNER:0*10, CORNER:1*10, CORNER:0*10
+GDRAWSPRITE 1004, "右下", 1000, 1000, CORNER:1*10, CORNER:2*10
+GDRAWSPRITE 1004, "左下", 1000-CORNER:3*10, 1000, CORNER:3*10, CORNER:2*10
+GDRAWSPRITE 1004, "左上", 1000-CORNER:3*10, 1000-CORNER:0*10, CORNER:3*10, CORNER:0*10
+SPRITEDISPOSE "RADOR"
+SPRITECREATE "RADOR", 1004
+
+IF !SPRITECREATED("RADOR_BACK")
+	GDISPOSE 1005
+	GCREATE 1005, 2400, 2400
+	GDRAWSPRITE 1005, "右上", 1200, 200, 1000, 1000, CM:0:0
+	GDRAWSPRITE 1005, "右下", 1200, 1200, 1000, 1000, CM:0:0
+	GDRAWSPRITE 1005, "左下", 200, 1200, 1000, 1000, CM:0:0
+	GDRAWSPRITE 1005, "左上", 200, 200, 1000, 1000, CM:0:0
+	FOR XCOUNT, 0, 2400
+		FOR YCOUNT, 0, 2400
+			SIF INRANGE(XCOUNT, 1195, 1204) || INRANGE(YCOUNT, 1195, 1204)
+				GSETCOLOR 1005, 0xFF000000, XCOUNT, YCOUNT
+		NEXT
+	NEXT
+	SPRITECREATE "RADOR_BACK", 1005
+ENDIF
+
+GDISPOSE 1006
+GCREATE 1006, 2600, 2500
+GDRAWSPRITE 1006, "RADOR_BACK"
+GDRAWSPRITE 1006, "RADOR", 200, 200
+
+GSETFONT 1006, "Arial", 150
+GSETBRUSH 1006, 0xD0FFFFFF
+
+GSETPEN 1006, 0xD0EE82EE, 2
+GDRAWTEXT 1006, @"開発難易度 {CORNER:0}", 750, 50
+GSETPEN 1006, 0xD0FF0000, 2
+GDRAWTEXT 1006, @"性経験 {CORNER:1}", 1800, 1100
+GSETPEN 1006, 0xD000FFFF, 2
+GDRAWTEXT 1006, @"売却額 {CORNER:2}", 850, 2200
+GSETPEN 1006, 0xD000FF00, 2
+GDRAWTEXT 1006, "屈服難易度", 0, 1100
+GDRAWTEXT 1006, @"{CORNER:3}", 0, 1250
+
+SPRITEDISPOSE "SQUARE_RADOR"
+SPRITECREATE "SQUARE_RADOR", 1006
+
+RETURNF "SQUARE_RADOR"
+
+@レーダーチャートデバッグ
+#DIM DYNAMIC LCOUNT
+
+FOR LCOUNT, 0, 10000
+	SIF !EXISTCSV(LCOUNT)
+		CONTINUE
+	CALL 売却額PT計算, LCOUNT
+	PRINTFORML %CSVCALLNAME(LCOUNT), 20, LEFT% 開発難易度PT:{開発難易度PT計算(LCOUNT), 4, LEFT} 性経験PT:{性経験PT計算(LCOUNT), 4, LEFT} 売却額PT:{RESULT, 4, LEFT} 屈服難易度PT:{屈服難易度PT計算(LCOUNT), 4, LEFT}
+NEXT
+
+WAIT

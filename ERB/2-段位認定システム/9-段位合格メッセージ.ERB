@@ -1,0 +1,188 @@
+﻿
+@段位認定対象, 段位番号
+#FUNCTION
+#DIM DYNAMIC 段位番号
+SIF INRANGE(段位番号, 0, 30) || GROUPMATCH(段位番号, 573, 999)
+	RETURNF 1
+RETURNF 0
+
+@TEST_CLEAR
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC 換金
+#DIM DYNAMIC ボーナス
+#DIM DYNAMIC クリアマーク用
+#DIM DYNAMIC 売却人数
+#DIM DYNAMIC 陥落人数
+#DIM DYNAMIC 未クリアあり
+PRINTL ………………
+PRINTL …………
+PRINTW ……
+
+IF 段位認定対象(FLAG:選択段位) || ERDNAME(段位名, FLAG:選択段位) == "EDIT"
+	PRINTFORM 段位認定%ERDNAME(段位名, FLAG:選択段位)%
+ELSE
+	PRINT オリジナルコース
+ENDIF
+PRINTFORML に合格しました。おめでとうございます。
+IF 段位認定対象(FLAG:選択段位)
+	LOADGLOBAL
+	SIF FLAG:選択段位 == 7 && 段位 < 7
+		PRINTL 次回から青段位が受験可能になりました。
+	SIF FLAG:選択段位 == 18 && 段位 < 18
+		PRINTL 次回から赤段位が受験可能になりました。
+	SIF FLAG:選択段位 == 20 && 段位 < 20
+		PRINTL 次回から中伝が受験可能になりました。
+	SIF FLAG:選択段位 == 30 && 段位 < 30
+		PRINTL 次回から皆伝が受験可能になりました。
+ENDIF
+WAIT
+IF ERDNAME(段位名, FLAG:選択段位) == "EDIT"
+	PRINTL 「このEDIT楽しかったな」って思ったらぜひスレ等に報告してみてください。
+ELSEIF FLAG:選択段位 == 999
+	PRINTL 段位認定をここまで攻略したあなたにはもう調教できないものなどありません。
+	PRINTL これでも物足りないと思ったあなた、ぜひ新たなアイディアを募集しています。
+ELSEIF FLAG:選択段位 == 573
+	PRINTL あなたにはこのゲームをマスターしたことを名乗る資格があります。
+	PRINTL ここまで遊んでいただいてありがとうございます。
+	PRINTL これからもeraBEMANIをよろしくお願いします！
+ELSEIF 段位認定対象(FLAG:選択段位)
+	FOR LCOUNT, FLAG:選択段位, 573+1
+		SIF !段位認定対象(LCOUNT)
+			CONTINUE
+		SIF ERDNAME(段位名, LCOUNT) == ""
+			CONTINUE
+		PRINTFORML 是非次回は%ERDNAME(段位名, LCOUNT)%に挑戦してみてください。
+		BREAK
+	NEXT
+ENDIF
+WAIT
+
+;実績「段位認定皆伝をクリアする」
+SIF FLAG:選択段位 == 573
+	CALL 実績解除, "皆伝？これからもよろしくな"
+
+;先にボーナスを計算
+クリアマーク用 = 1
+FOR LCOUNT, 0, CHARANUM
+	SIF CFLAG:LCOUNT:キャラロスト
+		売却人数++
+	SIF 陥落(LCOUNT)
+		陥落人数++
+NEXT
+IF !売却人数
+	IF 陥落人数
+		;ALL JUSTに相当(全員未売却で1人以上陥落)
+		クリアマーク用 = 3
+		IF FLAG:段位ゲージ == 1
+			;ボーダークリア
+			ボーナス = 133333
+		ELSE
+			ボーナス = 50000
+		ENDIF
+	ELSE
+		;PERFECTに相当(全員未売却)
+		クリアマーク用 = 2
+		IF FLAG:段位ゲージ == 1
+			;ボーダークリア
+			ボーナス = 11900
+		ELSE
+			ボーナス = 3110
+		ENDIF
+	ENDIF
+ELSEIF FLAG:段位ゲージ == 1
+	;ボーダークリアのみ
+	ボーナス = 5730
+ENDIF
+
+PRINTL 
+LOADGLOBAL
+PRINTW 段位情報をセーブします。
+SIF 段位 < FLAG:選択段位 && !INRANGE(FLAG:選択段位, 50, 99)
+	段位 = FLAG:選択段位
+SIF 段位名:(FLAG:選択段位) < クリアマーク用 && FLAG:選択段位 != 999
+	段位名:(FLAG:選択段位) = クリアマーク用
+SAVEGLOBAL
+PRINTW セーブが完了しました。
+
+FOR LCOUNT, 0, VARSIZE("段位名")
+	SIF !段位認定対象(LCOUNT)
+		CONTINUE
+	SIF !段位名:LCOUNT
+		未クリアあり = 1
+NEXT
+SIF !未クリアあり
+	CALL 実績解除, "クリアマークに希望と涙を添えて"
+
+PRINTL ゲームを続けますか？
+PRINTL 続ける場合、段位ゲージを所持金に換算したあとに、
+PRINTL 難易度を選択し全能力を引き継いでPREMIUM FREEに移行します
+PRINTL 
+PRINTL [0] - 続行する
+PRINTL [1] - 終了する
+
+BINPUT
+IF RESULT == 0
+	PRINTL 段位ゲージを所持金に換算します
+	CALL PASELIL, @"段位ゲージ{FLAG:段位ゲージ*2}\% × 2000 ＝ {FLAG:段位ゲージ * 4000}＄"
+	換金 = FLAG:段位ゲージ * 4000
+	;オリジナルコースでない場合、ボーナスを加算
+	IF 段位認定対象(FLAG:選択段位)
+		換金 += ボーナス
+		SELECTCASE ボーナス
+			CASE 133333
+				SETCOLOR 0xFA5AFA
+				CALL PASELIL, @"PERFECT + BORDER  {ボーナス}＄"
+				RESETCOLOR
+				;実績「段位認定で133333パセリのボーナスを得る」
+				CALL 実績解除, "この実績が達成できてしまったあなたは立派なビーマー"
+			CASE 50000
+				SETCOLOR 0xFA5AFA
+				CALL PASELIL, @"PERFECT  {ボーナス}＄"
+				RESETCOLOR
+			CASE 11900
+				CALL PASELIL, @"PERFECT + BORDER  {ボーナス}＄"
+			CASE 3110
+				CALL PASELIL, @"PERFECT  {ボーナス}＄"
+			CASE 5730
+				CALL PASELIL, @"BORDER  {ボーナス}＄"
+		ENDSELECT
+	ENDIF
+	CALL PASELIW, @"{換金}＄に換算しました"
+	CALL PAYMENT, 換金, "段位ゲージ換金"
+	売却禁止 = 0
+	PRINTL 難易度を選択してください
+	PRINTL 
+	PRINTL [1] - NORMAL
+	PRINTL [2] - HYPER
+	PRINTL [3] - ANOTHER
+	PRINTL [4] - LEGGENDARIA
+	BINPUT
+	FLAG:難易度 = RESULT
+	PRINTW PREMIUM FREEに移行します
+	FLAG:ゲームモード = 9
+	CALL プレイログ記録, @"段位認定「%受験段位名%」合格"
+	JUMP SHOP画面
+ELSE
+	PRINTW ゲームを終了します。おつかれさまでした。
+	QUIT
+ENDIF
+
+@TEST_FAILED
+PRINTL ………………
+PRINTL …………
+PRINTW ……
+PRINTL ゲージが0%になってしまったため、段位認定は不合格です。
+PRINTW またの挑戦をお待ちしております。
+PRINTL [0] - タイトルに戻る
+PRINTL [1] - 諦める
+BINPUT
+SELECTCASE RESULT
+	CASE 0
+		CALL RESET_DATA
+		;RESETDATAではTARGETが1になってるので-1にする
+		TARGET = -1
+		BEGIN TITLE
+	CASE 1
+		CALL THANKYOUFORPLAYING
+		QUIT
+ENDSELECT

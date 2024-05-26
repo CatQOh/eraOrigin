@@ -1,0 +1,981 @@
+﻿;ステータス表示
+@所持キャラ一覧
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC 表示数
+#DIM DYNAMIC カウント数
+;#DIM DYNAMIC SHOP_未表示キャラ
+#DIM DYNAMIC LTARGET
+#DIM 表示切り替え
+#DIM DYNAMIC 表示上限 = 30
+{
+#DIMS DYNAMIC 選択情報 = 
+"",
+"調教対象選択",
+"助手選択1",
+"助手選択2",
+"能力表示",
+"ABL上昇",
+"ロストキャラ表示",
+}
+
+VARLINE = LINECOUNT
+
+IF ゲームモード() == "新婚モード"
+	CALL COLUMNPRINT, 0, "□キャラ一覧 "
+ELSE
+	SELECTCASE SHOP_キャラ表示情報
+		CASE "調教対象選択"
+			CALL COLUMNPRINT, 0, "□調教対象変更 "
+		CASE "助手選択1", "助手選択2"
+			CALL COLUMNPRINT, 0, "□助手変更     "
+		CASE "ロストキャラ表示"
+			CALL COLUMNPRINT, 0, "□ロストキャラ "
+		CASEELSE
+			CALL COLUMNPRINT, 0, "□キャラ一覧   "
+	ENDSELECT
+ENDIF
+
+FOR LCOUNT, 1, VARSIZE("選択情報")
+	IF SHOP_キャラ表示情報 == 選択情報:LCOUNT
+		CALL MCOLUMNPRINT, @"[--] %選択情報:LCOUNT% ", "deepskyblue"
+	ELSE
+		CALL MCOLUMNPRINT, @"[-{LCOUNT}] %選択情報:LCOUNT% "
+	ENDIF
+NEXT
+CALL MCOLUMNPRINTL, ""
+;PRINTL [-1] 表示上限を減らす [-9] 表示上限を増やす
+
+SHOP_未表示キャラ = 0
+
+FOR LCOUNT, 0, CHARANUM
+	;1巡目はMASTERとTARGET及びASSIの能力表示
+	IF LCOUNT == 0 && SHOP_キャラ表示情報 != "ロストキャラ表示"
+		IF STRCOUNT(SHOP_キャラ表示情報, "助手選択")
+			CALL COLUMNPRINTL, 0, "　[  0] 助手無し"
+		ELSE
+			CALL COLUMNPRINTL, 0, @"　[  0] %CALLNAME:MASTER%(主人) \@ SEX(MASTER) == 1 ? ♂ # ♀ \@ \@ TALENT:MASTER:ふたなり ? 双 #\@"
+		ENDIF
+		;TARGETとASSIはMASTERの下に表示する
+		IF TARGET > 0
+			;助手の指定なら助手不可能なキャラは除外
+			SIF !STRCOUNT(SHOP_キャラ表示情報, "助手選択") || 助手可能(TARGET)
+				CALL STATUS_BAR, TARGET
+		ENDIF
+		SIF ASSI > 0
+			CALL STATUS_BAR, ASSI
+		SIF ASSI:1 > 0
+			CALL STATUS_BAR, ASSI:1
+		CALL COLUMNDRAWLINE, 0
+		CONTINUE
+	ENDIF
+
+	;2巡目以降は通常のキャラ表示なので条件を指定
+	;ロストしたキャラは別枠
+	SIF CFLAG:LCOUNT:キャラロスト && SHOP_キャラ表示情報 != "ロストキャラ表示"
+		CONTINUE
+	SIF !CFLAG:LCOUNT:キャラロスト && SHOP_キャラ表示情報 == "ロストキャラ表示"
+		CONTINUE
+	;助手の指定なら助手不可能なキャラは除外
+	SIF STRCOUNT(SHOP_キャラ表示情報, "助手選択") && !助手可能(LCOUNT)
+		CONTINUE
+	;助手2はアニマルも選べない
+	SIF SHOP_キャラ表示情報 == "助手選択2" && TALENT:LCOUNT:アニマル
+		CONTINUE
+	;登場作品フィルタが設定してあるならそれ以外のキャラは除外
+	SIF 登場作品フィルタ != "" && GROUPMATCH(登場作品フィルタ, CSTR:LCOUNT:登場作品, CSTR:LCOUNT:登場作品２, CSTR:LCOUNT:登場作品３) == 0 && ORIGIN
+		CONTINUE
+	;キャラの表示上限に達したら終了
+	IF 表示数 >= 表示上限
+		SHOP_未表示キャラ = 1
+		BREAK
+	ENDIF
+	;対象と助手は主人の下に表示されるので除外
+	SIF GROUPMATCH(LCOUNT, TARGET, ASSI, ASSI:1)
+		CONTINUE
+	カウント数++
+	;ページ数×表示上限まで表示を飛ばす
+	SIF SHOP_キャラページ*表示上限 >= カウント数
+		CONTINUE
+	CALL STATUS_BAR, LCOUNT
+	表示数++
+NEXT
+;表示数が足りない場合は改行入れる
+IF 表示数 < 表示上限
+	DO
+		CALL COLUMNPRINTL, 0, ""
+		表示数++
+	LOOP 表示数 < 表示上限
+ENDIF
+
+CALL COLUMNDRAWLINE, 0
+CALL COLUMNPRINTL, 0, "　☆：調教中　１：助手1 ２：助手2　●：助手可　■：タグ色"
+CALL COLUMNPRINTL, 0, "　KA：経営モードに配属中　不：使用不可　妊：妊娠育児中　監：監禁中　獣：ペット候補　を表しています"
+CALL COLUMNDRAWLINE, 0
+
+;条件を満たしているにも関わらずまだリスト表示されてないキャラが居ればSHOP_未表示キャラフラグは1になる
+;RETURN SHOP_未表示キャラ
+
+;DRAWLINE
+;CALL LIFE_LIST, "調教対象選択", 0, 表示上限
+;RESULTにはSHOP_未表示キャラが居るかどうか
+;次ページあり = RESULT
+;DRAWLINE
+;PRINTPLAIN 　CHANGE TARGET　
+CALL COLUMNPRINT, 0, RETURNSPACE(SHOP_キャラページ, "　[999] 前ページ ")
+CALL COLUMNPRINT, 0, RETURNSPACE(SHOP_未表示キャラ, "[1001] 次ページ ")
+CALL COLUMNPRINT, 0, "[1010] キャラソート "
+IF SHOP_表示切り替え
+	CALL COLUMNPRINT, 0, "[1011] 通常表示に切り替え "
+ELSE
+	CALL COLUMNPRINT, 0, "[1011] 経営用表示に切り替え "
+ENDIF
+IF SHOP_配属キャラ選択不可
+	CALL COLUMNPRINT, 0, "[1012] 配属済キャラも選択可能にする "
+ELSE
+	CALL COLUMNPRINT, 0, "[1012] 配属済キャラを選択不可にする "
+ENDIF
+CALL COLUMNPRINTL, 0, ""
+
+CALL COLUMNPRINT, 0, SPACESLENS("　[999] 前ページ [1001] 次ページ ")
+SELECTCASE ワンタッチソート:0
+	CASE ""
+	CASE "キャラ番号", "配属先", "解禁日"
+		CALL COLUMNPRINT, 0, @"[1013] ワンタッチソート(%ワンタッチソート:0%%ワンタッチソート:2%) "
+	CASE "最大ベース"
+		CALL COLUMNPRINT, 0, @"[1013] ワンタッチソート(最大%ワンタッチソート:1%%ワンタッチソート:2%) "
+	CASEELSE
+		CALL COLUMNPRINT, 0, @"[1013] ワンタッチソート(%ワンタッチソート:1%%ワンタッチソート:2%) "
+ENDSELECT
+SIF ORIGIN
+	CALL COLUMNPRINT, 0, "[1020] 登場作品で絞る"
+CALL COLUMNPRINTL, 0, ""
+
+@所持キャラ一覧_INPUT
+#DIM DYNAMIC LTARGET
+SELECTCASE CRESULT:1
+	CASE MASTER
+		SELECTCASE SHOP_キャラ表示情報
+			CASE "調教対象選択"
+				TARGET = -1
+			CASE "助手選択1"
+				ASSI = -1
+			CASE "助手選択2"
+				ASSI:1 = -1
+			CASE "ABL上昇"
+				PRINTW 主人の能力上昇はスキルツリーから行ってください
+			CASE "能力表示"
+				GOTO 能力表示
+		ENDSELECT
+	CASE -1
+		SHOP_キャラ表示情報 = 調教対象選択
+	CASE -2
+		SHOP_キャラ表示情報 = 助手選択1
+		SHOP_キャラページ = 0
+	CASE -3
+		SHOP_キャラ表示情報 = 助手選択2
+		SHOP_キャラページ = 0
+	CASE -4
+		SHOP_キャラ表示情報 = 能力表示
+	CASE -5
+		SHOP_キャラ表示情報 = ABL上昇
+	CASE -6
+		SHOP_キャラ表示情報 = ロストキャラ表示
+		SHOP_キャラページ = 0
+	;CASE -1
+	;	SIF 表示上限 > 10
+	;		表示上限 -= 10
+	;CASE -9
+	;	表示上限 += 10
+	CASE 999
+		SHOP_キャラページ--
+	CASE 1000
+		RETURN
+	CASE 1001
+		SHOP_キャラページ++
+	CASE 1010
+		CALL CHARA_SORT
+	CASE 1011
+		INVERTBIT SHOP_表示切り替え, 0
+	CASE 1012
+		INVERTBIT SHOP_配属キャラ選択不可, 0
+	CASE 1013
+		SKIPDISP 1
+		CALL CHARASORTING, ワンタッチソート:0, ワンタッチソート:1, ワンタッチソート:2
+		SKIPDISP 0
+	CASE 1020
+		CALL 登場作品フィルタ設定
+		SHOP_キャラページ = 0
+	CASE 0 TO CHARANUM-1
+		SELECTCASE SHOP_キャラ表示情報
+			CASE "調教対象選択"
+				CALL ASSIGN_TARGET, CRESULT:1
+			CASE "助手選択1"
+				SELECTCASE CRESULT:1
+					CASE ASSI
+						ASSI = -1
+					CASEELSE
+						CALL ASSIGN_ASSI, CRESULT:1
+				ENDSELECT
+			CASE "助手選択2"
+				SELECTCASE CRESULT:1
+					CASE ASSI:1
+						ASSI:1 = -1
+					CASEELSE
+						CALL ASSIGN_ASSI, CRESULT:1, 2
+				ENDSELECT
+			CASE "能力表示", "ロストキャラ表示"
+				CALLF プレイ称号計算, "能力表示"
+				$能力表示
+				LTARGET = TARGET
+				TARGET = CRESULT:1
+				;TARGETの能力表示中はあっちで「調教対象に指定」を表示させないためのフラグ
+				IF TARGET == LTARGET
+					SHOW_TARGET = LTARGET
+				ELSE
+					SHOW_TARGET = 0
+				ENDIF
+				対象変更済み = 0
+				IF SHOP_キャラ表示情報 == "ロストキャラ表示"
+					ロストキャラ表示 = 1
+					CALL STATUS
+					ロストキャラ表示 = 0
+				ELSE
+					CALL STATUS
+				ENDIF
+				;TARGET変更がされてる場合は戻さない
+				SIF !対象変更済み && ASSI != LTARGET && ASSI:1 != LTARGET
+					TARGET = LTARGET
+				;TARGET変更無しかつ元々TARGETが居なかった場合も戻す
+				SIF !対象変更済み && LTARGET == -1
+					TARGET = -1
+			CASE "ABL上昇"
+				FLAG:能力上昇 = TARGET
+				TARGET = CRESULT:1
+				CALL ABL上昇画面
+				TARGET = FLAG:能力上昇
+		ENDSELECT
+		RETURN
+ENDSELECT
+
+@STATUS_BAR, 対象
+#DIM DYNAMIC 対象
+#DIM DYNAMIC 文字色
+#DIMS DYNAMIC 文字列
+
+IF CFLAG:対象:タグ色 > 0
+	文字色 = CFLAG:対象:タグ色
+ELSE
+	文字色 = -1
+ENDIF
+
+IF CFLAG:対象:キャラロスト
+	文字列 += COLUMNPRINTF("　")
+ELSE
+	IF CFLAG:対象:使用不可
+		文字列 += COLUMNPRINTF("不", 文字色)
+	ELSEIF TALENT:対象:アニマル
+		文字列 += COLUMNPRINTF("獣", 文字色)
+	ELSEIF CHECK_CHILD_CARE(対象)
+		文字列 += COLUMNPRINTF("妊", 文字色)
+	ELSEIF 対象 == TARGET
+		文字列 += COLUMNPRINTF("☆", 文字色)
+	ELSEIF 対象 == ASSI
+		文字列 += COLUMNPRINTF("１", 文字色)
+	ELSEIF 対象 == ASSI:1
+		文字列 += COLUMNPRINTF("２", 文字色)
+	ELSEIF CFLAG:対象:監禁
+		文字列 += COLUMNPRINTF("監", 文字色)
+	ELSEIF CSTR:対象:配属 != ""
+		文字列 += COLUMNPRINTF("KA", 文字色)
+	;助手経験あり
+	;ELSEIF ISASSI:対象
+	;	文字列 += COLUMNPRINTF("●", 文字色)
+	;助手可能
+	ELSEIF CFLAG:対象:助手可能
+		文字列 += COLUMNPRINTF("●", 文字色)
+	ELSEIF CFLAG:対象:タグ色
+		文字列 += COLUMNPRINTF("■", 文字色)
+	ELSE
+		文字列 += COLUMNPRINTF("　")
+	ENDIF
+ENDIF
+
+;調教対象の指定、もしくは助手の指定なら、育児部屋に移動しているキャラと監禁中キャラは選べない
+;配属キャラ選択不可オンの場合経営に配属したキャラも選べない（誤爆対策）
+IF GROUPMATCH(SHOP_キャラ表示情報, "調教対象選択", "助手選択1", "助手選択2") && (CHECK_CHILD_CARE(対象) || CFLAG:対象:使用不可 || CFLAG:対象:監禁 || (SHOP_配属キャラ選択不可 && CSTR:対象:配属 != ""))
+	文字列 += COLUMNPRINTF(@"[---] %LIMITEDCALLNAME(対象, 24), 25, LEFT%", "gray")
+ELSE
+	文字列 += COLUMNPRINTF(@"[{対象, 3}] %LIMITEDCALLNAME(対象, 24), 25, LEFT%")
+ENDIF
+
+;上記のキャラを表示したら詳細情報も表示
+;助手選択画面では表示しない
+IF SHOP_キャラ表示情報 != "助手選択" && SHOP_キャラ表示情報 != "ロストキャラ表示"
+	;表示切り替え中は経営用の情報表示
+	IF SHOP_表示切り替え
+		文字列 += COLUMNPRINTF("配属先:")
+		IF CSTR:対象:配属 != ""
+			文字列 += COLUMNPRINTF(@"%CSTR:対象:配属, 19, LEFT% ")
+		ELSE
+			文字列 += COLUMNPRINTF(@"%"無し", 19, LEFT% ")
+		ENDIF
+		文字列 += COLUMNPRINTF("モチベーション:")
+		SELECTCASE CFLAG:対象:モチベーション
+			CASE 1 TO 9
+				文字列 += COLUMNPRINTF("皆無 ", "gray")
+			CASE 10 TO 39
+				文字列 += COLUMNPRINTF("微妙 ", "yellow")
+			CASE 40 TO 60
+				文字列 += COLUMNPRINTF("普通 ", "silver")
+			CASE 61 TO 90
+				文字列 += COLUMNPRINTF("良好 ", "cyan")
+			CASE 91 TO 100
+				文字列 += COLUMNPRINTF("最高 ", "lime")
+		ENDSELECT
+		IF GUI
+			文字列 += @"%IMGTOTAG(BASEBAR("モチベ", 対象, 4))% "
+		ELSE
+			文字列 += COLUMNPRINTF(@"{CFLAG:対象:モチベーション, 3}/100 ")
+		ENDIF
+	ELSE
+		IF GUI
+			文字列 += @"体力:%IMGTOTAG(BASEBAR("体力", 対象, 11))% "
+			文字列 += @"気力:%IMGTOTAG(BASEBAR("気力", 対象, 11))% "
+		ELSE
+			文字列 += COLUMNPRINTF(@"体力%BARBASE("体力", 対象, 10), 23, LEFT%") 
+			文字列 += COLUMNPRINTF(@" 気力%BARBASE("気力", 対象, 10), 23, LEFT% ")
+		ENDIF
+	ENDIF
+ENDIF
+SELECTCASE SEX(対象)
+	CASE 1
+		文字列 += COLUMNPRINTF("♂ ")
+	CASE 2
+		文字列 += COLUMNPRINTF("♀ ")
+ENDSELECT
+SELECTCASE SHOP_キャラ表示情報
+	CASE "調教対象選択"
+		IF GROUPMATCH(CSTR:対象:種族, "獣人", "獣")
+			IF GUI
+				;26日周期で13日目がピーク
+				SELECTCASE CFLAG:対象:発情周期
+					CASE 0 TO 6
+						文字列 += COLUMNPRINTF(@"発情:%IMGTOTAG(GBAR(発情度(対象), 100, 2, "white", "gray", @"{発情度(対象)}\%", "black"))% ")
+					CASE 7 TO 9
+						文字列 += COLUMNPRINTF(@"発情:%IMGTOTAG(GBAR(発情度(対象), 100, 2, "yellow", "gray", @"{発情度(対象)}\%", "black"))% ")
+					CASE 10 TO 12
+						文字列 += COLUMNPRINTF(@"発情:%IMGTOTAG(GBAR(発情度(対象), 100, 2, "lime", "gray", @"{発情度(対象)}\%", "black"))% ")
+					CASE 13
+						文字列 += COLUMNPRINTF(@"発情:%IMGTOTAG(GBAR(発情度(対象), 100, 2, "deepskyblue", "gray", "100%", "black"))% ")
+					CASE 14 TO 16
+						文字列 += COLUMNPRINTF(@"発情:%IMGTOTAG(GBAR(100-発情度(対象), 100, 2, "gray", "lime", @"{発情度(対象)}\%", "black"))% ")
+					CASE 17 TO 19
+						文字列 += COLUMNPRINTF(@"発情:%IMGTOTAG(GBAR(100-発情度(対象), 100, 2, "gray", "yellow", @"{発情度(対象)}\%", "black"))% ")
+					CASE 20 TO 25
+						文字列 += COLUMNPRINTF(@"発情:%IMGTOTAG(GBAR(100-発情度(対象), 100, 2, "gray", "white", @"{発情度(対象)}\%", "black"))% ")
+				ENDSELECT
+			ELSE
+				文字列 += COLUMNPRINTF("発情:")
+				SELECTCASE CFLAG:対象:発情周期
+					CASE 0 TO 6
+						文字列 += COLUMNPRINTF(@"{発情度(対象)}\% ", "white")
+					CASE 7 TO 9
+						文字列 += COLUMNPRINTF(@"{発情度(対象)}\% ", "yellow")
+					CASE 10 TO 12
+						文字列 += COLUMNPRINTF(@"{発情度(対象)}\% ", "lime")
+					CASE 13
+						文字列 += COLUMNPRINTF(@"{発情度(対象)}\% ", "deepskyblue")
+					CASE 14 TO 16
+						文字列 += COLUMNPRINTF(@"{発情度(対象)}\% ", "lime")
+					CASE 17 TO 19
+						文字列 += COLUMNPRINTF(@"{発情度(対象)}\% ", "yellow")
+					CASE 20 TO 25
+						文字列 += COLUMNPRINTF(@"{発情度(対象)}\% ", "white")
+				ENDSELECT
+			ENDIF
+		ENDIF
+		SIF TALENT:対象:処女
+			文字列 += COLUMNPRINTF("処女 ")
+		SIF TALENT:対象:再生処女
+			文字列 += COLUMNPRINTF("再生処女 ")
+		SIF TALENT:対象:童貞
+			文字列 += COLUMNPRINTF("童貞 ")
+		SIF TALENT:対象:恋慕
+			文字列 += COLUMNPRINTF("恋慕 ")
+		SIF TALENT:対象:淫乱
+			文字列 += COLUMNPRINTF("淫乱 ")
+		SIF TALENT:対象:服従
+			文字列 += COLUMNPRINTF("服従 ")
+		SIF TALENT:対象:親愛
+			文字列 += COLUMNPRINTF("親愛 ")
+		SIF TALENT:対象:淫魔
+			文字列 += COLUMNPRINTF("淫魔 ")
+		SIF TALENT:対象:隷属
+			文字列 += COLUMNPRINTF("隷属 ")
+		SIF TALENT:対象:崩壊
+			文字列 += COLUMNPRINTF("崩壊 ")
+		SIF TALENT:対象:ふたなり
+			文字列 += COLUMNPRINTF("双 ")
+		SIF TALENT:対象:リミットバースト
+			文字列 += COLUMNPRINTF("超 ")
+		SIF ISSLIME(対象)
+			文字列 += COLUMNPRINTF("粘 ")
+	CASE "助手選択"
+		IF GUI
+			文字列 += @"技巧:%IMGTOTAG(GBAR(ABL:対象:技巧, 10, 3, BARCOLOR:能力, "gray", ABL:対象:技巧, "black"))% "
+			SELECTCASE SEX(対象)
+				CASE 1
+					文字列 += @"ホモっ気:%IMGTOTAG(GBAR(ABL:対象:ホモっ気, 10, 3, BARCOLOR:能力, "gray", ABL:対象:ホモっ気, "black"))% "
+					文字列 += @"ゲイ中毒:%IMGTOTAG(GBAR(ABL:対象:ゲイ中毒, 10, 3, BARCOLOR:能力, "gray", ABL:対象:ゲイ中毒, "black"))% "
+				CASE 2
+					文字列 += @"レズっ気:%IMGTOTAG(GBAR(ABL:対象:レズっ気, 10, 3, BARCOLOR:能力, "gray", ABL:対象:レズっ気, "black"))% "
+					文字列 += @"レズ中毒:%IMGTOTAG(GBAR(ABL:対象:レズ中毒, 10, 3, BARCOLOR:能力, "gray", ABL:対象:レズ中毒, "black"))% "
+			ENDSELECT
+			文字列 += " "
+			SIF TALENT:対象:両刀
+				文字列 += COLUMNPRINTF("両刀 ")
+			SIF TALENT:対象:ふたなり
+				文字列 += COLUMNPRINTF("ふたなり")
+		ELSE
+			SELECTCASE SEX(対象)
+				CASE 1
+					文字列 += COLUMNPRINTF(@"技巧Lv{ABL:対象:技巧, 2, LEFT} ホモっ気Lv{ABL:対象:ホモっ気, 2, LEFT} ゲイ中毒Lv{ABL:対象:ゲイ中毒, 2, LEFT} ")
+				CASE 2
+					文字列 += COLUMNPRINTF(@"技巧Lv{ABL:対象:技巧, 2, LEFT} レズっ気Lv{ABL:対象:レズっ気, 2, LEFT} レズ中毒Lv{ABL:対象:レズ中毒, 2, LEFT} ")
+			ENDSELECT
+			SIF TALENT:対象:両刀
+				文字列 += COLUMNPRINTF("両刀 ")
+			SIF TALENT:対象:ふたなり
+				文字列 += COLUMNPRINTF("ふたなり")
+		ENDIF
+	CASE "ロストキャラ表示"
+		文字列 += COLUMNPRINTF(@"ロスト原因:%CSTR:対象:ロスト詳細%")
+	CASEELSE
+		IF GUI
+			文字列 += COLUMNPRINTF(@"ストレス値:%IMGTOTAG(BASEBAR("ストレス値", 対象, 4))% ")
+			IF GROUPMATCH(CSTR:対象:種族, "獣人", "獣")
+				;26日周期で13日目がピーク
+				SELECTCASE CFLAG:対象:発情周期
+					CASE 0 TO 6
+						文字列 += COLUMNPRINTF(@"発情:%IMGTOTAG(GBAR(発情度(対象), 100, 2, "white", "gray", @"{発情度(対象)}\%", "black"))% ")
+					CASE 7 TO 9
+						文字列 += COLUMNPRINTF(@"発情:%IMGTOTAG(GBAR(発情度(対象), 100, 2, "yellow", "gray", @"{発情度(対象)}\%", "black"))% ")
+					CASE 10 TO 12
+						文字列 += COLUMNPRINTF(@"発情:%IMGTOTAG(GBAR(発情度(対象), 100, 2, "lime", "gray", @"{発情度(対象)}\%", "black"))% ")
+					CASE 13
+						文字列 += COLUMNPRINTF(@"発情:%IMGTOTAG(GBAR(発情度(対象), 100, 2, "deepskyblue", "gray", "100%", "black"))% ")
+					CASE 14 TO 16
+						文字列 += COLUMNPRINTF(@"発情:%IMGTOTAG(GBAR(100-発情度(対象), 100, 2, "gray", "lime", @"{発情度(対象)}\%", "black"))% ")
+					CASE 17 TO 19
+						文字列 += COLUMNPRINTF(@"発情:%IMGTOTAG(GBAR(100-発情度(対象), 100, 2, "gray", "yellow", @"{発情度(対象)}\%", "black"))% ")
+					CASE 20 TO 25
+						文字列 += COLUMNPRINTF(@"発情:%IMGTOTAG(GBAR(100-発情度(対象), 100, 2, "gray", "white", @"{発情度(対象)}\%", "black"))% ")
+				ENDSELECT
+			ENDIF
+		ELSE
+			文字列 += COLUMNPRINTF("ストレス値:")
+			SELECTCASE CFLAG:対象:ストレス値
+				CASE 0
+					文字列 += COLUMNPRINTF(@"{CFLAG:対象:ストレス値, 3}/999 ", "gray")
+				CASE 1 TO 99
+					文字列 += COLUMNPRINTF(@"{CFLAG:対象:ストレス値, 3}/999 ", "lime")
+				CASE 100 TO 299
+					文字列 += COLUMNPRINTF(@"{CFLAG:対象:ストレス値, 3}/999 ", "yellow")
+				CASE 300 TO 499
+					文字列 += COLUMNPRINTF(@"{CFLAG:対象:ストレス値, 3}/999 ", "red")
+				CASE IS >= 500
+					文字列 += COLUMNPRINTF(@"{CFLAG:対象:ストレス値, 3}/999 ", "darkred")
+			ENDSELECT
+			IF GROUPMATCH(CSTR:対象:種族, "獣人", "獣")
+				文字列 += COLUMNPRINTF("発情:")
+				SELECTCASE CFLAG:対象:発情周期
+					CASE 0 TO 6
+						文字列 += COLUMNPRINTF(@"{発情度(対象)}\% ", "white")
+					CASE 7 TO 9
+						文字列 += COLUMNPRINTF(@"{発情度(対象)}\% ", "yellow")
+					CASE 10 TO 12
+						文字列 += COLUMNPRINTF(@"{発情度(対象)}\% ", "lime")
+					CASE 13
+						文字列 += COLUMNPRINTF(@"{発情度(対象)}\% ", "deepskyblue")
+					CASE 14 TO 16
+						文字列 += COLUMNPRINTF(@"{発情度(対象)}\% ", "lime")
+					CASE 17 TO 19
+						文字列 += COLUMNPRINTF(@"{発情度(対象)}\% ", "yellow")
+					CASE 20 TO 25
+						文字列 += COLUMNPRINTF(@"{発情度(対象)}\% ", "white")
+				ENDSELECT
+			ENDIF
+		ENDIF
+ENDSELECT
+RESETCOLOR
+
+CALL COLUMNPRINTL, 0, 文字列
+
+;対象指定用関数
+@ASSIGN_TARGET, 対象
+#DIM DYNAMIC 対象
+TARGET = 対象
+SIF TARGET == ASSI
+	ASSI = -1
+SIF TARGET == ASSI:1
+	ASSI:1 = -1
+CALL KOJO_MESSAGE_EVENT, "調教対象指定"
+;配属してたら自動的に外す
+CALL 配属解除, TARGET
+;監禁も解除
+SIF CFLAG:対象:監禁
+	CALL 監禁解除, 対象
+
+;助手指定用関数
+@ASSIGN_ASSI, 助手, 助手番号 = 1
+#DIM DYNAMIC 助手
+#DIM DYNAMIC 助手番号
+SIF 助手番号 >= 2 && TALENT:助手:アニマル
+	RETURN
+SIF 助手 == TARGET
+	TARGET = -1
+SIF 助手 == ASSI
+	ASSI = -1
+SIF 助手 == ASSI:1
+	ASSI:1 = -1
+
+ASSI:(助手番号-1) = 助手
+CALL KOJO_MESSAGE_EVENT, "助手指定", 助手
+;配属してたら自動的に外す
+CALL 配属解除, ASSI:(助手番号-1)
+;監禁も解除
+SIF CFLAG:助手:監禁
+	CALL 監禁解除, 助手
+;助手にした際の素質変化用関数
+CALL ASSI_CHANGE, 助手番号
+ISASSI:(ASSI:(助手番号-1)) = 1
+
+;;;キャラソート
+@CHARA_SORT
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC 番号
+#DIM DYNAMIC 表示数
+#DIM DYNAMIC ソート設定
+#DIMS DYNAMIC SORTOPTION, 3
+#DIM DYNAMIC LVARLINE
+
+SIF LVARLINE
+	CLEARLINE LINECOUNT-LVARLINE
+LVARLINE = LINECOUNT
+DRAWLINE
+VARSET SORTOPTION
+PRINTL □どの要素でソートしますか？
+PRINTL 　[1] - 刻印
+PRINTL 　[2] - 能力
+PRINTL 　[3] - 経験
+PRINTL 　[4] - 名前
+PRINTL 　[5] - キャラ番号
+PRINTL 　[6] - 体力
+PRINTL 　[7] - 気力
+PRINTL 　[8] - 素質
+PRINTL 　[9] - 配属先
+SIF !ORIGIN
+	PRINTL 　[10] - 解禁日
+DRAWLINE
+PRINTPLAIN 　CHARA SORT　
+PRINTFORM [0] - 戻る
+SIF ソート設定
+	SETCOLORBYNAME deepskyblue
+PRINTFORM 　[98] - ワンタッチソートの設定
+RESETCOLOR
+SIF ワンタッチソート:0 != ""
+	PRINTFORM 　[99] - 設定をクリア
+PRINTL 
+
+BINPUT
+SELECTCASE RESULT
+	CASE 0
+		RETURN
+	CASE 98
+		INVERTBIT ソート設定, 0
+		RESTART
+	CASE 99
+		PRINTFORMW ワンタッチソートの設定をクリアしました
+		VARSET ワンタッチソート
+		RETURN
+	CASE 1
+		DRAWLINE
+		SORTOPTION:0 = 刻印
+		PRINTL □刻印
+		FOR LCOUNT, 0, 4
+			SIF MARKNAME:LCOUNT != ""
+				PRINTFORML 　[{LCOUNT}] - %MARKNAME:LCOUNT%
+		NEXT
+		DRAWLINE
+		PRINTPLAIN 　MARK　
+		PRINTL [100] - 戻る
+		BINPUT
+		番号 = RESULT
+		SIF RESULT == 100
+			RESTART
+		SORTOPTION:1 = %MARKNAME:番号%
+		PRINTL □並べ替え
+		PRINTL 　[0] - 昇順(低い順)
+		PRINTL 　[1] - 降順(高い順)
+		DRAWLINE
+		PRINTPLAIN 　MARK　
+		PRINTL [10] - 戻る
+		BINPUT
+		SELECTCASE RESULT
+			CASE 10
+				RESTART
+			CASE 0
+				SORTOPTION:2 = 昇順
+			CASE 1
+				SORTOPTION:2 = 降順
+		ENDSELECT
+	CASE 2
+		DRAWLINE
+		SORTOPTION:0 = 能力
+		PRINTL □能力
+		FOR LCOUNT, 0, 50
+			SIF ABLNAME:LCOUNT == ""
+				CONTINUE
+			PRINTFORMLC 　[{LCOUNT, 2}] - %ABLNAME:LCOUNT%
+		NEXT
+		CALL NEWLINE
+
+		DRAWLINE
+		PRINTPLAIN 　ABL　
+		PRINTL [100] - 戻る
+		BINPUT
+		番号 = RESULT
+		SIF RESULT == 100
+			RESTART
+		SORTOPTION:1 = %ABLNAME:番号%
+		PRINTL □並べ替え
+		PRINTL 　[0] - 昇順(低い順)
+		PRINTL 　[1] - 降順(高い順)
+		DRAWLINE
+		PRINTPLAIN 　ABL　
+		PRINTL [10] - 戻る
+		BINPUT
+		SELECTCASE RESULT
+			CASE 10
+				RESTART
+			CASE 0
+				SORTOPTION:2 = 昇順
+			CASE 1
+				SORTOPTION:2 = 降順
+		ENDSELECT
+	CASE 3
+		DRAWLINE
+		SORTOPTION:0 = 経験
+		PRINTL □経験
+		FOR LCOUNT, 0, VARSIZE("EXP")
+			SIF EXPNAME:LCOUNT == ""
+				CONTINUE
+			PRINTFORMLC 　[{LCOUNT, 2}] - %EXPNAME:LCOUNT%
+		NEXT
+		CALL NEWLINE
+
+		DRAWLINE
+		PRINTPLAIN 　EXP　
+		PRINTFORML [{VARSIZE("EXP")}] - 戻る
+		BINPUT
+		番号 = RESULT
+		SELECTCASE RESULT
+			CASE VARSIZE("EXP")
+				RESTART
+			CASE 0 TO VARSIZE("EXP")-1
+				SORTOPTION:1 = %EXPNAME:番号%
+				PRINTL □並べ替え
+				PRINTL 　[0] - 昇順(低い順)
+				PRINTL 　[1] - 降順(高い順)
+				DRAWLINE
+				PRINTPLAIN 　ABL　
+				PRINTL [10] - 戻る
+				BINPUT
+				SELECTCASE RESULT
+					CASE 10
+						RESTART
+					CASE 0
+						SORTOPTION:2 = 昇順
+					CASE 1
+						SORTOPTION:2 = 降順
+				ENDSELECT
+		ENDSELECT
+	CASE 4
+		DRAWLINE
+		SORTOPTION:0 = 名前
+		PRINTL □名前
+		PRINTL 　[0] - 昇順(フルネーム)
+		PRINTL 　[1] - 降順(フルネーム)
+		PRINTL 　[2] - 昇順(呼び名)
+		PRINTL 　[3] - 降順(呼び名)
+		PRINTL 　[4] - 昇順(アルファベット)
+		PRINTL 　[5] - 降順(アルファベット)
+		DRAWLINE
+		PRINTPLAIN 　NAME　
+		PRINTL [10] - 戻る
+		BINPUT
+		SIF RESULT == 10
+			RESTART
+		SELECTCASE RESULT/2
+			CASE 0
+				SORTOPTION:1 = フルネーム
+			CASE 1
+				SORTOPTION:1 = 呼び名
+			CASE 2
+				SORTOPTION:1 = アルファベット
+		ENDSELECT
+		IF RESULT%2 == 0
+			SORTOPTION:2 = 昇順
+		ELSE
+			SORTOPTION:2 = 降順
+		ENDIF
+	CASE 5
+		DRAWLINE
+		SORTOPTION:0 = キャラ番号
+		PRINTL □番号
+		PRINTL 　[0] - 昇順(0～)
+		PRINTL 　[1] - 降順(～0)
+		DRAWLINE
+		PRINTPLAIN 　NUMBER　
+		PRINTL [10] - 戻る
+		BINPUT
+		SELECTCASE RESULT
+			CASE 10
+				RESTART
+			CASE 0
+				SORTOPTION:2 = 昇順
+			CASE 1
+				SORTOPTION:2 = 降順
+		ENDSELECT
+	CASE 6
+		DRAWLINE
+		SORTOPTION:1 = 体力
+		PRINTL □体力
+		PRINTL 　[0] - 現在の体力昇順(低い順)
+		PRINTL 　[1] - 現在の体力降順(高い順)
+		PRINTL 　[2] - 最大体力昇順(低い順)
+		PRINTL 　[3] - 最大体力降順(高い順)
+		DRAWLINE
+		PRINTPLAIN 　HEALTH　
+		PRINTL [10] - 戻る
+		BINPUT
+		SIF RESULT == 10
+			RESTART
+		SELECTCASE RESULT/2
+			CASE 0
+				SORTOPTION:0 = ベース
+			CASE 1
+				SORTOPTION:0 = 最大ベース
+		ENDSELECT
+		IF RESULT%2 == 0
+			SORTOPTION:2 = 昇順
+		ELSE
+			SORTOPTION:2 = 降順
+		ENDIF
+	CASE 7
+		DRAWLINE
+		SORTOPTION:1 = 気力
+		PRINTL □気力
+		PRINTL 　[0] - 現在の気力昇順(低い順)
+		PRINTL 　[1] - 現在の気力降順(高い順)
+		PRINTL 　[2] - 最大気力昇順(低い順)
+		PRINTL 　[3] - 最大気力降順(高い順)
+		DRAWLINE
+		PRINTPLAIN 　VITAL　
+		PRINTL [10] - 戻る
+		BINPUT
+		SIF RESULT == 10
+			RESTART
+		SELECTCASE RESULT/2
+			CASE 0
+				SORTOPTION:0 = ベース
+			CASE 1
+				SORTOPTION:0 = 最大ベース
+		ENDSELECT
+		IF RESULT%2 == 0
+			SORTOPTION:2 = 昇順
+		ELSE
+			SORTOPTION:2 = 降順
+		ENDIF
+	CASE 8
+		DRAWLINE
+		SORTOPTION:0 = 素質
+		PRINTL □素質
+		FOR LCOUNT, 0, VARSIZE("TALENT")
+			SIF TALENTNAME:LCOUNT == ""
+				CONTINUE
+			PRINTFORMLC 　[{LCOUNT, 2}] - %TALENTNAME:LCOUNT%
+		NEXT
+		CALL NEWLINE
+
+		DRAWLINE
+		PRINTPLAIN 　TALENT　
+		PRINTFORML [{VARSIZE("TALENT")}] - 戻る
+		BINPUT
+		番号 = RESULT
+		SELECTCASE RESULT
+			CASE VARSIZE("TALENT")
+				RESTART
+			CASE 0 TO VARSIZE("TALENT")-1
+				SIF TALENTNAME:番号 == ""
+					CONTINUE
+				SORTOPTION:1 = %TALENTNAME:番号%
+				PRINTL □並べ替え
+				PRINTL 　[0] - 昇順(素質の無いキャラ優先)
+				PRINTL 　[1] - 降順(素質のあるキャラ優先)
+				DRAWLINE
+				PRINTPLAIN 　TALENT　
+				PRINTL [10] - 戻る
+				BINPUT
+				SELECTCASE RESULT
+					CASE 10
+						RESTART
+					CASE 0
+						SORTOPTION:2 = 昇順
+					CASE 1
+						SORTOPTION:2 = 降順
+				ENDSELECT
+		ENDSELECT
+	CASE 9
+		DRAWLINE
+		SORTOPTION:0 = 配属先
+		PRINTL □配属先
+		PRINTL 　[0] - 昇順(配属されてないキャラ優先)
+		PRINTL 　[1] - 降順(配属されてるキャラ優先)
+		DRAWLINE
+		PRINTPLAIN 　ASSIGNED　
+		PRINTL [10] - 戻る
+		BINPUT
+		SELECTCASE RESULT
+			CASE 10
+				RESTART
+			CASE 0
+				SORTOPTION:2 = 昇順
+			CASE 1
+				SORTOPTION:2 = 降順
+		ENDSELECT
+	CASE 10
+		SIF ORIGIN
+			CONTINUE
+		SORTOPTION:0 = 解禁日
+		PRINTL □解禁日
+		PRINTL 　[0] - 昇順(早い順)
+		PRINTL 　[1] - 降順(遅い順)
+		DRAWLINE
+		PRINTPLAIN 　UNLOCK　
+		PRINTL [10] - 戻る
+		BINPUT
+		SELECTCASE RESULT
+			CASE 10
+				RESTART
+			CASE 0
+				SORTOPTION:2 = 昇順
+			CASE 1
+				SORTOPTION:2 = 降順
+		ENDSELECT
+ENDSELECT
+IF ソート設定
+	PRINTFORMW ワンタッチソートの設定を変更しました（SHOP画面からソート可能です）
+	ワンタッチソート:0 = %SORTOPTION:0%
+	ワンタッチソート:1 = %SORTOPTION:1%
+	ワンタッチソート:2 = %SORTOPTION:2%
+ELSE
+	CALL CHARASORTING, SORTOPTION:0, SORTOPTION:1, SORTOPTION:2
+ENDIF
+
+;;;ソート処理
+@CHARASORTING, ソート:0, ソート:1, ソート:2
+#DIM DYNAMIC LCOUNT
+#DIMS DYNAMIC ソート, 3
+
+SELECTCASE ソート:0
+	CASE "刻印"
+		IF ソート:2 == "昇順"
+			SORTCHARA MARK:GETNUM(MARK, ソート:1)
+		ELSE
+			SORTCHARA MARK:GETNUM(MARK, ソート:1), BACK
+		ENDIF
+	CASE "能力"
+		IF ソート:2 == "昇順"
+			SORTCHARA ABL:GETNUM(ABL, ソート:1)
+		ELSE
+			SORTCHARA ABL:GETNUM(ABL, ソート:1), BACK
+		ENDIF
+	CASE "経験"
+		IF ソート:2 == "昇順"
+			SORTCHARA EXP:GETNUM(EXP, ソート:1)
+		ELSE
+			SORTCHARA EXP:GETNUM(EXP, ソート:1), BACK
+		ENDIF
+	CASE "名前"
+		SELECTCASE ソート:1
+			CASE "フルネーム"
+				IF ソート:2 == "昇順"
+					SORTCHARA NAME
+				ELSE
+					SORTCHARA NAME, BACK
+				ENDIF
+			CASE "呼び名"
+				IF ソート:2 == "昇順"
+					SORTCHARA CALLNAME
+				ELSE
+					SORTCHARA CALLNAME, BACK
+				ENDIF
+			CASE "アルファベット"
+				IF ソート:2 == "昇順"
+					SORTCHARA CSTR:英語名
+				ELSE
+					SORTCHARA CSTR:英語名, BACK
+				ENDIF
+		ENDSELECT
+	CASE "キャラ番号"
+		IF ソート:2 == "昇順"
+			SORTCHARA
+		ELSE
+			SORTCHARA BACK
+		ENDIF
+	CASE "ベース"
+		IF ソート:2 == "昇順"
+			SORTCHARA BASE:GETNUM(BASE, ソート:1)
+		ELSE
+			SORTCHARA BASE:GETNUM(BASE, ソート:1), BACK
+		ENDIF
+	CASE "最大ベース"
+		IF ソート:2 == "昇順"
+			SORTCHARA MAXBASE:GETNUM(BASE, ソート:1)
+		ELSE
+			SORTCHARA MAXBASE:GETNUM(BASE, ソート:1), BACK
+		ENDIF
+	CASE "素質"
+		IF ソート:2 == "昇順"
+			SORTCHARA TALENT:GETNUM(TALENT, ソート:1)
+		ELSE
+			SORTCHARA TALENT:GETNUM(TALENT, ソート:1), BACK
+		ENDIF
+	CASE "配属先"
+		IF ソート:2 == "昇順"
+			SORTCHARA CSTR:配属
+		ELSE
+			SORTCHARA CSTR:配属, BACK
+		ENDIF
+	CASE "解禁日"
+		FOR LCOUNT, 0, CHARANUM
+			ソート用購入日:LCOUNT:0 = BUYY:LCOUNT:0*10000+BUYM:LCOUNT:0*100+BUYD:LCOUNT:0
+		NEXT
+		IF ソート:2 == "昇順"
+			SORTCHARA ソート用購入日:0
+		ELSE
+			SORTCHARA ソート用購入日:0, BACK
+		ENDIF
+ENDSELECT
+SELECTCASE ソート:0
+	CASE "キャラ番号", "配属先", "解禁日"
+		PRINTFORMW %ソート:0%で%ソート:2%にソートしました
+	CASE "名前"
+		PRINTFORMW 名前(%ソート:1%)で%ソート:2%にソートしました
+	CASE "最大ベース"
+		PRINTFORMW 最大%ソート:1%で%ソート:2%にソートしました
+	CASEELSE
+		PRINTFORMW %ソート:1%で%ソート:2%にソートしました
+ENDSELECT
+SORTCHARA CFLAG:キャラロスト

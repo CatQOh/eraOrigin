@@ -1,0 +1,568 @@
+﻿@STRATEGY_PERSONAL, 配属先, 配属部屋
+#DIM DYNAMIC ページ数
+#DIM DYNAMIC 表示数
+#DIM DYNAMIC 配属可能人数
+#DIM DYNAMIC 飛ばした人数
+#DIM DYNAMIC 配属人数
+#DIMS DYNAMIC 配属先
+#DIM DYNAMIC 配属上限
+#DIM DYNAMIC 配属部屋
+#DIM DYNAMIC LTARGET
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC 配属可能, 10000
+#DIM DYNAMIC 名前文字数
+#DIM DYNAMIC 配属先文字数
+#DIM DYNAMIC LRESULT
+#DIM DYNAMIC 実績用変数
+#DIM DYNAMIC 初回
+
+配属人数 = 0
+
+CALL LOOP_CLEARLINE, !初回
+初回 = 1
+
+;分野ごとの配属上限人数を設定しておく
+SELECTCASE 配属先
+	CASE "ゲームセンター"
+		配属上限 = 10
+	CASE "ゲーセン売春"
+		配属上限 = 3
+	CASE "娼館"
+		配属上限 = 2
+	CASE "芸能プロダクション"
+		配属上限 = 20
+	CASE "医務室"
+		配属上限 = 3
+	CASE "図書室"
+		配属上限 = 3
+	CASE "実験室"
+		配属上限 = 5
+	CASE "農業"
+		;プランターで一人、畑は各1人*8、田んぼは各3人*2、最大で合計15人
+		配属上限 = ITEM:畑+ITEM:田んぼ*3
+		SIF ITEM:プランター
+			配属上限++
+	CASE "畜産業"
+		配属上限 = 10
+	CASE "調理室"
+		配属上限 = 3
+	CASE "飲食店"
+		配属上限 = 飲食店配属上限()
+	CASE "温泉探索"
+		配属上限 = 3
+	CASE "監禁室"
+		配属上限 = 3
+	CASE "出版社"
+		配属上限 = 5
+	CASE "博物館"
+		配属上限 = 3
+ENDSELECT
+
+;既に配属されている人数を計算
+IF 配属先 == "娼館"
+	配属人数 = CMATCH(CFLAG:娼館部屋番号, 配属部屋)
+ELSE
+	配属人数 = CMATCH(CSTR:配属, 配属先)
+ENDIF
+
+DRAWLINE
+IF 配属先 == "娼館"
+	PRINTFORML □娼館の{配属部屋}番ルームに配属するキャラを選んでください
+ELSE
+	PRINTFORML □%配属先%に配属する人員を選択してください(現在{配属人数}/{配属上限})
+ENDIF
+SELECTCASE 配属先
+	CASE "農業", "畜産業", "温泉探索", "博物館"
+		PRINTL 　配属可能条件：無条件
+	CASE "娼館", "ゲーセン売春"
+		PRINTL 　配属可能条件：売却可能であること
+	CASE "監禁室"
+		PRINTL 　配属可能条件：淫乱系陥落か服従系陥落であること
+	CASE "飲食店", "ゲームセンター", "出版社"
+		PRINTL 　配属可能条件：従順or奉仕精神Lv3以上
+	CASEELSE
+		PRINTL 　配属可能条件：助手可能であること
+ENDSELECT
+
+配属可能人数 = 0
+
+;配属可能なキャラを調べる
+FOR LCOUNT, 0, CHARANUM
+	;DISABLEチェック
+	CALLFORM DISABLE, 配属先 + "配属", LCOUNT
+	SIF RESULT
+		CONTINUE
+	;主人は無理
+	SIF LCOUNT == MASTER
+		CONTINUE
+	SIF CFLAG:LCOUNT:キャラロスト
+		CONTINUE
+	;アニマルも当然無理
+	SIF TALENT:LCOUNT:アニマル
+		CONTINUE
+	;監禁中は無理
+	SIF CFLAG:LCOUNT:監禁
+		CONTINUE
+	;出版社配属中で編集中は選べない
+	SIF CSTR:LCOUNT:配属 == "出版社" && 雑誌編集中()
+		CONTINUE
+	;パートナーなら配属条件無視
+	SIF GETCHARANAME(パートナー) == LCOUNT
+		GOTO 配属条件無視
+	SELECTCASE 配属先
+		;娼館とゲーセン売春は売却可能で配置可能
+		CASE "娼館", "ゲーセン売春"
+			;売却可能じゃないと無理
+			SIF !CFLAG:LCOUNT:売却可能
+				CONTINUE
+			;貞操帯装着中も配属不可
+			SIF CFLAG:LCOUNT:貞操帯
+				CONTINUE
+		;監禁室は淫乱系か服従系が条件
+		CASE "監禁室"
+			SIF !GROUPMATCH(FALLTYPE(LCOUNT), 2, 3)
+				CONTINUE
+		;従順or奉仕精神3以上
+		CASE "飲食店", "ゲームセンター", "出版社"
+			SIF ABL:LCOUNT:従順 < 3 && ABL:LCOUNT:奉仕精神 < 3
+				CONTINUE
+		;農業と畜産業と温泉と博物館は状態に関わらず配属可
+		CASE "農業", "畜産業", "温泉探索", "博物館"
+		;その他 助手可能が条件
+		CASEELSE
+			SIF !CFLAG:LCOUNT:助手可能
+				CONTINUE
+	ENDSELECT
+	$配属条件無視
+	;妊娠中、育児中は無理
+	SIF TALENT:LCOUNT:妊娠 || TALENT:LCOUNT:育児中
+		CONTINUE
+	;使用不可のキャラも無理
+	SIF CFLAG:LCOUNT:使用不可
+		CONTINUE
+	配属可能人数++
+	;配属可能なキャラに対応した配列が1になる
+	配属可能:LCOUNT = 1
+NEXT
+
+飛ばした人数 = 0
+表示数 = 0
+名前文字数 = 0
+配属先文字数 = 0
+
+;配属できるキャラがいる
+IF 配属可能人数
+	;表示を揃えるために名前の文字数と配属先の文字数を取得する
+	FOR LCOUNT, 0, CHARANUM
+		SIF !配属可能:LCOUNT
+			CONTINUE
+		;2ページ目以降はページ×20まで表示を飛ばす
+		IF 飛ばした人数 < ページ数*20
+			飛ばした人数++
+			CONTINUE
+		ENDIF
+		CALL SETMAX(名前文字数, STRLENS(NAME:LCOUNT))
+		CALL SETMAX(配属先文字数, STRLENS(CSTR:LCOUNT:配属))
+		表示数++
+		;20人表示したらページ終わり
+		SIF 表示数 == 20
+			BREAK
+	NEXT
+	;長いと溢れるため名前は32を上限に
+	SIF 名前文字数 > 32
+		名前文字数 = 32
+	飛ばした人数 = 0
+	表示数 = 0
+	;「【配属中】」「【調教中】」などの10文字分追加
+	配属先文字数 += 10
+	FOR LCOUNT, 0, CHARANUM
+		SIF !配属可能:LCOUNT
+			CONTINUE
+		;2ページ目以降はページ×20まで表示を飛ばす
+		IF 飛ばした人数 < ページ数*20
+			飛ばした人数++
+			CONTINUE
+		ENDIF
+		;その分野に配属中のキャラには◯マークが付く 娼館の場合は部屋番号
+		IF CSTR:LCOUNT:配属 == 配属先
+			IF 配属先 == "娼館"
+				PRINTFORM {CFLAG:LCOUNT:娼館部屋番号, 2}
+			ELSE
+				PRINT ◯
+			ENDIF
+		ELSE
+			PRINT 　
+		ENDIF
+		PRINTFORM [{LCOUNT, 2}] - %LIMITEDNAME(LCOUNT, 名前文字数), 名前文字数+1, LEFT% 
+		SELECTCASE CSTR:LCOUNT:配属
+			CASE ""
+				IF LCOUNT == TARGET
+					PRINTFORM %"【調教中】", 配属先文字数, LEFT%
+				ELSEIF GROUPMATCH(LCOUNT, ASSI, ASSI:1)
+					PRINTFORM %"【助手中】", 配属先文字数, LEFT%
+				ELSE
+					PRINTFORM %"【休憩中】", 配属先文字数, LEFT%
+				ENDIF
+			CASEELSE
+				PRINTFORM %@"【%CSTR:LCOUNT:配属%配属中】", 配属先文字数, LEFT%
+		ENDSELECT
+
+		;配属先によって表示が違う
+		SELECTCASE 配属先
+			CASE "ゲームセンター"
+				PRINTFORM 家事技能:{ABL:LCOUNT:家事技能, 2, LEFT} 工作技能:{ABL:LCOUNT:工作技能, 2, LEFT} 料理技能:{ABL:LCOUNT:料理技能, 2, LEFT}
+				CALL ISTALENT, LCOUNT, "料理人"
+				CALL ISTALENT, LCOUNT, "工学博士"
+				CALL ISTALENT, LCOUNT, "音ゲーマー"
+				CALL ISTALENT, LCOUNT, "サボり魔"
+				CALL ISTALENT, LCOUNT, "浪費癖"
+				CALL ISTALENT, LCOUNT, "統率"
+				SIF ワーカホリックレベル(LCOUNT)
+					PRINTFORM [ワーカホリック+{ワーカホリックレベル(LCOUNT)}]
+			CASE "娼館", "ゲーセン売春"
+				PRINTFORM 従順:{ABL:LCOUNT:従順, 2, LEFT} 欲望:{ABL:LCOUNT:欲望, 2, LEFT} 技巧:{ABL:LCOUNT:技巧, 2, LEFT}
+				CALL ISTALENT, LCOUNT, "淫乱"
+				CALL ISTALENT, LCOUNT, "淫魔"
+				CALL ISTALENT, LCOUNT, "淫核"
+				CALL ISTALENT, LCOUNT, "淫膣"
+				CALL ISTALENT, LCOUNT, "淫尻"
+				CALL ISTALENT, LCOUNT, "淫乳"
+				CALL ISTALENT, LCOUNT, "サボり魔"
+			CASE "芸能プロダクション"
+				PRINTFORM 歌唱技能:{ABL:LCOUNT:歌唱技能, 2, LEFT} 演奏技能:{ABL:LCOUNT:演奏技能, 2, LEFT} 舞踊技能:{ABL:LCOUNT:舞踊技能, 2, LEFT}
+				CALL ISTALENT, LCOUNT, "魅力"
+				CALL ISTALENT, LCOUNT, "魅惑"
+				CALL ISTALENT, LCOUNT, "謎の魅力"
+				CALL ISTALENT, LCOUNT, "人気"
+				CALL ISTALENT, LCOUNT, "絶対音感"
+				CALL ISTALENT, LCOUNT, "サボり魔"
+			CASE "医務室"
+				PRINTFORM 奉仕精神:{ABL:LCOUNT:奉仕精神, 2, LEFT} 医療技能:{ABL:LCOUNT:医療技能, 2, LEFT}
+				CALL ISTALENT, LCOUNT, "調合知識"
+				CALL ISTALENT, LCOUNT, "浪費癖"
+				CALL ISTALENT, LCOUNT, "謎の魅力"
+				CALL ISTALENT, LCOUNT, "魅力"
+				CALL ISTALENT, LCOUNT, "魅惑"
+				CALL ISTALENT, LCOUNT, "人気"
+				CALL ISTALENT, LCOUNT, "統率"
+				CALL ISTALENT, LCOUNT, "植生学"
+			CASE "図書室"
+				PRINTFORM 実務経験:{EXP:LCOUNT:実務経験, 4, LEFT}
+				CALL ISTALENT, LCOUNT, "買い物上手"
+				CALL ISTALENT, LCOUNT, "読書家"
+				CALL ISTALENT, LCOUNT, "潔癖症"
+				CALL ISTALENT, LCOUNT, "禁断の知識"
+				CALL ISTALENT, LCOUNT, "浪費癖"
+				CALL ISTALENT, LCOUNT, "謎の魅力"
+				CALL ISTALENT, LCOUNT, "魅力"
+				CALL ISTALENT, LCOUNT, "統率"
+			CASE "実験室"
+				PRINTFORM 工作技能:{ABL:LCOUNT:工作技能, 2, LEFT} サドっ気:{ABL:LCOUNT:サドっ気, 2, LEFT} マゾっ気:{ABL:LCOUNT:マゾっ気, 2, LEFT}
+				CALL ISTALENT, LCOUNT, "工学博士"
+				CALL ISTALENT, LCOUNT, "サド"
+				CALL ISTALENT, LCOUNT, "マゾ"
+				CALL ISTALENT, LCOUNT, "倒錯的"
+				CALL ISTALENT, LCOUNT, "調合知識"
+				CALL ISTALENT, LCOUNT, "浪費癖"
+				CALL ISTALENT, LCOUNT, "統率"
+				SIF ワーカホリックレベル(LCOUNT)
+					PRINTFORM [ワーカホリック+{ワーカホリックレベル(LCOUNT)}]
+			CASE "農業"
+				PRINTFORM 栽培技能:{ABL:LCOUNT:栽培技能, 2, LEFT} 工作技能:{ABL:LCOUNT:工作技能, 2, LEFT} 魔法技能:{ABL:LCOUNT:魔法技能, 2, LEFT}
+				CALL ISTALENT, LCOUNT, "統率"
+				CALL ISTALENT, LCOUNT, "植生学"
+				SIF ワーカホリックレベル(LCOUNT)
+					PRINTFORM [ワーカホリック+{ワーカホリックレベル(LCOUNT)}]
+			CASE "畜産業"
+				PRINTFORM 飼育技能:{ABL:LCOUNT:飼育技能, 2, LEFT} 飼育適性:{飼育レベル(LCOUNT), 2, LEFT}
+				CALL ISTALENT, LCOUNT, "世話好き"
+				CALL ISTALENT, LCOUNT, "浪費癖"
+				SIF GROUPMATCH(CSTR:LCOUNT:種族, "人魚", "獣人", "獣", "精霊", "妖精")
+					PRINTFORM [%CSTR:LCOUNT:種族%]
+				CALL ISTALENT, LCOUNT, "統率"
+				SIF ワーカホリックレベル(LCOUNT)
+					PRINTFORM [ワーカホリック+{ワーカホリックレベル(LCOUNT)}]
+			CASE "調理室"
+				PRINTFORM 料理技能:{ABL:LCOUNT:料理技能, 2, LEFT}
+				CALL ISTALENT, LCOUNT, "料理人"
+				CALL ISTALENT, LCOUNT, "統率"
+				SIF ワーカホリックレベル(LCOUNT)
+					PRINTFORM [ワーカホリック+{ワーカホリックレベル(LCOUNT)}]
+			CASE "温泉探索"
+				PRINTFORM 魔法技能:{ABL:LCOUNT:魔法技能, 2, LEFT} 
+				PRINTFORM 工作技能:{ABL:LCOUNT:工作技能, 2, LEFT} 
+				PRINTFORM 実務経験:{EXP:LCOUNT:実務経験, 2, LEFT}
+				CALL ISTALENT, LCOUNT, "地質学"
+				SIF ワーカホリックレベル(LCOUNT)
+					PRINTFORM [ワーカホリック+{ワーカホリックレベル(LCOUNT)}]
+			CASE "飲食店"
+				PRINTFORM 料理技能:{ABL:LCOUNT:料理技能, 2, LEFT}
+				CALL ISTALENT, LCOUNT, "料理人"
+				CALL ISTALENT, LCOUNT, "統率"
+				SIF ワーカホリックレベル(LCOUNT)
+					PRINTFORM [ワーカホリック+{ワーカホリックレベル(LCOUNT)}]
+				SIF !CFLAG:LCOUNT:配属完了 && CSTR:LCOUNT:配属 == "飲食店"
+					CALL PRINTCOLOR, "【配属準備中】", "gray"
+			CASE "出版社"
+				PRINTFORM 撮影技能:{ABL:LCOUNT:撮影技能, 2, LEFT} 
+				PRINTFORM 実務経験:{EXP:LCOUNT:実務経験, 2, LEFT}
+				CALL ISTALENT, LCOUNT, "カメラマン"
+				SIF ワーカホリックレベル(LCOUNT)
+					PRINTFORM [ワーカホリック+{ワーカホリックレベル(LCOUNT)}]
+		ENDSELECT
+		PRINTL
+		表示数++
+		;20人表示したらページ終わり
+		SIF 表示数 == 20
+			BREAK
+	NEXT
+ELSE
+	PRINTL 
+	PRINTL 【現在配属できるキャラはいません】
+	PRINTL 
+ENDIF
+DRAWLINE
+PRINTPLAINFORM 　PAGE.{ページ数+1}　
+IF ページ数 > 0
+	PRINTLC [999]前ページ
+ELSE
+	PRINTLC  
+ENDIF
+PRINTLC [1000] 戻る　
+;表示できるキャラがまだ居れば次ページ
+IF 表示数+20*ページ数 < 配属可能人数 
+	PRINTLC [1001]次ページ
+ELSE
+	PRINTLC  
+ENDIF
+SIF !(配属先 == "出版社" && 雑誌編集中())
+	PRINT [1002] 全員帰還
+PRINTL 
+
+CALL TUTORIAL
+
+BINPUT
+SELECTCASE RESULT
+	CASE 999
+		ページ数--
+	CASE 1000
+		CALL TUTORIAL, "施設_3"
+		VARLINE = 0
+		RETURN 0
+	CASE 1001
+		ページ数++
+	CASE 1002
+		FOR LCOUNT, 0, CHARANUM
+			SIF CSTR:LCOUNT:配属 == 配属先
+				CALL 配属解除, LCOUNT
+		NEXT
+		SELECTCASE 配属先
+			CASE "医務室", "図書室", "実験室", "調理室"
+				PRINTFORMW %配属先%の全員を担当から外しました
+			CASEELSE
+				PRINTFORMW %配属先%に配属してる人員が全員帰宅しました
+		ENDSELECT
+		RESTART
+	CASEELSE
+		SELECTCASE CSTR:RESULT:配属
+			CASE 配属先
+				;娼館の別部屋に配属してる場合はそちらから引っ張ってくる
+				SIF 配属先 == "娼館" && CFLAG:RESULT:娼館部屋番号 != 配属部屋
+					GOTO 娼館ELSE
+				SELECTCASE 配属先
+					CASE "医務室", "図書室", "実験室", "調理室"
+						PRINTFORMW %CALLNAME:RESULT%を%配属先%担当から外しました
+					CASEELSE
+						PRINTFORMW %CALLNAME:RESULT%が帰宅しました
+				ENDSELECT
+				LRESULT = RESULT
+				CALL 配属解除, LRESULT
+				LTARGET = TARGET
+				TARGET = LRESULT
+				;配属解除時の口上
+				CALL KOJO_STRATEGY, LRESULT, 配属先, "ASSIGNOFF"
+				TARGET = LTARGET
+				;配属先ごとに専用の処理がある場合は呼び出す
+				TRYCALLFORM %配属先%_ASSIGNOFF_OPTION, LRESULT
+			CASEELSE
+				$娼館ELSE
+				IF 配属人数 >= 配属上限
+					PRINTW これ以上配属できません
+					RESTART
+				ENDIF
+				PRINTFORMW %CALLNAME:RESULT%を配属しました
+				LRESULT = RESULT
+				CALL 配属解除, LRESULT
+				CSTR:LRESULT:配属 = %配属先%
+				SIF 配属先 == "娼館"
+					CFLAG:LRESULT:娼館部屋番号 = 配属部屋
+				LTARGET = TARGET
+				TARGET = LRESULT
+				;配属時の口上
+				CALL KOJO_STRATEGY, LRESULT, 配属先, "ASSIGNON"
+				TARGET = LTARGET
+				SIF ASSI == LRESULT
+					ASSI = -1
+				SIF ASSI:1 == LRESULT
+					ASSI:1 = -1
+				SIF TARGET == LRESULT
+					TARGET = -1
+				;配属先ごとに専用の処理がある場合は呼び出す
+				TRYCALLFORM %配属先%_ASSIGNON_OPTION, LRESULT
+				;配属先によっては即配属完了にする
+				SELECTCASE 配属先
+					CASE "調理室", "芸能プロダクション", "出版社"
+						CFLAG:LRESULT:配属完了 = 1
+				ENDSELECT
+				;実績:日向美ビタースイーツ♪のメンバーを全員娼館に配属する
+				実績用変数 = 0
+				IF 配属先 == "娼館"
+					FOR LCOUNT, 0, CHARANUM
+						IF CSTR:LCOUNT:配属 == "娼館"
+							SELECTCASE CHARANAMEF(LCOUNT)
+								CASE "山形 まり花", "和泉 一舞", "春日 咲子", "霜月 凛", "芽兎 めう"
+									実績用変数++
+							ENDSELECT
+						ENDIF
+					NEXT
+					SIF 実績用変数 == 5
+						CALL 実績解除, "日向美商店街で噂の売春宿"
+				ENDIF
+				;実績:ユーズ、ター子、レイジを調理室に配属する
+				実績用変数 = 0
+				IF 配属先 == "調理室"
+					FOR LCOUNT, 0, CHARANUM
+						IF CSTR:LCOUNT:配属 == "調理室"
+							SELECTCASE CHARANAMEF(LCOUNT)
+								CASE "ユーズ", "ター子", "レイジ"
+									実績用変数++
+							ENDSELECT
+						ENDIF
+					NEXT
+					SIF 実績用変数 == 3
+						CALL 実績解除, "今夜はたこ焼きパーティ"
+				ENDIF
+		ENDSELECT
+ENDSELECT
+RESTART
+
+@配属解除, 対象, キャラロスト処理
+#DIMS DYNAMIC 配属先
+#DIM DYNAMIC キャラロスト処理
+#DIM DYNAMIC 対象
+
+配属先 = %CSTR:対象:配属%
+CSTR:対象:配属 = 
+CSTR:対象:転属 = 
+CFLAG:対象:配属完了 = 0
+CFLAG:対象:ゲーセン店長 = 0
+CFLAG:対象:上級娼婦 = 0
+CFLAG:対象:レッスン = 0
+CFLAG:対象:娼館部屋番号 = 0
+飲食店リーダー:対象:0 = 0
+SIF !キャラロスト処理
+	TRYCALLFORM %配属先%_ASSIGNOFF_OPTION, 対象
+
+TRYCALLFORM 配属解除_%CSVNAMERPS(NO:対象)%, 配属先
+
+@浪費癖人数, 配属先
+#FUNCTION
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC 返り値
+#DIMS DYNAMIC 配属先
+
+FOR LCOUNT, 0, CHARANUM
+	SIF CSTR:LCOUNT:配属 == 配属先 && TALENT:LCOUNT:浪費癖
+		返り値++
+NEXT
+
+RETURNF 返り値
+
+;同じ配属先に相性が良いキャラが居る場合にモチベに補正がかかる
+;相性悪いともちろん下がる
+@相性モチベ補正, 対象
+#FUNCTION
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC 計算用
+#DIM DYNAMIC 相性
+#DIM DYNAMIC 対象
+
+FOR LCOUNT, 1, CHARANUM
+	SIF LCOUNT == 対象
+		CONTINUE
+	IF CSTR:対象:配属 == CSTR:LCOUNT:配属
+		相性 = 相性値(対象, LCOUNT)
+		IF 相性 > 100
+			計算用 += 相性/100
+		ELSEIF 相性 < 100
+			計算用 -= (100-MIN(相性, 80))/20
+		ENDIF
+	ENDIF
+NEXT
+
+RETURNF 計算用
+
+;指定した配属先に素質「統率」持ちがいるかどうかを確認
+@統率者, 配属先, 対象
+#FUNCTION
+#DIM DYNAMIC LCOUNT
+#DIMS DYNAMIC 配属先
+#DIM DYNAMIC 対象
+
+;娼館のみ同じ部屋のキャラが対象
+IF 配属先 == "娼館"
+	FOR LCOUNT, 1, CHARANUM
+		SIF CSTR:LCOUNT:配属 != 配属先
+			CONTINUE
+		SIF TALENT:LCOUNT:統率 && CFLAG:LCOUNT:配属完了 && CFLAG:LCOUNT:娼館部屋番号 == 対象
+			RETURNF 1
+	NEXT
+ELSE
+	FOR LCOUNT, 1, CHARANUM
+		SIF CSTR:LCOUNT:配属 != 配属先
+			CONTINUE
+		SIF TALENT:LCOUNT:統率 && CFLAG:LCOUNT:配属完了
+			RETURNF 1
+	NEXT
+ENDIF
+
+RETURNF 0
+
+@世話好き人数, 配属先, 対象
+#FUNCTION
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC 人数
+#DIMS DYNAMIC 配属先
+#DIM DYNAMIC 対象
+
+;娼館のみ同じ部屋のキャラが対象
+IF 配属先 == "娼館"
+	FOR LCOUNT, 1, CHARANUM
+		SIF CSTR:LCOUNT:配属 != 配属先
+			CONTINUE
+		SIF TALENT:LCOUNT:世話好き && CFLAG:LCOUNT:配属完了 && CFLAG:LCOUNT:娼館部屋番号 == 対象
+			人数++
+	NEXT
+	RETURNF 人数
+ELSE
+	FOR LCOUNT, 1, CHARANUM
+		SIF CSTR:LCOUNT:配属 != 配属先
+			CONTINUE
+		SIF TALENT:LCOUNT:世話好き && CFLAG:LCOUNT:配属完了
+			人数++
+	NEXT
+	RETURNF 人数
+ENDIF
+
+@配属人数(配属先)
+#FUNCTION
+#DIMS DYNAMIC 配属先
+#DIM DYNAMIC 総人数
+#DIM DYNAMIC LCOUNT
+
+FOR LCOUNT,1 , CHARANUM
+	SIF CSTR:LCOUNT:配属 == 配属先 && CFLAG:LCOUNT:配属完了 && !CFLAG:LCOUNT:サボり
+		総人数++
+NEXT
+
+RETURNF 総人数

@@ -1,0 +1,57 @@
+﻿@クラスメイトと一緒に登校する
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC LRAND
+#DIM DYNAMIC 候補人数
+#DIM DYNAMIC 候補, 1000
+
+PRINTL □誰と登校しますか？
+$RESTART
+
+FOR LCOUNT, 1, CHARANUM
+	;同じ学校の中から
+	SIF CSTR:LCOUNT:在校 != CSTR:PLAYER:在校
+		CONTINUE
+	SIF CFLAG:LCOUNT:特殊在校
+		CONTINUE
+	;数人の候補をランダムで選出
+	;ただし好感度の高いキャラは確定
+	IF 好感度合計(LCOUNT) >= 100
+		PRINTFORM 　[{LCOUNT}] - 
+		CALL SNAME(LCOUNT)
+		PRINTL 
+		候補:LCOUNT = 1
+		候補人数++
+	ELSE
+		IF RAND:4 == 0 || 運命の人 == NAME:LCOUNT
+			PRINTFORM 　[{LCOUNT}] - 
+			CALL SNAME(LCOUNT)
+			PRINTL 
+			候補:LCOUNT = 1
+			候補人数++
+		ENDIF
+	ENDIF
+NEXT
+
+;もし誰も居なかったら候補を選び直す
+SIF 候補人数 == 0
+	GOTO RESTART
+
+DRAWLINE
+PRINTPLAIN 　登校　
+PRINTL [10000] 戻る
+BINPUT
+SIF RESULT == 10000
+	RETURN 0
+
+TARGET = RESULT
+
+CALL SCHOOL_KOJO, TARGET, "一緒に登校"
+CALL 好感度上昇, TARGET, "友情", 10
+WAIT
+
+CSTR:PLAYER:現在地 = %CSTR:PLAYER:在校%
+
+RETURN 0
+
+@SCHOOL_MESSAGE_一緒に登校
+PRINTFORML %CALLNAME:TARGET%と一緒に朝の登校をした

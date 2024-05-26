@@ -1,0 +1,317 @@
+﻿;-------------------------------------------------
+;羞恥プレイ
+;-------------------------------------------------
+@USERCOM_ABLE_羞恥プレイ
+#FUNCTION
+#DIM DYNAMIC 条件確定
+
+;ゲーセンに居る場合はできない
+コマンド実行条件 += "ゲーセンでは実行不可/"
+SIF TEQUIP:ゲームセンター
+	COMRESULT = 0
+;上級売春中は不可
+コマンド実行条件 += "上級売春中は実行不可/"
+SIF 上級売春中
+	COMRESULT = 0
+;解除はいつでも可能
+SIF TEQUIP:羞恥プレイ && COMRESULT
+	条件確定 = 1
+
+;アイテム｢大鏡｣を持っていないとダメ
+コマンド実行条件 += "アイテム[大鏡]が必要/"
+SIF ITEM:大鏡 <= 0
+	COMRESULT = 0
+;マジックミラーの場合はビデオカメラで撮影してると不可
+コマンド実行条件 += "大鏡をマジックミラーに改造している場合、ビデオカメラとの併用はできない/"
+SIF アイテム改造:大鏡 == "マジックミラー" && 撮影中()
+	COMRESULT = 0
+;従順が1以上ないとダメ
+コマンド実行条件 += "対象の従順LV1以上が必要/"
+SIF ABL:従順 < 1
+	COMRESULT = 0
+;野外プレイ中はダメ
+コマンド実行条件 += "野外プレイ中は実行できない/"
+SIF TEQUIP:野外プレイ
+	COMRESULT = 0
+;お風呂場プレイ中はダメ
+コマンド実行条件 += "お風呂場では実行できない/"
+SIF TEQUIP:お風呂場
+	COMRESULT = 0
+;触手調教中はダメ
+コマンド実行条件 += "触手召喚中は実行できない/"
+SIF TEQUIP:触手
+	COMRESULT = 0
+;新妻プレイ中はダメ
+コマンド実行条件 += "エプロン使用中は実行できない/"
+SIF TEQUIP:エプロン
+	COMRESULT = 0
+コマンド実行条件 += "睡眠中は実行できない/"
+SIF TEQUIP:睡眠
+	COMRESULT = 0
+IF MOD:STS
+	コマンド実行条件 += "屍姦中は実行できない/"
+	SIF CFLAG:死亡
+		COMRESULT = 0
+ENDIF
+
+IF 条件確定
+	COMRESULT = 1
+	RETURNF 1
+ENDIF
+RETURNF COMRESULT
+
+@COM_羞恥プレイ
+#DIM DYNAMIC 増加量
+
+PRINTL 羞恥プレイ
+CALL KOJO_MESSAGE_COM
+
+;着脱の処理 終了時はソース、経験の加算は行わない
+INVERTBIT TEQUIP:羞恥プレイ, 0
+
+;着脱の処理
+IF アイテム改造:大鏡 == "マジックミラー"
+	IF TEQUIP:羞恥プレイ
+		;ビデオ撮影がされていれば終了させる
+		;テープは終了時に数を減らす、さらにこれまでの値段と経験を加算する
+		TEQUIP:ビデオカメラ = 0
+		ITEM:ビデオテープ--
+		CALL PRICE_VIDEO
+		PRINTW ★★★ビデオ撮影を終了します★★★
+	ELSE
+		;ビデオ撮影してなければ初期化して開始
+		TEQUIP:ビデオカメラ = 1
+		TFLAG:ビデオ撮影回数 = 0
+		VARSET ビデオ撮影内容, 
+		PRINTW ★★★ビデオ撮影を開始します★★★
+	ENDIF
+ENDIF
+
+SIF !TEQUIP:羞恥プレイ
+	RETURN 1
+
+;-------------------------------------------------
+;ソース追加処理
+;-------------------------------------------------
+;消費体力、気力
+LOSEBASE:体力 += 40
+LOSEBASE:気力 += 40
+
+SOURCE:恐怖 += 500
+SOURCE:露出 += 300
+SOURCE:屈従 += 300
+SOURCE:逸脱 += 1000
+SOURCE:反感 += 1000
+
+IF アイテム改造:大鏡 == "三面鏡"
+	SOURCE:恐怖 += 500
+	SOURCE:露出 += 1200
+	SOURCE:逸脱 += 500
+	SOURCE:反感 += 500
+ENDIF
+
+;-------------------------------------------------
+;特殊ソース処理
+;-------------------------------------------------
+;抑圧、抵抗持ちには、抑鬱ソース追加
+SIF TALENT:抑圧 || TALENT:抵抗
+	SOURCE:鬱屈 += 500
+
+;種族で補正
+SELECTCASE CSTR:種族
+	CASE "獣人", "獣"
+		SOURCE:露出 -= 300
+ENDSELECT
+
+;苦痛を伴わないマゾっ気及びマゾの処理は先にしておく
+;マゾっ気を見る
+増加量 = 700
+SIF アイテム改造:大鏡 == "三面鏡"
+	増加量 += 800
+SELECTCASE ABL:マゾっ気
+	CASE 0
+		TIMES 増加量 , 0.80
+		SOURCE:液体 += 0
+		SOURCE:欲情 += 0
+	CASE 1
+		TIMES 増加量 , 1.00
+		SOURCE:液体 += 20
+		SOURCE:欲情 += 30
+	CASE 2
+		TIMES 増加量 , 1.20
+		SOURCE:液体 += 40
+		SOURCE:欲情 += 70
+	CASE 3
+		TIMES 増加量 , 1.40
+		SOURCE:液体 += 70
+		SOURCE:欲情 += 120
+	CASE 4
+		TIMES 増加量 , 1.50
+		SOURCE:液体 += 110
+		SOURCE:欲情 += 180
+	CASE 5
+		TIMES 増加量 , 1.70
+		SOURCE:液体 += 150
+		SOURCE:欲情 += 250
+	CASE 6
+		TIMES 増加量 , 1.90
+		SOURCE:液体 += 200
+		SOURCE:欲情 += 300
+	CASE 7
+		TIMES 増加量 , 2.10
+		SOURCE:液体 += 250
+		SOURCE:欲情 += 350
+	CASE 8
+		TIMES 増加量 , 2.30
+		SOURCE:液体 += 300
+		SOURCE:欲情 += 400
+	CASE 9
+		TIMES 増加量 , 2.50
+		SOURCE:液体 += 350
+		SOURCE:欲情 += 450
+	CASE IS >= 10
+		TIMES 増加量 , 3.00
+		SOURCE:液体 += 500
+		SOURCE:欲情 += 500
+ENDSELECT
+SOURCE:露出 += 増加量
+
+;衝動的持ちは3分の1でアイテム壊す
+;マジックミラーの場合は発生しない
+IF TALENT:衝動的 && RAND:3 == 0 && アイテム改造:大鏡 != "マジックミラー"
+	TFLAG:アイテム破壊 = 1
+	ITEM:大鏡 = -1
+	TEQUIP:羞恥プレイ = 0
+ENDIF
+
+;-------------------------------------------------
+;絶頂チェック
+;-------------------------------------------------
+CALL SOURCE_CHECK_CVAB
+
+;-------------------------------------------------
+;射精チェック
+;-------------------------------------------------
+CALL SAMEN_CHECK_T, 0
+
+CALL SAMEN_SHOOT_T, 0, NOWEX:射精
+
+RETURN 1
+
+;-------------------------------------------------
+;装着継続の処理
+;-------------------------------------------------
+@EQUIP_COM_羞恥プレイ
+#DIM DYNAMIC 増加量
+
+PRINTL ＜羞恥プレイ中＞
+
+LOSEBASE:体力 += 20
+LOSEBASE:気力 += 40
+
+SOURCE:恐怖 += 400
+SOURCE:露出 += 300
+SOURCE:屈従 += 200
+SOURCE:逸脱 += 500
+SOURCE:反感 += 300
+
+IF アイテム改造:大鏡 == "三面鏡"
+	SOURCE:恐怖 += 100
+	SOURCE:露出 += 700
+	SOURCE:逸脱 += 500
+	SOURCE:反感 += 700
+ENDIF
+
+;-------------------------------------------------
+;特殊ソース処理
+;-------------------------------------------------
+;抑圧、抵抗持ちには、抑鬱ソース追加
+SIF TALENT:抑圧 || TALENT:抵抗
+	SOURCE:鬱屈 += 600
+
+;種族で補正
+SELECTCASE CSTR:種族
+	CASE "獣人", "獣"
+		SOURCE:露出 -= 200
+ENDSELECT
+
+;苦痛を伴わないマゾっ気及びマゾの処理は先にしておく
+;マゾっ気を見る
+増加量 = 400
+SIF アイテム改造:大鏡 == "三面鏡"
+	増加量 += 600
+SELECTCASE ABL:マゾっ気
+	CASE 0
+		TIMES 増加量 , 0.80
+		SOURCE:液体 += 0
+		SOURCE:欲情 += 0
+	CASE 1
+		TIMES 増加量 , 1.00
+		SOURCE:液体 += 20
+		SOURCE:欲情 += 30
+	CASE 2
+		TIMES 増加量 , 1.20
+		SOURCE:液体 += 40
+		SOURCE:欲情 += 70
+	CASE 3
+		TIMES 増加量 , 1.40
+		SOURCE:液体 += 70
+		SOURCE:欲情 += 120
+	CASE 4
+		TIMES 増加量 , 1.50
+		SOURCE:液体 += 110
+		SOURCE:欲情 += 180
+	CASE 5
+		TIMES 増加量 , 1.70
+		SOURCE:液体 += 150
+		SOURCE:欲情 += 250
+	CASE 6
+		TIMES 増加量 , 1.90
+		SOURCE:液体 += 200
+		SOURCE:欲情 += 300
+	CASE 7
+		TIMES 増加量 , 2.10
+		SOURCE:液体 += 250
+		SOURCE:欲情 += 350
+	CASE 8
+		TIMES 増加量 , 2.30
+		SOURCE:液体 += 300
+		SOURCE:欲情 += 400
+	CASE 9
+		TIMES 増加量 , 2.50
+		SOURCE:液体 += 350
+		SOURCE:欲情 += 450
+	CASE IS >= 10
+		TIMES 増加量 , 3.00
+		SOURCE:液体 += 500
+		SOURCE:欲情 += 500
+ENDSELECT
+SOURCE:露出 += 増加量
+
+;ナルシスト
+IF TALENT:ナルシスト
+	SOURCE:欲情 += 100
+	SOURCE:露出 += 200
+	SOURCE:屈従 += 100
+	SOURCE:欲情 *= 2
+ENDIF
+
+;-------------------------------------------------
+;ビデオの処理
+;-------------------------------------------------
+IF アイテム改造:大鏡 == "マジックミラー"
+	;撮影内容の保存
+	ビデオ撮影内容:(TFLAG:ビデオ撮影回数) = %SELECTCOMS%
+	TFLAG:ビデオ撮影回数++
+
+	;テープ残量がなくなると強制的にTEQUIPフラグを外す、さらにビデオの値段と経験の処理をする
+	IF TFLAG:ビデオ撮影回数 >= 10
+		TEQUIP:ビデオカメラ = 0
+		CALL PRICE_VIDEO
+		PRINTL ＜テープの残量がなくなりました　ビデオ撮影を終了します＞
+	ELSE
+		PRINTFORML ＜ビデオ撮影中{TFLAG:ビデオ撮影回数}/10＞
+	ENDIF
+ENDIF
+
+RETURN 1

@@ -1,0 +1,898 @@
+﻿;-------------------------------------------------
+;キスする
+;-------------------------------------------------
+@MESSAGE_COM_キスする
+IF TALENT:アニマル
+	PRINTFORMW %CALLNAME:PLAYER%が%CALLNAME:TARGET%に舌を突き出すと、%CALLNAME:TARGET%は湿った舌で口元を舐めてきた……
+ELSE
+	IF TEQUIP:睡眠
+		PRINTFORMW 寝息を立てる%CALLNAME:TARGET%の唇にそっとキスをした……
+		RETURN
+	ELSEIF CFLAG:死亡
+		PRINTFORM %CALLNAME:TARGET%の死体と
+	ELSEIF !陥落(TARGET) && ゲームモード() != "学園モード"
+		IF ABL:従順 < 3
+			PRINTFORM 抵抗する%CALLNAME:TARGET%と半ば強引に
+		ELSE
+			PRINTFORM まだ嫌がる%CALLNAME:TARGET%を言いくるめて
+		ENDIF
+	ELSE
+		PRINTFORM %CALLNAME:TARGET%と
+	ENDIF
+	PRINT 唇を重ね
+	IF TEQUIP:トイレ
+		IF 陥落(TARGET)
+			IF ABL:露出癖 >= 3
+				PRINTW ると、個室の外にも聞こえそうな音を立てて激しく求めてきた……
+			ELSE
+				PRINTW るが、個室の外に誰かが居ることを察して積極的になれずにいる……
+			ENDIF
+		ELSE
+			PRINTW た……
+		ENDIF
+	ELSE
+		IF CFLAG:死亡
+			PRINTW 冷たい口内を舌で蹂躙した……
+		;陥落+従順LV3以上+同性愛経験500以上+調教者と同性
+		ELSEIF 陥落(TARGET) && ABL:従順 >= 3 && (EXP:レズ経験 >= 500 || EXP:ゲイ経験 >= 500) && SEX(PLAYER) == SEX(TARGET)
+			PRINTFORMW 、ねっとりと舌を絡めあいながら唾液を交換した……
+		;陥落済み
+		ELSEIF 陥落(TARGET) && PLAYER == MASTER
+			PRINTFORMW ると、%CALLNAME:TARGET%も%CALLNAME:PLAYER%を求めて舌を絡めてきた……
+		;従順LV3以上
+		;ELSEIF ABL:従順 >= 3
+		;	PRINTFORMW ると、%CALLNAME:TARGET%も積極的に舌を絡めてきた……
+		ELSE
+			PRINTW た……
+		ENDIF
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;何もしない
+;-------------------------------------------------
+@MESSAGE_COM_何もしない
+IF TEQUIP:睡眠
+	PRINTFORML %CALLNAME:PLAYER%は何もせずに%CALLNAME:TARGET%の寝顔を眺めている……
+ELSEIF CFLAG:死亡
+	PRINTFORML %CALLNAME:PLAYER%は何もせずに%CALLNAME:TARGET%の死体を眺めている……
+ELSE
+	PRINTFORML %CALLNAME:PLAYER%は何もせずに%CALLNAME:TARGET%を放置している
+	IF TALENT:アニマル
+		PRINTFORML %CALLNAME:TARGET%は退屈そうに動物的な仕草を見せている……
+	ELSEIF TEQUIP:媚薬 && !TEQUIP:アイマスク
+		PRINTFORML %CALLNAME:TARGET%は媚薬でこみ上げる欲情に顔を赤くしながら見つめてくる……
+	ENDIF
+ENDIF
+WAIT
+
+;-------------------------------------------------
+;罵倒
+;-------------------------------------------------
+@MESSAGE_COM_罵倒
+;調教者が男
+PRINTFORML %CALLNAME:PLAYER%は思いつく限りの罵詈雑言を%CALLNAME:TARGET%に浴びせた
+PRINTFORM %CALLNAME:TARGET%は
+IF TALENT:アニマル
+	PRINT 人の言葉を理解できるのかはさておき、
+	IF CFLAG:依存度 <= 1000 || TALENT:反抗的
+		PRINTFORML %CALLNAME:PLAYER%の明らかな敵対心に対抗して威圧的な鳴き声を上げている……
+	ELSE
+		PRINTFORML %CALLNAME:PLAYER%からのお叱りに寂しそうな鳴き声を上げている……
+	ENDIF
+ELSE
+	IF 上級売春中
+		PRINTL 口をぐっと閉じて恍惚の表情を浮かべながら震えている……
+	ELSE
+		;ボールギャグ装着中
+		IF TEQUIP:ボールギャグ
+			;マゾっ気
+			SELECTCASE ABL:マゾっ気
+				;LV0
+				CASE 0
+					PRINTL 何か言い返そうとしているが口枷によって言葉は封じられている
+				;LV1,2
+				CASE 1, 2
+					PRINTL 一瞬何か言い返したいような仕草を見せるが自分の口が塞がっているのを思い出したのかおとなしくなった
+				;LV3,4
+				CASE 3, 4
+					PRINTL 罵られることに快感を感じているようだ……
+				;LV5以上
+				CASE IS >= 5
+					PRINTL 顔を紅潮させて鼻息を荒げている、どうやら罵られることにすっかり快感を感じているようだ
+					;以下女性のみ NOT無機物
+					SIF SEX(TARGET) == 2 && !TALENT:無機物
+						PRINTFORML %CALLNAME:TARGET%は\@ OVER_GENITAL(TARGET) != "" ? 衣服を愛液で湿らせながら # 足元を下品に漏れだす体液で水たまりを作り \@、さらなる罵倒を期待するかの様に淫靡な視線で見上げている……
+			ENDSELECT
+		ELSE
+			;マゾっ気
+			SELECTCASE ABL:マゾっ気
+				;LV0
+				CASE 0
+					;反抗的orプライド高いor生意気
+					IF TALENT:反抗的 || TALENT:プライド高い || TALENT:生意気
+						PRINTFORML ぎりぎりと歯を軋ませながら%CALLNAME:PLAYER%を睨みつけている
+					;素直orプライド低いor大人しい(上が優先)
+					ELSEIF TALENT:素直 || TALENT:プライド低い || TALENT:大人しい
+						PRINTFORML 目にうっすらと涙を浮かべながら%CALLNAME:PLAYER%の罵詈雑言を堪えている
+					ELSE
+						PRINTFORML 怒りと屈辱に満ちた顔で%CALLNAME:PLAYER%を睨んだ
+					ENDIF
+				;LV1,2
+				CASE 1, 2
+					IF TALENT:反抗的 || TALENT:プライド高い || TALENT:生意気
+						PRINTL 気にしない素振りを見せつつも、怒りとは別の反応が僅かに見て取れる……
+					ELSEIF TALENT:素直 || TALENT:プライド低い || TALENT:大人しい
+						PRINTL 何も言い返せずに口を噤むが、罵倒の言葉に聞き入っているようにも見える……
+					ELSE
+						PRINTFORML %CALLNAME:PLAYER%を睨んでいるもののその表情には僅かな快感がちらついている……
+					ENDIF
+				;LV3,4
+				CASE 3, 4
+					$NOTFALL
+					PRINTL 罵られることに快感を感じているようだ……
+				;LV5以上
+				CASE IS >= 5
+					;ここからは服従系陥落だけ
+					SIF FALLTYPE(TARGET) != 3
+						GOTO NOTFALL
+					PRINTL 罵られることにすっかり快感を感じているようだ
+					PRINTFORM %CALLNAME:TARGET%は顔を紅潮させて媚びるような眼差しで%CALLNAME:PLAYER%を見上げ、
+					;気丈かプライド高いがある
+					IF TALENT:気丈 || TALENT:プライド高い
+						PRINTL 言葉責めをねだるその姿にはかつての面影は既に無かった……
+					ELSE
+						PRINTL 哀願のこもった声でさらなる言葉責めをおねだりしている……
+					ENDIF
+			ENDSELECT
+		ENDIF
+	ENDIF
+ENDIF
+WAIT
+
+;-------------------------------------------------
+;お酒を飲ませる
+;-------------------------------------------------
+@MESSAGE_COM_お酒を飲ませる
+IF TEQUIP:ゲームセンター
+	PRINTFORML フードコートで%酒名%を注文して%CALLNAME:TARGET%に奢った
+ELSE
+	PRINTFORML %CALLNAME:TARGET%に%酒名%を飲ませることにした
+ENDIF
+IF CFLAG:酔
+	IF TALENT:下戸
+		IF CFLAG:酔 >= 20
+			GOTO 泥酔
+		ELSE
+			SELECTCASE 酒名
+				CASE "ザーメンハイボール", "精液サワー"
+					IF ABL:精液中毒 >= 3
+						PRINTFORMW %CALLNAME:TARGET%は酔いと情欲で顔を紅くしながら精液入りの酒を啜っている……
+					ELSE
+						PRINTFORMW %CALLNAME:TARGET%は精液の混じった酒に顔を歪めつつも、酒酔いに奪われた思考でなすがままにされている……
+					ENDIF
+				CASE "焼酎ゼリー", "ウイスキージュレ", "カルーアジュレ"
+					IF ISSLIME(TARGET)
+						IF 陥落(TARGET)
+							PRINTFORMW 酔いに酔った%CALLNAME:TARGET%はゼリー状の酒と溶け混ざり、自分が自分でなくなりそうな感覚すら心地良く感じている……
+						ELSE
+							PRINTFORMW ゼリー状の酒と溶け混ざり、自分が自分でなくなりそうな感覚に戸惑いつつも、%CALLNAME:TARGET%は酒酔いに奪われた思考でなすがままにされている……
+						ENDIF
+					ELSE
+						PRINTFORML %CALLNAME:TARGET%は顔を紅くしながら、ゼリー状に加工されたお酒をスイーツ感覚で味わっている
+						PRINTFORMW 酔いが回り、%CALLNAME:TARGET%の身も心もスライムに浸食され、とろけていく……
+					ENDIF
+				CASEELSE
+					IF ISSLIME(TARGET)
+						IF 陥落(TARGET)
+							PRINTFORMW 酒と溶け混ざった%CALLNAME:TARGET%は本来の形を崩しつつ%CALLNAME:MASTER%に抱きつくように絡みつく……
+						ELSE
+							PRINTFORMW ほんのりと赤みを帯びた%CALLNAME:TARGET%の身体に、酒が溶け混ざるとより赤みが強くなっていく……
+						ENDIF
+					ELSEIF 陥落(TARGET)
+						PRINTFORMW %CALLNAME:TARGET%は酔って%CALLNAME:MASTER%に抱きついたりしながらアルコールに溺れている
+					ELSE
+						PRINTFORMW 既に酔いが回っていた%CALLNAME:TARGET%は顔を紅くしながら少しづつ%酒名%を飲んでいる
+					ENDIF
+			ENDSELECT
+		ENDIF
+	ELSEIF TALENT:酒豪
+		SELECTCASE 酒名
+			CASE "ザーメンハイボール", "精液サワー"
+				GOTO 精液酒
+			CASE "焼酎ゼリー", "ウイスキージュレ", "カルーアジュレ"
+				GOTO 粘液酒
+			CASEELSE
+				IF 陥落(TARGET)
+					PRINTFORMW %CALLNAME:TARGET%は%CALLNAME:MASTER%にも酌をしながらお酒を楽しんでいる
+				ELSE
+					PRINTFORMW %CALLNAME:TARGET%は、自分はまだ飲めると言わんばかりに豪快に%酒名%を飲み干した
+				ENDIF
+		ENDSELECT
+	ELSE
+		IF CFLAG:酔 >= 50
+			$泥酔
+			SELECTCASE 酒名
+				CASE "ザーメンハイボール", "精液サワー"
+					IF ABL:精液中毒 >= 3
+						PRINTFORMW 十二分に酔いが回っているにも関わらず、%CALLNAME:TARGET%は精液入りの酒を喜々として飲み下した……
+					ELSE
+						PRINTFORMW ただでさえ酔いが回っているところに精液入りの酒を飲まされ、%CALLNAME:TARGET%はえずいている……
+					ENDIF
+				CASE "焼酎ゼリー", "ウイスキージュレ", "カルーアジュレ"
+					IF ISSLIME(TARGET)
+						PRINTFORMW 十二分に酔いが回っているにも関わらず、%CALLNAME:TARGET%はゼリー状の酒を喜々として取り込んだ……
+					ELSE
+						PRINTFORMW ただでさえ酔いが回っているところにゼリー状の酒を飲まされ、%CALLNAME:TARGET%はえずいている……
+					ENDIF
+				CASEELSE
+					PRINTFORMW %CALLNAME:TARGET%は既に呂律が回らなくなっている。少し苦しそうだ……
+			ENDSELECT
+		ELSE
+			SELECTCASE 酒名
+				CASE "ザーメンハイボール", "精液サワー"
+					$精液酒
+					IF ABL:精液中毒 >= 3
+						PRINTFORMW 酒に精液が入ってることに気づいた%CALLNAME:TARGET%は、淫らな顔で味を堪能している……
+					ELSE
+						PRINTFORMW 精液入りの酒は当然美味しくはないようだが、%CALLNAME:TARGET%はしぶしぶとそれを飲んでいる……
+					ENDIF
+				CASE "焼酎ゼリー", "ウイスキージュレ", "カルーアジュレ"
+					$粘液酒
+					IF ISSLIME(TARGET)
+						PRINTFORMW ゼリー状の酒がスライムと混ぜ合わされたものと気づいた%CALLNAME:TARGET%は、淫らな顔で身体に取り込み、味わってる……
+					ELSE
+						PRINTFORML ゼリー状の酒はほんのり甘く、%CALLNAME:TARGET%はスイーツ感覚で味わっている
+						PRINTFORMW それが身も心も溶かしていくスライムでできているとも知らずに……
+					ENDIF
+				CASEELSE
+					IF 陥落(TARGET)
+						PRINTFORMW 勧められるままにお酒を飲む%CALLNAME:TARGET%は、酔いが回って積極的になっている
+					ELSE
+						PRINTFORMW %CALLNAME:TARGET%は不本意に酒に溺れることを不安がっている……
+					ENDIF
+			ENDSELECT
+		ENDIF
+	ENDIF
+ELSE
+	SELECTCASE 酒名
+		CASE "ザーメンハイボール", "精液サワー"
+			IF ABL:精液中毒 >= 3
+				PRINTFORMW %CALLNAME:TARGET%は素面ということもあってか、精液の香りが漂う%酒名%をうっとりとした顔で飲み干した……
+			ELSE
+				PRINTFORMW %CALLNAME:TARGET%は精液入りの酒を、顔をしかめて飲んでいる……
+			ENDIF
+		CASE "焼酎ゼリー", "ウイスキージュレ", "カルーアジュレ"
+			IF ISSLIME(TARGET)
+				PRINTFORMW %CALLNAME:TARGET%は差し出された%酒名%を取り込み、味わうように自身の身体に溶け込ませていく……
+			ELSE
+				PRINTFORML %CALLNAME:TARGET%はあまり乗り気ではないようだが、%酒名%ならおやつ感覚で食べれるかもという事で口にした
+				PRINTFORMW その一口が、%CALLNAME:TARGET%に取り返しのつかない変化をもたらすものだとは知らずに……
+			ENDIF
+		CASEELSE
+			IF CFLAG:二日酔い
+				PRINTFORMW 二日酔い真っ只中の%CALLNAME:TARGET%にとっては辛いようだが、迎え酒という名目で飲ませた……
+			ELSEIF TALENT:下戸
+				PRINTFORMW %CALLNAME:TARGET%はあまり乗り気ではないようだが、少しだけということでお酒を口にした
+			ELSEIF TALENT:酒豪
+				IF 陥落(TARGET)
+					PRINTFORMW %CALLNAME:TARGET%はお酒を飲めてご満悦な様子だ
+				ELSE
+					PRINTFORMW %CALLNAME:TARGET%は酒が唯一の救いだといった様子で呑んでいる
+				ENDIF
+			ELSE
+				IF 陥落(TARGET)
+					PRINTFORMW %CALLNAME:TARGET%は一人で飲むのも悪いということで、%CALLNAME:MASTER%と盃を交わすことにした
+				ELSE
+					PRINTFORMW %CALLNAME:TARGET%はあまり乗り気ではないようだが、少しだけということでお酒を口にした
+				ENDIF
+			ENDIF
+	ENDSELECT
+ENDIF
+
+;-------------------------------------------------
+;キスしてもらう
+;-------------------------------------------------
+@MESSAGE_COM_キスしてもらう
+IF TALENT:アニマル
+	IF CFLAG:依存度 >= 1500
+		PRINTFORML %CALLNAME:TARGET%は飼い主である%CALLNAME:PLAYER%に飛びかかっては、口元や顔をくまなく舐め回してきた……
+	ELSE
+		PRINTFORML %CALLNAME:TARGET%は%CALLNAME:PLAYER%の口元や顔を舐め回してきた……
+	ENDIF
+ELSE
+	IF 陥落(TARGET)
+		SELECTCASE FALLTYPE(TARGET)
+			;恋慕、親愛
+			CASE 1
+				PRINTFORML %CALLNAME:TARGET%は%CALLNAME:PLAYER%を抱きしめ、微かに息を荒げながらキスをしてきた……
+				SIF TALENT:ツンデレ
+					PRINTFORML 高飛車な振る舞いが残りつつも、そのキスは素直で柔らかい……
+			;淫乱系
+			CASE 2
+				IF TEQUIP:ゲームセンター
+					PRINTFORML %CALLNAME:TARGET%は%CALLNAME:PLAYER%を壁に押し付けると、捕食するような激しい口づけを交わしてきた……
+				ELSE
+					PRINTFORML %CALLNAME:TARGET%は%CALLNAME:PLAYER%を押し倒し、貪るようなキスをしては%CALLNAME:PLAYER%の口内に唾液を垂らしている……
+				ENDIF
+			;服従、隷属
+			CASE 3
+				PRINTFORML %CALLNAME:TARGET%はまず%CALLNAME:PLAYER%の手の甲に唇を寄せ、敬愛を込めてから唇に重ね合わせてきた……
+		ENDSELECT
+	ELSEIF ゲームモード() == "学園モード"
+		PRINTFORM %CALLNAME:TARGET%にキスをせがむと、
+		IF CFLAG:倫理観 >= 80
+			PRINTL 躊躇うこともなく唇を重ね、舌を深く入れてきた……
+		ELSE
+			PRINTL 唇を重ねてきてくれた……
+		ENDIF
+	ELSE
+		PRINTFORM %CALLNAME:TARGET%は嫌がったが、
+		IF TALENT:ツンデレ || TALENT:プライド高い
+			PRINTL 顔をしかめて毒づきながらもキスをしてくれた……
+		ELSEIF TALENT:恥じらい
+			PRINTL 恥じらいで顔を紅くしながらも唇を重ねてくれた……
+		ELSE
+			PRINTL 渋々といった様子で唇を重ね合わせてきた……
+		ENDIF
+	ENDIF
+ENDIF
+WAIT
+
+;-------------------------------------------------
+;情欲を煽る
+;-------------------------------------------------
+@MESSAGE_COM_情欲を煽る
+PRINTFORML %CALLNAME:PLAYER%は卑猥な言葉で%CALLNAME:TARGET%の情欲を煽った……
+IF 上級売春中
+	PRINTFORML %CALLNAME:TARGET%は早く行為に及びたくてうずうずしている……
+ELSE
+	IF 陥落(TARGET)
+		SELECTCASE FALLTYPE(TARGET)
+			;恋慕、親愛
+			CASE 1
+				PRINTFORML %CALLNAME:TARGET%は興奮と期待と少しばかりの恥を宿した表情で体を疼かせている……
+			;淫乱系
+			CASE 2
+				PRINTFORML %CALLNAME:TARGET%は言葉だけで体を敏感に反応させ、今にも襲い掛かってきそうな様子だ……
+			;服従、隷属
+			CASE 3
+				PRINTFORML %CALLNAME:TARGET%は平常を装ってはいるものの、主の言葉に感情が揺らいでいる……
+		ENDSELECT
+	ELSE
+		IF TALENT:幼稚; || TALENT:幼児／幼児退行
+			PRINTFORML しかし%CALLNAME:TARGET%は隠語の意味が分からずに首を傾げている……
+		ELSEIF TALENT:恥じらい
+			PRINTFORML 猥談に思考を蝕まれる%CALLNAME:TARGET%は、赤面する顔を俯かせている……
+		ELSEIF TALENT:感情乏しい || TALENT:無関心
+			PRINTFORML しかし%CALLNAME:TARGET%はまるで聞こえていないかのように表情一つ変えない……
+		ELSEIF ゲームモード() == "学園モード"
+			PRINTFORML %CALLNAME:TARGET%も行為の一環としてその会話に応じた……
+		ELSE
+			PRINTFORML %CALLNAME:TARGET%は侮蔑の目で%CALLNAME:PLAYER%を見据えている……
+		ENDIF
+	ENDIF
+ENDIF
+WAIT
+
+;-------------------------------------------------
+;魔法詠唱
+;-------------------------------------------------
+@MESSAGE_COM_魔法詠唱
+IF 詠唱魔法 == "魔力吸収"
+	PRINTFORML %CALLNAME:PLAYER%は%CALLNAME:TARGET%に口づけると、魔力の宿った唾液が流れ込んできた……
+ELSEIF 詠唱魔法 == "魔力譲与"
+	PRINTFORML %CALLNAME:PLAYER%は%CALLNAME:TARGET%に口づけると、その体へ慎重に魔力を流し込んだ……
+ELSE
+	SELECTCASE 詠唱魔法
+		CASE "ハニーパーティ"
+			PRINTFORML %CALLNAME:PLAYER%は浴槽いっぱいに貯まったお湯にハニーパーティを唱えた
+		CASE "ラブキャンセーブユー"
+			IF TFLAG:ラブキャンセーブユー == 2
+				PRINTFORML %CALLNAME:PLAYER%は%CALLNAME:TARGET%にかけられたラブキャンセーブユーの魔法を解いた
+			ELSE
+				PRINTFORML %CALLNAME:PLAYER%は%CALLNAME:TARGET%に%詠唱魔法%を唱えた
+			ENDIF
+		CASEELSE
+			PRINTFORML %CALLNAME:PLAYER%は%CALLNAME:TARGET%に%詠唱魔法%を唱えた
+	ENDSELECT
+ENDIF
+WAIT
+
+;-------------------------------------------------
+;コナステで遊ぶ
+;-------------------------------------------------
+@MESSAGE_COM_コナステで遊ぶ
+PRINTFORMW %CALLNAME:PLAYER%は%CALLNAME:TARGET%とコナステの楽しい音楽ゲームを遊ぶことにした……
+
+;-------------------------------------------------
+;ジュースを飲ませる
+;-------------------------------------------------
+@MESSAGE_COM_ジュースを飲ませる
+PRINTFORML %CALLNAME:TARGET%に%酒名%を飲ませた
+SIF 陥落(TARGET)
+	PRINTFORML 美味しそうに%酒名%を飲んでは、喉を潤している……
+
+IF 酒名 == "スライムジュース"
+	IF ISSLIME(TARGET)
+		PRINTFORML ジュースに加工されたスライムの粘液が、%CALLNAME:TARGET%の身体を構成する粘液と混ざり合っていく……
+	ELSE
+		PRINTFORML ジュースに加工されたスライムの粘液と知らずに飲んだ%CALLNAME:TARGET%の身体が、スライムに浸食されていく……
+	ENDIF
+ENDIF
+
+WAIT
+
+;-------------------------------------------------
+;会話
+;-------------------------------------------------
+@MESSAGE_COM_会話
+IF TEQUIP:ゲームセンター
+	IF TEQUIP:トイレ
+		PRINTFORMW %CALLNAME:PLAYER%と%CALLNAME:TARGET%は個室の外に漏れないほどのひそひそ声で囁きあった……
+	ELSE
+		SELECTCASE FALLTYPE(TARGET)
+			CASE 1
+				PRINTFORMW %CALLNAME:PLAYER%と%CALLNAME:TARGET%は騒音にかき消されないように互いの顔を近づけながら、他の誰にも聞こえることのない甘い言葉を囁きあった……
+			CASE 3
+				GOTO 服従
+		ENDSELECT
+	ENDIF
+ELSE
+	SELECTCASE FALLTYPE(TARGET)
+		CASE 1
+			PRINTFORMW %CALLNAME:PLAYER%は%CALLNAME:TARGET%と楽しげに会話をした……
+		CASE 3
+			$服従
+			PRINTFORMW %CALLNAME:PLAYER%は%CALLNAME:TARGET%と言葉を交わし、忠誠心を再確認した……
+	ENDSELECT
+ENDIF
+
+;-------------------------------------------------
+;プレゼント
+;-------------------------------------------------
+@MESSAGE_COM_プレゼント
+PRINTFORM %CALLNAME:PLAYER%は%CALLNAME:TARGET%に
+SELECTCASE TFLAG:プレゼント
+	;スマイルプリキュア
+	CASE 0
+		PRINT 爽やかな笑顔
+	;今時カードでパセリ買うやつ
+	CASE 1
+		PRINT パセリカード
+	;日用品(ご想像にお任せします)
+	CASE 2
+		PRINT 軽くて身近な日用品
+	;アクセサリ(指輪ではない)
+	CASE 3
+		PRINT 綺麗なアクセサリ
+	;服 数パターンあり 需要があれば口上側で参照できるようにする
+	CASE 4
+		SELECTCASE RAND:4
+			CASE 0
+				PRINT 可愛らしい服
+			CASE 1
+				PRINT 煌びやかな服
+			CASE 2
+				PRINT 格好良い服
+			CASE 3
+				PRINT 着心地の良い服
+		ENDSELECT
+	;指輪
+	CASE 5
+		PRINT 名前の刻印入りのリング
+	;IIDX筐体
+	CASE 6
+		PRINT IIDX筐体
+	;特注品のディルド
+	CASE 7
+		PRINT 特注品のディルド
+	;特殊プレゼント
+	CASE 8
+		PRINTFORM %特殊プレゼント%
+	;アルストロメリア
+	CASE 10
+		PRINT アルストロメリアの花束
+	;薔薇
+	CASE 11
+		PRINT 薔薇の花束
+ENDSELECT
+PRINTFORML をプレゼントした……
+SELECTCASE TFLAG:プレゼント
+	;指輪プレゼントした場合
+	CASE 5
+		;親愛なら愛情経験ボーナス
+		IF TALENT:親愛
+			PRINTL 愛情経験ボーナス+50
+		;恋慕でもボーナス
+		ELSEIF TALENT:恋慕
+			PRINTL 愛情経験ボーナス+25
+		ENDIF
+	;IIDX筐体をプレセントした場合
+	CASE 6
+		PRINTFORML 突然のとんでもない振る舞いに%CALLNAME:TARGET%は気が動転している……
+	;ディルド
+	CASE 7
+		IF TALENT:恥じらい
+			PRINTFORML 男性器を模したプレゼントに%CALLNAME:TARGET%は顔を赤らめ、慌ててしまっている……
+		ELSEIF TALENT:貞操無頓着 || TALENT:好奇心 || TALENT:自慰しやすい || TALENT:快感に素直 || TALENT:淫膣 || TALENT:淫尻 || TALENT:倒錯的
+			PRINTFORML %CALLNAME:TARGET%はプレゼントを受け取ると舌なめずりをし、今すぐにでも使いたげな表情を浮かべている……
+		ELSE
+			PRINTFORML %CALLNAME:TARGET%は複雑な笑顔を見せながら、若干引き気味にそれを受け取った……
+		ENDIF
+ENDSELECT
+WAIT
+
+;-------------------------------------------------
+;スキンシップ
+;-------------------------------------------------
+@MESSAGE_COM_スキンシップ
+PRINTFORML %CALLNAME:PLAYER%は%CALLNAME:TARGET%とのスキンシップを図った
+IF TALENT:アニマル
+	PRINTFORMW %CALLNAME:TARGET%は%CALLNAME:PLAYER%の手の中で嬉しそうに顔を舐めてくる……
+ELSE
+	IF TEQUIP:ゲームセンター
+		IF TEQUIP:トイレ
+			SELECTCASE FALLTYPE(TARGET)
+				CASE 1
+					PRINTFORML %CALLNAME:TARGET%はスキンシップよりも、もっと性的な愛撫を欲しがっている……
+				CASE 3
+					PRINTFORML %CALLNAME:TARGET%は個室の中で愛情表現を図る%CALLNAME:PLAYER%に何の反応も見せない……
+			ENDSELECT
+		ELSE
+			SELECTCASE FALLTYPE(TARGET)
+				CASE 1
+					IF TALENT:恥じらい
+						PRINTFORML %CALLNAME:TARGET%は周囲の視線に気づいては、嬉しそうにしながらも顔を真っ赤に染めている……
+					ELSE
+						IF ABL:露出癖 >= 3
+							PRINTFORML %CALLNAME:TARGET%も、人目を憚らずに%CALLNAME:PLAYER%とじゃれ合っている……
+						ELSE
+							PRINTFORML %CALLNAME:TARGET%は周囲の視線が少し恥ずかしいようだ……
+						ENDIF
+					ENDIF
+				CASE 3
+					PRINTFORML %CALLNAME:TARGET%は%CALLNAME:PLAYER%の人目も気にしないスキンシップにも動じずにいる……
+			ENDSELECT
+		ENDIF
+		WAIT
+	ELSE
+		SELECTCASE FALLTYPE(TARGET)
+			CASE 1
+				SELECTCASE RAND:3
+					CASE 0
+						PRINTFORMW %CALLNAME:TARGET%は何だか嬉しそうにしている……
+					CASE 1
+						PRINTFORMW %CALLNAME:TARGET%は少しくすぐったそうにしているが、まんざらでもなさそうだ……
+					CASE 2
+						PRINTFORMW %CALLNAME:TARGET%もじゃれ合わんとばかりに%CALLNAME:PLAYER%の体をまさぐっている……
+				ENDSELECT
+			CASE 3
+				SELECTCASE RAND:3
+					CASE 0
+						PRINTFORMW %CALLNAME:TARGET%は今や怯えることもなく%CALLNAME:PLAYER%のスキンシップを受け入れている……
+					CASE 1
+						PRINTFORMW %CALLNAME:TARGET%は特に嫌がる様子も嬉しがる様子も見せない……
+					CASE 2
+						PRINTFORMW %CALLNAME:TARGET%にスキンシップをするものの、%CALLNAME:TARGET%の方から触れてくることはない……
+				ENDSELECT
+		ENDSELECT
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;まったりする
+;まったりとはいったい
+;-------------------------------------------------
+@MESSAGE_COM_まったりする
+PRINTFORMW %CALLNAME:PLAYER%は%CALLNAME:TARGET%と一緒にまったりしていた……
+
+;-------------------------------------------------
+;ビデオ鑑賞
+;-------------------------------------------------
+@MESSAGE_COM_ビデオ鑑賞
+PRINTFORML %CALLNAME:PLAYER%は、%CALLNAME:TARGET%と一緒に%CALLNAME:TARGET%の痴態を写したビデオを見た
+;露出癖LV5
+IF ABL:露出癖 >= 5
+	PRINTFORMW %CALLNAME:TARGET%は自らの痴態に興奮したのか、%CALLNAME:PLAYER%に淫靡な視線を送っていた……
+ELSE
+	PRINTFORMW %CALLNAME:TARGET%は画面の向こうの淫らな自身の姿を見て顔を赤くしている……
+ENDIF
+
+;-------------------------------------------------
+;吸血する
+;-------------------------------------------------
+@MESSAGE_COM_吸血する
+PRINTFORML %CALLNAME:TARGET%が緊張と期待に少し震えた様子で首筋をさらけ出すと、%CALLNAME:PLAYER%は歯を立てて血を吸い始めた
+PRINTFORM 生き血を捧げることに%CALLNAME:TARGET%は
+SIF TALENT:痛みに弱い
+	PRINT 涙を浮かべながら
+PRINTW 悲鳴のような喘ぎ声を上げている……
+
+;-------------------------------------------------
+;吸血させる
+;-------------------------------------------------
+@MESSAGE_COM_吸血させる
+PRINTFORML %CALLNAME:TARGET%に血を吸わせることにした
+PRINTFORMW %CALLNAME:TARGET%は%CALLNAME:PLAYER%の首筋に唇を寄せ、一思いに齧り付くと血を啜り始めた……
+
+;-------------------------------------------------
+;母乳飲み
+;-------------------------------------------------
+@MESSAGE_COM_母乳飲み
+IF PLAYER == TFLAG:前コマンド実行者
+	SELECTCASE PREVCOMS
+		CASE "母乳飲み", "授乳手コキ"
+			PRINTFORMW %CALLNAME:TARGET%の\@TALENT:バストサイズ >= 2 ? 乳房を揉みしだきながら # 胸を愛撫しながら \@、その先端から滴る母乳を吸い続けた……
+			RETURN 0
+	ENDSELECT
+ENDIF
+
+PRINTFORM %CALLNAME:TARGET%の
+SELECTCASE TALENT:バストサイズ
+	;男
+	CASE 0
+		SIF 地の文用小柄(TARGET)
+			PRINT 未発達な
+	;絶壁
+	CASE 1
+		PRINT 僅かに膨らみが感じられる程度の
+	;貧乳
+	CASE 2
+		IF 地の文用小柄(TARGET)
+			PRINT 僅かに膨らみが感じられる程度の
+		ELSE
+			PRINT 小振りの
+		ENDIF
+	;普通
+	CASE 3
+		PRINT 綺麗に整った
+	;巨乳、豊乳
+	CASE 4, 5
+		PRINT 手から溢れそうなほどの
+	;爆乳
+	CASE IS >= 6
+		PRINT 手に余るほど大きな
+ENDSELECT
+;恋慕か親愛+欲情のPALAMLV3以上
+IF FALLTYPE(TARGET) == 1 && PALAM:欲情 >= PALAMLV:3
+	PRINTFORMW 胸を\@TALENT:バストサイズ >= 2 ? 絞り込むようにし # 外側から内側へと撫でさすり \@、先端を強く吸い上げると、%CALLNAME:TARGET%は嬌声を上げながら%CALLNAME:PLAYER%の頭を寄せ、強く抱きしめ圧迫した……
+;淫乱系+欲情のPALAMLV3以上
+ELSEIF FALLTYPE(TARGET) == 2 && PALAM:欲情 >= PALAMLV:3
+	PRINTFORMW 胸を\@TALENT:バストサイズ >= 2 ? 絞り込むようにし # 外側から内側へと撫でさすり \@、先端を強く吸い上げると、%CALLNAME:TARGET%は嬌声を上げながら、胸を強調するように%CALLNAME:PLAYER%の顔に押し付けた……
+;恋慕か親愛か服従か隷属
+ELSEIF FALLTYPE(TARGET) == 1 || FALLTYPE(TARGET) == 3
+	PRINTFORMW 胸を\@TALENT:バストサイズ >= 2 ? 揉みしだきながら # 愛撫しながら \@その先端を吸い上げると、%CALLNAME:TARGET%は優しい笑みを浮かべ、%CALLNAME:PLAYER%の頭を撫でながら母乳を与えた……
+ELSE
+	PRINTW 胸の先端を吸いあげ母乳を飲んだ……
+ENDIF
+
+;-------------------------------------------------
+;排卵マッサージ
+;-------------------------------------------------
+@MESSAGE_COM_排卵マッサージ
+PRINT 妊娠出産が滞りなく進むように、
+IF TEQUIP:お風呂場
+	PRINTFORMW 温かい湯船の中で%CALLNAME:TARGET%の腹部を優しく揉みほぐした……
+ELSE
+	IF TALENT:足使用不可
+		PRINTFORMW %CALLNAME:TARGET%の腹部や腰回りを優しく揉みほぐした……
+	ELSE
+		PRINTFORMW %CALLNAME:TARGET%の腹部や足を優しく揉みほぐした……
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;家事
+;-------------------------------------------------
+@MESSAGE_COM_家事
+PRINTFORMW %CALLNAME:PLAYER%は%CALLNAME:TARGET%と一緒に家事を済ませることにした……
+
+;-------------------------------------------------
+;歌の練習
+;主人は楽器も演奏できるんだよ！
+;-------------------------------------------------
+@MESSAGE_COM_歌の練習
+PRINTFORML %CALLNAME:PLAYER%は%CALLNAME:TARGET%に歌の練習をさせた
+PRINTFORM %CALLNAME:PLAYER%の演奏に合わせて、%CALLNAME:TARGET%の
+;歌唱技能
+SELECTCASE ABL:歌唱技能
+	;LV-1
+	CASE -1
+		PRINTFORMW 聞くに堪えない歌声が響いていた……
+	;LV1
+	CASE 0, 1
+		PRINTFORMW 歌声が響いていた……
+	;LV2
+	CASE 2
+		PRINTFORMW そこそこ聞き心地のよい歌声が響いていた……
+	;LV3
+	CASE 3
+		PRINTFORMW かなり上手い歌声が響いていた……
+	;LV4
+	CASE 4
+		PRINTFORMW 思わず聞き惚れる歌声が響いていた……
+	;LV5以上
+	CASE IS >= 5
+		PRINTFORMW 心奪われる歌声が響き渡っていた……
+ENDSELECT
+
+;-------------------------------------------------
+;料理を作る
+;-------------------------------------------------
+@MESSAGE_COM_料理を作る
+PRINTFORML %CALLNAME:TARGET%に料理を作らせた
+IF TEQUIP:エプロン && アイテム改造:エプロン == "玄人志向エプロン"
+	PRINTW 料理の達人の意思が宿ったエプロンのおかげか、奇跡的なほどに料理の腕の上達を感じているようだ……
+ELSE
+	SELECTCASE ABL:料理技能
+		CASE -1
+			SELECTCASE RAND:4
+				CASE 0
+					PRINTW ……キッチンのほうがなんだか焦げ臭い
+				CASE 1
+					PRINTW 食欲をそそらない微妙な匂いが漂ってくる……
+				CASE 2
+					PRINTW どうやら料理中に軽い怪我をしたようだ。顔をしかめている……
+				CASE 3
+					PRINTW 素材を判別できないほどグロテスクな料理が出来上がった……
+			ENDSELECT
+		CASE 0, 1
+			SELECTCASE RAND:3
+				CASE 0
+					PRINTW 盛り付けはいまいちだが無難な仕上がりだ
+				CASE 1
+					PRINTW 普通に美味しそうな料理ができたようだ
+				CASE 2
+					PRINTW 味見してみると何かが足りない気もするが食べられないことはない
+			ENDSELECT
+		CASE 2 TO 4
+			SELECTCASE RAND:3
+				CASE 0
+					PRINTFORMW キッチンから漂ってくる食欲をそそる香りが%CALLNAME:MASTER%の空腹を促す……
+				CASE 1
+					PRINTFORMW %CALLNAME:TARGET%は美味しそうな料理を手際よく作っている
+				CASE 2
+					PRINTW 素材をふんだんに活かした美味しそうな料理が出来上がった
+			ENDSELECT
+		CASE IS >= 5
+			SELECTCASE RAND:3
+				CASE 0
+					PRINTW 今までに見たことがないほど美味しそうな料理が出来上がった
+				CASE 1
+					PRINTW 元の食材からは想像できないような立派な料理が出来上がった
+				CASE 2
+					PRINTW プロ並みの豪華な料理があっという間に食卓に並んだ
+			ENDSELECT
+	ENDSELECT
+ENDIF
+
+;-------------------------------------------------
+;お菓子を作る
+;-------------------------------------------------
+@MESSAGE_COM_お菓子を作る
+PRINTFORML %CALLNAME:TARGET%にお菓子を作らせた
+IF TEQUIP:エプロン && アイテム改造:エプロン == "玄人志向エプロン"
+	PRINTW 料理の達人の意思が宿ったエプロンのおかげか、奇跡的なほどに料理の腕の上達を感じているようだ……
+ELSE
+	SELECTCASE ABL:料理技能
+		CASE -1
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTW ……電子レンジの中で何かが爆発したようだ
+				CASE 1
+					PRINTW 台所を粉まみれにしつつもなんとか完成したようだ……
+			ENDSELECT
+		CASE 0, 1
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTW 香りは悪くないが見た目の悪さが際立つ……
+				CASE 1
+					PRINTFORMW 味付けの分量を間違えたようで、少々味が\@ RAND:2 ? 濃い # 薄い \@……
+			ENDSELECT
+		CASE 2 TO 4
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTW 美味しそうな甘い香りが家中に広がっている……
+				CASE 1
+					PRINTFORMW 申し分ない出来栄えに%CALLNAME:TARGET%自身も満足しているようだ
+			ENDSELECT
+		CASE IS >= 5
+			SELECTCASE RAND:2
+				CASE 0
+					PRINTW お店に並んでいるような本格的なお菓子が出来上がった
+				CASE 1
+					PRINTW 見た目にも趣向を凝らした逸品は食べるのすらもったいないほどだ
+			ENDSELECT
+	ENDSELECT
+ENDIF
+
+;-------------------------------------------------
+;楽器の練習
+;-------------------------------------------------
+@MESSAGE_COM_楽器の練習
+PRINTFORMW %CALLNAME:TARGET%に楽器の練習をさせた
+
+;-------------------------------------------------
+;機械の勉強
+;-------------------------------------------------
+@MESSAGE_COM_機械の勉強
+PRINTFORMW %CALLNAME:TARGET%に機械の勉強を教えた
+
+;-------------------------------------------------
+;プログラミング演習
+;-------------------------------------------------
+@MESSAGE_COM_プログラミング演習
+PRINTFORMW %CALLNAME:TARGET%にプログラミングの勉強を教えた
+
+;-------------------------------------------------
+;魔法の練習
+;-------------------------------------------------
+@MESSAGE_COM_魔法の練習
+IF ABL:PLAYER:魔法技能 && ABL:魔法技能
+	PRINTFORMW %CALLNAME:PLAYER%と%CALLNAME:TARGET%は互いを対象に魔法の練習をした
+ELSEIF ABL:PLAYER:魔法技能
+	PRINTFORMW %CALLNAME:PLAYER%は%CALLNAME:TARGET%を対象に魔法の練習をした
+ELSEIF ABL:魔法技能
+	PRINTFORMW %CALLNAME:TARGET%に魔法の練習をさせた
+ENDIF
+
+;-------------------------------------------------
+;尻尾を撫でる
+;-------------------------------------------------
+@MESSAGE_COM_尻尾を撫でる
+PRINTFORML %CALLNAME:TARGET%の尻尾を撫でた
+IF TEQUIP:睡眠
+	PRINTFORMW 寝ている%CALLNAME:TARGET%の尻尾は起きてるときとは違い、不規則にぱたぱたと動いている……
+ELSEIF CFLAG:死亡
+	PRINTFORMW 当然だが持ち主が死んでしまった尻尾は微動だにせず、毛艶も悪くなっている……
+ELSE
+	IF 陥落(TARGET) || (TALENT:アニマル && CFLAG:依存度 >= 1500)
+		IF TALENT:ツンデレ || TALENT:プライド高い || TALENT:生意気
+			PRINTFORMW %CALLNAME:TARGET%は何も言わないが、くすぐったいのか嬉しいのか口元が綻んでいる気がする……
+		ELSE
+			PRINTFORMW %CALLNAME:TARGET%は撫でられることにご満悦の様子だ……
+		ENDIF
+	ELSEIF ゲームモード() == "学園モード"
+		PRINTFORMW %CALLNAME:TARGET%は特段嫌がることもなく%CALLNAME:PLAYER%に尻尾を委ねた
+	ELSE
+		PRINTFORMW %CALLNAME:TARGET%は嫌がっているのか、掴もうとした尻尾がするすると逃げてしまう……
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;ハッキング
+;-------------------------------------------------
+@MESSAGE_COM_ハッキング
+PRINTFORM %CALLNAME:TARGET%をハッキングして
+SELECTCASE ハッキング命令
+	CASE "過電流"
+		PRINTW 過電流を流すと、関節部から火花が散るほどの電流に悲鳴を上げた……
+	CASE "射精"
+		PRINTW 、射精の信号を送った……
+	CASE "Ｃ絶頂"
+		PRINTW 、クリトリスで絶頂する信号を送った……
+	CASE "Ｂ絶頂"
+		PRINTW 、胸で絶頂する信号を送った……
+	CASE "Ｖ絶頂"
+		PRINTW 、ヴァギナで絶頂する信号を送った……
+	CASE "Ａ絶頂"
+		PRINTW 、アナルで絶頂する信号を送った……
+	CASE "従属"
+		PRINTFORMW 従属プログラムを実行すると、%CALLNAME:PLAYER%を自らのマスターと認識し始めた……
+	;ほんとシュールすぎて笑う
+	CASE "自爆"
+		PRINTW 自爆命令を送った
+		IF 陥落(TARGET)
+			PRINTFORMW %CALLNAME:TARGET%は自らの体内で起こる化学反応に気づくと慌てふためき、最期に一言%CALLNAME:MASTER%の名前を呼んで爆発した――
+		ELSE
+			PRINTFORMW 急に遠ざかる%CALLNAME:MASTER%\@ ASSI > 0 ? と%CALLNAME:ASSI% #  \@に首を傾げる%CALLNAME:TARGET%は次の瞬間爆発し、辺りに自らの破片と黒煙を撒き散らした――
+		ENDIF
+		SIF TEQUIP:ゲームセンター
+			PRINTW ゲームセンターに訪れた客たちも突然の非常事態に悲鳴を上げ、必死の消火活動が行われた……
+		SIF TEQUIP:野外プレイ
+			PRINTFORMW 爆風で周囲の木々が大きく揺れ、%CALLNAME:TARGET%が居た場所の周りは更地となっていた……
+	CASE "分析"
+		PRINTL 構成情報をダウンロードした
+		PRINTW 設備と技術者が居れば複製を作れるだろう……
+ENDSELECT

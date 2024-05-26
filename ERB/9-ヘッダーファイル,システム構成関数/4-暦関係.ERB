@@ -1,0 +1,671 @@
+﻿@NEXTDAY
+#DIM DYNAMIC LYEAR
+#DIM DYNAMIC LMONTH
+#DIM DYNAMIC LDAYS
+#DIM DYNAMIC 日数, 2
+
+;日付加算
+DAYS++
+SELECTCASE MONTH
+	CASE 1, 3, 5, 7, 8, 10, 12
+		SIF DAYS > 31
+			DAYS = 1
+	CASE 4, 6, 9, 11
+		SIF DAYS > 30
+			DAYS = 1
+	CASE 2
+		;うるう年かどうかで場合分け
+		SELECTCASE YEAR
+			;グレゴリオ暦
+			CASE IS > 1582
+				IF (YEAR%4 == 0 && YEAR%100 != 0) || YEAR%400 == 0
+					SIF DAYS > 29
+						DAYS = 1
+				ELSE
+					SIF DAYS > 28
+						DAYS = 1
+				ENDIF
+			;間違った運用がされていた頃のユリウス暦
+			CASE -44 TO -5
+				IF ABS(YEAR)%3 == 1
+					SIF DAYS > 29
+						DAYS = 1
+				ELSE
+					SIF DAYS > 28
+						DAYS = 1
+				ENDIF
+			;上の間違った運用のシワ寄せ期間
+			CASE -4 TO 4
+				SIF DAYS > 28
+					DAYS = 1
+			;(紀元前46年以前を含め)残りの期間すべてをユリウス暦とする
+			CASEELSE
+				IF ABS(YEAR)%4 == 0
+					SIF DAYS > 29
+						DAYS = 1
+				ELSE
+					SIF DAYS > 28
+						DAYS = 1
+				ENDIF
+		ENDSELECT
+ENDSELECT
+
+;1582年10月5日～1582年10月14日は存在しない
+SIF YEAR == 1582 && MONTH == 10 && INRANGE(DAYS, 5, 14)
+	DAYS = 15
+
+;繰り上げ処理
+SIF DAYS == 1
+	MONTH++
+SIF MONTH == 13
+	MONTH = 1
+SIF DAYS == 1 && MONTH == 1
+	YEAR++
+
+;月齢計算
+CALL 月齢逆算, 30, -1
+
+;過去19年の午前0時で最も新月に近いと思われる日と現在の日付の日数差を調べる
+日数 = GETDAYS(YEAR, MONTH, DAYS) - GETDAYS(RESULT, RESULT:1, RESULT:2)
+
+SELECTCASE 日数
+	CASE IS <= 30
+		月齢 = 日数*100
+	CASEELSE
+		日数:1 = 日数-(日数%30)
+		月齢 = ((日数:1*100000)%2953059)/1000
+		月齢 += (日数%30)*100
+ENDSELECT
+
+月齢 %= 3000
+
+;曜日計算
+FLAG:曜日 = ZELLER(YEAR,MONTH,DAYS)
+
+
+;;;簡易月齢計算法を用いて、過去19年間で指定した月齢に最も近いと思われる日付を返す（午前0時基準）
+;;;第2引数が正の値なら未来で、負の値なら過去で調べる
+@月齢逆算, 年月日, 時系列
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC LYEAR
+#DIM DYNAMIC LMONTH
+#DIM DYNAMIC LDAYS
+#DIM DYNAMIC 推定年
+#DIM DYNAMIC 年補正
+#DIM DYNAMIC 月補正
+#DIM DYNAMIC 推定月齢
+#DIM DYNAMIC 年月日
+#DIM DYNAMIC 時系列
+
+推定年 = YEAR-(YEAR%19)+11
+
+FOR LCOUNT, SIGN(時系列), 732*SIGN(時系列), SIGN(時系列)
+	CALL 日数逆算, 時系列, 推定年, MONTH, 31
+	LYEAR = RESULT:0
+	LMONTH = RESULT:1
+	LDAYS = RESULT:2
+	IF LYEAR > YEAR || (LYEAR == YEAR && LMONTH > MONTH) || (LYEAR == YEAR && LMONTH == MONTH && LDAYS > DAYS)
+		推定年 -= 19
+		CONTINUE
+	ENDIF
+
+	;月齢計算
+	年補正 = LYEAR-11
+	;負の数の剰余に対応
+	IF 年補正 < 0
+		年補正 = 19 + (年補正)%19
+	ELSE
+		年補正 %= 19
+	ENDIF
+	年補正 = (年補正)*11
+	SELECTCASE LMONTH
+		CASE 1, 3
+			月補正 = 0
+		CASEELSE
+			CONTINUE
+	ENDSELECT
+	SIF (年補正+月補正+LDAYS) == 年月日
+		RETURN LYEAR, LMONTH, LDAYS
+NEXT
+
+;西暦0年1月0日からの経過日数を返す式中関数
+@GETDAYS, LYEAR, LMONTH, LDAYS
+#FUNCTION
+#DIM DYNAMIC LYEAR
+#DIM DYNAMIC LMONTH
+#DIM DYNAMIC LDAYS
+#DIM DYNAMIC 閏年
+#DIM DYNAMIC 経過日数
+#DIM DYNAMIC IS閏年
+#DIM DYNAMIC 月補正
+
+経過日数 = 365*LYEAR
+
+;1582年10月5日～1582年10月14日は存在しないため、真っ最中なら経過日数を
+;1582年10月15日以降なら10日分減算する
+IF LYEAR == 1582 && LMONTH == 10 && INRANGE(LDAYS, 5, 14)
+	経過日数 -= LDAYS-5
+ELSEIF LYEAR > 1582 || (LYEAR == 1582 && LMONTH > 10) || (LYEAR == 1582 && LMONTH == 10 && LDAYS > 14)
+	経過日数 -= 10
+ENDIF
+
+
+;LYEARが閏年かどうかを判別
+SELECTCASE LYEAR
+	;グレゴリオ暦
+	CASE IS > 1582
+		SIF (LYEAR%4 == 0 && LYEAR%100 != 0) || LYEAR%400 == 0
+			IS閏年 = 1
+	;間違った運用がされていた頃のユリウス暦
+	CASE -44 TO -5
+		SIF ABS(LYEAR)%3 == 1
+			IS閏年 = 1
+	;(紀元前46年以前を含め)残りの期間すべてをユリウス暦とする
+	CASE IS < -45
+		SIF ABS(LYEAR)%4 == 0
+			IS閏年 = 1
+ENDSELECT
+
+;閏年の数を計算する
+SELECTCASE LYEAR
+	;グレゴリオ暦
+	CASE IS > 1582
+		;単純にグレゴリオ暦の方法でまず計算する
+		;4年に一回
+		閏年 = LYEAR/4
+		;ただし100年に一回は閏年無いので減算
+		閏年 -= LYEAR/100
+		;ただしただし400年に一回は閏年強制発動なので加算
+		閏年 += LYEAR/400
+		;そしてユリウス暦の計算 ユリウス暦では100年に一回ルールは無いので、400年に一回の3回分差し引いて1500年までの計12回を加算
+		閏年 += 12
+		;しかし西暦4年(と西暦0年)は閏年中止したので減算
+		閏年 -= 1
+	;西暦0年からユリウス暦廃止まで
+	CASE 0 TO 1582
+		;4年に一回
+		閏年 = LYEAR/4
+		;西暦4年(と西暦0年)は閏年中止したので減算
+		SIF LYEAR >= 4
+			閏年--
+	;西暦-6年(BC7年)から西暦0年(BC1年)の間は閏年が無い
+	CASE -4 TO 0
+		閏年 = 0
+	;西暦-44年(BC45年)から西暦-7年(BC8年)までの閏年失敗期間
+	CASE -44 TO -5
+		;紀元前の返り値はマイナスになるので閏年カウントもマイナスで考える
+		;西暦-44年～-5年までは3年ごとに閏年になってた
+		閏年 = (LYEAR-2)/3
+		;西暦-5年に間違い発覚 西暦-4年と-1年の閏年の分減算
+		閏年 += 2
+	;当ゲームでは西暦-45年(BC46年)以前も全てユリウス暦で計算
+	CASE IS <= -45
+		;4年に一回
+		閏年 = LYEAR/4
+		;ただし西暦-44年～-5年は3年毎に閏年になっており、本来なら10回のところ13回になっている
+		;西暦0年以降に2年分のしわ寄せを行ったので、西暦-1年以前は2回分閏年が多くなる
+		;よってその分を減算
+		閏年 += 2
+ENDSELECT
+
+;対象年が閏年なら1引く
+SIF IS閏年
+	閏年--
+	
+;経過日数に閏年の分を加算
+経過日数 += 閏年
+
+;0年1月1日を「0日経過」と返したいのであらかじめ1を引いておく
+経過日数 --
+;↑この「経過日数」に1を足すと0年1月1日からLYEAR年1月1日までの経過日数になっている
+;ここからその年における指定日までの日数を足していく
+
+月補正 += (LMONTH-1)*30
+
+SIF LMONTH > 1
+	月補正++
+
+;2月以降なら2日分減算
+IF LMONTH > 2
+	月補正 -= 2
+	;閏年ならもう1日加算
+	SIF IS閏年
+		月補正++
+ENDIF
+
+SIF LMONTH > 3
+	月補正++
+SIF LMONTH > 5
+	月補正++
+SIF LMONTH > 7
+	月補正++
+SIF LMONTH > 8
+	月補正++
+SIF LMONTH > 10
+	月補正++
+
+
+;年に対応した正負の値で計算
+経過日数 += 月補正
+
+;そして最後に同じ方法でLDAYSを計算
+経過日数 += LDAYS
+
+;西暦0年1月0日からの経過日数を返す
+RETURNF 経過日数
+
+
+;現在時刻から(日数)日後、もしくは(日数)日前の日付を求める関数。式中関数ではない
+;(日数)が正の値なら(日数)日後、負の値なら(日数)日前の日付をRESULT:0～2に入れて返す
+@日数逆算, 日数, 指定年 = -1, 指定月 = -1, 指定日 = -1
+#DIM DYNAMIC 日数
+#DIM DYNAMIC 指定年
+#DIM DYNAMIC 指定月
+#DIM DYNAMIC 指定日
+
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC LDAYS
+#DIM DYNAMIC LMONTH
+#DIM DYNAMIC LYEAR
+
+IF 指定年 == -1
+	LYEAR = YEAR
+ELSE
+	LYEAR = 指定年
+ENDIF
+IF 指定月 == -1
+	LMONTH = MONTH
+ELSE
+	LMONTH = 指定月
+ENDIF
+IF 指定日 == -1
+	LDAYS = DAYS
+ELSE
+	LDAYS = 指定日
+ENDIF
+
+FOR LCOUNT, 0, ABS(日数)
+	;日付加算・減産(+1か-1する)
+	LDAYS += SIGN(日数)
+
+	;未来を求める場合
+	IF SIGN(日数) == 1
+		SELECTCASE LMONTH
+			CASE 1, 3, 5, 7, 8, 10, 12
+				SIF LDAYS > 31
+					LDAYS = 1
+			CASE 4, 6, 9, 11
+				SIF LDAYS > 30
+					LDAYS = 1
+			CASE 2
+				;うるう年かどうかで場合分け
+				SELECTCASE LYEAR
+					;グレゴリオ暦
+					CASE IS > 1582
+						IF (LYEAR%4 == 0 && LYEAR%100 != 0) || LYEAR%400 == 0
+							SIF LDAYS > 29
+								LDAYS = 1
+						ELSE
+							SIF LDAYS > 28
+								LDAYS = 1
+						ENDIF
+					;間違った運用がされていた頃のユリウス暦
+					CASE -44 TO -5
+						IF ABS(LYEAR)%3 == 1
+							SIF LDAYS > 29
+								LDAYS = 1
+						ELSE
+							SIF LDAYS > 28
+								LDAYS = 1
+						ENDIF
+					;上の間違った運用のシワ寄せ期間
+					CASE -4 TO 4
+						SIF LDAYS > 28
+							LDAYS = 1
+					;(紀元前46年以前を含め)残りの期間すべてをユリウス暦とする
+					CASEELSE
+						IF ABS(LYEAR)%4 == 0
+							SIF LDAYS > 29
+								LDAYS = 1
+						ELSE
+							SIF LDAYS > 28
+								LDAYS = 1
+						ENDIF
+				ENDSELECT
+		ENDSELECT
+		;1582年10月5日～1582年10月14日は存在しない
+		SIF LYEAR == 1582 && LMONTH == 10 && INRANGE(LDAYS, 5, 14)
+			LDAYS = 15
+		;繰り上げ処理
+		IF LDAYS == 1
+			LMONTH++
+			SIF LMONTH == 13
+				LMONTH = 1
+			SIF LDAYS == 1 && LMONTH == 1
+				LYEAR++
+		ENDIF
+	;過去を求める場合
+	ELSEIF SIGN(日数) == -1
+		;1582年10月5日～1582年10月14日は存在しない
+		SIF LYEAR == 1582 && LMONTH == 10 && INRANGE(LDAYS, 5, 14)
+			LDAYS = 4
+		;繰り下げ処理
+		IF LDAYS == 0
+			LMONTH--
+			IF LMONTH == 0
+				LYEAR--
+				LMONTH = 12
+			ENDIF
+			SELECTCASE LMONTH
+				CASE 1, 3, 5, 7, 8, 10, 12
+					LDAYS = 31
+				CASE 4, 6, 9, 11
+					LDAYS = 30
+				CASE 2
+					;うるう年かどうかで場合分け
+					SELECTCASE LYEAR
+						;グレゴリオ暦
+						CASE IS > 1582
+							IF (LYEAR%4 == 0 && LYEAR%100 != 0) || LYEAR%400 == 0
+								LDAYS = 29
+							ELSE
+								LDAYS = 28
+							ENDIF
+						;間違った運用がされていた頃のユリウス暦
+						CASE -44 TO -5
+							IF ABS(LYEAR)%3 == 1
+								LDAYS = 29
+							ELSE
+								LDAYS = 28
+							ENDIF
+						;上の間違った運用のシワ寄せ期間
+						CASE -4 TO 4
+							LDAYS = 28
+						;(紀元前46年以前を含め)残りの期間すべてをユリウス暦とする
+						CASEELSE
+							IF ABS(LYEAR)%4 == 0
+								LDAYS = 29
+							ELSE
+								LDAYS = 28
+							ENDIF
+					ENDSELECT
+			ENDSELECT
+		ENDIF
+	ENDIF
+NEXT
+
+RETURN LYEAR, LMONTH, LDAYS
+
+
+@HOLIDAY
+VARSET HOLIDAY
+
+;祝日の設定
+SELECTCASE MONTH
+	;1月
+	CASE 1
+		SELECTCASE DAYS
+			;1日
+			CASE 1
+				HOLIDAY = 元日
+			;7日
+			CASE 7
+				HOLIDAY = イロドリミドリの日
+			;18日
+			CASE 18
+				HOLIDAY = 「SOUND VOLTEX」稼働記念日
+		ENDSELECT
+		;第二月曜日
+		IF DAYS == NO_DOW(2, "月")
+			ARRAYSHIFT HOLIDAY, 1, ""
+			HOLIDAY = 成人の日
+		ENDIF
+	;2月
+	CASE 2
+		SELECTCASE DAYS
+			;3日
+			CASE 3
+				HOLIDAY = 節分
+			;4日
+			CASE 4
+				HOLIDAY = 「Toy'sMarch」稼働記念日
+			;6日
+			CASE 6
+				HOLIDAY = 「KEYBOARDMANIA」稼働記念日
+			;11日
+			CASE 11
+				HOLIDAY = 建国記念日
+			;14日
+			CASE 14
+				HOLIDAY = バレンタインデー
+			;26日
+			CASE 26
+				HOLIDAY = 「beatmaniaIIDX」稼働記念日
+		ENDSELECT
+	;3月
+	CASE 3
+		SELECTCASE DAYS
+			;1日
+			CASE 1
+				HOLIDAY = 「ノスタルジア」稼働記念日
+			;3日
+			CASE 3
+				HOLIDAY = ひな祭り
+				HOLIDAY:1 = 「DANCE aROUND」稼働記念日
+			;13日
+			CASE 13
+				HOLIDAY = 「オトカドール」稼働記念日
+			;14日
+			CASE 14
+				HOLIDAY = ホワイトデー
+			;15日
+			CASE 15
+				HOLIDAY = 「GuitarFreaks」稼働記念日
+			;面倒だから20日
+			CASE 20
+				HOLIDAY = 春分の日
+				HOLIDAY:1 = 「ときめきアイドル」サービス開始日
+			CASE 21
+				HOLIDAY = KONAMI創立記念日
+			;23日
+			CASE 23
+				HOLIDAY = 「DANCERUSH」稼働記念日
+			;27日
+			CASE 27
+				HOLIDAY = 「Dance Evolution ARCADE」稼働記念日
+		ENDSELECT
+	;4月
+	CASE 4
+		SELECTCASE DAYS
+			;1日
+			CASE 1
+				HOLIDAY = エイプリルフール
+			;29日
+			CASE 29
+				HOLIDAY = 昭和の日
+		ENDSELECT
+	;5月
+	CASE 5
+		SELECTCASE DAYS
+			;3日
+			CASE 3
+				HOLIDAY = 憲法記念日
+			;4日
+			CASE 4
+				HOLIDAY = みどりの日
+			;5日
+			CASE 5
+				HOLIDAY = こどもの日
+		ENDSELECT
+		;第二日曜日
+		IF DAYS == NO_DOW(2, "日")
+			ARRAYSHIFT HOLIDAY, 1, ""
+			HOLIDAY = 母の日
+		ENDIF
+	;6月
+	CASE 6
+		SELECTCASE DAYS
+			;4日
+			CASE 4
+				HOLIDAY = 「MAMBO A GO GO」稼働記念日
+			;20日
+			CASE 20
+				HOLIDAY = 「ミライダガッキ」稼働記念日
+			;21日
+			CASE 21
+				ARRAYSHIFT HOLIDAY, 1, ""
+				HOLIDAY = 「Dance ManiaX」稼働記念日
+			;23日
+			CASE 23
+				ARRAYSHIFT HOLIDAY, 1, ""
+				HOLIDAY = 「DANCE 86.4 FUNKY RADIO STATION」稼働記念日
+		ENDSELECT
+		;第三日曜日
+		IF DAYS == NO_DOW(3, "日")
+			ARRAYSHIFT HOLIDAY, 1, ""
+			HOLIDAY = 父の日
+		ENDIF
+	;7月
+	CASE 7
+		SELECTCASE DAYS
+			;7日
+			CASE 7
+				HOLIDAY = 七夕
+			;11日
+			CASE 11
+				HOLIDAY = 「maimai」稼働記念日
+			;16日
+			CASE 16
+				HOLIDAY = 「CHUNITHM」稼働記念日
+			;17日
+			CASE 17
+				HOLIDAY = 「BeatStream」稼働記念日
+			;21日
+			CASE 21
+				HOLIDAY = 「drummania」稼働記念日
+			;24日
+			CASE 24
+				HOLIDAY = 「jubeat」稼働記念日
+				HOLIDAY:1 = 「クイズマジックアカデミー」稼働記念日
+		ENDSELECT
+		;第三月曜日
+		IF DAYS == NO_DOW(3, "月")
+			ARRAYSHIFT HOLIDAY, 1, ""
+			HOLIDAY = 海の日
+		ENDIF
+	;8月
+	CASE 8
+		SELECTCASE DAYS
+			;11日
+			CASE 11
+				HOLIDAY = 山の日
+			;13～15日
+			CASE 13 TO 15
+				HOLIDAY = お盆
+		ENDSELECT
+	;9月
+	CASE 9
+		SELECTCASE DAYS
+			CASE 12
+				HOLIDAY = 「ParaParaParadise」稼働記念日
+			;面倒だから23日
+			CASE 23
+				HOLIDAY = 秋分の日
+			;24日
+			CASE 25
+				HOLIDAY = 「Dance Dance Revolution」稼働記念日
+			;28日
+			CASE 28
+				HOLIDAY = 「pop'n music」稼働記念日
+		ENDSELECT
+		;15日以降
+		IF DAYS >= 15
+			;満月なら十五夜
+			IF INRANGE(月齢, 1500, 1599)
+				ARRAYSHIFT HOLIDAY, 1, ""
+				HOLIDAY = 十五夜
+			ENDIF
+		ENDIF
+		;第三月曜日
+		IF DAYS == NO_DOW(3, "月")
+			ARRAYSHIFT HOLIDAY, 1, ""
+			HOLIDAY = 敬老の日
+		ENDIF
+	;10月
+	CASE 10
+		SELECTCASE DAYS
+			;31日
+			CASE 31
+				HOLIDAY = ハロウィン
+		ENDSELECT
+		;第二月曜日
+		IF DAYS == NO_DOW(2, "月")
+			ARRAYSHIFT HOLIDAY, 1, ""
+			HOLIDAY = 体育の日
+		ENDIF
+		;15日以前
+		IF DAYS <= 15
+			;満月なら十五夜
+			IF INRANGE(月齢, 1500, 1599)
+				ARRAYSHIFT HOLIDAY, 1, ""
+				HOLIDAY = 十五夜
+			ENDIF
+		ENDIF
+	;11月
+	CASE 11
+		SELECTCASE DAYS
+			;3日
+			CASE 3
+				HOLIDAY = 文化の日
+			;4日
+			CASE 4
+				HOLIDAY = 「REFLEC BEAT」稼働記念日
+			;15日
+			CASE 15
+				HOLIDAY = 七五三
+			;23日
+			CASE 23
+				HOLIDAY = 勤労感謝の日
+			;25日
+			CASE 25
+				HOLIDAY = 「日向美ビタースイーツ」結成記念日
+		ENDSELECT
+	;12月 天皇誕生日はちょっと様子を見るので見送り
+	CASE 12
+		SELECTCASE DAYS
+			;10日
+			CASE 10
+				HOLIDAY = 「MÚSECA」稼働記念日
+			;24日
+			CASE 24
+				HOLIDAY = クリスマス・イブ
+			;25日
+			CASE 25
+				HOLIDAY = クリスマス
+			;31日
+			CASE 31
+				HOLIDAY = 大晦日
+		ENDSELECT
+ENDSELECT
+
+;プレミアムフライデーならまずプレミアムフライデーを入れる(下記祝日・記念日の表示が優先)
+IF PREMIUM_FRIDAY(YEAR, MONTH, DAYS)
+	ARRAYSHIFT HOLIDAY, 1, ""
+	HOLIDAY = プレミアムフライデー
+ENDIF
+
+;新婚モードで開始した日は結婚記念日
+IF ゲームモード() == "新婚モード" && REALTIME:月 == MONTH &&  REALTIME:日 == DAYS
+	ARRAYSHIFT HOLIDAY, 1, ""
+	HOLIDAY = 結婚記念日
+ENDIF
+
+@ISHOLIDAY, 休日名
+#FUNCTION
+#DIMS DYNAMIC 休日名
+;引数の休日かどうかを判定
+
+SIF FINDELEMENT(HOLIDAY, 休日名, 0, VARSIZE("HOLIDAY"), 1) >= 0
+	RETURNF 1
+
+RETURNF 0

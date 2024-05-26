@@ -1,0 +1,279 @@
+﻿;-------------------------------------------------
+;パイズリフェラ
+;-------------------------------------------------
+@USERCOM_ABLE_パイズリフェラ
+#FUNCTION
+#DIM DYNAMIC 必要技巧
+
+コマンド実行条件 += "対象が男、絶壁なら技巧LV7以上必要/"
+コマンド実行条件 += "対象が貧乳なら技巧LV6以上必要/"
+コマンド実行条件 += "対象が並乳なら技巧LV5以上必要/"
+コマンド実行条件 += "対象が巨乳、豊乳なら技巧LV4以上必要/"
+コマンド実行条件 += "対象が爆乳なら技巧LV3以上必要/"
+SELECTCASE TALENT:バストサイズ
+	;男、絶壁なら技巧7以上必要
+	CASE 0, 1
+		必要技巧 = 7
+	;貧乳なら技巧6以上必要
+	CASE 2
+		必要技巧 = 6
+	;普通なら技巧5以上必要
+	CASE 3
+		必要技巧 = 5
+	;巨乳、豊乳なら技巧LV4以上必要
+	CASE 4, 5
+		必要技巧 = 4
+	;爆乳なら技巧LV3以上必要
+	CASE IS >= 6
+		必要技巧 = 3
+ENDSELECT
+SIF ABL:技巧 < 必要技巧
+	COMRESULT = 0
+;猫舌の奴隷の場合は技巧Lv2以上必要
+コマンド実行条件 += "対象が[猫舌]の場合は技巧LV2以上必要/"
+SIF TALENT:猫舌 && ABL:技巧 < 2
+	COMRESULT = 0
+;ボールギャグ使用中は不可
+コマンド実行条件 += "対象がボールギャグ装着中は実行できない/"
+SIF TEQUIP:ボールギャグ
+	COMRESULT = 0
+;服を着ている場合ペニスの出入り口がある構造じゃないとダメ
+コマンド実行条件 += "対象の服装によっては実行できない場合がある/"
+SIF !GETBIT(パイズリ判定(TARGET), 2)
+	COMRESULT = 0
+;アニマルだと無理
+コマンド実行条件 += "対象が[アニマル]の場合は実行できない/"
+SIF TALENT:アニマル
+	COMRESULT = 0
+コマンド実行条件 += "睡眠中は実行できない/"
+SIF TEQUIP:睡眠
+	COMRESULT = 0
+IF MOD:STS
+	コマンド実行条件 += "屍姦中は実行できない/"
+	SIF CFLAG:死亡
+		COMRESULT = 0
+ENDIF
+
+;汎用COMABLE通らなかったらダメ
+SIF !USERCOM_ABLE_Ｐ奉仕()
+	COMRESULT = 0
+
+RETURNF COMRESULT
+
+@実行判定_パイズリフェラ
+#DIM DYNAMIC 実効値
+;-------------------------------------------------
+;実行判定処理
+;-------------------------------------------------
+;すべての命令に共通の要素を考慮
+;(従順が高いと命令に従いやすいなど)
+CALL COM_ORDER
+実効値 = RESULT
+
+CALL COM_ORDER_フェラ
+実効値 += RESULT
+
+;42以上で実行
+CALL 実効値判定, 実効値, 42
+
+RETURN RESULT
+
+@COM_パイズリフェラ
+#DIM DYNAMIC 増加量
+
+SIF OVER_BUST(TARGET) != ""
+	PRINT 着衣
+PRINTL パイズリフェラ
+
+SIF !TFLAG:実行判定無視
+	CALLFORM 実行判定_%SELECTCOMS%
+SIF !RESULT && !TFLAG:実行判定無視
+	RETURN 0
+
+;-------------------------------------------------
+;実行決定
+;-------------------------------------------------
+CALL KOJO_MESSAGE_COM
+
+;実行者が奴隷であるフラグ
+TFLAG:奴隷実行 = 1
+
+;-------------------------------------------------
+;射精ゲージチェック
+;-------------------------------------------------
+増加量 = 射精ゲージ計算_奉仕(600)
+
+;TALENT:バストサイズをみる
+;奴隷が小柄体型・小人体型なら身体が柔らかいので増やす
+IF TALENT:体格 == 1 || TALENT:小人体型
+	SELECTCASE TALENT:バストサイズ
+		CASE 0, 1
+			TIMES 増加量 , 0.40
+		CASE 2
+			TIMES 増加量 , 0.85
+		CASE 3
+			TIMES 増加量 , 1.30
+		CASE 4
+			TIMES 増加量 , 1.60
+		CASE 5
+			TIMES 増加量 , 1.90
+		CASE 6
+			TIMES 増加量 , 2.10
+		CASE 7
+			TIMES 増加量 , 2.40
+		CASE IS >= 8
+			TIMES 増加量 , 2.70
+	ENDSELECT
+ELSEIF TALENT:体格 == 2
+	SELECTCASE TALENT:バストサイズ
+		CASE 0, 1
+			TIMES 増加量 , 0.40
+		CASE 2
+			TIMES 増加量 , 0.76
+		CASE 3
+			TIMES 増加量 , 1.12
+		CASE 4
+			TIMES 増加量 , 1.36
+		CASE 5
+			TIMES 増加量 , 1.60
+		CASE 6
+			TIMES 増加量 , 1.84
+		CASE 7
+			TIMES 増加量 , 2.08
+		CASE IS >= 8
+			TIMES 増加量 , 2.32
+	ENDSELECT
+ELSE
+	SELECTCASE TALENT:バストサイズ
+		CASE 0, 1
+			TIMES 増加量 , 0.40
+		CASE 2
+			TIMES 増加量 , 0.70
+		CASE 3
+			TIMES 増加量 , 1.00
+		CASE 4
+			TIMES 増加量 , 1.20
+		CASE 5
+			TIMES 増加量 , 1.40
+		CASE 6
+			TIMES 増加量 , 1.60
+		CASE 7
+			TIMES 増加量 , 1.80
+		CASE IS >= 8
+			TIMES 増加量 , 2.00
+	ENDSELECT
+ENDIF
+
+増加量 *= (600 + MIN(EXP:パイズリ経験, 1200))
+増加量 /= 800
+
+;PLAYERが小柄体型・小人体型なら相対的に胸が大きくなるので少し増やす
+SIF TALENT:PLAYER:体格 <= 2 || TALENT:PLAYER:小人体型
+	TIMES 増加量 , 1.15
+
+;無機物の場合、ある程度減らす
+IF TALENT:無機物
+	TIMES 増加量 , 0.60
+ELSEIF TALENT:無機物
+	TIMES 増加量 , 0.80
+ENDIF
+
+;TALENT:舌使いをみる
+SIF TALENT:舌使い
+	TIMES 増加量 , 1.50
+;肋骨抜かれてると柔らかい
+SIF TALENT:肋骨除去済み
+	TIMES 増加量 , 1.50
+
+CALL 射精ゲージ増加, 増加量, PLAYER
+
+;-------------------------------------------------
+;ソース追加処理
+;-------------------------------------------------
+;消費体力、気力
+LOSEBASE:体力 += 50
+LOSEBASE:気力 += 100
+
+DOWNBASE:MASTER:体力 += 20
+DOWNBASE:MASTER:気力 += 30
+
+IF MOD:パイズリ奉仕特化 && ゲームモード() != "段位認定"
+	SOURCE:情愛 = 550
+	SOURCE:恭順 = 550
+	SOURCE:性行動 = 1650
+	SOURCE:達成 = 880
+	SOURCE:屈従 = 1320
+ELSE
+	SOURCE:快B = 10
+	SOURCE:情愛 = 500
+	SOURCE:恭順 = 500
+	SOURCE:性行動 = 1500
+	SOURCE:達成 = 800
+	SOURCE:屈従 = 1200
+ENDIF
+SOURCE:逸脱 = 400
+SOURCE:反感 = 400
+SOURCE:不潔 = 100
+
+;汚れ
+SIF GET_STAIN(STAIN:PLAYER:ペニス, "アナル", "尿")
+	SOURCE:不潔 += 80
+
+;-------------------------------------------------
+;特殊ソース処理
+;-------------------------------------------------
+;抑圧、抵抗持ちには、抑鬱ソース追加
+SIF TALENT:抑圧 || TALENT:抵抗
+	SOURCE:鬱屈 += 600
+
+;-------------------------------------------------
+;絶頂チェック
+;-------------------------------------------------
+CALL SOURCE_CHECK_CVAB
+
+;-------------------------------------------------
+;射精チェック
+;-------------------------------------------------
+CALL SAMEN_CHECK, 4
+CALL SAMEN_CHECK_T, 0
+
+CALL SAMEN_SHOOT, 4, NOWEX:PLAYER:射精
+CALL SAMEN_SHOOT_T, 0, NOWEX:射精
+
+;-------------------------------------------------
+;汚れの処理
+;-------------------------------------------------
+;奴隷の胸⇔調教者のペニスの汚れが移動
+STAIN:胸 |= STAIN:PLAYER:ペニス
+STAIN:PLAYER:ペニス |= STAIN:胸
+
+;奉仕精神LV2以上、技巧LV2以上なら汚れをなめ取る
+SIF ABL:奉仕精神 >= 2 && ABL:技巧 >= 2
+	STAIN:PLAYER:ペニス = 2
+
+;-------------------------------------------------
+;経験の処理
+;-------------------------------------------------
+CALL EXPUP_BASE, 3, 3
+
+CALL EXPUP, "フェラ経験", 1
+CALL EXPUP, "パイズリ経験", 1
+
+;愛情経験
+SIF (TALENT:恋慕 || TALENT:親愛) && PLAYER == MASTER
+	CALL EXPUP, "愛情経験", 1
+
+;奴隷が猫舌持ちの場合は嗜虐快楽経験を追加
+SIF TALENT:猫舌
+	CALL EXPUP, "嗜虐快楽経験", 1
+
+IF !避妊具(PLAYER)
+	CALL 魔力回復, 5
+	CALL 獣人催淫, 1
+ENDIF
+
+TFLAG:奉仕快楽 = 1
+
+パイズリ回数:TARGET:(NOF(PLAYER)) += 1
+
+RETURN 1

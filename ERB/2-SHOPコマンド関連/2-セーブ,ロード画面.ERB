@@ -1,0 +1,300 @@
+﻿[SKIPSTART]
+@USERSAVE
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC データ番号
+#DIM DYNAMIC データ数
+#DIM DYNAMIC ページ数
+PRINTL □何番にセーブしますか？
+PRINTL 　[--]　　　 現実の時間　　　　|　　　ゲーム内の時間
+
+FOR LCOUNT, ページ数*20, ページ数*20+20
+	SELECTCASE CHKDATA(LCOUNT)
+		CASE 0
+			PRINTFORML 　[{LCOUNT, 2}] %RESULTS%
+		CASE 1
+			SETCOLORBYNAME gray
+			;表示テンプレ
+			;PRINTFORML 　[ 5] 2016/01/10(曜) 00:10:15 | 2016/3/28(曜) 197日目夜 難易度:(N) ∞ 
+			PRINTFORML 　[{LCOUNT, 2}] ----　　　　　　　　　　|
+			RESETCOLOR
+		CASE 2
+			SETCOLORBYNAME gray
+			PRINTFORML 　[{LCOUNT, 2}] 別バリアントのセーブデータです 上書きは可能です
+			RESETCOLOR
+		CASE 3
+			SETCOLORBYNAME gray
+			PRINTFORML 　[{LCOUNT, 2}] 互換性の無いセーブデータです 上書きは可能です
+			RESETCOLOR
+		CASE 4
+			SETCOLORBYNAME gray
+			PRINTFORML 　[{LCOUNT, 2}] ロードできないセーブデータです 上書きは可能です
+	ENDSELECT
+NEXT
+DRAWLINE
+PRINTPLAINFORM 　SAVE.{ページ数+1}　
+CALL PRINTSPACE, ページ数 > 0, "[101] 前ページ "
+PRINT [100] 戻る 
+CALL PRINTSPACE, ページ数 < 3, "[109] 次ページ "
+PRINTL 
+DO
+	INPUT
+	データ番号 = RESULT
+	SELECTCASE データ番号
+		CASE 0 TO 79
+			SELECTCASE CHKDATA(データ番号)
+				CASE 0, 2, 3, 4
+					PRINTL 既にセーブデータが存在します。上書きしますか？
+					PRINTL [0] はい
+					PRINTL [1] いいえ
+					BINPUT
+					SIF RESULT == 1
+						RESTART
+					BREAK
+				CASE 1
+					BREAK
+			ENDSELECT
+		CASE 101
+			SIF ページ数 > 0
+				ページ数--
+			RESTART
+		CASE 109
+			SIF ページ数 < 3
+				ページ数++
+			RESTART
+		CASE 100
+			RETURN 0
+	ENDSELECT
+LOOP 1
+
+CALLF プレイ称号計算, "セーブ"
+CALL MOD情報セーブ
+SAVEDATA データ番号, セーブデータ情報()
+
+データ数 = 0
+FOR LCOUNT, 0, 80
+	SIF CHKDATA(LCOUNT) == 0
+		データ数++
+NEXT
+
+SIF データ数 == 80
+	CALL 実績解除, "メモリーカードの容量が足りません"
+
+SAVEGLOBAL
+
+RETURN 0
+[SKIPEND]
+@SYSTEM_AUTOSAVE
+#DIM DYNAMIC データ番号
+;チュートリアル中はセーブしない
+SIF TUTORIAL != ""
+	RETURN
+IF ゲームモード() == "学園モード"
+	データ番号 = 94+((DAY-1)*4%6)
+	SELECTCASE ターン
+		CASE "昼"
+			データ番号 += 1
+		CASE "夕"
+			データ番号 += 2
+		CASE "夜"
+			データ番号 += 3
+	ENDSELECT
+	SIF データ番号 > 99
+		データ番号 -= 6
+ELSE
+	IF ターン == "昼"
+		データ番号 = 94+((DAY-1)*2%6)
+	ELSE
+		データ番号 = 94+((DAY-1)*2%6+1)
+	ENDIF
+ENDIF
+
+CALL MOD情報セーブ
+SAVEDATA データ番号, セーブデータ情報()
+
+@セーブデータ情報
+#FUNCTIONS
+#DIMS DYNAMIC REALTIMENOW
+#DIM DYNAMIC 年
+#DIM DYNAMIC 月
+#DIM DYNAMIC 日
+#DIMS DYNAMIC DETAIL, 2
+
+;リアルタイムの計算
+年 = TOINT(SUBSTRING(GETTIMES(), 0, 4))
+月 = TOINT(SUBSTRING(GETTIMES(), 5, 2))
+日 = TOINT(SUBSTRING(GETTIMES(), 8, 2))
+
+REALTIMENOW = %GETTIMES()%
+;曜日挟むために一度分割する
+SPLIT REALTIMENOW, " ", DETAIL
+;現実の時間を入れる
+DETAIL = %DETAIL%(%DOW(ZELLER(年, 月, 日))%) %DETAIL:1%
+;ここからゲーム内の時間や情報
+DETAIL = %DETAIL% | {YEAR}/%TOSTR(MONTH, "D2")%/%TOSTR(DAYS, "D2")%(%DOW(FLAG:曜日)%)
+
+IF ゲームモード() == "学園モード"
+	DETAIL += @" {DAY, 3}日目(%ターン%)"
+ELSE
+	DETAIL += @" {DAY, 4}日目(%ターン%) "
+ENDIF
+
+;ORIGINでは表示しない
+IF !ORIGIN
+	SELECTCASE ゲームモード()
+		CASE "新婚モード"
+		CASE "段位認定"
+			DETAIL += "段位認定 "
+		CASE "学園モード"
+			DETAIL += "学園モード "
+		CASEELSE
+			SIF ゲームモード() == "経営モード"
+				DETAIL += "KA "
+			DETAIL += "難易度:"
+			SELECTCASE FLAG:難易度
+				CASE -1
+					DETAIL += "(B)"
+				CASE 1
+					DETAIL += "(N) "
+				CASE 2
+					DETAIL += "(H) "
+				CASE 3
+					DETAIL += "(A) "
+				CASE 4
+					DETAIL += "(L) "
+			ENDSELECT
+	ENDSELECT
+
+	SIF GROUPMATCH(ゲームモード(), "新婚モード", "フリーモード")
+		DETAIL += "∞ "
+;ただしeraBEMANIのORIGINモードのみOriginと付ける
+ELSEIF ORIGIN && GAMEBASE_TITLE == "eraBEMANI+α"
+	DETAIL += "Origin "
+ENDIF
+
+SELECTCASE ゲームモード()
+	CASE "新婚モード"
+		SIF FINDCHARA(CFLAG:嫁, 1) >= 0 && !CFLAG:FINDCHARA(CFLAG:嫁, 1):キャラロスト
+			DETAIL += @"%CALLNAME:MASTER%と%CALLNAME:(FINDCHARA(CFLAG:嫁, 1))%が新婚生活中"
+	CASE "学園モード"
+		DETAIL += @"PLAYER:%NAME:MASTER%"
+	CASEELSE
+		IF TARGET > 0
+			DETAIL += @"%NAME:TARGET%調教中 "
+			SIF TALENT:恋慕
+				DETAIL += "恋,"
+			SIF TALENT:淫乱
+				DETAIL += "淫,"
+			SIF TALENT:服従
+				DETAIL += "服,"
+			SIF TALENT:親愛
+				DETAIL += "愛,"
+			SIF TALENT:淫魔
+				DETAIL += "魔,"
+			SIF TALENT:隷属
+				DETAIL += "隷,"
+			SIF TALENT:崩壊
+				DETAIL += "崩,"
+			DETAIL += @"従{ABL:従順},欲{ABL:欲望},技{ABL:技巧}"
+		ENDIF
+ENDSELECT
+
+LASTSAVEMODE = %ゲームモード()%
+SAVEGLOBAL
+
+RETURNF DETAIL
+
+[SKIPSTART]
+@USERLOAD
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC ページ数
+#DIM DYNAMIC 最新セーブ, 2
+#DIMS DYNAMIC SPLITVAR, 2
+PRINTL □何番をロードしますか？
+PRINTL 　[--]　　　 現実の時間　　　　|　　　ゲーム内の時間
+
+FOR LCOUNT, ページ数*20, ページ数*20+20
+	SELECTCASE CHKDATA(LCOUNT)
+		CASE 0
+			PRINTFORML 　[{LCOUNT, 2}] %RESULTS%
+		CASE 1
+			SETCOLORBYNAME gray
+			PRINTFORML 　[{LCOUNT, 2}] ----　　　　　　　　　　|
+			RESETCOLOR
+		CASE 2
+			SETCOLORBYNAME gray
+			PRINTFORML 　[{LCOUNT, 2}] 別バリアントのセーブデータです
+			RESETCOLOR
+		CASE 3
+			SETCOLORBYNAME gray
+			PRINTFORML 　[{LCOUNT, 2}] 互換性の無いセーブデータです
+			RESETCOLOR
+		CASE 4
+			SETCOLORBYNAME gray
+			PRINTFORML 　[{LCOUNT, 2}] ロードできないセーブデータです
+	ENDSELECT
+NEXT
+DRAWLINE
+FOR LCOUNT, 94, 100
+	SELECTCASE CHKDATA(LCOUNT)
+		CASE 0
+			SPLIT RESULTS, "|", SPLITVAR
+			REPLACE SPLITVAR, "[^0-9]", ""
+			IF TOINT(RESULTS) > 最新セーブ:1
+				最新セーブ:0 = LCOUNT
+				最新セーブ:1 = TOINT(RESULTS)
+			ENDIF
+	ENDSELECT
+NEXT
+FOR LCOUNT, 94, 100
+	SELECTCASE CHKDATA(LCOUNT)
+		CASE 0
+			PRINTFORML 　[{LCOUNT, 2}] %RESULTS% \@ LCOUNT == 最新セーブ:0 ? 【最新】#\@
+	ENDSELECT
+NEXT
+DRAWLINE
+PRINTPLAINFORM 　LOAD.{ページ数+1}　
+CALL PRINTSPACE, ページ数 > 0, "[101] 前ページ "
+PRINT [100] 戻る 
+CALL PRINTSPACE, ページ数 < 3, "[109] 次ページ "
+PRINTL 
+INPUT
+SELECTCASE RESULT
+	CASE 0 TO 79, 94 TO 99
+		SELECTCASE CHKDATA(RESULT)
+			CASE 0
+				;STOPBGM
+				LOADDATA RESULT
+			CASEELSE
+				RESTART
+		ENDSELECT
+	CASE 100
+		RETURN 0
+	CASE 101
+		SIF ページ数 > 0
+			ページ数--
+		RESTART
+	CASE 109
+		SIF ページ数 < 3
+			ページ数++
+		RESTART
+	CASEELSE
+		RESTART
+ENDSELECT
+
+RETURN 0
+[SKIPEND]
+
+@SYSTEM_LOADEND
+CALLF メモリ解放, "SYSTEM_LOADEND"
+選択カラム = 0
+IF 口上プロジェクト
+	CALL 口上エディタ_COM
+	BEGIN TITLE
+ENDIF
+
+SELECTCASE ゲームモード()
+	CASE "学園モード"
+		JUMP SHOP_SCHOOL
+	CASEELSE
+		JUMP SHOP画面
+ENDSELECT

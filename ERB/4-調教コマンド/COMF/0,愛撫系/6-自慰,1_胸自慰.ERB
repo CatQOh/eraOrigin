@@ -1,0 +1,186 @@
+﻿;-------------------------------------------------
+;胸自慰
+;-------------------------------------------------
+@USERCOM_ABLE_胸自慰
+#FUNCTION
+;ゲーセンに居る場合はトイレじゃないとできない
+コマンド実行条件 += "ゲーセンではトイレじゃないと実行できない/"
+SIF TEQUIP:ゲームセンター && !TEQUIP:トイレ
+	COMRESULT = 0
+;上級売春中は客がマゾじゃないとダメ
+コマンド実行条件 += "上級売春中は客に素質[マゾ]が必要/"
+SIF 上級売春中 && !TALENT:マゾ
+	COMRESULT = 0
+;縄使用中は不可
+コマンド実行条件 += "縄で縛ってるときは実行できない/"
+SIF TEQUIP:縄
+	COMRESULT = 0
+;触手調教中はダメ
+コマンド実行条件 += "触手召喚中は実行できない/"
+SIF TEQUIP:触手
+	COMRESULT = 0
+;アニマルだと無理
+コマンド実行条件 += "対象が[アニマル]の場合は実行できない/"
+SIF TALENT:アニマル
+	COMRESULT = 0
+コマンド実行条件 += "睡眠中は実行できない/"
+SIF TEQUIP:睡眠
+	COMRESULT = 0
+IF MOD:STS
+	コマンド実行条件 += "屍姦中は実行できない/"
+	SIF CFLAG:死亡
+		COMRESULT = 0
+ENDIF
+
+RETURNF COMRESULT
+
+@実行判定_胸自慰
+#DIM DYNAMIC 実効値, 2
+;-------------------------------------------------
+;実行判定処理
+;-------------------------------------------------
+;すべての命令に共通の要素を考慮
+;(従順が高いと命令に従いやすいなど)
+CALL COM_ORDER
+実効値 = RESULT
+
+CALL COM_ORDER_自慰
+実効値 += RESULT
+
+IF ABL:Ｂ感覚 >= 2
+	実効値 += MIN(ABL:Ｂ感覚, 10)/2
+	PRINTFORM +Ｂ感覚LV{ABL:Ｂ感覚}({MIN(ABL:Ｂ感覚, 10)/2})
+ENDIF
+
+;難易度上昇
+;公開で+10
+実効値:1 = 33
+SIF 撮影中()
+	実効値:1 += 10
+
+CALL 実効値判定, 実効値, 実効値:1
+
+RETURN RESULT
+
+@COM_胸自慰
+#DIM DYNAMIC 増加量
+
+SIF 撮影中()
+	PRINT 公開
+PRINTL 胸自慰
+
+SIF !TFLAG:実行判定無視
+	CALLFORM 実行判定_%SELECTCOMS%
+SIF !RESULT && !TFLAG:実行判定無視
+	RETURN 0
+
+CALL KOJO_MESSAGE_COM
+
+;実行者が奴隷であるフラグ
+TFLAG:奴隷実行 = 1
+
+;-------------------------------------------------
+;ソース追加処理
+;-------------------------------------------------
+;消費体力、気力
+LOSEBASE:体力 += 40
+LOSEBASE:気力 += 100
+
+DOWNBASE:MASTER:体力 += 20
+DOWNBASE:MASTER:気力 += 30
+
+SOURCE:快B = 100
+SOURCE:性行動 = 200
+SOURCE:恐怖 = 100
+SOURCE:中毒 = 100
+SOURCE:露出 = 200
+SOURCE:屈従 = 300
+SOURCE:逸脱 = 150
+SOURCE:反感 = 200
+IF 撮影中()
+	SOURCE:液体 = 50
+	SOURCE:恐怖 += 100
+	SOURCE:逸脱 += 100
+	SOURCE:反感 += 100
+	SOURCE:露出 += 200
+ENDIF
+
+;-------------------------------------------------
+;特殊ソース処理
+;-------------------------------------------------
+;抑圧、抵抗持ちには、抑鬱ソース追加
+SIF TALENT:抑圧 || TALENT:抵抗
+	SOURCE:鬱屈 += 150
+
+;中毒による中毒充足のソースは先に処理しておく
+;自慰中毒を見る
+SELECTCASE ABL:自慰中毒
+	CASE 0
+		TIMES SOURCE:中毒 , 0.00
+	CASE 1
+		TIMES SOURCE:中毒 , 0.10
+	CASE 2
+		TIMES SOURCE:中毒 , 0.30
+	CASE 3
+		TIMES SOURCE:中毒 , 0.60
+	CASE 4
+		TIMES SOURCE:中毒 , 0.90
+	CASE 5
+		TIMES SOURCE:中毒 , 1.20
+	CASE 6
+		TIMES SOURCE:中毒 , 1.50
+	CASE 7
+		TIMES SOURCE:中毒 , 1.80
+	CASE 8
+		TIMES SOURCE:中毒 , 2.30
+	CASE 9
+		TIMES SOURCE:中毒 , 3.00
+	CASE IS >= 10
+		TIMES SOURCE:中毒 , 5.00
+ENDSELECT
+
+;-------------------------------------------------
+;絶頂チェック
+;-------------------------------------------------
+CALL SOURCE_CHECK_CVAB
+
+;-------------------------------------------------
+;射精チェック
+;-------------------------------------------------
+CALL SAMEN_CHECK_T, 0
+
+CALL SAMEN_SHOOT_T, 0, NOWEX:射精
+
+;-------------------------------------------------
+;汚れの処理
+;-------------------------------------------------
+;奴隷の手⇔奴隷の胸の汚れが移動
+STAIN:手 |= STAIN:胸
+STAIN:胸 |= STAIN:手
+
+;-------------------------------------------------
+;経験の処理
+;-------------------------------------------------
+IF 撮影中()
+	増加量 = 2
+ELSE
+	増加量 = 1
+ENDIF
+
+CALL EXPUP_BASE, 2, 増加量
+
+;ビデオ撮影時は経験にプラス
+IF 撮影中()
+	CALL EXPUP, "自慰経験", 2
+ELSE
+	CALL EXPUP, "自慰経験", 1
+ENDIF
+IF 撮影中()
+	IF CFLAG:自慰を撮影された経験 == 0
+		PRINTL ＜初自慰撮影＞
+		CALL EXPUP, "異常経験", 1
+	ENDIF
+	CFLAG:自慰を撮影された経験++
+ENDIF
+
+RETURN 1

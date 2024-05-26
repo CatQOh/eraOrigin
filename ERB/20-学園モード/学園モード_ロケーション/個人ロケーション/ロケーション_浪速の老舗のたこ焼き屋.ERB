@@ -1,0 +1,164 @@
+﻿@ロケーション条件_浪速の老舗のたこ焼き屋
+#DIM DYNAMIC LCOUNT
+;出現条件のキャラをフルネーム(NAME)で入れる
+{
+#DIMS DYNAMIC 条件用キャラ = 
+"ター子"
+}
+
+FOR LCOUNT, 0, VARSIZE("条件用キャラ")
+	IF GETCHARANAME(条件用キャラ:LCOUNT) > 0
+		SIF 好感度合計(GETCHARANAME(条件用キャラ:LCOUNT)) >= 100
+			RETURN GETCHARANAME(条件用キャラ:LCOUNT)
+	ENDIF
+NEXT
+
+RETURN 0
+
+@ロケーション可否_浪速の老舗のたこ焼き屋
+;時間帯などで使えない場合は理由を書く
+SIF ターン == "朝"
+ロケーション可否 = 営業準備中
+
+@バイト条件_浪速の老舗のたこ焼き屋
+;バイトの時間帯などを書く
+バイト要項 = 昼～夜のシフトで募集しとるで
+;バイト可能かどうかの条件式
+SIF !GROUPMATCH(ターン, "朝")
+	バイト可能 = 1
+;ロケーション解禁済みで可能
+;返り値はその店の責任者で、面接官扱いになる。居なければ-1でOK
+SIF FINDELEMENTF(解禁済みロケーション, "浪速の老舗のたこ焼き屋") >= 0
+	RETURN -1
+
+RETURN 0
+
+;バイト時に好感度が上がるキャラ
+@職場出現キャラ_浪速の老舗のたこ焼き屋
+#DIM DYNAMIC 対象
+{
+#DIMS DYNAMIC 出現キャラ =
+"ター子",
+}
+
+対象 = GETCHARANAME(出現キャラ:(RAND:VARSIZE("出現キャラ")))
+
+SIF 対象 > 0 && CSTR:対象:現在地 == ""
+	RETURN 対象
+
+RETURN 0
+
+@出現キャラ_浪速の老舗のたこ焼き屋
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC グループ数
+#DIM DYNAMIC 始点
+#DIM DYNAMIC 終点
+
+;NOではなく登録番号で指定する
+IF データベース参照中
+	始点 = データベース参照中
+	終点 = データベース参照中+1
+ELSE
+	IF 始点
+		終点 = 始点
+		始点 = 1
+	ELSE
+		始点 = RAND(1, CHARANUM)
+		終点 = CHARANUM
+	ENDIF
+ENDIF
+
+FOR LCOUNT, 始点, 終点
+	;学校などに行ってるキャラは居ない
+	SIF CSTR:LCOUNT:現在地 != "" && !データベース参照中
+		CONTINUE
+	;出現率:LCOUNT = {出現率(100分率)} で指定できる
+	SELECTCASE CHARANAMEF(LCOUNT)
+		CASE "ター子"
+			SIF 出現率:LCOUNT >= 0
+				出現率:LCOUNT = 100
+		CASE "ユーズ", "梅桐 彩葉", "レイジ"
+			SIF 出現率:LCOUNT >= 0
+				出現率:LCOUNT = 50
+		CASEELSE
+			IF RANDPER(2) && グループ数 < 10
+				;相性の良いキャラと2～4人で行動している
+				;無所属、教師陣のグループは休日のみ現れる
+				IF 休日()
+					CALL グループキャラ選出, LCOUNT, "相性"
+				;あとは放課後等
+				ELSEIF CSTR:LCOUNT:在校 != ""
+					CALL クラスメイト選出, LCOUNT, "相性"
+				ELSE
+					CONTINUE
+				ENDIF
+				;2人以上揃わなかったら無かったことにする
+				SIF RESULT:0 == 0
+					CONTINUE
+				;2～4人のグループ
+				集団行動:グループ数:0 = LCOUNT
+				集団行動:グループ数:1 = RESULT:0
+				IF RANDPER(30)
+					集団行動:グループ数:2 = RESULT:1
+					SIF RANDPER(30)
+						集団行動:グループ数:3 = RESULT:2
+				ENDIF
+				グループ数++
+			ELSE
+				IF TALENT:LCOUNT:食欲皆伝
+					SIF 出現率:LCOUNT >= 0
+						出現率:LCOUNT = 10
+				ENDIF
+			ENDIF
+	ENDSELECT
+NEXT
+
+SIF 始点 == 1
+	RETURN
+SIF !データベース参照中
+	RESTART
+
+@浪速の老舗のたこ焼き屋_専用コマンド
+IF 同行者
+	IF MONEY < 1200
+		CALL COLUMNPRINTL, 0, @"　[---] - %CALLNAME:同行者%とたこ焼きを食べる(1200＄)", "gray"
+	ELSE
+		CALL COLUMNPRINTL, 0, @"　[  1] - %CALLNAME:同行者%とたこ焼きを食べる(1200＄)"
+	ENDIF
+ELSE
+	IF MONEY < 600
+		CALL COLUMNPRINTL, 0, "　[---] - たこ焼きを注文する(600＄)", "gray"
+	ELSE
+		CALL COLUMNPRINTL, 0, "　[  0] - たこ焼きを注文する(600＄)"
+	ENDIF
+ENDIF
+
+@浪速の老舗のたこ焼き屋_専用コマンド_INPUT
+#DIM DYNAMIC 対象
+
+選択肢 = CRESULT:1
+対象 = 0
+SIF CSTR:GETCHARANAME("ター子"):現在地 != ""
+	対象 = GETCHARANAME("ター子")
+SELECTCASE CRESULT:1
+	CASE 0
+		IF 対象
+			CALL SCHOOL_KOJO, 対象, "浪速の老舗のたこ焼き屋で注文"
+			CALL 好感度上昇, 対象, "友情", 15
+		ELSE
+			PRINTL 浪速の老舗のたこ焼き屋で美味しいたこ焼きを頂いた
+		ENDIF
+		MONEY -= 600
+	CASE 1
+		CALL SCHOOL_KOJO, 同行者, "浪速の老舗のたこ焼き屋で食事する"
+		CALL 好感度上昇, 同行者, "友情", 30
+		MONEY -= 1000
+ENDSELECT
+WAIT
+RETURN 1
+
+@SCHOOL_MESSAGE_浪速の老舗のたこ焼き屋で注文
+PRINTFORML たこ焼きを注文して、会計をしてくれた%CALLNAME:TARGET%と談笑した
+
+@SCHOOL_MESSAGE_浪速の老舗のたこ焼き屋で食事する
+PRINTFORML 浪速の老舗のたこ焼き屋の前で%CALLNAME:TARGET%とたこ焼きを食べながら談笑した

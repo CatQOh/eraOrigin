@@ -1,0 +1,90 @@
+﻿@STRATEGY_INCOME
+#DIM DYNAMIC LCOUNT
+;休業日に営業開始して収入入るのを防ぐため
+;配属完了の処理だけは休業日でもやる
+
+FOR LCOUNT, 0, CHARANUM
+	SELECTCASE CSTR:LCOUNT:配属
+		CASE "ゲームセンター", "ゲーセン売春", "娼館", "飲食店"
+			CFLAG:LCOUNT:配属完了 = 1
+	ENDSELECT
+NEXT
+IF INRANGE(GC:営業中, 1, DAY-1) || (GC:営業中 && DAY == 1)
+	FOR LCOUNT, 0, CHARANUM
+		SIF CSTR:LCOUNT:配属 == "ゲームセンター" || CSTR:LCOUNT:配属 == "ゲーセン売春"
+			CFLAG:LCOUNT:休憩 = 0
+	NEXT
+	CALL INCOME_GC
+	CALL INCOME_GC_BR
+ENDIF
+CALL CHECKDRAWLINEW
+
+IF INRANGE(BR:営業中, 1, DAY-1) || (BR:営業中 && DAY == 1)
+	FOR LCOUNT, 0, CHARANUM
+		SIF CSTR:LCOUNT:配属 == "娼館"
+			CFLAG:LCOUNT:休憩 = 0
+	NEXT
+	CALL INCOME_BR
+ENDIF
+CALL CHECKDRAWLINEW
+
+IF INRANGE(INN:営業中, 1, DAY-1) || (INN:営業中 && DAY == 1)
+	FOR LCOUNT, 0, CHARANUM
+		SIF CSTR:LCOUNT:配属 == "飲食店"
+			CFLAG:LCOUNT:休憩 = 0
+	NEXT
+	CALL INCOME_飲食店
+ENDIF
+CALL CHECKDRAWLINEW
+
+CALL INCOME_博物館
+CALL CHECKDRAWLINEW
+
+RETURN 0
+
+;経営モード用の変数初期化
+@CLEAR_STRATEGY_FLAG
+;VARSET 設置筐体
+VARSET 空きスペース
+VARSET GC
+VARSET GCS
+VARSET GCオブジェクト
+VARSET 筐体
+
+VARSET BR
+VARSET BRS
+VARSET BRITEM
+
+VARSET MU
+
+VARSET IDOL
+
+VARSET INN
+VARSET INNS
+
+VARSET 飲食店メニュー
+VARSET 飲食店売上
+VARSET 飲食店客数
+VARSET メニュー売上
+VARSET 飲食店帳簿
+
+VARSET PU
+VARSET 出版物
+VARSET 出版物情報
+VARSET 誌名
+
+VARSET 本の補充経過日数
+
+@サボり判定, 対象
+#FUNCTION
+#DIM DYNAMIC 対象
+
+SIF !TALENT:対象:サボり魔 || ワーカホリックレベル(対象)
+	RETURNF 0
+;100-モチベーションの確率で、50%の確率でサボるイベントが発生する モチベ50ならつまり25%で、100ならサボらなくなる
+IF RANDPER(100-CFLAG:対象:モチベーション)
+	SIF RAND:2
+		RETURNF 1
+ENDIF
+
+RETURNF 0

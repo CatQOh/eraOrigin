@@ -1,0 +1,972 @@
+﻿@スキルツリー
+#DIM DYNAMIC LCOUNT
+#DIMS DYNAMIC 項目
+#DIM DYNAMIC 必要経験値
+#DIM DYNAMIC NEEDTALENT, VARSIZE("TALENT")
+#DIM DYNAMIC NEEDTENTACLE
+#DIMS DYNAMIC 表示用変数, 15
+#DIMS DYNAMIC 分割用, 2
+DRAWLINE
+
+;　　　　◇調合知識
+;　　　　│
+;　　◇─◇─◇─◇─◇─◇─◇
+;　　│　
+;　　◇　◇─◇─◇─◇─◇─◇─◇─◇
+;　工│魔│　　　│　　　　　　◇小悪魔　　　　◇触手使役術
+;　作◇法◇　　　◇　　サドっ気│　　　　　　　│
+;　技│技│孔雀の瞳サド◇─◇─◇─◇─◇─◇─◇
+;　能◇能◇サドっ気　　│　　　　　　　　　　　
+;　　└┬┘◇─◇─◇─◇─◇　◇買い物上手　　
+;　技巧│　│技巧　　針さばき　│
+;　◇─◇─◇─◇─◇─◇─◇─◇─◇─◇─◇禁断の知識
+;　│　│　│同性愛っ気└◇舌使い
+;　│　◇　◇─◇─◇─◇─◇─◇─◇─◇─◇─◇
+;　│　汚れ無視　　├─┐女好き　　│　　　　　│
+;　│　　　　　　　◇　◇男好き　　◇両刀　　　◇謎の魅力
+;　│Ｃ感覚
+;　├◇─◇─◇─◇─◇─◇─◇─◇─◇─◇
+;　│Ｖ感覚
+;　├◇─◇─◇─◇─◇─◇─◇─◇─◇─◇
+;　│Ａ感覚
+;　├◇─◇─◇─◇─◇─◇─◇─◇─◇─◇
+;　│Ｂ感覚
+;　└◇─◇─◇─◇─◇─◇─◇─◇─◇─◇
+IF ORIGIN
+	PRINTFORML 習得したい能力の「◆」をクリックしてください(Originモードでは経験値不要)
+ELSE
+	PRINTFORML 残り経験値:{FLAG:経験値} 習得したい能力の「◆」をクリックしてください
+ENDIF
+PRINTL 
+
+VARSET 表示用変数
+IF ABL:MASTER:工作技能 >= 5
+	;　　　　◇調合知識
+	;　　　　│
+
+	;1行目
+	表示用変数:0 = %SET_TOOLTIP("　　　　", "", 0)%
+	IF TALENT:MASTER:調合知識
+		表示用変数:1 = %SET_TOOLTIP("◆", "[調合知識]は習得済みです", 0, "deepskyblue")%
+	ELSE
+		表示用変数:1 = %SET_TOOLTIPBUTTON("◆", "調合知識/20", "[調合知識]を習得します 必要経験値:20")%
+		NEEDTALENT:GETNUM(TALENT, "調合知識") = 20
+	ENDIF
+	HTML_PRINT STRJOIN(表示用変数, "")
+
+	;2行目
+	PRINT 　　　　
+	SIF TALENT:MASTER:調合知識
+		SETCOLORBYNAME deepskyblue
+	PRINTL │
+	RESETCOLOR
+ENDIF
+
+VARSET 表示用変数
+IF ABL:MASTER:工作技能 >= 3
+	;　　◇─◇─◇─◇─◇─◇─◇
+	;　　│工作技能4～10　
+
+	;1行目
+	表示用変数:0 = %SET_TOOLTIP("　　", "", 0)%
+	IF ABL:MASTER:工作技能 >= 4
+		表示用変数:1 = %SET_TOOLTIP("◆", "工作技能Lv4は習得済みです", 0, "deepskyblue")%
+	ELSE
+		表示用変数:1 = %SET_TOOLTIPBUTTON("◆", "工作技能/8", "工作技能Lv4を習得します 必要経験値:8")%
+	ENDIF
+	FOR LCOUNT, 5, 11
+		IF ABL:MASTER:工作技能 >= LCOUNT-1
+			IF ABL:MASTER:工作技能 >= LCOUNT
+				表示用変数:LCOUNT = %SET_TOOLTIP("─", "", 0, "deepskyblue")%
+				表示用変数:LCOUNT += SET_TOOLTIP("◆", @"工作技能Lv{LCOUNT}は習得済みです", 0, "deepskyblue")
+			ELSE
+				表示用変数:LCOUNT = %SET_TOOLTIP("─", "", 0)%
+				表示用変数:LCOUNT += SET_TOOLTIPBUTTON("◆", @"工作技能/{LCOUNT*2}", @"工作技能Lv{LCOUNT}を習得します 必要経験値:{LCOUNT*2}")
+			ENDIF
+		ENDIF
+	NEXT
+	HTML_PRINT STRJOIN(表示用変数, "")
+
+	;2行目
+	SIF ABL:MASTER:工作技能 >= 4
+		SETCOLORBYNAME deepskyblue
+	PRINTL 　　│
+	RESETCOLOR
+ENDIF
+
+VARSET 表示用変数
+IF ABL:MASTER:工作技能 || ABL:MASTER:魔法技能 || ABL:MASTER:サドっ気 >= 6
+	;　　◇　◇─◇─◇─◇─◇─◇─◇─◇
+	;　工│魔│法技能│　　　　　　◇小悪魔　　　　◇触手使役術
+	;　作◇　◇　　　◇孔雀の瞳　　│　　　　　　　│
+
+	;1行目
+	IF ABL:MASTER:工作技能 >= 2 || ABL:MASTER:魔法技能 >= 2
+		表示用変数:0 = %SET_TOOLTIP("　　", "", 0)%
+		IF ABL:MASTER:工作技能 >= 2
+			IF ABL:MASTER:工作技能 >= 3
+				表示用変数:1 = %SET_TOOLTIP("◆", "工作技能Lv3は習得済みです", 0, "deepskyblue")%
+			ELSE
+				表示用変数:1 = %SET_TOOLTIPBUTTON("◆", "工作技能/6", "工作技能Lv3を習得します 必要経験値:6")%
+			ENDIF
+		ELSE
+			表示用変数:1 = %SET_TOOLTIP("　", "", 0)%
+		ENDIF
+		表示用変数:2 = %SET_TOOLTIP("　", "", 0)%
+		IF ABL:MASTER:魔法技能 >= 2
+			IF ABL:MASTER:魔法技能 >= 3
+				表示用変数:3 = %SET_TOOLTIP("◆", @"魔法技能Lv3は習得済みです", 0, "deepskyblue")%
+			ELSE
+				必要経験値 = 6
+				SIF CSTR:MASTER:種族 == "魔術師"
+					必要経験値 /= 2
+				表示用変数:3 = %SET_TOOLTIPBUTTON("◆", @"魔法技能/{必要経験値}", @"魔法技能Lv3を習得します 必要経験値:{必要経験値}")%
+			ENDIF
+		ENDIF
+		FOR LCOUNT, 4, 11
+			IF ABL:MASTER:魔法技能 >= LCOUNT-1
+				IF ABL:MASTER:魔法技能 >= LCOUNT
+					表示用変数:LCOUNT = %SET_TOOLTIP("─", "", 0, "deepskyblue")%
+					表示用変数:LCOUNT += SET_TOOLTIP("◆", @"魔法技能Lv{LCOUNT}は習得済みです", 0, "deepskyblue")
+				ELSE
+					必要経験値 = LCOUNT*2
+					SIF CSTR:MASTER:種族 == "魔術師"
+						必要経験値 /= 2
+					表示用変数:LCOUNT = %SET_TOOLTIP("─", "", 0)%
+					表示用変数:LCOUNT += SET_TOOLTIPBUTTON("◆", @"魔法技能/{必要経験値}", @"魔法技能Lv{LCOUNT}を習得します 必要経験値:{必要経験値}")
+				ENDIF
+			ENDIF
+		NEXT
+		HTML_PRINT STRJOIN(表示用変数, "")
+	ENDIF
+	
+	;2行目
+	VARSET 表示用変数
+	IF ABL:MASTER:工作技能 >= 2 || ABL:MASTER:魔法技能 >= 2 || ABL:MASTER:サドっ気 >= 6
+		SIF ABL:MASTER:工作技能 >= 3
+			SETCOLORBYNAME deepskyblue
+		IF ABL:MASTER:工作技能 < 2
+			表示用変数:0 = %SET_TOOLTIP("　　　", "", 0)%
+		ELSE
+			表示用変数:0 = %SET_TOOLTIP("　　│", "", 0)%
+		ENDIF	
+		RESETCOLOR
+		SIF ABL:MASTER:魔法技能 >= 3
+			SETCOLORBYNAME deepskyblue
+		IF ABL:MASTER:魔法技能 < 2
+			表示用変数:0 += SET_TOOLTIP("　　", "", 0)
+		ELSE
+			表示用変数:0 += SET_TOOLTIP("　│", "", 0)
+		ENDIF
+		RESETCOLOR
+		SIF TALENT:MASTER:孔雀の瞳
+			SETCOLORBYNAME deepskyblue
+		IF ABL:MASTER:魔法技能 < 5
+			表示用変数:0 += SET_TOOLTIP("　　　　", "", 0)
+		ELSE
+			表示用変数:0 += SET_TOOLTIP("　　　│", "", 0)
+		ENDIF
+		RESETCOLOR
+		表示用変数:0 += SET_TOOLTIP("　　　　　　", "", 0)
+		IF ABL:MASTER:サドっ気 >= 6
+			IF TALENT:MASTER:小悪魔
+				表示用変数:1 = %SET_TOOLTIP("◆", "[小悪魔]は習得済みです", 0, "deepskyblue")%
+			ELSE
+				表示用変数:1 = %SET_TOOLTIPBUTTON("◆", "小悪魔/5", "[小悪魔]を習得します 必要経験値:5")%
+				NEEDTALENT:GETNUM(TALENT, "小悪魔") = 5
+			ENDIF
+		ELSE
+			表示用変数:1 = %SET_TOOLTIP("　", "", 0)%
+		ENDIF
+		表示用変数:2 = %SET_TOOLTIP("　　　　　　　", "", 0)%
+		IF ABL:MASTER:サドっ気 >= 10
+			IF TALENT:MASTER:触手使い
+				表示用変数:3 = %SET_TOOLTIP("◆", "[触手使い]は習得済みです", 0, "deepskyblue")%
+			ELSE
+				表示用変数:3 = %SET_TOOLTIPBUTTON("◆", "触手使い/30", "[触手使い]を習得します 必要経験値:30")%
+				NEEDTENTACLE = 30
+			ENDIF
+		ENDIF
+		HTML_PRINT STRJOIN(表示用変数, "")
+	ENDIF
+
+	;3行目
+	VARSET 表示用変数
+	表示用変数:0 = %SET_TOOLTIP("　　", "", 0)%
+	IF ABL:MASTER:工作技能
+		IF ABL:MASTER:工作技能 >= 2
+			表示用変数:1 = %SET_TOOLTIP("◆", "工作技能Lv2は習得済みです", 0, "deepskyblue")%
+		ELSE
+			表示用変数:1 = %SET_TOOLTIPBUTTON("◆", "工作技能/4", "工作技能Lv2を習得します 必要経験値:4")%
+		ENDIF
+	ELSE
+		表示用変数:1 = %SET_TOOLTIP("　", "", 0)%
+	ENDIF
+	表示用変数:2 = %SET_TOOLTIP("　", "", 0)%
+	IF ABL:MASTER:魔法技能 && ABL:MASTER:技巧 >= 2
+		IF ABL:MASTER:魔法技能 >= 2
+			表示用変数:3 = %SET_TOOLTIP("◆", "魔法技能Lv2は習得済みです", 0, "deepskyblue")%
+		ELSE
+			必要経験値 = 4
+			SIF CSTR:MASTER:種族 == "魔術師"
+				必要経験値 /= 2
+			表示用変数:3 = %SET_TOOLTIPBUTTON("◆", @"魔法技能/{必要経験値}", @"魔法技能Lv2を習得します 必要経験値:{必要経験値}")%
+		ENDIF
+	ELSE
+		表示用変数:3 = %SET_TOOLTIP("　", "", 0)%
+	ENDIF
+	表示用変数:4 = %SET_TOOLTIP("　　　", "", 0)%
+	IF ABL:MASTER:魔法技能 >= 5
+		IF TALENT:MASTER:孔雀の瞳
+			表示用変数:5 = %SET_TOOLTIP("◆", "[孔雀の瞳]は習得済みです", 0, "deepskyblue")%
+		ELSE
+			表示用変数:5 = %SET_TOOLTIPBUTTON("◆", "孔雀の瞳/10", "[孔雀の瞳]を習得します 必要経験値:10")%
+			NEEDTALENT:GETNUM(TALENT, "孔雀の瞳") = 10
+		ENDIF
+	ELSE
+		表示用変数:5 = %SET_TOOLTIP("　", "", 0)%
+	ENDIF
+	表示用変数:6 = %SET_TOOLTIP("　　　　　　", "", 0)%
+	SIF ABL:MASTER:サドっ気 >= 6
+		SETCOLORBYNAME deepskyblue
+	IF ABL:MASTER:サドっ気 < 6
+		表示用変数:7 = %SET_TOOLTIP("　", "", 0)%
+	ELSE
+		表示用変数:7 = %SET_TOOLTIP("│", "", 0)%
+	ENDIF
+	RESETCOLOR
+	表示用変数:8 = %SET_TOOLTIP("　　　　　　　", "", 0)%
+	SIF ABL:MASTER:サドっ気 >= 10
+		SETCOLORBYNAME deepskyblue
+	IF ABL:MASTER:サドっ気 < 10
+		表示用変数:9 = %SET_TOOLTIP("　", "", 0)%
+	ELSE
+		表示用変数:9 = %SET_TOOLTIP("│", "", 0)%
+	ENDIF
+	RESETCOLOR
+	HTML_PRINT STRJOIN(表示用変数, "")
+ENDIF
+
+VARSET 表示用変数
+IF ABL:MASTER:技巧 >= 2 || ABL:MASTER:サドっ気 >= 4
+	;　工│魔│　　　　サド◇─◇─◇─◇─◇─◇─◇
+	;　作◇法◇　　　　　　│　サドっ気
+
+	;1行目
+	;IF ABL:MASTER:工作技能 || ABL:MASTER:魔法技能
+	SIF ABL:MASTER:工作技能 >= 2
+		SETCOLORBYNAME deepskyblue
+	IF ABL:MASTER:工作技能 < 1
+		表示用変数:0 = %SET_TOOLTIP("　　　", "", 0)%
+	ELSE
+		表示用変数:0 = %SET_TOOLTIP("　　│", "", 0)%
+	ENDIF
+	RESETCOLOR
+	SIF ABL:MASTER:魔法技能 >= 2
+		SETCOLORBYNAME deepskyblue
+	IF ABL:MASTER:魔法技能 < 1
+		表示用変数:0 += SET_TOOLTIP("　　", "", 0)
+	ELSE
+		表示用変数:0 += SET_TOOLTIP("　│", "", 0)
+	ENDIF
+	RESETCOLOR
+	表示用変数:0 += SET_TOOLTIP("　　　　　　", "", 0)
+	IF ABL:MASTER:サドっ気 >= 4
+		IF TALENT:MASTER:サド
+			表示用変数:1 = %SET_TOOLTIP("◆", "[サド]は習得済みです", 0, "deepskyblue")%
+		ELSE
+			表示用変数:1 = %SET_TOOLTIPBUTTON("◆", "サド/10", "[サド]を習得します 必要経験値:10")%
+			NEEDTALENT:GETNUM(TALENT, "サド") = 10
+		ENDIF
+	ELSE
+		表示用変数:1= %SET_TOOLTIP("　", "", 0)%
+	ENDIF
+	IF TALENT:MASTER:サド
+		FOR LCOUNT, 5, 11
+			IF ABL:MASTER:サドっ気 >= LCOUNT-1
+				IF ABL:MASTER:サドっ気 >= LCOUNT
+					表示用変数:LCOUNT = %SET_TOOLTIP("─", "", 0, "deepskyblue")%
+					表示用変数:LCOUNT += SET_TOOLTIP("◆", @"サドっ気Lv{LCOUNT}は習得済みです", 0, "deepskyblue")
+				ELSE
+					表示用変数:LCOUNT = %SET_TOOLTIP("─", "", 0)%
+					表示用変数:LCOUNT += SET_TOOLTIPBUTTON("◆", @"サドっ気/{LCOUNT}", @"サドっ気Lv{LCOUNT}を習得します 必要経験値:{LCOUNT}")
+				ENDIF
+			ENDIF
+		NEXT
+	ENDIF
+	HTML_PRINT STRJOIN(表示用変数, "")
+
+	;2行目
+	VARSET 表示用変数
+	表示用変数:0 = %SET_TOOLTIP("　　", "", 0)%
+	IF ABL:MASTER:技巧 >= 2
+		IF ABL:MASTER:工作技能
+			表示用変数:1 = %SET_TOOLTIP("◆", "工作技能Lv1は習得済みです", 0, "deepskyblue")%
+		ELSE
+			表示用変数:1 = %SET_TOOLTIPBUTTON("◆", "工作技能/2", "工作技能Lv1を習得します 必要経験値:2")%
+		ENDIF
+	ELSE
+		表示用変数:1 = %SET_TOOLTIP("　", "", 0)%
+	ENDIF
+	表示用変数:2 = %SET_TOOLTIP("　", "", 0)%
+	IF ABL:MASTER:技巧 >= 2
+		IF ABL:MASTER:魔法技能
+			表示用変数:3 = %SET_TOOLTIP("◆", "魔法技能Lv1は習得済みです", 0, "deepskyblue")%
+		ELSE
+			必要経験値 = 2
+			SIF CSTR:MASTER:種族 == "魔術師"
+				必要経験値 /= 2
+			表示用変数:3 = %SET_TOOLTIPBUTTON("◆", @"魔法技能/{必要経験値}", @"魔法技能Lv1を習得します 必要経験値:{必要経験値}")%
+		ENDIF
+	ELSE
+		表示用変数:3 = %SET_TOOLTIP("　", "", 0)%
+	ENDIF
+	表示用変数:4 = %SET_TOOLTIP("　　　　　　", "", 0)%
+	SIF TALENT:MASTER:サド
+		SETCOLORBYNAME deepskyblue
+	IF ABL:MASTER:サドっ気 < 4
+		表示用変数:5 = %SET_TOOLTIP("　", "", 0)%
+	ELSE
+		表示用変数:5 = %SET_TOOLTIP("│", "", 0)%
+	ENDIF
+	RESETCOLOR
+	HTML_PRINT STRJOIN(表示用変数, "")
+ENDIF
+
+VARSET 表示用変数
+IF ABL:MASTER:技巧 >= 2
+	;　　└┬┘◇─◇─◇─◇─◇　◇買い物上手　　
+	;　　　│　│サドっ気　針さばき│
+
+	;1行目
+	SIF ABL:MASTER:工作技能
+		SETCOLORBYNAME deepskyblue
+	表示用変数:0 = %SET_TOOLTIP("　　└", "", 0)%
+	RESETCOLOR
+	SIF ABL:MASTER:工作技能 || ABL:MASTER:魔法技能
+		SETCOLORBYNAME deepskyblue
+	表示用変数:0 += SET_TOOLTIP("┬", "", 0)
+	RESETCOLOR
+	SIF ABL:MASTER:魔法技能
+		SETCOLORBYNAME deepskyblue
+	表示用変数:0 += SET_TOOLTIP("┘", "", 0)
+	RESETCOLOR
+	IF ABL:MASTER:技巧 >= 3
+		IF ABL:MASTER:サドっ気
+			表示用変数:1 = %SET_TOOLTIP("◆", @"サドっ気Lv1は習得済みです", 0, "deepskyblue")%
+		ELSE
+			表示用変数:1 = %SET_TOOLTIPBUTTON("◆", @"サドっ気/1", @"サドっ気Lv1を習得します 必要経験値:1")%
+		ENDIF
+		FOR LCOUNT, 2, 5
+			IF ABL:MASTER:サドっ気 >= LCOUNT-1
+				IF ABL:MASTER:サドっ気 >= LCOUNT
+					表示用変数:LCOUNT = %SET_TOOLTIP("─", "", 0, "deepskyblue")%
+					表示用変数:LCOUNT += SET_TOOLTIP("◆", @"サドっ気Lv{LCOUNT}は習得済みです", 0, "deepskyblue")
+				ELSE
+					表示用変数:LCOUNT = %SET_TOOLTIP("─", "", 0)%
+					表示用変数:LCOUNT += SET_TOOLTIPBUTTON("◆", @"サドっ気/{LCOUNT}", @"サドっ気Lv{LCOUNT}を習得します 必要経験値:{LCOUNT}")
+				ENDIF
+			ELSE
+				表示用変数:LCOUNT = %SET_TOOLTIP("　　", "", 0)%
+			ENDIF
+		NEXT
+		IF ABL:MASTER:サドっ気 >= 4
+			IF TALENT:MASTER:針さばき
+				表示用変数:6 = %SET_TOOLTIP("─", "", 0, "deepskyblue")%
+				表示用変数:6 += SET_TOOLTIP("◆", "[針さばき]は習得済みです", 0, "deepskyblue")
+			ELSE
+				表示用変数:6 = %SET_TOOLTIP("─", "", 0)%
+				表示用変数:6 += SET_TOOLTIPBUTTON("◆", "針さばき/5", "[針さばき]を習得します 必要経験値:5")
+				NEEDTALENT:GETNUM(TALENT, "針さばき") = 5
+			ENDIF
+		ELSE
+			表示用変数:LCOUNT = %SET_TOOLTIP("　　", "", 0)%
+		ENDIF
+		IF ABL:MASTER:技巧 >= 8
+			表示用変数:7 = %SET_TOOLTIP("　", "", 0)%
+			IF TALENT:MASTER:買い物上手
+				表示用変数:8 = %SET_TOOLTIP("◆", "[買い物上手]は習得済みです", 0, "deepskyblue")%
+			ELSE
+				表示用変数:8 = %SET_TOOLTIPBUTTON("◆", "買い物上手/20", "[買い物上手]を習得します 必要経験値:20")%
+				NEEDTALENT:GETNUM(TALENT, "買い物上手") = 20
+			ENDIF
+		ENDIF
+	ENDIF
+	HTML_PRINT STRJOIN(表示用変数, "")
+
+	;2行目
+	VARSET 表示用変数
+	SIF ABL:MASTER:工作技能 || ABL:MASTER:魔法技能
+		SETCOLORBYNAME deepskyblue
+	PRINT 　　　│
+	RESETCOLOR
+	SIF ABL:MASTER:サドっ気
+		SETCOLORBYNAME deepskyblue
+	IF ABL:MASTER:技巧 < 3
+		PRINT 　　
+	ELSE
+		PRINT 　│
+	ENDIF
+	RESETCOLOR
+	SIF TALENT:MASTER:買い物上手
+		SETCOLORBYNAME deepskyblue
+	SIF ABL:MASTER:技巧 >= 8
+		PRINT 　　　　　　　　　│
+	PRINTL 
+	RESETCOLOR
+ENDIF
+
+VARSET 表示用変数
+;　◇─◇─◇─◇─◇─◇─◇─◇─◇─◇─◇禁断の知識
+;　技巧
+
+表示用変数 = %SET_TOOLTIP("　", "", 0)%
+IF ABL:MASTER:技巧 >= 1
+	表示用変数:1 = %SET_TOOLTIP("◆", "技巧Lv1は習得済みです", 0, "deepskyblue")%
+ELSE
+	表示用変数:1 = %SET_TOOLTIPBUTTON("◆", "技巧/1", "技巧Lv1を習得します 必要経験値:1")%
+ENDIF
+FOR LCOUNT, 2, 11
+	IF ABL:MASTER:技巧 >= LCOUNT-1
+		IF ABL:MASTER:技巧 >= LCOUNT
+			表示用変数:LCOUNT = %SET_TOOLTIP("─", "", 0, "deepskyblue")%
+			表示用変数:LCOUNT += SET_TOOLTIP("◆", @"技巧Lv{LCOUNT}は習得済みです", 0, "deepskyblue")
+		ELSE
+			表示用変数:LCOUNT = %SET_TOOLTIP("─", "", 0)%
+			表示用変数:LCOUNT += SET_TOOLTIPBUTTON("◆", @"技巧/{LCOUNT}", @"技巧Lv{LCOUNT}を習得します 必要経験値:{LCOUNT}")
+		ENDIF
+	ENDIF
+NEXT
+IF ABL:MASTER:技巧 >= 10
+	IF TALENT:MASTER:禁断の知識
+		表示用変数:11 = %SET_TOOLTIP("─", "", 0, "deepskyblue")%
+		表示用変数:11 += SET_TOOLTIP("◆", "[禁断の知識]は習得済みです", 0, "deepskyblue")
+	ELSE
+		表示用変数:11 = %SET_TOOLTIP("─", "", 0, "deepskyblue")%
+		表示用変数:11 += SET_TOOLTIPBUTTON("◆", "禁断の知識/30", "[禁断の知識]を習得します 必要経験値:30")
+		NEEDTALENT:GETNUM(TALENT, "禁断の知識") = 30
+	ENDIF
+ENDIF
+HTML_PRINT STRJOIN(表示用変数, "")
+
+VARSET 表示用変数
+IF ABL:MASTER:技巧
+	;　│　│　│同性愛っ気└◇舌使い
+	;　│　◇　◇─◇─◇─◇─◇─◇─◇─◇─◇─◇
+
+	;1行目
+	SIF ABL:MASTER:Ｃ感覚 || ABL:MASTER:Ｖ感覚 || ABL:MASTER:Ａ感覚 || ABL:MASTER:Ｂ感覚
+		SETCOLORBYNAME deepskyblue
+	表示用変数:0 = %SET_TOOLTIP("　│", "", 0)%
+	RESETCOLOR
+	SIF TALENT:MASTER:汚れ無視
+		SETCOLORBYNAME deepskyblue
+	IF ABL:MASTER:技巧 < 2
+		表示用変数:1 = %SET_TOOLTIP("　　", "", 0)%
+	ELSE
+		表示用変数:1 = %SET_TOOLTIP("　│", "", 0)%
+	ENDIF
+	RESETCOLOR
+	SIF ABL:MASTER:ホモっ気 && ABL:MASTER:レズっ気
+		SETCOLORBYNAME deepskyblue
+	IF ABL:MASTER:技巧 < 3
+		表示用変数:2 = %SET_TOOLTIP("　　", "", 0)%
+	ELSE
+		表示用変数:2 = %SET_TOOLTIP("　│", "", 0)%
+	ENDIF
+	RESETCOLOR
+	SIF TALENT:MASTER:舌使い
+		SETCOLORBYNAME deepskyblue
+	IF ABL:MASTER:技巧 >= 6
+		表示用変数:3 = %SET_TOOLTIP("　　　　　└", "", 0)%
+		IF TALENT:MASTER:舌使い
+			表示用変数:4 = %SET_TOOLTIP("◆", "[舌使い]は習得済みです")%
+		ELSE
+			表示用変数:4 = %SET_TOOLTIPBUTTON("◆", "舌使い/5", "[舌使い]を習得します 必要経験値:5")%
+			NEEDTALENT:GETNUM(TALENT, "舌使い") = 5
+		ENDIF
+	ENDIF
+	HTML_PRINT STRJOIN(表示用変数, "")
+	RESETCOLOR
+
+	VARSET 表示用変数
+	;2行目
+	SIF ABL:MASTER:Ｃ感覚 || ABL:MASTER:Ｖ感覚 || ABL:MASTER:Ａ感覚 || ABL:MASTER:Ｂ感覚
+		SETCOLORBYNAME deepskyblue
+	表示用変数:0 = %SET_TOOLTIP("　│　", "", 0)%
+	RESETCOLOR
+	SIF TALENT:MASTER:汚れ無視
+		SETCOLORBYNAME deepskyblue
+	IF ABL:MASTER:技巧 >= 2
+		IF TALENT:MASTER:汚れ無視
+			表示用変数:1 = %SET_TOOLTIP("◆", "[汚れ無視]は習得済みです")%
+		ELSE
+			表示用変数:1 = %SET_TOOLTIPBUTTON("◆", "汚れ無視/3", "[汚れ無視]を習得します 必要経験値:3")%
+			NEEDTALENT:GETNUM(TALENT, "汚れ無視") = 3
+		ENDIF
+	ENDIF
+	RESETCOLOR
+	IF ABL:MASTER:技巧 >= 3
+		表示用変数:2 = %SET_TOOLTIP("　", "", 0)%
+		IF ABL:MASTER:ホモっ気 && ABL:MASTER:レズっ気
+			表示用変数:3 = %SET_TOOLTIP("◆", @"\@SEX(MASTER) == 1 ? ホモっ気 # レズっ気 \@Lv1は習得済みです", 0, "deepskyblue")%
+		ELSE
+			表示用変数:3 = %SET_TOOLTIPBUTTON("◆", @"\@SEX(MASTER) == 1 ? ホモっ気 # レズっ気 \@/1", @"\@SEX(MASTER) == 1 ? ホモっ気 # レズっ気 \@Lv1を習得します 必要経験値:1")%
+		ENDIF
+		FOR LCOUNT, 2, 11
+			IF ABL:MASTER:ホモっ気 >= LCOUNT-1 || ABL:MASTER:レズっ気 >= LCOUNT-1
+				IF ABL:MASTER:ホモっ気 >= LCOUNT && ABL:MASTER:レズっ気 >= LCOUNT
+					表示用変数:(LCOUNT+2) = %SET_TOOLTIP("─", "", 0, "deepskyblue")%
+					表示用変数:(LCOUNT+2) += SET_TOOLTIP("◆", @"\@SEX(MASTER) == 1 ? ホモっ気 # レズっ気 \@Lv{LCOUNT}は習得済みです", 0, "deepskyblue")
+				ELSE
+					表示用変数:(LCOUNT+2) = %SET_TOOLTIP("─", "", 0)%
+					表示用変数:(LCOUNT+2) += SET_TOOLTIPBUTTON("◆", @"\@SEX(MASTER) == 1 ? ホモっ気 # レズっ気 \@/{LCOUNT}", @"\@SEX(MASTER) == 1 ? ホモっ気 # レズっ気 \@Lv{LCOUNT}を習得します 必要経験値:{LCOUNT}")
+				ENDIF
+			ENDIF
+		NEXT
+	ENDIF
+	RESETCOLOR
+	HTML_PRINT STRJOIN(表示用変数, "")
+ENDIF
+
+VARSET 表示用変数
+IF ABL:MASTER:技巧
+	;　│　　　　　　　├─┐女好き　　│　　　　　│
+	;　│　　　　　　　◇　◇男好き　　◇両刀　　　◇謎の魅力
+
+	;1行目
+	SIF ABL:MASTER:Ｃ感覚 || ABL:MASTER:Ｖ感覚 || ABL:MASTER:Ａ感覚 || ABL:MASTER:Ｂ感覚
+		SETCOLORBYNAME deepskyblue
+	表示用変数:0 = %SET_TOOLTIP("　│", "", 0)%
+	RESETCOLOR
+	IF MIN(ABL:MASTER:ホモっ気, ABL:MASTER:レズっ気) >= 3
+		表示用変数:1 = %SET_TOOLTIP("　　　　　　　", "", 0)%
+		SIF TALENT:MASTER:女好き
+			SETCOLORBYNAME deepskyblue
+		表示用変数:2 = %SET_TOOLTIP("├", "", 0)%
+		RESETCOLOR
+		SIF TALENT:MASTER:男好き
+			SETCOLORBYNAME deepskyblue
+		表示用変数:3 = %SET_TOOLTIP("─┐", "", 0)%
+		RESETCOLOR
+	ENDIF
+	IF MIN(ABL:MASTER:ホモっ気, ABL:MASTER:レズっ気) >= 7
+		SIF TALENT:MASTER:両刀
+			SETCOLORBYNAME deepskyblue
+		表示用変数:4 = %SET_TOOLTIP("　　　　　│", "", 0)%
+		RESETCOLOR
+	ENDIF
+	IF MIN(ABL:MASTER:ホモっ気, ABL:MASTER:レズっ気) >= 10
+		SIF TALENT:MASTER:謎の魅力
+			SETCOLORBYNAME deepskyblue
+		表示用変数:5 = %SET_TOOLTIP("　　　　　│", "", 0)%
+		RESETCOLOR
+	ENDIF
+	HTML_PRINT STRJOIN(表示用変数, "")
+
+	;2行目
+	VARSET 表示用変数
+	SIF ABL:MASTER:Ｃ感覚 || ABL:MASTER:Ｖ感覚 || ABL:MASTER:Ａ感覚 || ABL:MASTER:Ｂ感覚
+		SETCOLORBYNAME deepskyblue
+	表示用変数:0 = %SET_TOOLTIP("　│", "", 0)%
+	RESETCOLOR
+	IF MIN(ABL:MASTER:ホモっ気, ABL:MASTER:レズっ気) >= 3
+		表示用変数:1 = %SET_TOOLTIP("　　　　　　　", "", 0)%
+		IF TALENT:MASTER:女好き
+			表示用変数:2 = %SET_TOOLTIP("◆", "[女好き]は習得済みです", 0, "deepskyblue")%
+		ELSE
+			表示用変数:2 = %SET_TOOLTIPBUTTON("◆", "女好き/5", "[女好き]を習得します 必要経験値:5")%
+			NEEDTALENT:GETNUM(TALENT, "女好き") = 5
+		ENDIF
+		表示用変数:3 = %SET_TOOLTIP("　", "", 0)%
+		IF TALENT:MASTER:男好き
+			表示用変数:4 = %SET_TOOLTIP("◆", "[男好き]は習得済みです", 0, "deepskyblue")%
+		ELSE
+			表示用変数:4 = %SET_TOOLTIPBUTTON("◆", "男好き/5", "[男好き]を習得します 必要経験値:5")%
+			NEEDTALENT:GETNUM(TALENT, "男好き") = 5
+		ENDIF
+	ENDIF
+	表示用変数:5 = %SET_TOOLTIP("　　　　　", "", 0)%
+	IF MIN(ABL:MASTER:ホモっ気, ABL:MASTER:レズっ気) >= 7
+		IF TALENT:MASTER:両刀
+			表示用変数:6 = %SET_TOOLTIP("◆", "[両刀]は習得済みです", 0, "deepskyblue")%
+		ELSE
+			表示用変数:6 = %SET_TOOLTIPBUTTON("◆", "両刀/10", "[両刀]を習得します 必要経験値:10")%
+			NEEDTALENT:GETNUM(TALENT, "両刀") = 10
+		ENDIF
+	ENDIF
+	表示用変数:7 = %SET_TOOLTIP("　　　　　", "", 0)%
+	IF MIN(ABL:MASTER:ホモっ気, ABL:MASTER:レズっ気) >= 10
+		IF TALENT:MASTER:謎の魅力
+			表示用変数:8 = %SET_TOOLTIP("◆", "[謎の魅力]は習得済みです", 0, "deepskyblue")%
+		ELSE
+			表示用変数:8 = %SET_TOOLTIPBUTTON("◆", "謎の魅力/20", "[謎の魅力]を習得します 必要経験値:20")%
+			NEEDTALENT:GETNUM(TALENT, "謎の魅力") = 20
+		ENDIF
+	ENDIF
+	HTML_PRINT STRJOIN(表示用変数, "")
+ENDIF
+
+VARSET 表示用変数
+IF ABL:MASTER:技巧
+	;　│Ｃ感覚
+	;　├◇─◇─◇─◇─◇─◇─◇─◇─◇─◇
+	;　│Ｖ感覚
+	;　├◇─◇─◇─◇─◇─◇─◇─◇─◇─◇
+	;　│Ａ感覚
+	;　├◇─◇─◇─◇─◇─◇─◇─◇─◇─◇
+	;　│Ｂ感覚
+	;　└◇─◇─◇─◇─◇─◇─◇─◇─◇─◇
+
+	;1行目
+	SIF ABL:MASTER:Ｃ感覚 || ABL:MASTER:Ｖ感覚 || ABL:MASTER:Ａ感覚 || ABL:MASTER:Ｂ感覚
+		SETCOLORBYNAME deepskyblue
+	HTML_PRINT SET_TOOLTIP("　│", "", 0)
+	RESETCOLOR
+
+	;2行目
+	VARSET 表示用変数
+	SIF ABL:MASTER:Ｃ感覚 || ABL:MASTER:Ｖ感覚 || ABL:MASTER:Ａ感覚 || ABL:MASTER:Ｂ感覚
+		SETCOLORBYNAME deepskyblue
+	表示用変数:0 = %SET_TOOLTIP("　├", "", 0)%
+	RESETCOLOR
+	IF ABL:MASTER:Ｃ感覚 >= 1
+		表示用変数:1 = %SET_TOOLTIP("◆", "Ｃ感覚Lv1は習得済みです", 0, "deepskyblue")%
+	ELSE
+		表示用変数:1 = %SET_TOOLTIPBUTTON("◆", "Ｃ感覚/1", "Ｃ感覚Lv1を習得します 必要経験値:1")%
+	ENDIF
+	FOR LCOUNT, 2, 11
+		IF ABL:MASTER:Ｃ感覚 >= LCOUNT-1
+			IF ABL:MASTER:Ｃ感覚 >= LCOUNT
+				表示用変数:LCOUNT = %SET_TOOLTIP("─", "", 0, "deepskyblue")%
+				表示用変数:LCOUNT += SET_TOOLTIP("◆", @"Ｃ感覚Lv{LCOUNT}は習得済みです", 0, "deepskyblue")
+			ELSE
+				表示用変数:LCOUNT = %SET_TOOLTIP("─", "", 0)%
+				表示用変数:LCOUNT += SET_TOOLTIPBUTTON("◆", @"Ｃ感覚/{LCOUNT}", @"Ｃ感覚Lv{LCOUNT}を習得します 必要経験値:{LCOUNT}")
+			ENDIF
+		ENDIF
+	NEXT
+	HTML_PRINT STRJOIN(表示用変数, "")
+
+	;3行目
+	SIF ABL:MASTER:Ｖ感覚 || ABL:MASTER:Ａ感覚 || ABL:MASTER:Ｂ感覚
+		SETCOLORBYNAME deepskyblue
+	HTML_PRINT SET_TOOLTIP("　│", "", 0)
+	RESETCOLOR
+
+	;4行目
+	VARSET 表示用変数
+	SIF ABL:MASTER:Ｖ感覚 || ABL:MASTER:Ａ感覚 || ABL:MASTER:Ｂ感覚
+		SETCOLORBYNAME deepskyblue
+	表示用変数:0 = %SET_TOOLTIP("　├", "", 0)%
+	RESETCOLOR
+	IF ABL:MASTER:Ｖ感覚 >= 1
+		表示用変数:1 = %SET_TOOLTIP("◆", "Ｖ感覚Lv1は習得済みです", 0, "deepskyblue")%
+	ELSE
+		表示用変数:1 = %SET_TOOLTIPBUTTON("◆", "Ｖ感覚/1", "Ｖ感覚Lv1を習得します 必要経験値:1")%
+	ENDIF
+	FOR LCOUNT, 2, 11
+		IF ABL:MASTER:Ｖ感覚 >= LCOUNT-1
+			IF ABL:MASTER:Ｖ感覚 >= LCOUNT
+				表示用変数:LCOUNT = %SET_TOOLTIP("─", "", 0, "deepskyblue")%
+				表示用変数:LCOUNT += SET_TOOLTIP("◆", @"Ｖ感覚Lv{LCOUNT}は習得済みです", 0, "deepskyblue")
+			ELSE
+				表示用変数:LCOUNT = %SET_TOOLTIP("─", "", 0)%
+				表示用変数:LCOUNT += SET_TOOLTIPBUTTON("◆", @"Ｖ感覚/{LCOUNT}", @"Ｖ感覚Lv{LCOUNT}を習得します 必要経験値:{LCOUNT}")
+			ENDIF
+		ENDIF
+	NEXT
+	HTML_PRINT STRJOIN(表示用変数, "")
+
+	;5行目
+	SIF ABL:MASTER:Ａ感覚 || ABL:MASTER:Ｂ感覚
+		SETCOLORBYNAME deepskyblue
+	HTML_PRINT SET_TOOLTIP("　│", "", 0)
+	RESETCOLOR
+
+	;6行目
+	VARSET 表示用変数
+	SIF ABL:MASTER:Ａ感覚 || ABL:MASTER:Ｂ感覚
+		SETCOLORBYNAME deepskyblue
+	表示用変数:0 = %SET_TOOLTIP("　├", "", 0)%
+	RESETCOLOR
+	IF ABL:MASTER:Ａ感覚 >= 1
+		表示用変数:1 = %SET_TOOLTIP("◆", "Ａ感覚Lv1は習得済みです", 0, "deepskyblue")%
+	ELSE
+		表示用変数:1 = %SET_TOOLTIPBUTTON("◆", "Ａ感覚/1", "Ａ感覚Lv1を習得します 必要経験値:1")%
+	ENDIF
+	FOR LCOUNT, 2, 11
+		IF ABL:MASTER:Ａ感覚 >= LCOUNT-1
+			IF ABL:MASTER:Ａ感覚 >= LCOUNT
+				表示用変数:LCOUNT = %SET_TOOLTIP("─", "", 0, "deepskyblue")%
+				表示用変数:LCOUNT += SET_TOOLTIP("◆", @"Ａ感覚Lv{LCOUNT}は習得済みです", 0, "deepskyblue")
+			ELSE
+				表示用変数:LCOUNT = %SET_TOOLTIP("─", "", 0)%
+				表示用変数:LCOUNT += SET_TOOLTIPBUTTON("◆", @"Ａ感覚/{LCOUNT}", @"Ａ感覚Lv{LCOUNT}を習得します 必要経験値:{LCOUNT}")
+			ENDIF
+		ENDIF
+	NEXT
+	HTML_PRINT STRJOIN(表示用変数, "")
+
+	;7行目
+	SIF ABL:MASTER:Ｂ感覚
+		SETCOLORBYNAME deepskyblue
+	HTML_PRINT SET_TOOLTIP("　│", "", 0)
+	RESETCOLOR
+
+	;8行目
+	VARSET 表示用変数
+	SIF ABL:MASTER:Ｂ感覚
+		SETCOLORBYNAME deepskyblue
+	表示用変数:0 = %SET_TOOLTIP("　└", "", 0)%
+	RESETCOLOR
+	IF ABL:MASTER:Ｂ感覚 >= 1
+		表示用変数:1 = %SET_TOOLTIP("◆", "Ｂ感覚Lv1は習得済みです", 0, "deepskyblue")%
+	ELSE
+		表示用変数:1 = %SET_TOOLTIPBUTTON("◆", "Ｂ感覚/1", "Ｂ感覚Lv1を習得します 必要経験値:1")%
+	ENDIF
+	FOR LCOUNT, 2, 11
+		IF ABL:MASTER:Ｂ感覚 >= LCOUNT-1
+			IF ABL:MASTER:Ｂ感覚 >= LCOUNT
+				表示用変数:LCOUNT = %SET_TOOLTIP("─", "", 0, "deepskyblue")%
+				表示用変数:LCOUNT += SET_TOOLTIP("◆", @"Ｂ感覚Lv{LCOUNT}は習得済みです", 0, "deepskyblue")
+			ELSE
+				表示用変数:LCOUNT = %SET_TOOLTIP("─", "", 0)%
+				表示用変数:LCOUNT += SET_TOOLTIPBUTTON("◆", @"Ｂ感覚/{LCOUNT}", @"Ｂ感覚Lv{LCOUNT}を習得します 必要経験値:{LCOUNT}")
+			ENDIF
+		ENDIF
+	NEXT
+	HTML_PRINT STRJOIN(表示用変数, "")
+ENDIF
+
+PRINTL
+DRAWLINE
+PRINTPLAIN 　SKILL UP　
+PRINTBUTTON "[0] - 戻る ", "0"
+PRINTBUTTON "[1] - スキルと経験値の説明", "1"
+PRINTL 
+
+BINPUTS
+
+SIF RESULTS == "0"
+	RETURN
+IF RESULTS == "1"
+	CALL MANUAL_スキルツリー
+	RESTART
+ENDIF
+
+SPLIT RESULTS, "/", 分割用
+項目 = %分割用:0%
+必要経験値 = TOINT(分割用:1)
+
+CLEARLINE 1
+
+IF 必要経験値 > FLAG:経験値 && !ORIGIN
+	PRINTW 経験値が足りません
+	RESTART
+ENDIF
+
+SELECTCASE 項目
+	CASE "技巧", "サドっ気", "Ｃ感覚", "Ｖ感覚", "Ａ感覚", "Ｂ感覚", "ホモっ気", "レズっ気"
+		必要経験値 = ABL:MASTER:項目+1
+		IF 必要経験値 > FLAG:経験値 && !ORIGIN
+			PRINTW 経験値が足りません
+			RESTART
+		ENDIF
+		PRINTFORML \@ !ORIGIN ? 経験値を{必要経験値}消費して#\@%項目%Lv{ABL:MASTER:項目+1}を習得します。よろしいですか？
+		PRINTL [0] - はい
+		PRINTL [1] - いいえ
+		BINPUT
+		SIF RESULT == 1
+			RESTART
+	CASE "工作技能", "魔法技能"
+		IF CSTR:MASTER:種族 == "魔術師" && 項目 == "魔法技能"
+			必要経験値 = (ABL:MASTER:項目+1)
+		ELSE
+			必要経験値 = (ABL:MASTER:項目+1)*2
+		ENDIF
+		IF 必要経験値 > FLAG:経験値 && !ORIGIN
+			PRINTW 経験値が足りません
+			RESTART
+		ENDIF
+		PRINTFORML \@ !ORIGIN ? 経験値を{必要経験値}消費して#\@%項目%Lv{ABL:MASTER:項目+1}を習得します。よろしいですか？
+		PRINTL [0] - はい
+		PRINTL [1] - いいえ
+		BINPUT
+		SIF RESULT == 1
+			RESTART
+	CASE "触手使い"
+		必要経験値 = NEEDTENTACLE
+		SIF 必要経験値 == 0
+			RESTART
+		IF 必要経験値 > FLAG:経験値 && !ORIGIN
+			PRINTW 経験値が足りません
+			RESTART
+		ENDIF
+		PRINTFORML \@ !ORIGIN ? 経験値を{必要経験値}消費して#\@%項目%を習得します。よろしいですか？
+		PRINTL [0] - はい
+		PRINTL [1] - いいえ
+		BINPUT
+		SIF RESULT == 1
+			RESTART
+	CASE "孔雀の瞳", "調合知識", "サド", "買い物上手", "女好き", "男好き", "両刀", "謎の魅力", "汚れ無視", "舌使い", "針さばき", "小悪魔", "禁断の知識"
+		必要経験値 = NEEDTALENT:GETNUM(TALENT, 項目)
+		SIF 必要経験値 == 0
+			RESTART
+		IF 必要経験値 > FLAG:経験値 && !ORIGIN
+			PRINTW 経験値が足りません
+			RESTART
+		ENDIF
+		PRINTFORML \@ !ORIGIN ? 経験値を{必要経験値}消費して#\@%項目%を習得します。よろしいですか？
+		PRINTL [0] - はい
+		PRINTL [1] - いいえ
+		BINPUT
+		SIF RESULT == 1
+			RESTART
+ENDSELECT
+
+SELECTCASE 項目
+	CASE "技巧", "サドっ気", "Ｃ感覚", "Ｖ感覚", "Ａ感覚", "Ｂ感覚", "ホモっ気", "レズっ気", "工作技能", "魔法技能"
+		PRINTFORMW %項目%Lv{ABL:MASTER:項目+1}を習得しました
+		;ホモっ気、レズっ気は性別に関係無く両方上げる
+		IF GROUPMATCH(項目, "ホモっ気", "レズっ気")
+			ABL:MASTER:ホモっ気++
+			ABL:MASTER:レズっ気++
+		ELSE
+			ABL:MASTER:項目++
+		ENDIF
+	CASE "孔雀の瞳", "調合知識", "サド", "買い物上手", "女好き", "男好き", "両刀", "謎の魅力", "汚れ無視", "舌使い", "針さばき", "小悪魔", "触手使い", "禁断の知識"
+		PRINTFORMW %項目%を習得しました
+		IF 項目 == "触手使い"
+			TALENT:MASTER:触手使い = 1
+		ELSE
+			TALENT:MASTER:項目 = 1
+		ENDIF
+		SIF CHARANAMEF(MASTER) == "駄天使ちゃん" && 項目 == "サド"
+			CALL 実績解除, "(天使じゃ)ないです"
+ENDSELECT
+
+SIF !ORIGIN
+	FLAG:経験値 -= 必要経験値
+
+RESTART
+
+@経験値取得, 対象, 場面
+#DIM DYNAMIC 点数
+#DIM DYNAMIC 対象
+#DIMS DYNAMIC 場面
+
+;アニマルは対象外
+SIF TALENT:アニマル
+	RETURN
+
+点数 = 経験値計算(対象)
+
+SELECTCASE 場面
+	;売却可能で3分の1の経験値を得る 切り上げ
+	CASE "売却可能"
+		点数 = (点数%3 > 0 ? (点数/3)+1 # 点数/3)
+	;陥落で残りの3分の2の経験値を得る 切り上げ
+	CASE "陥落"
+		点数 = (点数%3 > 0 ? (点数/3*2)+1 # 点数/3*2)
+ENDSELECT
+
+;最低1は保証
+SIF 点数 < 1
+	点数 = 1
+FLAG:経験値 += 点数
+PRINTFORML %CALLNAME:MASTER%は{点数}の経験値を得た(現在の経験値:{FLAG:経験値})
+SIF 場面 != "学園"
+	WAIT
+RETURN
+
+@経験値計算, 対象
+#FUNCTION
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC LTARGET
+#DIM DYNAMIC 点数
+#DIM DYNAMIC 対象
+
+LTARGET = TARGET
+TARGET = 対象
+
+;即落ちは無条件で最低値
+IF TALENT:即落ち
+	TARGET = LTARGET
+	RETURNF 1
+ENDIF
+
+;攻略の難しさで取得できる経験値が変わる
+FOR LCOUNT, 0, VARSIZE("TALENT")
+	SIF !TALENT:LCOUNT
+		CONTINUE
+	SELECTCASE TALENTNAME:LCOUNT
+		CASE "性別"
+			SIF SEX(TARGET) == 1
+				点数 += 2
+		CASE "恋心"
+			SIF CSTR:恋心 != CSVNAMEF(NOF(MASTER))
+				点数 += 3
+		CASE "既婚者"
+			SIF CSTR:既婚者 != CSVNAMEF(NOF(MASTER))
+				点数 += 4
+		CASE "男好き"
+			SIF SEX(MASTER) == 1
+				点数--
+		CASE "女好き"
+			SIF SEX(MASTER) == 2
+				点数--
+		CASE "男嫌い"
+			SIF SEX(MASTER) == 1
+				点数 += 3
+		CASE "女嫌い"
+			SIF SEX(MASTER) == 2
+				点数 += 3
+		CASE "同族嫌悪"
+			SIF CSTR:種族 == CSTR:MASTER:種族
+				点数 += 3
+		CASE "献身的", "快感に素直"
+			点数 -= 2
+		{
+		CASE "臆病", "素直", "プライド低い", "大人しい", "弱気", "好奇心", "楽観的", "悲観的",
+			 "目立ちたがり", "貞操無頓着", "弱味", "痛みに強い", "自慰しやすい", "Ｖ敏感",
+			 "Ｃ敏感", "Ａ敏感", "Ｂ敏感", "回復早い", "恥薄い", "寂しがり屋", "習得早い",
+			 "両刀", "マゾ"
+		}
+			点数--
+		{
+		CASE "冷静", "恥じらい", "濡れにくい", "勃ちにくい", "霊体", "習得遅い",
+			 "汚臭敏感", "潔癖症", "戦士"
+		}
+			点数++
+		{
+		CASE "生意気", "反抗的", "プライド高い", "気丈", "強気", "自制心", "無関心",
+			 "感情乏しい", "保守的", "貞操観念", "痛みに弱い", "Ｖ鈍感", "Ｃ鈍感",
+			 "Ａ鈍感", "Ｂ鈍感", "足使用不可", "回復遅い", "抑圧", "抵抗"
+		}
+			点数 += 2
+		CASE "ツンデレ", "小人体型", "薬毒耐性", "無機物"
+			点数 += 3
+		CASE "一線越えない", "快感の否定"
+			点数 += 4
+	ENDSELECT
+NEXT
+
+TARGET = LTARGET
+
+;0以下なら1にする
+SIF 点数 <= 0
+	点数 = 1
+
+RETURNF 点数
+
+@MANUAL_スキルツリー
+PRINTL □スキルと経験値の説明
+PRINTL 　キャラクターを売却可能、及び陥落させることで経験値を得ることができます
+PRINTL 　攻略難易度が高いほど多くの経験値が得られます
+PRINTL 　売却可能となったときに、得られる総経験値の3分の1を、陥落させたときに残りの3分の2を取得します
+PRINTL 　各余剰は切り上げとなりますので、どんなに難易度が低いキャラでも2の経験値は保証されています
+PRINTL 　スキルツリー上の「◆」をクリックすることで得られた経験値を消費し、能力や素質などを習得可能です
+PRINTL 　なお、eraOrigin、及びOriginモードでは経験値は不要です
+WAIT
+RETURN

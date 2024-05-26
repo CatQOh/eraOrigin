@@ -1,0 +1,31 @@
+﻿@他の学校に行く
+#DIM DYNAMIC LRESULT
+
+CALL 学校一覧
+
+DRAWLINE
+PRINTPLAIN 　他の学校に行く　
+PRINTL [10000] 戻る
+
+DO
+	INPUT
+	LRESULT = RESULT
+	SELECTCASE LRESULT
+		CASE 0 TO VARSIZE("学校名")
+			IF 学校名:LRESULT == CSTR:PLAYER:在校
+				PRINTFORML %CALLNAME:PLAYER%の学校です
+				PRINTL [0] - なるほど
+				PRINTL [1] - 普通に登校する
+				BINPUT
+				SIF RESULT
+					JUMP 学校へ行く
+				RESTART
+			ENDIF
+			PRINTFORML %CALLNAME:PLAYER%は%学校名:LRESULT%に行ってみた
+			;生徒とその学校の先生とわずかに友好度が上がるだけ
+		CASE 10000
+			RETURN 0
+	ENDSELECT
+LOOP 1
+
+RETURN 1

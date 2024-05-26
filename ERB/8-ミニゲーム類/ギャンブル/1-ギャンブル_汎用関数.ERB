@@ -1,0 +1,1126 @@
+﻿@GAMBLE, カジノの種類
+#DIM DYNAMIC ギャンブル合計収支
+#DIM DYNAMIC チップ
+#DIM DYNAMIC 利子
+#DIM DYNAMIC 利益計算用
+#DIM DYNAMIC 同伴者
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC パートナー必要
+#DIM DYNAMIC ディーラーあり
+#DIM DYNAMIC 収支
+#DIM DYNAMIC カジノの種類 = 1;引数指定が無ければ表カジノ扱い
+#DIM DYNAMIC キャラ価格
+#DIM DYNAMIC 売却候補, 1000
+#DIM DYNAMIC 売却総額
+#DIM DYNAMIC LTARGET
+#DIM DYNAMIC LASSI
+#DIM DYNAMIC 売却可能
+#DIM DYNAMIC 経過日数
+#DIM DYNAMIC 入店カウント計算用
+;新しくゲームを追加する場合はここに名称を追加する
+{
+#DIMS DYNAMIC ゲーム名 = 
+"ルーレット",
+"クラップス",
+"ブラックジャック",
+"ビンゴピンボール",
+"ビデオポーカー",
+"ポーカーソリティア",
+"レットイットライド",
+"バカラ",
+"サーティー",
+"素数ダイス",
+"モンテカルロ",
+}
+;"神経衰弱",
+
+;ギャンブルで借金を背負った場合の利子(難易度によって変動)
+SELECTCASE FLAG:難易度
+	;BEGINNER
+	CASE -1
+		利子 = 10
+	;NORMAL
+	CASE 1
+		利子 = 25
+	;HYPER
+	CASE 2
+		利子 = 55
+	;ANOTHER
+	CASE 3
+		利子 = 90
+	;LEGGENDARIA
+	CASE 4
+		利子 = 150
+ENDSELECT
+
+;始めるときの金額を記憶
+利益計算用 = MONEY
+
+DRAWLINE
+IF (TARGET > 0 && TALENT:アニマル) || (ASSI > 0 && TALENT:ASSI:アニマル)
+	IF LANGUAGE == "ENG"
+		PRINT Casino is not allowed entry with pet. 
+		IF TALENT:アニマル
+			PRINTFORM %CALLNAMEDISP(TARGET)% 
+			TARGET = -1
+			IF ASSI > 0 && TALENT:ASSI:アニマル
+				PRINTFORM and %CALLNAMEDISP(ASSI)% are 
+				ASSI = -1
+			ELSE
+				PRINT is 
+			ENDIF
+		ELSEIF ASSI > 0 && TALENT:ASSI:アニマル
+			PRINTFORM %CALLNAMEDISP(ASSI)% is 
+			ASSI = -1
+		ENDIF
+		PRINTFORMW stay at home.
+	ELSE
+		PRINT カジノにペットの入店は許可されていません。
+		IF TALENT:アニマル
+			PRINTFORM %CALLNAME:TARGET%
+			TARGET = -1
+			IF ASSI > 0 && TALENT:ASSI:アニマル
+				PRINTFORM と%CALLNAME:ASSI%
+				ASSI = -1
+			ENDIF
+		ELSEIF ASSI > 0 && TALENT:ASSI:アニマル
+			PRINTFORM %CALLNAME:ASSI%
+			ASSI = -1
+		ENDIF
+		PRINTFORMW を家に置いてきました
+	ENDIF
+	DRAWLINE
+ENDIF
+SELECTCASE カジノの種類
+	;表カジノ
+	CASE 1
+		CALL BGM再生, カジノBGM
+		表カジノ入店回数++
+		IF LANGUAGE == "ENG"
+			PRINTL Welcome to casino! What play game you do?
+			PRINTL But If you debt and can't payment,
+			PRINTFORML {利子}\% interest rate will arise.(We claim debt every 10 days)
+		ELSE
+			PRINTL カジノへようこそ。どのギャンブルで遊びますか？
+			PRINTL ただし、ギャンブル中に借金を背負って返済できなかった場合、
+			PRINTFORML その借金に対し、{利子}\%の利子が付きます。(10日に一度、返済を要求されます。その度に利子が発生します)
+		ENDIF
+	;裏カジノ
+	CASE 2
+		裏カジノ入店回数++
+		IF LANGUAGE == "ENG"
+			PRINTL Welcome to Darkness casino! What play game you do?
+			PRINTL But If you debt and can't payment,
+			PRINTL You will get 
+			FONTBOLD
+			PRINTL TERRIBLE PENALTY.
+			FONTREGULAR
+		ELSE
+			PRINTL 大金と命を賭けたクレイジーなカジノへようこそ！どのギャンブルで遊びますか？
+			PRINTL ただし、ギャンブル中に借金を背負って返済できなかった場合、
+			FONTBOLD
+			PRINT 裏カジノ特有のやり方
+			FONTREGULAR
+			PRINTL で借金の返済をしていただきます。
+		ENDIF
+ENDSELECT
+ギャンブル合計収支 = ギャンブル総収支:0 + ギャンブル総収支:1
+IF LANGUAGE== "ENG"
+	PRINTFORM Entry:{表カジノ入店回数}
+	SIF 裏カジノ入店回数
+		PRINTFORM +{裏カジノ入店回数}
+	PRINTL
+	CALL PASELIL, @"       Money:{MONEY}＄"
+	CALL PASELIL, @"Total Income:{ギャンブル合計収支}＄"
+	IF ギャンブル総収支:1
+		CALL PASELIL, @" NORMAL GAMBLE:{ギャンブル総収支:1}＄"
+		CALL PASELIL, @"      VIP ROOM:{ギャンブル総収支:1}＄"
+	ENDIF
+	[IF_DEBUG]
+		PRINTFORML Carol's Rating:{キャロル好感度}
+		PRINTFORML Kotomi's Rating:{ことみちゃん好感度}
+		PRINTFORML BroGamerBoy's Rating:{BroGamerの少年好感度}
+	[ENDIF]
+ELSE
+	PRINTFORM 入店:{表カジノ入店回数}
+	SIF 裏カジノ入店回数
+		PRINTFORM +{裏カジノ入店回数}
+	PRINTL 回
+	CALL PASELIL, @"所持金:{MONEY}＄"
+	CALL PASELIL, @"総収支:{ギャンブル合計収支}＄"
+	IF ギャンブル総収支:1
+		CALL PASELIL, @"通常収支:{ギャンブル総収支:0}＄"
+		CALL PASELIL, @"VIP ROOM:{ギャンブル総収支:1}＄"
+	ENDIF
+	[IF_DEBUG]
+		PRINTFORML キャロル好感度:{キャロル好感度}
+		PRINTFORML ことみちゃん好感度:{ことみちゃん好感度}
+		PRINTFORML BroGamerの少年好感度:{BroGamerの少年好感度}
+	[ENDIF]
+ENDIF
+
+FOR LCOUNT, 0, VARSIZE("ゲーム名")
+	SELECTCASE ゲーム名:LCOUNT
+		;バカラは裏専用
+		CASE "バカラ"
+			SIF カジノの種類 == 1
+				CONTINUE
+	ENDSELECT
+	PRINTFORMLC [{LCOUNT}] %I18N(ゲーム名:LCOUNT)%
+NEXT
+CALL NEWLINE
+[IF_DEBUG]
+	PRINTL [97] ナンプレ
+	PRINTL [98] ねらえ！ぴったり７
+[ENDIF]
+DRAWLINE
+PRINTPLAIN 　GAMBLE　
+PRINTL [99] やめておく
+$SELECT_GAMBLE
+DO
+	INPUT
+	SELECTCASE RESULT
+		CASE 0 TO VARSIZE("ゲーム名")
+			SIF LANGUAGE == "JP"
+				PRINTFORMW %CALLNAME:MASTER%は%ゲーム名:RESULT%で遊ぶことにした。
+			;ディーラーが存在するゲームならフラグを立てる
+			SELECTCASE ゲーム名:RESULT
+				CASE "ルーレット", "クラップス", "ブラックジャック", "ポーカーソリティア", "レットイットライド", "バカラ"
+					ディーラーあり = 1
+			ENDSELECT
+			;パートナーが必要なゲームならフラグを立てる
+			;SELECTCASE ゲーム名:RESULT
+			;	CASE
+			;		パートナー必要 = 1
+			;ENDSELECT
+			IF パートナー必要
+				TRYCCALLFORM %ゲーム名:RESULT%, 同伴者
+				CATCH
+					PRINTFORMW %ゲーム名:RESULT%は未実装です
+					RESTART
+				ENDCATCH
+			ELSE
+				TRYCCALLFORM %ゲーム名:RESULT%, カジノの種類
+				CATCH
+					PRINTFORMW %ゲーム名:RESULT%は未実装です
+					RESTART
+				ENDCATCH
+			ENDIF
+			BREAK
+		CASE 97
+			[IF_DEBUG]
+				CALL ナンプレ
+				BREAK
+			[ENDIF]
+		CASE 98
+			[IF_DEBUG]
+				CALL ねらえ！ぴったり７, 100000
+				BREAK
+			[ENDIF]
+		CASE 99
+			;CALL FADEOUTBGM
+			RETURN 0
+	ENDSELECT
+LOOP 1
+
+CALL CHECKDRAWLINE
+
+;今回のギャンブルでの収支
+収支 = MONEY-利益計算用
+;ギャンブルでの総収支
+ギャンブル総収支:0 += 収支
+
+キャロルお誘いフラグ = 0
+ことみちゃんお誘いフラグ = 0
+
+PRINTFORML %CALLNAME:MASTER%はギャンブルを終えた。
+SELECTCASE 収支
+	CASE IS > 0
+		CALL SE再生, 出入金
+		IF LANGUAGE == "ENG"
+			CALL PASELIW, @"You profited {収支}＄!"
+		ELSE
+			CALL PASELIW, @"{収支}＄儲かった！"
+		ENDIF
+		;PAYMENT用に元に戻す
+		MONEY -= 収支
+		CALL PAYMENT, 収支, "カジノで勝利"
+		;勝ち分の桁数の20倍だけキャロルの好感度が増える
+		SIF ディーラーあり
+			キャロル好感度 += 20*(1+LOG10(収支))
+		;ことみちゃんの好感度は収支が5桁なら+100,6桁なら+200,…と増える
+		SIF 収支 >= 10000
+			ことみちゃん好感度 += 100*(1+LOG10(収支/10000))
+		;総収支がプラスかつキャロルの好感度が1000以上のときお誘いを受ける
+		IF ギャンブル総収支:0 > 0 && キャロル好感度 >= 1000 && GETCHARANAME("キャロル") == -1 && キャロル進行フラグ >= 0
+			SELECTCASE キャロル進行フラグ
+				CASE 0
+					PRINTFORML 今日も勝つことができた%CALLNAME:MASTER%が屋敷に戻ろうとしたとき
+					PRINTL バニーガールの格好をしたディーラーが後ろからいきなり話しかけてきた。
+					PRINTL 彼女の名前はキャロルというようだ。
+					PRINTFORML どうやら何度も勝利を収める%CALLNAME:MASTER%に惚れ込みこの後お相手してほしいそうだ。
+					CALL プレイログ記録, @"カジノにてキャロルと出会う"
+					キャロル進行フラグ = 1
+				CASE 1
+					PRINTFORML キャロルが%CALLNAME:MASTER%に再び誘いをかけてきた。
+			ENDSELECT
+			キャロルお誘いフラグ = 1
+		;ことみちゃんの好感度が1000以上のときお誘いを受ける
+		ELSEIF ことみちゃん好感度 >= 1000 && GETCHARANAME("ことみちゃん") == -1 && ことみちゃん進行フラグ >= 0
+			SELECTCASE ことみちゃん進行フラグ
+				CASE 0
+					PRINTFORML %CALLNAME:MASTER%が帰ろうとしたそのとき、物陰から優しく袖を引っ張られた。
+					PRINTL 引っ張ってきたのは「ことみちゃん」と呼ばれる凄腕のギャンブラーであり、
+					PRINTFORML 派手な勝ちを挙げている%CALLNAME:MASTER%に魅力を感じたらしくこの後お相手してほしいそうだ。
+					CALL プレイログ記録, @"カジノにてことみちゃんと出会う"
+					ことみちゃん進行フラグ = 1
+				CASE 1
+					PRINTFORML ことみちゃんが%CALLNAME:MASTER%にこっそり誘いをかけてきた。
+			ENDSELECT
+			ことみちゃんお誘いフラグ = 1
+		;好感度(好感度1000で100%)
+		;総収支(1億で100%)
+		;これらを合算した確率でお誘いを受ける
+		ELSEIF BroGamerの少年好感度+ギャンブル総収支:0/100000 > RAND:1000 && GETCHARANAME("BroGamerの少年") == -1 && BroGamerの少年進行フラグ >= 0
+			SELECTCASE BroGamerの少年進行フラグ
+				CASE 0
+					PRINTFORML %CALLNAME:MASTER%が帰ろうとしたそのとき、近くのテーブルから1人のディーラーがやってきた。
+					PRINTL ……確か聞いたことがある。
+					PRINTL 最近このカジノには性別を偽って潜入した新入りのディーラーがいるらしく、名前は不明だが
+					PRINTL 「BroGamerの少年」や「ハートのクイーン」などの通り名で呼ばれている、と。
+					PRINTL 女性のような見た目のこの少年こそが、その本人なのだろう。
+					PRINTFORML 着々と勝利を重ねる%CALLNAME:MASTER%に何か思うところがありこの後お相手してほしいそうだ。
+					CALL プレイログ記録, @"カジノにてBroGamerの少年と出会う"
+				CASE 2
+					PRINTFORML BroGamerの少年が%CALLNAME:MASTER%に誘いをかけてきた。
+			ENDSELECT
+			BroGamerの少年お誘いフラグ = 1
+		ENDIF
+	CASE IS < 0
+		CALL PASELIW, @"{ABS(収支)}＄損してしまった……"
+		;PAYMENT用に元に戻す
+		MONEY -= 収支
+		CALL PAYMENT, 収支, "カジノで敗北"
+		;負け分の桁数の10倍だけキャロルの好感度が減る
+		SIF ディーラーあり
+			キャロル好感度 -= 10*(1+LOG10(-収支))
+	CASE 0
+		CALL PASELIW, "今回の収支はちょうど0＄のようだ。"
+ENDSELECT
+
+;実績:ミニゲーム100回クリアまたは勝利
+SIF TATSUJIN >= 100
+	CALL 実績解除, "ゲームの達人"
+
+;お誘いを受けたとき
+IF キャロルお誘いフラグ
+	CALL キャロルイベント
+ELSEIF ことみちゃんお誘いフラグ
+	CALL ことみちゃんイベント
+ELSEIF BroGamerの少年お誘いフラグ
+	CALL BroGamerの少年イベント
+ELSEIF !BroGamerの少年進行フラグ && MONEY >= 10000
+	;すべてのお誘いがないとき(入店回数-8)^2/1000の確率でBroGamerの少年に接近できる
+	;ただし、裏カジノへの入店は4倍で数え、入店回数-8が負のときは0とする
+	入店カウント計算用 = MAX(0, 表カジノ入店回数+4*裏カジノ入店回数-8)
+	IF POWER(入店カウント計算用,2) > RAND:1000
+		PRINTFORML 普段からカジノに出入りしている%CALLNAME:MASTER%は見慣れない新入りのディーラーを見つけた。
+		PRINTL 女性のディーラーしか居ないこのカジノで、彼はどうやら女装しているようだが……
+		PRINTL 話しかけますか？
+		PRINTL [0] - はい
+		PRINTL [1] - いいえ
+		BINPUT
+		IF RESULT == 0
+			BroGamerの少年進行フラグ = 1
+			CALL BroGamerの少年イベント
+		ENDIF
+	ENDIF
+ENDIF
+
+;借金を背負ったとき
+IF MONEY < 0
+	SELECTCASE カジノの種類
+		;表カジノ 借金に上乗せ
+		CASE 1
+			IF LANGUAGE == "ENG"
+				CALL PASELIL, @"You debted {ABS(MONEY)}＄,"
+				CALL PASELIL, @"Added {ABS(MONEY)*利子/100}＄ interest. You got {ABS(MONEY)+ABS(MONEY)*利子/100}＄ debt."
+				借金 += ABS(MONEY)+ABS(MONEY)*利子/100
+				MONEY = 0
+				CALL PASELIW, @"You have total of {借金}＄ debt."
+			ELSE
+				CALL PASELIL, @"ギャンブル中に借金{ABS(MONEY)}＄を背負ったため、"
+				CALL PASELIL, @"その{ABS(MONEY)}＄には利子{ABS(MONEY)*利子/100}＄が付き、借金は{ABS(MONEY)+ABS(MONEY)*利子/100}＄となります。"
+				借金 += ABS(MONEY)+ABS(MONEY)*利子/100
+				MONEY = 0
+				CALL PASELIW, @"借金の総額は{借金}＄となりました。"
+			ENDIF
+		CASE 2
+			PRINTW ………………
+			PRINTW …………
+			PRINTW ……
+			$返済
+			IF LANGUAGE == "ENG"
+				PRINTFORMW %CALLNAMEDISP(MASTER)% is losed and debt.
+				PRINTFORMW We give TERRIBLE PENALTY for %CALLNAMEDISP(MASTER)%.
+				PRINTL It is...
+				PRINTL [0] Sell Characters
+				PRINTL [1] You payment your body
+			ELSE
+				PRINTFORMW %CALLNAME:MASTER%はギャンブルに負け、借金を背負ってしまった
+				PRINTW このカジノでは負けた場合、金銭以外のもので返済に当てなくてはならない
+				PRINTL 返済の方法は……
+				PRINTL [0] キャラを売り飛ばす
+				PRINTL [1] 自らの身体で払う
+			ENDIF
+			BINPUT
+			SELECTCASE RESULT
+				CASE 0
+					$売却キャラ選択
+					IF LANGUAGE == "ENG"
+						CALL PASELIL, @"□Who do you sell?(Total Debt:{ABS(MONEY)}＄)"
+					ELSE
+						CALL PASELIL, @"□誰を売り飛ばしますか？(返済額:{ABS(MONEY)}＄)"
+					ENDIF
+					;売却可能でないキャラも売り飛ばせるが、総じて売値は半額になる カジノ出身キャラとアニマル、魔法効果発動中のキャラは売れない
+					FOR PAGING, 0, CHARANUM
+						売却可能 = 売却可能(PAGING)
+						;DISABLEチェック
+						CALLFORM DISABLE, "EVENT_裏カジノ売却", PAGING
+						SIF RESULT
+							売却可能 = 0
+						SIF PAGING == MASTER
+							売却可能 = 0
+						SIF GROUPMATCH(CHARANAMEF(PAGING), "キャロル", "ことみちゃん", "BroGamerの少年")
+							売却可能 = 0
+						IF PAGING > 0
+							CALL CHARA_SELL, PAGING
+							IF RESULT
+								キャラ価格 = RESULT/2
+							ELSE
+								キャラ価格 = 0
+							ENDIF
+						ENDIF
+						IF LANGUAGE == "ENG"
+							CALL PAGING, 売却可能, @"Price:{キャラ価格} \@ 売却候補:PAGING ? [SELECT] #  \@"
+						ELSE
+							CALL PAGING, 売却可能, @"価格:{キャラ価格} \@ 売却候補:PAGING ? 売却候補 #  \@"
+						ENDIF
+					NEXT
+					SELECTCASE RESULT
+						CASE -1
+							VARSET 売却候補
+							GOTO 返済
+						CASE 1 TO CHARANUM-1
+							INVERTBIT 売却候補:RESULT, 0
+					ENDSELECT
+					売却総額 = 0
+					FOR LCOUNT, 1, 1000
+						IF 売却候補:LCOUNT
+							CALL CHARA_SELL, LCOUNT
+							SIF RESULT > 0
+								売却総額 += RESULT/2
+						ENDIF
+						SIF 売却総額 >= ABS(MONEY)
+							BREAK
+					NEXT
+					SIF 売却総額 < ABS(MONEY)
+						GOTO 売却キャラ選択
+					PRINTL □以下のキャラを裏カジノに対する返済として売り飛ばします。本当によろしいですか？
+					FOR LCOUNT, 1, 1000
+						SIF 売却候補:LCOUNT
+							PRINTFORML 　%NAME:LCOUNT%
+					NEXT
+					DRAWLINE
+					PRINTFORML 　総額:{売却総額}
+					PRINTL 　[0] はい
+					PRINTL 　[1] いいえ
+					BINPUT
+					SELECTCASE RESULT
+						CASE 0
+							PRINTL 裏カジノに売り飛ばされた者たちは、別れを惜しむ間もなく黒ずくめの関係者に連れて行かれてしまった
+							PRINTFORMW 皆がこれからどんな目に遭うのか、%CALLNAME:MASTER%には知る由もない……
+							CALL PAYMENT, 売却総額, "裏カジノ返済用の補充（キャラ売却）"
+							FOR LCOUNT, CHARANUM-1, 1, -1
+								IF 売却候補:LCOUNT
+									CALL プレイログ記録, @"裏カジノでの返済のために%NAME:LCOUNT%を売却"
+									CSTR:LCOUNT:ロスト要因 = 売却
+									CSTR:LCOUNT:ロスト詳細 = 裏カジノでの返済のために売却された
+									CALL CLEAR_CHARA, LCOUNT
+								ENDIF
+							NEXT
+							RETURN 1
+						CASE 1
+							VARSET 売却候補
+							GOTO 売却キャラ選択
+					ENDSELECT
+				CASE 1
+					PRINTFORMW %CALLNAME:MASTER%はやむを得ず、自らの身体で借金を支払うことにした……
+					PRINTW ………………
+					PRINTW …………
+					PRINTW ……
+					;ペナルティは借金10万ごとに1日+3日
+					;STRATEGYモードで裏カジノ負けた場合はバッドエンド直行
+					IF ゲームモード() == "経営モード"
+						CALL BADENDING_GAMBLE
+					ELSE
+						PRINTFORMW 調教する立場の%CALLNAME:MASTER%が散々に乱暴な調教を受け、解放されたときには{ABS(収支)/100000+3}日が経過していた……
+						PRINTFORMW %CALLNAME:MASTER%は思い出しただけで吐き気を催す仕打ちに身を震わせながら、ぼろぼろの体を抱えてかろうじて屋敷に帰った……
+						経過日数 = ABS(収支)/100000+3
+						SIF VAGINA(MASTER)
+							CALL EXPUP, "Ｖ経験", 経過日数*2, MASTER
+						CALL EXPUP, "Ａ経験", 経過日数*2, MASTER
+						CALL EXPUP, "絶頂経験", 経過日数/2, MASTER
+						CALL EXPUP, "性交経験", 経過日数, MASTER
+						SIF PENIS(MASTER)
+							CALL EXPUP, "射精経験", 経過日数/3, MASTER
+						CALL EXPUP, "精液経験", 経過日数*2, MASTER
+						SIF SEX(MASTER) == 1
+							CALL EXPUP, "ゲイ経験", 経過日数, MASTER
+						CALL EXPUP, "フェラ経験", 経過日数, MASTER
+						CALL EXPUP, "緊縛経験", 経過日数*2, MASTER
+						SIF VAGINA(MASTER)
+							CALL EXPUP, "Ｖ経験", 経過日数/5, MASTER
+						IF 生殖機能♀(MASTER)
+							CALL EXPUP, "流産経験", 経過日数/100, MASTER
+							モブ孕み回数:MASTER:0 += 経過日数/100
+						ENDIF
+						IF TALENT:MASTER:処女
+							IF TALENT:MASTER:性転換済
+								CSTR:MASTER:性転換処女 = 裏カジノで売られた調教師
+							ELSE
+								CSTR:MASTER:処女 = 裏カジノで売られた調教師
+							ENDIF
+						ENDIF
+						TALENT:MASTER:処女 = 0
+						TALENT:MASTER:再生処女 = 0
+						TALENT:MASTER:傷物 += 経過日数
+						モブ経験人数:MASTER:0++
+						モブ経験回数:MASTER:0 += 経過日数
+						SIF VAGINA()
+							モブ中出され回数:MASTER:0 += 経過日数
+						モブアナル中出され回数:MASTER:0 += 経過日数
+						VARLINE = LINECOUNT
+						FOR LCOUNT, 0, ABS(収支)/100000+3
+							;PRINTFORML そして月日は流れ%"……"*(LCOUNT/500%3+1)%
+							IF LCOUNT && LCOUNT%500 == 0
+								AWAIT
+								;CLEARLINE 1
+								;PRINTFORML そして月日は流れ%"……"*(LCOUNT/500%3+1)%
+							ENDIF
+							CALL NEXTDAY
+						NEXT
+						CALL PAYMENT, ABS(収支), "裏カジノ返済用の補充（体を売る）"
+						CALL プレイログ記録, @"裏カジノでの返済のために%NAME:MASTER%が{経過日数}監禁される"
+						IF パートナー != "" && OPTION:口上表示 && !CFLAG:GETCHARA(GETNO(パートナー)):口上非表示
+							LTARGET = TARGET
+							TARGET = GETCHARANAME(パートナー)
+							TRYCALLFORM PARTNER_裏カジノから解放_%CSVNAMERPS(GETNO(パートナー))%
+							TARGET = LTARGET
+						ENDIF
+						RETURN 1
+					ENDIF
+			ENDSELECT
+	ENDSELECT
+ENDIF
+
+;CALL FADEOUTBGM
+
+RETURN 1
+
+@キャロルイベント
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC 道具フラグ退避用, 2000
+PRINTL [0] - キャロルの誘いを受ける
+SIF ASSI > 0
+	PRINTFORML [1] - %CALLNAME:ASSI%と一緒にキャロルの誘いを受ける
+PRINTL [2] - キャロルの誘いを断る
+BINPUT
+
+SELECTCASE RESULT
+	CASE 0, 1
+		SIF RESULT == 0
+			ASSI = -1
+		;調教開始準備
+		;過去に誘いに乗ったならそのステータスを引き継ぎ
+		IF CHKCHARADATA(@"キャロル_{データID}") == 0
+			LOADCHARA @"キャロル_{データID}"
+		ELSE
+			CALL CHARA_ADD, GETNO("キャロル")
+		ENDIF
+		TARGET = CHARANUM-1
+		;好感度がそのまま依存度になる
+		CFLAG:依存度 = キャロル好感度
+		SIF MARK:屈服刻印 < 2
+			MARK:屈服刻印 = 2
+		RELATION:(NOF(MASTER)) = 100 + LIMIT(CFLAG:依存度,0,9999)/100
+
+		PRINTFORMW キャロルの誘いに乗ると、%CALLNAME:MASTER%はカジノの特別室へと案内された
+		PRINTFORML きらびやかな装飾や家具、ワイングラスが部屋を彩る中、キャロルは制服のバニースーツで淫らなポーズを取りながら、
+		PRINTFORMW %CALLNAME:MASTER%をベッドへと誘惑している。さて、どうしようか……
+		;道具は一時的に無しにする
+		ARRAYCOPY "ITEM", "道具フラグ退避用"
+		VARSET ITEM
+		;お酒と避妊具は用意してある
+		ITEM:ローション = 12
+		ITEM:コンドーム = 60
+		ITEM:プレイマット = 1
+		ITEM:スーパードライ = 12
+		ITEM:一番搾り = 12
+		ITEM:プレミアムモルツ = 12
+		ITEM:ヱビス = 12
+		ITEM:皆伝 = 10
+		ITEM:魔王 = 10
+		ITEM:アルパカ = 10
+		ITEM:倉吉 = 10
+
+		;ここから調教開始
+		;体力気力を回復する
+		FOR LCOUNT, 0, VARSIZE("BASE")
+			SIF BASENAME:LCOUNT == ""
+				CONTINUE
+			BASE:LCOUNT = MAXBASE:LCOUNT
+		NEXT
+		CFLAG:酔 = 0
+
+		CALL EVENTUSERTRAIN
+		DO
+			CALL SHOW_STATUS
+			CALL SHOW_USERCOM
+			;INPUT
+			;CALL USERCOM
+		LOOP TFLAG:調教終了 == 0
+		CALL 調教終了
+		キャロル好感度 = CFLAG:依存度
+		DO
+			CALL ABL上昇画面
+			INPUT
+			SIF RESULT == 100
+				BREAK
+			;TRYCALLFORM ABLUP{RESULT}
+		LOOP RESULT != 100
+		CALL EVENTCHECK_T
+		;陥落したら加入する
+		IF 陥落(TARGET)
+			PRINTFORMW とうとう%CALLNAME:MASTER%の虜になったキャロルは、カジノの仕事よりも%CALLNAME:MASTER%のことを優先したいようだ
+			PRINTFORMW ＜キャロルを家に迎え入れました＞
+			CFLAG:売却不可 = 1
+			キャロル進行フラグ = -1
+			RELATION:(NOF(MASTER)) = 200
+			CALL プレイログ記録, @"キャロルを迎え入れる"
+			ARRAYCOPY "道具フラグ退避用", "ITEM"
+		ELSE
+			CALL CLEAR_FLAG, TARGET
+			SAVECHARA　@"キャロル_{データID}", "", TARGET
+			CALL CLEAR_CHARA, TARGET, 1
+			TARGET = -1
+			DRAWLINE
+			PRINTFORMW キャロルは%CALLNAME:MASTER%との行為も大変気に入った様子で、またの来店を促している
+			PRINTFORMW 彼女に見損なわれないようにカジノで勝ち続けよう
+			ARRAYCOPY "道具フラグ退避用", "ITEM"
+		ENDIF
+	CASE 2
+		PRINTFORMW %CALLNAME:MASTER%はキャロルの誘いを丁寧に断った……
+ENDSELECT
+
+@ことみちゃんイベント
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC 道具フラグ退避用, 2000
+PRINTL [0] - ことみちゃんの誘いを受ける
+SIF ASSI > 0
+	PRINTFORML [1] - %CALLNAME:ASSI%と一緒にことみちゃんの誘いを受ける
+PRINTL [2] - ことみちゃんの誘いを断る
+BINPUT
+
+SELECTCASE RESULT
+	CASE 0, 1
+		SIF RESULT == 0
+			ASSI = -1
+
+		;調教開始準備
+		;過去に誘いに乗ったならそのステータスを引き継ぎ
+		IF CHKCHARADATA(@"ことみちゃん_{データID}") == 0
+			LOADCHARA @"ことみちゃん_{データID}"
+		ELSE
+			CALL CHARA_ADD, GETNO("ことみちゃん")
+		ENDIF
+		TARGET = CHARANUM-1
+		;好感度がそのまま依存度になる
+		CFLAG:依存度 = ことみちゃん好感度
+		SIF MARK:屈服刻印 < 2
+			MARK:屈服刻印 = 2
+		RELATION:(NOF(MASTER)) = 100 + LIMIT(CFLAG:依存度,0,9999)/100
+
+		PRINTFORMW ことみちゃんの誘いに乗ると、%CALLNAME:MASTER%はカジノ施設の一級スイートルームへと案内された
+		PRINT きらびやかな装飾や家具、ワイングラスが部屋を彩る中、ことみちゃんは
+		SIF TALENT:処女
+			PRINT ぎこちない手で
+		PRINTL ドレスの裾をたくし上げ、
+		SELECTCASE ABL:欲望
+			CASE 0
+				PRINT 見るからに緊張しながらも
+			CASE IS >= 4
+				PRINT 淫らな仕草で
+		ENDSELECT
+		PRINTFORMW %CALLNAME:MASTER%をベッドへと誘惑している。さて、どうしようか……
+		;道具は一時的に無しにする
+		ARRAYCOPY "ITEM", "道具フラグ退避用"
+		VARSET ITEM
+		;お酒と避妊具は用意してある
+		IF TALENT:処女
+			ITEM:コンドーム = 2
+		ELSE
+			ITEM:コンドーム = 14
+		ENDIF
+		ITEM:スーパードライ = 12
+		ITEM:一番搾り = 12
+		ITEM:プレミアムモルツ = 12
+		ITEM:ヱビス = 12
+		ITEM:皆伝 = 10
+		ITEM:魔王 = 10
+		ITEM:アルパカ = 10
+		ITEM:倉吉 = 10
+
+		;ここから調教開始
+		;体力気力を回復する
+		FOR LCOUNT, 0, VARSIZE("BASE")
+			SIF BASENAME:LCOUNT == ""
+				CONTINUE
+			BASE:LCOUNT = MAXBASE:LCOUNT
+		NEXT
+		CFLAG:酔 = 0
+
+		CALL EVENTUSERTRAIN
+		DO
+			CALL SHOW_STATUS
+			CALL SHOW_USERCOM
+			;INPUT
+			;CALL USERCOM
+		LOOP TFLAG:調教終了 == 0
+		CALL 調教終了
+		ことみちゃん好感度 = CFLAG:依存度
+		DO
+			CALL ABL上昇画面
+			INPUT
+			SIF RESULT == 100
+				BREAK
+			;TRYCALLFORM ABLUP{RESULT}
+		LOOP RESULT != 100
+		CALL EVENTCHECK_T
+		;陥落したら加入する
+		IF 陥落(TARGET)
+			PRINTFORMW とうとう%CALLNAME:MASTER%の虜になったことみちゃんは、カジノ遊びよりも%CALLNAME:MASTER%のことを優先したいようだ
+			PRINTFORMW ＜ことみちゃんを家に迎え入れました＞
+			CFLAG:売却不可 = 1
+			ことみちゃん進行フラグ = -1
+			RELATION:(NOF(MASTER)) = 200
+			CALL プレイログ記録, @"ことみちゃんを迎え入れる"
+			ARRAYCOPY "道具フラグ退避用", "ITEM"
+		ELSE
+			CALL CLEAR_FLAG, TARGET
+			SAVECHARA　@"ことみちゃん_{データID}", "", TARGET
+			CALL CLEAR_CHARA, TARGET, 1
+			TARGET = -1
+			DRAWLINE
+			PRINTFORMW ことみちゃんは%CALLNAME:MASTER%との行為も大変気に入った様子で、また会いたいと言っている
+			PRINTFORMW 彼女に見損なわれないようにカジノで勝ち続けよう
+			ARRAYCOPY "道具フラグ退避用", "ITEM"
+		ENDIF
+	CASE 2
+		PRINTFORMW %CALLNAME:MASTER%はことみちゃんの誘いを丁寧に断った……
+ENDSELECT
+
+@BroGamerの少年イベント
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC 道具フラグ退避用, 2000
+
+IF BroGamerの少年進行フラグ == 1
+	PRINTL 聞いた話だと彼は「BroGamerの少年」と呼ばれていて、
+	PRINTL 何らかの事情があって女装してディーラーとして潜入しているようだ。
+
+	PRINTL [0] - 単独でBroGamerの少年に接触する
+	SIF ASSI > 0
+		PRINTFORML [1] - %CALLNAME:ASSI%と一緒にBroGamerの少年に接触する
+	PRINTL [2] - やっぱりやめておこう
+	BINPUT
+ELSE
+	PRINTL [0] - BroGamerの少年の誘いを受ける
+	SIF ASSI > 0
+		PRINTFORML [1] - %CALLNAME:ASSI%と一緒にBroGamerの少年の誘いを受ける
+	PRINTL [2] - BroGamerの少年の誘いを断る
+	BINPUT
+ENDIF
+
+SELECTCASE RESULT
+	CASE 0, 1
+		SIF RESULT == 0
+			ASSI = -1
+
+		;調教開始準備
+		;過去に誘いに乗ったならそのステータスを引き継ぎ
+		IF CHKCHARADATA(@"BroGamerの少年_{データID}") == 0
+			LOADCHARA @"BroGamerの少年_{データID}"
+		ELSE
+			CALL CHARA_ADD, GETNO("BroGamerの少年")
+		ENDIF
+		TARGET = CHARANUM-1
+		;好感度がそのまま依存度になる
+		CFLAG:依存度 = BroGamerの少年好感度
+		SIF MARK:屈服刻印 < 2
+			MARK:屈服刻印 = 2
+		RELATION:(NOF(MASTER)) = 100 + LIMIT(CFLAG:依存度,0,9999)/100
+
+		;PRINTFORMW BroGamerの少年の誘いに乗ると、%CALLNAME:MASTER%はカジノの近くにあるホテルへと案内された
+
+
+
+		;道具は一時的に無しにする
+		ARRAYCOPY "ITEM", "道具フラグ退避用"
+		VARSET ITEM
+		;避妊具などは用意してある
+		ITEM:ローション = 12
+		ITEM:コンドーム = 12
+
+		;ここから調教開始
+		;体力気力を回復する
+		FOR LCOUNT, 0, VARSIZE("BASE")
+			SIF BASENAME:LCOUNT == ""
+				CONTINUE
+			BASE:LCOUNT = MAXBASE:LCOUNT
+		NEXT
+		CFLAG:酔 = 0
+
+		CALL EVENTUSERTRAIN
+		DO
+			CALL SHOW_STATUS
+			CALL SHOW_USERCOM
+			;INPUT
+			;CALL USERCOM
+		LOOP TFLAG:調教終了 == 0
+		CALL 調教終了
+		BroGamerの少年好感度 = CFLAG:依存度
+		DO
+			CALL ABL上昇画面
+			INPUT
+			SIF RESULT == 100
+				BREAK
+			;TRYCALLFORM ABLUP{RESULT}
+		LOOP RESULT != 100
+		CALL EVENTCHECK_T
+		;陥落したら加入する
+		IF 陥落(TARGET)
+
+			CFLAG:売却不可 = 1
+			BroGamerの少年進行フラグ = -1
+			CALL プレイログ記録, @"BroGamerの少年を迎え入れる"
+			ARRAYCOPY "道具フラグ退避用", "ITEM"
+		ELSE
+			CALL CLEAR_FLAG, TARGET
+			SAVECHARA　@"BroGamerの少年_{データID}", "", TARGET
+			CALL CLEAR_CHARA, TARGET, 1
+			TARGET = -1
+			DRAWLINE
+			;PRINTFORMW BroGamerの少年は%CALLNAME:MASTER%との行為も大変気に入った様子で、また会いたいと言っている
+			;PRINTFORMW 彼に見損なわれないようにカジノで勝ち続けよう
+			ARRAYCOPY "道具フラグ退避用", "ITEM"
+		ENDIF
+		BroGamerの少年進行フラグ = 3
+	CASE 3
+		IF BroGamerの少年進行フラグ == 1
+			BroGamerの少年進行フラグ = 2
+		ELSE
+			PRINTFORMW %CALLNAME:MASTER%はBroGamerの少年の誘いを丁寧に断った……
+			BroGamerの少年進行フラグ = 3
+		ENDIF
+ENDSELECT
+
+;以下、各ゲーム共通の賭け金設定
+@STAKE, 賭け金上限, カジノの種類
+#DIM DYNAMIC 利子
+#DIM DYNAMIC 賭け金上限
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC ループ用ステップ = 5
+#DIM DYNAMIC マックスベット可
+#DIM DYNAMIC カジノの種類
+#DIM DYNAMIC 賭け金
+
+SIF 賭け金上限 <= 0
+	RETURN 0
+
+;ギャンブルで借金を背負った場合の利子(難易度によって変動)
+IF カジノの種類 == 1
+	SELECTCASE FLAG:難易度
+		;BEGINNER
+		CASE -1
+			利子 = 10
+		;NORMAL
+		CASE 1
+			利子 = 25
+		;HYPER
+		CASE 2
+			利子 = 55
+		;ANOTHER
+		CASE 3
+			利子 = 90
+		;LEGGENDARIA
+		CASE 4
+			利子 = 150
+	ENDSELECT
+ENDIF
+
+IF LANGUAGE == "ENG"
+	PRINTL How many stake you do?
+	IF 利子
+		PRINTL But If you debt and can't payment,
+		CALL PASELIL, @"{利子}\% interest rate will arise."
+	ENDIF
+	IF カジノの種類 == 3
+		PRINT (Medal:
+	ELSE
+		PRINT (Money:
+	ENDIF
+ELSE
+	PRINTL いくら賭けますか？
+	IF 利子
+		PRINTL ただし、ギャンブル中に新たな借金を背負って返済できなかった場合、
+		CALL PASELIL, @"その借金に対し、{利子}\%の利子が付きます。"
+	ENDIF
+	IF カジノの種類 == 3
+		PRINT (所持メダル:
+	ELSE
+		PRINT (所持金:
+	ENDIF
+ENDIF
+SIF MONEY < 0
+	SETCOLORBYNAME red
+CALL PASELI, @"{MONEY}＄"
+RESETCOLOR
+
+CALL PASELIL, @" / MAXBET:{賭け金上限}＄)"
+
+SETCOLORBYNAME skyblue
+CALL PASELI, "[1] 1＄  "  
+
+FOR LCOUNT, 0, 賭け金上限+1, ループ用ステップ
+	SELECTCASE LCOUNT
+		CASE 5
+			SETCOLORBYNAME crimson
+		CASE 25
+			SETCOLORBYNAME springgreen
+		CASE 100
+			SETCOLORBYNAME darkgray
+		CASE 500
+			SETCOLORBYNAME purple
+		CASE 1000
+			SETCOLORBYNAME yellow
+		CASE 5000
+			SETCOLORBYNAME brown
+		CASE 25000
+			SETCOLORBYNAME orange
+		CASE 100000
+			SETCOLORBYNAME cyan
+		CASE 500000
+			SETCOLORBYNAME magenta
+		CASE 1000000
+			SETCOLORBYNAME silver
+		CASE 2000000
+			SETCOLORBYNAME gold
+		CASEELSE
+			マックスベット可 = 1
+			CONTINUE
+	ENDSELECT
+	CALL PASELI, @"[{LCOUNT}] {LCOUNT}＄  "
+	ループ用ステップ = LCOUNT
+	マックスベット可 = 0
+NEXT
+PRINTL 
+RESETCOLOR
+SIF マックスベット可
+	CALL PASELIL, @"[{賭け金上限}] MAXBET({賭け金上限}＄)"
+$STAKE_INPUT
+DO
+	INPUT
+	賭け金 = RESULT
+	SELECTCASE 賭け金
+		CASE IS > 賭け金上限
+			IF LANGUAGE == "ENG"
+				CALL PASELIL, @"You can stake lower than {賭け金上限}. Please reinput."
+			ELSE
+				CALL PASELIL, @"賭け金上限は{賭け金上限}です。再入力してください"
+			ENDIF
+		CASE IS > 0
+			BREAK
+	ENDSELECT
+LOOP 1
+
+CALL SE再生, カジノコイン
+
+RETURN 賭け金
+
+;フィッシャー・イェーツのシャッフル
+;CARD:0からCARD:{(変数1)-1}までの配列にシャッフルした順列を返す
+;第二引数が渡された場合は(変数1)～(変数2)間のカードをシャッフルする
+@SHUFFLE, 変数1, 変数2
+#DIM DYNAMIC 変数1
+#DIM DYNAMIC 変数2
+#DIM DYNAMIC 枚数
+#DIM DYNAMIC 始点
+#DIM DYNAMIC 終点
+#DIM DYNAMIC LCOUNT0
+#DIM DYNAMIC LCOUNT1
+
+IF 変数2 > 0
+	始点 = 変数1
+	終点 = 変数2
+	;(始点)以下にあるカードは初期値に含まれない LCOUNT1を使用
+	FOR LCOUNT0, 始点, 終点
+		WHILE FINDELEMENT(CARD, LCOUNT1, 0, 終点) >= 0
+			LCOUNT1++
+		WEND
+		CARD:LCOUNT0 = LCOUNT1
+		LCOUNT1++
+	NEXT
+	;LCOUNT0を(終点)から(始点)まで1ずつ下げていく
+	FOR LCOUNT0, 終点, 始点, -1
+		LCOUNT1 = RAND(始点, LCOUNT0);(始点)以上LCOUNT0未満の数を決めてこれをLCOUNT1とする
+		;LCOUNT1番目と(LCOUNT0-1)番目を入れ替える
+		SWAP CARD:(LCOUNT0-1), CARD:LCOUNT1
+	NEXT
+ELSE
+	枚数 = 変数1
+	;CARD:0～CARD:(枚数)まで、0から順番に代入
+	FOR LCOUNT0, 0, 枚数
+		CARD:LCOUNT0 = LCOUNT0
+	NEXT
+
+	;LCOUNT0を(枚数)から1まで1ずつ下げていく
+	FOR LCOUNT0, 変数1, 0, -1
+		LCOUNT1 = RAND:LCOUNT0;0以上LCOUNT0未満の数を決めてこれをLCOUNT1とする
+		;LCOUNT1番目と(LCOUNT0-1)番目を入れ替える
+		SWAP CARD:(LCOUNT0-1), CARD:LCOUNT1
+	NEXT
+ENDIF
+
+;第1引数「カード」を52で割った余りに対し以下を表示
+;クラブK(余り0)→スペードA(余り1)→スペード2(余り2)→ … →ハートA(余り14)→ … →ダイヤA(余り27)→ … →クラブA(余り40)→ … →クラブQ(余り51)
+;第2引数「色指定」にSETCOLORBYNAMEで使える文字列を入れると強制的にその色になる
+@PRTCARD, カード, 色指定
+#DIM DYNAMIC カード
+#DIMS DYNAMIC 色指定
+
+IF 色指定 == "" || COLOR_FROMNAME(色指定) == -1
+	SELECTCASE ((カード+51)%52)/13
+		;スペード
+		CASE 0
+			SETCOLORBYNAME deepskyblue
+		;ハート
+		CASE 1
+			SETCOLORBYNAME hotpink
+		;ダイヤ
+		CASE 2
+			SETCOLORBYNAME red
+		;クラブ
+		CASE 3
+			SETCOLORBYNAME skyblue
+	ENDSELECT
+ELSE
+	SETCOLOR COLOR_FROMNAME(色指定)
+ENDIF
+
+SELECTCASE ((カード+51)%52)/13
+	;スペード
+	CASE 0
+		PRINT ♠
+	;ハート
+	CASE 1
+		PRINT ♥
+	;ダイヤ
+	CASE 2
+		PRINT ♦
+	;クラブ
+	CASE 3
+		PRINT ♣
+ENDSELECT
+
+SELECTCASE カード%13
+	CASE 1
+		PRINT Ａ
+	;2～9はUIに配慮して全角にする
+	CASE 2 TO 9
+		PRINTFORM %TOFULL(TOSTR(カード%13))%
+	CASE 10
+		PRINT 10
+	CASE 11
+		PRINT Ｊ
+	CASE 12
+		PRINT Ｑ
+	CASEELSE
+		PRINT Ｋ
+ENDSELECT
+RESETCOLOR
+
+;上のボタン化関数 第二引数に押した時の返り値が入る
+@PRTCARDBUTTON, カード, ボタン, 色指定
+#DIM DYNAMIC カード
+#DIMS DYNAMIC 色指定
+#DIM DYNAMIC ボタン
+#DIMS DYNAMIC スート
+#DIMS DYNAMIC 数字
+
+IF 色指定 == "" || COLOR_FROMNAME(色指定) == -1
+	SELECTCASE ((カード+51)%52)/13
+		;スペード
+		CASE 0
+			SETCOLORBYNAME deepskyblue
+		;ハート
+		CASE 1
+			SETCOLORBYNAME hotpink
+		;ダイヤ
+		CASE 2
+			SETCOLORBYNAME red
+		;クラブ
+		CASE 3
+			SETCOLORBYNAME skyblue
+	ENDSELECT
+ELSE
+	SETCOLOR COLOR_FROMNAME(色指定)
+ENDIF
+
+SELECTCASE ((カード+51)%52)/13
+	;スペード
+	CASE 0
+		スート = ♠
+	;ハート
+	CASE 1
+		スート = ♥
+	;ダイヤ
+	CASE 2
+		スート = ♦
+	;クラブ
+	CASE 3
+		スート = ♣
+ENDSELECT
+
+SELECTCASE カード%13
+	CASE 1
+		数字 = Ａ
+	;2～9はUIに配慮して全角にする
+	CASE 2 TO 9
+		数字 = %TOFULL(TOSTR(カード%13))%
+	CASE 10
+		数字 = 10
+	CASE 11
+		数字 = Ｊ
+	CASE 12
+		数字 = Ｑ
+	CASEELSE
+		数字 = Ｋ
+ENDSELECT
+PRINTBUTTON @"%スート%%数字%", ボタン
+RESETCOLOR
+
+;カジノフラグリセット
+@CLEAR_CASINO_FLAG
+キャロル進行フラグ = 0
+ことみちゃん進行フラグ = 0
+BroGamerの少年進行フラグ = 0

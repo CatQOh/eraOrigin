@@ -1,0 +1,263 @@
+﻿;-------------------------------------------------
+;ダブル素股
+;-------------------------------------------------
+@USERCOM_ABLE_ダブル素股
+#FUNCTION
+;服着てるとダメ
+コマンド実行条件 += "性器が露出していないと実行できない/"
+SIF !性器露出(TARGET)
+	COMRESULT = 0
+;潤滑が高くないとダメ
+コマンド実行条件 += "対象の潤滑2000以上が必要/"
+SIF PALAM:潤滑 < 2000
+	COMRESULT = 0
+;Ｖ使用中はダメ
+コマンド実行条件 += "対象がV使用中は実行できない/"
+SIF Ｖ使用中(TARGET)
+	COMRESULT = 0
+;お風呂場プレイ中はプレイマットが無いとダメ
+コマンド実行条件 += "お風呂場ではプレイマット(アイテム)が無いと実行できない/"
+SIF TEQUIP:お風呂場 && !ITEM:プレイマット
+	COMRESULT = 0
+;ペニスある場合はダメ（代わりに兜合わせコマンドが使える）
+コマンド実行条件 += "対象に男性器があると実行できない/"
+SIF PENIS(TARGET)
+	COMRESULT = 0
+コマンド実行条件 += "睡眠中は実行できない/"
+SIF TEQUIP:睡眠
+	COMRESULT = 0
+IF MOD:STS
+	コマンド実行条件 += "屍姦中は実行できない/"
+	SIF CFLAG:死亡
+		COMRESULT = 0
+ENDIF
+
+;汎用COMABLE通らなかったらダメ
+SIF !USERCOM_ABLE_Ｐ奉仕()
+	COMRESULT = 0
+
+;調教者が主人で、前回の調教が貝合わせ(助手)かダブル素股だと可能
+コマンド実行条件 += "実行者が主人で、前回のコマンドが貝合わせ(助手)かダブル素股だと派生可能/"
+IF !TEQUIP:ゲームセンター
+	IF TFLAG:前コマンド実行者 != MASTER && (PREVCOMS == "ダブル素股" || (TFLAG:前コマンド実行者 != PLAYER && PREVCOMS == "貝合わせ"))
+		RETURNF COMRESULT
+	ENDIF
+ENDIF
+
+COMRESULT = 0
+RETURNF 0
+
+@実行判定_ダブル素股
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC 実効値, 2
+
+;すべての命令に共通の要素を考慮
+CALL COM_ORDER
+実効値 = RESULT
+
+;ABL:欲望
+IF ABL:欲望
+	実効値 += ABL:欲望*2
+	PRINTFORM +欲望LV{ABL:欲望}({ABL:欲望*2})
+ENDIF
+;ABL:奉仕精神
+IF ABL:奉仕精神
+	実効値 += ABL:奉仕精神*4
+	PRINTFORM +奉仕精神LV{ABL:奉仕精神}({ABL:奉仕精神*4})
+ENDIF
+;ABL:精液中毒
+IF ABL:精液中毒
+	実効値 += ABL:精液中毒
+	PRINTFORM +精液中毒LV{ABL:精液中毒}({ABL:精液中毒})
+ENDIF
+
+;快楽刻印
+IF MARK:快楽刻印
+	実効値 += MARK:快楽刻印*2
+	PRINTFORM +快楽刻印LV{MARK:快楽刻印}({MARK:快楽刻印*2})
+ENDIF
+
+CALL COM_ORDER_欲情, 1
+実効値 += RESULT
+
+FOR LCOUNT, 0, VARSIZE("TALENT")
+	実効値:1 = 0
+	SIF !TALENT:LCOUNT
+		CONTINUE
+	SELECTCASE TALENTNAME:LCOUNT
+		CASE "親愛"
+			SIF PLAYER == MASTER
+				実効値:1 = 10
+		CASE "恋慕"
+			SIF PLAYER == MASTER
+				実効値:1 = 5
+		CASE "恥じらい"
+			実効値:1 = -3
+		CASE "快感の否定"
+			SIF FALLTYPE(TARGET) != 2
+				実効値:1 = -3
+		CASE "男嫌い"
+			SIF SEX(PLAYER) == 1 && (FALLTYPE(TARGET) != 1 || PLAYER != MASTER)
+				実効値:1 = -7
+	ENDSELECT
+	IF 実効値:1
+		PRINTFORM \@SIGN(実効値:1) == 1 ? + # - \@%TALENTNAME:LCOUNT%({ABS(実効値:1)})
+		実効値 += 実効値:1
+	ENDIF
+NEXT
+
+;媚薬
+IF TEQUIP:媚薬
+	実効値 += 6
+	PRINT +媚薬(6)
+ENDIF
+
+実効値:1 = 0
+;精液の汚れ
+SIF GETBIT(STAIN:PLAYER:ペニス, 2)
+	実効値:1 += 3
+;アナルの汚れ
+SIF GETBIT(STAIN:PLAYER:ペニス, 3)
+	実効値:1 += 5
+;尿
+SIF GETBIT(STAIN:PLAYER:ペニス, 7)
+	実効値:1 += 5
+
+SIF TALENT:汚れ無視
+	実効値:1 /= 3
+SIF TALENT:潔癖症
+	実効値:1 *= 2
+
+;素股では汚れがそれほど影響しない
+実効値:1 /= 3
+
+;汚れあり
+IF 実効値:1
+	実効値 -= 実効値:1
+	IF TALENT:汚れ無視
+		PRINT -汚れあり、汚れ無視
+	ELSEIF TALENT:潔癖症
+		PRINT -汚れあり、潔癖症
+	ELSE
+		PRINT -汚れあり
+	ENDIF
+	PRINTFORM ({実効値:1})
+ENDIF
+
+;25以上で実行
+CALL 実効値判定, 実効値, 25
+
+RETURN RESULT
+
+@COM_ダブル素股
+#DIM DYNAMIC 増加量
+#DIM DYNAMIC ASSI退避 ;口上呼出し用
+#DIM DYNAMIC TMASTER退避 ;口上呼出し用
+
+PRINTL ダブル素股
+
+SIF !TFLAG:実行判定無視
+	CALLFORM 実行判定_%SELECTCOMS%
+SIF !RESULT && !TFLAG:実行判定無視
+	RETURN 0
+
+ASSI退避 = ASSI
+TMASTER退避 = TMASTER
+ASSI = TFLAG:前コマンド実行者
+TMASTER = PLAYER
+CALL KOJO_MESSAGE_COM
+ASSI = ASSI退避
+TMASTER = TMASTER退避
+
+;実行者が奴隷であるフラグ
+TFLAG:奴隷実行 = 1
+
+;-------------------------------------------------
+;射精ゲージチェック
+;-------------------------------------------------
+増加量 = 射精ゲージ計算_奉仕(300, PLAYER)
+
+;ABL:助手の技巧をみる
+増加量 += (増加量/5)*ABL:(TFLAG:前コマンド実行者):技巧
+
+;ABL:助手の従順をみる
+増加量 += (増加量/10)*ABL:(TFLAG:前コマンド実行者):従順 - (増加量/10)*2
+
+;ABL:助手の奉仕精神をみる
+SELECTCASE ABL:(TFLAG:前コマンド実行者):奉仕精神
+	CASE 0
+		TIMES 増加量 , 0.50
+	CASE 1
+		TIMES 増加量 , 0.80
+	CASE 2
+		TIMES 増加量 , 1.20
+	CASE 3
+		TIMES 増加量 , 1.50
+	CASE 4
+		TIMES 増加量 , 1.80
+	CASEELSE
+		増加量 += 増加量/3*ABL:奉仕精神
+ENDSELECT
+
+CALL 射精ゲージ増加, 増加量, PLAYER
+
+;-------------------------------------------------
+;ソース追加処理
+;-------------------------------------------------
+;消費体力、気力
+LOSEBASE:体力 += 40
+LOSEBASE:気力 += 100
+
+SOURCE:快C = 200
+SOURCE:情愛 = 100
+SOURCE:性行動 = 600
+SOURCE:達成 = 300
+SOURCE:屈従 = 600
+SOURCE:逸脱 = 200
+SOURCE:反感 = 200
+SOURCE:不潔 = 200
+
+;-------------------------------------------------
+;特殊ソース処理
+;-------------------------------------------------
+;抑圧、抵抗持ちには、抑鬱ソース追加
+SIF TALENT:抑圧 || TALENT:抵抗
+	SOURCE:鬱屈 += 400
+
+;-------------------------------------------------
+;絶頂チェック
+;-------------------------------------------------
+CALL SOURCE_CHECK_CVAB
+
+;-------------------------------------------------
+;射精チェック
+;-------------------------------------------------
+CALL SAMEN_CHECK, 6
+CALL SAMEN_CHECK_T, 0
+
+CALL SAMEN_SHOOT, 6, NOWEX:PLAYER:射精
+CALL SAMEN_SHOOT_T, 0, NOWEX:射精
+
+;-------------------------------------------------
+;汚れの処理
+;-------------------------------------------------
+;射精に関係なく行われる処理はここから
+;奴隷のヴァギナ⇔調教者のペニスの汚れが移動
+STAIN:ヴァギナ |= STAIN:PLAYER:ペニス
+STAIN:PLAYER:ペニス |= STAIN:ヴァギナ
+;助手のヴァギナ⇔調教者のペニスの汚れが移動
+STAIN:(TFLAG:前コマンド実行者):3 |= STAIN:PLAYER:ペニス
+STAIN:PLAYER:ペニス |= STAIN:(TFLAG:前コマンド実行者):3
+;奴隷のヴァギナ⇔助手のヴァギナの汚れが移動
+STAIN:ヴァギナ |= STAIN:(TFLAG:前コマンド実行者):3
+STAIN:(TFLAG:前コマンド実行者):3 |= STAIN:ヴァギナ
+
+;-------------------------------------------------
+;経験の処理
+;-------------------------------------------------
+CALL EXPUP_BASE, 4, 1
+
+;奉仕快楽フラグ
+TFLAG:奉仕快楽 = 1
+
+RETURN 1

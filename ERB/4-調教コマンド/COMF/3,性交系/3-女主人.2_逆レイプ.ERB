@@ -1,0 +1,308 @@
+﻿;-------------------------------------------------
+;逆レイプ
+;-------------------------------------------------
+@USERCOM_ABLE_逆レイプ
+#FUNCTION
+;ゲーセンに居る場合はできない
+コマンド実行条件 += "ゲーセンでは実行不可/"
+SIF TEQUIP:ゲームセンター
+	COMRESULT = 0
+;上級売春中は方針がハード、SMじゃないとダメ
+コマンド実行条件 += "上級売春中は経営方針がハードorSMじゃないと実行できない/"
+SIF 上級売春中 && !GROUPMATCH(BR:方針, 2, 3)
+	COMRESULT = 0
+;調教者が小人体型のとき主人が禁断の知識持ちじゃないとダメ
+コマンド実行条件 += "実行者が小人体型の場合、主人に禁断の知識が必要/"
+SIF TALENT:PLAYER:小人体型 && !TALENT:MASTER:禁断の知識 && !TALENT:小人体型
+	COMRESULT = 0
+;調教者が助手の場合は助手が陥落していないとダメ
+コマンド実行条件 += "実行者が助手の場合、助手が陥落済みでないと実行できない/"
+SIF PLAYER != MASTER && !陥落(PLAYER)
+	COMRESULT = 0
+;足使用不可だとできない
+コマンド実行条件 += "実行者が[足使用不可]だと実行できない/"
+SIF TALENT:PLAYER:足使用不可
+	COMRESULT = 0
+;PLAYERがＶ使用中はダメ
+コマンド実行条件 += "実行者がV使用中は実行できない/"
+SIF Ｖ使用中(PLAYER)
+	COMRESULT = 0
+
+;対象がペニス無いとダメ
+コマンド実行条件 += "対象に男性器が必要/"
+SIF !PENIS(TARGET)
+	COMRESULT = 0
+;Ｐ使用中、使用不可はダメ
+コマンド実行条件 += "対象の男性器に道具使用中だと実行できない/"
+SIF Ｐ使用中(TARGET) || Ｐ使用不可(TARGET)
+	COMRESULT = 0
+;お風呂場プレイ中はプレイマットが無いとダメ
+コマンド実行条件 += "お風呂場ではプレイマット(アイテム)が無いと実行できない/"
+SIF TEQUIP:お風呂場 && !ITEM:プレイマット
+	COMRESULT = 0
+;新妻プレイ中はダメ
+コマンド実行条件 += "エプロン使用中は実行できない/"
+SIF TEQUIP:エプロン
+	COMRESULT = 0
+;勃起が一定以上じゃないとダメ
+コマンド実行条件 += @"対象の勃起{PALAMLV:3}以上じゃないと実行できない/"
+SIF PALAM:勃起 < PALAMLV:3
+	COMRESULT = 0
+;アニマルは無理
+コマンド実行条件 += "対象が[アニマル]の場合は実行できない/"
+SIF TALENT:アニマル
+	COMRESULT = 0
+IF MOD:STS
+	コマンド実行条件 += "屍姦中は実行できない/"
+	SIF CFLAG:死亡
+		COMRESULT = 0
+ENDIF
+
+RETURNF COMRESULT
+
+@実行判定_逆レイプ
+#DIM DYNAMIC 実効値
+;-------------------------------------------------
+;実行判定処理
+;-------------------------------------------------
+;縄で縛られている場合は無視（縄が無い時のみ実行判定を行う）
+IF !TEQUIP:縄
+	;すべての命令に共通の要素を考慮
+	;(従順が高いと命令に従いやすいなど)
+	CALL COM_ORDER
+	実効値 = RESULT
+
+	CALL COM_ORDER_セックスさせる
+	実効値 += RESULT
+
+	;32以上で実行
+	CALL 実効値判定, 実効値, 32
+
+	RETURN RESULT
+ELSE
+	RETURN 1
+ENDIF
+
+@COM_逆レイプ
+#DIM DYNAMIC 増加量
+#DIM DYNAMIC 射精先
+
+PRINTL 逆レイプ
+
+SIF !TFLAG:実行判定無視
+	CALLFORM 実行判定_%SELECTCOMS%
+SIF !RESULT && !TFLAG:実行判定無視
+	RETURN 0
+
+IF VAGINA(PLAYER)
+	PRINTL どちらで逆レイプしますか？
+	PRINTL [1] - 膣で逆レイプする
+	PRINTL [2] - アナルで逆レイプする
+	SIF ISSKIP()
+		RETURN
+	BINPUT
+	TFLAG:奴隷挿入箇所 = RESULT
+ELSE
+	TFLAG:奴隷挿入箇所 = 2
+ENDIF
+
+;-------------------------------------------------
+;実行決定
+;-------------------------------------------------
+CALL KOJO_MESSAGE_COM
+
+;-------------------------------------------------
+;脱衣
+;-------------------------------------------------
+IF OVER_GENITAL(PLAYER) != ""
+	IF CFLAG:PLAYER:挿入可
+		TEQUIP:PLAYER:下半身下着 = 0
+	ELSE
+		TEQUIP:PLAYER:下半身下着 = 0
+		TEQUIP:PLAYER:下半身上着 = 0
+		TEQUIP:PLAYER:全身上着 = 0
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;射精ゲージチェック（主人）
+;-------------------------------------------------
+増加量 = 射精ゲージ計算_実行者受け(500)
+
+;ABL:調教者の技巧をみる
+増加量 += (増加量/5)*ABL:PLAYER:技巧
+
+;ABL:技巧をみる
+増加量 += (増加量/5)*ABL:技巧
+
+CALL 射精ゲージ増加, 増加量, PLAYER
+
+;-------------------------------------------------
+;射精ゲージチェック（奴隷）
+;-------------------------------------------------
+増加量 = 1000
+
+;ABL:調教者の技巧をみる
+増加量 += (増加量/2)*ABL:PLAYER:技巧
+
+;ABL:従順をみる
+増加量 += (増加量/10)*ABL:従順
+
+;ABL:欲望をみる
+増加量 += (増加量/5)*ABL:欲望
+
+;ABL:Ｃ感覚をみる
+SELECTCASE ABL:Ｃ感覚
+	CASE 0
+		TIMES 増加量 , 1.00
+	CASE 1
+		TIMES 増加量 , 1.50
+	CASE 2
+		TIMES 増加量 , 2.00
+	CASE 3
+		TIMES 増加量 , 2.50
+	CASE 4
+		TIMES 増加量 , 3.50
+	CASEELSE
+		増加量 += 増加量*(ABL:Ｃ感覚-1)
+ENDSELECT
+
+;子供は締まりが良いので増える
+SIF TALENT:PLAYER:体格 <= 2
+	TIMES 増加量 , 1.20
+
+CALL 射精ゲージ増加, 増加量, TARGET
+
+;-------------------------------------------------
+;ソース追加処理
+;-------------------------------------------------
+;消費体力、気力
+LOSEBASE:体力 += 80
+LOSEBASE:気力 += 150
+
+DOWNBASE:MASTER:体力 += 100
+DOWNBASE:MASTER:気力 += 80
+
+SOURCE:快C = 400
+SOURCE:恐怖 = 200
+SOURCE:性行動 = 300
+SOURCE:屈従 = 1000
+SOURCE:逸脱 = 500
+SOURCE:反感 = 500
+SOURCE:露出 = 100
+SOURCE:不潔 = 150
+SOURCE:恭順 = 400
+
+;-------------------------------------------------
+;特殊ソース処理
+;-------------------------------------------------
+;抑圧、抵抗持ちには、抑鬱ソース追加
+SIF TALENT:抑圧 || TALENT:抵抗
+	SOURCE:鬱屈 += 700
+
+;調教者が処女か再生処女
+IF TFLAG:奴隷挿入箇所 == 1
+	IF TALENT:PLAYER:処女 || TALENT:PLAYER:再生処女
+		TIMES SOURCE:露出 , 20.00
+		TIMES SOURCE:屈従 , 3.00
+		PRINTFORML %CALLNAME:PLAYER%処女喪失
+		CFLAG:PLAYER:逆レイプで処女を散らした経験++
+		IF !CFLAG:処女に逆レイプされた経験
+			;異常経験追加
+			EXP:異常経験++
+			PRINTFORML 異常経験+1
+		ENDIF
+		CFLAG:処女に逆レイプされた経験++
+		SETBIT STAIN:PLAYER:膣内, 6
+		WAIT
+	ENDIF
+
+	IF TALENT:PLAYER:処女
+		IF TALENT:PLAYER:性転換済
+			SIF PLAYER != MASTER
+				CFLAG:PLAYER:性転換処女の奪われ方 = 2
+			CSTR:PLAYER:性転換処女 = %NAME:TARGET%
+		ELSE
+			SIF PLAYER != MASTER
+				CFLAG:PLAYER:処女の奪われ方 = 2
+			CSTR:PLAYER:処女 = %NAME:TARGET%
+		ENDIF
+	ENDIF
+ENDIF
+
+TALENT:PLAYER:処女 = 0
+TALENT:PLAYER:再生処女 = 0
+
+;-------------------------------------------------
+;絶頂チェック
+;-------------------------------------------------
+CALL SOURCE_CHECK_CVAB
+
+;-------------------------------------------------
+;射精チェック
+;-------------------------------------------------
+;射精時の処理
+SELECTCASE TFLAG:奴隷挿入箇所
+	CASE 1
+		IF PLAYER == TMASTER
+			射精先 = 1
+		ELSEIF PLAYER == ASSI
+			射精先 = 2
+		ENDIF
+	CASE 2
+		IF PLAYER == TMASTER
+			射精先 = 6
+		ELSEIF PLAYER == ASSI
+			射精先 = 7
+		ENDIF
+ENDSELECT
+
+CALL SAMEN_CHECK, 6
+CALL SAMEN_CHECK_T, 射精先
+
+CALL SAMEN_SHOOT, 6, NOWEX:PLAYER:射精
+CALL SAMEN_SHOOT_T, 射精先, NOWEX:射精
+
+;-------------------------------------------------
+;汚れの処理
+;-------------------------------------------------
+;奴隷のペニス⇔調教者への挿入箇所の汚れが移動
+SELECTCASE TFLAG:奴隷挿入箇所
+	CASE 1
+		STAIN:ペニス |= STAIN:PLAYER:膣内
+		STAIN:PLAYER:膣内 |= STAIN:ペニス
+	CASE 2
+		;対象のペニスにアナル汚れ
+		SETBIT STAIN:ペニス, 3
+		STAIN:ペニス |= STAIN:PLAYER:アナル
+		STAIN:PLAYER:アナル |= STAIN:ペニス
+ENDSELECT
+
+;-------------------------------------------------
+;経験の処理
+;-------------------------------------------------
+CALL EXPUP_BASE, 3, 2
+
+;調教者のV,A経験
+SELECTCASE TFLAG:奴隷挿入箇所
+	CASE 1
+		CALL EXPUP, "Ｖ経験", 2, PLAYER
+		CALL EXPUP, "苦痛快楽経験", 1, PLAYER
+	CASE 2
+		CALL EXPUP, "Ａ経験", 2, PLAYER
+		CALL EXPUP, "苦痛快楽経験", 2, PLAYER
+ENDSELECT
+
+CALL EXPUP, "性交経験", 1
+CALL EXPUP, "性交経験", 1, PLAYER
+
+SIF !避妊具(TARGET)
+	CALL 魔力回復, 3, PLAYER
+
+;奉仕快楽フラグ
+TFLAG:奉仕快楽 = 1
+
+経験回数:PLAYER:(NOF(TARGET)) += 1
+経験回数:TARGET:(NOF(PLAYER)) += 1
+
+RETURN 1

@@ -1,0 +1,49 @@
+﻿@ABL_CHECK_Ｃ感覚
+SELECTCASE ABL:Ｃ感覚
+	CASE 0
+		ABLUP:快Ｃ = 1
+	CASE 1
+		ABLUP:快Ｃ = 20
+	CASE 2
+		ABLUP:快Ｃ = 400
+	CASE 3
+		ABLUP:快Ｃ = 5000
+	CASE 4
+		ABLUP:快Ｃ = 15000
+	CASE 5
+		ABLUP:快Ｃ = 30000
+	CASE 6
+		ABLUP:快Ｃ = 40000
+	CASE 7
+		ABLUP:快Ｃ = 50000
+	CASE 8
+		ABLUP:快Ｃ = 60000
+	CASE 9
+		ABLUP:快Ｃ = 70000
+	CASE IS >= 10
+		ABLUP:快Ｃ = 800 * POWER(ABL:Ｃ感覚, 2)
+ENDSELECT
+
+;淫乱
+SIF TALENT:淫乱
+	TIMES ABLUP:快Ｃ , 0.80
+;淫魔
+SIF TALENT:淫魔
+	TIMES ABLUP:快Ｃ , 0.50
+;淫核
+SIF TALENT:淫核
+	TIMES ABLUP:快Ｃ , 0.80
+
+;@CHECK_JUEL_Ｃ感覚
+;快Ｃの珠で上げる
+SIF JUEL:快Ｃ >= ABLUP:快Ｃ
+	RETURN 1
+
+;上記の条件を満たせなかったら上げられない
+RETURN 0
+
+@ABLUP_MESSAGE_Ｃ感覚
+SIF JUEL:快Ｃ < ABLUP:快Ｃ
+	SETCOLORBYNAME gray
+PRINTFORM [快Ｃの珠×{ABLUP:快Ｃ}]
+RESETCOLOR

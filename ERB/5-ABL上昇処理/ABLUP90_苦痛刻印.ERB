@@ -1,0 +1,54 @@
+﻿@ABL_CHECK_苦痛刻印
+SELECTCASE MARK:苦痛刻印
+	CASE 1
+		ABLUP:恭順 = 1000
+	CASE 2
+		ABLUP:恭順 = 3000
+	CASE 3
+		ABLUP:恭順 = 5000
+ENDSELECT
+
+SIF TALENT:臆病
+	TIMES ABLUP:恭順 , 1.20
+
+SIF TALENT:痛みに弱い
+	TIMES ABLUP:恭順 , 1.20
+
+SIF TALENT:マゾ
+	TIMES ABLUP:恭順 , 0.80
+
+SIF TALENT:痛みに強い
+	TIMES ABLUP:恭順 , 0.80
+
+IF 陥落(TARGET)
+	TIMES ABLUP:恭順 , 0.20
+ELSEIF CFLAG:助手可能
+	TIMES ABLUP:恭順 , 0.80
+ENDIF
+
+;@CHECK_JUEL_苦痛刻印
+;苦痛刻印無ければ戻る
+SIF !MARK:苦痛刻印
+	RETURN 0
+
+;苦痛刻印Lvと同じLvの奉仕精神が必要
+SIF ABL:奉仕精神 < MARK:苦痛刻印
+	RETURN 0
+
+;恭順の珠で減らす
+SIF JUEL:恭順 >= ABLUP:恭順
+	RETURN 1
+
+RETURN 0
+
+@ABLUP_MESSAGE_苦痛刻印
+;苦痛刻印刻印Lvと同じLvの奉仕精神が必要
+SIF ABL:奉仕精神 < MARK:苦痛刻印
+	SETCOLORBYNAME gray
+PRINTFORM [奉仕精神LV{MARK:苦痛刻印}以上]
+RESETCOLOR
+
+SIF JUEL:恭順 < ABLUP:恭順
+	SETCOLORBYNAME gray
+PRINTFORM [恭順の珠×{ABLUP:恭順}]
+RESETCOLOR

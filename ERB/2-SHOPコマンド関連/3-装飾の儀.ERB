@@ -1,0 +1,178 @@
+﻿@RITUAL_OF_ACCESSORY
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC LCOUNT2
+#DIM DYNAMIC LTARGET = -1
+#DIM DYNAMIC APOINT = -1
+#DIMS DYNAMIC EQUIPD_ACCESSORY
+#DIM ACC
+#DIMS DYNAMIC アクセサリー名
+#DIMS DYNAMIC 着用可能部位リスト
+#DIMS DYNAMIC SPLITVAR, 10
+
+;装飾の種類、装着可能な部位（/で区切る）の順
+{
+#DIMS DYNAMIC アクセサリーリスト = 
+"空欄", "空欄", 
+"リングピアス", "右乳首/左乳首", 
+"バーベルピアス", "右乳首/左乳首", 
+}
+
+DRAWLINE
+
+PRINTL □装飾の儀
+PRINTL □効果
+PRINTL 　この儀式ではピアスなどの装飾を奴隷やMASTERに施すことができる
+PRINTL 　MASTERに施す場合はもちろん、奴隷に施す場合でも陥落している必要はない。が、その場合は嫌がられるだろう
+SETCOLORBYNAME gray
+PRINT 　付ける場所や付けるものによっては調教の効果が増すこともあるようだ
+RESETCOLOR
+PRINTL （未実装です）
+PRINTL
+
+IF !LTARGET
+	PRINTFORML 　[1] - 対象を選ぶ（選択中：%CALLNAME:MASTER%）
+ELSE
+	PRINTFORML 　[1] - 対象を選ぶ\@ LTARGET != -1 ? （選択中：%CHARANAMEF(LTARGET)%） #  \@
+ENDIF
+
+IF LTARGET == -1
+	SETCOLORBYNAME gray
+	PRINTPLAIN 　[2] - 部位を選ぶ（対象を指定してください）
+	RESETCOLOR
+ELSE
+	PRINTFORM 　[2] - 部位を選ぶ\@ APOINT != -1 ? （指定している部位：%ERDNAME(ACCESSORY,APOINT)%） #  \@
+ENDIF
+PRINTL 
+
+IF APOINT == -1
+	SETCOLORBYNAME gray
+	PRINTPLAIN 　[3] - アクセサリーを選ぶ（部位を指定してください）
+	RESETCOLOR
+ELSE
+	PRINTFORM 　[3] - アクセサリーを選ぶ\@ EQUIPD_ACCESSORY != "" ? （つけるアクセサリー：%EQUIPD_ACCESSORY%） #  \@
+ENDIF
+PRINTL 
+
+IF EQUIPD_ACCESSORY == ""
+	SETCOLORBYNAME gray
+	PRINTPLAIN 　[7] - 装飾をつける
+	RESETCOLOR
+ELSE
+	PRINTFORM 　[7] - 装飾をつける
+ENDIF
+PRINTL 
+
+
+DRAWLINE
+PRINTPLAIN 　装飾の儀　
+PRINT [0] - 戻る 
+SIF LTARGET != -1
+	PRINT [100] - 装飾の確認
+PRINTL 
+
+BINPUT
+SELECTCASE RESULT
+	CASE 0
+		RETURN 0
+	CASE 1
+		DRAWLINE
+		FOR PAGING, 0, CHARANUM
+			CALL PAGING, 1, "", "TARGET", "やめる"
+		NEXT
+
+		SIF RESULT >= 0
+			LTARGET = RESULT
+	CASE 2
+		DRAWLINE
+		PRINTFORML □どの部位に装飾を施しますか？
+
+		;装着可能部位はACCESSORY.ERDに定義を追加する事で増やす
+		FOR LCOUNT, 0, VARSIZE("ACCESSORY")
+			IF ERDNAME(ACCESSORY,LCOUNT) != ""
+				{
+				PRINTFORML [{LCOUNT}] - %ERDNAME(ACCESSORY,LCOUNT)%
+				\@ LTARGET >=0 && ACCESSORY:LTARGET:(ERDNAME(ACCESSORY,LCOUNT)) != "" ? 
+				(%ACCESSORY:LTARGET:(ERDNAME(ACCESSORY,LCOUNT))%がついています) #  \@
+				}
+			ENDIF
+		NEXT
+		DRAWLINE
+		PRINTPLAINFORM 　ACCESSORY　
+		PRINTL [0] - 戻る
+
+		BINPUT
+		IF !RESULT
+			RESTART
+		ELSE
+			APOINT = RESULT
+			;アクセサリー指定済の場合そこにつけられないアクセサリーなら外す（動作未確認）
+			IF EQUIPD_ACCESSORY != ""
+				FOR LCOUNT, 1, VARSIZE("アクセサリーリスト")/2
+					アクセサリー名 = %アクセサリーリスト:(LCOUNT*2)%
+					IF EQUIPD_ACCESSORY == アクセサリー名
+						着用可能部位リスト = %アクセサリーリスト:(LCOUNT*2+1)%
+						BREAK
+					ENDIF
+				NEXT
+				SPLIT 着用可能部位リスト, "/", SPLITVAR
+				FOR LCOUNT, 0, RESULT
+					SIF SPLITVAR:LCOUNT == ERDNAME(ACCESSORY,APOINT)
+						GOTO OK
+				NEXT
+				EQUIPD_ACCESSORY = 
+				$OK
+			ENDIF
+		ENDIF
+	CASE 3
+		DRAWLINE
+		PRINTFORML □どんなアクセサリーをつけますか？
+
+		;アクセサリーの種類は上で定義
+		FOR LCOUNT, 1, VARSIZE("アクセサリーリスト")/2
+			アクセサリー名 = %アクセサリーリスト:(LCOUNT*2)%
+			着用可能部位リスト = %アクセサリーリスト:(LCOUNT*2+1)%
+			SPLIT 着用可能部位リスト, "/", SPLITVAR
+			FOR LCOUNT2, 0, RESULT
+				SIF SPLITVAR:LCOUNT2 == ERDNAME(ACCESSORY,APOINT)
+					PRINTFORML [{LCOUNT}] - %アクセサリー名%
+			NEXT
+		NEXT
+		DRAWLINE
+		PRINTPLAINFORM 　ACCESSORY　
+		PRINTL [0] - 戻る
+
+		BINPUT
+		SELECTCASE RESULT
+			CASE 0
+				RESTART
+			CASEELSE
+				EQUIPD_ACCESSORY = %アクセサリーリスト:(RESULT*2)%
+		ENDSELECT
+	CASE 7
+		IF ACCESSORY:LTARGET:APOINT == EQUIPD_ACCESSORY
+			PRINTW その部位には既に同じアクセサリーがついているようです
+		ELSE
+			PRINTL □アクセサリーをつけますか？
+			SIF ACCESSORY:LTARGET:APOINT != ""
+				PRINTFORML 　（この部位には既に%ACCESSORY:LTARGET:APOINT%がついています）
+			PRINTL [0] - つける
+			PRINTL [1] - やっぱやめる
+
+			BINPUT
+			IF !RESULT
+				ACCESSORY:LTARGET:APOINT = %EQUIPD_ACCESSORY%
+				PRINTFORMW %CHARANAMEF(LTARGET)%の%ERDNAME(ACCESSORY,APOINT)%に%EQUIPD_ACCESSORY%を付け終わった
+			ENDIF
+		ENDIF
+	CASE 100
+		DRAWLINE
+		PRINTFORML □%CHARANAMEF(LTARGET)%の装飾
+		FOR LCOUNT, 0, VARSIZE("ACCESSORY")
+			SIF ERDNAME(ACCESSORY,LCOUNT) != ""
+				PRINTFORML 　%ERDNAME(ACCESSORY,LCOUNT)%：\@ACCESSORY:LTARGET:LCOUNT != "" ? %ACCESSORY:LTARGET:LCOUNT% # なし \@
+		NEXT
+		WAIT
+ENDSELECT
+
+RESTART
+

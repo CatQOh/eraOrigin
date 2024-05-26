@@ -1,0 +1,130 @@
+﻿;-------------------------------------------------
+;針
+;-------------------------------------------------
+@USERCOM_ABLE_針
+#FUNCTION
+;ゲーセンに居る場合はできない
+コマンド実行条件 += "ゲーセンでは実行不可/"
+SIF TEQUIP:ゲームセンター
+	COMRESULT = 0
+;上級売春中は不可
+コマンド実行条件 += "上級売春中は実行不可/"
+SIF 上級売春中
+	COMRESULT = 0
+;アイテムを持っているか、アイテムなし設定でないとダメ
+コマンド実行条件 += "アイテム[針]が必要/"
+SIF !ITEM:針
+	COMRESULT = 0
+;助手の場合従順5未満だとでないとダメ（サド、針さばきならＯＫ）
+コマンド実行条件 += "実行者が助手の場合、[サド]or[針さばき]or従順LV6以上必要/"
+IF PLAYER != MASTER
+	SIF ABL:PLAYER:従順 < 5 && !TALENT:PLAYER:サド && !TALENT:PLAYER:針さばき
+		COMRESULT = 0
+ENDIF
+;ＣorＰとＢが両方塞がってるとダメ
+コマンド実行条件 += "対象の刺突可能な部位が服で覆われてるか道具使用中だと実行できない/"
+コマンド実行条件 += "対象が[去勢済み]の場合胸が露出していないかB道具使用中だと実行できない/"
+SIF (((PENIS(TARGET) && Ｐ使用中(TARGET)) || TEQUIP:クリキャップ || TALENT:去勢済み) || OVER_GENITAL(TARGET) != "") && (OVER_BUST(TARGET) != "" || Ｂ使用中(TARGET))
+	COMRESULT = 0
+;触手調教中はダメ
+コマンド実行条件 += "触手召喚中は実行できない/"
+SIF TEQUIP:触手
+	COMRESULT = 0
+;お風呂場プレイ中はダメ
+コマンド実行条件 += "お風呂場では実行できない/"
+SIF TEQUIP:お風呂場
+	COMRESULT = 0
+;新妻プレイ中はダメ
+コマンド実行条件 += "エプロン使用中は実行できない/"
+SIF TEQUIP:エプロン
+	COMRESULT = 0
+コマンド実行条件 += "睡眠中は実行できない/"
+SIF TEQUIP:睡眠
+	COMRESULT = 0
+
+RETURNF COMRESULT
+
+@針刺突部位
+#FUNCTIONS
+SELECTCASE TFLAG:刺突箇所
+	CASE 1
+		RETURNF "乳首"
+	CASE 2
+		IF PENIS(TARGET)
+			RETURNF "ペニス"
+		ELSE
+			RETURNF "クリトリス"
+		ENDIF
+ENDSELECT
+RETURNF ""
+
+@COM_針
+IF OVER_BUST(TARGET) != "" || Ｂ使用中(TARGET)
+	TFLAG:刺突箇所 = 2
+ELSEIF ((PENIS(TARGET) && Ｐ使用中(TARGET)) || TEQUIP:クリキャップ || TALENT:去勢済み) || OVER_GENITAL(TARGET) != ""
+	TFLAG:刺突箇所 = 1
+ELSEIF !ISSKIP() && (PENIS(TARGET) || SEX(TARGET) == 2)
+	PRINTL 針でどこを責めますか？
+	PRINTL [1] - 乳首
+	PRINTL [2] - 性器
+	PRINTL [0] - やめる
+	BINPUT
+	SIF RESULT == 0
+		RETURN 0
+	TFLAG:刺突箇所 = RESULT
+ELSE
+	TFLAG:刺突箇所 = 1
+ENDIF
+
+PRINTL 針
+CALL KOJO_MESSAGE_COM
+
+;-------------------------------------------------
+;ソース追加処理
+;-------------------------------------------------
+;消費体力、気力
+SELECTCASE TFLAG:刺突箇所
+	CASE 1
+		LOSEBASE:体力 += 120
+		LOSEBASE:気力 += 80
+
+		SOURCE:苦痛 = 1500
+		SOURCE:恐怖 = 1000
+		SOURCE:逸脱 = 300
+		SOURCE:反感 = 1000
+	CASE 2
+		LOSEBASE:体力 += 150
+		LOSEBASE:気力 += 100
+
+		SOURCE:苦痛 = 2000
+		SOURCE:恐怖 = 1500
+		SOURCE:逸脱 = 500
+		SOURCE:反感 = 1200
+ENDSELECT
+
+;-------------------------------------------------
+;特殊ソース処理
+;-------------------------------------------------
+;苦痛のパラメータによる苦痛のソース増加は先に処理しておく
+SOURCE:苦痛 += GETPALAMLV(PALAM:苦痛, 4)*(SOURCE:苦痛/2)
+
+;-------------------------------------------------
+;絶頂チェック
+;-------------------------------------------------
+CALL SOURCE_CHECK_CVAB
+
+;-------------------------------------------------
+;射精チェック
+;-------------------------------------------------
+CALL SAMEN_CHECK_T, 0
+
+CALL SAMEN_SHOOT_T, 0, NOWEX:射精
+
+;-------------------------------------------------
+;経験の処理
+;-------------------------------------------------
+CALL EXPUP_BASE, 1, 4
+
+CALL EXPUP, "医療経験", 1, PLAYER
+
+RETURN 1

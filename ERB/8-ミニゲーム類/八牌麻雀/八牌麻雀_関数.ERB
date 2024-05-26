@@ -1,0 +1,504 @@
+﻿;;;フィッシャー・イェーツのシャッフル
+;;;SFL:0からSFL:{ARG-1}までの配列にシャッフルした順列を返す
+;;;TRDは交換用
+@SHUFFLE_M8, 終点
+#DIM DYNAMIC SFL, 104
+#DIM DYNAMIC TRD
+#DIM DYNAMIC 終点
+#DIM DYNAMIC LCOUNT
+
+FOR LCOUNT, 0, 終点
+	SFL:LCOUNT = LCOUNT
+NEXT
+
+FOR LCOUNT, 終点, 0, -1
+	SWAP SFL:LCOUNT, SFL:(RAND:LCOUNT)
+NEXT
+
+;今回は配列YAMAに代入
+ARRAYCOPY "SFL", "YAMA"
+
+;;;牌を並べ替える
+;;;引数はプレイヤーの番号
+;;;赤の位置は不定
+@SORTPAI, プレイヤー
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC SFL, 7
+#DIM DYNAMIC プレイヤー
+
+FOR LCOUNT, 0, 7
+	SFL:LCOUNT = (TEHAI:プレイヤー:LCOUNT%25)*4+(TEHAI:プレイヤー:LCOUNT/25)
+NEXT
+
+ARRAYSORT SFL
+
+FOR LCOUNT, 0, 7
+	TEHAI:プレイヤー:LCOUNT = (SFL:LCOUNT%4)*25+(SFL:LCOUNT/4)
+NEXT
+
+;;;引数に対し、牌を表示する
+@PRTPAI, 牌番号, リーチ
+#DIM DYNAMIC 牌番号
+#DIM DYNAMIC リーチ
+#DIMS DYNAMIC リーチ記号
+#DIMS DYNAMIC 表示用
+
+SIF リーチ
+	リーチ記号 = リーチ
+RESETCOLOR
+
+IF 牌番号 >= 100
+	SELECTCASE 牌番号
+		CASE 100
+			表示用 = <img src='春%リーチ記号%' 
+		CASE 101
+			表示用 = <img src='夏%リーチ記号%' 
+		CASE 102
+			表示用 = <img src='秋%リーチ記号%' 
+		CASE 103
+			表示用 = <img src='冬%リーチ記号%' 
+		CASE 200
+			表示用 = <img src='牌背%リーチ記号%' 
+	ENDSELECT
+ELSE
+	;赤五萬
+	IF (牌番号 == 79 && M8:赤五萬) || (牌番号 == 54 && M8:赤五萬 >= 2) || (牌番号%25 == 4 && M8:赤五萬 >= 3)
+		表示用 = <img src='赤五萬%リーチ記号%' 
+	;赤五筒
+	ELSEIF (牌番号 == 88 && M8:赤五筒) || (牌番号 == 63 && M8:赤五筒 >= 2) || (牌番号%25 == 13 && M8:赤五筒 >= 3)
+		表示用 = <img src='赤五筒%リーチ記号%' 
+	;赤三筒
+	ELSEIF (牌番号 == 86 && M8:赤三筒) || (牌番号 == 61 && M8:赤三筒 == 2)
+		表示用 = <img src='赤三筒%リーチ記号%' 
+	;金三筒もといスーパー赤三筒
+	ELSEIF 牌番号 == 61 && M8:赤三筒 >= 3
+		表示用 = <img src='金三筒%リーチ記号%' 
+	;赤北
+	ELSEIF 牌番号 == 96 && M8:赤北
+		表示用 = <img src='赤北%リーチ記号%' 
+	ELSE
+		表示用 = <img src='%牌名:(牌番号%25)%%リーチ記号%' 
+	ENDIF
+ENDIF
+
+IF リーチ
+	表示用 += "height='200' width='300'>"
+ELSE
+	表示用 += "height='300' width='200' ypos='-75'>"
+ENDIF
+
+HTML_PRINT 表示用, 1
+
+;;;シャンテン数を返す式中関数
+;;;0シャンテンをテンパイ、-1シャンテンをアガリとみなす
+;;;[シャンテン数] = 4 - [メンツ数]*2 - [ターツor対子数] - [ヘッド数]
+;;;ただし、[メンツ数]+[ターツor対子数]の最大は2、[ヘッド数]の最大は1
+@SHANTEN8(手牌:0, 手牌:1, 手牌:2, 手牌:3, 手牌:4, 手牌:5, 手牌:6, 手牌:7, 手牌:8)
+#FUNCTION
+#DIM DYNAMIC SHANTEN
+#DIM DYNAMIC PAI, 25;種類別の牌の枚数(最初に固定)
+#DIM DYNAMIC PAI2, 25;種類別の牌の枚数(計算用 メンツ切り出しによって減っていく)
+#DIM DYNAMIC MENTSU
+#DIM DYNAMIC TOITSU
+#DIM DYNAMIC TATSU
+#DIM DYNAMIC MT;[メンツ数]+[ターツor対子数]のカウントに利用
+#DIM DYNAMIC KOUHO
+#DIM DYNAMIC HEAD
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC LCOUNT2
+#DIM DYNAMIC 手牌, 9
+
+;手牌:0～手牌:7の引数を-1にするか、手牌:8で除外する番号を指定しているとカウントしない
+FOR LCOUNT, 0, 8
+	SIF 手牌:LCOUNT != -1 && LCOUNT != 手牌:8
+		PAI:(手牌:LCOUNT%25)++
+NEXT
+
+;メンツを4通りの方法で切り出す
+;順子と刻子の組み合わせで2*2=4通り
+
+;刻子+刻子
+ARRAYCOPY "PAI", "PAI2"
+
+FOR LCOUNT, 0, 25
+	IF PAI2:LCOUNT >= 3
+		PAI2:LCOUNT -= 3
+		MENTSU++
+	ENDIF
+NEXT
+FOR LCOUNT, 0, 25
+	IF PAI2:LCOUNT >= 2
+		PAI2:LCOUNT -= 2
+		TOITSU++
+	ENDIF
+NEXT
+FOR LCOUNT, 0, 8
+	IF PAI2:LCOUNT && PAI2:(LCOUNT+1)
+		PAI2:LCOUNT--
+		PAI2:(LCOUNT+1)--
+		TATSU++
+	ENDIF
+NEXT
+FOR LCOUNT, 9, 17
+	IF PAI2:LCOUNT && PAI2:(LCOUNT+1)
+		PAI2:LCOUNT--
+		PAI2:(LCOUNT+1)--
+		TATSU++
+	ENDIF
+NEXT
+FOR LCOUNT, 0, 7
+	IF PAI2:LCOUNT && PAI2:(LCOUNT+2)
+		PAI2:LCOUNT--
+		PAI2:(LCOUNT+2)--
+		TATSU++
+	ENDIF
+NEXT
+FOR LCOUNT, 9, 16
+	IF PAI2:LCOUNT && PAI2:(LCOUNT+2)
+		PAI2:LCOUNT--
+		PAI2:(LCOUNT+2)--
+		TATSU++
+	ENDIF
+NEXT
+MT = MENTSU
+IF MT == 0 && TATSU >= 2
+	MT = 2
+	KOUHO += 2
+	TATSU -= 2
+ELSEIF MT < 2 && TATSU >= 1
+	MT++
+	KOUHO++
+	TATSU--
+ENDIF
+IF MT == 0 && TOITSU >= 2
+	MT = 2
+	KOUHO += 2
+	TOITSU -= 2
+ELSEIF MT < 2 && TOITSU >= 1
+	MT++
+	KOUHO++
+	TOITSU--
+ENDIF
+SIF TOITSU
+	HEAD++
+SHANTEN = 4 - 2*MENTSU - KOUHO - HEAD
+
+FOR LCOUNT, 0, 16
+	IF LCOUNT%9 < 7
+		;順子+順子
+		VARSET MENTSU
+		VARSET TOITSU
+		VARSET TATSU
+		VARSET MT
+		VARSET KOUHO
+		VARSET HEAD
+		ARRAYCOPY "PAI", "PAI2"
+		FOR LCOUNT2, LCOUNT, LCOUNT+18
+			IF LCOUNT2%9 < 7
+				DO
+					IF PAI2:(LCOUNT2%18) && PAI2:(LCOUNT2%18+1) && PAI2:(LCOUNT2%18+2)
+						PAI2:(LCOUNT2%18)--
+						PAI2:(LCOUNT2%18+1)--
+						PAI2:(LCOUNT2%18+2)--
+						MENTSU++
+					ENDIF
+				LOOP PAI2:(LCOUNT2%18) && PAI2:(LCOUNT2%18+1) && PAI2:(LCOUNT2%18+2)
+			ENDIF
+		NEXT
+		FOR LCOUNT2, 0, 25
+			IF PAI2:LCOUNT2 >= 2
+				PAI2:LCOUNT2 -= 2
+				TOITSU++
+			ENDIF
+		NEXT
+		FOR LCOUNT2, 0, 8
+			IF PAI2:LCOUNT2 && PAI2:(LCOUNT2+1)
+				PAI2:LCOUNT2--
+				PAI2:(LCOUNT2+1)--
+				TATSU++
+			ENDIF
+		NEXT
+		FOR LCOUNT2, 9, 17
+			IF PAI2:LCOUNT2 && PAI2:(LCOUNT2+1)
+				PAI2:LCOUNT2--
+				PAI2:(LCOUNT2+1)--
+				TATSU++
+			ENDIF
+		NEXT
+		FOR LCOUNT2, 0, 7
+			IF PAI2:LCOUNT2 && PAI2:(LCOUNT2+2)
+				PAI2:LCOUNT2--
+				PAI2:(LCOUNT2+2)--
+				TATSU++
+			ENDIF
+		NEXT
+		FOR LCOUNT2, 9, 16
+			IF PAI2:LCOUNT2 && PAI2:(LCOUNT2+2)
+				PAI2:LCOUNT2--
+				PAI2:(LCOUNT2+2)--
+				TATSU++
+			ENDIF
+		NEXT
+		MT = MENTSU
+		IF MT == 0 && TATSU >= 2
+			MT = 2
+			KOUHO += 2
+			TATSU -= 2
+		ELSEIF MT < 2 && TATSU >= 1
+			MT++
+			KOUHO++
+			TATSU--
+		ENDIF
+		IF MT == 0 && TOITSU >= 2
+			MT = 2
+			KOUHO += 2
+			TOITSU -= 2
+		ELSEIF MT < 2 && TOITSU >= 1
+			MT++
+			KOUHO++
+			TOITSU--
+		ENDIF
+		SIF TOITSU
+			HEAD++
+		SIF SHANTEN > 4 - 2*MENTSU - KOUHO - HEAD
+			SHANTEN = 4 - 2*MENTSU - KOUHO - HEAD
+			
+		;順子+刻子
+		VARSET MENTSU
+		VARSET TOITSU
+		VARSET TATSU
+		VARSET MT
+		VARSET KOUHO
+		VARSET HEAD
+		ARRAYCOPY "PAI", "PAI2"
+		FOR LCOUNT2, LCOUNT, LCOUNT+18
+			IF LCOUNT2%9 < 7
+				IF PAI2:(LCOUNT2%18) && PAI2:(LCOUNT2%18+1) && PAI2:(LCOUNT2%18+2)
+					PAI2:(LCOUNT2%18)--
+					PAI2:(LCOUNT2%18+1)--
+					PAI2:(LCOUNT2%18+2)--
+					MENTSU++
+					BREAK
+				ENDIF
+			ENDIF
+		NEXT
+		FOR LCOUNT2, 0, 25
+			IF PAI2:LCOUNT2 >= 3
+				PAI2:LCOUNT2 -= 3
+				MENTSU++
+				BREAK
+			ENDIF
+		NEXT
+		FOR LCOUNT2, 0, 25
+			IF PAI2:LCOUNT2 >= 2
+				PAI2:LCOUNT2 -= 2
+				TOITSU++
+			ENDIF
+		NEXT
+		FOR LCOUNT2, 0, 8
+			IF PAI2:LCOUNT2 && PAI2:(LCOUNT2+1)
+				PAI2:LCOUNT2--
+				PAI2:(LCOUNT2+1)--
+				TATSU++
+			ENDIF
+		NEXT
+		FOR LCOUNT2, 9, 17
+			IF PAI2:LCOUNT2 && PAI2:(LCOUNT2+1)
+				PAI2:LCOUNT2--
+				PAI2:(LCOUNT2+1)--
+				TATSU++
+			ENDIF
+		NEXT
+		FOR LCOUNT2, 0, 7
+			IF PAI2:LCOUNT2 && PAI2:(LCOUNT2+2)
+				PAI2:LCOUNT2--
+				PAI2:(LCOUNT2+2)--
+				TATSU++
+			ENDIF
+		NEXT
+		FOR LCOUNT2, 9, 16
+			IF PAI2:LCOUNT2 && PAI2:(LCOUNT2+2)
+				PAI2:LCOUNT2--
+				PAI2:(LCOUNT2+2)--
+				TATSU++
+			ENDIF
+		NEXT
+		MT = MENTSU
+		IF MT == 0 && TATSU >= 2
+			MT = 2
+			KOUHO += 2
+			TATSU -= 2
+		ELSEIF MT < 2 && TATSU >= 1
+			MT++
+			KOUHO++
+			TATSU--
+		ENDIF
+		IF MT == 0 && TOITSU >= 2
+			MT = 2
+			KOUHO += 2
+			TOITSU -= 2
+		ELSEIF MT < 2 && TOITSU >= 1
+			MT++
+			KOUHO++
+			TOITSU--
+		ENDIF
+		SIF TOITSU
+			HEAD++
+		SIF SHANTEN > 4 - 2*MENTSU - KOUHO - HEAD
+			SHANTEN = 4 - 2*MENTSU - KOUHO - HEAD
+
+		;刻子+順子
+		VARSET MENTSU
+		VARSET TOITSU
+		VARSET TATSU
+		VARSET MT
+		VARSET KOUHO
+		VARSET HEAD
+		ARRAYCOPY "PAI", "PAI2"
+		FOR LCOUNT2, 0, 25
+			IF PAI2:LCOUNT2 >= 3
+				PAI2:LCOUNT2 -= 3
+				MENTSU++
+				BREAK
+			ENDIF
+		NEXT
+		FOR LCOUNT2, LCOUNT, LCOUNT+18
+			IF LCOUNT2%9 < 7
+				IF PAI2:(LCOUNT2%18) && PAI2:(LCOUNT2%18+1) && PAI2:(LCOUNT2%18+2)
+					PAI2:(LCOUNT2%18)--
+					PAI2:(LCOUNT2%18+1)--
+					PAI2:(LCOUNT2%18+2)--
+					MENTSU++
+					BREAK
+				ENDIF
+			ENDIF
+		NEXT
+		FOR LCOUNT2, 0, 25
+			IF PAI2:LCOUNT2 >= 2
+				PAI2:LCOUNT2 -= 2
+				TOITSU++
+			ENDIF
+		NEXT
+		FOR LCOUNT2, 0, 8
+			IF PAI2:LCOUNT2 && PAI2:(LCOUNT2+1)
+				PAI2:LCOUNT2--
+				PAI2:(LCOUNT2+1)--
+				TATSU++
+			ENDIF
+		NEXT
+		FOR LCOUNT2, 9, 17
+			IF PAI2:LCOUNT2 && PAI2:(LCOUNT2+1)
+				PAI2:LCOUNT2--
+				PAI2:(LCOUNT2+1)--
+				TATSU++
+			ENDIF
+		NEXT
+		FOR LCOUNT2, 0, 7
+			IF PAI2:LCOUNT2 && PAI2:(LCOUNT2+2)
+				PAI2:LCOUNT2--
+				PAI2:(LCOUNT2+2)--
+				TATSU++
+			ENDIF
+		NEXT
+		FOR LCOUNT2, 9, 16
+			IF PAI2:LCOUNT2 && PAI2:(LCOUNT2+2)
+				PAI2:LCOUNT2--
+				PAI2:(LCOUNT2+2)--
+				TATSU++
+			ENDIF
+		NEXT
+		MT = MENTSU
+		IF MT == 0 && TATSU >= 2
+			MT = 2
+			KOUHO += 2
+			TATSU -= 2
+		ELSEIF MT < 2 && TATSU >= 1
+			MT++
+			KOUHO++
+			TATSU--
+		ENDIF
+		IF MT == 0 && TOITSU >= 2
+			MT = 2
+			KOUHO += 2
+			TOITSU -= 2
+		ELSEIF MT < 2 && TOITSU >= 1
+			MT++
+			KOUHO++
+			TOITSU--
+		ENDIF
+		SIF TOITSU
+			HEAD++
+		SIF SHANTEN > 4 - 2*MENTSU - KOUHO - HEAD
+			SHANTEN = 4 - 2*MENTSU - KOUHO - HEAD
+	ENDIF
+NEXT
+
+RETURNF SHANTEN
+
+
+;;;シャンテン数を返す式中関数の簡易版
+;;;ARG:0はプレイヤー番号、ARG:1は除外する番号
+@SHANTEN(プレイヤー, 除外牌)
+#FUNCTION
+#DIM DYNAMIC プレイヤー
+#DIM DYNAMIC 除外牌
+RETURNF SHANTEN8(TEHAI:プレイヤー:0, TEHAI:プレイヤー:1, TEHAI:プレイヤー:2, TEHAI:プレイヤー:3, TEHAI:プレイヤー:4, TEHAI:プレイヤー:5, TEHAI:プレイヤー:6, TSUMO, 除外牌)
+
+;;;待ちを文字列で返す式中関数
+@MACHI(手牌:0, 手牌:1, 手牌:2, 手牌:3, 手牌:4, 手牌:5, 手牌:6)
+#FUNCTIONS
+#DIM DYNAMIC 手牌, 7
+#DIM DYNAMIC LCOUNT
+#DIMS DYNAMIC 待ち
+#DIM DYNAMIC 複数
+
+FOR LCOUNT, 0, 25
+	IF SHANTEN8(手牌:0, 手牌:1, 手牌:2, 手牌:3, 手牌:4, 手牌:5, 手牌:6, LCOUNT, -1) == -1
+		SIF 複数
+			待ち += " "
+		SELECTCASE LCOUNT
+			CASE IS < 9
+				待ち += @"%CONV_NO(LCOUNT+1)%萬"
+			CASE 9 TO 17
+				待ち += @"%CONV_NO(LCOUNT%9+1)%筒"
+			CASE 18
+				待ち += "東"
+			CASE 19
+				待ち += "南"
+			CASE 20
+				待ち += "西"
+			CASE 21
+				待ち += "北"
+			CASE 22
+				待ち += "白"
+			CASE 23
+				待ち += "發"
+			CASE 24
+				待ち += "中"
+		ENDSELECT
+		複数++
+	ENDIF
+NEXT
+
+RETURNF 待ち
+
+;何もない行を30行追加する
+@LINEPLUS
+REPEAT 30
+	PRINTL
+REND
+
+@河表示, プレイヤー, 加算値
+#DIM DYNAMIC プレイヤー
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC 加算値
+
+FOR LCOUNT, 0, TURN:プレイヤー+加算値
+	IF RICHI:プレイヤー == LCOUNT
+		CALL PRTPAI, KAWA:プレイヤー:LCOUNT, 1
+	ELSE
+		CALL PRTPAI, KAWA:プレイヤー:LCOUNT
+	ENDIF
+	SIF LCOUNT%6 == 5
+		PRINT  
+NEXT

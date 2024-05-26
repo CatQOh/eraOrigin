@@ -1,0 +1,2067 @@
+﻿@口上エディタ_プロジェクト選択
+#DIM DYNAMIC LCOUNT
+TARGET = -1
+
+PRINTL □プロジェクトを選択してください
+FOR LCOUNT, 100, 130
+	SELECTCASE CHKDATA(LCOUNT)
+		CASE 0
+			PRINTFORML 　[{LCOUNT, 3}] %RESULTS%
+		CASE 1
+			PRINTFORML 　[{LCOUNT, 3}] 未使用のプロジェクト
+		CASE 2
+			PRINTFORML 　[{LCOUNT, 3}] 別バリアントのセーブデータです プロジェクト番号使用可能
+		CASE 3
+			PRINTFORML 　[{LCOUNT, 3}] 互換性の無いセーブデータです プロジェクト番号使用可能
+		CASE 4
+			PRINTFORML 　[{LCOUNT, 3}] ロードできないセーブデータです プロジェクト番号使用可能
+	ENDSELECT
+NEXT
+DRAWLINE
+PRINT 　[0] 戻る 
+;#; PRINT [1] 口上テンプレを出力する（作者用）
+PRINTL 
+
+INPUT
+SELECTCASE RESULT
+	CASE 0
+		RETURN
+	CASE 1
+		CLEARLINE LINECOUNT
+		FOR LCOUNT, 0, VARSIZE("TRAINNAME")
+			SIF TRAINNAME:LCOUNT == ""
+				CONTINUE
+			CALL 口上エディタ_コマンド, LCOUNT, 1
+		NEXT
+		OUTPUTLOG "CreatedDialogue/COM_KX1.ERB"
+		WAIT
+		RESTART
+	CASE 100 TO 130
+		IF CHKDATA(RESULT) == 0
+			LOADDATA RESULT
+		ELSE
+			口上プロジェクト = RESULT
+			JUMP 口上エディタ_COM
+		ENDIF
+ENDSELECT
+
+@口上エディタ_COM
+#DIM DYNAMIC LRESULT
+#DIM DYNAMIC PAGE
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC LCOUNT2
+#DIM DYNAMIC 処理数
+#DIM DYNAMIC 表示数 = 80
+#DIM DYNAMIC 次ページあり
+#DIM DYNAMIC 執筆行数
+#DIM DYNAMIC 表示行数
+#DIM DYNAMIC コマンド
+#DIMS DYNAMIC SPLITVAR, 3
+#DIMS DYNAMIC RECOVERY, 1000000
+
+IF TARGET == -1
+	PRINTL □口上を書くキャラを選んでください
+	VARLINE = LINECOUNT
+	CALL CHARA_ADD, 0
+	CALL CHARA_LIST, "全キャラ表示"
+	CALL CHARA_ADD, RESULT
+	SAVEDATA 口上プロジェクト, @"保存日時:%GETTIMES()% %NAME:TARGET%の口上"
+ENDIF
+
+CALL LOOP_CLEARLINE
+DRAWLINE
+PRINTFORML □%NAME:TARGET%口上執筆中 コマンドを選んでください
+処理数 = 0
+次ページあり = 0
+FOR LCOUNT, 0, VARSIZE("TRAINNAME")
+	SIF TRAINNAME:LCOUNT == ""
+		CONTINUE
+	IF INRANGE(処理数, PAGE*表示数, PAGE*表示数+表示数-1)
+		執筆行数 = 0
+		FOR LCOUNT2, 0, VARSIZE("COMD")
+			SIF COMD:LCOUNT2 == ""
+				BREAK
+			SPLIT COMD:LCOUNT2, "/", SPLITVAR
+			SIF SPLITVAR:0 == TRAINNAME:LCOUNT && SPLITVAR:2 != "乱数分岐"
+				執筆行数++
+		NEXT
+		SIF 執筆行数
+			SETCOLORBYNAME deepskyblue
+		PRINTFORMLC 　[{LCOUNT, 3}]%TRAINNAME:LCOUNT%\@ 執筆行数 > 0 ? (総執筆行数:{執筆行数}行) #\@
+		RESETCOLOR
+	ENDIF
+	処理数++
+	IF 処理数 > PAGE*表示数+表示数 && TRAINNAME:LCOUNT != ""
+		次ページあり = 1
+		BREAK
+	ENDIF
+NEXT
+CALL NEWLINE
+
+DRAWLINE
+PRINTPLAIN 　COM　
+CALL PRINTSPACE, PAGE, "[-1] 前ページ "
+PRINT [1000] 保存して終了する 
+CALL PRINTSPACE, 次ページあり, "[-9] 次ページ "
+PRINT [-10] イベント口上に切り替え 
+IF 自動保存
+	PRINT [-11] 自動保存(現在:オン)
+ELSE
+	SETCOLORBYNAME red
+	PRINT [-11] 自動保存(現在:オフ)
+	RESETCOLOR
+ENDIF
+PRINTL 
+PRINTPLAINFORM %SPACESLENS("　COM　")%
+PRINTL [-20] 口上を出力する [-21] バックアップから復元する
+
+DO
+	INPUT
+	SELECTCASE RESULT
+		CASE 1000
+			CALL 口上プロジェクトセーブ, 口上プロジェクト
+			RETURN
+		CASE -1
+			SIF PAGE > 0
+				PAGE--
+			RESTART
+		CASE -9
+			SIF 次ページあり
+				PAGE++
+			RESTART
+		CASE -10
+			JUMP 口上エディタ_EVENT
+		CASE -11
+			INVERTBIT 自動保存, 0
+			RESTART
+		CASE -20
+			PRINTL 口上を出力します。よろしいですか？(古いファイルは上書きされます。バックアップ推奨)
+			PRINTL [0] - はい
+			PRINTL [1] - いいえ
+			BINPUT
+			SIF RESULT == 0
+				CALL 口上出力
+			RESTART
+		CASE -21
+			PRINTL バックアップから口上データを復元します
+			PRINTL ※注意※
+			PRINTL 現在のプロジェクトは初期化されます。新規にプロジェクトを作成し、対象を選んでから復元することを推奨します
+			PRINTL バックアップから復元する準備は同梱の「口上エディタについて.txt」をご覧ください
+			PRINTL [0] - 準備ができたのでバックアップから復元する
+			PRINTL [1] - 戻る
+			BINPUT
+			SIF RESULT == 1
+				RESTART
+			SPLIT LOADTEXT(0), UNICODE(0xA), RECOVERY
+			ARRAYCOPY "RECOVERY", "COMD"
+			SPLIT LOADTEXT(1), UNICODE(0xA), RECOVERY
+			ARRAYCOPY "RECOVERY", "EVED"
+			SPLIT LOADTEXT(2), UNICODE(0xA), RECOVERY
+			ARRAYCOPY "RECOVERY", "ITEMD"
+			SPLIT LOADTEXT(3), UNICODE(0xA), RECOVERY
+			ARRAYCOPY "RECOVERY", "ORGD"
+			PRINTW バックアップファイルからプロジェクトを復元しました
+			RESTART
+		CASEELSE
+			コマンド = RESULT
+			SIF !INRANGE(コマンド, 0, VARSIZE("TRAINNAME")-1)
+				RESTART
+			SIF TRAINNAME:コマンド == ""
+				RESTART
+			CALL 口上エディタ_コマンド, コマンド
+			RESTART
+	ENDSELECT
+LOOP 1
+
+@口上エディタ_EVENT
+#DIM DYNAMIC LRESULT
+#DIM DYNAMIC PAGE
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC LCOUNT2
+#DIM DYNAMIC 処理数
+#DIM DYNAMIC 次ページあり
+#DIM DYNAMIC 執筆行数
+#DIM DYNAMIC 表示行数
+#DIM DYNAMIC イベント
+#DIMS DYNAMIC SPLITVAR, 3
+#DIMS DYNAMIC タイトル
+#DIM DYNAMIC 文字数 = 34
+
+;PAGE=0 イベント
+;PAGE=1 絶頂系
+;PAGE=2 道具使用時
+
+CALL LOOP_CLEARLINE
+DRAWLINE
+PRINTFORML □%NAME:TARGET%口上執筆中 イベントを選んでください
+処理数 = 0
+SELECTCASE PAGE
+	CASE 0
+		FOR LCOUNT, 0, VARSIZE("EVENTNAME")
+			執筆行数 = 0
+			FOR LCOUNT2, 0, VARSIZE("EVED")
+				SIF EVED:LCOUNT2 == ""
+					BREAK
+				SPLIT EVED:LCOUNT2, "/", SPLITVAR
+				SIF SPLITVAR:0 == EVENTNAME:LCOUNT && SPLITVAR:2 != "乱数分岐"
+					執筆行数++
+			NEXT
+			SPLIT EVENTNAME:LCOUNT, "-", タイトル
+			SIF 執筆行数
+				SETCOLORBYNAME deepskyblue
+			PRINTFORM 　[{LCOUNT, 3}]%@"%タイトル%\@ 執筆行数 > 0 ? (総執筆行数:{執筆行数}行) #\@", 文字数, LEFT%
+			RESETCOLOR
+			処理数++
+			SIF 処理数%3 == 0 && 処理数 > 0
+				PRINTL 
+		NEXT
+	CASE 1
+		FOR LCOUNT, 0, VARSIZE("ORGNAME")
+			執筆行数 = 0
+			FOR LCOUNT2, 0, VARSIZE("ORGD")
+				SIF ORGD:LCOUNT2 == ""
+					BREAK
+				SPLIT ORGD:LCOUNT2, "/", SPLITVAR
+				SIF SPLITVAR:0 == ORGNAME:LCOUNT && SPLITVAR:2 != "乱数分岐"
+					執筆行数++
+			NEXT
+			SIF 執筆行数
+				SETCOLORBYNAME deepskyblue
+			PRINTFORM 　[{LCOUNT, 3}]%@"%ORGNAME:LCOUNT%\@ 執筆行数 > 0 ? (総執筆行数:{執筆行数}行) #\@", 文字数, LEFT%
+			RESETCOLOR
+			処理数++
+			SIF 処理数%3 == 0 && 処理数 > 0
+				PRINTL 
+		NEXT
+	CASE 2
+		FOR LCOUNT, 0, VARSIZE("ITEMUSE")
+			執筆行数 = 0
+			FOR LCOUNT2, 0, VARSIZE("ITEMD")
+				SIF ITEMD:LCOUNT2 == ""
+					BREAK
+				SPLIT ITEMD:LCOUNT2, "/", SPLITVAR
+				SIF SPLITVAR:0 == ITEMUSE:LCOUNT && SPLITVAR:2 != "乱数分岐"
+					執筆行数++
+			NEXT
+			SPLIT ITEMUSE:LCOUNT, "-", タイトル
+			SIF 執筆行数
+				SETCOLORBYNAME deepskyblue
+			PRINTFORM 　[{LCOUNT, 3}]%@"%タイトル%\@ 執筆行数 > 0 ? (総執筆行数:{執筆行数}行) #\@", 文字数, LEFT%
+			RESETCOLOR
+			処理数++
+			SIF 処理数%3 == 0 && 処理数 > 0
+				PRINTL 
+		NEXT
+ENDSELECT
+CALL NEWLINE
+
+DRAWLINE
+PRINTPLAIN 　COM　
+CALL PRINTSPACE, PAGE, "[-1] 前ページ "
+PRINT [1000] 保存して終了する 
+CALL PRINTSPACE, PAGE < 2, "[-9] 次ページ "
+PRINT [-10] コマンド口上に切り替え 
+IF 自動保存
+	PRINT [-11] 自動保存(現在:オン)
+ELSE
+	SETCOLORBYNAME red
+	PRINT [-11] 自動保存(現在:オフ)
+	RESETCOLOR
+ENDIF
+PRINTL 
+PRINTPLAINFORM %SPACESLENS("　COM　")%
+PRINTL [-20] 口上を出力する
+
+DO
+	INPUT
+	SELECTCASE RESULT
+		CASE 1000
+			CALL 口上プロジェクトセーブ, 口上プロジェクト
+			RETURN
+		CASE -1
+			SIF PAGE > 0
+				PAGE--
+			RESTART
+		CASE -9
+			SIF PAGE < 2
+				PAGE++
+			RESTART
+		CASE -10
+			JUMP 口上エディタ_COM
+		CASE -11
+			INVERTBIT 自動保存, 0
+			RESTART
+		CASE -20
+			PRINTL 口上を出力します。よろしいですか？(古いファイルは上書きされます。バックアップ推奨)
+			PRINTL [0] - はい
+			PRINTL [1] - いいえ
+			BINPUT
+			SIF RESULT == 0
+				CALL 口上出力
+			RESTART
+		CASEELSE
+			イベント = RESULT
+			SELECTCASE PAGE
+				CASE 0
+					SIF !INRANGE(イベント, 0, VARSIZE("EVED"))
+						CONTINUE
+					CALL 口上エディタ_イベント, イベント, "イベント"
+				CASE 1
+					SIF !INRANGE(イベント, 0, VARSIZE("ORGD"))
+						CONTINUE
+					CALL 口上エディタ_イベント, イベント, "絶頂"
+				CASE 2
+					SIF !INRANGE(イベント, 0, VARSIZE("ITEMD"))
+						CONTINUE
+					CALL 口上エディタ_イベント, イベント, "道具系"
+			ENDSELECT
+			RESTART
+	ENDSELECT
+LOOP 1
+
+
+@口上エディタ_タグ変換, 入力
+#DIMS DYNAMIC 入力
+#DIM DYNAMIC LCOUNT
+#DIMS DYNAMIC ラベル, 2
+#DIMS DYNAMIC SPLITVAR, 10
+#DIM DYNAMIC 分割数
+
+SPLIT 入力, "＋＋＋", SPLITVAR
+分割数 = RESULT
+IF 分割数 > 1
+	入力 = 
+	FOR LCOUNT, 0, 分割数-1
+		PRINTFORML 調教者に名前が設定されている場合の{LCOUNT+1}番目の＋＋＋の中身を入力してください
+		INPUTS
+		ラベル:0 = %RESULTS%
+		PRINTFORML 調教者の名前がデフォルトの場合の{LCOUNT+1}番目の＋＋＋の中身を入力してください
+		INPUTS
+		ラベル:1 = %RESULTS%
+		入力 += @"%SPLITVAR:LCOUNT%\\@ 名前あり\(\) ? %ラベル:0% # %ラベル:1% \\@"
+	NEXT
+	入力 += SPLITVAR:(分割数-1)
+ENDIF
+SPLIT 入力, "＃＃＃", SPLITVAR
+分割数 = RESULT
+IF 分割数 > 1
+	入力 = 
+	FOR LCOUNT, 0, 分割数-1
+		入力 += SPLITVAR:LCOUNT + "%CALLNAME:PLAYER%"
+	NEXT
+	入力 += SPLITVAR:(分割数-1)
+ENDIF
+RESULTS = %入力%
+
+@口上エディタ_ヘルプ
+PRINTFORML □特殊タグの入力について
+PRINTFORML 　「＃＃＃」を入力すると口上表示時にあなたの名前が表示されるタグに変換されます
+PRINTFORML 　「＋＋＋」を入力するとあなたの名前が「あなた」かどうかで表示される文章を変える事ができます
+PRINTFORML 　（敬称をつけた場合に「あなたさん」「あなたくん」となってしまうような時にお使いください）
+PRINTFORMW 　また、タグ「＋＋＋」の中で「＃＃＃」を使う事も可能です
+
+
+@口上エディタ_コマンド, コマンド, テンプレ作成
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC LCOUNT2
+#DIM DYNAMIC コマンド
+#DIM DYNAMIC LRESULT
+#DIM DYNAMIC 段落
+#DIM DYNAMIC 選択分岐
+#DIM DYNAMIC 分岐数
+#DIMS DYNAMIC 本文
+#DIM DYNAMIC 表示行数
+#DIM DYNAMIC 執筆行数
+#DIMS DYNAMIC 内容
+#DIMS DYNAMIC SPLITVAR, 3
+#DIMS DYNAMIC SPLITVARTEQUIP, 2
+#DIM DYNAMIC 着脱コマンド, VARSIZE("TRAINNAME")
+#DIM DYNAMIC 着脱切り替え
+#DIM DYNAMIC テンプレ作成
+{
+#DIMS DYNAMIC 分岐 =
+"初実行時",
+"陥落済み",
+"恋慕",
+"親愛",
+"淫乱",
+"淫魔",
+"服従",
+"隷属",
+"屈服刻印LV3",
+"反発刻印LV3",
+"屈服刻印LV2",
+"反発刻印LV2",
+"屈服刻印LV1",
+"反発刻印LV1",
+"通常時",
+}
+
+;着脱系コマンドを登録しておく
+VARSET 着脱コマンド
+FOR LCOUNT, 0, VARSIZE("TRAINNAME")
+	SELECTCASE TRAINNAME:LCOUNT
+		{
+		CASE "クリキャップ", "バイブ", "ペニスバンド", "オナホール", "搾精コンドーム", "コンドーム",
+			 "搾精機", "貞操帯", "アナルバイブ", "アナルビーズ", "浣腸器", "拡張バルーン",
+			 "アナル電極", "電動エネマグラ", "ニプルキャップ", "搾乳器", "乳房電極",
+			 "ビデオカメラ", "ライブ配信", "アイマスク", "縄", "ボールギャグ", "尿道カテーテル",
+			 "尿道ポッキー", "触手挿入", "アナル触手", "触手クリ責め", "触手乳首責め", "触手搾乳",
+			 "触手緊縛", "触手浣腸", "触手口辱", "触手搾精", "触手射精止め", "野外プレイ", "羞恥プレイ",
+			 "お風呂場プレイ", "シャワー", "ゲームセンター", "トイレに行く", "女装させる", "新妻プレイ",
+		}
+			着脱コマンド:LCOUNT = 1
+	ENDSELECT
+NEXT
+
+SIF テンプレ作成
+	GOTO テンプレ用出力
+
+;分岐番号の表示は上から優先される
+
+DRAWLINE
+PRINTFORML □コマンド「%TRAINNAME:コマンド%」の口上
+
+FOR LCOUNT, 0, VARSIZE("分岐")
+	執筆行数 = 0
+	FOR LCOUNT2, 0, VARSIZE("COMD")
+		SIF COMD:LCOUNT2 == ""
+			BREAK
+		SPLIT COMD:LCOUNT2, "/", SPLITVAR
+		SIF SPLITVAR:0 == TRAINNAME:コマンド && SPLITVAR:1 == 分岐:LCOUNT && SPLITVAR:2 != "乱数分岐"
+			執筆行数++
+	NEXT
+	$テンプレ用出力
+	IF テンプレ作成
+		;一部のコマンドは専用のテンプレ
+		SELECTCASE TRAINNAME:コマンド
+			CASE "下着扱きする"
+				PRINTL ;-------------------------------------------------
+				PRINTL ;下着扱きする %CSTR:PLAYER:下半身下着%で下着の名前を取得
+				PRINTL ;-------------------------------------------------
+				PRINTL @COM_下着扱きする_KX1
+				PRINTL 
+				RETURN
+			CASE "お酒を飲ませる"
+				PRINTL ;-------------------------------------------------
+				PRINTL ;お酒を飲ませる %酒名%で飲ませるお酒を取得
+				PRINTL ;-------------------------------------------------
+				PRINTL @COM_お酒を飲ませる_KX1
+				PRINTL 
+				RETURN
+			CASE "ジュースを飲ませる"
+				PRINTL ;-------------------------------------------------
+				PRINTL ;ジュースを飲ませる %酒名%で飲ませるジュースを取得 酒……？
+				PRINTL ;-------------------------------------------------
+				PRINTL @COM_ジュースを飲ませる_KX1
+				PRINTL 
+				RETURN
+			CASE "プレゼント"
+				PRINTL ;-------------------------------------------------
+				PRINTL ;プレゼント 恋慕、親愛のみ
+				PRINTL ;-------------------------------------------------
+				PRINTL @COM_プレゼント_KX1
+				PRINTL ;TFLAG:プレゼントでプレゼントしたものの詳細
+				PRINTL ;0 = スマイル
+				PRINTL ;1 = パセリカード
+				PRINTL ;2 = 日用品
+				PRINTL ;3 = アクセサリ
+				PRINTL ;4 = 服
+				PRINTL ;5 = 素敵な指輪
+				PRINTL ;6 = IIDX筐体
+				PRINTL ;7 = 特注品のディルド
+				PRINTL ;8 = 特殊プレゼント %特殊プレゼント%で名前を取得
+				PRINTL ;10 = アルストロメリア
+				PRINTL ;11 = 薔薇
+				PRINTL 
+				RETURN
+			CASE "下着扱き"
+				PRINTL ;-------------------------------------------------
+				PRINTL ;下着扱き %CSTR:下半身下着%で下着の名前を取得
+				PRINTL ;-------------------------------------------------
+				PRINTL @COM_下着扱き_KX1
+				PRINTL 
+				RETURN
+		ENDSELECT
+	ENDIF
+
+	;一部のコマンドは陥落してないと使えないのでどうにかする
+	SELECTCASE TRAINNAME:コマンド
+		;恋慕系のみのコマンド
+		{
+		CASE "会話", "プレゼント", "スキンシップ", "まったりする", "吸血する", "吸血させる",
+			 "排卵マッサージ", "新妻プレイ"
+		}
+			IF テンプレ作成
+				PRINTL ;-------------------------------------------------
+				PRINTFORML ;%TRAINNAME:コマンド% 恋慕、親愛のみ
+				PRINTL ;-------------------------------------------------
+				PRINTFORML @COM_%TRAINNAME:コマンド%_KX1
+				PRINTL 
+				RETURN
+			ENDIF
+			SIF !GROUPMATCH(分岐:LCOUNT, "陥落済み", "恋慕", "親愛")
+				CONTINUE
+		;服従系のみのコマンド
+		CASE "アナル電極", "乳房電極", "フィストファック", "アナルフィスト", "両穴フィスト"
+			IF テンプレ作成
+				PRINTL ;-------------------------------------------------
+				PRINTFORML ;%TRAINNAME:コマンド% 服従、隷属のみ
+				PRINTL ;-------------------------------------------------
+				PRINTFORML @COM_%TRAINNAME:コマンド%_KX1
+				PRINTL 
+				RETURN
+			ENDIF
+			SIF !GROUPMATCH(分岐:LCOUNT, "陥落済み", "服従", "隷属")
+				CONTINUE
+		;陥落済みでのコマンド
+		{
+		CASE "ビデオ鑑賞", "母乳飲み", "ゲームセンター", "トイレに行く", "IIDXをプレイする",
+			 "ポップンをプレイする", "DDRをプレイする", "ギタドラをプレイする", "jubeatをプレイする",
+			 "リフレクをプレイする", "ボルテをプレイする", "ダンエボをプレイする", 
+			 "授乳手コキ", "正常位キスさせる", "逆レイプキス", "対面座位吸血", "背面座位吸血",
+			 "正常位吸血させる", "後背位吸血させる"
+		}
+			IF テンプレ作成
+				PRINTL ;-------------------------------------------------
+				PRINTFORML ;%TRAINNAME:コマンド% 陥落時のみ
+				PRINTL ;-------------------------------------------------
+				PRINTFORML @COM_%TRAINNAME:コマンド%_KX1
+				PRINTL 
+				RETURN
+			ENDIF
+			SIF !GROUPMATCH(分岐:LCOUNT, "陥落済み", "恋慕", "親愛", "淫乱", "淫魔", "服従", "隷属")
+				CONTINUE
+		CASEELSE
+			IF テンプレ作成
+				PRINTL ;-------------------------------------------------
+				PRINTFORML ;%TRAINNAME:コマンド%
+				PRINTL ;-------------------------------------------------
+				PRINTFORML @COM_%TRAINNAME:コマンド%_KX1
+				PRINTL 
+				RETURN
+			ENDIF
+	ENDSELECT
+	SELECTCASE 分岐:LCOUNT
+		CASE "陥落済み"
+			SIF 陥落分岐簡易化
+				PRINTFORML 　[{LCOUNT, 2}] %分岐:LCOUNT%の分岐を書く\@ 執筆行数 ? (総執筆行数:{執筆行数}行)#\@
+		CASE "恋慕", "親愛", "淫乱", "淫魔", "服従", "隷属"
+			SIF !陥落分岐簡易化
+				PRINTFORML 　[{LCOUNT, 2}] %分岐:LCOUNT%の分岐を書く\@ 執筆行数 ? (総執筆行数:{執筆行数}行)#\@
+		CASEELSE
+			SIF 分岐:LCOUNT != ""
+				PRINTFORML 　[{LCOUNT, 2}] %分岐:LCOUNT%の分岐を書く\@ 執筆行数 ? (総執筆行数:{執筆行数}行)#\@
+	ENDSELECT
+NEXT
+DRAWLINE
+PRINTPLAIN 　分岐　
+PRINTFORML [100] - 戻る [101] - 陥落分岐の簡易化(現在:\@ 陥落分岐簡易化 ? オン # オフ \@)
+
+INPUT
+LRESULT = RESULT
+SELECTCASE LRESULT
+	CASE 0 TO 19
+		SIF 分岐:LRESULT == ""
+			RESTART
+		選択分岐 = LRESULT
+		VARLINE = LINECOUNT
+		GOTO WRITE
+	CASE 100
+		RETURN
+	CASE 101
+		INVERTBIT 陥落分岐簡易化, 0
+		RESTART
+ENDSELECT
+
+$WRITE
+CLEARLINE LINECOUNT-VARLINE
+DRAWLINE
+PRINTFORM □「%TRAINNAME:コマンド%」の%分岐:選択分岐%分岐
+IF 着脱コマンド:コマンド
+	IF 着脱切り替え
+		PRINT (解除時)
+	ELSE
+		PRINT (実行時)
+	ENDIF
+ENDIF
+PRINTL 
+段落 = 0
+分岐数 = 0
+表示行数 = 0
+FOR LCOUNT, 0, VARSIZE("COMD")
+	SIF COMD:LCOUNT == ""
+		BREAK
+	SPLIT COMD:LCOUNT, "/", SPLITVAR
+	SIF SPLITVAR:0 != TRAINNAME:コマンド || SPLITVAR:1 != 分岐:選択分岐
+		CONTINUE
+	IF 着脱コマンド:コマンド
+		SPLIT SPLITVAR:2, "|", SPLITVARTEQUIP
+		SIF (SPLITVARTEQUIP:0 == "実行時" && 着脱切り替え == 1) || (SPLITVARTEQUIP:0 == "解除時" && 着脱切り替え == 0)
+			CONTINUE
+		本文 = %SPLITVARTEQUIP:1%
+	ELSE
+		本文 = %SPLITVAR:2%
+	ENDIF
+	IF 本文 == "乱数分岐"
+		分岐数++
+		PRINTBUTTON @"　乱数分岐{分岐数} [編集]", LCOUNT
+		PRINTL 
+		段落 = 1
+		表示行数++
+	ELSEIF 本文 != ""
+		SIF 段落
+			PRINT 　
+		PRINTBUTTON @"　%本文% [編集]", LCOUNT
+		PRINTL 
+		表示行数++
+	ENDIF
+NEXT
+IF 表示行数 == 0
+	PRINTBUTTON "　[行を追加]", 0
+	PRINTL
+ENDIF
+DRAWLINE
+PRINTPLAIN 　COM　
+PRINT [-1] - 戻る　[-2] - ヘルプを見る　
+SIF 着脱コマンド:コマンド
+	PRINTFORM [-9] - \@ 着脱切り替え ? 実行時の口上を書く # 解除時の口上を書く \@
+PRINTL 
+
+DO
+	INPUT
+	LRESULT = RESULT
+	SELECTCASE LRESULT
+		CASE -1
+			RESTART
+		CASE -2
+			CALL 口上エディタ_ヘルプ
+			GOTO WRITE
+		CASE -9
+			INVERTBIT 着脱切り替え, 0
+			GOTO WRITE
+		CASE 0 TO VARSIZE("COMD")-1
+			IF 表示行数 == 0
+				PRINTL [0] 行を追加
+				PRINTL [2] 乱数分岐を追加
+				PRINTL [5] 戻る
+			ELSE
+				PRINTL [0] 行を挿入(上に加筆)
+				PRINTL [1] 行を追加(下に加筆)
+				PRINTL [2] 乱数分岐を挿入(上に加筆)
+				PRINTL [3] 乱数分岐を追加(下に加筆)
+				PRINTL [4] 行を削除
+				PRINTL [5] 戻る
+			ENDIF
+			INPUT
+			SELECTCASE RESULT
+				CASE 0
+					PRINTL 文章を入力してください
+					INPUTS
+					CALL 口上エディタ_タグ変換, RESULTS
+					内容 = %RESULTS%
+					ARRAYSHIFT COMD, 1, "", LRESULT
+					IF 着脱コマンド:コマンド
+						COMD:LRESULT = %TRAINNAME:コマンド%/%分岐:選択分岐%/\@ 着脱切り替え ? 解除時 # 実行時 \@|%内容%
+					ELSE
+						COMD:LRESULT = %TRAINNAME:コマンド%/%分岐:選択分岐%/%内容%
+					ENDIF
+				CASE 1
+					PRINTL 文章を入力してください
+					INPUTS
+					CALL 口上エディタ_タグ変換, RESULTS
+					内容 = %RESULTS%
+					ARRAYSHIFT COMD, 1, "", LRESULT+1
+					IF 着脱コマンド:コマンド
+						COMD:(LRESULT+1) = %TRAINNAME:コマンド%/%分岐:選択分岐%/\@ 着脱切り替え ? 解除時 # 実行時 \@|%内容%
+					ELSE
+						COMD:(LRESULT+1) = %TRAINNAME:コマンド%/%分岐:選択分岐%/%内容%
+					ENDIF
+				CASE 2
+					ARRAYSHIFT COMD, 1, "", LRESULT
+					IF 着脱コマンド:コマンド
+						COMD:LRESULT = %TRAINNAME:コマンド%/%分岐:選択分岐%/\@ 着脱切り替え ? 解除時 # 実行時 \@|乱数分岐
+					ELSE
+						COMD:LRESULT = %TRAINNAME:コマンド%/%分岐:選択分岐%/乱数分岐
+					ENDIF
+				CASE 3
+					ARRAYSHIFT COMD, 1, "", LRESULT+1
+					IF 着脱コマンド:コマンド
+						COMD:(LRESULT+1) = %TRAINNAME:コマンド%/%分岐:選択分岐%/\@ 着脱切り替え ? 解除時 # 実行時 \@|乱数分岐
+					ELSE
+						COMD:(LRESULT+1) = %TRAINNAME:コマンド%/%分岐:選択分岐%/乱数分岐
+					ENDIF
+				CASE 4
+					PRINTL 指定の行を削除します。よろしいですか？
+					PRINTL [0] - はい
+					PRINTL [1] - いいえ
+					BINPUT
+					SIF RESULT == 0
+						ARRAYREMOVE COMD, LRESULT, 1
+				CASE 5
+					GOTO WRITE
+			ENDSELECT
+			SIF 自動保存
+				CALL 口上プロジェクトセーブ, 口上プロジェクト
+			GOTO WRITE
+	ENDSELECT
+LOOP 1
+
+@口上エディタ_イベント, イベント, タイプ
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC LCOUNT2
+#DIM DYNAMIC イベント
+#DIM DYNAMIC LRESULT
+#DIM DYNAMIC 段落
+#DIM DYNAMIC 選択分岐
+#DIM DYNAMIC 分岐数
+#DIMS DYNAMIC 本文
+#DIM DYNAMIC 表示行数
+#DIM DYNAMIC 執筆行数
+#DIMS DYNAMIC EVEVAR, 1000000
+#DIMS DYNAMIC 内容
+#DIMS DYNAMIC SPLITVAR, 3
+#DIMS DYNAMIC SPLITVARTRAIN, 2
+#DIMS DYNAMIC タイプ
+#DIMS DYNAMIC タイトル
+{
+#DIMS DYNAMIC 分岐 =
+"初実行時",
+"陥落済み",
+"恋慕",
+"親愛",
+"淫乱",
+"淫魔",
+"服従",
+"隷属",
+"屈服刻印LV3",
+"反発刻印LV3",
+"屈服刻印LV2",
+"反発刻印LV2",
+"屈服刻印LV1",
+"反発刻印LV1",
+"通常時",
+}
+
+;分岐番号の表示は上から優先される
+
+DRAWLINE
+SELECTCASE タイプ
+	CASE "イベント"
+		タイトル = %EVENTNAME:イベント%
+		ARRAYCOPY "EVED", "EVEVAR"
+	CASE "絶頂"
+		タイトル = %ORGNAME:イベント%
+		ARRAYCOPY "ORGD", "EVEVAR"
+	CASE "道具系"
+		タイトル = %ITEMUSE:イベント%
+		ARRAYCOPY "ITEMD", "EVEVAR"
+ENDSELECT
+PRINTFORML □「%タイトル%」の口上
+
+FOR LCOUNT, 0, VARSIZE("分岐")
+	執筆行数 = 0
+	FOR LCOUNT2, 0, VARSIZE("EVEVAR")
+		SIF EVEVAR:LCOUNT2 == ""
+			BREAK
+		SPLIT EVEVAR:LCOUNT2, "/", SPLITVAR
+		SELECTCASE タイプ
+			CASE "イベント"
+				SIF SPLITVAR:0 == EVENTNAME:イベント && SPLITVAR:1 == 分岐:LCOUNT && SPLITVAR:2 != "乱数分岐"
+					執筆行数++
+			CASE "絶頂"
+				SIF SPLITVAR:0 == ORGNAME:イベント && SPLITVAR:1 == 分岐:LCOUNT && SPLITVAR:2 != "乱数分岐"
+					執筆行数++
+			CASE "道具系"
+				SIF SPLITVAR:0 == ITEMUSE:イベント && SPLITVAR:1 == 分岐:LCOUNT && SPLITVAR:2 != "乱数分岐"
+					執筆行数++
+		ENDSELECT
+	NEXT
+	;場合によっては陥落済み等の条件があるのでどうにかする
+	IF タイプ == "イベント"
+		SELECTCASE EVENTNAME:イベント
+			CASE "朝フェラ", "朝パイズリ", "朝騎乗位", "調教後3P", "調教後セックス"
+				SIF !GROUPMATCH(分岐:LCOUNT, "陥落済み", "恋慕", "親愛", "淫乱", "淫魔", "服従", "隷属")
+					CONTINUE
+			CASE "[恋慕]取得時-恋慕", "[淫乱]取得時-淫乱", "[服従]取得時-服従", "[親愛]取得時-親愛", "[淫魔]取得時-娼婦", "[隷属]取得時-隷属"
+				SIF GROUPMATCH(分岐:LCOUNT, "初実行時", "陥落済み", "恋慕", "親愛", "淫乱", "淫魔", "服従", "隷属")
+					CONTINUE
+			CASE "[淫核]取得時-淫核", "[淫膣]取得時-淫膣", "[淫尻]取得時-淫尻", "[淫乳]取得時-淫乳", "[絶倫]取得時-絶倫", "[サド]取得時-サド", "[マゾ]取得時-マゾ"
+				SIF GROUPMATCH(分岐:LCOUNT, "初実行時")
+					CONTINUE
+		ENDSELECT
+	ENDIF
+	SELECTCASE 分岐:LCOUNT
+		CASE "陥落済み"
+			SIF 陥落分岐簡易化
+				PRINTFORML 　[{LCOUNT, 2}] %分岐:LCOUNT%の分岐を書く\@ 執筆行数 ? (総執筆行数:{執筆行数}行)#\@
+		CASE "恋慕", "親愛", "淫乱", "淫魔", "服従", "隷属"
+			SIF !陥落分岐簡易化
+				PRINTFORML 　[{LCOUNT, 2}] %分岐:LCOUNT%の分岐を書く\@ 執筆行数 ? (総執筆行数:{執筆行数}行)#\@
+		CASEELSE
+			SIF 分岐:LCOUNT != ""
+				PRINTFORML 　[{LCOUNT, 2}] %分岐:LCOUNT%の分岐を書く\@ 執筆行数 ? (総執筆行数:{執筆行数}行)#\@
+	ENDSELECT
+NEXT
+DRAWLINE
+PRINTPLAIN 　分岐　
+PRINTFORML [100] - 戻る [101] - 陥落分岐の簡易化(現在:\@ 陥落分岐簡易化 ? オン # オフ \@)
+
+INPUT
+LRESULT = RESULT
+SELECTCASE LRESULT
+	CASE 0 TO 19
+		SIF 分岐:LRESULT == ""
+			RESTART
+		選択分岐 = LRESULT
+		VARLINE = LINECOUNT
+		GOTO WRITE
+	CASE 100
+		RETURN
+	CASE 101
+		INVERTBIT 陥落分岐簡易化, 0
+		RESTART
+ENDSELECT
+
+$WRITE
+CLEARLINE LINECOUNT-VARLINE
+DRAWLINE
+PRINTFORML □「%タイトル%」の%分岐:選択分岐%分岐
+段落 = 0
+分岐数 = 0
+表示行数 = 0
+FOR LCOUNT, 0, VARSIZE("EVEVAR")
+	SIF EVEVAR:LCOUNT == ""
+		BREAK
+	SPLIT EVEVAR:LCOUNT, "/", SPLITVAR
+	SELECTCASE タイプ
+		CASE "イベント"
+			SIF SPLITVAR:0 != EVENTNAME:イベント || SPLITVAR:1 != 分岐:選択分岐
+				CONTINUE
+		CASE "絶頂"
+			SIF SPLITVAR:0 != ORGNAME:イベント || SPLITVAR:1 != 分岐:選択分岐
+				CONTINUE
+		CASE "道具系"
+			SIF SPLITVAR:0 != ITEMUSE:イベント || SPLITVAR:1 != 分岐:選択分岐
+				CONTINUE
+	ENDSELECT
+	本文 = %SPLITVAR:2%
+	IF 本文 == "乱数分岐"
+		分岐数++
+		PRINTBUTTON @"　乱数分岐{分岐数} [編集]", LCOUNT
+		PRINTL 
+		段落 = 1
+		表示行数++
+	ELSEIF 本文 != ""
+		SIF 段落
+			PRINT 　
+		PRINTBUTTON @"　%本文% [編集]", LCOUNT
+		PRINTL 
+		表示行数++
+	ENDIF
+NEXT
+IF 表示行数 == 0
+	PRINTBUTTON "　[行を追加]", 0
+	PRINTL
+ENDIF
+DRAWLINE
+PRINTPLAIN 　COM　
+PRINTL [-1] - 戻る　[-2] - ヘルプを見る
+
+DO
+	INPUT
+	LRESULT = RESULT
+	SELECTCASE LRESULT
+		CASE -1
+			RESTART
+		CASE -2
+			CALL 口上エディタ_ヘルプ
+			GOTO WRITE
+		CASE 0 TO VARSIZE("EVEVAR")-1
+			IF 表示行数 == 0
+				PRINTL [0] 行を追加
+				PRINTL [2] 乱数分岐を追加
+				PRINTL [5] 戻る
+			ELSE
+				PRINTL [0] 行を挿入(上に加筆)
+				PRINTL [1] 行を追加(下に加筆)
+				PRINTL [2] 乱数分岐を挿入(上に加筆)
+				PRINTL [3] 乱数分岐を追加(下に加筆)
+				PRINTL [4] 行を削除
+				PRINTL [5] 戻る
+			ENDIF
+			INPUT
+			SELECTCASE RESULT
+				CASE 0
+					PRINTL 文章を入力してください
+					INPUTS
+					CALL 口上エディタ_タグ変換, RESULTS
+					内容 = %RESULTS%
+					ARRAYSHIFT EVEVAR, 1, "", LRESULT
+					SELECTCASE タイプ
+						CASE "イベント"
+							EVEVAR:LRESULT = %EVENTNAME:イベント%/%分岐:選択分岐%/%内容%
+						CASE "絶頂"
+							EVEVAR:LRESULT = %ORGNAME:イベント%/%分岐:選択分岐%/%内容%
+						CASE "道具系"
+							EVEVAR:LRESULT = %ITEMUSE:イベント%/%分岐:選択分岐%/%内容%
+					ENDSELECT
+				CASE 1
+					PRINTL 文章を入力してください
+					INPUTS
+					CALL 口上エディタ_タグ変換, RESULTS
+					内容 = %RESULTS%
+					ARRAYSHIFT EVEVAR, 1, "", LRESULT+1
+					SELECTCASE タイプ
+						CASE "イベント"
+							EVEVAR:(LRESULT+1) = %EVENTNAME:イベント%/%分岐:選択分岐%/%内容%
+						CASE "絶頂"
+							EVEVAR:(LRESULT+1) = %ORGNAME:イベント%/%分岐:選択分岐%/%内容%
+						CASE "道具系"
+							EVEVAR:(LRESULT+1) = %ITEMUSE:イベント%/%分岐:選択分岐%/%内容%
+					ENDSELECT
+				CASE 2
+					ARRAYSHIFT EVEVAR, 1, "", LRESULT
+					SELECTCASE タイプ
+						CASE "イベント"
+							EVEVAR:LRESULT = %EVENTNAME:イベント%/%分岐:選択分岐%/乱数分岐
+						CASE "絶頂"
+							EVEVAR:LRESULT = %ORGNAME:イベント%/%分岐:選択分岐%/乱数分岐
+						CASE "道具系"
+							EVEVAR:LRESULT = %ITEMUSE:イベント%/%分岐:選択分岐%/乱数分岐
+					ENDSELECT
+				CASE 3
+					ARRAYSHIFT EVEVAR, 1, "", LRESULT+1
+					SELECTCASE タイプ
+						CASE "イベント"
+							EVEVAR:(LRESULT+1) = %EVENTNAME:イベント%/%分岐:選択分岐%/乱数分岐
+						CASE "絶頂"
+							EVEVAR:(LRESULT+1) = %ORGNAME:イベント%/%分岐:選択分岐%/乱数分岐
+						CASE "道具系"
+							EVEVAR:(LRESULT+1) = %ITEMUSE:イベント%/%分岐:選択分岐%/乱数分岐
+					ENDSELECT
+				CASE 4
+					PRINTL 指定の行を削除します。よろしいですか？
+					PRINTL [0] - はい
+					PRINTL [1] - いいえ
+					BINPUT
+					SIF RESULT == 0
+						ARRAYREMOVE EVEVAR, LRESULT, 1
+				CASE 5
+					GOTO WRITE
+			ENDSELECT
+			SELECTCASE タイプ
+				CASE "イベント"
+					ARRAYCOPY "EVEVAR", "EVED"
+				CASE "絶頂"
+					ARRAYCOPY "EVEVAR", "ORGD"
+				CASE "道具系"
+					ARRAYCOPY "EVEVAR", "ITEMD"
+			ENDSELECT
+			SIF 自動保存
+				CALL 口上プロジェクトセーブ, 口上プロジェクト
+			GOTO WRITE
+	ENDSELECT
+LOOP 1
+
+@口上プロジェクトセーブ, SAVENO
+#DIM DYNAMIC SAVENO
+SAVEDATA SAVENO, @"保存日時:%GETTIMES()% %NAME:TARGET%の口上"
+
+@口上出力
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC ECOUNT;EVENT COUNT
+#DIM DYNAMIC CCOUNT;COMMAND COUNT
+#DIM DYNAMIC BCOUNT;BRANCH COUNT
+#DIM DYNAMIC 行数
+#DIM DYNAMIC 表示済み
+#DIMS DYNAMIC SPLITVAR, 3
+#DIMS DYNAMIC SPLITVARTEQUIP, 2
+#DIMS DYNAMIC SPLITVARFUNC, 2
+#DIM DYNAMIC 着脱コマンド
+;#DIMS DYNAMIC 分岐文, 1000000
+#DIMS DYNAMIC 本文, 1000000
+#DIM DYNAMIC 分岐数
+#DIM DYNAMIC 処理済み分岐数
+#DIM DYNAMIC ISELSE
+#DIMS DYNAMIC 処理フラグ
+#DIM DYNAMIC 概要表示済み
+#DIM DYNAMIC 分岐無し
+#DIM DYNAMIC TEQUIP分岐済み
+#DIM DYNAMIC 配列終端
+#DIMS DYNAMIC 初回分岐
+#DIM DYNAMIC インデント
+{
+#DIMS DYNAMIC 分岐 =
+"初実行時",
+"陥落済み",
+"恋慕",
+"親愛",
+"淫乱",
+"淫魔",
+"服従",
+"隷属",
+"屈服刻印LV3",
+"反発刻印LV3",
+"屈服刻印LV2",
+"反発刻印LV2",
+"屈服刻印LV1",
+"反発刻印LV1",
+"通常時",
+}
+
+;適宜詰めてるので正確に取得できるはず
+配列終端 = FINDELEMENT(COMD, "", 0, VARSIZE("COMD"), 1)
+
+CLEARLINE LINECOUNT
+;COM_KX1から出力する
+
+PRINTFORML ;-------------------------------------------------
+IF ORIGIN
+	PRINTFORML ;eraOrigin用 %NAME:TARGET%口上
+ELSE
+	PRINTFORML ;eraBEMANI用 %NAME:TARGET%口上
+ENDIF
+PRINTFORML ;この口上は本体同梱の口上エディタで作成されました
+PRINTFORML ;-------------------------------------------------
+PRINTFORML ;コマンド実行時のセリフ FCOM:(COM番号)
+PRINTFORML ;-------------------------------------------------
+
+;FOR3つ入れ子 不安しかない
+FOR CCOUNT, 0, VARSIZE("TRAINNAME")
+	SIF TRAINNAME:CCOUNT == ""
+		CONTINUE
+	;軽量化のFINDELEMENT
+	SIF FINDELEMENT(COMD, TRAINNAME:CCOUNT, 0, 配列終端) == -1
+		CONTINUE
+	着脱コマンド = 0
+	ISELSE = 0
+	表示済み = 0
+	概要表示済み = 0
+	分岐無し = 0
+	TEQUIP分岐済み = 0
+	FOR BCOUNT, 0, VARSIZE("分岐")
+		行数 = 0
+		分岐数 = 0
+		SIF FINDELEMENT(COMD, @"%TRAINNAME:CCOUNT%/%分岐:BCOUNT%", 0, 配列終端) == -1
+			CONTINUE
+		;陥落分岐簡易化中なら一部の分岐無視
+		;暫定でオフ
+		;SELECTCASE 分岐:BCOUNT
+		;	CASE "陥落済み"
+		;		SIF !陥落分岐簡易化
+		;			CONTINUE
+		;	CASE "恋慕", "親愛", "淫乱", "淫魔", "服従", "隷属"
+		;		SIF 陥落分岐簡易化
+		;			CONTINUE
+		;ENDSELECT
+		VARSET 本文
+		FOR LCOUNT, 0, VARSIZE("COMD")
+			SIF COMD:LCOUNT == ""
+				BREAK
+			SPLIT COMD:LCOUNT, "/", SPLITVAR
+			;コマンド名及び分岐名が違ったら処理しない
+			SIF SPLITVAR:0 != TRAINNAME:CCOUNT || SPLITVAR:1 != 分岐:BCOUNT
+				CONTINUE
+			DEBUGPRINTFORML COMD:{LCOUNT}を分割 %SPLITVAR:0% %SPLITVAR:1% %SPLITVAR:2%
+			;本文を|でSPLITできるならそれは着脱コマンド
+			SPLIT SPLITVAR:2, "|", SPLITVARTEQUIP
+			SIF RESULT >= 2
+				着脱コマンド = 1
+			;着脱コマンドは2回回す 最初は実行時のみ処理
+			IF 着脱コマンド
+				SIF SPLITVARTEQUIP:0 == "解除時"
+					CONTINUE
+				DEBUGPRINTFORML {FINDELEMENT(本文, "", 0, VARSIZE("本文"), 1)}行目に %SPLITVARTEQUIP:1% を登録
+				;前詰めで入れていく
+				本文:FINDELEMENT(本文, "", 0, VARSIZE("本文"), 1) = %SPLITVARTEQUIP:1%
+				行数++
+				SIF SPLITVARTEQUIP:1 == "乱数分岐"
+					分岐数++
+			ELSE
+				DEBUGPRINTFORML {FINDELEMENT(本文, "", 0, VARSIZE("本文"), 1)}行目に %SPLITVAR:2% を登録
+				本文:FINDELEMENT(本文, "", 0, VARSIZE("本文"), 1) = %SPLITVAR:2%
+				行数++
+				SIF SPLITVAR:2 == "乱数分岐"
+					分岐数++
+			ENDIF
+		NEXT
+		;ここから形成
+		SIF 行数 == 0
+			CONTINUE
+		IF !概要表示済み
+			PRINTL ;-------------------------------------------------
+			PRINTFORML ;%TRAINNAME:CCOUNT%
+			PRINTL ;-------------------------------------------------
+			PRINTFORML @COM_%TRAINNAME:CCOUNT%_%CSVNAMERPS(NOF(TARGET))%
+			概要表示済み = 1
+		ENDIF
+		処理済み分岐数 = 0
+		;着脱コマンドなら実行時(TEQUIPが0時)の分岐を作る
+		IF 着脱コマンド && !TEQUIP分岐済み
+			;TEQUIPNAMEとTRAINNAMEが同じ場合
+			FOR LCOUNT, 0, VARSIZE("TEQUIP")
+				SIF TEQUIPNAME:LCOUNT == TRAINNAME:CCOUNT
+					PRINTFORML IF TEQUIP:%TEQUIPNAME:LCOUNT% == 0
+			NEXT
+			;その他
+			SELECTCASE TRAINNAME:CCOUNT
+				CASE "貞操帯"
+					PRINTL IF CFLAG:貞操帯 == 0
+				CASE "新妻プレイ"
+					PRINTL IF TEQUIP:エプロン == 0
+				CASE "トイレに行く"
+					PRINTL IF TEQUIP:トイレ == 0
+				CASE "女装させる"
+					PRINTL IF TEQUIP:女装
+				;触手系は特殊
+				CASE "触手召喚"
+					PRINTL IF TEQUIP:触手 == 0
+				CASE "触手挿入"
+					PRINTL IF TEQUIP:バイブ == 0
+				CASE "アナル触手"
+					PRINTL IF TEQUIP:アナルバイブ == 0
+				CASE "触手クリ責め"
+					PRINTL IF TEQUIP:クリキャップ == 0
+				CASE "触手乳首責め"
+					PRINTL IF TEQUIP:ニプルキャップ == 0
+				CASE "触手搾乳"
+					PRINTL IF TEQUIP:搾乳器 == 0
+				CASE "触手緊縛"
+					PRINTL IF TEQUIP:縄 == 0
+				CASE "触手浣腸"
+					PRINTL IF TEQUIP:浣腸器 == 0
+				CASE "触手口辱"
+					PRINTL IF TEQUIP:触手口辱 == 0
+				CASE "触手搾精"
+					PRINTL IF TEQUIP:オナホール == 0
+				CASE "触手射精止め"
+					PRINTL IF TEQUIP:射精止め == 0
+			ENDSELECT
+			TEQUIP分岐済み = 1
+		ENDIF
+		;着脱コマンドなら以下インデントを1つ増やす
+		SIF 着脱コマンド
+			PRINT 	
+		;IF分岐を作る
+		IF ISELSE
+			PRINT ELSEIF 
+		ELSE
+			PRINT IF 
+		ENDIF
+		処理フラグ = 
+		SELECTCASE 分岐:BCOUNT
+			CASE "初実行時"
+				PRINTL FCOM:SELECTCOM == 0
+				処理フラグ '= "FCOM:SELECTCOM = 1"
+			CASE "陥落済み"
+				PRINTL 陥落(TARGET)
+			CASE "恋慕"
+				PRINTL TALENT:恋慕
+			CASE "親愛"
+				PRINTL TALENT:親愛
+			CASE "淫乱"
+				PRINTL TALENT:淫乱
+			CASE "淫魔"
+				PRINTL TALENT:淫魔
+			CASE "服従"
+				PRINTL TALENT:服従
+			CASE "隷属"
+				PRINTL TALENT:隷属
+			CASE "屈服刻印LV3"
+				PRINTL MARK:屈服刻印 == 3
+			CASE "反発刻印LV3"
+				PRINTL MARK:反発刻印 == 3
+			CASE "屈服刻印LV2"
+				PRINTL MARK:屈服刻印 >= 2
+			CASE "反発刻印LV2"
+				PRINTL MARK:反発刻印 >= 2
+			CASE "屈服刻印LV1"
+				PRINTL MARK:屈服刻印 >= 1
+			CASE "反発刻印LV1"
+				PRINTL MARK:反発刻印 >= 1
+			CASE "通常時"
+				;CLEARLINEの前に一応改行しておく
+				IF ISELSE
+					PRINTL 
+					CLEARLINE 1
+					SIF 着脱コマンド
+						PRINT 	
+					PRINTL ELSE
+				ELSE
+					PRINTL 
+					CLEARLINE 1
+					分岐無し = 1
+				ENDIF
+		ENDSELECT
+		ISELSE = 1
+		;本文を書く
+		FOR LCOUNT, 0, VARSIZE("本文")
+			IF 本文:LCOUNT == ""
+				;乱数分岐していればENDSELECTで閉じる
+				IF 処理済み分岐数
+					SIF 着脱コマンド
+						PRINT 	
+					SIF !分岐無し
+						PRINT 	
+					PRINTL ENDSELECT
+				ENDIF
+				;処理するフラグがあれば入れる
+				IF 処理フラグ != ""
+					SIF 着脱コマンド
+						PRINT 	
+					PRINTFORML 	%処理フラグ%
+				ENDIF
+				BREAK
+			ENDIF
+			;インデント調整
+			SIF 着脱コマンド
+				PRINT 	
+			SIF !分岐無し
+				PRINT 	
+			;乱数分岐ならSELECTCASE RAND:Xを作る
+			IF 本文:LCOUNT == "乱数分岐"
+				IF 処理済み分岐数 == 0
+					PRINTFORML SELECTCASE RAND:{分岐数}
+					;インデント調整
+					SIF 着脱コマンド
+						PRINT 	
+					SIF !分岐無し
+						PRINT 	
+				ENDIF
+				PRINTFORML 	CASE {処理済み分岐数}
+				処理済み分岐数++
+			ELSE
+				;乱数分岐の有無でインデントが違う
+				IF 処理済み分岐数
+					PRINTFORML 		PRINTFORMW %本文:LCOUNT%
+				ELSE
+					PRINTFORML PRINTFORMW %本文:LCOUNT%
+				ENDIF
+			ENDIF
+		NEXT
+		表示済み = 1
+	NEXT
+	;最後にENDIFで閉じる
+	IF 表示済み && !分岐無し
+		IF 着脱コマンド
+			PRINTL 	ENDIF
+		ELSE
+			PRINTL ENDIF
+		ENDIF
+	ENDIF
+	IF !着脱コマンド
+		PRINTL 
+		CONTINUE
+	ENDIF
+	;着脱コマンドならELSEを置いてもう一度回す
+	PRINTL ELSE
+	ISELSE = 0
+	表示済み = 0
+	分岐無し = 0
+	FOR BCOUNT, 0, VARSIZE("分岐")
+		行数 = 0
+		分岐数 = 0
+		;陥落分岐簡易化中なら一部の分岐無視
+		;暫定でオフ
+		;SELECTCASE 分岐:BCOUNT
+		;	CASE "陥落済み"
+		;		SIF !陥落分岐簡易化
+		;			CONTINUE
+		;	CASE "恋慕", "親愛", "淫乱", "淫魔", "服従", "隷属"
+		;		SIF 陥落分岐簡易化
+		;			CONTINUE
+		;ENDSELECT
+		VARSET 本文
+		FOR LCOUNT, 0, VARSIZE("COMD")
+			SIF COMD:LCOUNT == ""
+				BREAK
+			SPLIT COMD:LCOUNT, "/", SPLITVAR
+			;コマンド名及び分岐名が違ったら処理しない
+			SIF SPLITVAR:0 != TRAINNAME:CCOUNT || SPLITVAR:1 != 分岐:BCOUNT
+				CONTINUE
+			SPLIT SPLITVAR:2, "|", SPLITVARTEQUIP
+			;着脱コマンドは2回回す 2回目は解除時
+			IF 着脱コマンド
+				SIF SPLITVARTEQUIP:0 == "実行時"
+					CONTINUE
+				;前詰めで入れていく
+				本文:FINDELEMENT(本文, "", 0, VARSIZE("本文"), 1) = %SPLITVARTEQUIP:1%
+				行数++
+				SIF SPLITVARTEQUIP:1 == "乱数分岐"
+					分岐数++
+			ELSE
+				本文:FINDELEMENT(本文, "", 0, VARSIZE("本文"), 1) = %SPLITVAR:2%
+				行数++
+				SIF SPLITVAR:2 == "乱数分岐"
+					分岐数++
+			ENDIF
+		NEXT
+		;ここから形成
+		SIF 行数 == 0
+			CONTINUE
+		処理済み分岐数 = 0
+		;1回目の処理で既にELSE分岐が作られているので分岐形成はしない
+		;着脱コマンドなので以下インデントを1つ増やす
+		PRINT 	
+		;IF分岐を作る
+		IF ISELSE
+			PRINT ELSEIF 
+		ELSE
+			PRINT IF 
+		ENDIF
+		処理フラグ = 
+		SELECTCASE 分岐:BCOUNT
+			CASE "初実行時"
+				PRINTL FCOM:SELECTCOM == 1
+				処理フラグ '= "FCOM:SELECTCOM = 2"
+			CASE "陥落済み"
+				PRINTL 陥落(TARGET)
+			CASE "恋慕"
+				PRINTL TALENT:恋慕
+			CASE "親愛"
+				PRINTL TALENT:親愛
+			CASE "淫乱"
+				PRINTL TALENT:淫乱
+			CASE "淫魔"
+				PRINTL TALENT:淫魔
+			CASE "服従"
+				PRINTL TALENT:服従
+			CASE "隷属"
+				PRINTL TALENT:隷属
+			CASE "屈服刻印LV3"
+				PRINTL MARK:屈服刻印 == 3
+			CASE "反発刻印LV3"
+				PRINTL MARK:反発刻印 == 3
+			CASE "屈服刻印LV2"
+				PRINTL MARK:屈服刻印 >= 2
+			CASE "反発刻印LV2"
+				PRINTL MARK:反発刻印 >= 2
+			CASE "屈服刻印LV1"
+				PRINTL MARK:屈服刻印 >= 1
+			CASE "反発刻印LV1"
+				PRINTL MARK:反発刻印 >= 1
+			CASE "通常時"
+				;CLEARLINEの前に一応改行しておく
+				IF ISELSE
+					PRINTL 
+					CLEARLINE 1
+					PRINTL 	ELSE
+				ELSE
+					PRINTL 
+					CLEARLINE 1
+					分岐無し = 1
+				ENDIF
+		ENDSELECT
+		ISELSE = 1
+		;本文を書く
+		FOR LCOUNT, 0, VARSIZE("本文")
+			IF 本文:LCOUNT == ""
+				;乱数分岐していればENDSELECTで閉じる
+				IF 処理済み分岐数
+					PRINT 	
+					SIF !分岐無し
+						PRINT 	
+					PRINTL 	ENDSELECT
+				ENDIF
+				;処理するフラグがあれば入れる
+				IF 処理フラグ != ""
+					PRINT 	
+					PRINTFORML 	%処理フラグ%
+				ENDIF
+				BREAK
+			ENDIF
+			;インデント調整
+			PRINT 	
+			SIF !分岐無し
+				PRINT 	
+			;乱数分岐ならSELECTCASE RAND:Xを作る
+			IF 本文:LCOUNT == "乱数分岐"
+				IF 処理済み分岐数 == 0
+					PRINTFORML SELECTCASE RAND:{分岐数}
+					;インデント調整
+					PRINT 	
+					SIF !分岐無し
+						PRINT 	
+				ENDIF
+				PRINTFORML 	CASE {処理済み分岐数}
+				処理済み分岐数++
+			ELSE
+				;乱数分岐の有無でインデントが違う
+				IF 処理済み分岐数
+					PRINTFORML 		PRINTFORMW %本文:LCOUNT%
+				ELSE
+					PRINTFORML PRINTFORMW %本文:LCOUNT%
+				ENDIF
+			ENDIF
+		NEXT
+		表示済み = 1
+	NEXT
+	;最後にENDIFで閉じる
+	SIF 表示済み && !分岐無し
+		PRINTL 	ENDIF
+	;IF TEQUIP～ELSEのENDIF
+	PRINTL ENDIF
+	PRINTL 
+	AWAIT
+NEXT
+
+OUTPUTLOG @"CreatedDialogue/COM_%CSVNAMERPS(NOF(TARGET))%.ERB"
+PRINTW CreatedDialogueフォルダに口上が出力されました。ERB/口上フォルダにコピーしてお使いください
+
+;バックアップ用 なにかあったときにLOADTEXTとSPLITで復元できるようにする
+CLEARLINE LINECOUNT
+FOR LCOUNT, 0, VARSIZE("COMD")
+	SIF COMD:LCOUNT == ""
+		CONTINUE
+	PRINTFORML %COMD:LCOUNT%
+NEXT
+OUTPUTLOG @"CreatedDialogue/backuptxt/COMD_%CSVNAMERPS(NOF(TARGET))%_{GETTIME()/1000}.txt"
+
+CLEARLINE LINECOUNT
+;EVENT_KX1を出力する
+
+PRINTFORML ;-------------------------------------------------
+IF ORIGIN
+	PRINTFORML ;eraOrigin用 %NAME:TARGET%口上
+ELSE
+	PRINTFORML ;eraBEMANI用 %NAME:TARGET%口上
+ENDIF
+PRINTFORML ;この口上は本体同梱の口上エディタで作成されました
+PRINTFORML ;-------------------------------------------------
+PRINTFORML ;口上の存在判定
+PRINTFORML ;--------------------------------------------------
+PRINTFORML @EXIST_KOJO_%CSVNAMERPS(NOF(TARGET))%
+PRINTL 
+PRINTFORML ;--------------------------------------------------
+PRINTFORML ;@KOJO_MESSAGE_COM関係
+PRINTFORML ;コマンド実行時に出力されます
+PRINTFORML ;--------------------------------------------------
+PRINTFORML @KOJO_COM_%CSVNAMERPS(NOF(TARGET))%
+PRINTFORML ;地の文表示関数 地の文を表示させたくないコマンドがあれば除外すると良い
+PRINTFORML TRYCALLFORM MESSAGE_COM_\%SELECTCOMS\%
+PRINTL
+PRINTFORML ;憑依時に口上を表示しない 表示する場合はコメントアウト
+PRINTFORML SIF CFLAG:憑依 >= 0
+PRINTFORML 	RETURN 0
+PRINTFORML ;ボールギャグ着用時には地の文を表示して口上をスキップする
+PRINTFORML SIF TEQUIP:ボールギャグ &&  SELECTCOMS != "ボールギャグ"
+PRINTFORML 	RETURN 0
+PRINTFORML SIF OPTION:口上表示 == 0
+PRINTFORML 	RETURN 0
+PRINTL 
+PRINTFORML TRYCALLFORM COM_\%SELECTCOMS\%_%CSVNAMERPS(NOF(TARGET))%
+PRINTL
+
+配列終端 = FINDELEMENT(ORGD, "", 0, VARSIZE("ORGD"), 1)
+
+FOR ECOUNT, 0, VARSIZE("ORGNAME")
+	SIF ORGNAME:ECOUNT == ""
+		CONTINUE
+	;軽量化のFINDELEMENT
+	SIF FINDELEMENT(ORGD, ORGNAME:ECOUNT, 0, 配列終端) == -1
+		CONTINUE
+	ISELSE = 0
+	表示済み = 0
+	概要表示済み = 0
+	分岐無し = 0
+	FOR BCOUNT, 0, VARSIZE("分岐")
+		行数 = 0
+		分岐数 = 0
+		SIF FINDELEMENT(ORGD, @"%ORGNAME:ECOUNT%/%分岐:BCOUNT%", 0, 配列終端) == -1
+			CONTINUE
+		;陥落分岐簡易化中なら一部の分岐無視
+		;暫定でオフ
+		;SELECTCASE 分岐:BCOUNT
+		;	CASE "陥落済み"
+		;		SIF !陥落分岐簡易化
+		;			CONTINUE
+		;	CASE "恋慕", "親愛", "淫乱", "淫魔", "服従", "隷属"
+		;		SIF 陥落分岐簡易化
+		;			CONTINUE
+		;ENDSELECT
+		VARSET 本文
+		FOR LCOUNT, 0, VARSIZE("ORGD")
+			SIF ORGD:LCOUNT == ""
+				BREAK
+			SPLIT ORGD:LCOUNT, "/", SPLITVAR
+			;イベント名及び分岐名が違ったら処理しない
+			SIF SPLITVAR:0 != ORGNAME:ECOUNT || SPLITVAR:1 != 分岐:BCOUNT
+				CONTINUE
+			DEBUGPRINTFORML {FINDELEMENT(本文, "", 0, VARSIZE("本文"), 1)}行目に %SPLITVAR:2% を登録
+			本文:FINDELEMENT(本文, "", 0, VARSIZE("本文"), 1) = %SPLITVAR:2%
+			行数++
+			SIF SPLITVAR:2 == "乱数分岐"
+				分岐数++
+		NEXT
+		;ここから形成
+		SIF 行数 == 0
+			CONTINUE
+		IF !概要表示済み
+			初回分岐 = 
+			処理フラグ = 
+			SELECTCASE ORGNAME:ECOUNT
+				CASE "調教者の射精"
+					PRINTFORML ;-------------------------------------------------
+					PRINTFORML ;@KOJO_MESSAGE_SHOOT
+					PRINTFORML ;調教者の射精をトリガーにした口上
+					PRINTFORML ;-------------------------------------------------
+					PRINTFORML @KOJO_MESSAGE_SHOOT_%CSVNAMERPS(NOF(TARGET))%
+					PRINTFORML ;助手が調教した時に口上をスキップする（好みに応じて使う、行頭の;を消すとスキップするようになる）
+					PRINTFORML ;SIF PLAYER != MASTER
+					PRINTFORML ;	RETURN 0 
+					PRINTL 
+					PRINTFORML ;地の文表示関数 地の文を表示させたくない場合はコメントアウト
+					PRINTFORML TRYCALL SHOOT_MESSAGE
+					PRINTL 
+					PRINTFORML ;憑依時に口上を表示しない 表示する場合はコメントアウト
+					PRINTFORML SIF CFLAG:憑依 >= 0
+					PRINTFORML 	RETURN 0
+					PRINTFORML ;ボールギャグ着用時にはスキップする
+					PRINTFORML SIF TEQUIP:ボールギャグ && SELECTCOMS != "ボールギャグ"
+					PRINTFORML 	RETURN 0
+					PRINTFORML SIF OPTION:口上表示 == 0
+					PRINTFORML 	RETURN 0
+					PRINTL 
+					初回分岐 '= @"FEX:{ECOUNT} == 0"
+					処理フラグ '= @"FEX:{ECOUNT} = 1"
+				CASE "触手の射精"
+					PRINTFORML ;-------------------------------------------------
+					PRINTFORML ;@KOJO_MESSAGE_TSHOOT
+					PRINTFORML ;触手の射精をトリガーにした口上
+					PRINTFORML ;-------------------------------------------------
+					PRINTFORML @KOJO_MESSAGE_TSHOOT_%CSVNAMERPS(NOF(TARGET))%
+					PRINTFORML ;助手が調教した時に口上をスキップする（好みに応じて使う、行頭の;を消すとスキップするようになる）
+					PRINTFORML ;SIF PLAYER != MASTER
+					PRINTFORML ;	RETURN 0 
+					PRINTL 
+					PRINTFORML ;地の文表示関数 表示させたくない場合はコメントアウト
+					PRINTFORML TRYCALL TSHOOT_MESSAGE
+					PRINTL 
+					PRINTFORML ;憑依時に口上を表示しない 表示する場合はコメントアウト
+					PRINTFORML SIF CFLAG:憑依 >= 0
+					PRINTFORML 	RETURN 0
+					PRINTFORML ;ボールギャグ着用時にはスキップする
+					PRINTFORML SIF TEQUIP:ボールギャグ && SELECTCOMS != "ボールギャグ"
+					PRINTFORML 	RETURN 0
+					PRINTFORML SIF OPTION:口上表示 == 0
+					PRINTFORML 	RETURN 0
+					PRINTFORML ;-------------------------------------------------
+					PRINTFORML ;触手の射精時のテキスト
+					PRINTFORML ;-------------------------------------------------
+					PRINTFORML ;-------------------------------------------------
+					PRINTFORML ;触手が射精
+					PRINTFORML ;-------------------------------------------------
+					PRINTFORML IF NOWEX:MASTER:触手射精
+					初回分岐 '= @"FEX:{ECOUNT} == 0"
+					処理フラグ '= @"FEX:{ECOUNT} = 1"
+				CASEELSE
+					PRINTL ;--------------------------------------------------
+					PRINTFORML ;%ORGNAME:ECOUNT%
+					PRINTL ;--------------------------------------------------
+					PRINTFORML IF NOWEX:%ORGNAME:ECOUNT%
+					初回分岐 '= @"FEX:{ECOUNT} == 0"
+					処理フラグ '= @"FEX:{ECOUNT} = 1"
+			ENDSELECT
+			概要表示済み = 1
+		ENDIF
+		処理済み分岐数 = 0
+		;絶頂系は全部インデント入れる
+		;IF分岐を作る
+		IF ISELSE
+			PRINT 	ELSEIF 
+		ELSE
+			PRINT 	IF 
+		ENDIF
+		SELECTCASE 分岐:BCOUNT
+			CASE "初実行時"
+				PRINTFORML %初回分岐%
+			CASE "陥落済み"
+				PRINTL 陥落(TARGET)
+			CASE "恋慕"
+				PRINTL TALENT:恋慕
+			CASE "親愛"
+				PRINTL TALENT:親愛
+			CASE "淫乱"
+				PRINTL TALENT:淫乱
+			CASE "淫魔"
+				PRINTL TALENT:淫魔
+			CASE "服従"
+				PRINTL TALENT:服従
+			CASE "隷属"
+				PRINTL TALENT:隷属
+			CASE "屈服刻印LV3"
+				PRINTL MARK:屈服刻印 == 3
+			CASE "反発刻印LV3"
+				PRINTL MARK:反発刻印 == 3
+			CASE "屈服刻印LV2"
+				PRINTL MARK:屈服刻印 >= 2
+			CASE "反発刻印LV2"
+				PRINTL MARK:反発刻印 >= 2
+			CASE "屈服刻印LV1"
+				PRINTL MARK:屈服刻印 >= 1
+			CASE "反発刻印LV1"
+				PRINTL MARK:反発刻印 >= 1
+			CASE "通常時"
+				;CLEARLINEの前に一応改行しておく
+				IF ISELSE
+					PRINTL 
+					CLEARLINE 1
+					PRINTL 	ELSE
+				ELSE
+					PRINTL 
+					CLEARLINE 1
+					分岐無し = 1
+				ENDIF
+		ENDSELECT
+		ISELSE = 1
+		;本文を書く
+		FOR LCOUNT, 0, VARSIZE("本文")
+			IF 本文:LCOUNT == ""
+				;乱数分岐していればENDSELECTで閉じる
+				IF 処理済み分岐数
+					SIF !分岐無し
+						PRINT 	
+					PRINTL 	ENDSELECT
+				ENDIF
+				;処理するフラグがあれば入れる
+				SIF 処理フラグ != "" && 分岐:BCOUNT == "初実行時"
+					PRINTFORML 		%処理フラグ%
+				BREAK
+			ENDIF
+			;インデント調整
+			SIF !分岐無し
+				PRINT 	
+			;乱数分岐ならSELECTCASE RAND:Xを作る
+			IF 本文:LCOUNT == "乱数分岐"
+				IF 処理済み分岐数 == 0
+					PRINTFORML 	SELECTCASE RAND:{分岐数}
+					;インデント調整
+					SIF !分岐無し
+						PRINT 	
+				ENDIF
+				PRINTFORML 		CASE {処理済み分岐数}
+				処理済み分岐数++
+			ELSE
+				;乱数分岐の有無でインデントが違う
+				IF 処理済み分岐数
+					PRINTFORML 			PRINTFORMW %本文:LCOUNT%
+				ELSE
+					PRINTFORML 	PRINTFORMW %本文:LCOUNT%
+				ENDIF
+			ENDIF
+		NEXT
+		表示済み = 1
+	NEXT
+	;最後にENDIFで閉じる
+	SIF 表示済み && !分岐無し
+		PRINTL 	ENDIF
+	;最後にもう一回ENDIF
+	SIF 表示済み
+		PRINTL ENDIF
+	PRINTL 
+	AWAIT
+NEXT
+
+PRINTFORML ;-------------------------------------------------
+PRINTFORML ;イベント口上集
+PRINTFORML ;-------------------------------------------------
+PRINTFORML @KOJO_EVENT_%CSVNAMERPS(NOF(TARGET))%, イベント名
+PRINTFORML #DIMS DYNAMIC イベント名
+PRINTFORML ;地の文表示関数 地の文表示させたくない場合はコメントアウト
+PRINTFORML TRYCALLFORM EVENT_MESSAGE_\%イベント名\%
+PRINTL 
+PRINTFORML ;憑依時に口上を表示しない 表示する場合はコメントアウト
+PRINTFORML SIF CFLAG:憑依 >= 0
+PRINTFORML 	RETURN 0
+PRINTFORML SIF OPTION:口上表示 == 0
+PRINTFORML 	RETURN 0
+PRINTL 
+PRINTFORML TRYCALLFORM EVENT_\%イベント名\%_%CSVNAMERPS(NOF(TARGET))%
+PRINTL 
+配列終端 = FINDELEMENT(EVED, "", 0, VARSIZE("EVED"), 1)
+
+FOR ECOUNT, 0, VARSIZE("EVENTNAME")
+	SIF EVENTNAME:ECOUNT == ""
+		CONTINUE
+	;軽量化のFINDELEMENT
+	SIF FINDELEMENT(EVED, EVENTNAME:ECOUNT, 0, 配列終端) == -1
+		CONTINUE
+	ISELSE = 0
+	表示済み = 0
+	概要表示済み = 0
+	分岐無し = 0
+	FOR BCOUNT, 0, VARSIZE("分岐")
+		行数 = 0
+		分岐数 = 0
+		SIF FINDELEMENT(EVED, @"%EVENTNAME:ECOUNT%/%分岐:BCOUNT%", 0, 配列終端) == -1
+			CONTINUE
+		;陥落分岐簡易化中なら一部の分岐無視
+		;暫定でオフ
+		;SELECTCASE 分岐:BCOUNT
+		;	CASE "陥落済み"
+		;		SIF !陥落分岐簡易化
+		;			CONTINUE
+		;	CASE "恋慕", "親愛", "淫乱", "淫魔", "服従", "隷属"
+		;		SIF 陥落分岐簡易化
+		;			CONTINUE
+		;ENDSELECT
+		VARSET 本文
+		FOR LCOUNT, 0, VARSIZE("EVED")
+			SIF EVED:LCOUNT == ""
+				BREAK
+			SPLIT EVED:LCOUNT, "/", SPLITVAR
+			;イベント名及び分岐名が違ったら処理しない
+			SIF SPLITVAR:0 != EVENTNAME:ECOUNT || SPLITVAR:1 != 分岐:BCOUNT
+				CONTINUE
+			DEBUGPRINTFORML {FINDELEMENT(本文, "", 0, VARSIZE("本文"), 1)}行目に %SPLITVAR:2% を登録
+			本文:FINDELEMENT(本文, "", 0, VARSIZE("本文"), 1) = %SPLITVAR:2%
+			行数++
+			SIF SPLITVAR:2 == "乱数分岐"
+				分岐数++
+		NEXT
+		;ここから形成
+		SIF 行数 == 0
+			CONTINUE
+		IF !概要表示済み
+			初回分岐 = 
+			処理フラグ = 
+			SELECTCASE EVENTNAME:ECOUNT
+				CASE "調教開始"
+					PRINTL ;--------------------------------------------------
+					PRINTL ;調教開始時のセリフ
+					PRINTL ;--------------------------------------------------
+					PRINTFORML @KOJO_START_%CSVNAMERPS(NOF(TARGET))%
+					PRINTL ;憑依時に口上を表示しない 表示する場合はコメントアウト
+					PRINTL SIF CFLAG:憑依 >= 0
+					PRINTL 	RETURN 0
+					PRINTL SIF OPTION:口上表示 == 0
+					PRINTL 	RETURN 0
+					PRINTL 
+					初回分岐 '= "FEVE:0 == 0"
+					処理フラグ '= "FEVE:0 = 1"
+				CASE "調教終了"
+					PRINTL ;--------------------------------------------------
+					PRINTL ;調教終了時のセリフ
+					PRINTL ;--------------------------------------------------
+					PRINTFORML @KOJO_TURNEND_%CSVNAMERPS(NOF(TARGET))%
+					PRINTL ;憑依時に口上を表示しない 表示する場合はコメントアウト
+					PRINTL SIF CFLAG:憑依 >= 0
+					PRINTL 	RETURN 0
+					PRINTL SIF OPTION:口上表示 == 0
+					PRINTL 	RETURN 0
+					PRINTL 
+					初回分岐 '= "FEVE:1 == 0"
+					処理フラグ '= "FEVE:1 = 1"
+				CASEELSE
+					SPLIT EVENTNAME:ECOUNT, "-", SPLITVARFUNC
+					PRINTL ;--------------------------------------------------
+					IF RESULT >= 2
+						PRINTFORML ;%SPLITVARFUNC:0%
+					ELSE
+						PRINTFORML ;%EVENTNAME:ECOUNT%
+					ENDIF
+					PRINTL ;--------------------------------------------------
+					IF RESULT >= 2
+						PRINTFORML @EVENT_%SPLITVARFUNC:1%_%CSVNAMERPS(NOF(TARGET))%
+					ELSE
+						PRINTFORML @EVENT_%EVENTNAME:ECOUNT%_%CSVNAMERPS(NOF(TARGET))%
+					ENDIF
+					初回分岐 '= @"FEVE:{ECOUNT+10} == 0"
+					処理フラグ '= @"FEVE:{ECOUNT+10} = 1"
+			ENDSELECT
+			概要表示済み = 1
+		ENDIF
+		処理済み分岐数 = 0
+		;IF分岐を作る
+		IF ISELSE
+			PRINT ELSEIF 
+		ELSE
+			PRINT IF 
+		ENDIF
+		SELECTCASE 分岐:BCOUNT
+			CASE "初実行時"
+				PRINTFORML %初回分岐%
+			CASE "陥落済み"
+				PRINTL 陥落(TARGET)
+			CASE "恋慕"
+				PRINTL TALENT:恋慕
+			CASE "親愛"
+				PRINTL TALENT:親愛
+			CASE "淫乱"
+				PRINTL TALENT:淫乱
+			CASE "淫魔"
+				PRINTL TALENT:淫魔
+			CASE "服従"
+				PRINTL TALENT:服従
+			CASE "隷属"
+				PRINTL TALENT:隷属
+			CASE "屈服刻印LV3"
+				PRINTL MARK:屈服刻印 == 3
+			CASE "反発刻印LV3"
+				PRINTL MARK:反発刻印 == 3
+			CASE "屈服刻印LV2"
+				PRINTL MARK:屈服刻印 >= 2
+			CASE "反発刻印LV2"
+				PRINTL MARK:反発刻印 >= 2
+			CASE "屈服刻印LV1"
+				PRINTL MARK:屈服刻印 >= 1
+			CASE "反発刻印LV1"
+				PRINTL MARK:反発刻印 >= 1
+			CASE "通常時"
+				;CLEARLINEの前に一応改行しておく
+				IF ISELSE
+					PRINTL 
+					CLEARLINE 1
+					PRINTL ELSE
+				ELSE
+					PRINTL 
+					CLEARLINE 1
+					分岐無し = 1
+				ENDIF
+		ENDSELECT
+		ISELSE = 1
+		;本文を書く
+		FOR LCOUNT, 0, VARSIZE("本文")
+			IF 本文:LCOUNT == ""
+				;乱数分岐していればENDSELECTで閉じる
+				IF 処理済み分岐数
+					SIF !分岐無し
+						PRINT 	
+					PRINTL ENDSELECT
+				ENDIF
+				;処理するフラグがあれば入れる
+				SIF 処理フラグ != "" && 分岐:BCOUNT == "初実行時"
+					PRINTFORML 	%処理フラグ%
+				BREAK
+			ENDIF
+			;インデント調整
+			SIF !分岐無し
+				PRINT 	
+			;乱数分岐ならSELECTCASE RAND:Xを作る
+			IF 本文:LCOUNT == "乱数分岐"
+				IF 処理済み分岐数 == 0
+					PRINTFORML SELECTCASE RAND:{分岐数}
+					;インデント調整
+					SIF !分岐無し
+						PRINT 	
+				ENDIF
+				PRINTFORML 	CASE {処理済み分岐数}
+				処理済み分岐数++
+			ELSE
+				;乱数分岐の有無でインデントが違う
+				IF 処理済み分岐数
+					PRINTFORML 		PRINTFORMW %本文:LCOUNT%
+				ELSE
+					PRINTFORML PRINTFORMW %本文:LCOUNT%
+				ENDIF
+			ENDIF
+		NEXT
+		表示済み = 1
+	NEXT
+	;最後にENDIFで閉じる
+	SIF 表示済み && !分岐無し
+		PRINTL ENDIF
+	PRINTL 
+	AWAIT
+NEXT
+
+PRINTFORML ;-------------------------------------------------
+PRINTFORML ;アイテム使用時口上集
+PRINTFORML ;-------------------------------------------------
+PRINTFORML @KOJO_USE_ITEM_%CSVNAMERPS(NOF(TARGET))%, アイテム名
+PRINTFORML #DIMS DYNAMIC アイテム名
+PRINTFORML ;憑依時に口上を表示しない 表示する場合はコメントアウト
+PRINTFORML SIF CFLAG:憑依 >= 0
+PRINTFORML 	RETURN 0
+PRINTFORML SIF OPTION:口上表示 == 0
+PRINTFORML 	RETURN 0
+PRINTL 
+PRINTFORML TRYCALLFORM USE_ITEM_\%アイテム名\%_%CSVNAMERPS(NOF(TARGET))%
+PRINTL 
+配列終端 = FINDELEMENT(ITEMD, "", 0, VARSIZE("ITEMD"), 1)
+FOR ECOUNT, 0, VARSIZE("ITEMUSE")
+	SIF ITEMUSE:ECOUNT == ""
+		CONTINUE
+	;軽量化のFINDELEMENT
+	SIF FINDELEMENT(ITEMD, ITEMUSE:ECOUNT, 0, 配列終端) == -1
+		CONTINUE
+	ISELSE = 0
+	表示済み = 0
+	概要表示済み = 0
+	分岐無し = 0
+	FOR BCOUNT, 0, VARSIZE("分岐")
+		行数 = 0
+		分岐数 = 0
+		SIF FINDELEMENT(ITEMD, @"%ITEMUSE:ECOUNT%/%分岐:BCOUNT%", 0, 配列終端) == -1
+			CONTINUE
+		;陥落分岐簡易化中なら一部の分岐無視
+		;暫定でオフ
+		;SELECTCASE 分岐:BCOUNT
+		;	CASE "陥落済み"
+		;		SIF !陥落分岐簡易化
+		;			CONTINUE
+		;	CASE "恋慕", "親愛", "淫乱", "淫魔", "服従", "隷属"
+		;		SIF 陥落分岐簡易化
+		;			CONTINUE
+		;ENDSELECT
+		VARSET 本文
+		FOR LCOUNT, 0, VARSIZE("ITEMD")
+			SIF ITEMD:LCOUNT == ""
+				BREAK
+			SPLIT ITEMD:LCOUNT, "/", SPLITVAR
+			;イベント名及び分岐名が違ったら処理しない
+			SIF SPLITVAR:0 != ITEMUSE:ECOUNT || SPLITVAR:1 != 分岐:BCOUNT
+				CONTINUE
+			DEBUGPRINTFORML {FINDELEMENT(本文, "", 0, VARSIZE("本文"), 1)}行目に %SPLITVAR:2% を登録
+			本文:FINDELEMENT(本文, "", 0, VARSIZE("本文"), 1) = %SPLITVAR:2%
+			行数++
+			SIF SPLITVAR:2 == "乱数分岐"
+				分岐数++
+		NEXT
+		;ここから形成
+		SIF 行数 == 0
+			CONTINUE
+		IF !概要表示済み
+			初回分岐 = 
+			処理フラグ = 
+			SPLIT ITEMUSE:ECOUNT, "-", SPLITVARFUNC
+			PRINTL ;--------------------------------------------------
+			IF RESULT >= 2
+				PRINTFORML ;%SPLITVARFUNC:0%
+			ELSE
+				PRINTFORML ;%ITEMUSE:ECOUNT%
+			ENDIF
+			PRINTL ;--------------------------------------------------
+			IF RESULT >= 2
+				PRINTFORML @USE_ITEM_%SPLITVARFUNC:1%_%CSVNAMERPS(NOF(TARGET))%
+			ELSE
+				PRINTFORML @USE_ITEM_%ITEMUSE:ECOUNT%_%CSVNAMERPS(NOF(TARGET))%
+			ENDIF
+			初回分岐 '= @"FEVE:{ECOUNT+200} == 0"
+			処理フラグ '= @"FEVE:{ECOUNT+200} = 1"
+			概要表示済み = 1
+		ENDIF
+		処理済み分岐数 = 0
+		;IF分岐を作る
+		IF ISELSE
+			PRINT ELSEIF 
+		ELSE
+			PRINT IF 
+		ENDIF
+		SELECTCASE 分岐:BCOUNT
+			CASE "初実行時"
+				PRINTFORML %初回分岐%
+			CASE "陥落済み"
+				PRINTL 陥落(TARGET)
+			CASE "恋慕"
+				PRINTL TALENT:恋慕
+			CASE "親愛"
+				PRINTL TALENT:親愛
+			CASE "淫乱"
+				PRINTL TALENT:淫乱
+			CASE "淫魔"
+				PRINTL TALENT:淫魔
+			CASE "服従"
+				PRINTL TALENT:服従
+			CASE "隷属"
+				PRINTL TALENT:隷属
+			CASE "屈服刻印LV3"
+				PRINTL MARK:屈服刻印 == 3
+			CASE "反発刻印LV3"
+				PRINTL MARK:反発刻印 == 3
+			CASE "屈服刻印LV2"
+				PRINTL MARK:屈服刻印 >= 2
+			CASE "反発刻印LV2"
+				PRINTL MARK:反発刻印 >= 2
+			CASE "屈服刻印LV1"
+				PRINTL MARK:屈服刻印 >= 1
+			CASE "反発刻印LV1"
+				PRINTL MARK:反発刻印 >= 1
+			CASE "通常時"
+				;CLEARLINEの前に一応改行しておく
+				IF ISELSE
+					PRINTL 
+					CLEARLINE 1
+					PRINTL ELSE
+				ELSE
+					PRINTL 
+					CLEARLINE 1
+					分岐無し = 1
+				ENDIF
+		ENDSELECT
+		ISELSE = 1
+		;本文を書く
+		FOR LCOUNT, 0, VARSIZE("本文")
+			IF 本文:LCOUNT == ""
+				;乱数分岐していればENDSELECTで閉じる
+				IF 処理済み分岐数
+					SIF !分岐無し
+						PRINT 	
+					PRINTL ENDSELECT
+				ENDIF
+				;処理するフラグがあれば入れる
+				SIF 処理フラグ != "" && 分岐:BCOUNT == "初実行時"
+					PRINTFORML 	%処理フラグ%
+				BREAK
+			ENDIF
+			;インデント調整
+			SIF !分岐無し
+				PRINT 	
+			;乱数分岐ならSELECTCASE RAND:Xを作る
+			IF 本文:LCOUNT == "乱数分岐"
+				IF 処理済み分岐数 == 0
+					PRINTFORML SELECTCASE RAND:{分岐数}
+					;インデント調整
+					SIF !分岐無し
+						PRINT 	
+				ENDIF
+				PRINTFORML 	CASE {処理済み分岐数}
+				処理済み分岐数++
+			ELSE
+				;乱数分岐の有無でインデントが違う
+				IF 処理済み分岐数
+					PRINTFORML 		PRINTFORMW %本文:LCOUNT%
+				ELSE
+					PRINTFORML PRINTFORMW %本文:LCOUNT%
+				ENDIF
+			ENDIF
+		NEXT
+		表示済み = 1
+	NEXT
+	;最後にENDIFで閉じる
+	SIF 表示済み && !分岐無し
+		PRINTL ENDIF
+	PRINTL 
+	AWAIT
+NEXT
+
+OUTPUTLOG @"CreatedDialogue/EVENT_%CSVNAMERPS(NOF(TARGET))%.ERB"
+PRINTW CreatedDialogueフォルダに口上が出力されました。ERB/口上フォルダにコピーしてお使いください
+
+;バックアップ用 なにかあったときにLOADTEXTとSPLITで復元できるようにする
+CLEARLINE LINECOUNT
+FOR LCOUNT, 0, VARSIZE("EVED")
+	SIF EVED:LCOUNT == ""
+		BREAK
+	PRINTFORML %EVED:LCOUNT%
+NEXT
+OUTPUTLOG @"CreatedDialogue/backuptxt/EVED_%CSVNAMERPS(NOF(TARGET))%_{GETTIME()/1000}.txt"
+
+CLEARLINE LINECOUNT
+FOR LCOUNT, 0, VARSIZE("ORGD")
+	SIF ORGD:LCOUNT == ""
+		BREAK
+	PRINTFORML %ORGD:LCOUNT%
+NEXT
+OUTPUTLOG @"CreatedDialogue/backuptxt/ORGD_%CSVNAMERPS(NOF(TARGET))%_{GETTIME()/1000}.txt"
+
+CLEARLINE LINECOUNT
+FOR LCOUNT, 0, VARSIZE("ITEMD")
+	SIF ITEMD:LCOUNT == ""
+		BREAK
+	PRINTFORML %ITEMD:LCOUNT%
+NEXT
+OUTPUTLOG @"CreatedDialogue/backuptxt/ITEMD_%CSVNAMERPS(NOF(TARGET))%_{GETTIME()/1000}.txt"
+
+CLEARLINE LINECOUNT

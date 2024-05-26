@@ -1,0 +1,919 @@
+﻿;----------------------------------------------------
+;ゲームセンター経営モードのグレード名をここで定義します
+;----------------------------------------------------
+;物件グレード----------------------------------------------------
+;;;数値に対応した物件の名前
+@物件名, 物件番号
+#FUNCTIONS
+#DIM DYNAMIC 物件番号
+#DIMS DYNAMIC 物件名 = "無し", "ボロ屋", "中小スーパーのテナント", "商店街の一角", "駅中テナント", "街中物件", "百貨店テナント", "アミューズメント"
+SIF !INRANGE(物件番号, 0, VARSIZE("物件番号")-1)
+	物件番号 = 0
+RETURNF 物件名:物件番号
+
+;;;テナント物件なら1
+@GCテナント
+#FUNCTION
+RETURNF STRFIND(物件名(GC:物件), "テナント")
+
+;;;物件の値段
+@物件価格, 物件番号
+#FUNCTION
+#DIM DYNAMIC 物件番号
+SELECTCASE 物件名(物件番号)
+	CASE "ボロ屋"
+		RETURNF 300000
+	CASE "中小スーパーのテナント"
+		RETURNF 50000
+	CASE "商店街の一角"
+		RETURNF 1000000
+	CASE "駅中テナント"
+		RETURNF 200000
+	CASE "街中物件"
+		RETURNF 10000000
+	CASE "百貨店テナント"
+		RETURNF 1000000
+	CASE "アミューズメント"
+		RETURNF 300000000
+ENDSELECT
+
+;;;物件の維持費
+@物件維持費, 物件番号
+#FUNCTION
+#DIM DYNAMIC 物件番号
+SELECTCASE 物件名(物件番号)
+	CASE "ボロ屋"
+		RETURNF 3000
+	CASE "中小スーパーのテナント"
+		RETURNF 10000
+	CASE "商店街の一角"
+		RETURNF 12000
+	CASE "駅中テナント"
+		RETURNF 30000
+	CASE "街中物件"
+		RETURNF 2000
+	CASE "百貨店テナント"
+		RETURNF 100000
+	CASE "アミューズメント"
+		RETURNF 50000
+ENDSELECT
+
+;名声グレード----------------------------------------------------
+@GC名声グレード, 名声値
+#FUNCTIONS
+#DIM DYNAMIC 名声値
+
+SELECTCASE 名声値
+	CASE IS < 100
+		RETURNF "まったくの無名ゲーセン"
+	CASE IS < 500
+		RETURNF "噂のゲーセン"
+	CASE IS < 1000
+		RETURNF "ちょっと寄ってみるか程度のゲーセン"
+	CASE IS < 3000
+		RETURNF "行ってみようよあそこのゲーセン"
+	CASE IS < 5000
+		RETURNF "なかなかいいよこのゲーセン"
+	CASE IS < 10000
+		RETURNF "やっぱ一番だよここのゲーセン"
+	CASE IS < 30000
+		RETURNF "すっかり馴染んだゲーセン"
+	CASE IS < 50000
+		RETURNF "県内随一の有名ゲーセン"
+	CASE IS < 10000
+		RETURNF "県外から遠征者が来るゲーセン"
+	CASE IS < 300000
+		RETURNF "国外から遠征者が来るゲーセン"
+	CASE IS < 500000
+		RETURNF "地球外から遠征者が来るゲーセン"
+	CASE IS < 1000000
+		RETURNF "他次元から遠征者が来るゲーセン"
+	CASE IS >= 1000000
+		RETURNF "ゲーセン界の王に君臨するゲーセン"
+ENDSELECT
+
+;評判グレード----------------------------------------------------
+@GC評判グレード, 評判値
+#FUNCTIONS
+#DIM DYNAMIC 評判値
+
+SELECTCASE 評判値
+	CASE IS <= -2000
+		RETURNF "怖い人いっぱい居るよこのゲーセン(´；ω；)(；ω；｀)"
+	CASE IS <= -1000
+		RETURNF "なんかやばいよこのゲーセン(；・_・)(・_・;)"
+	CASE IS <= -500
+		RETURNF "治安悪いよねあそこのゲーセン(´･ω･)(･ω･｀)"
+	CASE IS <= -100
+		RETURNF "近寄りがたいゲーセン"
+	CASE -99 TO 99
+		RETURNF "存在すら知られていないゲーセン"
+	CASE IS >= 100
+		RETURNF "意外と居心地いいよこのゲーセン"
+	CASE IS >= 500
+		RETURNF "たまにはあそこのゲーセン行ってみる？( ･ω･)(･ω･ )"
+	CASE IS >= 1000
+		RETURNF "今日も開店アタックするぞ！(｀・ω・)(・ω・´)"
+	CASE IS >= 2000
+		RETURNF "やっぱ最高だねこのゲーセン(*´ω｀)(´ω｀*)"
+ENDSELECT
+
+;収入グレード----------------------------------------------------
+@GC収入グレード, 収入値
+#FUNCTIONS
+#DIM DYNAMIC 収入値
+
+RETURNF ""
+
+SELECTCASE 収入値
+	CASE IS < -100000
+		RETURNF "このままではｶﾞｼｬﾝしてしまう！"
+	CASE IS < -50000
+		RETURNF "ゲーセンは家計簿に火を放った"
+	CASE IS < -30000
+		RETURNF "火の車"
+	CASE IS < -10000
+		RETURNF "大赤字"
+	CASE IS < -5000
+		RETURNF "赤字"
+	CASE IS < -3000
+		RETURNF "割に合わない"
+	CASE IS < -1000
+		RETURNF "給料を切り詰めるレベル"
+	CASE 0
+		RETURNF "プラマイゼロ"
+	CASE IS < 1000
+		RETURNF "小銭稼ぎか？"
+	CASE IS < 3000
+		RETURNF "副業としては良し"
+	CASE IS < 5000
+		RETURNF "飯は食えそう"
+	CASE IS < 10000
+		RETURNF "順風満帆"
+	CASE IS < 30000
+		RETURNF "この収入なら嫁を幸せにできるぞ"
+	CASE IS < 50000
+		RETURNF "腕のいい経営者"
+	CASE IS < 100000
+		RETURNF "立派な経営者"
+	CASE IS >= 100000
+		RETURNF "GOOOOOOOOOOOOOOOOOLD!!!!!"
+ENDSELECT
+
+;メンテグレード----------------------------------------------------
+@GCメンテグレード, メンテ値
+#FUNCTIONS
+#DIMS DYNAMIC 返り値
+#DIM DYNAMIC メンテ値
+
+SELECTCASE メンテ値
+	CASE 0
+		RETURNF "グレード無し"
+	CASE 1 TO 14
+		STRDATA 返り値
+			DATA 筐体の周りが汚いなぁ……
+			DATA メンテ悪いなぁ……
+			DATA 投入口にコイン挟まったぞ！
+			DATA つまみが取れた！
+			DATA 画面の色がおかしいぞ！
+			DATA ボタンがはまった！
+			DATA コナステやったほうが100倍マシ
+			DATA メンテゴミすぎ
+			DATA 手垢やばい
+			DATA ブルスク出た
+			DATA ツーバスへたれすぎ
+			DATA 無反応多すぎ
+		ENDDATA
+	CASE 15 TO 29
+		STRDATA 返り値
+			DATA もうちょっと綺麗にできないのか？
+			DATA 全然スコア出ない！やっぱここメンテ悪い
+			DATA 遅延がひどいなぁ
+			DATA 皿の反応悪いなぁ……
+			DATA ボタン硬いなぁ……
+			DATA めっちゃ空POOR出る
+			DATA パネル抜けた
+			DATA 多重やばい
+			DATA スピーカー壊れてる
+			DATA LED切れてる
+		ENDDATA
+	CASE 30 TO 49
+		SELECTCASE RAND:4
+			CASE 0
+				RETURNF "うん……まぁいいんじゃない？"
+			CASE 1
+				RETURNF "出来ないことはない"
+			CASE 2
+				RETURNF "まぁこんなもんやろな"
+			CASE 3
+				SELECTCASE フードコートレベル()
+					CASE IS <= 3
+						RETURNF "メンテはともかくフードコートはクソマズい"
+					CASE IS <= 7
+						RETURNF "メンテもフードコートも微妙"
+					CASE IS <= 10
+						RETURNF "メンテ微妙だけどフードコートは美味い"
+					CASE IS <= 15
+						RETURNF "ゲームより飯目当てで行くゲーセン"
+					CASEELSE
+						RETURNF "ここの料理最高！メンテは凡"
+				ENDSELECT
+		ENDSELECT
+	CASE 50 TO 69
+		STRDATA 返り値
+			DATA 結構いいと思うよ
+			DATA 遅延も無いし判定良好
+			DATA ボタンの押し心地最高！
+			DATA ホームにしたい！
+			DATA もうここでしかプレイできない
+		ENDDATA
+	CASE 70 TO 79
+		RETURNF "ここでやったらスコア伸びました！"
+	CASE 80 TO 89
+		RETURNF "ここでやったら全一出ました！"
+	CASE 90 TO 99
+		RETURNF "ここでやったら理論値出ました！"
+	CASE 100
+		RETURNF "ここのゲーセンメンテ良すぎて理論値超えた！！"
+ENDSELECT
+
+RETURNF 返り値
+
+;使ってなかった
+[SKIPSTART]
+@名声計算（筐体）, ARG
+#FUNCTION
+#DIM DYNAMIC 合計値
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC 加算値
+
+FOR LCOUNT, 0, 500
+	加算値 = 0
+	SIF !設置筐体:ARG:LCOUNT
+		CONTINUE
+	SELECTCASE ERDNAME(筐体, LCOUNT)
+		CASE "beatmaniaIIDX", "beatmaniaIIDX（LM）", "pop'n music"
+			加算値 = 2
+		CASE "Dance Dance Revolution", "Dance Dance Revolution（白）", "Dance Dance Revolution（金）", "GITADORA", "Dance Evolution", "クイズマジックアカデミー"
+			加算値 = 3
+		CASE "jubeat", "REFLEC BEAT", "SOUND VOLTEX", "SOUND VOLTEX（VM）", "maimai", "CHUNITHM", "オンゲキ"
+			加算値 = 1
+		CASE "ビデオポーカー", "ポーカーソリティア", "モンテカルロ", "ブラックジャック", "カードコネクト", "カードメイカー"
+			加算値 = 1
+	ENDSELECT
+	合計値 += 設置筐体:ARG:LCOUNT*加算値
+NEXT
+
+RETURNF 合計値
+[SKIPEND]
+
+@階層収入バッファ, 階層
+#DIM DYNAMIC 階層
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC LCOUNT2
+#DIM DYNAMIC 単価
+#DIM DYNAMIC バッファ数
+#DIM DYNAMIC 自販機対象筐体数, 300
+#DIM DYNAMIC 計算用, 2
+
+[SKIPSTART]
+;#DIM DYNAMIC 計算用名声
+;#DIM DYNAMIC 計算用評判
+計算用名声 = GC:名声
+計算用評判 = GC:評判
+;天候
+SELECTCASE 天気()
+	;晴れと曇り 特に問題ない
+	CASE "晴れ", "曇り"
+	;雨と雪 評判と名声が2割減で計算される
+	CASE "雨", "雪"
+		TIMES 計算用名声 , 0.80
+		TIMES 計算用評判 , 0.80
+	;大雨と雷雨 評判と名声が4割減だが、「台風だからゲーセン空いてるやろｗ」の法則でたまに2割増になる
+	CASE "大雨", "雷雨"
+		SELECTCASE RAND:10
+			CASE 0
+				TIMES 計算用名声 , 1.20
+				TIMES 計算用評判 , 1.20
+			CASEELSE
+				TIMES 計算用名声 , 0.60
+				TIMES 計算用評判 , 0.60
+		ENDSELECT
+	;大雪 交通がマヒするので半減する
+	CASE "大雪"
+		TIMES 計算用名声 , 0.50
+		TIMES 計算用評判 , 0.50
+ENDSELECT
+[SKIPEND]
+
+;0～299
+FOR LCOUNT, 0, 300
+	自販機対象筐体数:LCOUNT = 階層別設置済み筐体:階層:LCOUNT
+NEXT
+
+;名声と評判が与える影響は撤廃 すべてメンテのみとする
+FOR LCOUNT, 0, VARSIZE("筐体")
+	;バッファ数は筐体1台につき50クレ 自販機は10クレ
+	バッファ数 = 50
+	単価 = 0
+	SIF !階層別設置済み筐体:階層:LCOUNT
+		CONTINUE
+	SELECTCASE ERDNAME(筐体, LCOUNT)
+		CASE "beatmaniaIIDX", "beatmaniaIIDX（LM）"
+			;IIDXは最高で1080 メンテでだいぶ左右される
+			単価 = 480+(GC:メンテ/10*60)
+		CASE "pop'n music"
+			;ポップンは最高で800 こっちはIIDXほどメンテの影響は大きくない
+			単価 = 600+(GC:メンテ/10*20)
+		CASE "Dance Dance Revolution", "Dance Dance Revolution（白）", "Dance Dance Revolution（金）"
+			;DDRは待ち椅子ボーナスが大きい ボーナス無しでは最高1000
+			単価 = 600+(GC:メンテ/10*40)
+		CASE "GITADORA"
+			;ギタドラは最高600だが、ギタとドラでバッファが2倍確保される
+			単価 = 300+(GC:メンテ/10*30)
+			バッファ数 *= 2
+		CASE "jubeat", "REFLEC BEAT"
+			;指とリフレクはメンテスキルが必要無い 単価は240固定
+			単価 = 240
+		CASE "SOUND VOLTEX", "SOUND VOLTEX（VM）"
+			;ボルテは単価は最低だがメンテ次第で520
+			単価 = 120+(GC:メンテ/10*40)
+		CASE "オンゲキ"
+			;ボルテより少し高い待ち椅子ボーナスは無い 最大600
+			単価 = 200+(GC:メンテ/10*40)
+		CASE "Dance Evolution"
+			;ダンエボは単価360で固定 DDRほどではないが待ち椅子ボーナスが大きい
+			単価 = 360
+		CASE "クイズマジックアカデミー"
+			;マジアカはそこまで収入には貢献しないが、名声上昇量が割と大きい メンテの必要性は無し
+			;座ってやるゲームなので待ち椅子ボーナスは無い
+			単価 = 120
+		CASE "maimai"
+			;洗濯機はメンテスキルで伸びず単価は最低だが左右台でバッファ2倍
+			単価 = 100
+			バッファ数 *= 2
+		CASE "CHUNITHM"
+			;簡単に稼げるが評判に悪影響（ひどい）単価は300
+			単価 = 300
+		CASE "カードコネクト", "カードメイカー"
+			;単価は非常に高いがバッファが極小 待ち椅子補正も無い
+			単価 = 1000
+			バッファ数 = 5
+		CASE "ビデオポーカー", "ポーカーソリティア", "モンテカルロ"
+			;ギャンブル系（コインゲーム） 腕と運次第でいくらでも続けられるので正直収入に期待してはいけない
+			;ただし下記自販機とのシナジーは筐体コストの割には大きい メダル両替機が無いと収入にならない
+			SIF !EXISTGAMES("メダル両替機")
+				CONTINUE
+			単価 = 100
+		CASE "自販機系"
+			$自販機判定
+			バッファ数 = 10
+			;同階層の筐体の影響を受ける（筐体ごとにシナジーがある）設置数が多いほど抽選されやすい
+			計算用 = RAND(SUMARRAY(自販機対象筐体数))
+			計算用:1 = 0
+			FOR LCOUNT2, 0, 300
+				計算用:1 += 自販機対象筐体数:LCOUNT2
+				IF 計算用:1 > 計算用
+					単価 = 自販機単価決定(LCOUNT, LCOUNT2)
+					BREAK
+				ENDIF
+			NEXT
+		CASEELSE
+			SIF STRFIND(ERDNAME(筐体, LCOUNT), "自販機") >= 0
+				GOTO 自販機判定
+	ENDSELECT
+	;待ち椅子ボーナスの加算
+	;オンゲキはボーナスなし マジアカも座ってやるゲームなのでなし
+	SELECTCASE ERDNAME(筐体, LCOUNT)
+		CASE "Dance Dance Revolution", "Dance Dance Revolution（白）", "Dance Dance Revolution（金）"
+			;DDRは待ち椅子ボーナスが大きい
+			単価 += 30*階層別設置済み筐体:階層:GETNUM(筐体, "待ち椅子")
+			単価 += 50*階層別設置済み筐体:階層:GETNUM(筐体, "マッサージチェア")
+		CASE "Dance Evolution"
+			;DDRほどではないが待ち椅子ボーナスが大きい
+			単価 += 20*階層別設置済み筐体:階層:GETNUM(筐体, "待ち椅子")
+			単価 += 30*階層別設置済み筐体:階層:GETNUM(筐体, "マッサージチェア")
+		CASE "beatmaniaIIDX", "beatmaniaIIDX（LM）", "pop'n music", "GITADORA", "jubeat", "REFLEC BEAT", "SOUND VOLTEX", "SOUND VOLTEX（VM）", "maimai", "CHUNITHM"
+			単価 += 10*階層別設置済み筐体:階層:GETNUM(筐体, "待ち椅子")
+			単価 += 20*階層別設置済み筐体:階層:GETNUM(筐体, "マッサージチェア")
+	ENDSELECT
+	SIF !単価
+		CONTINUE
+	;筐体ごとのバッファ数*筐体数だけバッファに入れる
+	バッファ数 *= 階層別設置済み筐体:階層:LCOUNT
+	FOR LCOUNT2, 合計バッファ, バッファ数+合計バッファ
+		収入バッファ:LCOUNT2 = {単価}/%ERDNAME(筐体, LCOUNT)%
+	NEXT
+	合計バッファ += バッファ数
+NEXT
+
+;;;ネストが深くなるので分離
+@自販機単価決定, 自販機種類, 対応筐体
+#FUNCTION
+#DIM DYNAMIC 自販機種類
+#DIM DYNAMIC 対応筐体
+SELECTCASE ERDNAME(筐体, 自販機種類)
+	CASE "自販機（飲み物）"
+		SELECTCASE ERDNAME(筐体, 対応筐体)
+			CASE "Dance Dance Revolution", "Dance Dance Revolution（白）", "Dance Dance Revolution（金）"
+				RETURNF 80
+			CASE "Dance Evolution"
+				RETURNF 60
+			CASE "GITADORA"
+				RETURNF 40
+			CASE "ビデオポーカー", "ポーカーソリティア", "モンテカルロ", "ブラックジャック"
+				RETURNF 30
+			CASE "beatmaniaIIDX", "beatmaniaIIDX（LM）", "pop'n music", "maimai", "オンゲキ"
+				RETURNF 20
+			CASE "jubeat", "REFLEC BEAT", "SOUND VOLTEX", "SOUND VOLTEX（VM）", "CHUNITHM", "クイズマジックアカデミー"
+				RETURNF 10
+		ENDSELECT
+	CASE "自販機（軽食）"
+		SELECTCASE ERDNAME(筐体, 対応筐体)
+			CASE "GITADORA"
+				RETURNF 50
+			CASE "ビデオポーカー", "ポーカーソリティア", "モンテカルロ", "ブラックジャック"
+				RETURNF 40
+			CASE "beatmaniaIIDX", "beatmaniaIIDX（LM）", "Dance Dance Revolution", "Dance Dance Revolution（白）", "Dance Dance Revolution（金）", "Dance Evolution", "maimai", "クイズマジックアカデミー"
+				RETURNF 20
+			CASE "pop'n music", "jubeat", "REFLEC BEAT", "SOUND VOLTEX", "SOUND VOLTEX（VM）", "CHUNITHM", "オンゲキ"
+				RETURNF 10
+		ENDSELECT
+	CASE "自販機（アイス）"
+		SELECTCASE ERDNAME(筐体, 対応筐体)
+			CASE "pop'n music", "Dance Dance Revolution", "Dance Dance Revolution（白）", "Dance Dance Revolution（金）", "Dance Evolution"
+				RETURNF 40
+			CASE "SOUND VOLTEX", "SOUND VOLTEX（VM）", "ビデオポーカー", "ポーカーソリティア", "モンテカルロ", "ブラックジャック"
+				RETURNF 30
+			CASE "jubeat", "maimai", "オンゲキ"
+				RETURNF 20
+			CASE "beatmaniaIIDX", "beatmaniaIIDX（LM）", "REFLEC BEAT", "GITADORA", "CHUNITHM", "クイズマジックアカデミー"
+				RETURNF 10
+		ENDSELECT
+ENDSELECT
+
+
+@筐体支出補正, 筐体ナンバー
+#FUNCTION
+#DIM DYNAMIC 筐体ナンバー
+#DIM DYNAMIC 補正額
+
+SELECTCASE ERDNAME(筐体, 筐体ナンバー)
+	CASE "beatmaniaIIDX", "beatmaniaIIDX（LM）", "GITADORA"
+		補正額 = 1000
+	CASE "pop'n music"
+		補正額 = 900
+	CASE "Dance Dance Revolution", "Dance Dance Revolution（白）", "Dance Dance Revolution（金）", "Dance Evolution"
+		補正額 = 1500
+	CASE "jubeat", "REFLEC BEAT", "maimai", "CHUNITHM", "オンゲキ"
+		補正額 = 500
+	CASE "SOUND VOLTEX", "SOUND VOLTEX（VM）"
+		補正額 = 600
+	CASE "自販機（軽食）"
+		補正額 = 400
+	CASE "クイズマジックアカデミー", "自販機（アイス）"
+		補正額 = 300
+	CASE "ビデオポーカー", "ポーカーソリティア", "モンテカルロ", "ブラックジャック", "両替機", "メダル両替機", "マッサージチェア"
+		補正額 = 100
+	CASE "カードコネクト", "カードメイカー", "PASELI券売機", "PASELIチャージ機", "自販機（飲み物）"
+		補正額 = 200
+ENDSELECT
+補正額 += 補正額/10*浪費癖人数("ゲームセンター")
+
+RETURNF 補正額
+
+@GC収入人事補正
+#FUNCTION
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC 素質
+#DIM DYNAMIC 基準値
+#DIM DYNAMIC 倍率
+#DIM DYNAMIC 合計値
+
+FOR LCOUNT, 1, CHARANUM
+	基準値 = 0
+	SIF CSTR:LCOUNT:配属 != "ゲームセンター" || !CFLAG:LCOUNT:配属完了
+		CONTINUE
+	;サボり魔はモチベに応じてサボる
+	IF サボり判定(LCOUNT)
+		CFLAG:LCOUNT:サボり = 1
+		CONTINUE
+	ENDIF
+	基準値 += ABL:LCOUNT:従順*30
+	基準値 += ABL:LCOUNT:技巧*10
+	基準値 += ABL:LCOUNT:奉仕精神*20
+	基準値 += ABL:LCOUNT:工作技能*30
+	基準値 += ABL:LCOUNT:家事技能*30
+	;統率持ちが入れば上の各能力を1づつ加算
+	;店長が統率持ちなら効果2倍
+	IF FINDCHARA(CFLAG:ゲーセン店長, 1) >= 0 && TALENT:FINDCHARA(CFLAG:ゲーセン店長, 1):統率 && !TALENT:LCOUNT:統率
+		基準値 += 240
+	ELSEIF 統率者("ゲームセンター") && !TALENT:LCOUNT:統率
+		基準値 += 120
+	ENDIF
+	;ワーカホリックレベルに応じても上がる
+	基準値 += ワーカホリックレベル(LCOUNT)*120
+	SIF TALENT:LCOUNT:音ゲーマー
+		基準値 += 100
+	
+	倍率 = 100
+	FOR 素質, 0, VARSIZE("TALENT")
+		SIF !TALENT:LCOUNT:素質
+			CONTINUE
+		SELECTCASE TALENTNAME:素質
+			CASE "生意気", "反抗的", "衝動的", "同族嫌悪"
+				倍率 -= 20
+			CASE "臆病", "プライド高い", "無関心", "男嫌い", "女嫌い", "幼稚", "ツンデレ", "汚れ無視"
+				倍率 -= 10
+			CASE "気丈", "ハイテンション", "好奇心", "潔癖症", "ファーリー", "尻尾", "動物耳", "羽"
+				倍率 += 10
+			CASE "素直", "自制心", "献身的", "魅力", "魅惑"
+				倍率 += 20
+			CASE "人気", "謎の魅力"
+				倍率 += 30
+			CASE "バストサイズ"
+				SELECTCASE TALENT:LCOUNT:バストサイズ
+					CASE 4
+						倍率 += 5
+					CASE 5
+						倍率 += 15
+					CASE 6
+						倍率 += 25
+				ENDSELECT
+		ENDSELECT
+	NEXT
+	SIF CFLAG:LCOUNT:ゲーセン店長
+		基準値 *= 2
+	SIF 倍率 < 10
+		倍率 = 10
+	合計値 += 基準値*倍率/100
+NEXT
+
+RETURNF 合計値
+
+@フードコートレベル
+#FUNCTION
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC 基準値
+#DIM DYNAMIC 料理人数
+#DIM DYNAMIC レベル
+#DIM DYNAMIC 合計値
+
+SIF !GC:フードコート
+	RETURNF 0
+
+FOR LCOUNT, 1, CHARANUM
+	基準値 = 0
+	SIF CSTR:LCOUNT:配属 != "ゲームセンター" || !CFLAG:LCOUNT:配属完了
+		CONTINUE
+	SIF CFLAG:LCOUNT:サボり
+		CONTINUE
+	;リミットバースト分は計上しない
+	IF ABL:LCOUNT:料理技能 >= 10
+		基準値 = 10
+	ELSE
+		基準値 = ABL:LCOUNT:料理技能
+		IF FINDCHARA(CFLAG:ゲーセン店長, 1) >= 0 && TALENT:FINDCHARA(CFLAG:ゲーセン店長, 1):統率 && !TALENT:LCOUNT:統率
+			基準値 += 2
+		ELSEIF 統率者("ゲームセンター") && !TALENT:LCOUNT:統率
+			基準値++
+		ENDIF
+		基準値 += ワーカホリックレベル(LCOUNT)
+		SIF 基準値 > 10
+			基準値 = 10
+	ENDIF
+	合計値 += 基準値
+	SIF TALENT:LCOUNT:料理人
+		料理人数++
+NEXT
+
+;配属してるキャラの料理技能合計でレベルが決まる 最大20
+;配属できるのは10人まで
+SELECTCASE 合計値
+	CASE IS >= 100
+		レベル = 20
+	CASE 97 TO 99
+		レベル = 19
+	CASE 92 TO 96
+		レベル = 18
+	CASE 85 TO 91
+		レベル = 17
+	CASE 35 TO 84
+		レベル = 合計値/5
+	CASE 25 TO 34
+		レベル = 6
+	CASE 16 TO 24
+		レベル = 5
+	CASE 9 TO 15
+		レベル = 4
+	CASE 4 TO 8
+		レベル = 3
+	CASE 1 TO 3
+		レベル = 2
+	CASE 0
+		レベル = 1
+ENDSELECT
+
+;料理人の数だけレベルが上がる
+レベル += 料理人数
+
+RETURNF レベル
+
+@名声筐体補正, 筐体ナンバー
+#FUNCTION
+#DIM DYNAMIC 筐体ナンバー
+#DIM DYNAMIC 補正値
+
+;大体筐体コストと同じ
+SELECTCASE ERDNAME(筐体, 筐体ナンバー)
+	CASE "beatmaniaIIDX", "beatmaniaIIDX（LM）", "pop'n music"
+		RETURNF 2
+	CASE "Dance Dance Revolution", "Dance Dance Revolution（白）", "Dance Dance Revolution（金）", "GITADORA", "Dance Evolution", "クイズマジックアカデミー"
+		RETURNF 3
+	CASE "jubeat", "REFLEC BEAT", "SOUND VOLTEX", "SOUND VOLTEX（VM）", "maimai", "CHUNITHM", "オンゲキ"
+		RETURNF 1
+	CASE "ビデオポーカー", "ポーカーソリティア", "モンテカルロ", "ブラックジャック", "カードコネクト", "カードメイカー"
+		RETURNF 1
+	CASE "マッサージチェア"
+		RETURNF 3
+	CASE "PASELI券売機", "PASELIチャージ機", "自販機（軽食）"
+		RETURNF 2
+	CASE "両替機", "メダル両替機", "自販機（飲み物）", "自販機（アイス）", "待ち椅子"
+		RETURNF 1
+ENDSELECT
+
+;#;THROW 筐体:{筐体ナンバー}番に筐体は登録されていない
+RETURNF 0
+
+@名声人事補正
+#FUNCTION
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC 素質
+#DIM DYNAMIC 基準値
+#DIM DYNAMIC 合計値
+
+FOR LCOUNT, 1, CHARANUM
+	基準値 = 0
+	SIF CSTR:LCOUNT:配属 != "ゲームセンター" || !CFLAG:LCOUNT:配属完了
+		CONTINUE
+	SIF CFLAG:LCOUNT:サボり
+		CONTINUE
+	IF FINDCHARA(CFLAG:ゲーセン店長, 1) >= 0 && TALENT:FINDCHARA(CFLAG:ゲーセン店長, 1):統率 && !TALENT:LCOUNT:統率
+		基準値 += (ABL:LCOUNT:従順+2+ワーカホリックレベル(LCOUNT))/2
+		基準値 += (ABL:LCOUNT:工作技能+2+ワーカホリックレベル(LCOUNT))/2
+		基準値 += (ABL:LCOUNT:家事技能+2+ワーカホリックレベル(LCOUNT))/2
+	ELSEIF 統率者("ゲームセンター") && !TALENT:LCOUNT:統率
+		基準値 += (ABL:LCOUNT:従順+1+ワーカホリックレベル(LCOUNT))/2
+		基準値 += (ABL:LCOUNT:工作技能+1+ワーカホリックレベル(LCOUNT))/2
+		基準値 += (ABL:LCOUNT:家事技能+1+ワーカホリックレベル(LCOUNT))/2
+	ELSE
+		基準値 += (ABL:LCOUNT:従順+ワーカホリックレベル(LCOUNT))/2
+		基準値 += (ABL:LCOUNT:工作技能+ワーカホリックレベル(LCOUNT))/2
+		基準値 += (ABL:LCOUNT:家事技能+ワーカホリックレベル(LCOUNT))/2
+	ENDIF
+	FOR 素質, 0, VARSIZE("TALENT")
+		SIF !TALENT:LCOUNT:素質
+			CONTINUE
+		SELECTCASE TALENTNAME:素質
+			CASE "臆病", "大人しい", "無関心", "感情乏しい", "保守的", "恥じらい", "抵抗", "汚れ無視", "悲観的"
+				基準値 -= 1
+			CASE "ハイテンション", "好奇心", "目立ちたがり", "解放", "ファーリー", "尻尾", "動物耳", "羽"
+				基準値 += 1
+			CASE "人気", "謎の魅力", "小人体型", "魅力", "魅惑"
+				基準値 += 2
+			CASE "音ゲーマー"
+				基準値 += 3
+			CASE "バストサイズ"
+				SELECTCASE TALENT:LCOUNT:バストサイズ
+					CASE 4, 5
+						基準値 += 1
+					CASE 6
+						基準値 += 2
+				ENDSELECT
+			CASE "体格"
+				SIF TALENT:LCOUNT:体格 <= 2
+					基準値 += 1
+		ENDSELECT
+	NEXT
+	SIF CFLAG:LCOUNT:ゲーセン店長
+		基準値 *= 2
+	SIF 基準値 < 0
+		基準値 = 0
+	合計値 += 基準値
+NEXT
+
+RETURNF 合計値
+
+@評判人事補正
+#FUNCTION
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC 素質
+#DIM DYNAMIC 補正値
+#DIM DYNAMIC 合計値
+
+;他のパラメータと違って下がるときもある
+FOR LCOUNT, 1, CHARANUM
+	補正値 = 0
+	SIF CSTR:LCOUNT:配属 != "ゲームセンター" || !CFLAG:LCOUNT:配属完了
+		CONTINUE
+	SIF CFLAG:LCOUNT:サボり
+		CONTINUE
+	IF FINDCHARA(CFLAG:ゲーセン店長, 1) >= 0 && TALENT:FINDCHARA(CFLAG:ゲーセン店長, 1):統率 && !TALENT:LCOUNT:統率
+		補正値 += (ABL:LCOUNT:従順+2+ワーカホリックレベル(LCOUNT))/5
+		補正値 += (ABL:LCOUNT:奉仕精神+2+ワーカホリックレベル(LCOUNT))/5
+	ELSEIF 統率者("ゲームセンター") && !TALENT:LCOUNT:統率
+		補正値 += (ABL:LCOUNT:従順+1+ワーカホリックレベル(LCOUNT))/5
+		補正値 += (ABL:LCOUNT:奉仕精神+1+ワーカホリックレベル(LCOUNT))/5
+	ELSE
+		補正値 += (ABL:LCOUNT:従順+ワーカホリックレベル(LCOUNT))/5
+		補正値 += (ABL:LCOUNT:奉仕精神+ワーカホリックレベル(LCOUNT))/5
+	ENDIF
+	FOR 素質, 0, VARSIZE("TALENT")
+		SIF !TALENT:LCOUNT:素質
+			CONTINUE
+		SELECTCASE TALENTNAME:素質
+			CASE "生意気", "反抗的", "衝動的", "同族嫌悪", "崩壊"
+				補正値 -= 3
+			CASE "プライド高い", "無関心", "男嫌い", "女嫌い", "汚れ無視", "倒錯的"
+				補正値 -= 2
+			CASE "臆病", "保守的", "恥じらい", "大人しい", "寂しがり屋"
+				補正値 -= 1
+			CASE "素直", "自制心", "献身的", "気丈", "潔癖症"
+				補正値 += 1
+			CASE "音ゲーマー"
+				補正値 += 3
+		ENDSELECT
+	NEXT
+	SIF CFLAG:LCOUNT:ゲーセン店長
+		補正値 *= 2
+	;-ストレス/100
+	補正値 -= CFLAG:LCOUNT:ストレス値/100
+
+	合計値 += 補正値
+NEXT
+
+;配属人数が十分でないと評判下がる
+合計値 -= MAX(GC:物件-配属人数("ゲームセンター"), 0)*10
+
+RETURNF 合計値
+
+@評判筐体補正
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC ゲーム種類, 2
+#DIM DYNAMIC 評判補正
+#DIM DYNAMIC 階層COUNT
+#DIM DYNAMIC X座標
+#DIM DYNAMIC Y座標
+#DIM DYNAMIC 筐体NO
+
+FOR 階層COUNT, 1, GC:階層+1
+	;階層ごとに筐体種のダブりが無いか調べる
+	FOR LCOUNT, 0, 400
+		SIF !階層別設置済み筐体:階層COUNT:LCOUNT
+			CONTINUE
+		;CHUNITHMは評判に悪影響
+		IF ERDNAME(筐体, LCOUNT) == "CHUNITHM"
+			ゲーム種類 -= 階層別設置済み筐体:階層COUNT:LCOUNT
+		ELSE
+			;置いてあるアーケードゲーム筐体の種類
+			SELECTCASE LCOUNT
+				CASE 0 TO 199
+					ゲーム種類++
+				;その他
+				CASEELSE
+					ゲーム種類:1++
+			ENDSELECT
+		ENDIF
+	NEXT
+	FOR LCOUNT, 0, 400
+		SIF !階層別設置済み筐体:階層COUNT:LCOUNT
+			CONTINUE
+		SELECTCASE LCOUNT
+			CASE 0 TO 99
+				;各種筐体数＞置いてある種類だと偏ってるため評判が下がる
+				IF 階層別設置済み筐体:階層COUNT:LCOUNT > ゲーム種類
+					評判補正 += POWER(階層別設置済み筐体:階層COUNT:LCOUNT-ゲーム種類, 2)
+				;偏ってなければ筐体の数だけ上がる
+				;ELSE
+				;	評判補正 += 階層別設置済み筐体:階層COUNT:LCOUNT
+				ENDIF
+			;待ち椅子だけ例外
+			CASEELSE
+				IF ERDNAME(筐体, LCOUNT) != "待ち椅子"
+					;各種筐体数＞置いてある種類だと偏ってるため評判が下がる
+					IF 階層別設置済み筐体:階層COUNT:LCOUNT > ゲーム種類:1
+						評判補正 += POWER(階層別設置済み筐体:階層COUNT:LCOUNT-ゲーム種類, 2)
+					;偏ってなければ筐体の数だけ上がる
+					;ELSE
+					;	評判補正 += 階層別設置済み筐体:階層COUNT:LCOUNT
+					ENDIF
+				ENDIF
+		ENDSELECT
+	NEXT
+	評判補正 += ゲーム種類+ゲーム種類:1
+NEXT
+
+RETURN 評判補正
+
+;;;引数で指定した曜日が定休日かどうか 省略すれば今日の曜日
+;;;書式 GCS:定休日("木") みたいな
+@GC定休日, 指定曜日
+#FUNCTION
+#DIMS DYNAMIC 分割用, 10
+#DIMS DYNAMIC 指定曜日
+
+SIF 指定曜日 == ""
+	指定曜日 = %DOW(FLAG:曜日)%
+
+SPLIT GCS:定休日, "・", 分割用
+
+IF FINDELEMENT(分割用, 指定曜日) >= 0
+	RETURNF 1
+ELSE
+	RETURNF 0
+ENDIF
+
+;;;筐体がゲーセンに設置されてるかどうかの判定用関数
+@EXISTGAMES, 筐体名
+#FUNCTION
+#DIM DYNAMIC 筐体ナンバー
+#DIM DYNAMIC LCOUNT
+#DIMS DYNAMIC 筐体名
+
+筐体ナンバー = GETNUM(筐体, 筐体名)
+
+SIF 筐体ナンバー < 0
+	RETURNF 0
+
+SELECTCASE 筐体名
+	CASE "beatmaniaIIDX"
+		{
+		IF 設置済み筐体:GETNUM(筐体, "beatmaniaIIDX") || 
+		   設置済み筐体:GETNUM(筐体, "beatmaniaIIDX（LM）")
+		}
+			RETURNF 1
+		ELSE
+			RETURNF 0
+		ENDIF
+	CASE "Dance Dance Revolution"
+		{
+		IF 設置済み筐体:GETNUM(筐体, "Dance Dance Revolution") || 
+		   設置済み筐体:GETNUM(筐体, "Dance Dance Revolution（白）") || 
+		   設置済み筐体:GETNUM(筐体, "Dance Dance Revolution（金）")
+		}
+			RETURNF 1
+		ELSE
+			RETURNF 0
+		ENDIF
+	CASE "SOUND VOLTEX"
+		{
+		IF 設置済み筐体:GETNUM(筐体, "SOUND VOLTEX") || 
+		   設置済み筐体:GETNUM(筐体, "SOUND VOLTEX（VM）")
+		}
+			RETURNF 1
+		ELSE
+			RETURNF 0
+		ENDIF
+	CASEELSE
+		IF 設置済み筐体:筐体ナンバー > 0
+			RETURNF 1
+		ELSE
+			RETURNF 0
+		ENDIF
+ENDSELECT
+
+;;;筐体価格
+@筐体価格, 筐体ナンバー
+#FUNCTION
+#DIM DYNAMIC 筐体ナンバー
+
+SELECTCASE ERDNAME(筐体, 筐体ナンバー)
+	CASE "beatmaniaIIDX", "beatmaniaIIDX（LM）", "マッサージチェア"
+		RETURNF 100000
+	CASE "pop'n music", "自販機（軽食）"
+		RETURNF 80000
+	CASE "Dance Dance Revolution", "Dance Dance Revolution（白）", "Dance Dance Revolution（金）"
+		RETURNF 130000
+	CASE "GITADORA", "自販機（飲み物）"
+		RETURNF 60000
+	CASE "jubeat", "REFLEC BEAT", "オンゲキ"
+		RETURNF 15000
+	CASE "SOUND VOLTEX", "maimai", "PASELI券売機", "SOUND VOLTEX（VM）"
+		RETURNF 20000
+	CASE "Dance Evolution"
+		RETURNF 150000
+	CASE "クイズマジックアカデミー", "CHUNITHM", "両替機", "メダル両替機", "カードコネクト", "カードメイカー"
+		RETURNF 30000
+	CASE "ビデオポーカー", "ポーカーソリティア", "モンテカルロ", "ブラックジャック"
+		RETURNF 10000
+	CASE "PASELIチャージ機"
+		RETURNF 40000
+	CASE "自販機（アイス）"
+		RETURNF 70000
+	CASE "待ち椅子"
+		RETURNF 1000
+	CASE ""
+		RETURNF 0
+ENDSELECT
+
+;#; THROW %ERDNAME(筐体, 筐体ナンバー)%の価格が設定されてない

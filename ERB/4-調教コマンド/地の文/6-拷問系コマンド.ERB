@@ -1,0 +1,324 @@
+﻿;-------------------------------------------------
+;腹パン
+;-------------------------------------------------
+@MESSAGE_COM_腹パン
+PRINTFORML %CALLNAME:TARGET%の腹部を思い切り殴った
+SIF 上級売春中
+	PRINTFORML %CALLNAME:TARGET%は座り込んで苦痛に悶えるも、その表情は妖しい笑みを含んでいる……
+SIF CFLAG:死亡
+	PRINTFORML みぞおちに受けた一撃にも、死体は一切の反応を示さない……
+WAIT
+
+;-------------------------------------------------
+;踏む
+;-------------------------------------------------
+@MESSAGE_COM_踏む
+SIF CFLAG:死亡
+	PRINT 打ち捨てられた
+PRINTFORM %CALLNAME:TARGET%の
+SELECTCASE TFLAG:踏む部位
+	CASE 0
+		PRINT 腹
+	CASE 1
+		PRINT 胸
+	CASE 2
+		SELECTCASE 異物名(TEQUIP:Ｖ異物)
+			CASE "缶"
+				PRINT 缶が挿入された
+			CASE "ペットボトル"
+				PRINT ペットボトルが挿入された
+			CASE "一升瓶"
+				PRINT 一升瓶が挿入された
+		ENDSELECT
+		PRINT 股間
+	CASE 3
+		PRINT 首
+	CASE 4
+		PRINT 顔
+ENDSELECT
+PRINTW を思い切り踏みつけた……
+
+;-------------------------------------------------
+;裸締め
+;-------------------------------------------------
+@MESSAGE_COM_裸締め
+PRINTFORMW %CALLNAME:MASTER%は%CALLNAME:TARGET%の首を後ろから思い切り絞め上げた……
+
+;-------------------------------------------------
+;首を絞める
+;-------------------------------------------------
+@MESSAGE_COM_首を絞める
+PRINTFORMW %CALLNAME:TARGET%の首を強く絞めた……
+
+;-------------------------------------------------
+;ビンタ
+;-------------------------------------------------
+@MESSAGE_COM_ビンタ
+PRINTFORMW %CALLNAME:TARGET%の頬を手の平で弾いた……
+
+;-------------------------------------------------
+;フィストファック
+;-------------------------------------------------
+@MESSAGE_COM_フィストファック
+IF 上級売春中
+	PRINTFORML %CALLNAME:TARGET%の願うままに、%CALLNAME:PLAYER%は拳で膣を犯した
+ELSE
+	IF CFLAG:死亡
+		PRINTFORML 弛緩した%CALLNAME:TARGET%の膣にゆっくりと腕を挿入した
+	ELSE
+		PRINTFORML %CALLNAME:TARGET%の膣は%CALLNAME:PLAYER%の拳でかき回された
+	ENDIF
+ENDIF
+IF CFLAG:死亡
+	IF 地の文用幼児(TARGET)
+		PRINTW 幼い膣だが緩んだ肉穴は簡単に拡がり、抵抗も無いためすぐに子宮口まで届いた……
+	ELSE
+		PRINTW 生前よりも明らかに緩んだ膣内は簡単に拡がり、子宮口にも指が入ってしまいそうだ……
+	ENDIF
+ELSE
+	IF TEQUIP:睡眠
+		PRINTFORMW まだ眠っているのが不思議なくらいの強い刺激に、%CALLNAME:TARGET%は呻きながら体を震えさせている……
+	ELSE
+		;Ｖ感覚
+		SELECTCASE ABL:Ｖ感覚
+			CASE IS <= 2
+				PRINTFORMW %CALLNAME:TARGET%の膣はぽっかり口を開いている
+			CASE 3
+				PRINTFORMW %CALLNAME:TARGET%の膣は拡がったままなかなか戻らない
+			CASE 4
+				PRINTFORMW %CALLNAME:TARGET%の性器からは肉ビラがはみ出し、ぽっかり開いた膣口の奥には子宮口が見えている
+			CASE IS >= 5
+				IF TALENT:アニマル
+					PRINTW 動物の生殖器は人間のそれよりも柔軟性があるのか、拳ひとつを簡単に飲み込んでしまった
+				ELSE
+					PRINTFORMW %CALLNAME:TARGET%は、自分の膣口を指で拡げ、恍惚としている
+				ENDIF
+		ENDSELECT
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;アナルフィスト
+;-------------------------------------------------
+@MESSAGE_COM_アナルフィスト
+IF 上級売春中
+	PRINTFORML %CALLNAME:TARGET%の願うままに、%CALLNAME:PLAYER%は拳でアナルを犯した
+ELSE
+	IF CFLAG:死亡
+		PRINTFORML 弛緩した%CALLNAME:TARGET%のアナルにゆっくりと腕を挿入した
+	ELSE
+		PRINTFORML %CALLNAME:TARGET%の肛門は%CALLNAME:PLAYER%の拳でかき回された
+	ENDIF
+ENDIF
+IF CFLAG:死亡
+	PRINTW 緩んだ肛門は少し解すだけで簡単に手首まで飲み込み、体温を失った腸壁が腕に絡みついてくる……
+ELSE
+	IF TEQUIP:睡眠
+		PRINTFORMW まだ眠っているのが不思議なくらいの強い刺激に、%CALLNAME:TARGET%は呻きながら体を震えさせている……
+	ELSE
+		;Ａ感覚
+		SELECTCASE ABL:Ａ感覚
+			CASE IS <= 2
+				PRINTFORMW %CALLNAME:TARGET%の肛門はぽっかり口を開いている
+			CASE 3
+				PRINTFORMW %CALLNAME:TARGET%の肛門は拡がったままなかなか戻らない
+			CASE 4
+				PRINTFORMW %CALLNAME:TARGET%の肛門からは肉ビラがはみ出し、腸の中が丸見えになっている
+			CASE IS >= 5
+				IF TALENT:アニマル
+					PRINTW 動物の体は人間のそれよりも柔軟性があるのか、拳ひとつを簡単に飲み込んでしまった
+				ELSE
+					PRINTFORMW %CALLNAME:TARGET%は、自分の肛門を指で拡げ、恍惚としている
+				ENDIF
+		ENDSELECT
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;両穴フィスト
+;-------------------------------------------------
+@MESSAGE_COM_両穴フィスト
+IF 上級売春中
+	PRINTFORML より激しい刺激を求める%CALLNAME:TARGET%の両穴を拳でかき回した
+ELSE
+	IF CFLAG:死亡
+		PRINTFORML 弛緩した%CALLNAME:TARGET%の膣と肛門にゆっくりと腕を挿入した
+	ELSE
+		PRINTFORML %CALLNAME:TARGET%の膣と肛門は%CALLNAME:PLAYER%の拳でかき回された
+	ENDIF
+ENDIF
+IF CFLAG:死亡
+	PRINTW 苦痛も快楽も無い体の中で、膣壁と腸壁に隔たれた両腕が互いの感触が分かるほどに内側を蹂躙している……
+ELSE
+	IF TEQUIP:睡眠
+		PRINTFORMW まだ眠っているのが不思議なくらいの強い刺激に、%CALLNAME:TARGET%は呻きながら体を震えさせている……
+	ELSE
+		;Ｖ感覚かＡ感覚がLV4以下
+		IF ABL:Ｖ感覚 <= 4 || ABL:Ａ感覚 <= 4
+			PRINTFORMW %CALLNAME:TARGET%は\@ !TALENT:足使用不可 ? 両足 #\@を広げぐったりしており、拡がりきった膣口と肛門から粘液が垂れ流されていた……
+		;Ｖ感覚かＡ感覚がLV5以上
+		ELSEIF ABL:Ｖ感覚 >= 5 && ABL:Ａ感覚 >= 5
+			IF TALENT:アニマル
+				PRINTFORMW %CALLNAME:TARGET%は両穴の快楽に足をがくがくと震わせ、四つん這いで立つのもやっとな様子だ……
+			ELSE
+				PRINTFORMW %CALLNAME:TARGET%は、すっかり拡がった膣口と肛門の周りを両手の指で撫で回している
+			ENDIF
+		ENDIF
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;臍フィスト
+;-------------------------------------------------
+@MESSAGE_COM_臍フィスト
+IF CFLAG:死亡
+	PRINTFORMW ぴくりともしない%CALLNAME:TARGET%の臍に指を当て、弛緩した臍の穴に腕を飲み込ませていった……
+ELSE
+	PRINTFORML %CALLNAME:PLAYER%は%CALLNAME:TARGET%の臍に指を添え、慣らしながらゆっくりと腕を飲み込ませていった
+	SELECTCASE EXP:臍拡張経験
+		CASE IS >= 1000
+			PRINTFORMW \@ SEX(PLAYER) == 1 ? 前立腺 # 子宮 \@付近で蠢く拳に、%CALLNAME:TARGET%は艶の混じった嗚咽を上げている……
+		CASE IS >= 500
+			PRINTFORMW %CALLNAME:TARGET%は臍に入り込む拳に違和感を覚えるものの、慣れてきたのか吐息に感じてる様子が見て取れる……
+		CASEELSE
+			PRINTFORMW 内臓を直接掌握される感覚に、%CALLNAME:TARGET%は不快感を露わにしている……
+	ENDSELECT
+ENDIF
+
+;-------------------------------------------------
+;異物挿入
+;-------------------------------------------------
+@MESSAGE_COM_異物挿入
+PRINTFORM %CALLNAME:TARGET%の
+SELECTCASE TFLAG:異物挿入
+	CASE GETNUM(ABL, "Ｖ感覚")
+		PRINTFORM 膣に%異物名(TEQUIP:Ｖ異物)%を
+	CASE GETNUM(ABL, "Ａ感覚")
+		PRINTFORM アナルに%異物名(TEQUIP:Ａ異物)%を
+ENDSELECT
+PRINTL ねじ込んだ……
+
+IF CFLAG:死亡
+	PRINTFORML 弛緩した肉穴は押し込まれるがままにそれを飲み込むが、痛がることも悲鳴をあげることもない……
+ELSE
+	SELECTCASE TFLAG:異物挿入
+		CASE GETNUM(ABL, "Ｖ感覚")
+			SELECTCASE 異物名(TEQUIP:Ｖ異物)
+				CASE "缶"
+					IF ABL:Ｖ感覚 <= 4
+						PRINTFORMW %CALLNAME:TARGET%は非常識なほど太い異物の苦痛に悶えている……
+					ELSE
+						PRINTFORMW %CALLNAME:TARGET%の膣は水音を立てながら缶を飲み込み、ひんやりとした感触に震えている……
+					ENDIF
+				CASE "ペットボトル"
+					IF ABL:Ｖ感覚 <= 4
+						PRINTFORMW 薄汚れた不潔なペットボトルを挿入され、%CALLNAME:TARGET%は痛みのあまりに悲鳴を上げている……
+					ELSE
+						PRINTFORMW 透明なボトルからぽっかりと開いた膣内が露わになり、ボトルの中には少しずつ液が溜まっていった……
+					ENDIF
+				CASE "瓶"
+					IF ABL:Ｖ感覚 <= 4
+						PRINTFORMW %CALLNAME:TARGET%の中に半ば無理やり一升瓶をねじ込むと、あまりの苦痛に%CALLNAME:TARGET%は声にならない悲鳴を上げた……
+					ELSE
+						PRINTFORMW 一升瓶すらも膣で飲み込んでしまった%CALLNAME:TARGET%は、苦痛と不安が混じったような表情をしている……
+					ENDIF
+			ENDSELECT
+		CASE GETNUM(ABL, "Ａ感覚")
+			SELECTCASE 異物名(TEQUIP:Ａ異物)
+				CASE "缶"
+					IF ABL:Ａ感覚 <= 4
+						PRINTFORMW %CALLNAME:TARGET%は非常識なほど太い異物の苦痛に悶えている……
+					ELSE
+						PRINTFORMW %CALLNAME:TARGET%の尻穴は水音を立てながら缶を飲み込み、ひんやりとした感触に震えている……
+					ENDIF
+				CASE "ペットボトル"
+					IF ABL:Ａ感覚 <= 4
+						PRINTFORMW 薄汚れた不潔なペットボトルを挿入され、%CALLNAME:TARGET%は痛みのあまりに悲鳴を上げている……
+					ELSE
+						PRINTFORMW 透明なボトルからぽっかりと開いた腸内が露わになり、ボトルの中には少しずつ腸液が溜まっていった……
+					ENDIF
+				CASE "瓶"
+					IF ABL:Ａ感覚 <= 4
+						PRINTFORMW %CALLNAME:TARGET%の中に半ば無理やり一升瓶をねじ込むと、あまりの苦痛に%CALLNAME:TARGET%は声にならない悲鳴を上げた……
+					ELSE
+						PRINTFORMW 一升瓶すらも肛門で飲み込んでしまった%CALLNAME:TARGET%は、苦痛と不安が混じったような表情をしている……
+					ENDIF
+			ENDSELECT
+	ENDSELECT
+ENDIF
+
+;-------------------------------------------------
+;異物挿入解除
+;-------------------------------------------------
+@MESSAGE_COM_異物挿入解除
+IF CFLAG:死亡
+	PRINTFORMW %CALLNAME:TARGET%の穴から異物を抜き去るが、緩んだままで完全には閉じなくなっていた……
+ELSE
+	PRINTFORMW %CALLNAME:TARGET%の穴から異物を抜き去ると、ぽっかりと大口を開けたままひくひくと動いていた……
+ENDIF
+
+;-------------------------------------------------
+;採血
+;-------------------------------------------------
+@MESSAGE_COM_採血
+IF TEQUIP:採血
+	PRINTFORMW %CALLNAME:TARGET%の腕の静脈に注射針を刺し、採血を始めた……
+ELSE
+	PRINTFORMW %CALLNAME:TARGET%の腕から注射針を引き抜き、消毒を施した……
+ENDIF
+
+;-------------------------------------------------
+;尿道針挿入
+;-------------------------------------------------
+@MESSAGE_COM_尿道針挿入
+PRINTFORM %CALLNAME:PLAYER%が
+IF ABL:マゾっ気 >= 7
+	PRINT 期待に
+ELSE
+	PRINT 恐怖に
+ENDIF
+PRINTFORMW 震える%CALLNAME:TARGET%の尿道にまっすぐ針を刺し、手応えを感じたところで引き抜くと、真っ赤な鮮血が尿道から垂れ出てきた……
+
+;-------------------------------------------------
+;臍針挿入
+;-------------------------------------------------
+@MESSAGE_COM_臍針挿入
+PRINTFORM %CALLNAME:PLAYER%が
+IF ABL:マゾっ気 >= 7
+	PRINT 期待に
+ELSE
+	PRINT 恐怖に
+ENDIF
+PRINTFORMW 震える%CALLNAME:TARGET%の腹部に針をあてがい、臍の窪みを貫いて引き抜くと、赤黒い血が流れ出てきた……
+
+;-------------------------------------------------
+;乳管針挿入
+;-------------------------------------------------
+@MESSAGE_COM_乳管針挿入
+PRINTFORM %CALLNAME:PLAYER%が
+IF ABL:マゾっ気 >= 7
+	PRINT 期待に
+ELSE
+	PRINT 恐怖に
+ENDIF
+PRINTFORMW 震える%CALLNAME:TARGET%の乳首を針で突き、乳管を針で押し広げると、先端から赤い血が滲み始めた……
+
+;-------------------------------------------------
+;フィストファックさせる
+;-------------------------------------------------
+@MESSAGE_COM_フィストファックさせる
+IF 上級売春中
+	PRINTFORMW %CALLNAME:TARGET%は%CALLNAME:PLAYER%\@ TALENT:PLAYER:足使用不可 ? を仰向けにさせると # の足を拡げさせると \@、ゆっくりと膣に手全体を膣に挿れてきた……
+ELSE
+	PRINTFORMW %CALLNAME:PLAYER%は、膣を手で犯すよう%CALLNAME:TARGET%に命じた……
+ENDIF
+
+;-------------------------------------------------
+;アナルフィストさせる
+;-------------------------------------------------
+@MESSAGE_COM_アナルフィストさせる
+IF 上級売春中
+	PRINTFORMW %CALLNAME:TARGET%は%CALLNAME:PLAYER%に尻穴を晒させると、ゆっくりと手首まで突き挿れてきた……
+ELSE
+	PRINTFORMW %CALLNAME:PLAYER%は%CALLNAME:TARGET%に尻穴を晒し、手を奥まで挿れるように命じた……
+ENDIF

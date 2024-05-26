@@ -1,0 +1,1257 @@
+﻿@飲食店経営
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC 増築費用
+#DIMS DYNAMIC 定休日設定
+#DIM DYNAMIC LRESULT
+#DIM DYNAMIC 現リーダー
+
+;増築費用は(部屋数+1)^2*100000(暫定)
+増築費用 = POWER((INN:部屋数+1), 2)*100000
+
+DRAWLINE
+CALL 飲食店ステータス
+PRINTL 
+;とりあえず最大部屋数は100部屋で
+SIF ORIGIN
+	INN:部屋数 = 100
+IF INN:部屋数 >= 100
+	CALL PRINTCOLORL, "[--] - 部屋数は最大です", "gray"
+ELSE
+	CALL PASELIL, @"　[ 1] - 宿泊施設の増築(費用:{増築費用}＄)"
+ENDIF
+PRINTL 　[ 2] - 温泉を探す
+PRINTL 　[ 3] - 経営方針の管理
+IF INNS:ジャンル != "提供無し"
+	PRINTL 　[ 4] - メニューを変更
+ELSE
+	CALL PRINTCOLORL ,@"　[--] - %INNS:店名%では料理の提供を行っていません", "gray"
+ENDIF
+SELECTCASE INNS:業種
+	CASE "ビジネスホテル", "リゾートホテル", "ラブホテル", "ホストクラブ", "キャバクラ"
+		PRINTL 　[ 5] - 基本料金を設定する
+	CASE "日帰り温泉"
+		CALL PASELIL, @"　[--] - 日帰り温泉は温泉レベル×30で料金固定({INN:温泉レベル*30}＄)"
+	CASEELSE
+		CALL PRINTCOLORL, "　[--] - 現在の業種では基本料金の設定は不要です", "gray"
+ENDSELECT
+PRINTL 　[ 6] - 人員の管理
+PRINTL 　[ 7] - リーダーを任命する
+PRINTFORML 　[ 8] - \@ INN:営業中 > 0 ? 営業を休止する # 営業を再開する \@
+PRINTL 　[ 9] - 定休日の設定
+PRINTL 　[10] - 売上の詳細を確認
+DRAWLINE
+PRINTPLAIN 　飲食店・ホテル　
+PRINTL [0] - 戻る
+
+BINPUT
+SELECTCASE RESULT
+	CASE 0
+		RETURN
+	CASE 1
+		IF MONEY < 増築費用
+			PRINTW 所持金が足りません
+			RESTART
+		ENDIF
+		CALL PASELIL, @"{増築費用}＄で部屋数を{INN:部屋数+1}に増築します。よろしいですか？"
+		PRINTL [0] - はい
+		PRINTL [1] - いいえ
+		BINPUT
+		IF RESULT == 0
+			INN:部屋数++
+			CALL PAYMENT, -増築費用, "宿泊施設増築"
+			IF パートナー != ""
+				SIF OPTION:口上表示 && !CFLAG:GETCHARANAME(パートナー):口上非表示
+					TRYCALLFORM INN_RENOVATION_%CSVNAMERPS(GETNO(パートナー))%
+			ENDIF
+		ENDIF
+		RESTART
+	CASE 2
+		CALL 温泉探索
+	CASE 3
+		CALL 経営方針_飲食店
+	CASE 4
+		CALL メニュー変更_飲食店
+	CASE 5
+		CALL 基本料金設定
+	CASE 6
+		CALL 人員管理_飲食店
+	CASE 7
+		現リーダー = FINDCHARA(飲食店リーダー, 1)
+		SIF 現リーダー == -1
+			現リーダー = 0
+		DRAWLINE
+		PRINTFORML □リーダーを選択してください(現在のリーダー:\@ 現リーダー ? %NAME:現リーダー% # 不在 \@)
+		FOR LCOUNT, 1, CHARANUM
+			SIF CSTR:LCOUNT:配属 != "飲食店"
+				CONTINUE
+			PRINTFORML 　[{LCOUNT}] - %NAME:LCOUNT%
+		NEXT
+		DRAWLINE
+		PRINTPLAIN 　リーダー任命　
+		PRINTL [0] - 任命しない
+		BINPUT
+		SELECTCASE RESULT
+			CASE 0
+				CVARSET 飲食店リーダー
+			CASEELSE
+				IF INRANGE(RESULT, 0, CHARANUM-1)
+					SIF CSTR:RESULT:配属 != "飲食店"
+						CONTINUE
+					CVARSET 飲食店リーダー
+					飲食店リーダー:RESULT:0 = 1
+					CALL KOJO_STRATEGY, RESULT, "飲食店", "ASSIGNLEADER", RESULT, 現リーダー
+				ENDIF
+		ENDSELECT
+		RESTART
+	CASE 8
+		IF INN:営業中 > 0
+			PRINTFORMW %INNS:店名%の経営を一時中断しました
+			;定休日じゃない休業は-1
+			INN:営業中 = -1
+		ELSE
+			PRINTFORMW %INNS:店名%の経営を開始しました
+			INN:営業中 = DAY
+		ENDIF
+	CASE 9
+		VARLINE = 0
+		DO
+			CALL LOOP_CLEARLINE
+			定休日設定 = 
+			DRAWLINE
+			PRINTL □定休日を選んでください
+			PRINTFORML 　[1] - 日曜日（\@ INN定休日("日") ? 定休 # 営業 \@）
+			PRINTFORML 　[2] - 月曜日（\@ INN定休日("月") ? 定休 # 営業 \@）
+			PRINTFORML 　[3] - 火曜日（\@ INN定休日("火") ? 定休 # 営業 \@）
+			PRINTFORML 　[4] - 水曜日（\@ INN定休日("水") ? 定休 # 営業 \@）
+			PRINTFORML 　[5] - 木曜日（\@ INN定休日("木") ? 定休 # 営業 \@）
+			PRINTFORML 　[6] - 金曜日（\@ INN定休日("金") ? 定休 # 営業 \@）
+			PRINTFORML 　[0] - 土曜日（\@ INN定休日("土") ? 定休 # 営業 \@）
+			PRINTL 　[9] - 設定終了
+			INPUT
+			LRESULT = RESULT
+			SELECTCASE LRESULT
+				CASE 0 TO 6
+					FOR LCOUNT, 0, 7
+						IF LRESULT == LCOUNT
+							IF !INN定休日(DOW(LRESULT))
+								INNS:定休日 += @"・%DOW(LRESULT)%"
+							ELSE
+								CONTINUE
+							ENDIF
+						ENDIF
+						SIF INN定休日(DOW(LCOUNT))
+							定休日設定 += @"・%DOW(LCOUNT)%"
+					NEXT
+					INNS:定休日 = %SUBSTRINGU(定休日設定, 1)%
+				CASE 9
+					BREAK
+			ENDSELECT
+		LOOP 1
+	CASE 10
+		CALL 飲食店売上詳細
+	CASEELSE
+		CONTINUE
+ENDSELECT
+RESTART
+
+@経営方針_飲食店
+#DIM DYNAMIC 条件可否, 20
+#DIM DYNAMIC 表示数
+{
+#DIMS DYNAMIC 業種名 = 
+"飲食店",
+"ビジネスホテル",
+"リゾートホテル",
+"ラブホテル",
+"日帰り温泉",
+"バー",
+"ホストクラブ",
+"キャバクラ"
+}
+;連携が必要な業種は保留
+;"飲食店(裏)",
+;"リゾートホテル(裏)",
+;"ピンクサロン",
+;"ライブハウス",
+
+#DIM DYNAMIC LCOUNT
+
+DRAWLINE
+PRINTL □経営方針を設定します
+
+IF INN:温泉レベル == 0
+	CALL PRINTCOLORL, "　[-] - 温泉の併設(温泉設備が無いと併設できません)", "gray"
+ELSE
+	PRINTFORML 　[1] - 温泉の併設(\@ INN:温泉併設 ? 併設中 # 併設無し \@)
+ENDIF
+IF INN:部屋数 == 0
+	CALL PRINTCOLORL, "　[-] - 宿の併設(宿泊施設の増築を行わないと併設できません)", "gray"
+ELSE
+	PRINTFORML 　[2] - 宿の併設(\@ INN:宿併設 ? 併設中 # 併設無し \@)
+ENDIF
+;IF CMATCH(CSTR:配属, "娼館") == 0
+;	CALL PRINTCOLORL, "　[-] - 娼館との連携(娼館に配属してるキャラが居ないと連携できません)", "gray"
+;ELSE
+;	PRINTL 　[3] - 娼館との連携
+;ENDIF
+;IF CMATCH(CSTR:配属, "芸能プロダクション") == 0
+;	CALL PRINTCOLORL, "　[-] - 芸能プロダクションとの連携(芸プロの配属してるキャラが居ないと連携できません)", "gray"
+;ELSE
+;	PRINTL 　[4] - 芸能プロダクションとの連携
+;ENDIF
+SELECTCASE INNS:業種
+	CASE "ラブホテル", "日帰り温泉"
+		CALL PRINTCOLORL, "　[-] - 料理のジャンル(提供無し)", "gray"
+	CASE "バー", "ピンクサロン", "ライブハウス", "ホストクラブ", "キャバクラ"
+		PRINTL 　[-] - 料理のジャンル(お酒で固定)
+	CASEELSE
+		PRINTFORML 　[5] - 料理のジャンル(現在:\@ INNS:ジャンル == "" ? 何でも # %INNS:ジャンル% \@)
+ENDSELECT
+PRINTL 　[6] - 名前の変更
+
+PRINTL 
+
+PRINTFORML 　上記の条件から業種を選択 現在:%INNS:業種%(業種を変更するとリーダー以外の配属が解除されます)
+PRINT 　業種候補:
+
+LCOUNT = 0
+表示数 = 0
+VARSET 条件可否
+
+FOR LCOUNT, 0, VARSIZE("業種名")
+	SELECTCASE 業種名:LCOUNT
+		;無条件解放
+		CASE "飲食店", "バー", "ホストクラブ", "キャバクラ"
+			条件可否:LCOUNT = 1
+		;宿泊施設あり
+		CASE "ビジネスホテル", "ラブホテル"
+			SIF INN:宿併設
+				条件可否:LCOUNT = 1
+		;宿泊施設+温泉
+		CASE "リゾートホテル"
+			SIF INN:宿併設 && INN:温泉併設
+				条件可否:LCOUNT = 1
+		;娼館との連携必須
+		CASE "飲食店(裏)", "ピンクサロン"
+			SIF INN:娼館連携
+				条件可否:LCOUNT = 1
+		;リゾートホテル+娼館連携
+		CASE "リゾートホテル(裏)"
+			SIF INN:娼館連携 && INN:宿併設 && INN:温泉併設
+				条件可否:LCOUNT = 1
+		;温泉あり
+		CASE "日帰り温泉"
+			SIF INN:温泉併設
+				条件可否:LCOUNT = 1
+		;芸プロとの連携
+		CASE "ライブハウス"
+			SIF INN:芸プロ連携
+				条件可否:LCOUNT = 1
+	ENDSELECT
+	IF !条件可否:LCOUNT
+		SETCOLORBYNAME gray
+		PRINTPLAINFORM [--]%業種名:LCOUNT% 
+	ELSE
+		PRINTFORM [{LCOUNT+20}]%業種名:LCOUNT% 
+	ENDIF
+	表示数++
+	IF 表示数%5 == 0 && 表示数
+		PRINTL 
+		PRINTPLAIN 　　　　　 
+	ENDIF
+	RESETCOLOR
+NEXT
+CALL NEWLINE
+
+DRAWLINE
+PRINTPLAIN 　経営方針(飲食店)　
+PRINTL [0] - 戻る
+
+BINPUT
+SELECTCASE RESULT
+	CASE 0
+		RETURN
+	CASE 1
+		INVERTBIT INN:温泉併設, 0
+	CASE 2
+		INVERTBIT INN:宿併設, 0
+	CASE 5
+		PRINTL □ジャンルを選んでください
+		PRINTL 　[1] - 和食
+		PRINTL 　[2] - 洋食
+		PRINTL 　[3] - アジア料理
+		PRINTL 　[4] - スイーツ
+		PRINTL 　[5] - ファストフード
+		PRINTL 　[6] - お酒
+		PRINTL 　[0] - 指定無し
+		BINPUT
+		SELECTCASE RESULT
+			CASE 0
+				INNS:ジャンル = 
+			CASE 1
+				INNS:ジャンル = 和食
+			CASE 2
+				INNS:ジャンル = 洋食
+			CASE 3
+				INNS:ジャンル = アジア料理
+			CASE 4
+				INNS:ジャンル = スイーツ
+			CASE 5
+				INNS:ジャンル = ファストフード
+			CASE 6
+				INNS:ジャンル = お酒
+		ENDSELECT
+	CASE 6
+		PRINTL 名前を入力してください
+		INPUTS
+		IF RESULTS == ""
+			INNS:店名 = %INNS:業種%
+		ELSE
+			INNS:店名 = %RESULTS%
+		ENDIF
+	CASE 20 TO 40
+		INNS:業種 = %業種名:(RESULT-20)%
+		;デフォルト名のままなら業種に合わせて店名変更
+		SIF MATCH(業種名, INNS:店名) || INNS:店名 == ""
+			INNS:店名 = %INNS:業種%
+		;基本料金は初期化
+		INN:基本料金 = 0
+		SELECTCASE INNS:業種
+			;酒がメインのサービスなら酒で固定
+			CASE "バー", "ピンクサロン", "ライブハウス", "ホストクラブ", "キャバクラ"
+				INNS:ジャンル = お酒
+			;飲食物を提供しない店
+			CASE "日帰り温泉", "ラブホテル"
+				INNS:ジャンル = 提供無し
+		ENDSELECT
+		;リーダー以外の配属も初期化
+		FOR LCOUNT, 1, CHARANUM
+			IF CSTR:LCOUNT:配属 == "飲食店"
+				SIF 飲食店リーダー:LCOUNT:0
+					CONTINUE
+				CSTR:LCOUNT:配属 = 
+				CFLAG:LCOUNT:配属完了 = 0
+			ENDIF
+		NEXT
+ENDSELECT
+RESTART
+
+@メニュー変更_飲食店
+#DIM DYNAMIC LCOUNT
+#DIMS DYNAMIC 分割用, 5
+
+DRAWLINE
+
+PRINTFORML □現在の業種:%INNS:業種% ジャンル:%INNS:ジャンル% 価格倍率:{飲食店価格倍率/10}.{飲食店価格倍率%10}
+
+FOR LCOUNT, 0, 10
+	IF 飲食店メニュー:LCOUNT == ""
+		PRINTFORML 　[{LCOUNT}] - メニュー無し
+	ELSE
+		VARSET 分割用
+		CALLF レシピ判定, 飲食店メニュー:LCOUNT
+		SPLIT 料理ジャンル, "/", 分割用
+		SIF MATCH(分割用, INNS:ジャンル)
+			SETCOLORBYNAME lime
+		CALL PASELIL, @"　[{LCOUNT}] - %飲食店メニュー:LCOUNT, 28, LEFT% {(料理価格*飲食店価格倍率)/10, 4}＄\@ 料理原価 ? (原価:{料理原価}＄) # \@ \@ 新鮮食材 ? 新鮮食材:{新鮮食材}個 # \@"
+		RESETCOLOR
+	ENDIF
+NEXT
+PRINTL 　※緑色はお店のジャンルに沿ったメニュー
+DRAWLINE
+PRINTPLAIN 　メニュー変更　
+PRINTL [10] - 戻る [11] - 価格の倍率を変える [12] - メニューをリセットする
+
+BINPUT
+SELECTCASE RESULT
+	CASE 10
+		RETURN
+	CASE 11
+		CALL TWO_DIGIT, 20, "×10(%)", 1
+		飲食店価格倍率 = RESULT
+		RESTART
+	CASE 12
+		VARSET 飲食店メニュー
+		RESTART
+	CASE 0 TO 9
+		CALL レシピ選択_飲食店, RESULT
+		RESTART
+ENDSELECT
+
+@レシピ選択_飲食店, メニュー番号
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC メニュー番号
+#DIM DYNAMIC ページ数
+#DIM DYNAMIC 次ページあり
+#DIMS ジャンルフィルタ
+#DIMS DYNAMIC SPLITVAR, 5
+#DIM DYNAMIC 処理数
+{
+#DIMS DYNAMIC ジャンル一覧 = 
+"和食",
+"洋食",
+"アジア料理",
+"スイーツ",
+"ファストフード",
+"お酒",
+}
+
+DRAWLINE
+PRINTL □料理を選んでください
+処理数 = 0
+次ページあり = 0
+FOR LCOUNT, 0, VARSIZE("料理メニュー")
+	SIF 料理メニュー:LCOUNT == ""
+		CONTINUE
+	CALLF レシピ判定, 料理メニュー:LCOUNT
+	VARSET SPLITVAR
+	SPLIT 料理ジャンル, "/", SPLITVAR
+	SIF ジャンルフィルタ != "" && FINDELEMENT(SPLITVAR, ジャンルフィルタ, 0, VARSIZE("SPLITVAR"), 1) == -1
+		CONTINUE
+	処理数++
+	IF 処理数 < ページ数*20
+		CONTINUE
+	ELSEIF 処理数 >= ページ数*20+20
+		次ページあり = 1
+		BREAK
+	ENDIF
+	CALL PASELIL, @"　[{LCOUNT, 3}]%料理メニュー:LCOUNT, 28, LEFT% ジャンル:%料理ジャンル, 28, LEFT% 価格:{(料理価格*飲食店価格倍率)/10, 4}＄\@ 料理原価 ? (原価:{料理原価, 3}＄) # \@ \@ 新鮮食材 ? 新鮮食材:{新鮮食材}個 # \@"
+NEXT
+
+DRAWLINE
+PRINTPLAIN 　レシピ一覧　
+CALL PRINTSPACE, ページ数, "[-1] - 前ページ "
+PRINT [0] - 戻る 
+CALL PRINTSPACE, 次ページあり, "[-2] - 次ページ "
+PRINTFORML [-3] - メニュー無し [-4] - ジャンルから選ぶ(現在のフィルタ:\@ ジャンルフィルタ == "" ? 無し # %ジャンルフィルタ% \@)
+
+BINPUT
+SELECTCASE RESULT
+	CASE 0
+		RETURN
+	CASE -1
+		SIF ページ数
+			ページ数--
+		RESTART
+	CASE -2
+		SIF 次ページあり
+			ページ数++
+		RESTART
+	CASE -3
+		飲食店メニュー:メニュー番号 = 
+		RETURN
+	CASE -4
+		PRINTL 何を表示しますか？
+		FOR LCOUNT, 0, VARSIZE("ジャンル一覧")
+			PRINTFORML [{LCOUNT}] - %ジャンル一覧:LCOUNT%
+		NEXT
+		PRINTL [9] - 指定無し
+		PRINTL [10] - 戻る
+
+		BINPUT
+		SELECTCASE RESULT
+			CASE 0 TO VARSIZE("ジャンル一覧")-1
+				ジャンルフィルタ = %ジャンル一覧:RESULT%
+				ページ数 = 0
+				RESTART
+			CASE 9
+				ジャンルフィルタ =
+				ページ数 = 0
+				RESTART
+			CASE 10
+				RESTART
+		ENDSELECT
+	CASE 1 TO VARSIZE("料理メニュー")-1
+		SIF 料理メニュー:RESULT == ""
+			CONTINUE
+		飲食店メニュー:メニュー番号 = %料理メニュー:RESULT%
+		RETURN
+ENDSELECT
+
+@基本料金設定
+#DIM DYNAMIC 最低金額
+#DIM DYNAMIC 最高金額
+
+PRINTFORM □現在の業種:%INNS:業種% 
+SELECTCASE INNS:業種
+	CASE "ビジネスホテル"
+		CALL PASELIL, @"適正価格:{INN:ホテル名声+3000}"
+		最低金額 = 3000
+		最高金額 = (INN:ホテル名声+3000)*2
+	CASE "リゾートホテル"
+		CALL PASELIL, @"適正価格:{INN:ホテル名声+5000+(INN:温泉レベル*100)}"
+		最低金額 = 5000
+		最高金額 = (INN:ホテル名声+5000+(INN:温泉レベル*100))*2
+	CASE "ホストクラブ", "キャバクラ"
+		CALL PASELIL, @"適正価格:{(INN:飲食店名声*5)+2000}"
+		最低金額 = 2000
+		最高金額 = ((INN:飲食店名声*5)+2000)*2
+	CASE "ラブホテル"
+		CALL PASELIL, @"適正価格:{(INN:その他業種名声*5)+5000}"
+		最低金額 = 5000
+		最高金額 = ((INN:その他業種名声*5)+5000)*2
+ENDSELECT
+CALL PASELIL, @"　基本料金を入力してください {最低金額}＄～{最高金額}＄"
+INPUT
+INN:基本料金 = LIMIT(RESULT, 最低金額, 最高金額)
+
+RETURN
+
+@人員管理_飲食店
+
+DRAWLINE
+
+;連携する業種ではそちらから追加で配属できる
+SELECTCASE INNS:業種
+	CASE "飲食店(裏)", "リゾートホテル(裏)", "ピンクサロン"
+		SIF CMATCH(CSTR:配属, "娼館") == 0
+			GOTO ELSE
+		PRINTL □人員を配属します
+		PRINTFORML 　[1] - 娼館からの配属(現在:{CMATCH(CSTR:転属, "飲食店")}人/3人)
+	CASE "ライブハウス"
+		SIF CMATCH(CSTR:配属, "芸能プロダクション") == 0
+			GOTO ELSE
+		PRINTL □人員を配属します
+		PRINTFORML 　[1] - 芸プロからの配属(現在:{CMATCH(CSTR:転属, "飲食店")}人/3人)
+	CASEELSE
+		$ELSE
+		CALL STRATEGY_PERSONAL, "飲食店"
+		RETURN
+ENDSELECT
+PRINTFORML 　[2] - 通常の配属(現在:{CMATCH(CSTR:配属, "飲食店")}人/{飲食店配属上限()}人)
+PRINTL 　[0] - 戻る
+
+BINPUT
+SELECTCASE RESULT
+	CASE 0
+		RETURN
+	CASE 1
+		SELECTCASE INNS:業種
+			CASE "飲食店(裏)", "リゾートホテル(裏)", "ピンクサロン"
+				CALL 転属_飲食店, "娼館"
+			CASE "ライブハウス"
+				CALL 転属_飲食店, "芸プロ"
+		ENDSELECT
+	CASE 2
+		CALL STRATEGY_PERSONAL
+ENDSELECT
+
+RESTART
+
+@転属_飲食店, 本業
+#DIM DYNAMIC LCOUNT
+#DIMS DYNAMIC 本業
+
+DRAWLINE
+PRINTFORML □%INNS:店名%に転属するキャラを選択してください(本業の配属は解除されません)
+
+FOR LCOUNT, 1, CHARANUM
+	SELECTCASE 本業
+		CASE "娼館"
+			SIF CSTR:LCOUNT:配属 != "娼館"
+				CONTINUE
+			PRINTFORML 　[{LCOUNT, 2}] - %NAME:LCOUNT%\@ CSTR:LCOUNT:転属 == "飲食店" ? (転属中) # \@
+		CASE "芸プロ"
+			SIF CSTR:LCOUNT:配属 != "芸能プロダクション"
+				CONTINUE
+			PRINTFORML 　[{LCOUNT, 2}] - %NAME:LCOUNT%\@ CSTR:LCOUNT:転属 == "飲食店" ? (転属中) # \@
+	ENDSELECT
+NEXT
+DRAWLINE
+PRINTPLAIN 　転属　
+PRINTL [0] - 戻る
+
+BINPUT
+SELECTCASE RESULT
+	CASE 0
+		RETURN
+	CASE 1 TO CHARANUM-1
+		IF CSTR:RESULT:転属 == "飲食店"
+			CSTR:RESULT:転属 = 
+		ELSE
+			CSTR:RESULT:転属 = 飲食店
+		ENDIF
+		RESTART
+ENDSELECT
+
+@飲食店配属上限
+#FUNCTION
+
+;業種によって配属上限人数が違う
+SELECTCASE INNS:業種
+	CASE "ラブホテル", "日帰り温泉"
+		RETURNF 3
+	CASE "リゾートホテル", "リゾートホテル(裏)"
+		RETURNF 10
+	;それ以外は全部5人
+	CASEELSE
+		RETURNF 5
+ENDSELECT
+
+@飲食店ステータス
+
+SIF INNS:店名 == ""
+	INNS:店名 = 飲食店
+SIF INNS:業種 == ""
+	INNS:業種 = 飲食店
+
+SIF FINDCHARA(飲食店リーダー, 1)  == -1
+	飲食店リーダー:MASTER:0 = 1
+
+PRINTFORM □%INNS:店名%のステータス
+IF INN:営業中
+	IF INN定休日()
+		PRINTL (本日定休日)
+	ELSE
+		PRINTL (営業中)
+	ENDIF
+ELSE
+	PRINTL (休業中)
+ENDIF
+PRINTFORML 　飲食業の名声:{INN:飲食店名声} ホテル業の名声:{INN:ホテル名声} その他業種の名声:{INN:その他業種名声}
+PRINTFORM 　現在の業種:%INNS:業種%
+SELECTCASE INNS:業種
+	CASE "飲食店"
+		PRINT (食事の提供) 
+	CASE "ビジネスホテル"
+		PRINT (宿泊施設と軽食の提供) 
+	CASE "リゾートホテル"
+		PRINT (温泉と宿泊施設及び食事の提供) 
+	CASE "飲食店(裏)"
+		PRINT (食事とその他のサービスの提供) 
+	CASE "リゾートホテル(裏)"
+		PRINT (宿泊施設と併設された多数の娯楽及び食事の提供) 
+	CASE "ラブホテル"
+		PRINT (宿泊施設のみの提供) 
+	CASE "日帰り温泉"
+		PRINT (入浴を目的とした施設を提供) 
+	CASE "バー"
+		PRINT (アルコール類と軽食の提供) 
+	CASE "ピンクサロン"
+		PRINT (アルコール類とその他サービスの提供) 
+	CASE "ライブハウス"
+		PRINT (アルコール類と軽食、魂を揺さぶるメロディの提供) 
+	CASE "ホストクラブ", "キャバクラ"
+		PRINT (アルコール類と軽食、至福のひとときを提供) 
+ENDSELECT
+PRINT 料理ジャンル:
+IF INNS:ジャンル == ""
+	PRINT 何でも 
+ELSE
+	PRINTFORM %INNS:ジャンル% 
+ENDIF
+SIF INN:基本料金
+	CALL PASELI, @"基本料金:{INN:基本料金}＄ "
+SELECTCASE INNS:業種
+	CASE "ビジネスホテル", "リゾートホテル", "リゾートホテル(裏)", "ラブホテル"
+		PRINTFORM 支配人:%NAME:(FINDCHARA(飲食店リーダー, 1))%
+	CASE "日帰り温泉"
+		PRINTFORM 番頭:%NAME:(FINDCHARA(飲食店リーダー, 1))%
+	CASE "バー"
+		PRINTFORM マスター:%NAME:(FINDCHARA(飲食店リーダー, 1))%
+	CASEELSE
+		PRINTFORM 店長:%NAME:(FINDCHARA(飲食店リーダー, 1))%
+ENDSELECT
+PRINTL 
+
+CALL PASELIL, @"　所持金:{MONEY}＄ 前日の売上:{飲食店売上:0}＄"
+PRINTFORML 　定休日:\@ INNS:定休日 == "" ? 無し # %INNS:定休日% \@
+PRINTL □設備等
+IF INN:温泉レベル == 0
+	PRINT 　[温泉無し]
+ELSE
+	PRINTFORM 　[温泉レベル:{INN:温泉レベル}]
+ENDIF
+IF INN:部屋数 == 0
+	PRINT [宿泊施設無し]
+ELSE
+	PRINTFORM [宿泊施設:{INN:部屋数}室]
+ENDIF 
+;IF INN:娼館連携
+;	PRINT [娼館と連携中]
+;ELSE
+;	PRINT [娼館との連携無し]
+;ENDIF
+;IF INN:芸プロ連携
+;	PRINT [芸プロと連携中]
+;ELSE
+;	PRINT [芸プロとの連携無し]
+;ENDIF
+PRINTL 
+
+;;;引数で指定した曜日が定休日かどうか 省略すれば今日の曜日
+;;;書式 INN定休日("木") みたいな
+@INN定休日, 指定曜日
+#FUNCTION
+#DIMS DYNAMIC 分割用, 10
+#DIMS DYNAMIC 指定曜日
+
+SIF 指定曜日 == ""
+	指定曜日 = %DOW(FLAG:曜日)%
+
+SPLIT INNS:定休日, "・", 分割用
+
+IF FINDELEMENT(分割用, 指定曜日) >= 0
+	RETURNF 1
+ELSE
+	RETURNF 0
+ENDIF
+
+@INCOME_飲食店
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC LCOUNT2
+#DIM DYNAMIC 料理レベル
+#DIM DYNAMIC 接客レベル
+#DIM DYNAMIC 収入
+#DIM DYNAMIC 支出
+#DIM DYNAMIC モチベ計算用
+#DIM DYNAMIC 素質
+#DIM DYNAMIC 来客数
+#DIM DYNAMIC グループ数
+#DIM DYNAMIC 注文数, 10
+#DIM DYNAMIC 最高価格
+#DIM DYNAMIC 最低価格
+#DIM DYNAMIC 平均価格
+#DIM DYNAMIC メニュー数
+#DIM DYNAMIC 基本料金計算用
+#DIM DYNAMIC 名声上昇値
+#DIM DYNAMIC 料理種類
+#DIMS DYNAMIC 分割用, 5
+#DIM DYNAMIC モチベ加算値
+#DIM DYNAMIC 日給
+#DIM DYNAMIC 対応不可人数
+
+基本料金計算用 = INN:基本料金
+
+CALL CHECKDRAWLINE
+
+FOR LCOUNT, 1, CHARANUM
+	SIF CSTR:LCOUNT:配属 != "飲食店" && CSTR:LCOUNT:転属 != "飲食店"
+		CONTINUE
+	SIF !CFLAG:LCOUNT:配属完了
+		CONTINUE
+	;サボり魔はモチベに応じてサボる
+	IF サボり判定(LCOUNT)
+		PRINTFORML %CALLNAME:LCOUNT%は%INNS:店名%の仕事をサボりました
+		CFLAG:LCOUNT:サボり = 1
+		CONTINUE
+	ENDIF
+	;料理レベル計算 料理人だと+2
+	料理レベル += ABL:LCOUNT:料理技能+ワーカホリックレベル(LCOUNT)
+	SIF TALENT:LCOUNT:料理人
+		料理レベル += 2
+	
+	;接客レベル計算 ゲーセンとほぼ同じ
+	IF FINDCHARA(飲食店リーダー, 1) >= 0 && TALENT:FINDCHARA(飲食店リーダー, 1):統率 && !TALENT:LCOUNT:統率
+		接客レベル += (ABL:LCOUNT:従順+2+ワーカホリックレベル(LCOUNT))/5
+		接客レベル += (ABL:LCOUNT:奉仕精神+2+ワーカホリックレベル(LCOUNT))/5
+	ELSEIF 統率者("飲食店") && !TALENT:LCOUNT:統率
+		接客レベル += (ABL:LCOUNT:従順+1+ワーカホリックレベル(LCOUNT))/5
+		接客レベル += (ABL:LCOUNT:奉仕精神+1+ワーカホリックレベル(LCOUNT))/5
+	ELSE
+		接客レベル += (ABL:LCOUNT:従順+ワーカホリックレベル(LCOUNT))/5
+		接客レベル += (ABL:LCOUNT:奉仕精神+ワーカホリックレベル(LCOUNT))/5
+	ENDIF
+	FOR 素質, 0, VARSIZE("TALENT")
+		SIF !TALENT:LCOUNT:素質
+			CONTINUE
+		SELECTCASE TALENTNAME:素質
+			{
+			CASE "素直", "自制心", "献身的", "気丈", "潔癖症", "料理人", "魅力", "魅惑", "謎の魅力", 
+				 "ハイテンション", "楽観的", "専業主婦"
+			}
+				接客レベル += 2
+		ENDSELECT
+	NEXT
+	;-ストレス/100
+	接客レベル -= CFLAG:LCOUNT:ストレス値/100
+NEXT
+
+ARRAYSHIFT メニュー売上, 10, ""
+
+;業種によって客数と客単価が変動する
+SELECTCASE INNS:業種
+	CASE "飲食店"
+		;メニュー設定してないと不可
+		IF MATCH(飲食店メニュー, "") == 10
+			PRINTFORML %INNS:業種%を運営するにはメニューを設定してください
+			RETURN
+		ENDIF
+		;各メニューの最高価格と最低価格を見る
+		FOR LCOUNT, 0, 10
+			SIF 飲食店メニュー:LCOUNT == ""
+				CONTINUE
+			CALLF レシピ判定, 飲食店メニュー:LCOUNT
+			メニュー数++
+			CALL SETMIN, 最低価格, 料理価格*飲食店価格倍率/10
+			CALL SETMAX, 最高価格, 料理価格*飲食店価格倍率/10
+			平均価格 += 料理価格*飲食店価格倍率/10
+		NEXT
+		平均価格 /= メニュー数
+		;DEBUGPRINTFORML 平均価格:{平均価格}
+		;平均価格と名声で来客数が変動する 同値で約10人とし、あとは価格と反比例する(=名声に比例)
+		;補正値を300取る
+		来客数 = ((INN:飲食店名声+300)*10)/平均価格
+		;10%のゆらぎを与える
+		来客数 += RAND(-来客数/10, (来客数/10)+1)
+		;休日は20%増える
+		SELECTCASE DOW(FLAG:曜日)
+			CASE "土", "日"
+				TIMES 来客数, 1.20
+		ENDSELECT
+		;最低価格倍率に応じて最低保証変わる 20-倍率%/10
+		CALL SETMAX, 来客数, 20-飲食店価格倍率
+		;スタッフ足りないと対応できない。最大人数配属でフル対応可能で、スタッフの割合に応じて来客数も比例して下がる
+		;新婚モードでは計算しない
+		IF ゲームモード() != "新婚モード"
+			対応不可人数 = PERCENT(来客数, 100*(飲食店配属上限()-配属人数("飲食店"))/飲食店配属上限())
+			来客数 -= 対応不可人数
+		ENDIF
+		;各メニューの注文数を計算する
+		;基本的にどれかは出る
+		DO
+			料理種類 = RAND:10
+			$RECIPELOOP飲食店
+			IF 飲食店メニュー:料理種類 == ""
+				料理種類++
+				SIF 料理種類 == 10
+					料理種類 = 0
+				GOTO RECIPELOOP飲食店
+			ENDIF
+			IF 来客数 >= 300000 && 来客数-SUMARRAY(注文数) >= 100000
+				注文数:料理種類 += 1000
+			ELSE
+				注文数:料理種類++
+			ENDIF
+		LOOP SUMARRAY(注文数) < 来客数
+		FOR LCOUNT, 0, 10
+			SIF 飲食店メニュー:LCOUNT == ""
+				CONTINUE
+			CALLF レシピ判定, 飲食店メニュー:LCOUNT
+			SPLIT 料理ジャンル, "/", 分割用
+
+			;料理レベルに応じてこの追加注文処理を再度行う(合計料理レベル%の確率)
+			REPEAT 1+RANDPER(料理レベル)
+				;店のジャンルに合ってる場合は3割くらいが追加注文する
+				SIF MATCH(分割用, INNS:ジャンル)
+					注文数:LCOUNT += RAND(来客数/5, (来客数/3)+1)
+				;飲食店だと主食が出やすい
+				SIF 料理分類:FINDELEMENT(料理メニュー, 飲食店メニュー:LCOUNT) == "主食"
+					注文数:LCOUNT += RAND(来客数/5, (来客数/3)+1)
+			REND
+		NEXT
+		;各注文数に応じて売上と支出が変動
+		FOR LCOUNT, 0, 10
+			SIF 注文数:LCOUNT == 0
+				CONTINUE
+			CALLF レシピ判定, 飲食店メニュー:LCOUNT
+			収入 += (料理価格*飲食店価格倍率/10)*注文数:LCOUNT
+			支出 += 料理原価*注文数:LCOUNT
+			メニュー売上:LCOUNT '= @"%飲食店メニュー:LCOUNT%×{注文数:LCOUNT} 合計:{(料理価格*飲食店価格倍率/10)*注文数:LCOUNT}＄"
+		NEXT
+	CASE "ビジネスホテル", "リゾートホテル"
+		;基本料金を設定しないと経営不可
+		IF 基本料金計算用 == 0
+			PRINTL ホテルを運営するには基本料金を設定してください
+			RETURN
+		ENDIF
+		;基本料金と名声で来客数が変動する 同値で約5組とし、あとは価格と反比例する(=名声に比例)
+		;補正値をビジホ3000、リゾホ5000と取る
+		IF INNS:業種 == "ビジネスホテル"
+			グループ数 = (INN:ホテル名声+3000)*5/基本料金計算用
+		ELSE
+			;リゾホは温泉補正あり
+			グループ数 = (INN:ホテル名声+5000+(INN:温泉レベル*100))*5/基本料金計算用
+		ENDIF
+		;休日は20%増える
+		SELECTCASE DOW(FLAG:曜日)
+			CASE "土", "日"
+				TIMES グループ数, 1.20
+		ENDSELECT
+		;最低1組は保証する
+		CALL SETMAX, グループ数, 1
+		;ただし部屋数以上にはならない
+		CALL SETMIN, グループ数, INN:部屋数
+		;1グループごとに客数が違う ビジホならほぼお一人様
+		SELECTCASE INNS:業種
+			CASE "リゾートホテル"
+				REPEAT グループ数
+					来客数++
+					SIF RANDPER(90)
+						来客数++
+					SIF RANDPER(50)
+						来客数++
+					SIF RANDPER(30)
+						来客数++
+					SIF RANDPER(10)
+						来客数++
+				REND
+			CASE "ビジネスホテル"
+				REPEAT グループ数
+					来客数++
+					SIF RANDPER(5)
+						来客数++
+				REND
+		ENDSELECT
+		;スタッフ足りないと対応できない。最大人数配属でフル対応可能で、スタッフの割合に応じて来客数も比例して下がる
+		;新婚モードでは計算しない
+		IF ゲームモード() != "新婚モード"
+			対応不可人数 = PERCENT(来客数, 100*(飲食店配属上限()-配属人数("飲食店"))/飲食店配属上限())
+			来客数 -= 対応不可人数
+		ENDIF
+		;客単価は基本料金だが、たまに追加注文などある
+		収入 = 基本料金計算用*来客数
+		収入 += RAND:(来客数/10+1)*平均価格
+	CASE "ホストクラブ", "キャバクラ"
+		;基本料金を設定しないと経営不可
+		IF 基本料金計算用 == 0
+			PRINTFORML %INNS:業種%を運営するには基本料金を設定してください
+			RETURN
+		ENDIF
+		;基本料金と名声で来客数が変動する 同値で約20人とし、あとは価格と反比例する(=名声に比例)
+		;補正を2000円取る 2000円ポッキリ
+		来客数 = ((INN:飲食店名声+2000)*20)/基本料金計算用
+		;10%のゆらぎを与える
+		来客数 += RAND(-来客数/5, (来客数/5)+1)
+		;休日は20%増える
+		SELECTCASE DOW(FLAG:曜日)
+			CASE "土", "日"
+				TIMES 来客数, 1.20
+		ENDSELECT
+		;最低3人は保証する
+		CALL SETMAX, 来客数, 3
+		;スタッフ足りないと対応できない。最大人数配属でフル対応可能で、スタッフの割合に応じて来客数も比例して下がる
+		;新婚モードでは計算しない
+		IF ゲームモード() != "新婚モード"
+			対応不可人数 = PERCENT(来客数, 100*(飲食店配属上限()-配属人数("飲食店"))/飲食店配属上限())
+			来客数 -= 対応不可人数
+		ENDIF
+		;各メニューの注文数を計算する
+		FOR LCOUNT, 0, 10
+			SIF 飲食店メニュー:LCOUNT == ""
+				CONTINUE
+			CALLF レシピ判定, 飲食店メニュー:LCOUNT
+			SPLIT 料理ジャンル, "/", 分割用
+
+			;お酒でも出るときと出ないときある
+			SIF MATCH(分割用, "お酒")
+				注文数:LCOUNT += RAND(来客数/2, 来客数+1)
+		NEXT
+		;各注文数に応じて売上と支出が変動
+		FOR LCOUNT, 0, 10
+			SIF 注文数:LCOUNT == 0
+				CONTINUE
+			CALLF レシピ判定, 飲食店メニュー:LCOUNT
+			収入 += (料理価格*飲食店価格倍率/10)*注文数:LCOUNT
+			支出 += 料理原価*注文数:LCOUNT
+			メニュー売上:LCOUNT '= @"%飲食店メニュー:LCOUNT%×{注文数:LCOUNT} 合計:{(料理価格*飲食店価格倍率/10)*注文数:LCOUNT}＄"
+		NEXT
+		;+基本料金
+		収入 += 来客数*基本料金計算用
+	CASE "バー"
+		;メニュー設定してないと不可
+		IF MATCH(飲食店メニュー, "") == 10
+			PRINTFORML %INNS:業種%を運営するにはメニューを設定してください
+			RETURN
+		ENDIF
+		;各メニューの最高価格と最低価格を見る
+		FOR LCOUNT, 0, 10
+			SIF 飲食店メニュー:LCOUNT == ""
+				CONTINUE
+			CALLF レシピ判定, 飲食店メニュー:LCOUNT
+			メニュー数++
+			CALL SETMIN, 最低価格, 料理価格*飲食店価格倍率/10
+			CALL SETMAX, 最高価格, 料理価格*飲食店価格倍率/10
+			平均価格 += 料理価格*飲食店価格倍率/10
+		NEXT
+		平均価格 /= メニュー数
+		;平均価格と名声で来客数が変動する 同値で約25人とし、あとは価格と反比例する(=名声に比例)
+		;補正を500取る
+		来客数 = ((INN:飲食店名声+500)*25)/平均価格
+		;10%のゆらぎを与える
+		来客数 += RAND(-来客数/5, (来客数/5)+1)
+		;休日は20%増える
+		SELECTCASE DOW(FLAG:曜日)
+			CASE "土", "日"
+				TIMES 来客数, 1.20
+		ENDSELECT
+		;最低保証人数は10-価格倍率%/20
+		CALL SETMAX, 来客数, 10-飲食店価格倍率/2
+		;スタッフ足りないと対応できない。最大人数配属でフル対応可能で、スタッフの割合に応じて来客数も比例して下がる
+		;新婚モードでは計算しない
+		IF ゲームモード() != "新婚モード"
+			対応不可人数 = PERCENT(来客数, 100*(飲食店配属上限()-配属人数("飲食店"))/飲食店配属上限())
+			来客数 -= 対応不可人数
+		ENDIF
+		;各メニューの注文数を計算する
+		;基本的にどれかは出る
+		DO
+			料理種類 = RAND:10
+			$RECIPELOOPバー
+			IF 飲食店メニュー:料理種類 == ""
+				料理種類++
+				SIF 料理種類 == 10
+					料理種類 = 0
+				GOTO RECIPELOOPバー
+			ENDIF
+			IF 来客数 >= 300000 && 来客数-SUMARRAY(注文数) >= 100000
+				注文数:料理種類 += 1000
+			ELSE
+				注文数:料理種類++
+			ENDIF
+		LOOP SUMARRAY(注文数) < 来客数
+		FOR LCOUNT, 0, 10
+			SIF 飲食店メニュー:LCOUNT == ""
+				CONTINUE
+			CALLF レシピ判定, 飲食店メニュー:LCOUNT
+			SPLIT 料理ジャンル, "/", 分割用
+
+			;料理レベルに応じてこの追加注文処理を再度行う(合計料理レベル%の確率)
+			REPEAT 1+RANDPER(料理レベル)
+				;店のジャンルに合ってる場合は3割くらいが追加注文する
+				SIF MATCH(分割用, INNS:ジャンル)
+					注文数:LCOUNT += RAND(来客数/5, (来客数/3)+1)
+				;バーだとファストフードが出やすい傾向にある
+				SIF MATCH(分割用, "ファストフード")
+					注文数:LCOUNT += RAND(来客数/5, (来客数/3)+1)
+			REND
+		NEXT
+		;各注文数に応じて売上と支出が変動
+		FOR LCOUNT, 0, 10
+			SIF 注文数:LCOUNT == 0
+				CONTINUE
+			CALLF レシピ判定, 飲食店メニュー:LCOUNT
+			収入 += (料理価格*飲食店価格倍率/10)*注文数:LCOUNT
+			支出 += 料理原価*注文数:LCOUNT
+			メニュー売上:LCOUNT '= @"%飲食店メニュー:LCOUNT%×{注文数:LCOUNT} 合計:{(料理価格*飲食店価格倍率/10)*注文数:LCOUNT}＄"
+		NEXT
+	CASE "ラブホテル"
+		;基本料金を設定しないと経営不可
+		IF 基本料金計算用 == 0
+			PRINTL ホテルを運営するには基本料金を設定してください
+			RETURN
+		ENDIF
+		;基本料金と名声で来客数が変動する 同値で約10組とし、あとは価格と反比例する(=名声に比例)
+		;補正を5000と取る
+		グループ数 = ((INN:その他業種名声+5000)*10)/基本料金計算用
+		;10%のゆらぎを与える
+		グループ数 += RAND(-グループ数/5, (グループ数/5)+1)
+		;休日は20%増える
+		SELECTCASE DOW(FLAG:曜日)
+			CASE "土", "日"
+				TIMES 来客数, 1.20
+		ENDSELECT
+		;最低3組は保証する
+		CALL SETMAX, グループ数, 3
+		;だいたい2人で来るが極稀に人数が増える
+		REPEAT グループ数
+			来客数 += 2
+			SIF RANDPER(5)
+				来客数++
+		REND
+		;スタッフ足りないと対応できない。最大人数配属でフル対応可能で、スタッフの割合に応じて来客数も比例して下がる
+		;新婚モードでは計算しない
+		IF ゲームモード() != "新婚モード"
+			対応不可人数 = PERCENT(来客数, 100*(飲食店配属上限()-配属人数("飲食店"))/飲食店配属上限())
+			来客数 -= 対応不可人数
+		ENDIF
+		;客単価は基本料金
+		収入 = 基本料金計算用*来客数
+	CASE "日帰り温泉"
+		;名声で来客数が変動する 名声/50人
+		来客数 = INN:その他業種名声/50
+		;休日は20%増える
+		SELECTCASE DOW(FLAG:曜日)
+			CASE "土", "日"
+				TIMES 来客数, 1.20
+		ENDSELECT
+		;最低10人は保証する
+		CALL SETMAX, 来客数, 10
+		;日帰り温泉のみスタッフは1人で十分
+		;新婚モードでは計算しない
+		IF ゲームモード() != "新婚モード" && !配属人数("飲食店")
+			対応不可人数 = 来客数
+			来客数 = 0
+		ENDIF
+		;客単価は単純 INN:温泉レベル*30
+		収入 = INN:温泉レベル*30*来客数
+ENDSELECT
+
+
+;モチベーションと人件費を計算する こちらもゲーセンとほぼ同じ
+FOR LCOUNT, 1, CHARANUM
+	SIF CSTR:LCOUNT:配属 != "飲食店"
+		CONTINUE
+	;配属完了にする
+	IF !CFLAG:LCOUNT:配属完了
+		CFLAG:LCOUNT:配属完了 = 1
+		CONTINUE
+	ENDIF
+	モチベ計算用 = 0
+	FOR LCOUNT2, 0, VARSIZE("TALENT")
+		SIF !TALENT:LCOUNT:LCOUNT2
+			CONTINUE
+		SELECTCASE TALENTNAME:LCOUNT2
+			CASE "恋慕", "服従"
+				モチベ計算用++
+			CASE "親愛", "隷属"
+				モチベ計算用 += 2
+			CASE "素直", "冷静", "強気", "好奇心", "目立ちたがり", "恥薄い", "献身的", "潔癖症", "料理人"
+				モチベ計算用++
+			CASE "臆病", "プライド高い", "大人しい", "無関心", "恥じらい", "汚臭敏感", "男嫌い", "女嫌い"
+				モチベ計算用--
+		ENDSELECT
+	NEXT
+	モチベ加算値 = CFLAG:LCOUNT:モチベーション+モチベ計算用+世話好き人数("飲食店")
+	SIF TALENT:LCOUNT:世話好き
+		モチベ加算値 -= 世話好き人数("飲食店")
+	;配属先のキャラの相性で計算
+	モチベ加算値 += 相性モチベ補正(LCOUNT)
+	CFLAG:LCOUNT:モチベーション = LIMIT(モチベ加算値, 1, 100)
+
+	SELECTCASE INNS:業種
+		;宿を併設してると1部屋につき1万
+		;温泉併設してると温泉レベル*100
+		CASE "リゾートホテル"
+			支出 += INN:部屋数
+			支出 += INN:温泉レベル*100
+		CASE "ビジネスホテル", "ラブホテル"
+			支出 += INN:部屋数
+		CASE "日帰り温泉"
+			支出 += INN:温泉レベル*100
+	ENDSELECT
+	;給料は収入の2% 最低500
+	;メニュー価格の倍率が1以上ならそれに比例する
+	日給 = MAX(収入*2/100, 500)
+	SIF 飲食店価格倍率 > 10
+		日給 = 日給*飲食店価格倍率/10
+	;浪費癖だとさらに1.2倍
+	SIF TALENT:LCOUNT:浪費癖
+		TIMES 日給, 1.20
+	支出 += 日給
+	;実務経験を加算
+	EXP:LCOUNT:実務経験++
+	;人気度を加算
+	人気度:(NOF(LCOUNT)) += 2
+	;習得を加算
+	;JUEL:LCOUNT:習得 += CFLAG:LCOUNT:モチベーション*10
+	;料理を提供する店なら料理経験も加算
+	SELECTCASE INNS:業種
+		CASE "リゾートホテル", "飲食店"
+			EXP:LCOUNT:料理経験 += 3
+	ENDSELECT
+NEXT
+
+IF 対応不可人数
+	PRINTFORML %INNS:店名%には\@ グループ数 ? {グループ数}組({来客数+対応不可人数}人) # {来客数+対応不可人数}人 \@の客が訪れましたが、スタッフの不足により{対応不可人数}人の対応ができず、利用したのは{来客数}人でした
+	CALL PASELIL, @"結果、{収入}＄の収入と{支出}＄の支出がありました"
+ELSE
+	CALL PASELIL, @"%INNS:店名%には\@ グループ数 ? {グループ数}組({来客数}人) # {来客数}人 \@の客が訪れ、{収入}＄の収入と{支出}＄の支出がありました"
+ENDIF
+名声上昇値 = 接客レベル+来客数
+;温泉付きは温泉レベルも加算
+SIF GROUPMATCH(INNS:業種, "リゾートホテル", "日帰り温泉")
+	名声上昇値 += INN:温泉レベル
+SELECTCASE INNS:業種
+	CASE "ビジネスホテル", "リゾートホテル", "ラブホテル"
+		PRINTFORML ホテル名声が{名声上昇値}、飲食店名声とその他業種名声が{名声上昇値/10}上昇しました
+		INN:ホテル名声 += 名声上昇値
+		INN:飲食店名声 += 名声上昇値/10
+		INN:その他業種名声 += 名声上昇値/10
+	CASE "飲食店", "バー", "ホストクラブ", "キャバクラ"
+		PRINTFORML 飲食店名声が{名声上昇値}、ホテル名声とその他業種名声が{名声上昇値/10}上昇しました
+		INN:ホテル名声 += 名声上昇値/10
+		INN:飲食店名声 += 名声上昇値
+		INN:その他業種名声 += 名声上昇値/10
+	CASEELSE
+		PRINTFORML その他業種名声が{名声上昇値}、飲食店名声とホテル名声が{名声上昇値/10}上昇しました
+		INN:ホテル名声 += 名声上昇値/10
+		INN:飲食店名声 += 名声上昇値/10
+		INN:その他業種名声 += 名声上昇値
+ENDSELECT
+
+ARRAYSHIFT 飲食店売上, 1, 0
+ARRAYSHIFT 飲食店客数, 1, 0
+ARRAYSHIFT 飲食店支出, 1, 0
+ARRAYSHIFT 飲食店帳簿, 1, ""
+飲食店売上 = 収入
+飲食店客数 = 来客数
+飲食店支出 = 支出
+
+飲食店帳簿 = {YEAR}年{MONTH}月{DAYS}日 %INNS:店名%の売上
+
+CALL PAYMENT, 収入-支出, "飲食店の収支"
+
+FOR LCOUNT, 1, CHARANUM
+	SIF CSTR:LCOUNT:配属 == "飲食店"
+		CALL KOJO_STRATEGY, LCOUNT, "飲食店", "TURNEND", 収入, 支出, 来客数
+NEXT
+
+@飲食店売上詳細
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC ページ
+
+CALL CHECKDRAWLINE
+
+IF 飲食店帳簿:ページ == ""
+	PRINTL 
+	PRINTL 　---記録無し---
+	PRINTL
+ELSE
+	PRINTFORML □%飲食店帳簿:ページ%
+	FOR LCOUNT, ページ*10, ページ*10+10
+		SIF メニュー売上:LCOUNT == ""
+			CONTINUE
+		CALL PASELIL, @"　%メニュー売上:LCOUNT%"
+	NEXT
+	PRINTFORM 　来客数:{飲食店客数:ページ} 売上:{飲食店売上:ページ} 客単価:
+	IF 飲食店売上:ページ != 0 && 飲食店客数:ページ != 0
+		PRINTFORM {飲食店売上:ページ/飲食店客数:ページ}
+	ELSE
+		PRINT 0
+	ENDIF
+	PRINTFORML  支出:{飲食店支出:ページ}
+ENDIF
+DRAWLINE
+PRINTPLAIN 　売上詳細　
+CALL PRINTSPACE, ページ > 0, "[1] - 前ページ "
+PRINT [0] - 戻る 
+SIF ページ < 6
+CALL PRINTSPACE, ページ < 6, "[9] - 次ページ"
+
+BINPUT
+SELECTCASE RESULT
+	CASE 0
+		RETURN
+	CASE 1
+		ページ--
+	CASE 9
+		ページ++
+ENDSELECT
+
+RESTART
+
+;;;飲食店で設定しているメニュー数
+@飲食店メニュー数
+#FUNCTION
+
+RETURNF 10-MATCH(飲食店メニュー, "")
+
+@メニュージャンル一致数
+#FUNCTION
+#DIM DYNAMIC LCOUNT
+#DIMS DYNAMIC 分割用, 5
+#DIM DYNAMIC 一致数
+
+FOR LCOUNT, 0, 10
+	SIF 飲食店メニュー:LCOUNT == ""
+		CONTINUE
+	CALLF レシピ判定, 飲食店メニュー:LCOUNT
+	SPLIT 料理ジャンル, "/", 分割用
+
+	;店のジャンルに合ってる場合は3割くらいが追加注文する
+	SIF MATCH(分割用, INNS:ジャンル)
+		一致数++
+NEXT
+
+RETURNF 一致数

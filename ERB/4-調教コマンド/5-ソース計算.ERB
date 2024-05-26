@@ -1,0 +1,2202 @@
+﻿@SOURCE_CHECK
+;チェインオブペイン用の変数
+#DIM DYNAMIC COP
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC 増加量, 3
+#DIM DYNAMIC 補正
+#DIM DYNAMIC 消費量
+#DIM DYNAMIC LVARLINE
+
+;ライブ配信はNOWEXを参照するのでSOURCE_CHECK_CVAB後のここらへんで処理する
+SIF TEQUIP:ライブ配信
+	CALL ライブ配信_FUNC
+
+;SOURCEにマイナスがあるとまずいので確認する
+FOR LCOUNT, 0, VARSIZE("SOURCE")
+	SIF SOURCE:LCOUNT < 0
+		SOURCE:LCOUNT = 0
+NEXT
+
+;-------------------------------------------------
+;情愛のソース
+;-------------------------------------------------
+増加量 = SOURCE:情愛
+SELECTCASE ABL:従順
+	CASE 0
+		TIMES 増加量, 0.10
+	CASE 1
+		TIMES 増加量, 0.50
+	CASE 2
+		TIMES 増加量, 1.00
+	CASE 3
+		TIMES 増加量, 1.50
+	CASE 4
+		TIMES 増加量, 2.00
+	CASE 5
+		TIMES 増加量, 2.50
+	CASE 6
+		TIMES 増加量, 3.00
+	CASE 7
+		TIMES 増加量, 3.50
+	CASE 8
+		TIMES 増加量, 4.00
+	CASE 9
+		TIMES 増加量, 5.00
+	CASE IS >= 10
+		増加量 *= (ABL:従順/2)+1
+ENDSELECT
+
+増加量:1 = SOURCE:情愛
+SELECTCASE ABL:欲望
+	CASE 0
+		TIMES 増加量:1, 0.10
+	CASE 1
+		TIMES 増加量:1, 0.40
+	CASE 2
+		TIMES 増加量:1, 0.80
+	CASE 3
+		TIMES 増加量:1, 1.20
+	CASE 4
+		TIMES 増加量:1, 1.60
+	CASE 5
+		TIMES 増加量:1, 2.00
+	CASE 6
+		TIMES 増加量:1, 2.40
+	CASE 7
+		TIMES 増加量:1, 2.80
+	CASE 8
+		TIMES 増加量:1, 3.20
+	CASE 9
+		TIMES 増加量:1, 3.60
+	CASE IS >= 10
+		増加量:1 *= ABL:欲望/2-1
+ENDSELECT
+
+UP:恭順 += 増加量
+UP:欲情 += 増加量:1
+
+;-------------------------------------------------
+;性行動のソース
+;-------------------------------------------------
+増加量 = SOURCE:性行動
+SELECTCASE ABL:技巧
+	CASE 0
+		TIMES 増加量, 1.00
+	CASE 1
+		TIMES 増加量, 1.60
+	CASE 2
+		TIMES 増加量, 2.20
+	CASE 3
+		TIMES 増加量, 2.80
+	CASE 4
+		TIMES 増加量, 3.40
+	CASE 5
+		TIMES 増加量, 4.00
+	CASE 6
+		TIMES 増加量, 4.60
+	CASE 7
+		TIMES 増加量, 5.20
+	CASE 8
+		TIMES 増加量, 5.80
+	CASE 9
+		TIMES 増加量, 7.40
+	CASE IS >= 10
+		増加量 *= ABL:技巧-8
+ENDSELECT
+
+SELECTCASE ABL:奉仕精神
+	CASE 0
+		TIMES 増加量, 1.00
+	CASE 1
+		TIMES 増加量, 1.20
+	CASE 2
+		TIMES 増加量, 1.40
+	CASE 3
+		TIMES 増加量, 1.60
+	CASE 4
+		TIMES 増加量, 1.80
+	CASE 5
+		TIMES 増加量, 2.10
+	CASE 6
+		TIMES 増加量, 2.40
+	CASE 7
+		TIMES 増加量, 2.80
+	CASE 8
+		TIMES 増加量, 3.30
+	CASE 9
+		TIMES 増加量, 4.00
+	CASE IS >= 10
+		増加量 *= ABL:奉仕精神/2
+ENDSELECT
+
+UP:習得 += 増加量
+
+;-------------------------------------------------
+;達成のソース
+;-------------------------------------------------
+増加量 = SOURCE:達成
+
+SELECTCASE ABL:従順
+	CASE 0
+		TIMES 増加量, 0.50
+	CASE 1
+		TIMES 増加量, 1.00
+	CASE 2
+		TIMES 増加量, 1.50
+	CASE 3
+		TIMES 増加量, 2.00
+	CASE 4
+		TIMES 増加量, 2.50
+	CASE 5
+		TIMES 増加量, 3.00
+	CASE 6
+		TIMES 増加量, 3.50
+	CASE 7
+		TIMES 増加量, 4.00
+	CASE 8
+		TIMES 増加量, 4.50
+	CASE 9
+		TIMES 増加量, 5.00
+	CASE IS >= 10
+		増加量 *= ABL:従順/2+1
+ENDSELECT
+
+SELECTCASE ABL:奉仕精神
+	CASE 0
+		TIMES 増加量, 0.10
+	CASE 1
+		TIMES 増加量, 0.50
+	CASE 2
+		TIMES 増加量, 1.00
+	CASE 3
+		TIMES 増加量, 1.50
+	CASE 4
+		TIMES 増加量, 2.00
+	CASE 5
+		TIMES 増加量, 2.50
+	CASE 6
+		TIMES 増加量, 3.00
+	CASE 7
+		TIMES 増加量, 3.50
+	CASE 8
+		TIMES 増加量, 4.00
+	CASE 9
+		TIMES 増加量, 4.50
+	CASE IS >= 10
+		増加量 *= ABL:奉仕精神/2+1
+ENDSELECT
+
+UP:恭順 += 増加量
+
+;-------------------------------------------------
+;苦痛のソース
+;-------------------------------------------------
+IF TFLAG:チェインオブペイン
+	SOURCE:苦痛 += LOSEBASE:体力*150
+	COP = LOSEBASE:体力*150
+ENDIF
+増加量 = SOURCE:苦痛
+増加量:1 = SOURCE:苦痛
+増加量:2 = SOURCE:苦痛/20
+
+IF !上級売春中
+	;残り気力 百分率で計算 残り体力より消費は少ない
+	増加量 += 増加量/10*(10-(BASE:気力*10/MAXBASE:気力))
+	COP += 増加量/10*(10-(BASE:気力*10/MAXBASE:気力))
+;	SELECTCASE BASE:気力*100/MAXBASE:気力
+;		CASE 0 TO 9
+;			TIMES 増加量, 2.00
+;			TIMES COP, 2.00
+;		CASE 10 TO 19
+;			TIMES 増加量, 1.90
+;			TIMES COP, 1.90
+;		CASE 20 TO 29
+;			TIMES 増加量, 1.80
+;			TIMES COP, 1.80
+;		CASE 30 TO 39
+;			TIMES 増加量, 1.70
+;			TIMES COP, 1.70
+;		CASE 40 TO 49
+;			TIMES 増加量, 1.60
+;			TIMES COP, 1.60
+;		CASE 50 TO 59
+;			TIMES 増加量, 1.50
+;			TIMES COP, 1.50
+;		CASE 60 TO 69
+;			TIMES 増加量, 1.40
+;			TIMES COP, 1.40
+;		CASE 70 TO 79
+;			TIMES 増加量, 1.30
+;		CASE 80 TO 89
+;			TIMES 増加量, 1.20
+;		CASE 90 TO 99
+;			TIMES 増加量, 1.10
+;		CASE 100
+;			TIMES 増加量, 1.00
+;	ENDSELECT
+
+	;残り体力 百分率で計算 体力平均は2000で体力500以下だと終了するから30%あたりが下限か
+	SELECTCASE BASE:体力*100/MAXBASE:体力
+		CASE IS <= 40
+			TIMES 増加量, 2.50
+			TIMES COP, 2.50
+		CASE 40 TO 49
+			TIMES 増加量, 2.20
+			TIMES COP, 2.20
+		CASE 50 TO 59
+			TIMES 増加量, 2.00
+			TIMES COP, 2.00
+		CASE 60 TO 69
+			TIMES 増加量, 1.80
+			TIMES COP, 1.80
+		CASE 70 TO 79
+			TIMES 増加量, 1.60
+			TIMES COP, 1.60
+		CASE 80 TO 89
+			TIMES 増加量, 1.40
+			TIMES COP, 1.40
+		CASE 90 TO 99
+			TIMES 増加量, 1.20
+			TIMES COP, 1.20
+		CASE 100
+			TIMES 増加量, 1.00
+			TIMES COP, 1.00
+	ENDSELECT
+ENDIF
+
+SELECTCASE ABL:マゾっ気
+	CASE 0
+		TIMES 増加量:1, 0.00
+	CASE 1
+		TIMES 増加量:1, 0.10
+	CASE 2
+		TIMES 増加量:1, 0.20
+	CASE 3
+		TIMES 増加量:1, 0.30
+	CASE 4
+		TIMES 増加量:1, 0.45
+	CASE 5
+		TIMES 増加量:1, 0.60
+	CASE 6
+		TIMES 増加量:1, 0.75
+	CASE 7
+		TIMES 増加量:1, 0.90
+	CASE 8
+		TIMES 増加量:1, 1.20
+	CASE 9
+		TIMES 増加量:1, 1.50
+	CASE IS >= 10
+		増加量:1 *= ABL:マゾっ気/2-2
+ENDSELECT
+
+SELECTCASE MARK:苦痛刻印
+	CASE 1
+		TIMES 増加量:2, 1.20
+	CASE 2
+		TIMES 増加量:2, 1.50
+	CASE 3
+		TIMES 増加量:2, 2.00
+ENDSELECT
+
+;TARGETの素質
+IF TALENT:小人体型
+	TIMES 増加量, 2.00
+	TIMES COP, 2.00
+	TIMES 増加量:1, 0.75
+ENDIF
+SIF TALENT:ゾンビ && !TALENT:PLAYER:ネクロマンサー
+	TIMES 増加量, 0.50
+IF TALENT:無機物
+	TIMES 増加量, 0.10
+	TIMES COP, 0.10
+ENDIF
+IF TALENT:痛みに弱い
+	TIMES 増加量, 1.50
+	TIMES COP, 1.50
+ENDIF
+SIF TALENT:臆病
+	TIMES 増加量:2, 2.00
+SIF TALENT:肋骨除去済み
+	TIMES 増加量, 1.20
+
+;PLAYERの素質
+IF TALENT:PLAYER:衝動的
+	TIMES 増加量, 1.20
+	TIMES COP, 1.20
+ENDIF
+IF TALENT:PLAYER:冷静
+	TIMES 増加量, 0.75
+	TIMES COP, 0.75
+ENDIF
+SIF TALENT:PLAYER:サド
+	TIMES 増加量:1, 2.50
+
+;マゾっ気があるとPALAM:欲情も上がる、そのとき調教者が【サド】だと効果的
+;苦痛に応じて恐怖と屈服のソースが増加する
+UP:苦痛 += 増加量
+UP:欲情 += 増加量:1
+UP:恐怖 += 増加量:2
+UP:恐怖 += 増加量:2*2
+
+;-------------------------------------------------
+;恐怖のソース
+;-------------------------------------------------
+;戦士はソースに直接補正をかける
+SIF TALENT:戦士
+	SOURCE:恐怖 /= 2
+SIF TALENT:PLAYER:戦士
+	TIMES SOURCE:恐怖, 1.20
+
+増加量 = SOURCE:恐怖
+増加量:1 = SOURCE:恐怖/5
+
+増加量 *= ABL:PLAYER:サドっ気+1
+SIF CSTR:種族 == "悪魔"
+	TIMES 増加量, 0.90
+SIF TALENT:臆病
+	TIMES 増加量:1, 1.50
+
+UP:恐怖 += 増加量
+UP:屈服 += 増加量:1
+
+;-------------------------------------------------
+;中毒のソース
+;-------------------------------------------------
+増加量 = SOURCE:中毒
+増加量:1 = SOURCE:中毒
+
+SELECTCASE ABL:欲望
+	CASE 0
+		TIMES 増加量, 0.40
+		TIMES 増加量:1, 0.50
+	CASE 1
+		TIMES 増加量, 0.60
+		TIMES 増加量:1, 0.70
+	CASE 2
+		TIMES 増加量, 0.80
+		TIMES 増加量:1, 0.90
+	CASE 3
+		TIMES 増加量, 1.00
+		TIMES 増加量:1, 1.10
+	CASE 4
+		TIMES 増加量, 1.20
+		TIMES 増加量:1, 1.30
+	CASE 5
+		TIMES 増加量, 1.40
+		TIMES 増加量:1, 1.50
+	CASE 6
+		TIMES 増加量, 1.60
+		TIMES 増加量:1, 1.70
+	CASE 7
+		TIMES 増加量, 1.80
+		TIMES 増加量:1, 1.90
+	CASE 8
+		TIMES 増加量, 2.00
+		TIMES 増加量:1, 2.10
+	CASE 9
+		TIMES 増加量, 2.20
+		TIMES 増加量:1, 2.30
+	CASE IS >= 10
+		増加量 = (増加量*(ABL:欲望/2))/2
+		増加量:1 = (増加量:1*(ABL:欲望+1))/4
+ENDSELECT
+
+UP:恭順 += 増加量
+UP:欲情 += 増加量:1
+
+;-------------------------------------------------
+;習得のソース
+;-------------------------------------------------
+増加量 = SOURCE:習得
+
+SELECTCASE ABL:技巧
+	CASE 0
+		TIMES 増加量, 1.00
+	CASE 1
+		TIMES 増加量, 2.00
+	CASE 2
+		TIMES 増加量, 3.50
+	CASE 3
+		TIMES 増加量, 5.00
+	CASE 4
+		TIMES 増加量, 7.00
+	CASE 5
+		TIMES 増加量, 9.50
+	CASE 6
+		TIMES 増加量, 12.00
+	CASE 7
+		TIMES 増加量, 15.00
+	CASE 8
+		TIMES 増加量, 18.00
+	CASE 9
+		TIMES 増加量, 21.00
+	CASE IS >= 10
+		増加量 *= ABL:技巧*10/4
+ENDSELECT
+
+UP:習得 += 増加量
+
+;-------------------------------------------------
+;欲情のソース
+;-------------------------------------------------
+増加量 = SOURCE:欲情
+;前回コマンドが情欲を煽るなら5%アップ
+SIF PREVCOMS == "情欲を煽る"
+	TIMES 増加量 , 1.05
+
+SELECTCASE ABL:欲望
+	CASE 0
+		TIMES 増加量, 0.10
+	CASE 1
+		TIMES 増加量, 0.40
+	CASE 2
+		TIMES 増加量, 0.80
+	CASE 3
+		TIMES 増加量, 1.20
+	CASE 4
+		TIMES 増加量, 1.60
+	CASE 5
+		TIMES 増加量, 2.00
+	CASE 6
+		TIMES 増加量, 2.40
+	CASE 7
+		TIMES 増加量, 2.80
+	CASE 8
+		TIMES 増加量, 3.20
+	CASE 9
+		TIMES 増加量, 3.60
+	CASE IS >= 10
+		増加量 *= ABL:欲望/2
+ENDSELECT
+
+UP:欲情 += 増加量
+
+;-------------------------------------------------
+;液体のソース
+;-------------------------------------------------
+増加量 = SOURCE:液体
+増加量:1 = 0
+
+;欲情/10がそのまま潤滑に加算される
+SIF VAGINA(TARGET) && !TALENT:無機物
+	増加量:1 = UP:欲情/10
+
+;小人×普通人
+IF TALENT:小人体型 && !TALENT:PLAYER:小人体型
+	SIF SELECTCOMS != "コンドーム" && SELECTCOMS != "搾精コンドーム" && SELECTCOMS != "ローション"
+		TIMES 増加量 , 0.40
+ENDIF
+
+SIF TALENT:無機物
+	TIMES 増加量, 0.10
+SIF TALENT:PLAYER:スライム
+	TIMES 増加量, 10.00
+
+IF TALENT:濡れやすい
+	増加量:1 *= 4
+ELSEIF TALENT:濡れにくい
+	増加量:1 /= 4
+ENDIF
+
+UP:潤滑 += 増加量+増加量:1
+
+;-------------------------------------------------
+;恭順のソース
+;-------------------------------------------------
+増加量 = SOURCE:恭順
+
+SELECTCASE ABL:従順
+	CASE 0
+		TIMES 増加量, 0.80
+	CASE 1
+		TIMES 増加量, 1.20
+	CASE 2
+		TIMES 増加量, 1.60
+	CASE 3
+		TIMES 増加量, 2.00
+	CASE 4
+		TIMES 増加量, 2.40
+	CASE 5
+		TIMES 増加量, 2.80
+	CASE 6
+		TIMES 増加量, 3.20
+	CASE 7
+		TIMES 増加量, 3.60
+	CASE 8
+		TIMES 増加量, 4.00
+	CASE 9
+		TIMES 増加量, 4.40
+	CASE IS >= 10
+		増加量 *= ABL:従順/2
+ENDSELECT
+
+SELECTCASE ABL:欲望
+	CASE 0
+		TIMES 増加量, 1.00
+	CASE 1
+		TIMES 増加量, 1.30
+	CASE 2
+		TIMES 増加量, 1.60
+	CASE 3
+		TIMES 増加量, 1.90
+	CASE 4
+		TIMES 増加量, 2.20
+	CASE 5
+		TIMES 増加量, 2.50
+	CASE 6
+		TIMES 増加量, 2.80
+	CASE 7
+		TIMES 増加量, 3.10
+	CASE 8
+		TIMES 増加量, 3.40
+	CASE 9
+		TIMES 増加量, 3.70
+	CASE IS >= 10
+		増加量 *= ABL:欲望/2-1
+ENDSELECT
+
+UP:恭順 += 増加量
+
+;-------------------------------------------------
+;露出のソース
+;-------------------------------------------------
+;恥じらい、恥薄い、アニマルはここで処理
+SIF TALENT:恥じらい
+	TIMES SOURCE:露出, 2.00
+SIF TALENT:恥薄い
+	TIMES SOURCE:露出, 0.50
+SIF TALENT:アニマル
+	TIMES SOURCE:露出, 0.20
+
+;潤滑アップの30％を露出のソースに加える
+SOURCE:露出 += UP:潤滑/2
+増加量 = SOURCE:露出
+
+SELECTCASE ABL:露出癖
+	CASE 0
+		TIMES 増加量, 0.00
+	CASE 1
+		TIMES 増加量, 0.10
+	CASE 2
+		TIMES 増加量, 0.20
+	CASE 3
+		TIMES 増加量, 0.40
+	CASE 4
+		TIMES 増加量, 0.60
+	CASE 5
+		TIMES 増加量, 0.80
+	CASE 6
+		TIMES 増加量, 1.00
+	CASE 7
+		TIMES 増加量, 1.20
+	CASE 8
+		TIMES 増加量, 1.40
+	CASE 9
+		TIMES 増加量, 1.60
+	CASE IS >= 10
+		増加量 *= ABL:露出癖/5
+ENDSELECT
+
+;恥ずかしさを感じれば感じるほどあまり恥ずかしくなくなる
+増加量:1 = SOURCE:露出
+SELECTCASE GETPALAMLV(PALAM:恥情, 4)
+	CASE 0
+		TIMES 増加量:1, 1.00
+	CASE 1
+		TIMES 増加量:1, 0.90
+	CASE 2
+		TIMES 増加量:1, 0.80
+	CASE 3
+		TIMES 増加量:1, 0.70
+	CASE 4
+		TIMES 増加量:1, 0.60
+ENDSELECT
+
+SIF CSTR:種族 == "獣人" || CSTR:種族 == "獣" || TALENT:ファーリー
+	TIMES 増加量:1, 0.50
+
+UP:欲情 += 増加量
+UP:恥情 += 増加量:1
+UP:屈服 += 増加量:1/10
+
+;-------------------------------------------------
+;屈従のソース
+;-------------------------------------------------
+増加量 = SOURCE:屈従
+増加量:1 = SOURCE:恐怖
+;戦士は恐怖に屈しづらい→上で既に除算している
+;SIF TALENT:戦士
+;	SOURCE:恐怖 /= 5
+
+SELECTCASE ABL:従順
+	CASE 0
+		TIMES 増加量, 0.50
+	CASE 1
+		TIMES 増加量, 1.00
+	CASE 2
+		TIMES 増加量, 1.50
+	CASE 3
+		TIMES 増加量, 2.50
+	CASE 4
+		TIMES 増加量, 3.00
+	CASE 5
+		TIMES 増加量, 3.50
+	CASE 6
+		TIMES 増加量, 4.00
+	CASE 7
+		TIMES 増加量, 4.50
+	CASE 8
+		TIMES 増加量, 5.00
+	CASE 9
+		TIMES 増加量, 5.50
+	CASE IS >= 10
+		増加量 *= ABL:従順/2+1
+ENDSELECT
+
+SELECTCASE ABL:奉仕精神
+	CASE 0
+		TIMES 増加量, 0.50
+	CASE 1
+		TIMES 増加量, 1.00
+	CASE 2
+		TIMES 増加量, 1.50
+	CASE 3
+		TIMES 増加量, 2.50
+	CASE 4
+		TIMES 増加量, 3.00
+	CASE 5
+		TIMES 増加量, 3.50
+	CASE 6
+		TIMES 増加量, 4.00
+	CASE 7
+		TIMES 増加量, 4.50
+	CASE 8
+		TIMES 増加量, 5.00
+	CASE 9
+		TIMES 増加量, 5.50
+	CASE IS >= 10
+		増加量 *= ABL:奉仕精神/2+1
+ENDSELECT
+
+;恐怖よりは畏怖に近いと解釈
+SELECTCASE ABL:従順
+	CASE 0
+		TIMES 増加量:1, 1.00
+	CASE 1
+		TIMES 増加量:1, 1.50
+	CASE 2
+		TIMES 増加量:1, 2.00
+	CASE 3
+		TIMES 増加量:1, 2.50
+	CASE 4
+		TIMES 増加量:1, 3.00
+	CASE 5
+		TIMES 増加量:1, 3.50
+	CASE 6
+		TIMES 増加量:1, 4.00
+	CASE 7
+		TIMES 増加量:1, 4.50
+	CASE 8
+		TIMES 増加量:1, 5.00
+	CASE 9
+		TIMES 増加量:1, 5.50
+	CASE IS >= 10
+		増加量:1 *= ABL:従順/2+2
+ENDSELECT
+
+UP:屈服 += 増加量+増加量:1
+
+;-------------------------------------------------
+;不潔のソース
+;-------------------------------------------------
+SIF TFLAG:メタリックマインド
+	SOURCE:不潔 /= 3
+増加量 = SOURCE:不潔
+
+IF TEQUIP:下半身下着
+	SIF GETBIT(STAIN:下着, 汚れTOBIT("愛液"))
+		SOURCE:不潔 += 10
+	SIF GETBIT(STAIN:下着, 汚れTOBIT("先走り"))
+		SOURCE:不潔 += 20
+	SIF GETBIT(STAIN:下着, 汚れTOBIT("精液"))
+		SOURCE:不潔 += 30
+	SIF GETBIT(STAIN:下着, 汚れTOBIT("アナル"))
+		SOURCE:不潔 += 30
+	SIF GETBIT(STAIN:下着, 汚れTOBIT("母乳"))
+		SOURCE:不潔 += 10
+	SIF GETBIT(STAIN:下着, 汚れTOBIT("粘液"))
+		SOURCE:不潔 += 20
+	SIF GETBIT(STAIN:下着, 汚れTOBIT("破瓜血"))
+		SOURCE:不潔 += 20
+	SIF GETBIT(STAIN:下着, 汚れTOBIT("尿"))
+		SOURCE:不潔 += 50
+	;SIF GETBIT(STAIN:下着, 汚れTOBIT("糞便"))
+ENDIF
+
+SELECTCASE ABL:従順
+	CASE 0
+		TIMES 増加量, 1.00
+	CASE 1
+		TIMES 増加量, 0.90
+	CASE 2
+		TIMES 増加量, 0.80
+	CASE 3
+		TIMES 増加量, 0.70
+	CASE 4
+		TIMES 増加量, 0.60
+	CASE 5
+		TIMES 増加量, 0.50
+	CASE 6
+		TIMES 増加量, 0.40
+	CASE 7
+		TIMES 増加量, 0.30
+	CASE 8
+		TIMES 増加量, 0.20
+	CASE 9
+		TIMES 増加量, 0.10
+	CASE IS >= 10
+		TIMES 増加量, 0.00
+ENDSELECT
+
+SIF TALENT:汚れ無視
+	TIMES 増加量 , 0.50
+SIF TALENT:潔癖症
+	TIMES 増加量 , 2.00
+
+UP:不快 += 増加量
+
+;-------------------------------------------------
+;鬱屈のソース
+;-------------------------------------------------
+SIF TFLAG:メタリックマインド
+	SOURCE:鬱屈 /= 3
+
+;ストレス値に応じて鬱屈のソースが上がる
+;190で2倍 320で3倍 430で4倍 540で5倍 630で6倍 730で7倍 810で8倍 900で9倍 980で10倍
+SOURCE:鬱屈 += SOURCE:鬱屈*POW4V3(CFLAG:ストレス値/10,2)/100
+
+増加量 = SOURCE:鬱屈
+SELECTCASE ABL:従順
+	CASE 0
+		TIMES 増加量, 1.00
+	CASE 1
+		TIMES 増加量, 0.80
+	CASE 2
+		TIMES 増加量, 0.60
+	CASE 3
+		TIMES 増加量, 0.40
+	CASE 4
+		TIMES 増加量, 0.30
+	CASE 5
+		TIMES 増加量, 0.20
+	CASE 6
+		TIMES 増加量, 0.10
+	CASE 7
+		TIMES 増加量, 0.08
+	CASE 8
+		TIMES 増加量, 0.06
+	CASE 9
+		TIMES 増加量, 0.04
+	CASE IS >= 10
+		TIMES 増加量, 0.00
+ENDSELECT
+
+SELECTCASE ABL:欲望
+	CASE 0
+		TIMES 増加量, 1.00
+	CASE 1
+		TIMES 増加量, 0.90
+	CASE 2
+		TIMES 増加量, 0.80
+	CASE 3
+		TIMES 増加量, 0.70
+	CASE 4
+		TIMES 増加量, 0.60
+	CASE 5
+		TIMES 増加量, 0.50
+	CASE 6
+		TIMES 増加量, 0.40
+	CASE 7
+		TIMES 増加量, 0.30
+	CASE 8
+		TIMES 増加量, 0.20
+	CASE 9
+		TIMES 増加量, 0.10
+	CASE IS >= 10
+		TIMES 増加量, 0.00
+ENDSELECT
+
+UP:抑鬱 += 増加量
+
+;-------------------------------------------------
+;逸脱のソース
+;-------------------------------------------------
+SIF TFLAG:メタリックマインド
+	SOURCE:逸脱 /= 3
+
+;好奇心と保守的はここで処理
+SIF TALENT:好奇心
+	TIMES SOURCE:逸脱, 0.80
+SIF TALENT:保守的
+	TIMES SOURCE:逸脱, 2.00
+
+増加量 = SOURCE:逸脱
+SELECTCASE ABL:従順
+	CASE 0
+		TIMES 増加量, 1.00
+	CASE 1
+		TIMES 増加量, 0.80
+	CASE 2
+		TIMES 増加量, 0.60
+	CASE 3
+		TIMES 増加量, 0.40
+	CASE 4
+		TIMES 増加量, 0.30
+	CASE 5
+		TIMES 増加量, 0.20
+	CASE 6
+		TIMES 増加量, 0.10
+	CASE 7
+		TIMES 増加量, 0.08
+	CASE 8
+		TIMES 増加量, 0.06
+	CASE 9
+		TIMES 増加量, 0.04
+	CASE IS >= 10
+		TIMES 増加量, 0.00
+ENDSELECT
+
+SELECTCASE ABL:マゾっ気
+	CASE 0
+		TIMES 増加量, 1.00
+	CASE 1
+		TIMES 増加量, 0.95
+	CASE 2
+		TIMES 増加量, 0.90
+	CASE 3
+		TIMES 増加量, 0.85
+	CASE 4
+		TIMES 増加量, 0.80
+	CASE 5
+		TIMES 増加量, 0.75
+	CASE 6
+		TIMES 増加量, 0.70
+	CASE 7
+		TIMES 増加量, 0.65
+	CASE 8
+		TIMES 増加量, 0.60
+	CASE 9
+		TIMES 増加量, 0.55
+	CASE IS >= 10
+		TIMES 増加量, 0.50
+ENDSELECT
+
+UP:反感 += 増加量
+
+;-------------------------------------------------
+;反感のソース
+;-------------------------------------------------
+SIF TFLAG:メタリックマインド
+	SOURCE:反感 /= 3
+
+;ストレス値に応じて反感のソースが上がる
+;190で1.5倍 320で2倍 430で1.5倍 540で2倍 630で2.5倍 730で3倍 810で3.5倍 900で4倍 980で4.5倍
+SOURCE:反感 += SOURCE:反感*POW4V3(CFLAG:ストレス値/10)/100
+
+増加量 = SOURCE:反感
+SELECTCASE ABL:従順
+	CASE 0
+		TIMES 増加量, 1.00
+	CASE 1
+		TIMES 増加量, 0.80
+	CASE 2
+		TIMES 増加量, 0.60
+	CASE 3
+		TIMES 増加量, 0.40
+	CASE 4
+		TIMES 増加量, 0.30
+	CASE 5
+		TIMES 増加量, 0.20
+	CASE 6
+		TIMES 増加量, 0.10
+	CASE 7
+		TIMES 増加量, 0.08
+	CASE 8
+		TIMES 増加量, 0.06
+	CASE 9
+		TIMES 増加量, 0.04
+	CASE IS >= 10
+		TIMES 増加量, 0.00
+ENDSELECT
+
+SELECTCASE ABL:奉仕精神
+	CASE 0
+		TIMES 増加量, 1.00
+	CASE 1
+		TIMES 増加量, 0.90
+	CASE 2
+		TIMES 増加量, 0.80
+	CASE 3
+		TIMES 増加量, 0.70
+	CASE 4
+		TIMES 増加量, 0.60
+	CASE 5
+		TIMES 増加量, 0.50
+	CASE 6
+		TIMES 増加量, 0.40
+	CASE 7
+		TIMES 増加量, 0.30
+	CASE 8
+		TIMES 増加量, 0.20
+	CASE 9
+		TIMES 増加量, 0.10
+	CASE IS >= 10
+		TIMES 増加量, 0.00
+ENDSELECT
+
+UP:反感 += 増加量
+
+;-------------------------------------------------
+;薬品
+;-------------------------------------------------
+IF CFLAG:媚薬
+	UP:恭順 += UP:恭順/50*CFLAG:媚薬
+	UP:欲情 += UP:欲情/10*CFLAG:媚薬
+	UP:屈服 += UP:屈服/50*CFLAG:媚薬
+	UP:不快 += UP:不快/40*CFLAG:媚薬
+ENDIF
+IF TEQUIP:利尿剤
+	TIMES UP:恭順, 0.80
+	TIMES UP:欲情, 0.80
+	TIMES UP:恥情, 1.20
+	TIMES UP:反感, 1.50
+	TIMES UP:不快, 1.20
+ENDIF
+
+;-------------------------------------------------
+;魔法
+;-------------------------------------------------
+IF TFLAG:ゴーバーサーク
+	TIMES UP:恭順, 1.50
+	TIMES UP:欲情, 1.50
+ENDIF
+
+;-------------------------------------------------
+;陥落素質
+;-------------------------------------------------
+IF TALENT:恋慕
+	IF PLAYER == MASTER
+		TIMES UP:恭順, 2.00
+		TIMES UP:屈服, 2.00
+		TIMES UP:反感, 0.50
+		TIMES UP:不快, 0.50
+	ELSE
+		TIMES UP:恭順, 0.80
+		TIMES UP:反感, 1.20
+		TIMES UP:不快, 1.20
+	ENDIF
+ENDIF
+IF TALENT:淫乱
+	TIMES UP:恭順, 1.20
+	TIMES UP:屈服, 1.20
+	TIMES UP:習得, 1.20
+	TIMES UP:反感, 0.80
+	TIMES UP:不快, 0.80
+	TIMES UP:抑鬱, 0.40
+ENDIF
+IF TALENT:服従
+	TIMES UP:恭順, 0.50
+	TIMES UP:屈服, 3.00
+	TIMES UP:恐怖, 1.50
+	TIMES UP:反感, 0.50
+ENDIF
+
+IF TALENT:親愛
+	IF PLAYER == MASTER
+		TIMES UP:恭順, 3.00
+		TIMES UP:屈服, 3.00
+		TIMES UP:反感, 0.20
+		TIMES UP:不快, 0.20
+		TIMES UP:抑鬱, 0.50
+	ELSE
+		TIMES UP:恭順, 0.80
+		TIMES UP:反感, 1.20
+		TIMES UP:不快, 1.20
+	ENDIF
+ENDIF
+IF TALENT:淫魔
+	TIMES UP:恭順, 1.50
+	TIMES UP:屈服, 1.50
+	TIMES UP:習得, 1.50
+	TIMES UP:反感, 0.60
+	TIMES UP:不快, 0.60
+	TIMES UP:抑鬱, 0.30
+ENDIF
+IF TALENT:隷属
+	TIMES UP:恭順, 0.20
+	TIMES UP:屈服, 5.00
+	TIMES UP:恐怖, 3.00
+	TIMES UP:反感, 0.25
+	TIMES UP:不快, 0.25
+	TIMES UP:抑鬱, 0.25
+ENDIF
+
+;-------------------------------------------------
+;素質
+;-------------------------------------------------
+FOR LCOUNT, 0, VARSIZE("TALENT")
+	SIF !TALENT:LCOUNT
+		CONTINUE
+	SELECTCASE TALENTNAME:LCOUNT
+		CASE "臆病"
+			TIMES UP:恐怖, 1.20
+			TIMES UP:反感, 1.20
+		CASE "反抗的"
+			IF !FALLTYPE(TARGET) != 3
+				TIMES UP:恭順, 0.80
+				TIMES UP:屈服, 0.80
+				TIMES UP:反感, 1.20
+			ENDIF
+		CASE "気丈"
+			TIMES UP:恭順, 0.80
+			TIMES UP:欲情, 0.80
+			TIMES UP:屈服, 0.80
+			TIMES UP:恐怖, 0.80
+			TIMES UP:反感, 0.80
+			TIMES UP:抑鬱, 0.80
+		CASE "素直"
+			TIMES UP:恭順, 1.20
+			TIMES UP:反感, 0.80
+		CASE "大人しい"
+			TIMES UP:恭順, 0.80
+			TIMES UP:反感, 0.80
+		CASE "プライド高い"
+			TIMES UP:屈服, 0.80
+			TIMES UP:恐怖, 0.80
+			TIMES UP:反感, 1.20
+		CASE "生意気"
+			TIMES UP:恭順, 0.80
+			TIMES UP:屈服, 0.80
+			TIMES UP:反感, 1.20
+		CASE "プライド低い"
+			TIMES UP:屈服, 1.20
+			TIMES UP:恐怖, 1.20
+			TIMES UP:反感, 0.80
+		CASE "ツンデレ"
+			IF 陥落(TARGET)
+				TIMES UP:恭順, 1.20
+				TIMES UP:屈服, 1.20
+				TIMES UP:反感, 0.80
+			ELSE
+				TIMES UP:恭順, 0.80
+				TIMES UP:屈服, 0.80
+				TIMES UP:反感, 1.20
+			ENDIF
+		CASE "強気"
+			TIMES UP:屈服, 0.70
+			TIMES UP:恐怖, 0.80
+		CASE "弱気"
+			TIMES UP:屈服, 1.30
+			TIMES UP:恐怖, 1.30
+		CASE "自制心"
+			TIMES UP:屈服, 0.80
+			TIMES UP:恐怖, 0.80
+			TIMES UP:反感, 1.20
+		CASE "無関心"
+			TIMES UP:恭順, 0.80
+			TIMES UP:欲情, 0.80
+			TIMES UP:屈服, 0.80
+			TIMES UP:恐怖, 0.80
+			TIMES UP:反感, 0.80
+		CASE "感情乏しい"
+			TIMES UP:恭順, 0.80
+			TIMES UP:欲情, 0.80
+			TIMES UP:屈服, 0.80
+			TIMES UP:恥情, 0.80
+			TIMES UP:恐怖, 0.80
+			TIMES UP:反感, 0.80
+			TIMES UP:不快, 0.80
+			TIMES UP:抑鬱, 0.80
+		CASE "好奇心"
+			TIMES UP:習得, 1.20
+		CASE "保守的"
+			TIMES UP:習得, 0.80
+		CASE "楽観的"
+			TIMES UP:恐怖, 0.80
+			TIMES UP:抑鬱, 0.80
+		CASE "悲観的"
+			TIMES UP:恐怖, 1.20
+			TIMES UP:抑鬱, 1.20
+		CASE "一線越えない"
+			IF 陥落(TARGET)
+				TIMES UP:恭順, 1.30
+				TIMES UP:欲情, 1.30
+				TIMES UP:屈服, 1.30
+				TIMES UP:習得, 1.30
+				TIMES UP:反感, 0.70
+				TIMES UP:不快, 0.70
+			ELSE
+				TIMES UP:恭順, 0.70
+				TIMES UP:欲情, 0.70
+				TIMES UP:屈服, 0.70
+				TIMES UP:習得, 0.70
+				TIMES UP:反感, 1.30
+				TIMES UP:不快, 1.30
+			ENDIF
+		CASE "目立ちたがり"
+			TIMES UP:恥情, 0.80
+		CASE "寂しがり屋"
+			IF ASSI > 0
+				TIMES UP:恭順, 1.20
+				TIMES UP:恐怖, 0.80
+				TIMES UP:不快, 0.80
+			ENDIF
+		CASE "抑圧"
+			TIMES UP:欲情, 0.80
+			TIMES UP:反感, 1.20
+			TIMES UP:抑鬱, 1.20
+		CASE "解放"
+			TIMES UP:欲情, 1.20
+			TIMES UP:屈服, 1.20
+		CASE "抵抗"
+			TIMES UP:恭順, 0.80
+			TIMES UP:反感, 1.20
+			TIMES UP:抑鬱, 1.20
+		CASE "痛みに弱い"
+			TIMES UP:苦痛, 1.20
+		CASE "痛みに強い"
+			TIMES UP:苦痛, 0.80
+		CASE "習得早い"
+			TIMES UP:習得, 1.20
+		CASE "習得遅い"
+			TIMES UP:習得, 0.80
+		CASE "献身的"
+			TIMES UP:屈服, 1.20
+		CASE "快感に素直"
+			TIMES UP:欲情, 1.20
+		CASE "快感の否定"
+			SIF FALLTYPE(TARGET) != 2
+				TIMES UP:欲情, 0.80
+		CASE "即落ち"
+			TIMES UP:恭順, 5.00
+			TIMES UP:欲情, 5.00
+			TIMES UP:屈服, 5.00
+			TIMES UP:恐怖, 5.00
+			TIMES UP:反感, 0.20
+			TIMES UP:不快, 0.20
+			TIMES UP:抑鬱, 0.20
+		CASE "淫核"
+			TIMES UP:欲情, 1.20
+		CASE "淫膣"
+			TIMES UP:恭順, 1.20
+		CASE "淫尻"
+			TIMES UP:屈服, 1.20
+		CASE "淫乳"
+			TIMES UP:恥情, 1.20
+		CASE "倒錯的"
+			TIMES UP:屈服, 1.20
+			TIMES UP:恥情, 1.20
+		CASE "去勢済み"
+			TIMES UP:抑鬱, 1.50
+		CASE "男好き"
+			SIF SEX(PLAYER) == 1
+				GOTO 性別好き
+		CASE "女好き"
+			SIF SEX(PLAYER) == 2
+				GOTO 性別好き
+		CASE "男嫌い"
+			SIF SEX(PLAYER) == 1 && (FALLTYPE(TARGET) != 1 || PLAYER != MASTER)
+				GOTO 性別嫌い
+		CASE "女嫌い"
+			SIF SEX(PLAYER) == 2 && (FALLTYPE(TARGET) != 1 || PLAYER != MASTER)
+				GOTO 性別嫌い
+		CASE "性別好き"
+			$性別好き
+			TIMES UP:恭順, 1.20
+			TIMES UP:欲情, 1.20
+			TIMES UP:屈服, 1.20
+			TIMES UP:習得, 1.20
+			TIMES UP:反感, 0.80
+			TIMES UP:不快, 0.80
+		CASE "性別嫌い"
+			$性別嫌い
+			TIMES UP:恭順, 0.80
+			TIMES UP:欲情, 0.80
+			TIMES UP:屈服, 0.80
+			TIMES UP:習得, 0.80
+			TIMES UP:反感, 1.20
+			TIMES UP:不快, 1.20
+		CASE "同族嫌悪"
+			IF CSTR:種族 == CSTR:PLAYER:種族
+				TIMES UP:恭順, 0.80
+				TIMES UP:欲情, 0.80
+				TIMES UP:屈服, 0.80
+				TIMES UP:恥情, 1.20
+				TIMES UP:反感, 1.20
+			ENDIF
+		CASE "子供好き"
+			IF TALENT:PLAYER:体格 <= 2
+				TIMES UP:恭順, 1.20
+				TIMES UP:欲情, 1.20
+				TIMES UP:屈服, 0.80
+				TIMES UP:恐怖, 0.80
+				TIMES UP:反感, 0.80
+			ENDIF
+		CASE "サド"
+			TIMES UP:屈服, 0.80
+			TIMES UP:恐怖, 0.80
+		CASE ":マゾ"
+			TIMES UP:屈服, 1.20
+			TIMES UP:恐怖, 1.20
+			TIMES UP:抑鬱, 0.80
+		CASE "妄信"
+			TIMES UP:屈服, 1.20
+			TIMES UP:反感, 0.80
+		CASE "恋心"
+			IF ハニーバニー:0 > 0
+				GOTO 恋心
+			ELSEIF ISMIGELLAN(PLAYER) && (CSTR:恋心 == CSVNAMEF(TRANCEFLAG:PLAYER:ミゼラン専用, 1) || ミゼラン変身中:TARGET:0)
+				GOTO 恋心
+			ELSEIF CSTR:恋心 != CSVNAMEF(NOF(PLAYER), 1) && !陥落(TARGET)
+				TIMES UP:潤滑, 0.90
+				TIMES UP:恭順, 0.90
+				TIMES UP:欲情, 0.90
+				TIMES UP:屈服, 0.90
+				TIMES UP:習得, 0.90
+				TIMES UP:恥情, 0.90
+				TIMES UP:苦痛, 0.90
+				TIMES UP:恐怖, 0.90
+				TIMES UP:反感, 2.00
+				TIMES UP:不快, 1.10
+				TIMES UP:抑鬱, 1.10
+			ELSEIF CSTR:恋心 == CSVNAMEF(NOF(PLAYER), 1) && (PLAYER == MASTER || !陥落(TARGET))
+				$恋心
+				TIMES UP:潤滑, 1.20
+				TIMES UP:恭順, 1.20
+				TIMES UP:欲情, 1.20
+				TIMES UP:屈服, 1.20
+				TIMES UP:習得, 1.20
+				TIMES UP:恥情, 1.20
+				TIMES UP:苦痛, 1.20
+				TIMES UP:恐怖, 1.20
+				TIMES UP:反感, 0.50
+				TIMES UP:不快, 0.80
+				TIMES UP:抑鬱, 0.80
+			ENDIF
+		CASE "既婚者"
+			IF ハニーバニー:0 > 0
+				GOTO 既婚者
+			ELSEIF ISMIGELLAN(PLAYER) && (CSTR:既婚者 == CSVNAMEF(TRANCEFLAG:PLAYER:ミゼラン専用, 1) || ミゼラン変身中:TARGET:0)
+				GOTO 既婚者
+			ELSEIF CSTR:既婚者 != CSVNAMEF(NOF(PLAYER), 1) && !陥落(TARGET)
+				TIMES UP:潤滑, 0.70
+				TIMES UP:恭順, 0.70
+				TIMES UP:欲情, 0.70
+				TIMES UP:屈服, 0.70
+				TIMES UP:習得, 0.70
+				TIMES UP:恥情, 0.70
+				TIMES UP:苦痛, 0.70
+				TIMES UP:恐怖, 0.70
+				TIMES UP:反感, 4.00
+				TIMES UP:不快, 1.30
+				TIMES UP:抑鬱, 1.30
+			ELSEIF CSTR:既婚者 == CSVNAMEF(NOF(PLAYER), 1) && (PLAYER == MASTER || !陥落(TARGET))
+				$既婚者
+				TIMES UP:潤滑, 1.50
+				TIMES UP:恭順, 1.50
+				TIMES UP:欲情, 1.50
+				TIMES UP:屈服, 1.50
+				TIMES UP:習得, 1.50
+				TIMES UP:恥情, 1.50
+				TIMES UP:苦痛, 1.50
+				TIMES UP:恐怖, 1.50
+				TIMES UP:反感, 0.25
+				TIMES UP:不快, 0.50
+				TIMES UP:抑鬱, 0.50
+			ENDIF
+	ENDSELECT
+NEXT
+
+;-------------------------------------------------
+;その他
+;-------------------------------------------------
+;刻印
+SELECTCASE MARK:苦痛刻印
+	CASE 1
+		TIMES UP:苦痛, 1.10
+		TIMES UP:恐怖, 1.10
+	CASE 2
+		TIMES UP:苦痛, 1.20
+		TIMES UP:恐怖, 1.20
+	CASE 3
+		TIMES UP:苦痛, 1.30
+		TIMES UP:恐怖, 1.30
+ENDSELECT
+SELECTCASE MARK:快楽刻印
+	CASE 1
+		TIMES UP:欲情, 1.10
+		TIMES UP:習得, 1.10
+	CASE 2
+		TIMES UP:欲情, 1.20
+		TIMES UP:習得, 1.20
+	CASE 3
+		TIMES UP:欲情, 1.30
+		TIMES UP:習得, 1.30
+ENDSELECT
+SELECTCASE MARK:屈服刻印
+	CASE 1
+		TIMES UP:恭順, 1.10
+		TIMES UP:屈服, 1.10
+	CASE 2
+		TIMES UP:恭順, 1.20
+		TIMES UP:屈服, 1.20
+	CASE 3
+		TIMES UP:恭順, 1.30
+		TIMES UP:屈服, 1.30
+ENDSELECT
+SELECTCASE MARK:反発刻印
+	CASE 1
+		TIMES UP:恭順, 0.60
+		TIMES UP:反感, 1.10
+	CASE 2
+		TIMES UP:恭順, 0.40
+		TIMES UP:反感, 1.20
+	CASE 3
+		TIMES UP:恭順, 0.10
+		TIMES UP:反感, 1.30
+ENDSELECT
+
+;種族によるボーナス
+IF CSTR:種族 == "精霊"
+	SELECTCASE 天気()
+		CASE "大雨"
+			TIMES UP:習得, 1.20
+		CASE "雪", "大雪"
+			TIMES UP:反感, 0.70
+			TIMES UP:不快, 0.70
+			TIMES UP:抑鬱, 0.70
+			SIF 天気() == "大雪"
+				TIMES UP:恭順, 1.30
+	ENDSELECT
+ENDIF
+IF CSTR:種族 == "鳳凰" && FLAG:気温 > 0
+	補正 = FLAG:気温
+	SELECTCASE 天気()
+		CASE "晴れ"
+		CASE "曇り"
+			TIMES 補正, 0.50
+		CASEELSE
+			TIMES 補正, 0.20
+	ENDSELECT
+	;一部PALAMが1.{補正}倍になる 気温100℃でなんと2倍！(人類滅亡)
+	FOR LCOUNT, 0, VARSIZE("PALAM")
+		SELECTCASE PALAMNAME:LCOUNT
+			CASE "潤滑", "恭順", "欲情", "屈服", "習得"
+				UP:LCOUNT += (UP:LCOUNT*補正)/1000
+		ENDSELECT
+	NEXT
+ENDIF
+IF ISSLIME(TARGET)
+	TIMES UP:潤滑, 100.0
+ELSEIF CFLAG:スライム度 >= 10
+	TIMES UP:潤滑, 1.50
+ENDIF
+
+;発情度 勃起は下の処理でやってる
+UP:欲情 += UP:欲情*発情度(TARGET)/100
+UP:潤滑 += UP:潤滑*発情度(TARGET)/100
+
+;-------------------------------------------------
+;難易度による上下の処理
+;-------------------------------------------------
+
+FOR LCOUNT, 0, VARSIZE("PALAM")
+	SELECTCASE PALAMNAME:LCOUNT
+		CASE "潤滑", "勃起", "恭順", "欲情", "屈服", "習得", "恥情", "苦痛", "恐怖"
+			SELECTCASE FLAG:難易度
+				CASE -1
+					;BEGINNER NORMALは変化なし
+					TIMES UP:LCOUNT, 3.00
+				CASE 2
+					;HYPER
+					TIMES UP:LCOUNT, 0.80
+				CASE 3
+					;ANOTHER
+					TIMES UP:LCOUNT, 0.60
+				CASE 4
+					;LEGGENDARIA
+					TIMES UP:LCOUNT, 0.30
+			ENDSELECT
+		CASE "反感", "不快", "抑鬱"
+			SELECTCASE FLAG:難易度
+				CASE -1
+					TIMES UP:LCOUNT, 0.20
+				CASE 2
+					TIMES UP:LCOUNT, 1.20
+				CASE 3
+					TIMES UP:LCOUNT, 1.40
+				CASE 4
+					TIMES UP:LCOUNT, 2.00
+			ENDSELECT
+	ENDSELECT
+NEXT
+
+;-------------------------------------------------
+;相性による上下の処理
+;-------------------------------------------------
+補正 = 相性値(TARGET, PLAYER)
+IF 補正 != 100 && 補正 > 0 
+	UP:欲情 *= 補正/100
+	UP:屈服 *= 補正/100
+	UP:恥情 *= 補正/100
+	UP:反感 *= 100/補正
+	UP:不快 *= 100/補正
+	UP:抑鬱 *= 100/補正
+ENDIF
+
+;-------------------------------------------------
+;同じコマンドの連続実行による上下の処理
+;-------------------------------------------------
+;快楽系は絶頂に絡むので先に処理してある
+IF SELECTCOMS == PREVCOMS && !GROUPMATCH(SELECTCOMS, "お酒を飲ませる", "ハッキング") && !TFLAG:リカーシブファンクション
+	UP:恭順 /= 2
+	UP:欲情 /= 2
+	UP:屈服 /= 2
+	UP:習得 /= 2
+	UP:恥情 /= 2
+	UP:苦痛 /= 2
+	UP:恐怖 /= 2
+	COP /= 2
+ENDIF
+
+;-------------------------------------------------
+;気力０による上下の処理
+;-------------------------------------------------
+IF BASE:気力 <= 0 && !TFLAG:ゴーバーサーク
+	TIMES UP:恭順, 0.70
+	TIMES UP:欲情, 0.70
+	TIMES UP:屈服, 0.70
+	TIMES UP:恥情, 0.70
+	TIMES UP:恐怖, 0.70
+	TIMES UP:抑鬱, 0.70
+ENDIF
+SIF BASE:気力 <= 0
+	TIMES LOSEBASE:体力, 1.50
+
+;-------------------------------------------------
+;特質
+;-------------------------------------------------
+IF 特質("洗脳")
+	UP:反感 -= UP:反感*特質("洗脳")/100
+	UP:不快 -= UP:不快*特質("洗脳")/100
+	UP:抑鬱 -= UP:抑鬱*特質("洗脳")/100
+ENDIF
+
+SIF 特質("無痛症")
+	UP:苦痛 = 0
+
+IF 特質("異種族融和") && CSTR:PLAYER:種族 != CSTR:種族 
+	UP:潤滑 += UP:潤滑*(特質("異種族融和")*4/10)/100
+	UP:勃起 += UP:勃起*(特質("異種族融和")*4/10)/100
+	UP:恭順 += UP:恭順*(特質("異種族融和")*4/10)/100
+	UP:欲情 += UP:欲情*(特質("異種族融和")*4/10)/100
+	UP:屈服 += UP:屈服*(特質("異種族融和")*4/10)/100
+	UP:習得 += UP:習得*(特質("異種族融和")*4/10)/100
+	UP:恥情 += UP:恥情*(特質("異種族融和")*4/10)/100
+	UP:苦痛 += UP:苦痛*(特質("異種族融和")*4/10)/100
+	UP:恐怖 += UP:恐怖*(特質("異種族融和")*4/10)/100
+ENDIF
+
+SIF 特質("過剰分泌")
+	UP:潤滑 *= 特質("過剰分泌")/5
+
+;-------------------------------------------------
+;睡眠・屍姦
+;-------------------------------------------------
+;睡眠中と屍姦中は勃起と潤滑以外は変動しない
+IF TEQUIP:睡眠 || CFLAG:死亡
+	FOR LCOUNT, 0, VARSIZE("PALAM")
+		SELECTCASE PALAMNAME:LCOUNT
+			CASE "勃起", "潤滑"
+				;仮死プレイなら少しだけ反応する、睡眠なら通常、またローション系は対象外
+				SIF !CFLAG:死亡
+					CONTINUE
+				SIF PALAMNAME:LCOUNT == "潤滑" && GROUPMATCH(SELECTCOMS, "ローション", "ローション注入", "蜂蜜ローション", "魅惑の粘液")
+					CONTINUE
+				IF TEQUIP:仮死薬
+					UP:LCOUNT /= 20
+				ELSE
+					UP:LCOUNT = 0
+				ENDIF
+			CASE "恭順", "欲情", "屈服", "習得", "恥情", "苦痛", "恐怖", "反感", "不快", "抑鬱"
+				UP:LCOUNT = 0
+		ENDSELECT
+	NEXT
+ENDIF
+
+;-------------------------------------------------
+;苦痛からくる体力・気力の減少
+;-------------------------------------------------
+;チェインオブペインで上乗せされた分がLOSEBASEになったら本末転倒なので減少させる
+消費量 = (UP:苦痛-COP)/100
+
+SELECTCASE ABL:マゾっ気
+	CASE 0
+		TIMES 消費量, 1.00
+	CASE 1
+		TIMES 消費量, 0.95
+	CASE 2
+		TIMES 消費量, 0.90
+	CASE 3
+		TIMES 消費量, 0.80
+	CASE 4
+		TIMES 消費量, 0.65
+	CASEELSE
+		消費量 /= ABL:マゾっ気-3
+ENDSELECT
+
+SIF TALENT:痛みに弱い
+	TIMES 消費量, 1.20
+SIF TALENT:痛みに強い
+	TIMES 消費量, 0.80
+SIF TALENT:無機物
+	TIMES 消費量, 0.10
+SIF TALENT:ゾンビ
+	TIMES 消費量, 0.50
+SIF TALENT:溶ける快
+	TIMES 消費量, 0.80
+
+LOSEBASE:体力 += 消費量
+LOSEBASE:気力 += 消費量
+
+;-------------------------------------------------
+;体力・気力の減少
+;-------------------------------------------------
+IF 上級売春中
+	SIF BASE:MASTER:気力 <= 0
+		TIMES DOWNBASE:MASTER:体力, 1.50
+	;体格
+	SELECTCASE TALENT:MASTER:体格
+		CASE 1
+			TIMES DOWNBASE:MASTER:体力, 1.20
+		CASE 2
+			TIMES DOWNBASE:MASTER:体力, 1.10
+		CASE 4
+			TIMES DOWNBASE:MASTER:体力, 0.90
+	ENDSELECT
+	SIF TALENT:MASTER:小人体型
+		TIMES DOWNBASE:MASTER:体力, 1.20
+	;以下素質
+	SIF TALENT:MASTER:痛みに強い
+		TIMES DOWNBASE:MASTER:体力, 0.90
+	SIF TALENT:MASTER:痛みに弱い
+		TIMES DOWNBASE:MASTER:体力, 1.10
+	SIF TALENT:MASTER:ゾンビ
+		TIMES DOWNBASE:MASTER:体力, 0.80
+	SIF TALENT:MASTER:無機物
+		TIMES DOWNBASE:MASTER:体力, 0.80
+	SIF TALENT:MASTER:絶倫
+		TIMES DOWNBASE:MASTER:体力, 0.90
+	SIF TALENT:MASTER:母性
+		TIMES DOWNBASE:MASTER:体力, 0.90
+	SIF TALENT:MASTER:気丈
+		TIMES DOWNBASE:MASTER:気力, 0.90
+	SIF TALENT:MASTER:プライド低い
+		TIMES DOWNBASE:MASTER:気力, 1.10
+	SIF TALENT:MASTER:自制心
+		TIMES DOWNBASE:MASTER:気力, 0.90
+	SIF TALENT:MASTER:献身的
+		TIMES DOWNBASE:MASTER:気力, 1.10
+
+	SELECTCASE ABL:MASTER:技巧
+		CASE 1
+			TIMES DOWNBASE:MASTER:体力, 0.98
+			TIMES DOWNBASE:MASTER:気力, 0.98
+		CASE 2
+			TIMES DOWNBASE:MASTER:体力, 0.96
+			TIMES DOWNBASE:MASTER:気力, 0.96
+		CASE 3
+			TIMES DOWNBASE:MASTER:体力, 0.94
+			TIMES DOWNBASE:MASTER:気力, 0.94
+		CASE 4
+			TIMES DOWNBASE:MASTER:体力, 0.92
+			TIMES DOWNBASE:MASTER:気力, 0.92
+		CASE 5
+			TIMES DOWNBASE:MASTER:体力, 0.90
+			TIMES DOWNBASE:MASTER:気力, 0.90
+		CASE 6
+			TIMES DOWNBASE:MASTER:体力, 0.88
+			TIMES DOWNBASE:MASTER:気力, 0.88
+		CASE 7
+			TIMES DOWNBASE:MASTER:体力, 0.86
+			TIMES DOWNBASE:MASTER:気力, 0.86
+		CASE 8
+			TIMES DOWNBASE:MASTER:体力, 0.84
+			TIMES DOWNBASE:MASTER:気力, 0.84
+		CASE 9
+			TIMES DOWNBASE:MASTER:体力, 0.82
+			TIMES DOWNBASE:MASTER:気力, 0.82
+		CASE IS >= 10
+			TIMES DOWNBASE:MASTER:体力, 0.80
+			TIMES DOWNBASE:MASTER:気力, 0.80
+	ENDSELECT
+
+	SELECTCASE ABL:TARGET:技巧
+		CASE 1
+			TIMES DOWNBASE:MASTER:体力, 0.98
+			TIMES DOWNBASE:MASTER:気力, 0.98
+		CASE 2
+			TIMES DOWNBASE:MASTER:体力, 0.96
+			TIMES DOWNBASE:MASTER:気力, 0.96
+		CASE 3
+			TIMES DOWNBASE:MASTER:体力, 0.94
+			TIMES DOWNBASE:MASTER:気力, 0.94
+		CASE 4
+			TIMES DOWNBASE:MASTER:体力, 0.92
+			TIMES DOWNBASE:MASTER:気力, 0.92
+		CASE 5
+			TIMES DOWNBASE:MASTER:体力, 0.90
+			TIMES DOWNBASE:MASTER:気力, 0.90
+		CASE 6
+			TIMES DOWNBASE:MASTER:体力, 0.88
+			TIMES DOWNBASE:MASTER:気力, 0.88
+		CASE 7
+			TIMES DOWNBASE:MASTER:体力, 0.86
+			TIMES DOWNBASE:MASTER:気力, 0.86
+		CASE 8
+			TIMES DOWNBASE:MASTER:体力, 0.84
+			TIMES DOWNBASE:MASTER:気力, 0.84
+		CASE 9
+			TIMES DOWNBASE:MASTER:体力, 0.82
+			TIMES DOWNBASE:MASTER:気力, 0.82
+		CASE IS >= 10
+			TIMES DOWNBASE:MASTER:体力, 0.80
+			TIMES DOWNBASE:MASTER:気力, 0.80
+	ENDSELECT
+
+	;魔剤キメてるとさらに下がる 魔剤耐性は1100～2000の値をとるので、50%～約90.9%に下がる
+	IF CFLAG:魔剤
+		DOWNBASE:MASTER:体力 = DOWNBASE:MASTER:体力 * CFLAG:魔剤耐性 / 2200
+		DOWNBASE:MASTER:気力 = DOWNBASE:MASTER:気力 * CFLAG:魔剤耐性 / 2200
+	ENDIF
+	;天気が晴れで種族が精霊なら軽減
+	IF CSTR:種族 == "精霊" && 天気() == "晴れ"
+		TIMES DOWNBASE:MASTER:体力 , 0.80
+		TIMES DOWNBASE:MASTER:気力 , 0.80
+	ENDIF
+
+	BASE:MASTER:体力 -= DOWNBASE:MASTER:体力
+	IF BASE:MASTER:体力 < 0
+		BASE:MASTER:体力 = 0
+	ELSEIF BASE:MASTER:体力 > MAXBASE:MASTER:体力
+		BASE:MASTER:体力 = MAXBASE:MASTER:体力
+	ENDIF
+	BASE:MASTER:気力 -= DOWNBASE:MASTER:気力
+	IF BASE:MASTER:気力 < 0
+		BASE:MASTER:気力 = 0
+	ELSEIF BASE:MASTER:気力 > MAXBASE:MASTER:気力
+		BASE:MASTER:気力 = MAXBASE:MASTER:気力
+	ENDIF
+ELSE
+	;酔ってると減りやすくなる
+	IF CFLAG:酔
+		IF TALENT:酒豪
+			LOSEBASE:体力 += CFLAG:酔/5
+			LOSEBASE:気力 += CFLAG:酔/2
+		ELSEIF TALENT:下戸
+			LOSEBASE:体力 += CFLAG:酔
+			LOSEBASE:気力 += CFLAG:酔*2
+		ELSE
+			LOSEBASE:体力 += CFLAG:酔/2
+			LOSEBASE:気力 += CFLAG:酔
+		ENDIF
+	ENDIF
+
+	SELECTCASE TALENT:体格
+		CASE 1
+			TIMES LOSEBASE:体力, 1.20
+		CASE 2
+			TIMES LOSEBASE:体力, 1.10
+		CASE 4
+			TIMES LOSEBASE:体力, 0.90
+	ENDSELECT
+	SIF TALENT:小人体型
+		TIMES LOSEBASE:体力, 1.20
+
+	SIF TALENT:痛みに強い
+		TIMES LOSEBASE:体力, 0.90
+	SIF TALENT:痛みに弱い
+		TIMES LOSEBASE:体力, 1.10
+	SIF TALENT:ゾンビ
+		TIMES LOSEBASE:体力, 0.80
+	SIF TALENT:無機物
+		TIMES LOSEBASE:体力, 0.80
+	SIF TALENT:絶倫
+		TIMES LOSEBASE:体力, 0.90
+	SIF TALENT:母性
+		TIMES LOSEBASE:体力, 0.90
+	SIF TALENT:気丈
+		TIMES LOSEBASE:気力, 0.90
+	SIF TALENT:プライド低い
+		TIMES LOSEBASE:気力, 1.10
+	SIF TALENT:自制心
+		TIMES LOSEBASE:気力, 0.90
+	SIF TALENT:献身的
+		TIMES LOSEBASE:気力, 1.10
+	;実行者の素質
+	SIF TALENT:PLAYER:衝動的
+		TIMES LOSEBASE:体力, 1.10
+
+	SELECTCASE ABL:PLAYER:技巧
+		CASE 1
+			TIMES LOSEBASE:体力, 0.98
+			TIMES LOSEBASE:気力, 0.98
+		CASE 2
+			TIMES LOSEBASE:体力, 0.96
+			TIMES LOSEBASE:気力, 0.96
+		CASE 3
+			TIMES LOSEBASE:体力, 0.94
+			TIMES LOSEBASE:気力, 0.94
+		CASE 4
+			TIMES LOSEBASE:体力, 0.92
+			TIMES LOSEBASE:気力, 0.92
+		CASE IS >= 5
+			TIMES LOSEBASE:体力, 0.90
+			TIMES LOSEBASE:気力, 0.90
+	ENDSELECT
+
+	SELECTCASE ABL:TARGET:技巧
+		CASE 1
+			TIMES LOSEBASE:体力, 0.98
+			TIMES LOSEBASE:気力, 0.98
+		CASE 2
+			TIMES LOSEBASE:体力, 0.96
+			TIMES LOSEBASE:気力, 0.96
+		CASE 3
+			TIMES LOSEBASE:体力, 0.94
+			TIMES LOSEBASE:気力, 0.94
+		CASE 4
+			TIMES LOSEBASE:体力, 0.92
+			TIMES LOSEBASE:気力, 0.92
+		CASE 5
+			TIMES LOSEBASE:体力, 0.90
+			TIMES LOSEBASE:気力, 0.90
+		CASE 6
+			TIMES LOSEBASE:体力, 0.88
+			TIMES LOSEBASE:気力, 0.88
+		CASE 7
+			TIMES LOSEBASE:体力, 0.86
+			TIMES LOSEBASE:気力, 0.86
+		CASE 8
+			TIMES LOSEBASE:体力, 0.84
+			TIMES LOSEBASE:気力, 0.84
+		CASE 9
+			TIMES LOSEBASE:体力, 0.82
+			TIMES LOSEBASE:気力, 0.82
+		CASE IS >= 10
+			TIMES LOSEBASE:体力, 0.80
+			TIMES LOSEBASE:気力, 0.80
+	ENDSELECT
+
+	;魔剤キメてるとさらに下がる　魔剤耐性は1100～2000の値をとるので、50%～約90.9%に下がる
+	IF CFLAG:魔剤
+		LOSEBASE:体力 = LOSEBASE:体力 * CFLAG:魔剤耐性 / 2200
+		LOSEBASE:気力 = LOSEBASE:気力 * CFLAG:魔剤耐性 / 2200
+	ENDIF
+	;天気が晴れで種族が精霊なら軽減
+	IF CSTR:種族 == "精霊" && 天気() == "晴れ"
+		TIMES LOSEBASE:体力 , 0.80
+		TIMES LOSEBASE:気力 , 0.80
+	ENDIF
+
+	SIF TFLAG:ゴーバーサーク
+		TIMES LOSEBASE:体力, 1.20
+
+	;採血中はMAXBASE:体力の3%が軽減不可のLOSEBASEになる
+	SIF TEQUIP:採血
+		LOSEBASE:体力 += (MAXBASE:体力*3)/100
+
+	IF CFLAG:死亡 && !TEQUIP:仮死薬
+		LOSEBASE:体力 = 0
+		LOSEBASE:気力 = 0
+	ENDIF
+
+	BASE:体力 -= LOSEBASE:体力
+	IF BASE:体力 < 0
+		BASE:体力 = 0
+	ELSEIF BASE:体力 > MAXBASE:体力
+		BASE:体力 = MAXBASE:体力
+	ENDIF
+	BASE:気力 -= LOSEBASE:気力
+	IF BASE:気力 < 0
+		BASE:気力 = 0
+	ELSEIF BASE:気力 > MAXBASE:気力
+		BASE:気力 = MAXBASE:気力
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;苦痛快楽経験、奉仕快楽経験のチェック
+;-------------------------------------------------
+CALL EXP_GOT_CHECK
+
+;-------------------------------------------------
+;絶頂系口上の表示
+;-------------------------------------------------
+;調教者射精時→触手射精時→奴隷絶頂時→コマンド実行後
+LVARLINE = LINECOUNT
+CALL KOJO_MESSAGE_SHOOT
+CALL KOJO_MESSAGE_TSHOOT
+CALL KOJO_MESSAGE_EX
+SIF LVARLINE > LINECOUNT
+	WAIT
+CALL KOJO_MESSAGE_AFTER
+
+;-------------------------------------------------
+;コマンド実行後の処理
+;-------------------------------------------------
+;地の文表示の都合上、着衣パイズリで服を脱ぐ処理はここ
+SELECTCASE SELECTCOMS
+	CASE "パイズリ", "縦パイズリ", "パイズリフェラ", "69パイズリ"
+		IF NOWEX:PLAYER:射精 && OVER_BUST(TARGET) != "" && !TEQUIP:縄
+			IF OVER_BUST(TARGET) == CSTR:全身上着
+				TEQUIP:全身上着 = 0
+			ELSEIF OVER_BUST(TARGET) == CSTR:上半身上着
+				TEQUIP:上半身上着 = 0
+			ELSEIF OVER_BUST(TARGET) == CSTR:上半身下着
+				TEQUIP:上半身下着 = 0
+			ENDIF
+		ENDIF
+	CASE "ダブルパイズリ"
+		IF NOWEX:TMASTER:射精 && (OVER_BUST(TARGET) != "" || OVER_BUST(ASSI) != "") && !TEQUIP:縄
+			IF OVER_BUST(TARGET) == CSTR:全身上着
+				TEQUIP:全身上着 = 0
+			ELSEIF OVER_BUST(TARGET) == CSTR:上半身上着
+				TEQUIP:上半身上着 = 0
+			ELSEIF OVER_BUST(TARGET) == CSTR:上半身下着
+				TEQUIP:上半身下着 = 0
+			ENDIF
+			IF OVER_BUST(ASSI) == CSTR:ASSI:全身上着
+				TEQUIP:ASSI:全身上着 = 0
+			ELSEIF OVER_BUST(ASSI) == CSTR:ASSI:上半身上着
+				TEQUIP:ASSI:上半身上着 = 0
+			ELSEIF OVER_BUST(ASSI) == CSTR:ASSI:上半身下着
+				TEQUIP:ASSI:上半身下着 = 0
+			ENDIF
+		ENDIF
+ENDSELECT
+
+;アイテム破壊時のテキスト
+IF TFLAG:アイテム破壊
+	SELECTCASE SELECTCOMS
+		CASE "ローター", "電気按摩", "バイブ", "オナホール", "アナルバイブ", "アナルビーズ", "拡張バルーン", "ニプルキャップ", "搾乳器", "電動エネマグラ", "搾精機", "クリキャップ"
+			PRINTFORML ＜%SELECTCOMS%破損＞
+		CASE "乳首ローター"
+			PRINTL ＜ローター破損＞
+		CASE "空気浣腸"
+			PRINTL ＜空気ポンプ破損＞
+		CASE "アナル電極", "乳房電極"
+			PRINTL ＜電極プラグ破損＞
+		CASE "ローター愛撫させる"
+			PRINTL ＜ローター破損＞
+		CASE "バイブ被挿入"
+			PRINTL ＜バイブ破損＞
+		CASE "アナルバイブ被挿入"
+			PRINTL ＜アナルバイブ破損＞
+		CASE "電気按摩愛撫させる"
+			PRINTL ＜電気按摩破損＞
+		CASE "羞恥プレイ"
+			PRINTL ＜大鏡破損＞
+	ENDSELECT
+ENDIF
+
+;実績；ヴォルフガングがアイテムを壊す
+SIF TFLAG:アイテム破壊 && GROUPMATCH("ヴォルフガング", CHARANAMEF(TARGET), CHARANAMEF(PLAYER))
+	CALL 実績解除, "パウリ効果"
+
+;-------------------------------------------------
+;パラメータ変動による口上
+;-------------------------------------------------
+CALL KOJO_MESSAGE_PALAM
+
+;-------------------------------------------------
+;各種チェック
+;-------------------------------------------------
+;刻印取得、能力上昇により素質消滅、依存度の増減
+CALL MARK_GOT
+CALL ERASE_TALENT
+CALL DEPENDENCE_CHECK
+
+;-------------------------------------------------
+;調教ソースの表示
+;-------------------------------------------------
+CALL SHOW_SOURCE
+
+;-------------------------------------------------
+;数値変動の表示
+;-------------------------------------------------
+SIF 相性値(TARGET, PLAYER) != 100
+	PRINTFORML ＜相性{相性値(TARGET, PLAYER)/100}.{(相性値(TARGET, PLAYER)%100/10)}倍＞
+
+IF SELECTCOMS == PREVCOMS && SELECTCOMS != "ハッキング"
+	PRINT ＜同一コマンド連続実行
+	SIF TFLAG:リカーシブファンクション
+		PRINT （デメリット無効）
+	PRINTL ＞
+ENDIF
+
+;今回のコマンド名を「前回のコマンド名」に保存 ノーコストのふたなり化、バストサイズ変更は例外
+SELECTCASE SELECTCOMS
+	CASE "ふたなり化", "バストサイズ変更"
+	;体位の変わらない派生コマンドはPREVPOSITIONSを上書きしない
+	{
+	CASE  "騎乗乳房自慰", "挿入Gスポ責め", "挿入子宮口責め"
+		, "正常位キス", "騎乗位キス", "対面座位キス", "正常位アナルキス", "騎乗位アナルキス", "対面座位アナルキス"
+		, "後背位手淫", "騎乗位手淫", "後背位アナル手淫", "騎乗位アナル手淫"
+		, "正常位キスさせる", "逆レイプキス"
+		, "対面座位吸血", "背面座位吸血", "正常位吸血させる", "後背位吸血させる"
+		, "正常位首絞め", "後背位首絞め", "正常位アナル首絞め", "後背位アナル首絞め", "逆レイプ首絞め"
+		;, "体内放尿する", "体内放尿させる"
+	}
+		PREVCOMS = %SELECTCOMS%
+	CASEELSE
+		PREVCOMS = %SELECTCOMS%
+		PREVPOSITIONS = %SELECTCOMS%
+ENDSELECT
+;コマンドの実行者を保存
+TFLAG:前コマンド実行者 = PLAYER
+
+IF 上級売春中
+	SIF BASE:MASTER:気力 <= 0
+		PRINTL ★気力０★
+
+	IF DOWNBASE:MASTER:体力 >= 0
+		PRINTFORM %CALLNAME:MASTER%の体力-{DOWNBASE:MASTER:体力} 
+	ELSE
+		PRINTFORM %CALLNAME:MASTER%の体力+{ABS(DOWNBASE:MASTER:体力)} 
+	ENDIF
+	IF DOWNBASE:MASTER:気力 >= 0
+		PRINTFORML %CALLNAME:MASTER%の気力-{DOWNBASE:MASTER:気力}
+	ELSE
+		PRINTFORML %CALLNAME:MASTER%の気力+{ABS(DOWNBASE:MASTER:気力)}
+	ENDIF
+ELSEIF !CFLAG:死亡
+	IF BASE:気力 <= 0
+		PRINT ★気力０
+		SIF TFLAG:ゴーバーサーク
+			PRINT （ソース低下無効）
+		PRINTL ★
+	ENDIF
+
+	IF LOSEBASE:体力 >= 0
+		PRINTFORM 体力-{LOSEBASE:体力} 
+	ELSE
+		PRINTFORM 体力+{ABS(LOSEBASE:体力)} 
+	ENDIF
+	IF LOSEBASE:気力 >= 0
+		PRINTFORML 気力-{LOSEBASE:気力}
+	ELSE
+		PRINTFORML 気力+{ABS(LOSEBASE:気力)}
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;射精後の再装填処理
+;-------------------------------------------------
+SIF CFLAG:賢者タイム > 0
+	CFLAG:賢者タイム--
+SIF CFLAG:MASTER:賢者タイム > 0
+	CFLAG:MASTER:賢者タイム--
+SIF ASSI > 0 && CFLAG:ASSI:賢者タイム > 0
+	CFLAG:ASSI:賢者タイム--
+SIF ASSI:1 > 0 && CFLAG:(ASSI:1):賢者タイム > 0
+	CFLAG:(ASSI:1):賢者タイム--
+
+;-------------------------------------------------
+;PALAM等での汚れ付与
+;-------------------------------------------------
+;勃起と潤滑のPALAMが一定以上で先走りと愛液汚れ、主人と助手は常に汚れセット
+IF PENIS(TARGET)
+	SIF PALAM:勃起 >= PALAMLV:3
+		SETBIT STAIN:ペニス, 汚れTOBIT("先走り")
+ENDIF
+IF VAGINA(TARGET)
+	SIF PALAM:潤滑 >= PALAMLV:3
+		SETBIT STAIN:膣内, 汚れTOBIT("愛液")
+	SIF PALAM:潤滑 >= PALAMLV:4
+		SETBIT STAIN:ヴァギナ, 汚れTOBIT("愛液")
+ENDIF
+SIF PENIS(MASTER)
+	SETBIT STAIN:MASTER:ペニス, 汚れTOBIT("先走り")
+SIF VAGINA(MASTER)
+	SETBIT STAIN:MASTER:膣内, 汚れTOBIT("愛液")
+SIF PENIS(ASSI)
+	SETBIT STAIN:ASSI:ペニス, 汚れTOBIT("先走り")
+SIF VAGINA(ASSI)
+	SETBIT STAIN:ASSI:膣内, 汚れTOBIT("愛液")
+SIF PENIS(ASSI:1)
+	SETBIT STAIN:(ASSI:1):ペニス, 汚れTOBIT("先走り")
+SIF VAGINA(ASSI:1)
+	SETBIT STAIN:(ASSI:1):膣内, 汚れTOBIT("愛液")
+
+;下着に汚れ付与
+IF TEQUIP:下半身下着
+	STAIN:下着 |= STAIN:アナル
+	SIF PENIS(TARGET)
+		STAIN:下着 |= STAIN:ペニス
+	SIF VAGINA(TARGET)
+		STAIN:下着 |= STAIN:ヴァギナ
+ENDIF
+IF TEQUIP:MASTER:下半身下着
+	SIF PENIS(MASTER)
+		STAIN:MASTER:下着 |= STAIN:MASTER:ペニス
+	SIF VAGINA(MASTER)
+		STAIN:MASTER:下着 |= STAIN:MASTER:ヴァギナ
+ENDIF
+IF ASSI > 0 && TEQUIP:ASSI:下半身下着
+	SIF PENIS(ASSI)
+		STAIN:ASSI:下着 |= STAIN:ASSI:ペニス
+	SIF VAGINA(ASSI)
+		STAIN:ASSI:下着 |= STAIN:ASSI:ヴァギナ
+ENDIF
+IF ASSI:1 > 0 && TEQUIP:(ASSI:1):下半身下着
+	SIF PENIS(ASSI:1)
+		STAIN:ASSI:下着 |= STAIN:ASSI:ペニス
+	SIF VAGINA(ASSI:1)
+		STAIN:(ASSI:1):下着 |= STAIN:(ASSI:1):ヴァギナ
+ENDIF
+
+;-------------------------------------------------
+;写真撮影用の関数呼び出す
+;-------------------------------------------------
+CALL CREATE_PICTURE
+
+;-------------------------------------------------
+;実行判定無視フラグの処理
+;-------------------------------------------------
+SIF TFLAG:実行判定無視 > 0
+	TFLAG:実行判定無視--
+SIF TEQUIP:睡眠 || CFLAG:死亡
+	TFLAG:実行判定無視 = 100
+
+;-------------------------------------------------
+;睡眠フラグ減少
+;-------------------------------------------------
+SIF TEQUIP:睡眠 > 0
+	TEQUIP:睡眠--
+
+;-------------------------------------------------
+;パラメータの上昇＆表示（DOWNもここで）
+;-------------------------------------------------
+;オーバーフロー起こす場合はカンスト
+;オーバーフローしてマイナスになった場合、カンストと判断する
+;誤爆防止にINT_MINの90%まで許容範囲にしてみる
+FOR LCOUNT, 0, 16
+	IF PALAM:LCOUNT+UP:LCOUNT < __INT_MIN__/10
+		PRINTFORMW %PALAMNAME:LCOUNT%がオーバーフローしました
+		PALAM:LCOUNT = __INT_MAX__
+		UP:LCOUNT = 0
+		PALAMOVERFLOW:LCOUNT = 1
+	ELSEIF PALAM:LCOUNT+UP:LCOUNT < 0
+		PRINTFORMW %PALAMNAME:LCOUNT%がマイナス{PALAM:LCOUNT+UP:LCOUNT}になっています バグの可能性があります
+	ENDIF
+NEXT
+
+;実績:媚薬、強精神薬、利尿剤、お酒、魔剤の効果を同時に発動させる
+SIF TEQUIP:媚薬 && TEQUIP:強精神薬 && TEQUIP:利尿剤 && CFLAG:酔 && CFLAG:魔剤
+	CALL 実績解除, "バッドトリップ"
+
+;-------------------------------------------------
+;PALAM:勃起の処理 欲情がそのまま勃起に加算される
+;ABL:メス度が上がるたびに勃ちにくくなり、10で完全に勃たなくなる
+;-------------------------------------------------
+IF PALAM:勃起 < 3000 && ABL:メス度 < 10 && PENIS(TARGET)
+	UP:勃起 = UP:欲情+(UP:欲情*発情度(TARGET)/100)
+	SIF TALENT:子供好き && TALENT:PLAYER:体格 <= 2
+		TIMES UP:勃起, 1.20
+	SELECTCASE ABL:メス度
+		CASE 1
+			TIMES UP:勃起, 0.90
+		CASE 2
+			TIMES UP:勃起, 0.70
+		CASE 3
+			TIMES UP:勃起, 0.50
+		CASE 4
+			TIMES UP:勃起, 0.20
+		CASE 5
+			TIMES UP:勃起, 0.05
+		CASE 6
+			TIMES UP:勃起, 0.04
+		CASE 7
+			TIMES UP:勃起, 0.03
+		CASE 8
+			TIMES UP:勃起, 0.02
+		CASE 9
+			TIMES UP:勃起, 0.01
+	ENDSELECT
+	IF TALENT:勃ちやすい
+		UP:勃起 *= 4
+	ELSEIF TALENT:勃ちにくい
+		UP:勃起 /= 4
+	ENDIF
+ENDIF
+
+;Ver2.09でUPCHECKを独自処理に
+;UPCHECK
+
+FOR LCOUNT, 0, VARSIZE("PALAM")
+	SIF PALAMNAME:LCOUNT == ""
+		CONTINUE
+	SIF UP:LCOUNT == 0 && DOWN:LCOUNT == 0
+		CONTINUE
+	SELECTCASE PALAMNAME
+		CASE "快Ｃ", "快Ｖ", "快Ａ", "快Ｂ"
+			SELECTCASE 数値表示設定
+				CASE "3桁区切り"
+					PRINTFORM %PALAMNAME:LCOUNT% %TODIGSEP(PALAM:LCOUNT)% + %TODIGSEP(UP:LCOUNT)% 
+					SIF DOWN:LCOUNT
+						PRINTFORM - %TODIGSEP(DOWN:LCOUNT)% 
+					PRINTFORM = %TODIGSEP(PALAM:LCOUNT+UP:LCOUNT-DOWN:LCOUNT)% 
+				CASE "漢字桁表示"
+					PRINTFORM %PALAMNAME:LCOUNT% %TO漢字(PALAM:LCOUNT)% + %TO漢字(UP:LCOUNT)% 
+					SIF DOWN:LCOUNT
+						PRINTFORM - %TO漢字(DOWN:LCOUNT)% 
+					PRINTFORM = %TO漢字(PALAM:LCOUNT+UP:LCOUNT-DOWN:LCOUNT)% 
+				CASEELSE
+					PRINTFORM %PALAMNAME:LCOUNT% {PALAM:LCOUNT} + {UP:LCOUNT} 
+					SIF DOWN:LCOUNT
+						PRINTFORM - {DOWN:LCOUNT} 
+					PRINTFORM = {PALAM:LCOUNT+UP:LCOUNT-DOWN:LCOUNT} 
+			ENDSELECT
+		CASEELSE
+			SELECTCASE 数値表示設定
+				CASE "3桁区切り"
+					PRINTFORM %PALAMNAME:LCOUNT% %TODIGSEP(PALAM:LCOUNT)% + %TODIGSEP(UP:LCOUNT-DOWN:LCOUNT)% = %TODIGSEP(PALAM:LCOUNT+UP:LCOUNT-DOWN:LCOUNT)% 
+				CASE "漢字桁表示"
+					PRINTFORM %PALAMNAME:LCOUNT% %TO漢字(PALAM:LCOUNT)% + %TO漢字(UP:LCOUNT-DOWN:LCOUNT)% = %TO漢字(PALAM:LCOUNT+UP:LCOUNT-DOWN:LCOUNT)% 
+				CASEELSE
+					PRINTFORM %PALAMNAME:LCOUNT% {PALAM:LCOUNT}+{UP:LCOUNT-DOWN:LCOUNT}={PALAM:LCOUNT+UP:LCOUNT-DOWN:LCOUNT} 
+			ENDSELECT
+	ENDSELECT
+	SIF PALAM:LCOUNT+UP:LCOUNT-DOWN:LCOUNT >= PALAMLV:(GETPALAMLV(PALAM:LCOUNT, 10)+1)
+		PRINT LvUP!
+	PRINTL 
+	PALAM:LCOUNT += UP:LCOUNT
+	PALAM:LCOUNT -= DOWN:LCOUNT
+NEXT
+VARSET UP
+VARSET DOWN
+
+;-------------------------------------------------
+;調教ソースの表示（DOWNもここで）
+;-------------------------------------------------
+@SHOW_SOURCE
+#DIM DYNAMIC LCOUNT
+
+FOR LCOUNT, 0, VARSIZE("SOURCE")
+	SIF SOURCENAME:LCOUNT == ""
+		CONTINUE
+	SIF SOURCE:LCOUNT > 0
+		PRINTFORM %SOURCENAME:LCOUNT%({SOURCE:LCOUNT})
+NEXT
+CALL NEWLINE

@@ -1,0 +1,196 @@
+﻿;-------------------------------------------------
+;依存度システムの処理
+;依存度はプラスに大きいと主人に対して慕う形で依存し、
+;マイナスに大きいと主人を畏怖する形で依存していく
+;上記の依存の仕方はプラマイから苦痛刻印に置き換え
+;-------------------------------------------------
+@DEPENDENCE_CHECK
+#DIM DYNAMIC 増加量
+#DIM DYNAMIC ハニーバニー発動
+
+;屍姦中はメッセージすら表示しない
+SIF CFLAG:死亡
+	RETURN 0
+;崩壊、睡眠中は依存度は変化しない
+IF TALENT:崩壊 || TEQUIP:睡眠
+	PRINTL <依存度変化無し>
+	RETURN 0
+ENDIF
+
+増加量 = 0
+
+増加量 += TFLAG:口上依存度補正
+増加量 += ABL:従順*2
+増加量 += ABL:奉仕精神
+
+SELECTCASE FLAG:難易度
+	;BEGINNER
+	CASE -1
+		増加量 += 3
+	;NORMAL
+	CASE 1
+		増加量 += 0
+	;HYPER
+	CASE 2
+		増加量 -= 1
+	;ANOTHER
+	CASE 3
+		増加量 -= 2
+	;LEGGENDARIA
+	CASE 4
+		増加量 -= 5
+ENDSELECT
+
+;陥落素質
+SIF TALENT:恋慕
+	増加量 += 7
+SIF TALENT:親愛
+	増加量 += 10
+SIF TALENT:淫乱 && 相性値(TARGET, MASTER) > 100
+	増加量 += 3
+SIF TALENT:淫魔 && 相性値(TARGET, MASTER) > 100
+	増加量 += 5
+SIF TALENT:服従
+	増加量 += 5
+SIF TALENT:隷属
+	増加量 += 7
+
+;絶頂強度による補正
+増加量 += TFLAG:絶頂強度
+
+;その他素質
+SIF TALENT:淫核
+	増加量 += 1
+SIF TALENT:淫膣
+	増加量 += 1
+SIF TALENT:淫尻
+	増加量 += 1
+SIF TALENT:淫乳
+	増加量 += 1
+
+SIF TALENT:妄信
+	増加量 += 2
+SIF TALENT:寂しがり屋 && ASSI > 0
+	増加量 += 3
+SIF TALENT:男好き && SEX(MASTER) == 1
+	増加量 += 1
+SIF TALENT:女好き && SEX(MASTER) == 2
+	増加量 += 1
+SIF TALENT:痛みに弱い
+	増加量 += 1
+SIF TALENT:快感に素直
+	増加量 += 2
+SIF TALENT:マゾ
+	増加量 += 1
+SIF TALENT:幼稚
+	増加量 += 1
+SIF TALENT:弱気
+	増加量 += 2
+
+;主人の素質による増減
+SIF TALENT:MASTER:魅力
+	増加量 += 2
+SIF TALENT:MASTER:魅惑
+	増加量 += 3
+SIF TALENT:MASTER:謎の魅力
+	増加量 += 5
+;SIF TALENT:MASTER:治療
+;	増加量 += 2
+SIF TALENT:MASTER:鼓舞
+	増加量 += 2
+SIF TALENT:MASTER:人気
+	増加量 += 3
+
+;恋心と既婚者
+IF TALENT:恋心 && (CSTR:恋心 == CSVNAMEF(NOF(PLAYER), 1) || (ハニーバニー:0 && PLAYER == MASTER) || ISMIGELLANNTR(TARGET, PLAYER))
+	増加量 += 4
+	ハニーバニー発動 = 1
+ENDIF
+IF TALENT:既婚者 && (CSTR:既婚者 == CSVNAMEF(NOF(PLAYER), 1) || (ハニーバニー:0 && PLAYER == MASTER) || ISMIGELLANNTR(TARGET, PLAYER))
+	増加量 += 7
+	ハニーバニー発動 = 1
+ENDIF
+
+;実行者がMASTERで同性
+IF PLAYER == MASTER && SEX(MASTER) == SEX(TARGET)
+	SELECTCASE SEX(TARGET)
+		CASE 1
+			増加量 += ABL:ホモっ気+ABL:ゲイ中毒
+		CASE 2
+			増加量 += ABL:レズっ気+ABL:レズ中毒
+	ENDSELECT
+ENDIF
+
+増加量 += MARK:屈服刻印
+SIF TALENT:ヤンデレ
+	TIMES 増加量, 1.50
+
+増加量 += TFLAG:依存度補正
+
+SIF TALENT:アニマル
+	増加量 *= 3
+
+
+;同族嫌悪&同種族と感情乏しいはプラス値を半減
+SIF TALENT:同族嫌悪 && CSTR:種族 == CSTR:PLAYER:種族
+	増加量 /= 2
+SIF TALENT:感情乏しい
+	増加量 /= 2
+
+;ここからマイナス素質
+SIF TALENT:生意気
+	増加量 -= 1
+SIF TALENT:反抗的
+	増加量 -= 1
+SIF TALENT:ツンデレ && ABL:従順 <= 3
+	増加量 -= 2
+SIF TALENT:自制心
+	増加量 -= 1
+SIF TALENT:無関心
+	増加量 -= 2
+SIF TALENT:一線越えない && !陥落(TARGET)
+	増加量 -= 3
+SIF TALENT:抑圧
+	増加量 -= 1
+SIF TALENT:抵抗
+	増加量 -= 1
+SIF TALENT:弱味
+	増加量 -= 2
+SIF TALENT:痛みに強い
+	増加量 -= 1
+SIF TALENT:快感の否定
+	増加量 -= 2
+SIF TALENT:強気
+	増加量 -= 2
+SIF TALENT:男嫌い && SEX(MASTER) == 1
+	増加量 -= 2
+SIF TALENT:女嫌い && SEX(MASTER) == 2
+	増加量 -= 2
+SIF TALENT:恋心 && CSTR:恋心 != CSVNAMEF(NOF(PLAYER), 1) && !陥落(TARGET) && !ハニーバニー発動
+	増加量 -= 5
+SIF TALENT:既婚者 && CSTR:既婚者 != CSVNAMEF(NOF(PLAYER)) && !陥落(TARGET) && !ハニーバニー発動
+	増加量 -= 10
+
+増加量 -= MARK:反発刻印
+
+;絶対値が設定されていればそれになる
+SIF TFLAG:口上依存度絶対値 != __INT_MAX__
+	増加量 = TFLAG:口上依存度絶対値
+
+CFLAG:依存度 += 増加量
+
+IF 増加量 > 0
+	IF CFLAG:依存度 >= 5000
+		PRINTL <依存度最大>
+		CFLAG:依存度 = 5000
+	ELSE
+		PRINTL <依存度増加>
+	ENDIF
+ELSEIF 増加量 < 0
+	PRINTL <依存度減少>
+ELSE
+	PRINTL <依存度変化無し>
+ENDIF
+
+TFLAG:依存度補正 = 0
+RETURN 0

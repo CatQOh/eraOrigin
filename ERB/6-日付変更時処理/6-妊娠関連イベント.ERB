@@ -1,0 +1,1580 @@
+﻿;妊娠関連のイベント
+;---------------------------------------------------------
+;中田氏・妊娠フラグチェック
+;---------------------------------------------------------
+@IN_VAGINA
+#DIM DYNAMIC LCOUNT
+
+FOR LCOUNT, 0, CHARANUM
+	SIF LCOUNT == MASTER
+		CONTINUE
+	;死んでたら妊娠しない
+	SIF CFLAG:LCOUNT:死亡
+		CONTINUE
+	SIF CFLAG:LCOUNT:キャラロスト
+		CONTINUE
+	;主人の中田氏による妊娠判定
+	SIF PREG:LCOUNT:主人膣内射精
+		CALL NAKADASHI_CHECK, LCOUNT, MASTER
+	;助手→奴隷への中田氏による妊娠判定
+	SIF PREG:LCOUNT:助手膣内射精
+		CALL NAKADASHI_CHECK, LCOUNT, ASSI
+	SIF PREG:LCOUNT:助手2膣内射精
+		CALL NAKADASHI_CHECK, LCOUNT, ASSI:1
+	;奴隷→助手への中田氏による妊娠判定
+	SIF PREG:LCOUNT:奴隷膣内射精
+		CALL NAKADASHI_CHECK, LCOUNT, TARGET
+	;娼館やレンタル時に客に膣射された場合の妊娠判定
+	SIF PREG:LCOUNT:モブ膣内射精
+		CALL NAKADASHI_CHECK, LCOUNT, -1
+	;主人に中出ししてるかどうか
+	SIF PREG:LCOUNT:主人への膣内射精
+		CALL NAKADASHI_CHECK_MASTER, LCOUNT
+	;最後に中出しフラグリセットする
+	VARSET PREG:LCOUNT:0, 0, 0, 5
+	PREG:LCOUNT:助手2膣内射精 = 0
+	;夜なら排卵マッサージフラグを減らす
+	SIF ターン == "夜" && CFLAG:LCOUNT:排卵マッサージ > 0
+		CFLAG:LCOUNT:排卵マッサージ--
+NEXT
+
+;妊娠確定時の処理
+FOR LCOUNT, 0, CHARANUM
+	SIF CFLAG:LCOUNT:キャラロスト
+		CONTINUE
+	IF !TALENT:LCOUNT:妊娠 && PREG:LCOUNT:妊娠確定フラグ && PREG:LCOUNT:出産予定日 == 0
+		;獣人と獣は早く産める
+		SELECTCASE CSTR:LCOUNT:種族
+			CASE "獣人", "獣"
+				PREG:LCOUNT:出産予定日 = DAY+RAND(30, 41)
+				;MODによる操作
+				IF MOD:妊娠期間上限
+					PREG:LCOUNT:出産予定日 = DAY+RAND(MOD:妊娠期間下限, MOD:妊娠期間上限+1)
+				ELSEIF MOD:人口飽和 && ゲームモード() != "段位認定"
+					PREG:LCOUNT:出産予定日 = DAY+1
+				ENDIF
+				CALL CHILDSET, LCOUNT, FINDCHARA(NO, PREG:LCOUNT:父親)
+			CASEELSE
+				PREG:LCOUNT:出産予定日 = DAY+RAND(60, 81)
+				;MODによる操作
+				IF MOD:妊娠期間上限
+					PREG:LCOUNT:出産予定日 = DAY+RAND(MOD:妊娠期間下限, MOD:妊娠期間上限+1)
+				ELSEIF MOD:人口飽和 && ゲームモード() != "段位認定"
+					PREG:LCOUNT:出産予定日 = DAY+1
+				ENDIF
+				CALL CHILDSET, LCOUNT, FINDCHARA(NO, PREG:LCOUNT:父親)
+		ENDSELECT
+	ENDIF
+NEXT
+
+@NAKADASHI_CHECK, 対象, 竿役, 確率チェック=0, 精液量=0
+#DIMS DYNAMIC 対象種族
+#DIMS DYNAMIC 竿役種族
+#DIM DYNAMIC 妊娠確率, 2
+#DIM DYNAMIC 対象
+#DIM DYNAMIC 竿役
+#DIM DYNAMIC 精液量
+#DIM DYNAMIC 確率チェック
+#DIM DYNAMIC 妊娠乱数
+#DIM DYNAMIC 確率最低値
+#DIM DYNAMIC 勾配
+#DIM DYNAMIC Y切片;勾配とY切片で10～30部分の1次関数を作る
+#DIM DYNAMIC X二次;X二次は210からの差分で、210～260部分の2次関数を作る
+
+;妊娠確率:0は種族同士の相性や排卵の状態から算出
+;妊娠確率:1は子宮に注がれた精液量から算出
+;どちらも0～1000の値をとり0.0%～100.0%の0.1%刻みに対応
+;最終的には「妊娠確率:0×妊娠確率:1」の確率で妊娠する
+
+;確率チェックを入れるとトータルの妊娠確率を返すだけで関数が終了する
+
+;中出しされた精子量に応じて確率処理
+;対象 = 現在妊娠判定してるキャラ番号
+;竿役 = 中出ししたキャラの番号 -1ならモブ
+
+;現状はアニマルは繁殖しない
+SIF TALENT:対象:アニマル
+	RETURN 0
+IF 竿役 >= 0
+	SIF TALENT:竿役:アニマル
+		RETURN 0
+ENDIF
+
+;対象が助手もしくは奴隷でなければ不具合起こりそうなのでフラグリセットして終了
+;一時的にオミット
+;IF 対象 != TARGET && 対象 != ASSI
+;	VARSET PREG:対象:0, 0, 0, 4
+;	RETURN 0
+;ENDIF
+
+;対象が生殖能力無いなら関数終了
+SIF !生殖機能♀(対象)
+	RETURN 0
+;中出ししたヤツが生殖能力無ければ関数終了
+SIF !生殖機能♂(竿役)
+	RETURN 0
+;妊娠が既に確定している場合は関数終了
+SIF PREG:対象:妊娠確定フラグ
+	RETURN 0
+;妊娠中もしくは育児中は関数終了
+SIF TALENT:対象:妊娠 || TALENT:対象:育児中
+	RETURN 0
+
+;MOD:百発零中なら妊娠しない
+SIF MOD:百発零中 && ゲームモード() != "段位認定"
+	RETURN 0
+
+;DISABLEの確認 参照用に一旦TFLAGに入れてみる
+TFLAG:妊娠母親 = 対象
+TFLAG:妊娠父親 = 竿役
+CALL DISABLE, "EVENT_妊娠", 対象
+SIF RESULT
+	RETURN
+CALL DISABLE, "EVENT_妊娠", 竿役
+SIF RESULT
+	RETURN
+
+;ここから妊娠確率:0の計算
+IF MOD:排卵周期
+	IF MOD:安全係数
+		確率最低値 = 安全日妊娠確率
+	ELSE
+		確率最低値 = 40
+	ENDIF
+	;児童と老齢は妊娠しづらい
+	;安全日の妊娠確率が下がる
+	IF TALENT:対象:小人体型
+		TIMES 確率最低値, 0.15
+	ELSE
+		IF TALENT:対象:児童
+			TIMES 確率最低値, 0.70
+		ELSEIF TALENT:対象:老齢
+			TIMES 確率最低値, 0.50
+		ENDIF
+	ENDIF
+	;排卵周期は変数「排卵からの経過時間」を1～280でループさせることで表現している
+	;280で排卵して、280,1～9を排卵日としている
+	;また、260～279は危険日で排卵日と合わせて260～280,1～9の妊娠確率が最も高い
+	;また、その前後も多少は高くなっている
+	;確率最低値をmとおくと、グラフの概形は(1,1000),(10,1000),(30,m),(210,m),(260,1000),(280,1000)といったつなぎ方になる
+	;ただし、(10,1000),(30,m)間は直線、(210,m),(260,1000)間は2次関数となっている
+	SELECTCASE 排卵からの経過時間:対象:0
+		CASE 1 TO 10
+			妊娠確率 = 1000
+		CASE 11 TO 29
+			;(10,1000),(30,m)を通る直線の計算
+			;直線Y=-AX+Bが上記2点を通るので
+			;{ 1000 = -10A + B
+			;{    m = -30A + B
+			;この連立方程式を解く
+			;Bを消去して
+			;1000-m =  20A
+			;     A = (1000-m)/20
+			;Aを消去して
+			;3000-m =  2B
+			;     B = (3000-m)/2
+			勾配 = (1000-確率最低値)/20
+			Y切片 = (3000-確率最低値)/2
+			妊娠確率 = -勾配*排卵からの経過時間:対象:0 + Y切片
+		CASE 30 TO 210
+			妊娠確率 = 確率最低値
+		CASE 211 TO 259
+			X二次 = 排卵からの経過時間:対象:0-210
+			X二次 *= X二次
+			妊娠確率 = X二次 * (1000-確率最低値) / 2500
+		CASE 260 TO 280
+			妊娠確率 = 1000
+	ENDSELECT
+	;児童と老齢は妊娠しづらい
+	;全体の妊娠確率も下がる
+	IF TALENT:対象:小人体型
+		TIMES 妊娠確率 , 0.15
+	ELSE
+		IF TALENT:対象:児童
+			TIMES 妊娠確率, 0.70
+		ELSEIF TALENT:対象:老齢
+			TIMES 妊娠確率, 0.50
+		ENDIF
+	ENDIF
+;ここから非MOD
+ELSE
+	;排卵剤の有無と排卵マッサージフラグによる定数設定
+	IF CFLAG:対象:排卵誘発剤
+		妊娠確率 = 1000
+	ELSE
+		妊娠確率 = 250
+		妊娠確率 += 10*CFLAG:対象:排卵マッサージ
+		;獣人と獣は孕みやすい
+		SELECTCASE CSTR:対象:種族
+			CASE "獣人", "獣"
+				妊娠確率 *= 2
+		ENDSELECT
+		;児童と老齢は妊娠しづらい
+		IF TALENT:対象:小人体型
+			TIMES 妊娠確率, 0.15
+		ELSE
+			IF TALENT:対象:児童
+				TIMES 妊娠確率, 0.70
+			ELSEIF TALENT:対象:老齢
+				TIMES 妊娠確率, 0.50
+			ENDIF
+		ENDIF
+	ENDIF
+ENDIF
+LIMIT 妊娠確率, 0, 1000
+
+SIF TALENT:対象:排卵不安定
+	TIMES 妊娠確率, 0.25
+
+;種族を入れるが、「人間(？)」の場合は「人間」として扱う
+竿役種族 = %CSTR:竿役:種族%
+対象種族 = %CSTR:対象:種族%
+SIF 竿役種族 == "人間(？)"
+	竿役種族 = 人間
+SIF 対象種族 == "人間(？)"
+	対象種族 = 人間
+
+;異種間交配だと妊娠確率が下がる 竿役が神だと下がらない
+SIF 竿役種族 != "神" && 竿役種族 != 対象種族
+	TIMES 妊娠確率, 0.15
+
+
+;ここから妊娠確率:1の計算
+
+;射精量による妊娠判定
+IF 精液量 == 0
+	SELECTCASE 竿役
+		CASE MASTER
+			精液量 = PREG:対象:主人膣内射精
+		CASE ASSI
+			精液量 = PREG:対象:助手膣内射精
+		CASE ASSI:1
+			精液量 = PREG:対象:助手2膣内射精
+		CASE TARGET
+			精液量 = PREG:対象:奴隷膣内射精
+	ENDSELECT
+ENDIF
+SIF 精液量 <= 0
+	RETURN 0
+
+;精液量は射精1回につき最低1000
+;通常の体格以上なら15000でカンストする
+;体格2なら13000、体格1なら10000
+;小人体型なら3000
+
+;最初にそれぞれの最大値を1000とするように正規化する
+IF TALENT:対象:小人体型
+	精液量 /= 3
+ELSE
+	SELECTCASE TALENT:対象:体格
+		CASE 1
+			精液量 /= 10
+		CASE 2
+			精液量 /= 13
+		CASEELSE
+			精液量 /= 15
+	ENDSELECT
+ENDIF
+LIMIT 精液量, 1, 1000
+
+;MAXを1とした2乗オーダーで潰す
+;500なら250、100なら10になる
+妊娠確率:1 = 精液量*精液量/1000
+
+
+;実績「ルートと妊娠確定セックスをする」
+IF CHARANAMEF(TARGET) == "ルート＠超ドー研"
+	SIF 妊娠確率*妊娠確率:1 == 1000000
+		CALL 実績解除, "精子もどっかにそりゃあるでしょ！"
+ENDIF
+
+;妊娠確率:0は「排卵誘発剤使用、種族一致もしくは竿役が神、対象が小柄幼児体型小人体型共に無し」で最大の1000
+;妊娠確率:1は膣内射精量15以上で最大の1000
+;両方1000なら100%妊娠する
+;ちなみにTEQUIP:妊娠確率分子/TEQUIP:妊娠確率分母の結果で妊娠確率を口上側で変えることもできる
+;分母=0で100%孕む 分子=0で100%孕まない
+;これはMODよりも優先される
+妊娠乱数 = 妊娠確率*妊娠確率:1
+
+;MOD:百発百中なら1000000(妊娠確定)にする
+SIF MOD:百発百中 && ゲームモード() != "段位認定"
+	妊娠乱数 = 1000000
+
+SIF 確率チェック
+	RETURN 妊娠乱数
+
+;TEQUIPの補正
+妊娠乱数 *= TEQUIP:対象:妊娠確率分子
+IF TEQUIP:対象:妊娠確率分母 == 0
+	妊娠乱数 = 1000000
+ELSE
+	妊娠乱数 /= TEQUIP:対象:妊娠確率分母
+ENDIF
+
+IF RAND:1000000 < 妊娠乱数
+	PREG:対象:妊娠確定フラグ = 1
+	;憑依されてれば体のほうを優先
+	IF CFLAG:竿役:憑依 >= 0
+		PREG:対象:父親 = CFLAG:竿役:憑依
+	ELSE
+		PREG:対象:父親 = NOF(竿役)
+	ENDIF
+	PREG:対象:母親 = NOF(対象)
+ENDIF
+
+
+@NAKADASHI_CHECK_MASTER, 竿役, 確率チェック=0
+#DIM DYNAMIC 竿役
+#DIMS DYNAMIC 竿役種族
+#DIMS DYNAMIC 主人種族
+#DIM DYNAMIC 妊娠確率, 2
+#DIM DYNAMIC 精液量
+#DIM DYNAMIC 確率チェック
+#DIM DYNAMIC 妊娠乱数
+
+;現状アニマルは繁殖しない
+SIF TALENT:竿役:アニマル
+	RETURN 0
+;MASTERが生殖能力無いなら関数終了
+SIF !生殖機能♀(MASTER)
+	RETURN 0
+;竿役が生殖機能無いなら関数終了
+SIF !生殖機能♂(竿役)
+	RETURN 0
+;妊娠が既に確定している場合は関数終了
+SIF PREG:MASTER:出産予定日
+	RETURN 0
+;妊娠中もしくは育児中は関数終了
+SIF TALENT:MASTER:妊娠 || TALENT:MASTER:育児中
+	RETURN 0
+
+;MOD:百発零中なら妊娠しない
+SIF MOD:百発零中 && ゲームモード() != "段位認定"
+	RETURN 0
+
+
+;ここから妊娠確率:0の計算
+
+;排卵剤の有無による定数設定
+IF CFLAG:MASTER:排卵誘発剤
+	妊娠確率 = 1000
+ELSE
+	妊娠確率 = 250
+	;獣人と獣は孕みやすい
+	SELECTCASE CSTR:MASTER:種族
+		CASE "獣人", "獣"
+			妊娠確率 *= 2
+	ENDSELECT
+	;児童と老齢は妊娠しづらい
+	IF TALENT:MASTER:小人体型
+		TIMES 妊娠確率, 0.15
+	ELSE
+		IF TALENT:MASTER:児童
+			TIMES 妊娠確率, 0.70
+		ELSEIF TALENT:MASTER:老齢
+			TIMES 妊娠確率, 0.50
+		ENDIF
+	ENDIF
+ENDIF
+LIMIT 妊娠確率, 0, 1000
+
+;種族を入れるが、「人間(？)」の場合は「人間」として扱う
+竿役種族 = %CSTR:竿役:種族%
+主人種族 = %CSTR:MASTER:種族%
+SIF 竿役種族 == "人間(？)"
+	竿役種族 = 人間
+SIF 主人種族 == "人間(？)"
+	主人種族 = 人間
+
+;異種間交配だと妊娠確率が下がる 竿役が神だと下がらない
+SIF 竿役種族 != "神" && 竿役種族 != 主人種族
+	TIMES 妊娠確率, 0.15
+
+;ここから妊娠確率:1の計算
+
+;精液量は射精1回につき最低1000
+;通常の体格以上なら15000でカンストする
+;体格2なら13000、体格1なら10000
+;小人体型なら3000
+
+精液量 = PREG:竿役:主人への膣内射精
+SIF 精液量 <= 0
+	RETURN 0
+
+;最初にそれぞれの最大値を1000とするように正規化する
+IF TALENT:MASTER:小人体型
+	精液量 /= 3
+ELSE
+	SELECTCASE TALENT:MASTER:体格
+		CASE 1
+			精液量 /= 10
+		CASE 2
+			精液量 /= 13
+		CASEELSE
+			精液量 /= 15
+	ENDSELECT
+ENDIF
+LIMIT 精液量, 1, 1000
+
+;MAXを1とした2乗オーダーで潰す
+;500なら250、100なら10になる
+妊娠確率:1 = 精液量*精液量/1000
+
+
+;妊娠確率:0は「排卵誘発剤使用、種族一致もしくは竿役が神、対象が小柄幼児体型小人体型共に無し」で最大の1000
+;妊娠確率:1は膣内射精量15以上で最大の1000
+;両方1000なら100%妊娠する
+;ちなみにTEQUIP:妊娠確率分子/TEQUIP:妊娠確率分母の結果で妊娠確率を口上側で変えることもできる
+;分母=0で100%孕む 分子=0で100%孕まない
+;これはMODよりも優先される
+妊娠乱数 = 妊娠確率*妊娠確率:1
+
+;MOD:百発百中なら1000000(妊娠確定)にする
+SIF MOD:百発百中 && ゲームモード() != "段位認定"
+	妊娠乱数 = 1000000
+
+SIF 確率チェック
+	RETURN 妊娠乱数
+
+;TEQUIPの補正
+妊娠乱数 *= TEQUIP:MASTER:妊娠確率分子
+IF TEQUIP:MASTER:妊娠確率分母 == 0
+	妊娠乱数 = 1000000
+ELSE
+	妊娠乱数 /= TEQUIP:MASTER:妊娠確率分母
+ENDIF
+
+IF RAND:1000000 < 妊娠乱数
+	PREG:MASTER:妊娠確定フラグ = 1
+	IF CFLAG:竿役:憑依 >= 0
+		PREG:MASTER:父親 = CFLAG:竿役:憑依
+	ELSE
+		PREG:MASTER:父親 = NOF(竿役)
+	ENDIF
+	PREG:MASTER:母親 = NOF(MASTER)
+ENDIF
+
+;妊娠処理
+@GET_CHILD
+#DIM DYNAMIC LCOUNT
+
+FOR LCOUNT, 0, CHARANUM
+	SIF PREG:LCOUNT:妊娠確定フラグ == 0
+		CONTINUE
+	;出産予定日より20日前で妊娠発覚
+	;妊娠期間MODを入れてる場合は下限/3 妊娠確定時と発覚時にMODが一致してないケースがあるためなんともいえないので3日前にはイベント起こす
+
+	IF !TALENT:LCOUNT:妊娠 && !TALENT:LCOUNT:育児中
+		IF MOD:妊娠期間上限
+			IF DAY >= PREG:LCOUNT:出産予定日-(MOD:妊娠期間下限+3)/3
+				CALL GET_CHILD_MESSAGE, LCOUNT
+			ELSEIF DAY >= PREG:LCOUNT:出産予定日-3
+				CALL GET_CHILD_MESSAGE, LCOUNT
+			ENDIF
+		ELSE
+			SIF DAY >= PREG:LCOUNT:出産予定日-20
+				CALL GET_CHILD_MESSAGE, LCOUNT
+		ENDIF
+	ENDIF
+NEXT
+
+@GET_CHILD_MESSAGE, 対象
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC ストレス計算用
+#DIM DYNAMIC 父親ID
+#DIM DYNAMIC 対象
+
+IF 対象 == MASTER
+	PRINTW ここ最近つわりのようなものがひどい……
+	PRINTFORMW %CALLNAME:MASTER%はどうやら%CSVCALLNAMEF(PREG:対象:父親)%の子供を身籠ってしまったようだ
+	TALENT:MASTER:妊娠 = 1
+	FOR LCOUNT, 0, CHARANUM
+		IF NOF(LCOUNT) == PREG:対象:父親
+			孕ませ回数:LCOUNT:NOF(対象)++
+			BREAK
+		ENDIF
+	NEXT
+	孕み回数:対象:(PREG:対象:父親)++
+	CALL プレイログ記録, @"%NAME:MASTER%、%CSVNAMEF(PREG:対象:父親)%の子を身ごもる"
+	CALL KOJO_MASTER_EVENT, 1
+ELSE
+	PRINTFORMW %CALLNAME:対象%の様子がおかしい……
+	IF TALENT:対象:妊娠確定
+		PRINTFORMW %CALLNAME:対象%は妊娠の自覚症状が出てきたようだ
+		CALL プレイログ記録, @"%NAME:対象%が妊娠する"
+	ELSEIF PREG:対象:父親 == -1
+		PRINTFORMW %CALLNAME:対象%は名も知らぬ男の子供を身篭ったようだ
+		モブ孕み回数:対象:0++
+		CALL プレイログ記録, @"%NAME:対象%が妊娠する"
+	ELSE
+		PRINTFORMW %CALLNAME:対象%は%CSVCALLNAMEF(PREG:対象:父親)%の子供を身篭ったようだ
+		FOR LCOUNT, 0, CHARANUM
+			IF NOF(LCOUNT) == PREG:対象:父親
+				孕ませ回数:LCOUNT:NOF(対象)++
+				;実績:ふたなりのいちかを主人にして10人孕ませる
+				IF LCOUNT == 0 && CHARANAMEF(LCOUNT) == "いちか"
+					SIF SUMARRAY(孕ませ回数:LCOUNT:0, 0) >= 10
+						CALL 実績解除, "卵管キラーガール"
+				ENDIF
+				BREAK
+			ENDIF
+		NEXT
+		CALL プレイログ記録, @"%NAME:対象%、%CSVNAMEF(PREG:対象:父親)%の子を身ごもる"
+		孕み回数:対象:(PREG:対象:父親)++
+	ENDIF
+	PRINTFORMW %NAME:対象%は[妊娠]した
+	TALENT:対象:妊娠 = 1
+ENDIF
+
+;妊娠したら経営から外す
+IF CSTR:対象:配属 != ""
+	PRINTFORMW 様子を見るため、%CALLNAME:対象%を%CSTR:対象:配属%から外し休暇を与えます
+	CALL 配属解除, 対象
+ENDIF
+
+;MOD:人口飽和導入中ならTARGET、ASSIから外す
+IF MOD:人口飽和
+	SIF TARGET == 対象
+		TARGET = -1
+	SIF ASSI == 対象
+		ASSI = -1
+	SIF ASSI:1 == 対象
+		ASSI:1 = -1
+ENDIF
+
+;妊娠時のステータスの変化
+;共通処理
+;女だと母乳出るようになる
+IF !TALENT:対象:母乳体質 && SEX(対象) == 2
+	PRINTFORMW %CALLNAME:対象%は母乳が出るようになった
+	TALENT:対象:母乳体質 = 1
+	PREG:対象:母乳体質付与 = 1
+ENDIF
+
+;ストレス値の処理
+IF 対象 != MASTER || !TALENT:対象:妊娠確定
+	ストレス計算用 = 100
+	;父親が主人
+	IF PREG:対象:父親 == NOF(MASTER)
+		SELECTCASE FALLTYPE(対象)
+			;恋慕もしくは親愛
+			CASE 1
+				ストレス計算用 -= 100
+			;淫乱系
+			CASE 2
+				ストレス計算用 -= 60
+			;服従もしくは隷属
+			CASE 3
+				ストレス計算用 -= 80
+			CASEELSE
+				PREG:対象:出産トラウマ計算用 = 15
+		ENDSELECT
+	;父親が奴隷または助手
+	ELSEIF PREG:対象:父親 != -1
+		SELECTCASE FALLTYPE(対象)
+			;恋慕もしくは親愛
+			CASE 1
+				ストレス計算用 -= 40
+				PREG:対象:出産トラウマ計算用 = 15
+			;淫乱系
+			CASE 2
+				ストレス計算用 -= 60
+				PREG:対象:出産トラウマ計算用 = 5
+			;服従もしくは隷属
+			CASE 3
+				ストレス計算用 -= 50
+				PREG:対象:出産トラウマ計算用 = 5
+			CASEELSE
+				PREG:対象:出産トラウマ計算用 = 15
+		ENDSELECT
+	;父親が顧客
+	ELSEIF PREG:対象:父親 == -1
+		SELECTCASE FALLTYPE(対象)
+			;恋慕もしくは親愛
+			CASE 1
+				ストレス計算用 -= 10
+				PREG:対象:出産トラウマ計算用 = 20
+			;淫乱系
+			CASE 2
+				ストレス計算用 -= 60
+				PREG:対象:出産トラウマ計算用 = 5
+			;服従もしくは隷属
+			CASE 3
+				ストレス計算用 -= 50
+				PREG:対象:出産トラウマ計算用 = 10
+			CASEELSE
+				PREG:対象:出産トラウマ計算用 = 20
+		ENDSELECT
+	ENDIF
+	;相性による変動
+	IF PREG:対象:父親 != -1
+		ストレス計算用 *= 100
+		SIF RELATION:対象:(PREG:対象:父親)
+			ストレス計算用 /= RELATION:対象:(PREG:対象:父親)
+		;出産トラウマは相性20%ごとに±1変動
+		;極端に言えば恋慕付き東雲姉妹同士で孕ませ合っても相性300%なので出産トラウマは5残ってしまう
+		PREG:対象:出産トラウマ計算用 -= (RELATION:対象:(PREG:対象:父親)-100)/20
+		SIF PREG:対象:出産トラウマ計算用 < 0
+			PREG:対象:出産トラウマ計算用 = 0
+	ENDIF
+
+	;その他素質による補正
+	;相性で出産トラウマがマイナスにはならないが素質ではマイナスになる（つまりある程度猶予ができる）
+	SIF TALENT:対象:母性
+		PREG:対象:出産トラウマ計算用--
+	SELECTCASE TALENT:対象:体格
+		CASE 1
+			PREG:対象:出産トラウマ計算用 += 5
+		CASE 2
+			PREG:対象:出産トラウマ計算用 += 3
+	ENDSELECT
+	SIF TALENT:対象:男嫌い
+		PREG:対象:出産トラウマ計算用 += 3
+	SIF TALENT:対象:ヤンデレ
+		PREG:対象:出産トラウマ計算用--
+	SIF CSTR:対象:種族 == "獣人" || CSTR:対象:種族 == "獣"
+		PREG:対象:出産トラウマ計算用 -= 2
+	PREG:対象:出産トラウマ計算用 += MARK:対象:反発刻印
+	
+	;気丈
+	SIF TALENT:対象:気丈
+		ストレス計算用 -= 10
+	;無関心
+	SIF TALENT:対象:無関心
+		ストレス計算用 -= 5
+	;感情乏しい
+	SIF TALENT:対象:感情乏しい
+		ストレス計算用 -= 10
+	;楽観的
+	SIF TALENT:対象:楽観的
+		ストレス計算用 -= 5
+	;悲観的
+	SIF TALENT:対象:悲観的
+		ストレス計算用 += 5
+	;貞操観念
+	IF TALENT:対象:貞操観念
+		ストレス計算用 += 10
+		PREG:対象:出産トラウマ計算用++
+	ENDIF
+	;貞操無頓着
+	IF TALENT:対象:貞操無頓着
+		ストレス計算用 -= 10
+		PREG:対象:出産トラウマ計算用--
+	ENDIF
+	;出産トラウマ
+	SIF CFLAG:対象:出産トラウマ
+		ストレス計算用 += CFLAG:対象:出産トラウマ*10
+
+	SIF ストレス計算用 < 0
+		ストレス計算用 = 0
+
+	CFLAG:対象:ストレス値 += ストレス計算用
+	SIF CFLAG:対象:ストレス値 >= 999
+		CFLAG:対象:ストレス値 = 999
+ENDIF
+
+IF 対象 == MASTER
+	父親ID = FINDCHARA(NO, PREG:MASTER:父親)
+	IF 父親ID >= 0 && !CFLAG:父親ID:キャラロスト
+		PRINTFORML %CALLNAME:父親ID%に妊娠したことを伝えますか？
+		PRINTL [0] - そっとしておこう
+		PRINTL [1] - 伝えよう
+		BINPUT
+		SELECTCASE RESULT
+			CASE 0
+				PRINTFORMW %CALLNAME:父親ID%には報告しないことにしました
+				PREG:MASTER:父親の認知 = 0
+			CASE 1
+				PRINTFORMW %CALLNAME:父親ID%に、\@ SEX(父親ID) == 1 ? 彼 # 彼女 \@の子を身籠ったことを報告しました
+				CALL KOJO_MESSAGE_EVENT, "妊娠報告時", 父親ID
+				PREG:MASTER:父親の認知 = 1
+		ENDSELECT
+	ENDIF
+ELSE
+	CALL KOJO_MESSAGE_EVENT, "妊娠発覚時", 対象
+ENDIF
+
+TALENT:対象:妊娠確定 = 0
+
+;臨月到達
+@REACH_FULL_TERM, 対象
+#DIM DYNAMIC 対象
+PRINTFORML %CALLNAME:対象%は臨月を迎えました
+PRINTFORMW %CALLNAME:対象%は出産に備え育児室へ移動します
+SIF TARGET == 対象
+	TARGET = -1
+SIF ASSI == 対象
+	ASSI = -1
+SIF ASSI:1 == 対象
+	ASSI:1 = -1
+
+@PREG_READY
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC 父親ID
+
+;オリコ「くノ一忍法帖」ならスルー
+SIF 受験段位名 == "くノ一忍法帖"
+	RETURN 0
+
+;出産･育児室関連
+FOR LCOUNT, 0, CHARANUM
+	SIF CFLAG:LCOUNT:キャラロスト
+		CONTINUE
+	IF TALENT:LCOUNT:妊娠
+		;出産5日前からは臨月突入で調教不可に
+		IF (PREG:LCOUNT:出産予定日-5) == DAY:1
+			CALL CHECKDRAWLINE
+			CALL REACH_FULL_TERM, LCOUNT
+			;主人の使用不可フラグは余分に設定する
+			SIF LCOUNT == MASTER
+				CFLAG:MASTER:使用不可 = 10000
+		;出産前日には育児室への訪問を問うイベント発生
+		ELSEIF (PREG:LCOUNT:出産予定日-1) == DAY:1
+			CALL CHECKDRAWLINE
+			IF LCOUNT == MASTER
+				PRINTFORML %CALLNAME:LCOUNT%は出産が近づいている……
+				父親ID = FINDCHARA(NO, PREG:MASTER:父親)
+				SIF 父親ID >= 0
+					CALL KOJO_MESSAGE_EVENT, "主人育児室", 父親ID
+			ELSE
+				PRINTFORML %CALLNAME:LCOUNT%は出産が近づいているようだ……
+				CALL CHILD_CARE_ROOM_SELECT, LCOUNT
+			ENDIF
+		;出産予定日なら出産
+		ELSEIF PREG:LCOUNT:出産予定日 <= DAY:1
+			CALL CHECKDRAWLINE
+			CALL CHILD_BIRTH, LCOUNT
+		ENDIF
+	;PREG:6は他人の子を育てているフラグ 立っているとイベントは発生しない
+	ELSEIF TALENT:LCOUNT:育児中
+		;MOD:人口飽和ならすぐに親離れする
+		SIF MOD:人口飽和
+			GOTO 親離れ
+		;出産後翌日には育児室への訪問を問うイベント発生
+		IF (PREG:LCOUNT:出産予定日+1) == DAY:1 && !PREG:LCOUNT:乳母
+			CALL CHECKDRAWLINE
+			IF LCOUNT == MASTER
+				PRINTFORML %CALLNAME:LCOUNT%の出産から一日経ちました
+				;主人の妊娠で、父親が認知していれば会いに来るイベント
+				;陥落済みじゃないと発生しない
+				IF PREG:MASTER:父親の認知
+					父親ID = FINDCHARA(NO, PREG:MASTER:父親)
+					SIF 父親ID >= 0 && 陥落(父親ID) && !CFLAG:父親ID:キャラロスト
+						CALL KOJO_MESSAGE_EVENT, "主人育児室", 父親ID
+				ENDIF
+			ELSE
+				PRINTFORML %CALLNAME:LCOUNT%の出産から一日経ちました
+				CALL CHILD_CARE_ROOM_SELECT, LCOUNT
+			ENDIF
+		;出産後3日には育児室への訪問を問うイベント発生
+		ELSEIF (PREG:LCOUNT:出産予定日+3) == DAY:1 && !PREG:LCOUNT:乳母
+			CALL CHECKDRAWLINE
+			IF LCOUNT == MASTER
+				PRINTFORML %CALLNAME:LCOUNT%の出産から三日経ちました
+				;主人の妊娠で、父親が認知していれば会いに来るイベント
+				;翌日に一度やってるから発生しないようにしてみる
+				;IF PREG:MASTER:父親の認知
+				;	父親ID = FINDCHARA(NO, PREG:MASTER:父親)
+				;	SIF 父親ID >= 0 && 陥落(父親ID)
+				;		CALL KOJO_MESSAGE_EVENT, "主人育児室", 父親ID
+				;ENDIF
+			ELSE
+				PRINTFORML %CALLNAME:LCOUNT%の出産から三日経ちました
+				CALL CHILD_CARE_ROOM_SELECT, LCOUNT
+			ENDIF
+		;出産後5日で親離れで調教可能に
+		ELSEIF (PREG:LCOUNT:出産予定日+5) == DAY:1
+			$親離れ
+			CALL CHECKDRAWLINE
+			CALL DEPEARENT, LCOUNT
+		ENDIF
+	ENDIF
+NEXT
+
+;出産
+@CHILD_BIRTH, 対象
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC 父親ID
+#DIM DYNAMIC LTARGET
+#DIM DYNAMIC SKIP
+#DIM DYNAMIC 対象
+
+IF PREG:対象:父親 >= 0
+	PRINTFORMW %CALLNAME:対象%は、%CSVNAMEF(PREG:対象:父親)%の子供を無事出産しました
+ELSE
+	PRINTFORMW %CALLNAME:対象%は子供を無事出産しました
+ENDIF
+SIF CSTR:対象:種族 == "神"
+	CALL 実績解除, "産め！神が子を！"
+CALL プレイログ記録, @"%NAME:対象%が出産する"
+
+;処女だと処女喪失
+IF TALENT:対象:処女
+	PRINTW ＜処女喪失＞
+	TALENT:対象:処女 = 0
+	IF TALENT:対象:性転換済
+		CFLAG:対象:性転換処女の奪われ方 = 4
+	ELSE
+		CFLAG:対象:処女の奪われ方 = 4
+	ENDIF
+ELSEIF TALENT:対象:再生処女
+	PRINTW ＜再生処女喪失＞
+	TALENT:対象:再生処女 = 0
+ENDIF
+
+;ストレスが高いと難産で出産トラウマが残る
+SIF CFLAG:対象:ストレス値
+	PREG:対象:出産トラウマ計算用 = CFLAG:対象:ストレス値/30+1
+
+;医務室のスタッフが有能だとトラウマを軽減 最大12
+PREG:対象:出産トラウマ計算用 -= 出産用医務室ランク()
+SIF PREG:対象:出産トラウマ計算用 < 0
+	PREG:対象:出産トラウマ計算用 = 0
+
+;ヤンデレで父親が主人、陥落済みだと出産トラウマは0になる
+SIF TALENT:対象:ヤンデレ && 陥落(対象) && PREG:対象:父親 == NOF(MASTER)
+	PREG:対象:出産トラウマ計算用 = 0
+
+;主人には出産トラウマ付かない
+SIF 対象 == MASTER
+	PREG:対象:出産トラウマ計算用 = 0
+;新婚モードでも付かない
+SIF ゲームモード() == "新婚モード"
+	PREG:対象:出産トラウマ計算用 = 0
+
+CHILDBIRTHDAY:対象:0 = YEAR*10000+MONTH*100+DAYS
+
+IF 対象 == MASTER
+	IF PREG:MASTER:父親の認知
+		父親ID = FINDCHARA(NO, PREG:MASTER:父親)
+		SIF 父親ID >= 0 && !CFLAG:父親ID:キャラロスト
+			CALL KOJO_MESSAGE_EVENT, "主人出産時", 父親ID
+	ENDIF
+ELSE
+	CALL KOJO_MESSAGE_EVENT, "出産時", 対象
+ENDIF
+
+EXP:対象:出産経験++
+CFLAG:対象:出産トラウマ += PREG:対象:出産トラウマ計算用
+SIF CFLAG:対象:出産トラウマ >= 100
+	CFLAG:対象:出産トラウマ = 100
+
+;妊娠を失う
+TALENT:対象:妊娠 = 0
+PRINTFORML %CALLNAME:対象%は育児室で育児を始めた
+SIF 対象 == TARGET
+	TARGET = -1
+SIF 対象 == ASSI
+	ASSI = -1
+SIF 対象 == ASSI:1
+	ASSI:1 = -1
+TALENT:対象:育児中 = 1
+;女で恋慕or親愛持ちで父親が主人
+IF 対象 != MASTER
+	IF SEX(対象) == 2 && FALLTYPE(対象) == 1 && PREG:対象:父親 == NOF(MASTER) && !TALENT:対象:母性
+		PRINTFORMW どうやら%CALLNAME:対象%は[母性]に目覚めたようだ
+		TALENT:対象:母性 = 1
+	ENDIF
+ENDIF
+
+;実績準備
+SIF CHARANAMEF(対象) == "育江" && !エレジー
+	エレジー = YEAR*10000+MONTH*100+DAYS
+
+IF CMATCH(CSTR:配属, "医務室")
+	SKIP = RAND:CMATCH(CSTR:配属, "医務室")
+	FOR LCOUNT, 0, CHARANUM
+		IF CSTR:LCOUNT:配属 == "医務室"
+			SIF SKIP--
+				CONTINUE
+			TFLAG:出産キャラ = 対象
+			CALL KOJO_STRATEGY, LCOUNT, "医務室", "出産時"
+			BREAK
+		ENDIF
+	NEXT
+ENDIF
+
+@CHILD_CARE_ROOM_SELECT, 対象
+#DIM DYNAMIC LTARGET
+#DIM DYNAMIC 対象
+
+PRINTFORML %CALLNAME:対象%の様子を見に行きますか？
+PRINTL [0] - 育児室へ行く
+PRINTL [1] - 育児室へ行かない
+BINPUT
+SELECTCASE RESULT
+	CASE 0
+		DRAWLINE
+		PRINTFORMW %CALLNAME:MASTER%は%CALLNAME:対象%のところへ向かった
+		LTARGET = TARGET
+		TARGET = 対象
+		CALL KOJO_MESSAGE_EVENT, "育児室"
+		TARGET = LTARGET
+		;育児室に顔出すと出産トラウマが僅かに緩和される
+		PREG:対象:出産トラウマ計算用--
+	CASE 1
+		DRAWLINE
+ENDSELECT
+
+;子供の素質と種族の確定
+@CHILDSET, 母親ID, 父親ID = -1, 母体ID = -1
+#DIM DYNAMIC 母親ID
+#DIM DYNAMIC 父親ID
+#DIM DYNAMIC 母体ID
+#DIM DYNAMIC 素質数
+#DIM DYNAMIC テーブル
+#DIM DYNAMIC 素質上限
+#DIM DYNAMIC 素質付与判定, 30
+#DIM DYNAMIC 特殊素質上限
+
+SIF 母体ID == -1
+	母体ID = 母親ID
+
+;父親が不明、もしくは採取精液なら母親の種族を受け継ぐ
+IF 父親ID == -1
+	CHILDRACE:母体ID:0 = %CSTR:母親ID:種族%
+;種族一致なら子供も同じ種族
+ELSEIF CSTR:母親ID:種族 == CSTR:父親ID:種族
+	CHILDRACE:母体ID:0 = %CSTR:母親ID:種族%
+;種族不一致なら
+ELSE
+	;獣人、獣は母親IDの遺伝が強く、母親IDが獣人か獣ならまず獣人になる
+	SELECTCASE CSTR:母親ID:種族
+		CASE "獣人", "獣"
+			CHILDRACE:母体ID:0 = 獣人
+		CASEELSE
+			;父親が悪魔、もしくは神なら子供も父親の種族を受け継ぐ
+			SELECTCASE CSTR:父親ID:種族
+				CASE "悪魔", "神"
+					CHILDRACE:母体ID:0 = %CSTR:父親ID:種族%
+				;それ以外はランダムで父親か母親IDの種族を受け継ぐ
+				CASEELSE
+					SELECTCASE RAND:2
+						CASE 0
+							CHILDRACE:母体ID:0 = %CSTR:父親ID:種族%
+						CASE 1
+							CHILDRACE:母体ID:0 = %CSTR:母親ID:種族%
+					ENDSELECT
+			ENDSELECT
+	ENDSELECT
+ENDIF
+
+;血縁コードが同じ、もしくは親子間の交配なら近親交配フラグが立つ
+SIF 近親相姦(父親ID, 母親ID)
+	PREG:母体ID:近親交配フラグ = 1
+
+;続いて素質の設定
+;まずは性別 MODの影響を受ける
+IF MOD:男性化
+	CHILDTALENT:母体ID:TALENTF("性別") = 1
+ELSEIF MOD:女性化
+	CHILDTALENT:母体ID:TALENTF("性別") = 2
+ELSEIF MOD:女性化TSバストサイズランダム
+	CHILDTALENT:母体ID:TALENTF("性別") = 2
+ELSE
+	CHILDTALENT:母体ID:TALENTF("性別") = RAND(1, 3)
+ENDIF
+
+;小柄体型
+SIF !MOD:大人化
+	CHILDTALENT:母体ID:TALENTF("体格") = 3
+
+;MOD:ふたなり
+SIF MOD:ふたなり
+	CHILDTALENT:母体ID:TALENTF("ふたなり") = 1
+;MOD:おもらし
+SIF MOD:おもらし
+	CHILDTALENT:母体ID:TALENTF("おもらし癖") = 1
+
+;当然子供なので童貞か処女
+SELECTCASE CHILDTALENT:母体ID:TALENTF("性別")
+	CASE 1
+		CHILDTALENT:母体ID:TALENTF("童貞") = 1
+	CASE 2
+		CHILDTALENT:母体ID:TALENTF("処女") = 1
+		;基本絶壁か貧乳だがまれに大きくなる 爆乳にはならない
+		;MODがあれば固定
+		IF MOD:爆乳
+			CHILDTALENT:母体ID:TALENTF("バストサイズ") = 6
+		ELSEIF MOD:絶壁
+			CHILDTALENT:母体ID:TALENTF("バストサイズ") = 1
+		ELSE
+			SELECTCASE RAND:20
+				CASE 0 TO 5
+					CHILDTALENT:母体ID:TALENTF("バストサイズ") = 1
+				CASE 6 TO 15
+					CHILDTALENT:母体ID:TALENTF("バストサイズ") = 2
+				CASE 16 TO 18
+					CHILDTALENT:母体ID:TALENTF("バストサイズ") = 3
+				CASE 19
+					CHILDTALENT:母体ID:TALENTF("バストサイズ") = 4
+			ENDSELECT
+		ENDIF
+		;MOD:母乳
+		SIF MOD:母乳
+			CHILDTALENT:母体ID:TALENTF("母乳体質") = 1
+ENDSELECT
+
+;狐の遺伝子を持っていれば、獣なら狐、獣人なら妖狐になる
+IF TALENT:母親ID:狐 || TALENT:母親ID:妖狐 || (父親ID > 0 && (TALENT:父親ID:狐 || TALENT:父親ID:妖狐))
+	SIF CHILDRACE:母体ID:0 == "獣"
+		CHILDTALENT:母体ID:TALENTF("狐") = 1
+	SIF CHILDRACE:母体ID:0 == "獣人"
+		CHILDTALENT:母体ID:TALENTF("妖狐") = 1
+;犬、猫も同じく ただし犬×猫なら犬優先 狐が最優先
+ELSEIF TALENT:母親ID:犬 || (父親ID > 0 && TALENT:父親ID:犬)
+	CHILDTALENT:母体ID:TALENTF("犬") = 1
+ELSEIF TALENT:母親ID:猫 || (父親ID > 0 && TALENT:父親ID:猫)
+	CHILDTALENT:母体ID:TALENTF("猫") = 1
+ENDIF
+
+;だいたい6～8個の素質が付く
+素質上限 = RAND(6, 9)
+
+;親が神ならさらに2～4個追加
+SIF CSTR:母親ID:種族 == "神" || (父親ID >= 0 && CSTR:父親ID:種族 == "神")
+	素質上限 += RAND(2, 5)
+
+DO
+	テーブル = RAND(1, 23)
+	;既に決定済みのテーブルならやり直し
+	SIF 素質付与判定:テーブル
+		CONTINUE
+	;素質の種類ごとにテーブルを置く
+	SELECTCASE テーブル
+		;生意気、臆病、ツンデレ、強気、弱気
+		CASE 1
+			SELECTCASE RAND:5
+				CASE 0
+					CHILDTALENT:母体ID:TALENTF("生意気") = 1
+				CASE 1
+					CHILDTALENT:母体ID:TALENTF("臆病") = 1
+				CASE 2
+					CHILDTALENT:母体ID:TALENTF("ツンデレ") = 1
+				CASE 3
+					CHILDTALENT:母体ID:TALENTF("強気") = 1
+				CASE 4
+					CHILDTALENT:母体ID:TALENTF("弱気") = 1
+			ENDSELECT
+		;素直、反抗的、衝動的、ヤンデレ
+		CASE 2
+			SELECTCASE RAND:4
+				CASE 0
+					CHILDTALENT:母体ID:TALENTF("素直") = 1
+				CASE 1
+					CHILDTALENT:母体ID:TALENTF("反抗的") = 1
+				CASE 2
+					CHILDTALENT:母体ID:TALENTF("衝動的") = 1
+				CASE 3
+					CHILDTALENT:母体ID:TALENTF("ヤンデレ") = 1
+			ENDSELECT
+		;プライド高い、プライド低い
+		CASE 3
+			SELECTCASE RAND:2
+				CASE 0
+					CHILDTALENT:母体ID:TALENTF("プライド高い") = 1
+				CASE 1
+					CHILDTALENT:母体ID:TALENTF("プライド低い") = 1
+			ENDSELECT
+		;ハイテンション、大人しい
+		CASE 4
+			SELECTCASE RAND:2
+				CASE 0
+					CHILDTALENT:母体ID:TALENTF("ハイテンション") = 1
+				CASE 1
+					CHILDTALENT:母体ID:TALENTF("大人しい") = 1
+			ENDSELECT
+		;自制心、無関心、感情乏しい、好奇心
+		CASE 5
+			SELECTCASE RAND:4
+				CASE 0
+					CHILDTALENT:母体ID:TALENTF("自制心") = 1
+				CASE 1
+					CHILDTALENT:母体ID:TALENTF("無関心") = 1
+				CASE 2
+					CHILDTALENT:母体ID:TALENTF("感情乏しい") = 1
+				CASE 3
+					CHILDTALENT:母体ID:TALENTF("好奇心") = 1
+			ENDSELECT
+		;保守的、楽観的、悲観的
+		CASE 6
+			SELECTCASE RAND:3
+				CASE 0
+					CHILDTALENT:母体ID:TALENTF("保守的") = 1
+				CASE 1
+					CHILDTALENT:母体ID:TALENTF("楽観的") = 1
+				CASE 2
+					CHILDTALENT:母体ID:TALENTF("悲観的") = 1
+			ENDSELECT
+		;貞操観念、貞操無頓着
+		CASE 7
+			SELECTCASE RAND:2
+				CASE 0
+					CHILDTALENT:母体ID:TALENTF("貞操観念") = 1
+				CASE 1
+					CHILDTALENT:母体ID:TALENTF("貞操無頓着") = 1
+			ENDSELECT
+		;恥じらい、恥薄い、寂しがり屋
+		CASE 8
+			SELECTCASE RAND:3
+				CASE 0
+					CHILDTALENT:母体ID:TALENTF("恥じらい") = 1
+				CASE 1
+					CHILDTALENT:母体ID:TALENTF("恥薄い") = 1
+				CASE 2
+					CHILDTALENT:母体ID:TALENTF("寂しがり屋") = 1
+			ENDSELECT
+		;痛みに弱い、痛みに強い
+		CASE 9
+			SELECTCASE RAND:2
+				CASE 0
+					CHILDTALENT:母体ID:TALENTF("痛みに弱い") = 1
+				CASE 1
+					CHILDTALENT:母体ID:TALENTF("痛みに強い") = 1
+			ENDSELECT
+		;濡れやすい、濡れにくい、勃ちやすい、勃ちにくい
+		CASE 10
+			SELECTCASE CHILDTALENT:母体ID:TALENTF("性別")
+				CASE 1
+					SELECTCASE RAND:2
+						CASE 0
+							CHILDTALENT:母体ID:TALENTF("勃ちやすい") = 1
+						CASE 1
+							CHILDTALENT:母体ID:TALENTF("勃ちにくい") = 1
+					ENDSELECT
+				CASE 2
+					SELECTCASE RAND:2
+						CASE 0
+							CHILDTALENT:母体ID:TALENTF("濡れやすい") = 1
+						CASE 1
+							CHILDTALENT:母体ID:TALENTF("濡れにくい") = 1
+					ENDSELECT
+			ENDSELECT
+		;習得早い、習得遅い
+		CASE 11
+			SELECTCASE RAND:3
+				CASE 0
+					CHILDTALENT:母体ID:TALENTF("習得早い") = 1
+				CASE 1
+					CHILDTALENT:母体ID:TALENTF("習得遅い") = 1
+			ENDSELECT
+		;汚臭鈍感、汚臭敏感
+		CASE 12
+			SELECTCASE RAND:2
+				CASE 0
+					CHILDTALENT:母体ID:TALENTF("汚臭鈍感") = 1
+				CASE 1
+					CHILDTALENT:母体ID:TALENTF("汚臭敏感") = 1
+			ENDSELECT
+		;汚れ無視、潔癖症
+		CASE 13
+			SELECTCASE RAND:2
+				CASE 0
+					CHILDTALENT:母体ID:TALENTF("汚れ無視") = 1
+				CASE 1
+					CHILDTALENT:母体ID:TALENTF("潔癖症") = 1
+			ENDSELECT
+		;快感に素直、快感の否定
+		CASE 14
+			SELECTCASE RAND:2
+				CASE 0
+					CHILDTALENT:母体ID:TALENTF("快感に素直") = 1
+				CASE 1
+					CHILDTALENT:母体ID:TALENTF("快感の否定") = 1
+			ENDSELECT
+		;両刀、男好き、女好き、男嫌い、女嫌い、同族嫌悪
+		CASE 15
+			SELECTCASE RAND:6
+				CASE 0
+					CHILDTALENT:母体ID:TALENTF("両刀") = 1
+				CASE 1
+					CHILDTALENT:母体ID:TALENTF("男好き") = 1
+				CASE 2
+					CHILDTALENT:母体ID:TALENTF("女好き") = 1
+				CASE 3
+					CHILDTALENT:母体ID:TALENTF("男嫌い") = 1
+				CASE 4
+					CHILDTALENT:母体ID:TALENTF("女嫌い") = 1
+				CASE 5
+					CHILDTALENT:母体ID:TALENTF("同族嫌悪") = 1
+			ENDSELECT
+		;サド、マゾ
+		CASE 16
+			SELECTCASE RAND:2
+				CASE 0
+					CHILDTALENT:母体ID:TALENTF("サド") = 1
+				CASE 1
+					CHILDTALENT:母体ID:TALENTF("マゾ") = 1
+			ENDSELECT
+		;Ｖ敏感鈍感
+		CASE 17
+			;男ならやり直し
+			SIF CHILDTALENT:母体ID:TALENTF("性別") == 1
+				CONTINUE
+			SELECTCASE RAND:2
+				CASE 0
+					CHILDTALENT:母体ID:TALENTF("Ｖ敏感") = 1
+				CASE 1
+					CHILDTALENT:母体ID:TALENTF("Ｖ鈍感") = 1
+			ENDSELECT
+		;Ｃ敏感鈍感
+		CASE 18
+			SELECTCASE RAND:2
+				CASE 0
+					CHILDTALENT:母体ID:TALENTF("Ｃ敏感") = 1
+				CASE 1
+					CHILDTALENT:母体ID:TALENTF("Ｃ鈍感") = 1
+			ENDSELECT
+		;Ａ敏感鈍感
+		CASE 19
+			SELECTCASE RAND:2
+				CASE 0
+					CHILDTALENT:母体ID:TALENTF("Ａ敏感") = 1
+				CASE 0
+					CHILDTALENT:母体ID:TALENTF("Ａ鈍感") = 1
+			ENDSELECT
+		;Ｂ敏感鈍感
+		CASE 20
+			SELECTCASE RAND:2
+				CASE 0
+					CHILDTALENT:母体ID:TALENTF("Ｂ敏感") = 1
+				CASE 1
+					CHILDTALENT:母体ID:TALENTF("Ｂ鈍感") = 1
+			ENDSELECT
+		;回復早い、回復遅い、暑さに弱い、寒さに弱い
+		CASE 21
+			SELECTCASE RAND:4
+				CASE 0
+					CHILDTALENT:母体ID:TALENTF("回復早い") = 1
+				CASE 1
+					CHILDTALENT:母体ID:TALENTF("回復遅い") = 1
+				CASE 2
+					CHILDTALENT:母体ID:TALENTF("暑さに弱い") = 1
+				CASE 3
+					CHILDTALENT:母体ID:TALENTF("寒さに弱い") = 1
+			ENDSELECT
+		;酒豪、下戸、食欲皆伝、
+		CASE 22
+			SELECTCASE RAND:3
+				CASE 0
+					CHILDTALENT:母体ID:TALENTF("酒豪") = 1
+				CASE 1
+					CHILDTALENT:母体ID:TALENTF("下戸") = 1
+				CASE 2
+					CHILDTALENT:母体ID:TALENTF("食欲皆伝") = 1
+			ENDSELECT
+	ENDSELECT
+	素質付与判定:テーブル = 1
+	素質数++
+LOOP 素質上限 != 素質数
+
+素質数 = 0
+VARSET 素質付与判定
+
+;以下プラス素質から必ず何かひとつ付く
+特殊素質上限 = 1
+
+;親が神ならさらに1～3個追加
+SIF CSTR:母親ID:種族 == "神" || (父親ID >= 0 && CSTR:父親ID:種族 == "神")
+	特殊素質上限 += RAND(1, 4)
+
+DO
+	テーブル = RAND(1, 11)
+	;既に決定済みのテーブルならやり直し
+	SIF 素質付与判定:テーブル
+		CONTINUE
+	;目立ちたがり、舌使い、献身的、小悪魔、孔雀の瞳、夢喰い、買い物上手、治療、音ゲーマー
+	SELECTCASE テーブル
+		CASE 1
+			CHILDTALENT:母体ID:TALENTF("目立ちたがり") = 1
+		CASE 2
+			CHILDTALENT:母体ID:TALENTF("舌使い") = 1
+		CASE 3
+			CHILDTALENT:母体ID:TALENTF("献身的") = 1
+		CASE 4
+			CHILDTALENT:母体ID:TALENTF("小悪魔") = 1
+		CASE 5
+			CHILDTALENT:母体ID:TALENTF("孔雀の瞳") = 1
+		CASE 6
+			CHILDTALENT:母体ID:TALENTF("夢喰い") = 1
+		CASE 7
+			CHILDTALENT:母体ID:TALENTF("買い物上手") = 1
+		;CASE 8
+		;	CHILDTALENT:母体ID:TALENTF("治療") = 1
+		CASE 8
+			CHILDTALENT:母体ID:TALENTF("音ゲーマー") = 1
+		CASE 9
+			CHILDTALENT:母体ID:TALENTF("ふたなり") = 1
+		CASE 10
+			CHILDTALENT:母体ID:TALENTF("霊感") = 1
+	ENDSELECT
+	素質付与判定:テーブル = 1
+	素質数++
+LOOP 特殊素質上限 != 素質数
+
+;種族によって固定素質
+SELECTCASE CHILDRACE:母体ID:0
+	CASE "獣人", "獣"
+		CHILDTALENT:母体ID:TALENTF("動物耳") = 1
+		CHILDTALENT:母体ID:TALENTF("尻尾") = 1
+	CASE "天使", "鳳凰"
+		CHILDTALENT:母体ID:TALENTF("羽") = 1
+;	魔法システム追加したので魔法技能を付与する
+;	CASE "魔術師"
+;		CHILDTALENT:母体ID:TALENTF("調合知識") = 1
+ENDSELECT
+
+;両親が魔術師なら魔法技能フラグを立てる
+SIF CSTR:母親ID:種族 == "魔術師" || CSTR:父親ID:種族 == "魔術師" || TALENT:母親ID:魔法使い || TALENT:父親ID:魔法使い
+	PREG:母体ID:魔法の才能 = 1
+
+;親離れ、もしくは子供を迎え入れる
+@DEPEARENT, 対象
+#DIM DYNAMIC LCOUNT
+#DIMS DYNAMIC 子供の名前
+#DIM DYNAMIC 命名パターン
+#DIMS DYNAMIC 命名用変数, 10
+#DIM DYNAMIC 服装選出用
+#DIM DYNAMIC 対象
+
+PRINTFORML %CALLNAME:対象%の育てていた子供の容態が安定してきたようだ
+IF 対象 == MASTER
+	PRINTFORMW %CALLNAME:対象%が主人として復帰しました
+	CFLAG:MASTER:使用不可 = 0
+ELSE
+	PRINTFORMW %CALLNAME:対象%は再び調教可能になりました
+ENDIF
+TALENT:対象:育児中 = 0
+IF TALENT:対象:母乳体質 && PREG:対象:母乳体質付与 == 1
+	PRINTFORMW %CALLNAME:対象%は母乳が出なくなりました
+	TALENT:対象:母乳体質 = 0
+ENDIF
+SELECTCASE CHILDTALENT:対象:TALENTF("性別")
+	CASE 1
+		PRINTL さて、この子供は男の子だが……この子をどうしようか
+	CASE 2
+		PRINTL さて、この子供は女の子だが……この子をどうしようか
+ENDSELECT
+PRINTL [0] - 養子に出す
+CALL PASELIL,  @"[1] - 一緒に暮らす\@ !ORIGIN ? (育児費用30000＄が必要) #\@"
+;SIF STSMOD
+;	PRINTL [2] - 解体する
+
+BINPUT
+IF RESULT == 1 && MONEY < 30000 && !ORIGIN
+	PRINTW 育児費用が足りないため、やむなく養子に出すことにしました
+	RESULT = 0
+ENDIF
+
+SELECTCASE RESULT
+	CASE 0
+		PRINTFORML %CALLNAME:対象%の育てていた子供を養子に出しました
+		;主人との間にできた恋慕、親愛キャラの子供なら仕送りが来るようになる
+		IF NOF(対象) == PREG:対象:母親 && NOF(MASTER) == PREG:対象:父親 && FALLTYPE(対象) == 1
+			PRINTFORML 自立した子供から定期的に仕送りが来るようになりました
+			FLAG:仕送り++
+		ENDIF
+		CALL CLEAR_FLAG, 対象
+		WAIT
+		SIF 対象 != MASTER
+			CALL KOJO_MESSAGE_EVENT, "親離れ", 対象
+	CASE 1
+		$命名
+		DRAWLINE
+		PRINTL この子に名前を付ける手段を選んで下さい
+		SIF 子供の名前 != ""
+			PRINTFORML 候補:%子供の名前%
+		PRINTL [1] ランダム生成(カタカナ)
+		PRINTL [2] ランダム生成(ひらがな)
+		PRINTL [3] ランダム生成(漢字)
+		PRINTL [4] 自分で入力
+		SIF 子供の名前 != ""
+			PRINTL [0] 決定
+		BINPUT
+		SELECTCASE RESULT
+			CASE 0
+				SIF 子供の名前 == ""
+					GOTO 命名
+			CASE 1 TO 3
+				命名パターン = RESULT
+				$ランダム生成
+				FOR LCOUNT, 0, 10
+					命名用変数:LCOUNT = %ランダム命名(命名パターン)%
+					PRINTFORML [{LCOUNT, 2, RIGHT}] %命名用変数:LCOUNT%
+				NEXT
+				DRAWLINE
+				PRINTL [10] 再生成
+				PRINTL [99] 戻る
+				DO
+					INPUT
+					SELECTCASE RESULT
+						CASE 0 TO 9
+							子供の名前 = %命名用変数:RESULT%
+						CASE 10
+							GOTO ランダム生成
+					ENDSELECT
+				LOOP 0
+				GOTO 命名
+			CASE 4
+				PRINTL 名前をつけてあげよう。この子の名前は……(入力してください)
+				DO
+					INPUTS
+					IF RESULTS != ""
+						PRINTFORML 「%RESULTS%」でいいですか？
+						PRINTL [0] - はい
+						PRINTL [1] - 考え直す
+						PRINTL [9] - 戻る
+						BINPUT
+						SELECTCASE RESULT
+							CASE 0
+								子供の名前 = %RESULTS%
+							CASE 1
+								PRINTL 名前をつけてあげよう。この子の名前は……(入力してください)
+								CONTINUE
+						ENDSELECT
+					ENDIF
+				LOOP 0
+				GOTO 命名
+		ENDSELECT
+		CALL PAYMENT, -30000, @"%子供の名前%の養育費"
+		CALL プレイログ記録, @"%NAME:対象%の子供、%子供の名前%と一緒に暮らし始める"
+		
+		ADDVOIDCHARA
+		TARGET = CHARANUM-1
+		TALENT:体格 = 1
+		NAME:TARGET = %子供の名前%
+		CALLNAME:TARGET = %子供の名前%
+		CFLAG:誕生日 = CHILDBIRTHDAY:対象:0%10000
+		CSTR:種族 = %CHILDRACE:対象:0%
+		CALL キャラ生成初期フラグ
+		BUYY = CHILDBIRTHDAY:対象:0 / 10000
+		BUYM = (CHILDBIRTHDAY:対象:0%10000)/100
+		BUYD = CHILDBIRTHDAY:対象:0%100
+		FOR LCOUNT, 0, VARSIZE("TALENT")
+			TALENT:LCOUNT = CHILDTALENT:対象:LCOUNT
+		NEXT
+		SIF PREG:対象:近親交配フラグ
+			CFLAG:近親交配 = 1
+		MAXBASE:体力 = RAND(16, 19)*100
+		MAXBASE:気力 = RAND(12, 16)*100
+		IF CSTR:種族 == "鳳凰"
+			MAXBASE:鳳凰基礎体力 = MAXBASE:体力
+			MAXBASE:鳳凰基礎気力 = MAXBASE:気力
+		ENDIF
+		SELECTCASE CSTR:種族
+			CASE "神", "悪魔"
+				MAXBASE:体力 += 200
+				MAXBASE:気力 += 200
+			CASEELSE
+				;近親交配だと虚弱になりやすい
+				IF CFLAG:近親交配
+					MAXBASE:体力 -= RAND(1, 4)*100
+					MAXBASE:気力 -= RAND(1, 4)*100
+				ENDIF
+		ENDSELECT
+		;両親が魔術師だと魔法技能が付く
+		SIF PREG:対象:魔法の才能
+			ABL:魔法技能 = 1
+		BASE:体力 = MAXBASE:体力
+		BASE:気力 = MAXBASE:気力
+		;10000が恋心と既婚者のフラグに使われてるので、子供のNOは10001から
+		FLAG:子供の数++
+		NO:TARGET = FLAG:子供の数+10000
+		CFLAG:CSV無し = 1
+		;NO-10000のCHILDNAMEに名前が記録される
+		CHILDNAME:(FLAG:子供の数) = %NAME:TARGET%
+		CFLAG:血縁コード = PREG:対象:父親*100000+PREG:対象:母親
+		;母親がMASTERで父親が認知していなければ相性は良くならない
+		SIF 対象 != MASTER || PREG:対象:父親の認知
+			RELATION:(PREG:対象:父親) = 150
+		RELATION:(PREG:対象:母親) = 150
+		RELATION:NOF(対象) = 150
+		RELATION:対象:(NOF(TARGET)) = 150
+		;親が居れば親→子の相性も良くなる 兄弟姉妹間の相性も良くなる
+		FOR LCOUNT, 0, CHARANUM
+			SELECTCASE NOF(LCOUNT)
+				CASE PREG:対象:父親
+					;認知してなければ相性は変わらず
+					SIF 対象 != MASTER || PREG:対象:父親の認知
+						RELATION:LCOUNT:(NOF(TARGET)) = 150
+				CASE PREG:対象:母親
+					RELATION:LCOUNT:(NOF(TARGET)) = 150
+			ENDSELECT
+			IF CFLAG:血縁コード == CFLAG:LCOUNT:血縁コード && TARGET != LCOUNT
+				RELATION:(NOF(LCOUNT)) = 150
+				RELATION:LCOUNT:(NOF(TARGET)) = 150
+			ENDIF
+		NEXT
+		;ふたなりだった場合に処女&童貞を付ける
+		SIF PENIS(TARGET)
+			TALENT:童貞 = 1
+		SIF VAGINA(TARGET)
+			TALENT:処女 = 1
+		CALL CLEAR_FLAG, 対象
+
+		PRINTL 服を着せますか？
+		PRINTL [0] - 何も着せない
+		PRINTL [1] - 適当に何か着せる
+		BINPUT
+		SELECTCASE RESULT
+			CASE 0
+				FOR LCOUNT, 100, 107
+					CSTR:LCOUNT =
+				NEXT
+				CFLAG:挿入可 = 0
+				CFLAG:着衣併用 = 0
+				CFLAG:上着パイズリ = 0
+				CFLAG:下着パイズリ = 0
+				CFLAG:全身上着パイズリ = 0
+			CASE 1
+				服装選出用 = RAND(1, 10000)
+				;万が一同性のキャラが一人も実装されてない状態に備えて10000回の上限を設ける
+				LCOUNT = 0
+				WHILE !EXISTCSV(服装選出用) || CSVTALENT(服装選出用, GETNUM(TALENT, "性別")) != SEX(TARGET)
+					服装選出用++
+					SIF 服装選出用 >= 10000
+						服装選出用 = 1
+					LCOUNT++
+					SIF LCOUNT >= 10000
+						GOTO NOTFOUND
+				WEND
+				FOR LCOUNT, 100, 107
+					CSTR:LCOUNT = %CSVCSTR(服装選出用, LCOUNT)%
+				NEXT
+				CFLAG:挿入可 = CSVCFLAG(服装選出用, GETNUM(CFLAG, "挿入可"))
+				CFLAG:着衣併用 = CSVCFLAG(服装選出用, GETNUM(CFLAG, "着衣併用"))
+				CFLAG:上着パイズリ = CSVCFLAG(服装選出用, GETNUM(CFLAG, "上着パイズリ"))
+				CFLAG:下着パイズリ = CSVCFLAG(服装選出用, GETNUM(CFLAG, "下着パイズリ"))
+				CFLAG:全身上着パイズリ = CSVCFLAG(服装選出用, GETNUM(CFLAG, "全身上着パイズリ"))
+		ENDSELECT
+		$NOTFOUND
+		DRAWLINE
+		PRINTFORMW %CALLNAME:TARGET%に性教育を施すべく、一緒に暮らすことにしました
+		PRINTFORML %CALLNAME:TARGET%に性交渉を行えるようになるまでどう育てますか？
+		PRINTL [0] - 普通に育てる(年月経過、期限に影響は無し)
+		PRINTL [1] - 時の砂時計を使う
+		BINPUT
+		SELECTCASE RESULT
+			CASE 0
+				PRINTW ………………
+				PRINTW …………
+				PRINTW ……
+				PRINTFORMW 数年の月日を経て、%CALLNAME:TARGET%が調教可能になりました
+				YEAR += 8
+			CASE 1
+				PRINTFORMW 時の砂時計を使用して、%CALLNAME:TARGET%を調教可能な体まで成長させました
+		ENDSELECT
+ENDSELECT
+
+;妊娠まわりのフラグをリセット
+@CLEAR_FLAG, 対象
+#DIM DYNAMIC 対象
+
+VARSET PREG:対象:0, 0
+VARSET CHILDTALENT:対象:0, 0
+CHILDBIRTHDAY:対象:0 = 0
+CHILDRACE:対象:0 = 
+TALENT:対象:妊娠 = 0
+TALENT:対象:育児中 = 0
+SIF MOD:排卵周期
+	排卵からの経過時間:対象:0 = 1+RAND:280

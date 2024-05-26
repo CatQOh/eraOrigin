@@ -1,0 +1,1172 @@
+﻿;オプション設定処理
+[SKIPSTART]
+@OPTION
+#DIM DYNAMIC LRESULT
+
+DRAWLINE
+LOADGLOBAL
+PRINTL □設定項目を選択してください
+PRINTL 　[0] - テキスト設定
+PRINTL 　[1] - 着衣関連設定
+PRINTL 　[2] - イベント関連の設定
+SIF TALENT:MASTER:ドラゴン使い
+	PRINTL 　[3] - ドラゴンの名前変更
+SIF !SP
+	PRINTL 　[4] - サウンドオプション
+PRINTFORML 　[5] - 能力表示画面の顔グラ表示(現在:\@ 顔グラ表示 == 1 ? オン # オフ \@)
+PRINTFORML 　[6] - ショートカットコマンドを使用する(現在:\@ ショートカット == 1 ? オン # オフ \@)
+DRAWLINE
+PRINTPLAIN 　OPTION　
+PRINTL [100] - 戻る
+
+RESTART
+[SKIPEND]
+;テキスト関連
+@TEXT_SETTING
+DRAWLINE
+PRINTL □テキストの設定をしてください
+PRINT 　現在の設定：
+IF OPTION:地の文表示 && OPTION:口上表示
+	PRINTL 【口上+地の文】
+ELSEIF !OPTION:地の文表示 && OPTION:口上表示
+	PRINTL 【口上のみ】
+ELSEIF OPTION:地の文表示 && !OPTION:口上表示
+	PRINTL 【地の文のみ】
+ELSEIF !OPTION:地の文表示 && !OPTION:口上表示
+	PRINTL 【テキストを表示しない】
+ENDIF
+IF ゲームモード() != "段位認定"
+	PRINTL 　[0] - 口上+地の文
+	PRINTL 　[1] - 口上のみ
+ENDIF
+PRINTL 　[2] - 地の文のみ
+PRINTL 　[3] - テキストを表示しない
+SIF !ORIGIN
+	PRINTFORML 　[4] - 実績解除時のメッセージ(現在:\@ 実績メッセージ ? オン # オフ \@)
+PRINTFORML 　[5] - パセリ表示(現在:\@ OPTION:パセリ表示 ? オン # オフ \@)
+PRINTFORML 　[6] - 通貨単位設定(現在:\@ 通貨単位 == "" ? [未設定] # %通貨単位% \@)
+IF !ORIGIN || FINDCHARA(CFLAG:グリム, 1)
+	PRINT 　[7] - グリムキャラの名前表示設定(現在:
+	SELECTCASE FLAG:グリムコンフィグ
+		CASE 0
+			PRINTL 通常表示)
+		CASE 1
+			PRINTL 名前の先頭に「グリム・」を付ける
+	ENDSELECT
+ENDIF
+SIF !SP
+	PRINTL 　[8] - ツールチップ(マウスカーソルを当てた時に表示されるポップアップ)の設定
+PRINTFORML 　[9] - 調教画面とお金の数値表示の設定(現在:\@ 数値表示設定 == "" ? 設定無し # %数値表示設定% \@)
+PRINTFORML 　[10] - PAGING関数でのキャラ表示数(現在:{PAGING表示数}人)
+PRINTFORML 　[11] - 調教時のテキスト表示のウェイトを自動でスキップする(現在:\@ OPTION:調教時テキストスキップ ? オン # オフ \@)
+PRINTFORML 　[12] - 汎用喘ぎ口上を使用する(現在:\@ OPTION:汎用喘ぎ口上 ? オフ # オン \@)
+PRINTFORML 　[13] - 性別不明キャラの性別自動選択設定
+DRAWLINE
+PRINTPLAIN 　TEXT　
+PRINTL [100] - 戻る
+BINPUT
+SELECTCASE RESULT
+	CASE 0
+		PRINTL 【口上+地の文】に設定しました
+		OPTION:地の文表示 = 1
+		OPTION:口上表示 = 1
+	CASE 1
+		PRINTL 【口上のみ】に設定しました
+		OPTION:地の文表示 = 0
+		OPTION:口上表示 = 1
+	CASE 2
+		PRINTL 【地の文のみ】に設定しました
+		OPTION:地の文表示 = 1
+		OPTION:口上表示 = 0
+	CASE 3
+		PRINTL 【テキストを表示しない】に設定しました
+		OPTION:地の文表示 = 0
+		OPTION:口上表示 = 0
+	CASE 4
+		INVERTBIT 実績メッセージ, 0
+	CASE 5
+		INVERTBIT OPTION:パセリ表示, 0
+	CASE 6
+		PRINTL 通貨単位を入力してください
+		PRINTBUTTON "[変更しない]", "変更しない"
+		PRINTL 
+		INPUTS
+		SIF RESULTS == "変更しない"
+			RESTART
+		通貨単位 = %RESULTS%
+	CASE 7
+		PRINTL グリムキャラの名前表示
+		PRINTL [0] - 通常の名前で表示する
+		PRINTL [1] - 名前の先頭に「グリム・」を付ける
+		BINPUT
+		FLAG:グリムコンフィグ = RESULT
+	CASE 8
+		$TOOLTIP
+		PRINTL ツールチップ設定
+		PRINTFORML [0] - ツールチップ表示(現在:\@ ツールチップ非表示 ? オフ # オン \@)
+		PRINTFORML [1] - ツールチップ表示時間(現在:\@ ツールチップ表示時間 == 0 || ツールチップ表示時間 == 10000 ? 10秒(デフォルト) # {ツールチップ表示時間/1000}.{ツールチップ表示時間%1000}秒 \@)
+		PRINTFORML [2] - ツールチップ表示ディレイ(現在:\@ ツールチップディレイ == 0 ? 無し(デフォルト) # {ツールチップディレイ/1000}.{ツールチップディレイ%1000}秒 \@)
+		PRINTL [3] - 戻る
+		BINPUT
+		SELECTCASE RESULT
+			CASE 0
+				INVERTBIT ツールチップ非表示, 0
+			CASE 1
+				PRINTL ツールチップ表示時間を入力してください(ミリ秒)
+				PRINTL 1000ミリ秒=1秒 最大30000ミリ秒=30秒 デフォルトは10000ミリ秒=10秒
+				INPUT
+				ツールチップ表示時間 = LIMIT(RESULT, 1, 30000)
+				TOOLTIP_SETDURATION ツールチップ表示時間
+			CASE 2
+				PRINTL ツールチップの表示ディレイ時間を入力してください(ミリ秒)
+				PRINT 1000ミリ秒=1秒 最低500ミリ秒=0.5秒 最大30000ミリ秒=30秒 デフォルトは0=ディレイ無し
+				INPUT
+				IF RESULT == 0
+					ツールチップディレイ = 0
+				ELSE
+					ツールチップディレイ = LIMIT(RESULT, 500, 30000)
+				ENDIF
+				TOOLTIP_SETDELAY ツールチップディレイ
+			CASE 3
+				RESTART
+		ENDSELECT
+		SAVEGLOBAL
+		GOTO TOOLTIP
+	CASE 9
+		PRINTL 調教画面とお金の数値表示の設定
+		PRINTL [0] - 通常表示
+		PRINTL [1] - 3桁区切りで表示
+		PRINTL [2] - 漢字で桁を表示する
+		BINPUT
+		SELECTCASE RESULT
+			CASE 0
+				数値表示設定 = 
+			CASE 1
+				数値表示設定 = 3桁区切り
+			CASE 2
+				数値表示設定 = 漢字桁表示
+		ENDSELECT
+	CASE 10
+		PRINTL 表示数を選んでください 30人までが実用的だと思います
+		PRINTL [10][20][30][40][50]
+		BINPUT
+		PAGING表示数 = RESULT
+	CASE 11
+		INVERTBIT OPTION:調教時テキストスキップ, 0
+	CASE 12
+		INVERTBIT OPTION:汎用喘ぎ口上, 0
+	CASE 13
+		CALL 性別自動選択
+	CASE 100
+		RETURN 0
+ENDSELECT
+
+SAVEGLOBAL
+RESTART
+
+;初期着衣設定
+@CLOTHES_SETTING
+DRAWLINE
+PRINTL □設定する項目を選択してください
+PRINTL 　[0] - 調教時の着衣状態設定
+PRINTL 　[1] - 服装の設定
+PRINTFORML 　[2] - 服装プリセットのランダム選出(現在:\@ OPTION:服装プリセットランダム ? オン # オフ \@)
+DRAWLINE
+PRINTPLAIN 　CLOTHES　
+PRINTL [100] - 戻る
+BINPUT
+SELECTCASE RESULT
+	CASE 0
+		CALL CLOTHES_SETTING_TRAIN
+	CASE 1
+		CALL CLOTHES_SETTING_USUALLY
+	CASE 2
+		INVERTBIT OPTION:服装プリセットランダム, 0
+	CASE 100
+		RETURN
+ENDSELECT
+
+SAVEGLOBAL
+RESTART
+
+;調教開始時の着衣設定
+@CLOTHES_SETTING_TRAIN
+DRAWLINE
+PRINTL □調教開始時の服装を設定してください
+PRINT 　現在の設定：
+SELECTCASE FLAG:着衣設定
+	CASE 0
+		PRINTL 全着
+	CASE 1
+		PRINTL 下着無し
+	CASE 2
+		PRINTL 下着姿
+	CASE 3
+		PRINTL 全裸
+	CASE 4
+		PRINTL 特殊と足元のみ
+ENDSELECT
+PRINTL 　[0] - 全着
+PRINTL 　[1] - 下着無し
+PRINTL 　[2] - 下着姿
+PRINTL 　[3] - 全裸
+PRINTL 　[4] - 特殊と足元のみ
+DRAWLINE
+PRINTPLAIN 　CLOTHES SETTING　
+PRINTL [100] - 戻る
+BINPUT
+SELECTCASE RESULT
+	CASE 0
+		PRINTW 初期の着衣を全着に設定しました
+		FLAG:着衣設定 = 0
+	CASE 1
+		PRINTW 初期の着衣を下着無しに設定しました
+		FLAG:着衣設定 = 1
+	CASE 2
+		PRINTW 初期の着衣を下着姿に設定しました
+		FLAG:着衣設定 = 2
+	CASE 3
+		PRINTW 初期の着衣を全裸に設定しました
+		FLAG:着衣設定 = 3
+	CASE 4
+		PRINTW 初期の着衣を特殊と足元のみに設定しました
+		FLAG:着衣設定 = 4
+	CASE 100
+		RETURN
+ENDSELECT
+
+RESTART
+
+;着衣変更 きせかえ
+@CLOTHES_SETTING_USUALLY
+#DIM DYNAMIC LTARGET
+DRAWLINE
+PRINTL □着衣の設定をするキャラを選択してください
+FOR PAGING, 0, CHARANUM
+	CALL PAGING, 1
+NEXT
+
+SIF RESULT == -1
+	RETURN 0
+
+LTARGET = TARGET
+TARGET = RESULT
+CALL CHARA_CLOTHES_SETTING
+TARGET = LTARGET
+
+RESTART
+
+@CHARA_CLOTHES_SETTING, 対象 = -1
+#DIM DYNAMIC LCOUNT
+#DIMS DYNAMIC 選択部位
+#DIM DYNAMIC 対象
+#DIM DYNAMIC LTARGET
+#DIM DYNAMIC CSTR位置
+#DIM DYNAMIC 衣服文字数 = 20
+#DIMS DYNAMIC フラグ名
+
+IF 対象 != -1
+	LTARGET = TARGET
+	TARGET = 対象
+ENDIF
+
+FOR LCOUNT, GETNUM(CSTR, "特殊"), GETNUM(CSTR, "足元")+1
+	衣服文字数 = MAX(STRLENS(CSTR:LCOUNT), 衣服文字数)
+NEXT
+
+DRAWLINE
+PRINTFORML □%NAME:TARGET%の服装設定
+FOR LCOUNT, 0, 7
+	CSTR位置 = GETNUM(CSTR, "特殊")+LCOUNT
+	IF !CFLAG:@"%CSTRNAME:CSTR位置%着衣不可"
+		IF ゲームモード() == "学園モード"
+			PRINTFORM 　[{LCOUNT}] %CSTRNAME:CSTR位置, 10, LEFT%：%学園用服装:(CSTRNAME:CSTR位置), 衣服文字数+2, LEFT%
+		ELSE
+			PRINTFORM 　[{LCOUNT}] %CSTRNAME:CSTR位置, 10, LEFT%：%CSTR:(CSTRNAME:CSTR位置), 衣服文字数+2, LEFT%
+		ENDIF
+		IF MOD:着衣パイズリ && CSTR:(CSTRNAME:CSTR位置) != "" && GROUPMATCH(CSTRNAME:CSTR位置, "全身上着", "上半身上着", "上半身下着")
+			IF CSTRNAME:CSTR位置 == "全身上着"
+				フラグ名 = 全身上着パイズリ
+			ELSE
+				フラグ名 = %SUBSTRINGU(CSTRNAME:CSTR位置, 3, -1)%パイズリ
+			ENDIF
+			PRINTFORM [{LCOUNT+100}] %パイズリフラグ説明(CFLAG:フラグ名, TARGET)%
+			IF CFLAG:フラグ名/10 == 1
+				PRINTFORM (水着)
+			ELSEIF CFLAG:フラグ名/10 == 2
+				PRINTFORM (ぴっちりスーツ)
+			ENDIF
+		ENDIF
+		PRINTL 
+	ELSE
+		CALL PRINTCOLORL, @"　[-] %CSTRNAME:CSTR位置, 10, LEFT%：着衣不可", "gray"
+	ENDIF
+NEXT
+
+;下半身上着もしくは全身上着を着用時、挿入可フラグの変更ができる
+IF CSTR:下半身上着 != "" || CSTR:全身上着 != ""
+	PRINTFORML 　[7] 着衣状態での性行為可否の変更(現在:\@ CFLAG:挿入可 ? 可能 # 不可能 \@)
+ELSE
+	CALL PRINTCOLORL, "　[-] 着衣状態での性行為可否の変更", "gray"
+ENDIF
+
+;全身上着の着用時、全身上着の性質の変更ができる
+IF CSTR:全身上着 != ""
+	PRINTFORM 　[8] %CSTR:全身上着%の性質の変更(現在:
+	SELECTCASE CFLAG:着衣併用
+		CASE 0
+			PRINTL 上着として着用)
+		CASE 1
+			PRINTL 上着の上から着用)
+		CASE 2
+			PRINTL 下着として着用)
+	ENDSELECT
+ELSE
+	CALL PRINTCOLORL, "　[-] 全身上着の性質の変更", "gray"
+ENDIF
+
+SIF NOF(TARGET) < 10000
+	PRINTL 　[9] 着衣設定の初期化
+DRAWLINE
+PRINTPLAIN 　COORDINATE　
+PRINTL [10] 戻る
+BINPUT
+SELECTCASE RESULT
+	CASE 0 TO 6
+		選択部位 = %CSTRNAME:(GETNUM(CSTR, "特殊")+RESULT)%
+		CALL CHARA_CLOTHES_SETTINGNEXT, 選択部位
+	CASE 7
+		INVERTBIT CFLAG:挿入可, 0
+	CASE 8
+		PRINTFORML □%CSTR:全身上着%の性質を選択してください
+		PRINTL 　[0] - 通常の全身上着(上半身上着、下半身上着との併用が不可)
+		PRINTL 　[1] - 上着の上に着用するもの(上半身上着、下半身上着との併用が可能)
+		PRINTL 　[2] - 肌着も兼ねるもの(上半身上着、下半身上着、及び下着との併用が不可能)
+		BINPUT
+		CFLAG:着衣併用 = RESULT
+	CASE 9
+		CALL 服装初期化, TARGET
+		PRINTFORMW ＜%NAME:TARGET%の服装を初期化しました＞
+	CASE 10
+		SIF 対象 != -1
+			TARGET = LTARGET
+		RETURN 0
+	CASE 100 TO 107
+		CSTR位置 = GETNUM(CSTR, "特殊")+(RESULT-100)
+		IF CSTRNAME:CSTR位置 == "全身上着"
+			フラグ名 = 全身上着パイズリ
+		ELSE
+			フラグ名 = %SUBSTRINGU(CSTRNAME:CSTR位置, 3, -1)%パイズリ
+		ENDIF
+		PRINTFORML □%CSTRNAME:CSTR位置%の性質を選択してください
+		FOR LCOUNT, 0, 30
+			SIF パイズリフラグ説明(LCOUNT) == ""
+				CONTINUE
+			IF LCOUNT == 10
+				PRINTFORML 【水着系】
+			ELSEIF LCOUNT == 20
+				PRINTFORML 【ぴっちりスーツ系】
+			ENDIF
+			SIF LCOUNT >= 10
+				PRINT 　
+			PRINTFORML 　[{LCOUNT, 2}] %パイズリフラグ説明(LCOUNT, TARGET)% 
+		NEXT
+		PRINTFORML 　[-1] 戻る
+		BINPUT
+		SIF RESULT >= 0
+			CFLAG:フラグ名 = RESULT
+ENDSELECT
+
+RESTART
+
+@服装初期化, 対象
+#DIM DYNAMIC 対象
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC LTARGET
+
+LTARGET = TARGET
+TARGET = 対象
+
+;対象が「あなた」
+IF NOF(TARGET) == 0
+	IF ゲームモード() == "学園モード"
+		SELECTCASE SEX(TARGET)
+			CASE 1
+				CSTR:上半身上着 = 制服
+				CSTR:下半身上着 = ズボン
+				CSTR:全身上着 =
+				SIF 小中高(CSTR:在校) == "小"
+					CSTR:下半身下着 = ブリーフ
+				CFLAG:挿入可 = 0
+				CFLAG:着衣併用 = 0
+				CFLAG:上着パイズリ = 5
+				学園用服装フラグ:挿入可 = 0
+				学園用服装フラグ:着衣併用 = 0
+				学園用服装フラグ:上着パイズリ = 5
+			CASE 2
+				CSTR:上半身上着 = 制服
+				CSTR:下半身上着 = スカート
+				CSTR:全身上着 =
+				SIF 小中高(CSTR:在校) == "小"
+					CSTR:下半身下着 = ショーツ
+				CFLAG:挿入可 = 1
+				CFLAG:着衣併用 = 0
+				CFLAG:上着パイズリ = 5
+				学園用服装フラグ:挿入可 = 1
+				学園用服装フラグ:着衣併用 = 0
+				学園用服装フラグ:上着パイズリ = 5
+		ENDSELECT
+	ELSE
+		FOR LCOUNT, 100, 107
+			CSTR:LCOUNT = 
+		NEXT
+		SELECTCASE SEX(TARGET)
+			CASE 1
+				CSTR:上半身上着 = Tシャツ
+				CSTR:下半身上着 = ズボン
+				CSTR:下半身下着 = トランクス
+				CFLAG:下着パイズリ = 5
+			CASE 2
+				CSTR:全身上着 = ワンピース
+				CSTR:上半身下着 = ブラジャー
+				CSTR:下半身下着 = パンティ
+				CFLAG:挿入可 = 1
+				CFLAG:下着パイズリ = 4
+		ENDSELECT
+	ENDIF
+;対象が「あなた」ではない
+ELSE
+	FOR LCOUNT, 100, 107
+		CSTR:LCOUNT = %CSVCSTR(NOF(TARGET), LCOUNT)%
+		SIF ゲームモード() == "学園モード"
+			学園用服装:(LCOUNT-100) = %CSTR:LCOUNT%
+	NEXT
+	CFLAG:挿入可 = CSVCFLAG(NOF(TARGET), GETNUM(CFLAG, "挿入可"))
+	CFLAG:着衣併用 = CSVCFLAG(NOF(TARGET), GETNUM(CFLAG, "着衣併用"))
+	CFLAG:上着パイズリ = CSVCFLAG(NOF(TARGET), GETNUM(CFLAG, "上着パイズリ"))
+	CFLAG:下着パイズリ = CSVCFLAG(NOF(TARGET), GETNUM(CFLAG, "下着パイズリ"))
+	CFLAG:全身上着パイズリ = CSVCFLAG(NOF(TARGET), GETNUM(CFLAG, "全身上着パイズリ"))
+	CFLAG:耐水 = CSVCFLAG(NOF(TARGET), GETNUM(CFLAG, "耐水"))
+	IF ゲームモード() == "学園モード"
+		学園用服装フラグ:挿入可 = CFLAG:挿入可
+		学園用服装フラグ:着衣併用 = CFLAG:着衣併用
+		学園用服装フラグ:上着パイズリ = CFLAG:上着パイズリ
+		学園用服装フラグ:下着パイズリ = CFLAG:下着パイズリ
+		学園用服装フラグ:全身上着パイズリ = CFLAG:全身上着パイズリ
+		学園用服装フラグ:耐水 = CFLAG:耐水
+	ENDIF
+ENDIF
+
+TARGET = LTARGET
+
+@CHARA_CLOTHES_SETTINGNEXT, 選択部位
+#DIM DYNAMIC LCOUNT
+#DIMS DYNAMIC 選択部位
+#DIMS DYNAMIC フラグ名
+DRAWLINE
+PRINTFORML □着せたい%選択部位%の服装名を入力してください
+PRINTPLAIN 　COORDINATE　
+PRINTL [0] 戻る [1] 何も着せない
+INPUTS
+IF ISNUMERIC(RESULTS)
+	SELECTCASE TOINT(RESULTS)
+		CASE 0
+			RETURN
+		CASE 1
+			CSTR:選択部位 = 
+			SIF ゲームモード() == "学園モード"
+				学園用服装:選択部位 = 
+			IF 選択部位 == "全身上着"
+				フラグ名 = 全身上着パイズリ
+			ELSE
+				フラグ名 = %SUBSTRINGU(選択部位, 3, -1)%パイズリ
+			ENDIF
+			CFLAG:フラグ名 = 0
+			学園用服装フラグ:フラグ名 = 0
+	ENDSELECT
+ELSE
+	CSTR:選択部位 = %RESULTS%
+	SIF ゲームモード() == "学園モード"
+		学園用服装:選択部位 = %RESULTS%
+	SELECTCASE 選択部位
+		CASE "上半身上着", "下半身上着"
+			IF CFLAG:着衣併用 == 0
+				CSTR:全身上着 = 
+				SIF ゲームモード() == "学園モード"
+					学園用服装:全身上着 = 
+			ENDIF
+		CASE "上半身下着", "下半身下着"
+			IF CFLAG:着衣併用 == 2
+				CSTR:全身上着 = 
+				SIF ゲームモード() == "学園モード"
+					学園用服装:全身上着 = 
+			ENDIF
+		CASE "全身上着"
+			IF CFLAG:着衣併用 == 0
+				CSTR:上半身上着 = 
+				CSTR:下半身上着 = 
+				学園用服装:上半身上着 =
+				学園用服装:下半身上着 =
+			ENDIF
+			IF CFLAG:着衣併用 == 2
+				CSTR:上半身下着 = 
+				CSTR:下半身下着 = 
+				学園用服装:上半身下着 = 
+				学園用服装:下半身下着 =
+			ENDIF
+	ENDSELECT
+ENDIF
+
+@服装プリセット選出, 対象
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC LCOUNT2
+#DIM DYNAMIC 候補数
+#DIM DYNAMIC 対象
+#DIM DYNAMIC 候補
+#DIM DYNAMIC LTARGET
+
+LTARGET = TARGET
+TARGET = 対象
+
+IF !OPTION:服装プリセットランダム || !EXISTCSV(NOF(TARGET))
+	TARGET = LTARGET
+	RETURN
+ENDIF
+
+FOR LCOUNT, 2, 11
+	FOR LCOUNT2, 100, 107
+		IF CSVCSTR(NOF(TARGET), GETNUM(CSTR, @"%CSTRNAME:LCOUNT2%{LCOUNT}")) != ""
+			候補数++
+			BREAK
+		ENDIF
+	NEXT
+NEXT
+
+IF !候補数
+	TARGET = LTARGET
+	RETURN
+ENDIF
+
+候補 = RAND:候補数
+IF 候補 == 0
+	CALL 服装初期化, 対象
+ELSE
+	FOR LCOUNT, 100, 107
+		CSTR:LCOUNT = %CSVCSTR(NOF(TARGET), GETNUM(CSTR, @"%CSTRNAME:LCOUNT%{候補+1}"))%
+		SIF ゲームモード() == "学園モード"
+			学園用服装:(LCOUNT-100) = %CSTR:LCOUNT%
+	NEXT
+	CFLAG:挿入可 = CSVCFLAG(NOF(TARGET), GETNUM(CFLAG, @"挿入可{候補+1}"))
+	CFLAG:着衣併用 = CSVCFLAG(NOF(TARGET), GETNUM(CFLAG, @"着衣併用{候補+1}"))
+	CFLAG:上着パイズリ = CSVCFLAG(NOF(TARGET), GETNUM(CFLAG, @"上着パイズリ{候補+1}"))
+	CFLAG:下着パイズリ = CSVCFLAG(NOF(TARGET), GETNUM(CFLAG, @"下着パイズリ{候補+1}"))
+	CFLAG:全身上着パイズリ = CSVCFLAG(NOF(TARGET), GETNUM(CFLAG, @"全身上着パイズリ{候補+1}"))
+	CFLAG:耐水 = CSVCFLAG(NOF(TARGET), GETNUM(CFLAG, @"耐水{候補+1}"))
+	IF ゲームモード() == "学園モード"
+		学園用服装フラグ:挿入可 = CFLAG:挿入可
+		学園用服装フラグ:着衣併用 = CFLAG:着衣併用
+		学園用服装フラグ:上着パイズリ = CFLAG:上着パイズリ
+		学園用服装フラグ:下着パイズリ = CFLAG:下着パイズリ
+		学園用服装フラグ:全身上着パイズリ = CFLAG:全身上着パイズリ
+		学園用服装フラグ:耐水 = CFLAG:耐水
+	ENDIF
+ENDIF
+
+TARGET = LTARGET
+
+;イベント関連の設定
+@EVENT_SETTING
+DRAWLINE
+PRINTL □イベントのオン/オフを設定できます
+PRINTFORML 　[0] - 主人による色仕掛け/夜這い(現在\@ OPTION:色仕掛け ? オン # オフ \@)
+IF !ORIGIN
+	PRINTFORML 　[1] - 借金がないときの新規借入 (現在\@ OPTION:借入 ? オン # オフ \@)
+	PRINTFORML 　[2] - カジノでのお誘い (現在\@ OPTION:お誘い ? オン # オフ \@)
+ENDIF
+PRINTFORML 　[3] - TSバストサイズランダム化 (現在\@ OPTION:TSBランダム ? オン # オフ \@)
+PRINTFORML 　[4] - メスイキバストサイズランダム化 (現在\@ OPTION:メスイキ豊胸ランダム ? オン # オフ \@)
+PRINTFORML 　[5] - 相部屋のキャラ同士の妊娠 (現在\@ OPTION:相部屋妊娠 ? オン # オフ \@)
+DRAWLINE
+PRINTPLAIN 　EVENT　
+PRINTL [100] - 戻る
+
+BINPUT
+
+SELECTCASE RESULT
+	CASE 0
+		INVERTBIT OPTION:色仕掛け, 0
+	CASE 1
+		INVERTBIT OPTION:借入, 0
+	CASE 2
+		INVERTBIT OPTION:お誘い, 0
+	CASE 3
+		INVERTBIT OPTION:TSBランダム, 0
+	CASE 4
+		INVERTBIT OPTION:メスイキ豊胸ランダム, 0
+	CASE 5
+		INVERTBIT OPTION:相部屋妊娠, 0
+	CASE 100
+		RETURN 0
+ENDSELECT
+SAVEGLOBAL
+RESTART
+
+;デフォルトオプションの設定
+@DEFAULT_OPTION
+DRAWLINE
+LOADGLOBAL
+PRINTL □初期設定のオプションを設定することにより、ニューゲーム時のオプション設定を省略することができます
+SIF !ORIGIN
+	PRINTFORML 　[0] - チュートリアル表示(現在:\@ DOPTION:チュートリアル ? 常時確認 # 省略 \@)
+PRINT 　[1] - 口上&地の文設定(現在:
+IF DOPTION:地の文 && DOPTION:口上
+	PRINTL 口上+地の文)
+ELSEIF !DOPTION:地の文 && DOPTION:口上
+	PRINTL 口上のみ)
+ELSEIF DOPTION:地の文 && !DOPTION:口上
+	PRINTL 地の文のみ)
+ELSEIF !DOPTION:地の文 && !DOPTION:口上
+	PRINTL テキストを表示しない)
+ENDIF
+IF !ORIGIN
+	PRINTFORML 　[2] - 実績解除メッセージ(現在:\@ DOPTION:実績解除メッセージ ? 表示 # 非表示 \@)
+	PRINTFORML 　[3] - PASELI表示(現在:\@ DOPTION:パセリ表示 ? オン # オフ \@)
+ENDIF
+PRINTFORML 　[4] - 調教開始時の着衣設定(現在:\@ DOPTION:着衣オプション ? 脱がせて始める # 着せたまま始める \@)
+SIF !SP
+	PRINTFORML 　[5] - サウンドオプション
+DRAWLINE
+PRINTPLAIN 　DEFAULT OPTION　
+PRINT [100] - 保存して戻る 
+PRINT [101] - 保存せずに戻る 
+PRINTL [102] - デフォルトオプションを使用しない
+BINPUT
+SELECTCASE RESULT
+	CASE 100
+		DOPTION:有効 = 1
+		SAVEGLOBAL
+		RETURN 0
+	CASE 101
+		LOADGLOBAL
+		IF !SP
+			SETBGMVOLUME BGM音量
+			SETSOUNDVOLUME SOUND音量
+		ENDIF
+		RETURN 0
+	CASE 102
+		PRINTW デフォルトオプションを使用しません
+		DOPTION:有効 = 0
+		SAVEGLOBAL
+		RETURN 0
+	CASE 0
+		PRINTL □常にチュートリアルの表示を確認しますか？
+		PRINTL 　[0] - 確認しなくてもいいよ
+		PRINTL 　[1] - 不安だから確認して
+		BINPUT
+		DOPTION:チュートリアル = RESULT
+		SAVEGLOBAL
+	CASE 1
+		PRINTL □口上と地の文の初期設定を選んでください
+		PRINTL 　[0] - 口上+地の文
+		PRINTL 　[1] - 口上のみ
+		PRINTL 　[2] - 地の文のみ
+		PRINTL 　[3] - テキストを表示しない
+		BINPUT
+		SELECTCASE RESULT
+			CASE 0
+				DOPTION:地の文 = 1
+				DOPTION:口上 = 1
+			CASE 1
+				DOPTION:地の文 = 0
+				DOPTION:口上 = 1
+			CASE 2
+				DOPTION:地の文 = 1
+				DOPTION:口上 = 0
+			CASE 3
+				DOPTION:地の文 = 0
+				DOPTION:口上 = 0
+		ENDSELECT
+		SAVEGLOBAL
+	CASE 2
+		PRINTL □実績解除メッセージの初期設定を選んでください
+		PRINTL 　[0] - 表示しなくてもいいよ
+		PRINTL 　[1] - 表示されると嬉しいな
+		BINPUT
+		DOPTION:実績解除メッセージ = RESULT
+		SAVEGLOBAL
+	CASE 3
+		PRINTL □PASELI表示設定の初期設定を選んでください
+		PRINTL 　[0] - 商標権侵害だから表示しなくていい
+		PRINTL 　[1] - BEMANIやってる感あるから表示したい
+		BINPUT
+		DOPTION:パセリ表示 = RESULT
+		SAVEGLOBAL
+	CASE 4
+		PRINTL □調教開始時の着衣設定を選んでください
+		PRINTL 　[0] - 着衣プレイはエロいから着せたまま始める
+		PRINTL 　[1] - さっさとヤりたいので脱がせてから始める
+		BINPUT
+		DOPTION:着衣オプション = RESULT
+		SAVEGLOBAL
+	CASE 5
+		DRAWLINE
+		VARLINE = LINECOUNT
+		$SOUNDOPTION
+		CLEARLINE LINECOUNT-VARLINE
+		PRINTFORML □現在の設定 サウンド再生機能:\@ サウンド == 1 ? オン # オフ \@ BGM音量:{BGM音量} SE音量:{SOUND音量}
+		PRINTFORML 　[0] - サウンド再生機能(現在:\@ サウンド == 1 ? オン # オフ \@)
+		PRINTL 　[1] - BGMの音量を上げる
+		PRINTL 　[2] - BGMの音量を下げる
+		PRINTL 　[3] - SEの音量を上げる
+		PRINTL 　[4] - SEの音量を下げる
+		DRAWLINE
+		PRINTPLAIN 　SOUND　
+		PRINTL [100] - 戻る
+		BINPUT
+		SELECTCASE RESULT
+			CASE 0
+				INVERTBIT サウンド, 0
+				SELECTCASE サウンド
+					CASE 0
+						SETBGMVOLUME 0
+						SETSOUNDVOLUME 0
+					CASE 1
+						SETBGMVOLUME BGM音量
+						SETSOUNDVOLUME SOUND音量
+				ENDSELECT
+			CASE 1
+				BGM音量 += 10
+				CALL SETMIN(BGM音量, 100)
+				SETBGMVOLUME BGM音量
+			CASE 2
+				BGM音量 -= 10
+				CALL SETMAX(BGM音量, 0)
+				SETBGMVOLUME BGM音量
+			CASE 3
+				SOUND音量 += 10
+				CALL SETMIN(SOUND音量, 100)
+				SETSOUNDVOLUME SOUND音量
+				SIF サウンド
+					CALL SE再生, トランプドロー
+			CASE 4
+				SOUND音量 -= 10
+				CALL SETMAX(SOUND音量, 0)
+				SETSOUNDVOLUME SOUND音量
+				SIF サウンド
+					CALL SE再生, トランプドロー
+			CASE 100
+				RESTART
+		ENDSELECT
+		GOTO SOUNDOPTION
+ENDSELECT
+
+RESTART
+
+@BARCOLOR初期設定
+#DIM DYNAMIC LCOUNT
+
+FOR LCOUNT, 0, VARSIZE("BARCOLORDEFAULT")
+	SIF BARCOLOR:LCOUNT == ""
+		BARCOLOR:LCOUNT = %TOSTR(COLOR_FROMNAME(BARCOLORDEFAULT:LCOUNT))%
+NEXT
+SAVEGLOBAL
+
+@GUI_COLOR
+#DIM DYNAMIC LRESULT
+CALL CHECKDRAWLINE
+
+PRINTL [0] - 体力バーの色を設定する
+PRINTL [1] - 気力バーの色を設定する
+PRINTL [2] - 魔力バーの色を設定する
+PRINTL [3] - ABLバーの色を設定する
+PRINTL [4] - 射精バーの色を設定する
+PRINTL [5] - 母乳バーの色を設定する
+PRINTL [6] - リビドーバーの色を設定する
+SIF MOD:SCAT2
+	PRINTL [7] - 尿意バーの色を設定する
+IF MOD:SCAT
+	PRINTL [8] - 便意バーの色を設定する
+	PRINTL [9] - 便量バーの色を設定する
+ENDIF
+
+DRAWLINE
+PRINTPLAIN 　BARCOLOR　
+PRINTL [100] - 戻る
+
+BINPUT
+
+SELECTCASE RESULT
+	CASE 100
+		RETURN
+	CASEELSE
+		LRESULT = RESULT
+		VARLINE = LINECOUNT
+		CALL RGBBAR, TOINT(BARCOLOR:RESULT)/0x10000, TOINT(BARCOLOR:RESULT)/0x100%0x100, TOINT(BARCOLOR:RESULT)%0x100, COLOR_FROMNAME(BARCOLORDEFAULT:RESULT)
+		SIF RESULT
+			BARCOLOR:LRESULT = %TOSTR(RESULT)%
+		SAVEGLOBAL
+		RESTART
+ENDSELECT
+
+;;;ステータス表示画面でしか呼んでないのでカラム化
+@CHARA_BUST_SETTING, 対象登録番号
+;キャラ番号(キャラごとに常に固定)を使うのに注意
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC LVARLINE, 2
+#DIM DYNAMIC 対象登録番号
+#DIM DYNAMIC 対象キャラ番号
+#DIM DYNAMIC トップ
+#DIM DYNAMIC アンダー
+#DIM DYNAMIC 差分
+#DIM DYNAMIC トップMIN
+#DIM DYNAMIC アンダーMIN
+#DIM DYNAMIC 差分MIN
+#DIM DYNAMIC トップMAX
+#DIM DYNAMIC アンダーMAX
+#DIM DYNAMIC 差分MAX
+#DIM DYNAMIC 成長割合
+#DIM DYNAMIC 入力対象サイズ
+#DIM DYNAMIC 計算用
+
+LVARLINE = LINECOUNT
+対象キャラ番号 = NOF(対象登録番号)
+SIF !EXISTCSV(対象キャラ番号)
+	RETURN 0
+SIF !INRANGE(対象キャラ番号, 0, 9999)
+	RETURN 0
+
+CALL MCOLUMNDRAWLINE
+CALL MCOLUMNPRINTL, @"□%CSVNAMEF(対象キャラ番号)%のバストサイズ: %キャラバストサイズ表示(対象登録番号)%"
+
+成長割合 = LIMIT(CFLAG:対象登録番号:バスト成長, 0, 999)
+トップMIN = バストサイズ詳細トップ:対象キャラ番号:(TALENT:対象登録番号:バストサイズ)
+アンダーMIN = バストサイズ詳細アンダー:対象キャラ番号:(TALENT:対象登録番号:バストサイズ)
+差分MIN = トップMIN-アンダーMIN
+トップMAX = バストサイズ詳細トップ:対象キャラ番号:(TALENT:対象登録番号:バストサイズ+1)
+アンダーMAX = バストサイズ詳細アンダー:対象キャラ番号:(TALENT:対象登録番号:バストサイズ+1)
+差分MAX = トップMAX-アンダーMAX
+IF 成長割合 && トップMIN && アンダーMIN && トップMAX && アンダーMAX
+	トップ = トップMIN
+	アンダー = アンダーMIN
+	トップ += (トップMAX-トップMIN)*成長割合/1000
+	アンダー += (アンダーMAX-アンダーMIN)*成長割合/1000
+	差分 = トップ-アンダー
+	CALL MCOLUMNPRINTL, @"　　トップ:{トップ/10}.{トップ%10}cm ({トップMIN/10}.{トップMIN%10}cm→{トップMAX/10}.{トップMAX%10}cm)"
+	CALL MCOLUMNPRINTL, @"　アンダー:{アンダー/10}.{アンダー%10}cm ({アンダーMIN/10}.{アンダーMIN%10}cm→{アンダーMAX/10}.{アンダーMAX%10}cm)"
+	CALL MCOLUMNPRINTL, @"　　　　差:{差分/10}.{差分%10}cm ({差分MIN/10}.{差分MIN%10}cm→{差分MAX/10}.{差分MAX%10}cm)"
+ELSE
+	トップ = トップMIN
+	アンダー = アンダーMIN
+	差分 = トップ-アンダー
+	IF トップ
+		CALL MCOLUMNPRINTL, @"　　トップ:{トップ/10}.{トップ%10}cm"
+		IF アンダー
+			CALL MCOLUMNPRINTL, @"　アンダー:{アンダー/10}.{アンダー%10}cm"
+			CALL MCOLUMNPRINTL, @"　　　　差:{差分/10}.{差分%10}cm"
+		ELSE
+			CALL MCOLUMNPRINTL, "　アンダー:未設定"
+		ENDIF
+	ENDIF
+ENDIF
+CALL MCOLUMNPRINT, "　現在の小数処理の設定: "
+SELECTCASE バストサイズ詳細小数処理
+	CASE 0
+		CALL MCOLUMNPRINTL, "四捨五入"
+	CASE 1
+		CALL MCOLUMNPRINTL, "切り捨て"
+	CASE 2
+		CALL MCOLUMNPRINTL, "切り上げ"
+	CASE 3
+		CALL MCOLUMNPRINTL, "小数表示"
+ENDSELECT
+CALL MCOLUMNDRAWLINE
+CALL MCOLUMNPRINTL, "　[-1] - サイズ一覧を見る"
+
+
+CALL MCOLUMNPRINTL, @"　[10] - トップ\@ 成長割合 ? (成長前) #\@のサイズを入力する"
+CALL MCOLUMNPRINTL, @"　[11] - アンダー\@ 成長割合 ? (成長前) #\@のサイズを入力する"
+SIF (成長割合 && トップMIN) || (!成長割合 && トップ)
+	CALL MCOLUMNPRINTL, @"　[12] - トップ\@ 成長割合 ? (成長前) #\@を固定してカップ数を入力する"
+SIF (成長割合 && アンダーMIN) || (!成長割合 && アンダー)
+	CALL MCOLUMNPRINTL, @"　[13] - アンダー\@ 成長割合 ? (成長前) #\@を固定してカップ数を入力する"
+IF 成長割合
+	CALL MCOLUMNPRINTL, @"　[14] - トップ(成長後)のサイズを入力する"
+	CALL MCOLUMNPRINTL, @"　[15] - アンダー(成長後)のサイズを入力する"
+	SIF トップMAX
+		CALL MCOLUMNPRINTL, @"　[16] - トップ(成長後)を固定してカップ数を入力する"
+	SIF アンダーMAX
+		CALL MCOLUMNPRINTL, @"　[17] - アンダー(成長後)を固定してカップ数を入力する"
+ENDIF
+SIF CSVCFLAG(対象キャラ番号, GETNUM(CFLAG, "トップバスト")) && CSVCFLAG(対象キャラ番号, GETNUM(CFLAG, "アンダーバスト"))
+	CALL MCOLUMNPRINTL, "　[18] - キャラマニュアル記載のサイズを引用する"
+CALL MCOLUMNPRINTL, "　[19] - 適当に測る"
+
+@CHARA_BUST_SETTING_INPUT, 対象登録番号
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC LVARLINE, 2
+#DIM DYNAMIC 対象登録番号
+#DIM DYNAMIC 対象キャラ番号
+#DIM DYNAMIC トップ
+#DIM DYNAMIC アンダー
+#DIM DYNAMIC 差分
+#DIM DYNAMIC トップMIN
+#DIM DYNAMIC アンダーMIN
+#DIM DYNAMIC 差分MIN
+#DIM DYNAMIC トップMAX
+#DIM DYNAMIC アンダーMAX
+#DIM DYNAMIC 差分MAX
+#DIM DYNAMIC 成長割合
+#DIM DYNAMIC 入力対象サイズ
+#DIM DYNAMIC 計算用
+
+LVARLINE = LINECOUNT
+対象キャラ番号 = NOF(対象登録番号)
+
+SELECTCASE CRESULT:1
+	CASE -1
+		DO
+			入力対象サイズ = -1
+			$サイズ選択済
+			LVARLINE:1 = LINECOUNT
+			DRAWLINE
+			PRINTPLAIN Size欄をクリックで入力メニューへ移動します　
+			PRINTL [-1] 戻る
+			PRINTL    Size  | Top |Under|Diff.|Print
+			FOR LCOUNT, 0, 10
+				IF 入力対象サイズ < 0
+					IF LCOUNT == 0
+						PRINTBUTTON @"[%"男", 7%]", LCOUNT
+					ELSE
+						PRINTBUTTON @"[%バストサイズ(LCOUNT), 7%]", LCOUNT
+					ENDIF
+				ELSE
+					IF LCOUNT == 0
+						PRINTPLAINFORM [%"男", 7%]
+					ELSE
+						PRINTPLAINFORM [%バストサイズ(LCOUNT), 7%]
+					ENDIF
+				ENDIF
+				PRINTPLAIN |
+				CALL X10PRINT5DIGIT(バストサイズ詳細トップ:対象キャラ番号:LCOUNT, 1)
+				PRINTPLAIN |
+				CALL X10PRINT5DIGIT(バストサイズ詳細アンダー:対象キャラ番号:LCOUNT, 1)
+				PRINTPLAIN |
+				IF バストサイズ詳細トップ:対象キャラ番号:LCOUNT && バストサイズ詳細アンダー:対象キャラ番号:LCOUNT
+					CALL X10PRINT5DIGIT(バストサイズ詳細トップ:対象キャラ番号:LCOUNT-バストサイズ詳細アンダー:対象キャラ番号:LCOUNT, 0)
+				ELSE
+					PRINT      
+				ENDIF
+				PRINTPLAIN |
+				PRINTFORM %バストサイズ詳細表示(バストサイズ詳細トップ:対象キャラ番号:LCOUNT, バストサイズ詳細アンダー:対象キャラ番号:LCOUNT)%
+				PRINTL
+			NEXT
+			FOR LCOUNT, 10, 100
+				IF バストサイズ詳細トップ:対象キャラ番号:LCOUNT || バストサイズ詳細アンダー:対象キャラ番号:LCOUNT
+					IF 入力対象サイズ < 0
+						PRINTBUTTON @"[%バストサイズ(LCOUNT), 7%]", LCOUNT
+					ELSE
+						PRINTPLAINFORM [%バストサイズ(LCOUNT), 7%]
+					ENDIF
+					PRINTPLAIN |
+					CALL X10PRINT5DIGIT(バストサイズ詳細トップ:対象キャラ番号:LCOUNT, 1)
+					PRINTPLAIN |
+					CALL X10PRINT5DIGIT(バストサイズ詳細アンダー:対象キャラ番号:LCOUNT, 1)
+					PRINTPLAIN |
+					IF バストサイズ詳細トップ:対象キャラ番号:LCOUNT && バストサイズ詳細アンダー:対象キャラ番号:LCOUNT
+						CALL X10PRINT5DIGIT(バストサイズ詳細トップ:対象キャラ番号:LCOUNT-バストサイズ詳細アンダー:対象キャラ番号:LCOUNT, 0)
+					ELSE
+						PRINT      
+					ENDIF
+					PRINTPLAIN |
+					PRINTFORM %バストサイズ詳細表示(バストサイズ詳細トップ:対象キャラ番号:LCOUNT, バストサイズ詳細アンダー:対象キャラ番号:LCOUNT)%
+					PRINTL
+				ENDIF
+			NEXT
+			IF 入力対象サイズ < 0
+				INPUT
+				SIF RESULT < 0
+					BREAK
+				入力対象サイズ = RESULT
+			ENDIF
+			IF INRANGE(入力対象サイズ, 0, 99)
+				DRAWLINE
+				PRINTFORML 対象サイズ:{入力対象サイズ}(\@ !入力対象サイズ ? 男 # %バストサイズ(入力対象サイズ)% \@)
+				PRINTL [0] - トップのサイズを入力する
+				PRINTL [1] - アンダーのサイズを入力する
+				SIF バストサイズ詳細トップ:対象キャラ番号:入力対象サイズ
+					PRINTL [2] - トップを固定してカップ数を入力する
+				SIF バストサイズ詳細アンダー:対象キャラ番号:入力対象サイズ
+					PRINTL [3] - アンダーを固定してカップ数を入力する
+				PRINTL [9] - サイズ一覧に戻る
+				BINPUT
+				IF RESULT != 9
+					SELECTCASE RESULT
+						CASE 0
+							PRINTL トップのサイズを整数か0.1単位の小数で入力してください(0で未入力扱いになります)
+							INPUTS
+							バストサイズ詳細トップ:対象キャラ番号:入力対象サイズ = X10INPUT(RESULTS)
+						CASE 1
+							PRINTL アンダーのサイズを整数か0.1単位の小数で入力してください(0で未入力扱いになります)
+							INPUTS
+							バストサイズ詳細アンダー:対象キャラ番号:入力対象サイズ = X10INPUT(RESULTS)
+						CASE 2
+							PRINTL カップ数を入力してください
+							INPUTS
+							SIF トップアンダー差分(TOUPPER(RESULTS)) >= 0
+								バストサイズ詳細アンダー:対象キャラ番号:入力対象サイズ = バストサイズ詳細トップ:対象キャラ番号:入力対象サイズ-トップアンダー差分(RESULTS)
+						CASE 3
+							PRINTL カップ数を入力してください
+							INPUTS
+							SIF トップアンダー差分(TOUPPER(RESULTS)) >= 0
+								バストサイズ詳細トップ:対象キャラ番号:入力対象サイズ = バストサイズ詳細アンダー:対象キャラ番号:入力対象サイズ+トップアンダー差分(RESULTS)
+					ENDSELECT
+					CLEARLINE LINECOUNT-LVARLINE:1
+					GOTO サイズ選択済
+				ENDIF
+				CLEARLINE LINECOUNT-LVARLINE:1
+			ENDIF
+		LOOP 1
+	CASE 10
+		PRINTFORML トップ\@ 成長割合 ? (成長前) #\@のサイズを整数か0.1単位の小数で入力してください(0で未入力扱いになります)
+		INPUTS
+		バストサイズ詳細トップ:対象キャラ番号:(TALENT:対象登録番号:バストサイズ) = X10INPUT(RESULTS)
+	CASE 11
+		PRINTFORML アンダー\@ 成長割合 ? (成長前) #\@のサイズを整数か0.1単位の小数で入力してください(0で未入力扱いになります)
+		INPUTS
+		バストサイズ詳細アンダー:対象キャラ番号:(TALENT:対象登録番号:バストサイズ) = X10INPUT(RESULTS)
+	CASE 12
+		PRINTL カップ数を入力してください
+		INPUTS
+		SIF トップアンダー差分(TOUPPER(RESULTS)) >= 0
+			バストサイズ詳細アンダー:対象キャラ番号:(TALENT:対象登録番号:バストサイズ) = バストサイズ詳細トップ:対象キャラ番号:(TALENT:対象登録番号:バストサイズ)-トップアンダー差分(RESULTS)
+	CASE 13
+		PRINTL カップ数を入力してください
+		INPUTS
+		SIF トップアンダー差分(TOUPPER(RESULTS)) >= 0
+			バストサイズ詳細トップ:対象キャラ番号:(TALENT:対象登録番号:バストサイズ) = バストサイズ詳細アンダー:対象キャラ番号:(TALENT:対象登録番号:バストサイズ)+トップアンダー差分(RESULTS)
+	CASE 14
+		PRINTL トップ(成長後)のサイズを整数か0.1単位の小数で入力してください(0で未入力扱いになります)
+		INPUTS
+		バストサイズ詳細トップ:対象キャラ番号:(TALENT:対象登録番号:バストサイズ+1) = X10INPUT(RESULTS)
+	CASE 15
+		PRINTL アンダー(成長後)のサイズを整数か0.1単位の小数で入力してください(0で未入力扱いになります)
+		INPUTS
+		バストサイズ詳細アンダー:対象キャラ番号:(TALENT:対象登録番号:バストサイズ+1) = X10INPUT(RESULTS)
+	CASE 16
+		PRINTL カップ数を入力してください
+		INPUTS
+		SIF トップアンダー差分(TOUPPER(RESULTS)) >= 0
+			バストサイズ詳細アンダー:対象キャラ番号:(TALENT:対象登録番号:バストサイズ+1) = バストサイズ詳細トップ:対象キャラ番号:(TALENT:対象登録番号:バストサイズ+1)-トップアンダー差分(RESULTS)
+	CASE 17
+		PRINTL カップ数を入力してください
+		INPUTS
+		SIF トップアンダー差分(TOUPPER(RESULTS)) >= 0
+			バストサイズ詳細トップ:対象キャラ番号:(TALENT:対象登録番号:バストサイズ+1) = バストサイズ詳細アンダー:対象キャラ番号:(TALENT:対象登録番号:バストサイズ+1)+トップアンダー差分(RESULTS)
+	CASE 18
+		バストサイズ詳細トップ:対象キャラ番号:(TALENT:対象登録番号:バストサイズ) = CSVCFLAG(対象キャラ番号, GETNUM(CFLAG, "トップバスト"))
+		バストサイズ詳細アンダー:対象キャラ番号:(TALENT:対象登録番号:バストサイズ) = CSVCFLAG(対象キャラ番号, GETNUM(CFLAG, "アンダーバスト"))
+		;メモ ヴァニィ 990,690
+	CASE 19
+		入力対象サイズ = TALENT:対象登録番号:バストサイズ
+		PRINTFORML %CSVNAMEF(対象キャラ番号)%の体格はどのくらいですか？
+		PRINTFORML [0] かなり細め
+		PRINTFORML [1] やや細め
+		PRINTFORML [2] 普通
+		PRINTFORML [3] ややしっかり
+		PRINTFORML [4] かなりしっかり
+		BINPUT
+		SELECTCASE RESULT
+			CASE 0
+				計算用 = RAND(610, 631)
+			CASE 1
+				計算用 = RAND(630, 661)
+			CASE 2
+				計算用 = RAND(660, 731)
+			CASE 3
+				計算用 = RAND(730, 771)
+			CASE 4
+				計算用 = RAND(770, 811)
+		ENDSELECT
+		SELECTCASE CSVTALENT(対象キャラ番号, GETNUM(TALENT, "体格"))
+			CASE 1
+				TIMES 計算用, 0.95
+			CASE 2
+				TIMES 計算用, 0.98
+			CASE 4
+				TIMES 計算用, 1.03
+		ENDSELECT
+		バストサイズ詳細アンダー:対象キャラ番号:入力対象サイズ = 計算用
+		SELECTCASE 入力対象サイズ
+			CASE 0
+				計算用 = トップアンダー差分("AAAAA")
+			CASE 1
+				SELECTCASE RAND:10
+					CASE 0 TO 4
+						計算用 = トップアンダー差分("AAAA")
+					CASE 5 TO 8
+						計算用 = トップアンダー差分("AAAA")
+					CASEELSE
+						計算用 = トップアンダー差分("AAA")
+				ENDSELECT
+			CASE 2
+				SELECTCASE RAND:10
+					CASE 0, 1
+						計算用 = トップアンダー差分("AA")
+					CASE 2 TO 6
+						計算用 = トップアンダー差分("A")
+					CASEELSE
+						計算用 = トップアンダー差分("B")
+				ENDSELECT
+			CASEELSE
+				;ここから2サイズずつ
+				計算用 = ENCODETOUNI("C")+(入力対象サイズ-3)*2+(RAND:2)
+				SIF 計算用 > ENCODETOUNI("Z")
+					計算用 = ENCODETOUNI("Z")
+				計算用 = トップアンダー差分(UNICODE(計算用))
+		ENDSELECT
+		バストサイズ詳細トップ:対象キャラ番号:入力対象サイズ = バストサイズ詳細アンダー:対象キャラ番号:入力対象サイズ+計算用
+		計算用 = バストサイズ詳細トップ:対象キャラ番号:入力対象サイズ
+		バストサイズ詳細トップ:対象キャラ番号:入力対象サイズ = RAND(計算用-5, 計算用+5)
+ENDSELECT
+
+@性別自動選択
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC LCOUNT2
+{
+#DIMS CONST 項目 =
+"毎回選ぶ",
+"男性",
+"女性",
+"ランダム"
+}
+CALL LOOP_CLEARLINE
+
+CALL CHECKDRAWLINE
+PRINTL □性別を選択してください
+FOR LCOUNT, 1, 10000
+	SIF !EXISTCSV(LCOUNT) || CSVTALENT(LCOUNT, TALENTF("性別"))
+		CONTINUE
+	PRINTFORM 　[{LCOUNT, 4}] %CSVNAME(LCOUNT), 30, LEFT% 
+	FOR LCOUNT2, 0, 4
+		SIF 性別自動選択:LCOUNT == LCOUNT2
+			SETCOLORBYNAME deepskyblue
+		PRINTPLAINFORM [%項目:LCOUNT2%]
+		RESETCOLOR
+	NEXT
+	PRINTL 
+NEXT
+PRINTL 　[0] 戻る
+
+BINPUT
+
+SIF RESULT == 0
+	RETURN
+
+性別自動選択:RESULT++
+
+SIF 性別自動選択:RESULT > 3
+	性別自動選択:RESULT = 0
+
+SAVEGLOBAL
+
+RESTART

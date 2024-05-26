@@ -1,0 +1,240 @@
+﻿;-------------------------------------------------
+;女装させる
+;-------------------------------------------------
+@USERCOM_ABLE_女装させる
+#FUNCTION
+#DIM DYNAMIC 条件確定
+
+;ゲーセンに居る場合はできない
+コマンド実行条件 += "ゲーセンでは実行不可/"
+SIF TEQUIP:ゲームセンター
+	COMRESULT = 0
+;上級売春中は不可
+コマンド実行条件 += "上級売春中は実行不可/"
+SIF 上級売春中
+	COMRESULT = 0
+;男限定
+コマンド実行条件 += "対象が男性じゃないと実行できない/"
+SIF SEX(TARGET) == 2
+	COMRESULT = 0
+;従順3以上必要
+コマンド実行条件 += "対象の従順LV3以上が必要/"
+SIF ABL:従順 < 3
+	COMRESULT = 0
+;解除はいつでも可能
+SIF TEQUIP:女装 && COMRESULT
+	条件確定 = 1
+
+;助手じゃダメ
+コマンド実行条件 += "実行者が主人じゃないと実行できない/"
+SIF PLAYER != MASTER
+	COMRESULT = 0
+;お風呂場プレイ中はダメ
+コマンド実行条件 += "お風呂場では実行できない/"
+SIF TEQUIP:お風呂場
+	COMRESULT = 0
+;触手調教中はダメ
+コマンド実行条件 += "触手召喚中は実行できない/"
+SIF TEQUIP:触手
+	COMRESULT = 0
+;アニマルだと無理
+コマンド実行条件 += "対象が[アニマル]の場合は実行できない/"
+SIF TALENT:アニマル
+	COMRESULT = 0
+コマンド実行条件 += "睡眠中は実行できない/"
+SIF TEQUIP:睡眠
+	COMRESULT = 0
+IF MOD:STS
+	コマンド実行条件 += "屍姦中は実行できない/"
+	SIF CFLAG:死亡
+		COMRESULT = 0
+ENDIF
+
+IF 条件確定
+	COMRESULT = 1
+	RETURNF 1
+ENDIF
+RETURNF COMRESULT
+
+@COM_女装させる
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC CSTR始点
+#DIM DYNAMIC TEQUIP始点
+CSTR始点 = GETNUM(CSTR, "特殊")
+TEQUIP始点 = GETNUM(TEQUIP, "特殊")
+PRINTL 女装させる
+
+SELECTCASE TEQUIP:女装
+	;解除時
+	CASE 1
+		CSTR:特殊 = %服装保存用:0%
+		CSTR:上半身上着 = %服装保存用:1%
+		CSTR:下半身上着 = %服装保存用:2%
+		CSTR:全身上着 = %服装保存用:3%
+		CSTR:上半身下着 = %服装保存用:4%
+		CSTR:下半身下着 = %服装保存用:5%
+		CSTR:足元 = %服装保存用:6%
+
+		FOR LCOUNT, 0, 7
+			SIF CSTR:(CSTR始点+LCOUNT) != ""
+				TEQUIP:(TEQUIP始点+LCOUNT) = 1
+		NEXT
+
+		CFLAG:挿入可 = 服装フラグ保存用:0
+		CFLAG:着衣併用 = 服装フラグ保存用:1
+		CFLAG:上着パイズリ = 服装フラグ保存用:2
+		CFLAG:下着パイズリ = 服装フラグ保存用:3
+		CFLAG:全身上着パイズリ = 服装フラグ保存用:5
+	;実行時
+	CASE 0
+		服装保存用:0 = %CSTR:特殊%
+		服装保存用:1 = %CSTR:上半身上着%
+		服装保存用:2 = %CSTR:下半身上着%
+		服装保存用:3 = %CSTR:全身上着%
+		服装保存用:4 = %CSTR:上半身下着%
+		服装保存用:5 = %CSTR:下半身下着%
+		服装保存用:6 = %CSTR:足元%
+
+		服装フラグ保存用:0 = CFLAG:挿入可
+		服装フラグ保存用:1 = CFLAG:着衣併用
+		服装フラグ保存用:2 = CFLAG:上着パイズリ
+		服装フラグ保存用:3 = CFLAG:下着パイズリ
+		服装フラグ保存用:4 = CFLAG:全身上着パイズリ
+		PRINTL どの服で女装させますか？
+		PRINTL [0] - やっぱやめる
+		PRINTL [1] - セーラー服
+		PRINTL [2] - 和服
+		PRINTL [3] - スク水
+		PRINTL [4] - 逆バニースーツ
+		PRINTL [5] - メイド服
+		PRINTL [6] - チャイナドレス
+		PRINTL [7] - ナース服
+		PRINTL [8] - 体操服+ブルマ
+		SIF ISSKIP()
+			RETURN
+		BINPUT
+		SIF RESULT == 0
+			RETURN
+		CSTR:特殊 = 
+		CSTR:上半身上着 = 
+		CSTR:下半身上着 = 
+		CSTR:全身上着 = 
+		CSTR:上半身下着 = 
+		CSTR:下半身下着 = 
+		CSTR:足元 = 
+		CFLAG:挿入可 = 0
+		CFLAG:着衣併用 = 0
+		CFLAG:上着パイズリ = 0
+		CFLAG:下着パイズリ = 0
+		CFLAG:全身上着パイズリ = 0
+
+		SELECTCASE RESULT
+			CASE 0
+				RETURN 0
+			CASE 1
+				CSTR:上半身上着 = セーラー服
+				CSTR:下半身上着 = ミニスカート
+				CSTR:上半身下着 = ブラジャー
+				CSTR:下半身下着 = パンティ
+				CSTR:足元 = ニーソックス
+				CFLAG:挿入可 = 1
+			CASE 2
+				CSTR:全身上着 = 和服
+				CSTR:下半身下着 = パンティ
+				CSTR:足元 = 足袋
+				CFLAG:挿入可 = 1
+			CASE 3
+				CSTR:特殊 =
+				CSTR:上半身上着 =
+				CSTR:下半身上着 =
+				CSTR:全身上着 = スク水
+				CSTR:上半身下着 =
+				CSTR:下半身下着 =
+				CSTR:足元 =
+				CFLAG:挿入可 = 0
+				CFLAG:着衣併用 = 2
+			CASE 4
+				CSTR:特殊 = ウサ耳バンド
+				CSTR:全身上着 = 逆バニースーツ
+				CSTR:足元 = 網タイツ
+				CFLAG:挿入可 = 1
+				CFLAG:着衣併用 = 2
+			CASE 5
+				CSTR:特殊 = フリルカチューシャ
+				CSTR:全身上着 = メイド服
+				CSTR:上半身下着 = ブラジャー
+				CSTR:下半身下着 = パンティ
+				CSTR:足元 = ハイソックス
+				CFLAG:下着パイズリ = 4
+				CFLAG:挿入可 = 1
+			CASE 6
+				CSTR:特殊 = シニョンキャップ
+				CSTR:全身上着 = チャイナドレス
+				CSTR:下半身下着 = パンティ
+				CSTR:足元 = ハイソックス
+				CFLAG:下着パイズリ = 4
+				CFLAG:挿入可 = 1
+			CASE 7
+				CSTR:特殊 = ナースキャップ
+				CSTR:全身上着 = ナース服
+				CSTR:下半身下着 = パンティ
+				CSTR:足元 = ハイソックス
+				CFLAG:上着パイズリ = 0
+				CFLAG:下着パイズリ = 4
+				CFLAG:挿入可 = 1
+			CASE 8
+				CSTR:上半身上着 = 体操服
+				CSTR:下半身下着 = ブルマ
+				CSTR:足元 = 靴下
+		ENDSELECT
+		FOR LCOUNT, 0, 7
+			IF CSTR:(CSTR始点+LCOUNT) != ""
+				TEQUIP:(TEQUIP始点+LCOUNT) = 1
+			ELSE
+				TEQUIP:(TEQUIP始点+LCOUNT) = 0
+			ENDIF
+		NEXT
+ENDSELECT
+
+CALL KOJO_MESSAGE_COM
+;着脱の処理
+INVERTBIT TEQUIP:女装, 0
+
+;-------------------------------------------------
+;絶頂チェック
+;-------------------------------------------------
+CALL SOURCE_CHECK_CVAB
+
+;-------------------------------------------------
+;射精チェック
+;-------------------------------------------------
+CALL SAMEN_CHECK_T, 0
+
+CALL SAMEN_SHOOT_T, 0, NOWEX:射精
+
+RETURN 1
+
+;-------------------------------------------------
+;装着継続の処理
+;-------------------------------------------------
+@EQUIP_COM_女装させる
+
+PRINTFORML ＜%CALLNAME:TARGET%女装中＞
+
+;-------------------------------------------------
+;ソース追加処理
+;-------------------------------------------------
+;消費体力、気力
+LOSEBASE:体力 += 20
+LOSEBASE:気力 += 50
+
+;メス度10まで100づつ下がっていく
+SOURCE:露出 += 1000-(MIN(ABL:メス度, 10)*100)
+;メス度10まで50づつ下がっていく
+SOURCE:屈従 += 500-(MIN(ABL:メス度, 10)*50)
+;メス度10まで200づつ下がっていく
+SOURCE:反感 += 2000-(MIN(ABL:メス度, 10)*200)
+;メス度10まで100づつ上がっていく
+SOURCE:欲情 += MIN(ABL:メス度, 10)*100
+
+RETURN 1

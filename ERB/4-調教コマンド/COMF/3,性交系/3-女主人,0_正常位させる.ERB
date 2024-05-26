@@ -1,0 +1,235 @@
+﻿;-------------------------------------------------
+;正常位させる
+;-------------------------------------------------
+@USERCOM_ABLE_正常位させる
+#FUNCTION
+;ゲーセンに居る場合はできない
+コマンド実行条件 += "ゲーセンでは実行不可/"
+SIF TEQUIP:ゲームセンター
+	COMRESULT = 0
+;PLAYERがＶ使用中はダメ
+コマンド実行条件 += "実行者がV使用中は実行できない/"
+SIF Ｖ使用中(PLAYER)
+	COMRESULT = 0
+;実行者がヴァギナ無いとダメ
+コマンド実行条件 += "実行者に女性器が必要/"
+SIF !VAGINA(PLAYER)
+	COMRESULT = 0
+コマンド実行条件 += "睡眠中は実行できない/"
+SIF TEQUIP:睡眠
+	COMRESULT = 0
+IF MOD:STS
+	コマンド実行条件 += "屍姦中は実行できない/"
+	SIF CFLAG:死亡
+		COMRESULT = 0
+ENDIF
+
+;汎用COMABLE通らなかったらダメ
+SIF !USERCOM_ABLE_性交させる()
+	COMRESULT = 0
+
+RETURNF COMRESULT
+
+@実行判定_正常位させる
+#DIM DYNAMIC 実効値
+;-------------------------------------------------
+;実行判定処理
+;-------------------------------------------------
+;すべての命令に共通の要素を考慮
+;(従順が高いと命令に従いやすいなど)
+CALL COM_ORDER
+実効値 = RESULT
+
+CALL COM_ORDER_セックスさせる
+実効値 += RESULT
+
+;実行者が羽
+IF TALENT:PLAYER:羽
+	実効値 -= 5
+	PRINTFORM -%CALLNAME:PLAYER%が有翼(5)
+ENDIF
+
+;48以上で実行
+CALL 実効値判定, 実効値, 48
+
+RETURN RESULT
+
+@COM_正常位させる
+#DIM DYNAMIC 増加量
+#DIM DYNAMIC 射精先
+
+PRINTL 正常位させる
+
+SIF !TFLAG:実行判定無視
+	CALLFORM 実行判定_%SELECTCOMS%
+SIF !RESULT && !TFLAG:実行判定無視
+	RETURN 0
+
+;-------------------------------------------------
+;実行決定
+;-------------------------------------------------
+CALL KOJO_MESSAGE_COM
+
+;実行者が奴隷フラグ
+TFLAG:奴隷実行 = 1
+TFLAG:奴隷挿入箇所 = 1
+
+;-------------------------------------------------
+;脱衣
+;-------------------------------------------------
+IF OVER_GENITAL(PLAYER) != ""
+	IF CFLAG:PLAYER:挿入可
+		TEQUIP:PLAYER:下半身下着 = 0
+	ELSE
+		TEQUIP:PLAYER:下半身下着 = 0
+		TEQUIP:PLAYER:下半身上着 = 0
+		TEQUIP:PLAYER:全身上着 = 0
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;射精ゲージチェック（主人）
+;-------------------------------------------------
+増加量 = 射精ゲージ計算_実行者受け(600)
+
+;ABL:調教者の技巧をみる
+増加量 += (増加量/5)*ABL:PLAYER:技巧
+
+;ABL:技巧をみる
+増加量 += 増加量/10*4*ABL:技巧
+
+CALL 射精ゲージ増加, 増加量, PLAYER
+
+;-------------------------------------------------
+;射精ゲージチェック（奴隷）
+;-------------------------------------------------
+増加量 = 射精ゲージ計算_奴隷挿入(800)
+
+;ABL:調教者の技巧をみる
+増加量 += (増加量/5)*ABL:PLAYER:技巧
+
+;ABL:技巧をみる
+増加量 += 増加量/10*4*ABL:技巧
+
+CALL 射精ゲージ増加, 増加量, TARGET
+
+;-------------------------------------------------
+;ソース追加処理
+;-------------------------------------------------
+;消費体力、気力
+LOSEBASE:体力 += 50
+LOSEBASE:気力 += 90
+
+DOWNBASE:MASTER:体力 += 100
+DOWNBASE:MASTER:気力 += 80
+
+SOURCE:快C = 400
+SOURCE:恐怖 = 100
+SOURCE:性行動 = 600
+SOURCE:屈従 = 800
+SOURCE:逸脱 = 600
+SOURCE:反感 = 600
+SOURCE:露出 = 100
+SOURCE:恭順 = 400
+;汚れ
+SIF GET_STAIN(STAIN:PLAYER:ヴァギナ, "アナル", "尿")
+	SOURCE:不潔 = 100
+
+;-------------------------------------------------
+;特殊ソース処理
+;-------------------------------------------------
+;抑圧、抵抗持ちには、抑鬱ソース追加
+SIF TALENT:抑圧 || TALENT:抵抗
+	SOURCE:鬱屈 += 500
+
+IF TALENT:PLAYER:処女
+	IF TALENT:PLAYER:性転換済
+		IF PLAYER != MASTER
+			IF 陥落(PLAYER)
+				CFLAG:PLAYER:性転換処女の奪われ方 = 2
+			ELSEIF 相性値(PLAYER, TARGET)
+				CFLAG:PLAYER:性転換処女の奪われ方 = 3
+			ELSE
+				CFLAG:PLAYER:性転換処女の奪われ方 = 1
+			ENDIF
+		ENDIF
+		CSTR:PLAYER:性転換処女 = %NAME:TARGET%
+	ELSE
+		IF PLAYER != MASTER
+			IF 陥落(PLAYER)
+				CFLAG:PLAYER:処女の奪われ方 = 2
+			ELSEIF 相性値(PLAYER, TARGET)
+				CFLAG:PLAYER:処女の奪われ方 = 3
+			ELSE
+				CFLAG:PLAYER:処女の奪われ方 = 1
+			ENDIF
+		ENDIF
+		CSTR:PLAYER:処女 = %NAME:TARGET%
+	ENDIF
+ENDIF
+
+IF TALENT:PLAYER:処女 || TALENT:PLAYER:再生処女
+	PRINTFORMW %CALLNAME:PLAYER%処女喪失
+	SETBIT STAIN:PLAYER:膣内, 6
+ENDIF
+
+TALENT:PLAYER:処女 = 0
+TALENT:PLAYER:再生処女 = 0
+
+;-------------------------------------------------
+;絶頂チェック
+;-------------------------------------------------
+CALL SOURCE_CHECK_CVAB
+
+;-------------------------------------------------
+;射精チェック
+;-------------------------------------------------
+;射精時の処理
+IF PLAYER == TMASTER
+	射精先 = 1
+ELSEIF PLAYER == ASSI
+	射精先 = 2
+ENDIF
+
+CALL SAMEN_CHECK, 6
+CALL SAMEN_CHECK_T, 射精先
+
+CALL SAMEN_SHOOT, 6, NOWEX:PLAYER:射精
+CALL SAMEN_SHOOT_T, 射精先, NOWEX:射精
+
+;-------------------------------------------------
+;汚れの処理
+;-------------------------------------------------
+;奴隷のペニス⇔調教者の膣内の汚れが移動
+STAIN:ペニス |= STAIN:PLAYER:膣内
+STAIN:PLAYER:膣内 |= STAIN:ペニス
+
+;-------------------------------------------------
+;経験の処理
+;-------------------------------------------------
+CALL EXPUP_BASE, 3, 2
+
+CALL EXPUP, "性交経験", 1
+CALL EXPUP, "性交経験", 1, PLAYER
+CALL EXPUP, "Ｖ経験", 2, PLAYER
+CALL EXPUP, "苦痛快楽経験", 1, PLAYER
+
+;恋慕or親愛なら愛情経験+ 中出しでさらに+
+IF FALLTYPE(TARGET) == 1 && PLAYER == MASTER
+	IF NOWEX:射精 && !GETBIT(TFLAG:避妊具射精, 2)
+		CALL EXPUP, "愛情経験", 2
+	ELSE
+		CALL EXPUP, "愛情経験", 1
+	ENDIF
+ENDIF
+
+SIF !避妊具(TARGET)
+	CALL 魔力回復, 3, PLAYER
+
+;奉仕快楽フラグ
+TFLAG:奉仕快楽 = 1
+
+経験回数:PLAYER:(NOF(TARGET)) += 1
+経験回数:TARGET:(NOF(PLAYER)) += 1
+
+RETURN 1

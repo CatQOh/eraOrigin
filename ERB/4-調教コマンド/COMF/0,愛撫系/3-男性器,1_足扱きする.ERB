@@ -1,0 +1,168 @@
+﻿;-------------------------------------------------
+;足扱きする
+;-------------------------------------------------
+@USERCOM_ABLE_足扱きする
+#FUNCTION
+;ゲーセンに居る場合はできない
+コマンド実行条件 += "ゲーセンでは実行不可/"
+SIF TEQUIP:ゲームセンター
+	COMRESULT = 0
+;上級売春中は客がマゾじゃないとダメ
+コマンド実行条件 += "上級売春中は客に素質[マゾ]が必要/"
+SIF 上級売春中 && !TALENT:マゾ
+	COMRESULT = 0
+;対象がペニス無いとダメ
+コマンド実行条件 += "対象に男性器が必要/"
+SIF !PENIS(TARGET)
+	COMRESULT = 0
+;アニマルだと無理
+コマンド実行条件 += "対象が[アニマル]の場合は実行できない/"
+SIF TALENT:アニマル
+	COMRESULT = 0
+;Ｐ使用中はダメ
+コマンド実行条件 += "男性器に道具使用中は実行できない/"
+SIF Ｐ使用中(TARGET)
+	COMRESULT = 0
+;足使用不可だとできない
+コマンド実行条件 += "実行者が[足使用不可]だと実行できない/"
+SIF TALENT:PLAYER:足使用不可
+	COMRESULT = 0
+
+RETURNF COMRESULT
+
+@COM_足扱きする
+#DIM DYNAMIC 増加量
+
+PRINTL 足扱きする
+CALL KOJO_MESSAGE_COM
+
+;-------------------------------------------------
+;射精ゲージチェック（奴隷）
+;-------------------------------------------------
+増加量 = 射精ゲージ計算_Ｐ責め(300)
+
+;何も履いてない場合は微増
+SIF !TEQUIP:PLAYER:足元
+	TIMES 増加量 , 1.10
+
+;ABL:マゾっ気をみる
+増加量 += (増加量/2)*ABL:マゾっ気
+
+CALL 射精ゲージ増加, 増加量, TARGET
+
+;-------------------------------------------------
+;ソース追加処理
+;-------------------------------------------------
+;消費体力、気力
+LOSEBASE:体力 += 30
+LOSEBASE:気力 += 150
+
+DOWNBASE:MASTER:体力 += 50
+DOWNBASE:MASTER:気力 += 30
+
+SOURCE:快C = 200
+SOURCE:達成 = 200
+SOURCE:苦痛 = 150
+SOURCE:露出 = 300
+SOURCE:屈従 = 300
+SOURCE:中毒 = 100
+SOURCE:逸脱 = 500
+SOURCE:反感 = 500
+
+;-------------------------------------------------
+;特殊ソース処理
+;-------------------------------------------------
+;抑圧、抵抗持ちには、抑鬱ソース追加
+SIF TALENT:抑圧 || TALENT:抵抗
+	SOURCE:鬱屈 += 400
+
+;マゾっ気を見る
+SELECTCASE ABL:マゾっ気
+	CASE 0
+		TIMES SOURCE:達成 , 0.80
+		TIMES SOURCE:屈従 , 0.80
+		SOURCE:液体 += 0
+		SOURCE:欲情 += 0
+	CASE 1
+		TIMES SOURCE:達成 , 1.00
+		TIMES SOURCE:屈従 , 1.00
+		SOURCE:液体 += 20
+		SOURCE:欲情 += 30
+	CASE 2
+		TIMES SOURCE:達成 , 1.20
+		TIMES SOURCE:屈従 , 1.20
+		SOURCE:液体 += 40
+		SOURCE:欲情 += 70
+	CASE 3
+		TIMES SOURCE:達成 , 1.40
+		TIMES SOURCE:屈従 , 1.40
+		SOURCE:液体 += 70
+		SOURCE:欲情 += 120
+	CASE 4
+		TIMES SOURCE:達成 , 1.50
+		TIMES SOURCE:屈従 , 1.50
+		SOURCE:液体 += 110
+		SOURCE:欲情 += 180
+	CASE 5
+		TIMES SOURCE:達成 , 1.70
+		TIMES SOURCE:屈従 , 1.70
+		SOURCE:液体 += 150
+		SOURCE:欲情 += 250
+	CASE 6
+		TIMES SOURCE:達成 , 1.90
+		TIMES SOURCE:屈従 , 1.90
+		SOURCE:液体 += 200
+		SOURCE:欲情 += 300
+	CASE 7
+		TIMES SOURCE:達成 , 2.10
+		TIMES SOURCE:屈従 , 2.10
+		SOURCE:液体 += 250
+		SOURCE:欲情 += 350
+	CASE 8
+		TIMES SOURCE:達成 , 2.30
+		TIMES SOURCE:屈従 , 2.30
+		SOURCE:液体 += 300
+		SOURCE:欲情 += 400
+	CASE 9
+		TIMES SOURCE:達成 , 2.50
+		TIMES SOURCE:屈従 , 2.50
+		SOURCE:液体 += 350
+		SOURCE:欲情 += 450
+	CASE IS >= 10
+		TIMES SOURCE:達成 , 3.00
+		TIMES SOURCE:屈従 , 3.00
+		SOURCE:液体 += 500
+		SOURCE:欲情 += 500
+ENDSELECT
+
+;マゾを見る
+IF TALENT:マゾ
+	TIMES SOURCE:達成 , 2.50
+	TIMES SOURCE:屈従 , 2.50
+	TIMES SOURCE:液体 , 1.20
+	TIMES SOURCE:欲情 , 1.20
+ENDIF
+
+;倒錯的
+SIF TALENT:倒錯的
+	TIMES SOURCE:達成 , 1.80
+
+;-------------------------------------------------
+;絶頂チェック
+;-------------------------------------------------
+CALL SOURCE_CHECK_CVAB
+
+;-------------------------------------------------
+;射精チェック
+;-------------------------------------------------
+CALL SAMEN_CHECK_T, 0
+
+CALL SAMEN_SHOOT_T, 0, NOWEX:射精
+
+;-------------------------------------------------
+;経験の処理
+;-------------------------------------------------
+CALL EXPUP_BASE, 2, 2
+
+RETURN 1
+

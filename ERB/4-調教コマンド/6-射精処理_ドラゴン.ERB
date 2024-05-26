@@ -1,0 +1,120 @@
+﻿;---------------------------------------------------------
+;ドラゴンが射精するかのチェック
+;---------------------------------------------------------
+@SAMEN_CHECK_DRAGON
+#DIM DYNAMIC 射精強度
+
+SIF BASE:PLAYER:ドラゴン射精 <= 0
+	RETURN 0
+
+射精強度 = BASE:PLAYER:ドラゴン射精/MAXBASE:PLAYER:ドラゴン射精
+SIF 射精強度 <= 0
+	RETURN 0
+
+SELECTCASE SELECTCOMS
+	CASE "フェラさせる（ドラゴン）"
+		PRINTFORML %CSTR:PLAYER:ドラゴン%口内射精
+	CASE "膣を犯す（ドラゴン）"
+		PRINTFORML %CSTR:PLAYER:ドラゴン%膣内射精
+	CASE "アナルを犯す（ドラゴン）"
+		PRINTFORML %CSTR:PLAYER:ドラゴン%腸内射精
+ENDSELECT
+
+NOWEX:PLAYER:ドラゴン射精 = 射精強度
+
+;射精強度を表示
+SIF 射精強度 >= 3
+	PRINTFORML 射精強度×{射精強度}
+
+RETURN 射精強度
+
+@SAMEN_SHOOT_DRAGON, 射精量
+#DIM DYNAMIC 射精量
+#DIM DYNAMIC 魔力回復量
+#DIM DYNAMIC 増加量
+
+SIF 射精量 <= 0
+	RETURN 0
+
+SELECTCASE SELECTCOMS
+	CASE "フェラさせる（ドラゴン）"
+		CFLAG:ドラゴンを口で射精させた経験++
+	CASE "膣を犯す（ドラゴン）"
+		SOURCE:恐怖 += 500
+		SOURCE:苦痛 += 300
+		SOURCE:屈従 += 500
+		CFLAG:ドラゴン膣内射精経験++
+		IF PLAYER == TMASTER
+			VIDEOBONUS:ドラゴン中出し++
+		ELSEIF PLAYER == ASSI
+			VIDEOBONUS:助手ドラゴン中出し++
+		ENDIF
+	CASE "アナルを犯す（ドラゴン）"
+		SOURCE:恐怖 += 300
+		SOURCE:苦痛 += 500
+		SOURCE:屈従 += 500
+		CFLAG:ドラゴン腸内射精経験++
+		IF PLAYER == MASTER
+			VIDEOBONUS:ドラゴンアナル中出し++
+		ELSEIF PLAYER == ASSI
+			VIDEOBONUS:助手ドラゴンアナル中出し++
+		ENDIF
+ENDSELECT
+
+EX:PLAYER:ドラゴン射精++
+NOWEX:PLAYER:ドラゴン射精 = 射精量
+
+;ドラゴンの精液は多い
+PRINTFORML 精液経験+{射精量*3}
+EXP:精液経験 += 射精量*3
+
+BASE:PLAYER:ドラゴン射精 -= MAXBASE:PLAYER:ドラゴン射精*射精量
+SIF BASE:PLAYER:ドラゴン射精 >= MAXBASE:PLAYER:ドラゴン射精
+	BASE:PLAYER:ドラゴン射精 = MAXBASE:PLAYER:ドラゴン射精-1
+
+;魔力回復
+IF TALENT:魔法使い
+	SELECTCASE SELECTCOMS
+		CASE "フェラさせる（ドラゴン）"
+			魔力回復量 += MAXBASE:魔力/40
+		CASE "膣を犯す（ドラゴン）", "アナルを犯す（ドラゴン）"
+			魔力回復量 += MAXBASE:魔力/20
+	ENDSELECT
+	魔力回復量 += 魔力回復量*LIMIT(ABL:精液中毒, 0, 10)/10
+	BASE:魔力 = LIMIT(BASE:魔力+魔力回復量, 0, MAXBASE:魔力)
+ENDIF
+	
+
+;射精時に中毒充足のソースを追加
+;通常射精時
+SIF 射精量 == 1
+	増加量 = 500
+;大量射精時
+SIF 射精量 >= 2
+	増加量 = 1000
+
+;精液中毒を見る
+SELECTCASE ABL:精液中毒
+	CASE 0, 1
+		TIMES 増加量 , 0.10
+	CASE 2
+		TIMES 増加量 , 0.30
+	CASE 3
+		TIMES 増加量 , 0.60
+	CASE 4
+		TIMES 増加量 , 0.90
+	CASE 5
+		TIMES 増加量 , 1.20
+	CASE 6
+		TIMES 増加量 , 1.50
+	CASE 7
+		TIMES 増加量 , 1.80
+	CASE 8
+		TIMES 増加量 , 2.30
+	CASE 9
+		TIMES 増加量 , 3.00
+	CASE IS >= 10
+		TIMES 増加量 , 5.00
+ENDSELECT
+
+SOURCE:中毒 += 増加量

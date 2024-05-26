@@ -1,0 +1,1258 @@
+﻿;-------------------------------------------------
+;数珠繋ぎ
+;-------------------------------------------------
+@USERCOM_ABLE_数珠繋ぎ
+#FUNCTION
+
+;1=TMASTER 2=ASSI 3=TARGET
+;132だったら主人→奴隷→助手
+;312だったら奴隷→主人→助手
+;といった具合
+;「助手→主人 (21)」を含む順列を作ることはできないため、成立可能な順列は
+;123, 132, 231, 312  の4通り
+
+;数珠繋ぎ実行判定
+;助手がいないとダメ
+コマンド実行条件 += "助手が必要/"
+SIF ASSI < 0
+	COMRESULT = 0
+;ペニスバンド使ってるとダメ、入れられる側が処女でもダメ
+コマンド実行条件 += "ペニスバンドでは代用不可 入れられる側が処女でも実行不可/"
+IF ASSI >= 0
+	SIF !数珠繋ぎ_ABLE_123() && !数珠繋ぎ_ABLE_132() && !数珠繋ぎ_ABLE_231() && !数珠繋ぎ_ABLE_312()
+		COMRESULT = 0
+ENDIF
+コマンド実行条件 += "睡眠中は実行できない/"
+SIF TEQUIP:睡眠
+	COMRESULT = 0
+IF MOD:STS
+	コマンド実行条件 += "屍姦中は実行できない/"
+	SIF CFLAG:死亡
+		COMRESULT = 0
+ENDIF
+
+コマンド実行条件 += "前回と今回の実行者が別で性交系コマンドから、/"
+コマンド実行条件 += "もしくは前回と今回の実行者が同じで助手を犯す、助手を犯させるから派生可能/"
+
+コマンド実行条件 += "助手と対象が陥落済みでないと実行不可/"
+SIF !陥落(TARGET) || ASSI < 0 || !陥落(ASSI)
+	COMRESULT = 0
+
+RETURNF COMRESULT
+
+@数珠繋ぎ_ABLE_123
+#FUNCTION
+#DIM DYNAMIC 実行可能
+
+SIF TMASTER != MASTER
+	RETURNF 0
+SIF PREVCOMS == "数珠繋ぎ" && TFLAG:数珠繋ぎ == 123
+	RETURNF 1
+IF TFLAG:前コマンド実行者 == ASSI && PLAYER == TMASTER
+	SELECTCASE PREVCOMS
+		CASE "正常位", "後背位", "正常位アナル", "後背位アナル"
+			SIF PENIS(TMASTER) && !Ｐ使用不可(TMASTER) && PENIS(ASSI) && !Ｐ使用不可(ASSI)
+				実行可能 = 1
+	ENDSELECT
+ELSEIF TFLAG:前コマンド実行者 == TMASTER && PLAYER == ASSI
+	SELECTCASE PREVCOMS
+		CASE "助手を犯す"
+			SIF PENIS(TMASTER) && !Ｐ使用不可(TMASTER) && PENIS(ASSI) && !Ｐ使用不可(ASSI)
+				実行可能 = 1
+	ENDSELECT
+ENDIF
+
+SIF TALENT:ASSI:処女 && TFLAG:主人挿入箇所 == 1
+	実行可能 = 0
+SIF TALENT:処女 && TFLAG:助手挿入箇所 == 1
+	実行可能 = 0
+
+RETURNF 実行可能
+
+@数珠繋ぎ_ABLE_231
+#FUNCTION
+#DIM DYNAMIC 実行可能
+
+SIF PREVCOMS == "数珠繋ぎ" && TFLAG:数珠繋ぎ == 231
+	RETURNF 1
+IF TFLAG:前コマンド実行者 == ASSI && PLAYER == TMASTER
+	SELECTCASE PREVCOMS
+		CASE "正常位", "後背位", "正常位アナル", "後背位アナル"
+			SIF PENIS(TARGET) && !Ｐ使用不可(TARGET) && PENIS(ASSI) && !Ｐ使用不可(ASSI)
+				実行可能 = 1
+	ENDSELECT
+ELSEIF TFLAG:前コマンド実行者 == TMASTER && PLAYER == ASSI
+	SELECTCASE PREVCOMS
+		CASE "正常位させる", "後背位させる", "正常位アナルさせる", "後背位アナルさせる"
+			SIF PENIS(TARGET) && !Ｐ使用不可(TARGET) && PENIS(ASSI) && !Ｐ使用不可(ASSI)
+				実行可能 = 1
+	ENDSELECT
+ENDIF
+
+SIF TALENT:TMASTER:処女 && TFLAG:奴隷挿入箇所 == 1
+	実行可能 = 0
+SIF TALENT:処女 && TFLAG:助手挿入箇所 == 1
+	実行可能 = 0
+
+RETURNF 実行可能
+
+@数珠繋ぎ_ABLE_132
+#FUNCTION
+#DIM DYNAMIC 実行可能
+
+SIF PREVCOMS == "数珠繋ぎ" && TFLAG:数珠繋ぎ == 132
+	RETURNF 1
+IF TFLAG:前コマンド実行者 == ASSI && PLAYER == TMASTER
+	SELECTCASE PREVCOMS
+		CASE "正常位させる", "後背位させる", "正常位アナルさせる", "後背位アナルさせる"
+			SIF PENIS(TARGET) && !Ｐ使用不可(TARGET) && PENIS(TMASTER) && !Ｐ使用不可(TMASTER)
+				実行可能 = 1
+	ENDSELECT
+ELSEIF TFLAG:前コマンド実行者 == TMASTER && PLAYER == ASSI
+	SELECTCASE PREVCOMS
+		CASE "正常位", "後背位", "正常位アナル", "後背位アナル"
+			SIF PENIS(TARGET) && !Ｐ使用不可(TARGET) && PENIS(TMASTER) && !Ｐ使用不可(TMASTER)
+				実行可能 = 1
+	ENDSELECT
+ELSEIF TFLAG:前コマンド実行者 == TMASTER && PLAYER == TMASTER
+	SELECTCASE PREVCOMS
+		CASE "助手を犯させる"
+			SIF PENIS(TARGET) && !Ｐ使用不可(TARGET) && PENIS(TMASTER) && !Ｐ使用不可(TMASTER)
+				実行可能 = 1
+	ENDSELECT
+ENDIF
+
+SIF TALENT:ASSI:処女 && TFLAG:奴隷挿入箇所 == 1
+	RETURNF 0
+SIF TALENT:処女 && TFLAG:主人挿入箇所 == 1
+	RETURNF 0
+
+RETURNF 実行可能
+
+@数珠繋ぎ_ABLE_312
+#FUNCTION
+#DIM DYNAMIC 実行可能
+
+SIF TMASTER != MASTER
+	RETURNF 0
+
+SIF PREVCOMS == "数珠繋ぎ" && TFLAG:数珠繋ぎ == 312
+	RETURNF 1
+IF TFLAG:前コマンド実行者 == TMASTER && PLAYER == TMASTER
+	SELECTCASE PREVCOMS
+		CASE "正常位させる", "後背位させる", "正常位アナルさせる", "後背位アナルさせる", "助手を犯す"
+			SIF PENIS(TARGET) && !Ｐ使用不可(TARGET) && PENIS(TMASTER) && !Ｐ使用不可(TMASTER)
+				実行可能 = 1
+	ENDSELECT
+ENDIF
+
+SIF TALENT:ASSI:処女 && TFLAG:主人挿入箇所 == 1
+	RETURNF 0
+SIF TALENT:TMASTER:処女 && TFLAG:奴隷挿入箇所 == 1
+	RETURNF 0
+
+RETURNF 実行可能
+
+@COM_数珠繋ぎ
+#DIM DYNAMIC 増加量
+#DIM DYNAMIC 射精先, 3
+
+;挿れる場所を選択
+IF PREVCOMS == "数珠繋ぎ"
+ELSEIF TFLAG:前コマンド実行者 != PLAYER
+	SELECTCASE PREVCOMS
+		CASE "正常位", "後背位"
+			PRINTFORM %CALLNAME:(TFLAG:前コマンド実行者)%が%CALLNAME:TARGET%の膣に挿入しています。
+			SELECTCASE TFLAG:前コマンド実行者
+				CASE TMASTER
+					TFLAG:主人挿入箇所 = 1
+				CASE ASSI
+					TFLAG:助手挿入箇所 = 1
+			ENDSELECT
+		CASE "正常位アナル", "後背位アナル"
+			PRINTFORM %CALLNAME:(TFLAG:前コマンド実行者)%が%CALLNAME:TARGET%のアナルに挿入しています。
+			SELECTCASE TFLAG:前コマンド実行者
+				CASE TMASTER
+					TFLAG:主人挿入箇所 = 2
+				CASE ASSI
+					TFLAG:助手挿入箇所 = 2
+			ENDSELECT
+		CASE "正常位させる", "後背位させる"
+			PRINTFORM %CALLNAME:TARGET%が%CALLNAME:(TFLAG:前コマンド実行者)%の膣に挿入しています。
+			TFLAG:奴隷挿入箇所 = 1
+		CASE "正常位アナルさせる", "後背位アナルさせる"
+			PRINTFORM %CALLNAME:TARGET%が%CALLNAME:(TFLAG:前コマンド実行者)%のアナルに挿入しています。
+			TFLAG:奴隷挿入箇所 = 2
+		CASE "助手を犯す"
+			SELECTCASE TFLAG:主人挿入箇所
+				CASE 1
+					PRINTFORM %CALLNAME:TMASTER%が%CALLNAME:ASSI%の膣に挿入しています。
+					TFLAG:主人挿入箇所 = 1
+				CASE 2
+					PRINTFORM %CALLNAME:TMASTER%が%CALLNAME:ASSI%のアナルに挿入しています。
+					TFLAG:主人挿入箇所 = 2
+			ENDSELECT
+	ENDSELECT
+	PRINTFORML %CALLNAME:PLAYER%は何をしますか？
+	IF PLAYER == ASSI
+		SELECTCASE PREVCOMS
+			CASE "正常位させる", "後背位させる", "正常位アナルさせる", "後背位アナルさせる"
+				SIF VAGINA(TARGET)
+					PRINTFORML [1] - %CALLNAME:TARGET%の膣を犯す
+				PRINTFORML [2] - %CALLNAME:TARGET%のアナルを犯す
+				PRINTL [0] - キャンセル
+				DO
+					SIF ISSKIP()
+						BREAK
+					INPUT
+					SELECTCASE RESULT
+						CASE 0
+							RETURN 0
+						CASE 1
+							SIF !VAGINA(ASSI)
+								CONTINUE
+							TFLAG:数珠繋ぎ = 231
+							TFLAG:助手挿入箇所 = 1
+							BREAK
+						CASE 2
+							TFLAG:数珠繋ぎ = 231
+							TFLAG:助手挿入箇所 = 2
+							BREAK
+					ENDSELECT
+				LOOP 1
+			CASE "助手を犯す"
+				SIF VAGINA(TARGET)
+					PRINTFORML [1] - %CALLNAME:TARGET%の膣を犯す
+				PRINTFORML [2] - %CALLNAME:TARGET%のアナルを犯す
+				PRINTL [0] - キャンセル
+				DO
+					SIF ISSKIP()
+						BREAK
+					INPUT
+					SELECTCASE RESULT
+						CASE 0
+							RETURN 0
+						CASE 1
+							SIF !VAGINA(ASSI)
+								CONTINUE
+							TFLAG:数珠繋ぎ = 123
+							TFLAG:助手挿入箇所 = 1
+							BREAK
+						CASE 2
+							TFLAG:数珠繋ぎ = 123
+							TFLAG:助手挿入箇所 = 2
+							BREAK
+					ENDSELECT
+				LOOP 1
+			CASEELSE
+				SIF VAGINA(ASSI)
+					PRINTFORML [1] - %CALLNAME:TARGET%に膣を犯してもらう
+				PRINTFORML [2] - %CALLNAME:TARGET%にアナルを犯してもらう
+				PRINTL [0] - キャンセル
+				DO
+					SIF ISSKIP()
+						BREAK
+					INPUT
+					SELECTCASE RESULT
+						CASE 0
+							RETURN 0
+						CASE 1
+							SIF !VAGINA(ASSI)
+								CONTINUE
+							TFLAG:数珠繋ぎ = 132
+							TFLAG:奴隷挿入箇所 = 1
+							BREAK
+						CASE 2
+							TFLAG:数珠繋ぎ = 132
+							TFLAG:奴隷挿入箇所 = 2
+							BREAK
+					ENDSELECT
+				LOOP 1
+		ENDSELECT
+	ELSEIF PLAYER == TMASTER
+		SELECTCASE PREVCOMS	
+			CASE "正常位", "後背位", "正常位アナル", "後背位アナル"
+				IF 数珠繋ぎ_ABLE_123()
+					SIF VAGINA(ASSI)
+						PRINTFORML [1] - %CALLNAME:ASSI%の膣を犯す
+					PRINTFORML [2] - %CALLNAME:ASSI%のアナルを犯す
+				ENDIF
+				IF 数珠繋ぎ_ABLE_231()
+					SIF VAGINA(TMASTER)
+						PRINTFORML [3] - %CALLNAME:TARGET%に膣を犯してもらう
+					PRINTFORML [4] - %CALLNAME:TARGET%にアナルを犯してもらう
+				ENDIF
+				PRINTL [0] - キャンセル
+				DO
+					SIF ISSKIP()
+						BREAK
+					INPUT
+					SELECTCASE RESULT
+						CASE 0
+							RETURN 0
+						CASE 1
+							SIF !VAGINA(ASSI)
+								CONTINUE
+							SIF !数珠繋ぎ_ABLE_123()
+								CONTINUE
+							TFLAG:数珠繋ぎ = 123
+							TFLAG:主人挿入箇所 = 1
+							BREAK
+						CASE 2
+							SIF !数珠繋ぎ_ABLE_123()
+								CONTINUE
+							TFLAG:数珠繋ぎ = 123
+							TFLAG:主人挿入箇所 = 2
+							BREAK
+						CASE 3
+							SIF !VAGINA(TMASTER)
+								CONTINUE
+							SIF !数珠繋ぎ_ABLE_231()
+								CONTINUE
+							TFLAG:数珠繋ぎ = 231
+							TFLAG:奴隷挿入箇所 = 1
+							BREAK
+						CASE 4
+							SIF !数珠繋ぎ_ABLE_231()
+								CONTINUE
+							TFLAG:数珠繋ぎ = 231
+							TFLAG:奴隷挿入箇所 = 2
+							BREAK
+					ENDSELECT
+				LOOP 1
+			CASEELSE
+				SIF VAGINA(TARGET)
+					PRINTFORML [1] - %CALLNAME:TARGET%の膣を犯す
+				PRINTFORML [2] - %CALLNAME:TARGET%のアナルを犯す
+				PRINTL [0] - キャンセル
+				DO
+					SIF ISSKIP()
+						BREAK
+					INPUT
+					SELECTCASE RESULT
+						CASE 0
+							RETURN 0
+						CASE 1
+							SIF !VAGINA(TARGET)
+								CONTINUE
+							TFLAG:数珠繋ぎ = 132
+							TFLAG:主人挿入箇所 = 1
+							BREAK
+						CASE 2
+							TFLAG:数珠繋ぎ = 132
+							TFLAG:主人挿入箇所 = 2
+							BREAK
+					ENDSELECT
+				LOOP 1
+		ENDSELECT
+	ENDIF
+ELSEIF TFLAG:前コマンド実行者 == PLAYER
+	SELECTCASE PREVCOMS
+		CASE "助手を犯させる"
+			SELECTCASE TFLAG:奴隷挿入箇所
+				CASE 1
+					PRINTFORM %CALLNAME:TARGET%が%CALLNAME:ASSI%の膣に挿入しています。
+					TFLAG:奴隷挿入箇所 = 1
+				CASE 2
+					PRINTFORM %CALLNAME:TARGET%が%CALLNAME:ASSI%のアナルに挿入しています。
+					TFLAG:奴隷挿入箇所 = 2
+			ENDSELECT
+			PRINTFORML %CALLNAME:TMASTER%は何をしますか？
+			SIF VAGINA(TARGET)
+				PRINTFORML [1] - %CALLNAME:TARGET%の膣を犯す
+			PRINTFORML [2] - %CALLNAME:TARGET%のアナルを犯す
+			PRINTL [0] - キャンセル
+			DO
+				SIF ISSKIP()
+					BREAK
+				INPUT
+				SELECTCASE RESULT
+					CASE 0
+						RETURN 0
+					CASE 1
+						SIF !VAGINA(TARGET)
+							CONTINUE
+						TFLAG:数珠繋ぎ = 132
+						TFLAG:主人挿入箇所 = 1
+						BREAK
+					CASE 2
+						TFLAG:数珠繋ぎ = 132
+						TFLAG:主人挿入箇所 = 2
+						BREAK
+				ENDSELECT
+			LOOP 1
+		CASE "助手を犯す"
+			SELECTCASE TFLAG:主人挿入箇所
+				CASE 1
+					PRINTFORM %CALLNAME:TMASTER%が%CALLNAME:ASSI%の膣に挿入しています。
+					TFLAG:主人挿入箇所 = 1
+				CASE 2
+					PRINTFORM %CALLNAME:TMASTER%が%CALLNAME:ASSI%のアナルに挿入しています。
+					TFLAG:主人挿入箇所 = 2
+			ENDSELECT
+			PRINTFORML %CALLNAME:TARGET%に何をさせますか？
+			IF 数珠繋ぎ_ABLE_312()			
+				SIF VAGINA(TMASTER)
+					PRINTFORML [1] - %CALLNAME:TMASTER%の膣を犯してもらう
+				PRINTFORML [2] - %CALLNAME:TMASTER%のアナルを犯してもらう
+			ENDIF
+			IF 数珠繋ぎ_ABLE_123()
+				SIF VAGINA(TARGET)
+					PRINTFORML [3] - 膣を%CALLNAME:ASSI%に犯させる
+				PRINTFORML [4] - アナルを%CALLNAME:ASSI%に犯させる
+			ENDIF
+			PRINTL [0] - キャンセル
+			DO
+				SIF ISSKIP()
+					BREAK
+				INPUT
+				SELECTCASE RESULT
+					CASE 0
+						RETURN 0
+					CASE 1
+						SIF !VAGINA(TMASTER)
+							CONTINUE
+						SIF !数珠繋ぎ_ABLE_312()
+							CONTINUE
+						TFLAG:数珠繋ぎ = 312
+						TFLAG:奴隷挿入箇所 = 1
+						BREAK
+					CASE 2
+						SIF !数珠繋ぎ_ABLE_312()
+							CONTINUE
+						TFLAG:数珠繋ぎ = 312
+						TFLAG:奴隷挿入箇所 = 2
+						BREAK
+					CASE 3
+						SIF !VAGINA(TMASTER)
+							CONTINUE
+						SIF !数珠繋ぎ_ABLE_123()
+							CONTINUE
+						TFLAG:数珠繋ぎ = 123
+						TFLAG:奴隷挿入箇所 = 1
+						BREAK
+					CASE 4
+						SIF !数珠繋ぎ_ABLE_123()
+							CONTINUE
+						TFLAG:数珠繋ぎ = 123
+						TFLAG:奴隷挿入箇所 = 2
+						BREAK
+				ENDSELECT
+			LOOP 1
+		CASE "正常位させる", "後背位させる", "正常位アナルさせる", "後背位アナルさせる"
+			SELECTCASE PREVCOMS
+				CASE "正常位させる", "後背位させる"
+					PRINTFORM %CALLNAME:TARGET%が%CALLNAME:TMASTER%の膣に挿入しています。
+					TFLAG:奴隷挿入箇所 = 1
+				CASE "正常位アナルさせる", "後背位アナルさせる"
+					PRINTFORM %CALLNAME:TARGET%が%CALLNAME:TMASTER%のアナルに挿入しています。
+					TFLAG:奴隷挿入箇所 = 2
+			ENDSELECT
+			PRINTFORML %CALLNAME:TMASTER%は何をしますか？
+			SIF VAGINA(ASSI)
+				PRINTFORML [1] - %CALLNAME:ASSI%の膣を犯す
+			PRINTFORML [2] - %CALLNAME:ASSI%のアナルを犯す
+			PRINTL [0] - キャンセル
+			DO
+				SIF ISSKIP()
+					BREAK
+				INPUT
+				SELECTCASE RESULT
+					CASE 0
+						RETURN 0
+					CASE 1
+						SIF !VAGINA(ASSI)
+							CONTINUE
+						TFLAG:数珠繋ぎ = 312
+						TFLAG:主人挿入箇所 = 1
+						BREAK
+					CASE 2
+						TFLAG:数珠繋ぎ = 312
+						TFLAG:主人挿入箇所 = 2
+						BREAK
+				ENDSELECT
+			LOOP 1
+	ENDSELECT
+ENDIF
+
+
+;派生元のコマンドの実行判定を見る
+;SIF !TFLAG:実行判定無視
+;	CALLFORM 実行判定_%SELECTCOMS%
+;SIF !RESULT && !TFLAG:実行判定無視
+;	RETURN 0
+
+PRINT 数珠繋ぎ
+SELECTCASE TFLAG:数珠繋ぎ
+	CASE 123
+		PRINTFORML (%CALLNAME:TMASTER%→%CALLNAME:ASSI%→%CALLNAME:TARGET%)
+	CASE 132
+		PRINTFORML (%CALLNAME:TMASTER%→%CALLNAME:TARGET%→%CALLNAME:ASSI%)
+	CASE 231
+		PRINTFORML (%CALLNAME:ASSI%→%CALLNAME:TARGET%→%CALLNAME:TMASTER%)
+	CASE 312
+		PRINTFORML (%CALLNAME:TARGET%→%CALLNAME:TMASTER%→%CALLNAME:ASSI%)
+ENDSELECT
+
+CALL KOJO_MESSAGE_COM
+
+;V経験を伴うコマンドのフラグ(処女膜再生対応)
+SELECTCASE TFLAG:数珠繋ぎ
+	CASE 123
+		IF TALENT:TMASTER:童貞
+			TALENT:TMASTER:童貞 = 0
+			IF TALENT:TMASTER:性転換済
+				CSTR:TMASTER:性転換童貞 = %NAME:ASSI%
+			ELSE
+				CSTR:TMASTER:童貞 = %NAME:ASSI%
+			ENDIF
+		ENDIF
+		IF TALENT:ASSI:童貞
+			TALENT:ASSI:童貞 = 0
+			IF TALENT:ASSI:性転換済
+				CSTR:ASSI:性転換童貞 = %NAME:TARGET%
+			ELSE
+				CSTR:ASSI:童貞 = %NAME:TARGET%
+			ENDIF
+		ENDIF
+	CASE 132
+		IF TALENT:TMASTER:童貞
+			TALENT:TMASTER:童貞 = 0
+			IF TALENT:TMASTER:性転換済
+				CSTR:TMASTER:性転換童貞 = %NAME:TARGET%
+			ELSE
+				CSTR:TMASTER:童貞 = %NAME:TARGET%
+			ENDIF
+		ENDIF
+		IF TALENT:童貞
+			TALENT:童貞 = 0
+			IF TALENT:性転換済
+				CSTR:性転換童貞 = %NAME:ASSI%
+			ELSE
+				CSTR:童貞 = %NAME:ASSI%
+			ENDIF
+		ENDIF
+	CASE 231
+		IF TALENT:ASSI:童貞
+			TALENT:ASSI:童貞 = 0
+			IF TALENT:ASSI:性転換済
+				CSTR:ASSI:性転換童貞 = %NAME:TARGET%
+			ELSE
+				CSTR:ASSI:童貞 = %NAME:TARGET%
+			ENDIF
+		ENDIF
+		IF TALENT:童貞
+			TALENT:童貞 = 0
+			IF TALENT:性転換済
+				CSTR:性転換童貞 = %NAME:TMASTER%
+			ELSE
+				CSTR:童貞 = %NAME:TMASTER%
+			ENDIF
+		ENDIF
+	CASE 312
+		IF TALENT:童貞
+			TALENT:童貞 = 0
+			IF TALENT:性転換済
+				CSTR:性転換童貞 = %NAME:TMASTER%
+			ELSE
+				CSTR:童貞 = %NAME:TMASTER%
+			ENDIF
+		ENDIF
+		IF TALENT:TMASTER:童貞
+			TALENT:TMASTER:童貞 = 0
+			IF TALENT:TMASTER:性転換済
+				CSTR:TMASTER:性転換童貞 = %NAME:ASSI%
+			ELSE
+				CSTR:TMASTER:童貞 = %NAME:ASSI%
+			ENDIF
+		ENDIF
+ENDSELECT
+
+;-------------------------------------------------
+;脱衣
+;-------------------------------------------------
+IF OVER_GENITAL(TARGET) != ""
+	IF CFLAG:挿入可
+		TEQUIP:下半身下着 = 0
+	ELSE
+		TEQUIP:下半身下着 = 0
+		TEQUIP:下半身上着 = 0
+		TEQUIP:全身上着 = 0
+	ENDIF
+ENDIF
+IF OVER_GENITAL(TMASTER) != ""
+	IF CFLAG:TMASTER:挿入可
+		TEQUIP:TMASTER:下半身下着 = 0
+	ELSE
+		TEQUIP:TMASTER:下半身下着 = 0
+		TEQUIP:TMASTER:下半身上着 = 0
+		TEQUIP:TMASTER:全身上着 = 0
+	ENDIF
+ENDIF
+IF OVER_GENITAL(ASSI) != ""
+	IF CFLAG:ASSI:挿入可
+		TEQUIP:ASSI:下半身下着 = 0
+	ELSE
+		TEQUIP:ASSI:下半身下着 = 0
+		TEQUIP:ASSI:下半身上着 = 0
+		TEQUIP:ASSI:全身上着 = 0
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;射精ゲージチェック（主人）
+;-------------------------------------------------
+増加量 = 1800
+
+;ABL:技巧をみる
+増加量 += (増加量/5)*ABL:技巧
+
+;ABL:助手の技巧をみる
+増加量 += (増加量/5)*ABL:ASSI:技巧
+
+;ABL:従順をみる
+増加量 += (増加量/10)*ABL:従順 - (増加量/10)*2
+
+;ABL:助手の従順をみる
+増加量 += (増加量/10)*ABL:ASSI:従順 - (増加量/10)*2
+
+;ABL:欲望をみる
+増加量 += (増加量/10)*ABL:欲望
+
+;ABL:助手の欲望をみる
+増加量 += (増加量/10)*ABL:ASSI:欲望
+
+;奴隷に挿入時、PALAM:潤滑をみる
+SELECTCASE TFLAG:数珠繋ぎ
+	CASE 132
+		増加量 += (GETPALAMLV(PALAM:潤滑, 4)-2)*(増加量/5)
+ENDSELECT
+
+;主人のABL:Ｃ感覚をみる
+SELECTCASE ABL:TMASTER:Ｃ感覚
+	CASE 0
+		TIMES 増加量 , 1.00
+	CASE 1
+		TIMES 増加量 , 1.50
+	CASE 2
+		TIMES 増加量 , 2.00
+	CASE 3
+		TIMES 増加量 , 2.50
+	CASE 4
+		TIMES 増加量 , 3.50
+	CASEELSE
+		増加量 += 増加量*(ABL:TMASTER:Ｃ感覚-1)
+ENDSELECT
+
+;主人が挿れられてる側なら主人の感覚を見る
+SELECTCASE TFLAG:数珠繋ぎ
+	CASE 231, 312
+		SELECTCASE TFLAG:奴隷挿入箇所
+			CASE 1
+				SELECTCASE ABL:TMASTER:Ｖ感覚
+					CASE 0
+						TIMES 増加量 , 1.00
+					CASE 1
+						TIMES 増加量 , 1.20
+					CASE 2
+						TIMES 増加量 , 1.50
+					CASE 3
+						TIMES 増加量 , 2.00
+					CASE 4
+						TIMES 増加量 , 2.50
+					CASEELSE
+						増加量 += (増加量/2)*ABL:TMASTER:Ｖ感覚
+				ENDSELECT
+			CASE 2
+				SELECTCASE ABL:TMASTER:Ａ感覚
+					CASE 0
+						TIMES 増加量 , 1.00
+					CASE 1
+						TIMES 増加量 , 1.20
+					CASE 2
+						TIMES 増加量 , 1.50
+					CASE 3
+						TIMES 増加量 , 2.00
+					CASE 4
+						TIMES 増加量 , 2.50
+					CASEELSE
+						増加量 += (増加量/2)*ABL:TMASTER:Ａ感覚
+				ENDSELECT
+		ENDSELECT
+	;挿れられてなければ無条件で1.5倍
+	CASEELSE
+		TIMES 増加量 , 1.50
+ENDSELECT
+
+CALL 射精ゲージ増加, 増加量, TMASTER
+
+;-------------------------------------------------
+;射精ゲージチェック（助手）
+;-------------------------------------------------
+増加量 = 1800
+
+;ABL:技巧をみる
+増加量 += (増加量/5)*ABL:技巧
+
+;ABL:主人の技巧をみる
+増加量 += (増加量/5)*ABL:TMASTER:技巧
+
+;ABL:従順をみる
+増加量 += (増加量/10)*ABL:従順 - (増加量/10)*2
+
+;ABL:助手の従順をみる
+増加量 += (増加量/10)*ABL:ASSI:従順 - (増加量/10)*2
+
+;ABL:欲望をみる
+増加量 += (増加量/10)*ABL:欲望
+
+;ABL:助手の欲望をみる
+増加量 += (増加量/10)*ABL:ASSI:欲望
+
+;奴隷に挿入時、PALAM:潤滑をみる
+SELECTCASE TFLAG:数珠繋ぎ
+	CASE 123, 231
+		増加量 += (GETPALAMLV(PALAM:潤滑, 4)-2)*(増加量/5)
+ENDSELECT
+
+;助手のABL:Ｃ感覚をみる
+SELECTCASE ABL:ASSI:Ｃ感覚
+	CASE 0
+		TIMES 増加量 , 1.00
+	CASE 1
+		TIMES 増加量 , 1.50
+	CASE 2
+		TIMES 増加量 , 2.00
+	CASE 3
+		TIMES 増加量 , 2.50
+	CASE 4
+		TIMES 増加量 , 3.50
+	CASEELSE
+		増加量 += 増加量*(ABL:ASSI:Ｃ感覚-1)
+ENDSELECT
+
+;助手が挿れられてる側なら助手の感覚を見る
+SELECTCASE TFLAG:数珠繋ぎ
+	CASE 123, 312
+		SELECTCASE TFLAG:主人挿入箇所
+			CASE 1
+				SELECTCASE ABL:ASSI:Ｖ感覚
+					CASE 0
+						TIMES 増加量 , 1.00
+					CASE 1
+						TIMES 増加量 , 1.20
+					CASE 2
+						TIMES 増加量 , 1.50
+					CASE 3
+						TIMES 増加量 , 2.00
+					CASE 4
+						TIMES 増加量 , 2.50
+					CASEELSE
+						増加量 += (増加量/2)*ABL:ASSI:Ｖ感覚
+				ENDSELECT
+			CASE 2
+				SELECTCASE ABL:ASSI:Ａ感覚
+					CASE 0
+						TIMES 増加量 , 1.00
+					CASE 1
+						TIMES 増加量 , 1.20
+					CASE 2
+						TIMES 増加量 , 1.50
+					CASE 3
+						TIMES 増加量 , 2.00
+					CASE 4
+						TIMES 増加量 , 2.50
+					CASEELSE
+						増加量 += (増加量/2)*ABL:ASSI:Ａ感覚
+				ENDSELECT
+		ENDSELECT
+	CASE 132
+		SELECTCASE TFLAG:奴隷挿入箇所
+			CASE 1
+				SELECTCASE ABL:ASSI:Ｖ感覚
+					CASE 0
+						TIMES 増加量 , 1.00
+					CASE 1
+						TIMES 増加量 , 1.20
+					CASE 2
+						TIMES 増加量 , 1.50
+					CASE 3
+						TIMES 増加量 , 2.00
+					CASE 4
+						TIMES 増加量 , 2.50
+					CASEELSE
+						増加量 += (増加量/2)*ABL:ASSI:Ｖ感覚
+				ENDSELECT
+			CASE 2
+				SELECTCASE ABL:ASSI:Ａ感覚
+					CASE 0
+						TIMES 増加量 , 1.00
+					CASE 1
+						TIMES 増加量 , 1.20
+					CASE 2
+						TIMES 増加量 , 1.50
+					CASE 3
+						TIMES 増加量 , 2.00
+					CASE 4
+						TIMES 増加量 , 2.50
+					CASEELSE
+						増加量 += (増加量/2)*ABL:ASSI:Ａ感覚
+				ENDSELECT
+		ENDSELECT
+	;挿れられてなければ無条件で1.5倍
+	CASEELSE
+		TIMES 増加量 , 1.50
+ENDSELECT
+
+CALL 射精ゲージ増加, 増加量, ASSI
+
+;-------------------------------------------------
+;射精ゲージチェック（奴隷）
+;-------------------------------------------------
+増加量 = 1800
+
+;ABL:助手の技巧をみる
+増加量 += (増加量/5)*ABL:ASSI:技巧
+
+;ABL:主人の技巧をみる
+増加量 += (増加量/5)*ABL:TMASTER:技巧
+
+;ABL:従順をみる
+増加量 += (増加量/10)*ABL:従順 - (増加量/10)*2
+
+;ABL:助手の従順をみる
+増加量 += (増加量/10)*ABL:ASSI:従順 - (増加量/10)*2
+
+;ABL:欲望をみる
+増加量 += (増加量/10)*ABL:欲望
+
+;ABL:助手の欲望をみる
+増加量 += (増加量/10)*ABL:ASSI:欲望
+
+;PALAM:潤滑をみる
+SELECTCASE TFLAG:数珠繋ぎ
+	CASE 123, 132, 231
+		増加量 += (GETPALAMLV(PALAM:潤滑, 4)-2)*(増加量/5)
+ENDSELECT
+
+;ABL:Ｃ感覚をみる
+SELECTCASE ABL:Ｃ感覚
+	CASE 0
+		TIMES 増加量 , 1.00
+	CASE 1
+		TIMES 増加量 , 1.50
+	CASE 2
+		TIMES 増加量 , 2.00
+	CASE 3
+		TIMES 増加量 , 2.50
+	CASE 4
+		TIMES 増加量 , 3.50
+	CASEELSE
+		増加量 += 増加量*(ABL:Ｃ感覚-1)
+ENDSELECT
+
+;奴隷が挿れられてる側なら奴隷の感覚を見る
+SELECTCASE TFLAG:数珠繋ぎ
+	CASE 123, 231
+		SELECTCASE TFLAG:助手挿入箇所
+			CASE 1
+				SELECTCASE ABL:Ｖ感覚
+					CASE 0
+						TIMES 増加量 , 1.00
+					CASE 1
+						TIMES 増加量 , 1.20
+					CASE 2
+						TIMES 増加量 , 1.50
+					CASE 3
+						TIMES 増加量 , 2.00
+					CASE 4
+						TIMES 増加量 , 2.50
+					CASEELSE
+						増加量 += (増加量/2)*ABL:Ｖ感覚
+				ENDSELECT
+			CASE 2
+				SELECTCASE ABL:Ａ感覚
+					CASE 0
+						TIMES 増加量 , 1.00
+					CASE 1
+						TIMES 増加量 , 1.20
+					CASE 2
+						TIMES 増加量 , 1.50
+					CASE 3
+						TIMES 増加量 , 2.00
+					CASE 4
+						TIMES 増加量 , 2.50
+					CASEELSE
+						増加量 += (増加量/2)*ABL:Ａ感覚
+				ENDSELECT
+		ENDSELECT
+	CASE 132
+		SELECTCASE TFLAG:主人挿入箇所
+			CASE 1
+				SELECTCASE ABL:Ｖ感覚
+					CASE 0
+						TIMES 増加量 , 1.00
+					CASE 1
+						TIMES 増加量 , 1.20
+					CASE 2
+						TIMES 増加量 , 1.50
+					CASE 3
+						TIMES 増加量 , 2.00
+					CASE 4
+						TIMES 増加量 , 2.50
+					CASEELSE
+						増加量 += (増加量/2)*ABL:Ｖ感覚
+				ENDSELECT
+			CASE 2
+				SELECTCASE ABL:Ａ感覚
+					CASE 0
+						TIMES 増加量 , 1.00
+					CASE 1
+						TIMES 増加量 , 1.20
+					CASE 2
+						TIMES 増加量 , 1.50
+					CASE 3
+						TIMES 増加量 , 2.00
+					CASE 4
+						TIMES 増加量 , 2.50
+					CASEELSE
+						増加量 += (増加量/2)*ABL:Ａ感覚
+				ENDSELECT
+		ENDSELECT
+	;挿れられてなければ無条件で1.5倍
+	CASEELSE
+		TIMES 増加量 , 1.50
+ENDSELECT
+
+CALL 射精ゲージ増加, 増加量, TARGET
+
+;-------------------------------------------------
+;ソース追加処理
+;-------------------------------------------------
+;消費体力、気力
+LOSEBASE:体力 += 80
+LOSEBASE:気力 += 150
+
+SOURCE:情愛 = 500
+SOURCE:性行動 = 1000
+SOURCE:中毒 = 500
+SOURCE:恐怖 = 200
+SOURCE:屈従 = 1000
+SOURCE:逸脱 = 800
+SOURCE:反感 = 600
+
+;挿入している部位によって、ソースの数値が変化する
+SELECTCASE TFLAG:数珠繋ぎ
+	CASE 123, 231
+		SELECTCASE TFLAG:助手挿入箇所
+			CASE 1
+				SOURCE:快V += 700
+				SOURCE:性行動 += 100
+				SOURCE:苦痛 += 500
+			CASE 2
+				SOURCE:快A += 700
+				SOURCE:性行動 += 100
+				SOURCE:苦痛 += 800
+		ENDSELECT
+	CASE 132
+		SELECTCASE TFLAG:主人挿入箇所
+			CASE 1
+				SOURCE:快V += 700
+				SOURCE:性行動 += 100
+				SOURCE:苦痛 += 500
+			CASE 2
+				SOURCE:快A += 700
+				SOURCE:性行動 += 100
+				SOURCE:苦痛 += 800
+		ENDSELECT
+	CASE 312
+		SOURCE:性行動 += 600
+ENDSELECT
+
+;-------------------------------------------------
+;特殊ソース処理
+;-------------------------------------------------
+;抑圧、抵抗持ちには、抑鬱ソース追加
+SIF TALENT:抑圧 || TALENT:抵抗
+	SOURCE:鬱屈 += 500
+
+;貞操観念持ちで恋慕、親愛持ち以外には常に反発のソースを追加する（セックス系のみ）
+SIF TALENT:貞操観念 && FALLTYPE(TARGET) != 1
+	SOURCE:反感 += 1000
+
+SELECTCASE TFLAG:数珠繋ぎ
+	CASE 123, 231
+		SELECTCASE TFLAG:助手挿入箇所
+			CASE 1
+				CALL 特殊ソース処理_Ｖ
+			CASE 2
+				CALL 特殊ソース処理_Ａ
+		ENDSELECT
+	CASE 132
+		SELECTCASE TFLAG:主人挿入箇所
+			CASE 1
+				CALL 特殊ソース処理_Ｖ
+			CASE 2
+				CALL 特殊ソース処理_Ａ
+		ENDSELECT
+ENDSELECT
+
+CALL 特殊ソース処理_セックス
+
+;-------------------------------------------------
+;絶頂チェック
+;-------------------------------------------------
+CALL SOURCE_CHECK_CVAB
+
+;-------------------------------------------------
+;射精チェック
+;-------------------------------------------------
+SELECTCASE TFLAG:数珠繋ぎ
+	CASE 123,312
+		射精先 = 7
+	CASE 132
+		射精先 = TFLAG:主人挿入箇所
+	CASE 231
+		射精先 = 6
+ENDSELECT
+SELECTCASE TFLAG:数珠繋ぎ
+	CASE 123, 231
+		射精先:1 = TFLAG:助手挿入箇所
+	CASE 132, 312
+		射精先:1 = 6
+ENDSELECT
+SELECTCASE TFLAG:数珠繋ぎ
+	CASE 231, 312
+		SELECTCASE TFLAG:奴隷挿入箇所
+			CASE 1
+				射精先:2 = 1
+			CASE 2
+				射精先:2 = 6
+		ENDSELECT
+	CASE 132
+		SELECTCASE TFLAG:奴隷挿入箇所
+			CASE 1
+				射精先:2 = 2
+			CASE 2
+				射精先:2 = 7
+		ENDSELECT
+	CASE 123
+		SELECTCASE TFLAG:助手挿入箇所
+			CASE 1
+				射精先:2 = 4
+			CASE 2
+				射精先:2 = 5
+		ENDSELECT
+ENDSELECT
+
+CALL SAMEN_CHECK_M, 射精先
+CALL SAMEN_CHECK_A, 射精先:1
+CALL SAMEN_CHECK_T, 射精先:2
+
+SELECTCASE TFLAG:数珠繋ぎ
+	CASE 123
+		CALL SAMEN_SHOOT, 射精先, NOWEX:TMASTER:射精, TMASTER, ASSI
+		CALL SAMEN_SHOOT, 射精先:1, NOWEX:ASSI:射精, ASSI, TARGET
+		CALL SAMEN_SHOOT_T, 射精先:2, NOWEX:射精
+	CASE 132
+		CALL SAMEN_SHOOT, 射精先, NOWEX:TMASTER:射精, TMASTER, TARGET
+		CALL SAMEN_SHOOT, 射精先:1, NOWEX:ASSI:射精, ASSI
+		CALL SAMEN_SHOOT_T, 射精先:2, NOWEX:射精, ASSI
+	CASE 231
+		CALL SAMEN_SHOOT, 射精先, NOWEX:TMASTER:射精, TMASTER
+		CALL SAMEN_SHOOT, 射精先:1, NOWEX:ASSI:射精, ASSI, TARGET
+		CALL SAMEN_SHOOT_T, 射精先:2, NOWEX:射精, TMASTER
+	CASE 312
+		CALL SAMEN_SHOOT, 射精先, NOWEX:TMASTER:射精, TMASTER, ASSI
+		CALL SAMEN_SHOOT, 射精先:1, NOWEX:ASSI:射精, ASSI
+		CALL SAMEN_SHOOT_T, 射精先:2, NOWEX:射精, TMASTER
+ENDSELECT
+
+;-------------------------------------------------
+;汚れの処理
+;-------------------------------------------------
+;主人→助手がある場合
+IF TFLAG:数珠繋ぎ/10 == 12 || TFLAG:数珠繋ぎ%100 == 12
+	SELECTCASE TFLAG:主人挿入箇所
+		CASE 1
+			;助手の膣内⇔主人のペニスの汚れが移動
+			STAIN:ASSI:膣内 |= STAIN:TMASTER:ペニス
+			STAIN:TMASTER:ペニス |= STAIN:ASSI:膣内
+		CASE 2
+			;助手のアナル⇔主人のペニスの汚れが移動
+			SETBIT STAIN:TMASTER:ペニス, 3
+			STAIN:ASSI:アナル |= STAIN:TMASTER:ペニス
+			STAIN:TMASTER:ペニス |= STAIN:ASSI:アナル
+	ENDSELECT
+ENDIF
+;主人→奴隷がある場合
+IF TFLAG:数珠繋ぎ/10 == 13 || TFLAG:数珠繋ぎ%100 == 13
+	SELECTCASE TFLAG:主人挿入箇所
+		CASE 1
+			;奴隷の膣内⇔主人のペニスの汚れが移動
+			STAIN:膣内 |= STAIN:TMASTER:ペニス
+			STAIN:TMASTER:ペニス |= STAIN:膣内
+		CASE 2
+			;奴隷のアナル⇔主人のペニスの汚れが移動
+			SETBIT STAIN:TMASTER:ペニス, 3
+			STAIN:アナル |= STAIN:TMASTER:ペニス
+			STAIN:TMASTER:ペニス |= STAIN:アナル
+	ENDSELECT
+ENDIF
+;助手→奴隷
+IF TFLAG:数珠繋ぎ/10 == 23 || TFLAG:数珠繋ぎ%100 == 23
+	SELECTCASE TFLAG:助手挿入箇所
+		CASE 1
+			;奴隷の膣内⇔助手のペニスの汚れが移動
+			STAIN:膣内 |= STAIN:ASSI:ペニス
+			STAIN:ASSI:ペニス |= STAIN:膣内
+		CASE 2
+			;奴隷のアナル⇔助手のペニスの汚れが移動
+			SETBIT STAIN:ASSI:ペニス, 3
+			STAIN:アナル |= STAIN:ASSI:ペニス
+			STAIN:ASSI:ペニス |= STAIN:アナル
+	ENDSELECT
+ENDIF
+;奴隷→主人
+IF TFLAG:数珠繋ぎ/10 == 31 || TFLAG:数珠繋ぎ%100 == 31
+	SELECTCASE TFLAG:奴隷挿入箇所
+		CASE 1
+			;主人の膣内⇔奴隷のペニスの汚れが移動
+			STAIN:ペニス |= STAIN:TMASTER:膣内
+			STAIN:TMASTER:膣内 |= STAIN:ペニス
+		CASE 2
+			;主人のアナル⇔奴隷のペニスの汚れが移動
+			SETBIT STAIN:ペニス, 3
+			STAIN:TMASTER:アナル |= STAIN:ペニス
+			STAIN:ペニス |= STAIN:TMASTER:アナル
+	ENDSELECT
+ENDIF
+;奴隷→助手
+IF TFLAG:数珠繋ぎ/10 == 32 || TFLAG:数珠繋ぎ%100 == 32
+	SELECTCASE TFLAG:奴隷挿入箇所
+		CASE 1
+			;助手の膣内⇔奴隷のペニスの汚れが移動
+			STAIN:ペニス |= STAIN:ASSI:膣内
+			STAIN:ASSI:膣内 |= STAIN:ペニス
+		CASE 2
+			;助手のアナル⇔奴隷のペニスの汚れが移動
+			SETBIT STAIN:ペニス, 3
+			STAIN:ASSI:アナル |= STAIN:ペニス
+			STAIN:ペニス |= STAIN:ASSI:アナル
+	ENDSELECT
+ENDIF
+
+;-------------------------------------------------
+;経験の処理
+;-------------------------------------------------
+;同性愛経験
+IF SEX(TARGET) == SEX(TMASTER) && SEX(TARGET) == SEX(ASSI)
+	SELECTCASE SEX(TARGET)
+		CASE 1
+			CALL EXPUP, "ゲイ経験", 6
+			CALL EXPUP, "ゲイ経験", 3, TMASTER
+			CALL EXPUP, "ゲイ経験", 3, ASSI
+		CASE 2
+			CALL EXPUP, "レズ経験", 6
+			CALL EXPUP, "レズ経験", 3, TMASTER
+			CALL EXPUP, "レズ経験", 3, ASSI
+	ENDSELECT
+ELSEIF SEX(TARGET) == SEX(TMASTER) || SEX(TARGET) == SEX(ASSI)
+	SELECTCASE SEX(TARGET)
+		CASE 1
+			CALL EXPUP, "ゲイ経験", 3
+			SIF SEX(TMASTER) == 1
+				CALL EXPUP, "ゲイ経験", 2, TMASTER
+			SIF SEX(ASSI) == 1
+				CALL EXPUP, "ゲイ経験", 2, ASSI
+		CASE 2
+			CALL EXPUP, "レズ経験", 3
+			SIF SEX(TMASTER) == 2
+				CALL EXPUP, "レズ経験", 2, TMASTER
+			SIF SEX(ASSI) == 2
+				CALL EXPUP, "レズ経験", 2, ASSI
+	ENDSELECT
+ENDIF
+
+IF TMASTER == MASTER
+	CALL EXPUP, "主人調教経験", 2
+	CALL EXPUP, "助手調教経験", 2
+ELSE
+	CALL EXPUP, "助手調教経験", 4
+ENDIF
+
+;主人→助手がある場合
+IF TFLAG:数珠繋ぎ/10 == 12 || TFLAG:数珠繋ぎ%100 == 12
+	SELECTCASE TFLAG:主人挿入箇所
+		CASE 1
+			CALL EXPUP, "Ｖ経験", 1, ASSI
+		CASE 2
+			CALL EXPUP, "Ａ経験", 1, ASSI
+	ENDSELECT
+ENDIF
+;主人→奴隷がある場合
+IF TFLAG:数珠繋ぎ/10 == 13 || TFLAG:数珠繋ぎ%100 == 13
+	SELECTCASE TFLAG:主人挿入箇所
+		CASE 1
+			CALL EXPUP, "Ｖ経験", 1
+		CASE 2
+			CALL EXPUP, "Ａ経験", 1
+	ENDSELECT
+ENDIF
+;助手→奴隷
+IF TFLAG:数珠繋ぎ/10 == 23 || TFLAG:数珠繋ぎ%100 == 23
+	SELECTCASE TFLAG:助手挿入箇所
+		CASE 1
+			CALL EXPUP, "Ｖ経験", 1
+		CASE 2
+			CALL EXPUP, "Ａ経験", 1
+	ENDSELECT
+ENDIF
+;奴隷→主人
+IF TFLAG:数珠繋ぎ/10 == 31 || TFLAG:数珠繋ぎ%100 == 31
+	SELECTCASE TFLAG:奴隷挿入箇所
+		CASE 1
+			CALL EXPUP, "Ｖ経験", 1, TMASTER
+		CASE 2
+			CALL EXPUP, "Ａ経験", 1, TMASTER
+	ENDSELECT
+ENDIF
+;奴隷→助手
+IF TFLAG:数珠繋ぎ/10 == 32 || TFLAG:数珠繋ぎ%100 == 32
+	SELECTCASE TFLAG:奴隷挿入箇所
+		CASE 1
+			CALL EXPUP, "Ｖ経験", 1, ASSI
+		CASE 2
+			CALL EXPUP, "Ａ経験", 1, ASSI
+	ENDSELECT
+ENDIF
+
+;性交経験
+SELECTCASE TFLAG:数珠繋ぎ
+	CASE 312
+		CALL EXPUP, "性交経験", 1
+		CALL EXPUP, "性交経験", 2, TMASTER
+		CALL EXPUP, "性交経験", 1, ASSI
+		経験回数:TARGET:(NOF(TMASTER)) += 1
+		経験回数:TMASTER:(NOF(TARGET)) += 1
+		経験回数:TMASTER:(NOF(ASSI)) += 1
+		経験回数:ASSI:(NOF(TMASTER)) += 1
+	CASE 123
+		CALL EXPUP, "性交経験", 1
+		CALL EXPUP, "性交経験", 1, TMASTER
+		CALL EXPUP, "性交経験", 2, ASSI
+		経験回数:TMASTER:(NOF(ASSI)) += 1
+		経験回数:ASSI:(NOF(TMASTER)) += 1
+		経験回数:ASSI:(NOF(TARGET)) += 1
+		経験回数:TARGET:(NOF(ASSI)) += 1
+	CASEELSE
+		CALL EXPUP, "性交経験", 2
+		CALL EXPUP, "性交経験", 1, TMASTER
+		CALL EXPUP, "性交経験", 1, ASSI
+		経験回数:TMASTER:(NOF(TARGET)) += 1
+		経験回数:TARGET:(NOF(TMASTER)) += 1
+		経験回数:TARGET:(NOF(ASSI)) += 1
+		経験回数:ASSI:(NOF(TARGET)) += 1
+ENDSELECT
+
+RETURN 1

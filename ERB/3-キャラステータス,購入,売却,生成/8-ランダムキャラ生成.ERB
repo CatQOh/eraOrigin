@@ -1,0 +1,657 @@
+﻿@ADD_ランダムキャラ, 性別固定, 体型設定 = -1, 人体錬成
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC LTARGET
+#DIM DYNAMIC テーブル
+#DIM DYNAMIC 素質数
+#DIM DYNAMIC 人体錬成
+#DIM DYNAMIC 体型設定
+#DIMS DYNAMIC 種族候補
+#DIM DYNAMIC 素質上限
+#DIM DYNAMIC 素質付与判定, 30
+#DIM DYNAMIC 性別固定
+
+ADDVOIDCHARA
+
+LTARGET = TARGET
+TARGET = CHARANUM-1
+IF 体型設定 == -1
+	SELECTCASE RAND:6
+		CASE 0
+			TALENT:体格 = 1
+		CASE 1
+			TALENT:体格 = 2
+		CASE 2
+			TALENT:体格 = 4
+		CASEELSE
+			TALENT:体格 = 3
+	ENDSELECT
+ELSE
+	TALENT:体格 = 体型設定
+ENDIF
+
+IF 人体錬成
+	種族候補 = 人間
+ELSE
+	STRDATA 種族候補
+		DATA 人間
+		DATA 悪魔
+		DATA 天使
+		DATA 獣人
+		DATA 精霊
+		DATA 機械
+		DATA ヴァンパイア
+		DATA 妖精
+	ENDDATA
+ENDIF
+
+CSTR:種族 = %種族候補%
+
+NAME:TARGET = %ランダム命名(RAND(1, 4))%
+CALLNAME:TARGET = %NAME:TARGET%
+
+TALENT:性別 = 性別固定
+
+SELECTCASE TALENT:体格
+	CASE 3, 4
+		SIF 性別固定 == 2
+			TALENT:バストサイズ = RAND(1, 7)
+		MAXBASE:体力 = RAND(17, 22)*100
+		MAXBASE:気力 = RAND(17, 22)*100
+	CASE 1, 2
+		SIF 性別固定 == 2
+			TALENT:バストサイズ = RAND(1, 4)
+		MAXBASE:体力 = RAND(16, 20)*100
+		MAXBASE:気力 = RAND(16, 20)*100
+ENDSELECT
+
+BASE:体力 = MAXBASE:体力
+BASE:気力 = MAXBASE:気力
+CALL キャラ生成初期フラグ
+
+;6～10個の素質が付く
+素質上限 = RAND(6, 11)
+素質数 = 0
+
+DO
+	テーブル = RAND(1, 23)
+	;既に決定済みのテーブルならやり直し
+	SIF 素質付与判定:テーブル
+		CONTINUE
+	;素質の種類ごとにテーブルを置く
+	SELECTCASE テーブル
+		;生意気、臆病、ツンデレ、強気、弱気
+		CASE 1
+			SELECTCASE RAND:5
+				CASE 0
+					TALENT:生意気 = 1
+				CASE 1
+					TALENT:臆病 = 1
+				CASE 2
+					TALENT:ツンデレ = 1
+				CASE 3
+					TALENT:強気 = 1
+				CASE 4
+					TALENT:弱気 = 1
+			ENDSELECT
+		;素直、反抗的、衝動的、ヤンデレ
+		CASE 2
+			SELECTCASE RAND:4
+				CASE 0
+					TALENT:素直 = 1
+				CASE 1
+					TALENT:反抗的 = 1
+				CASE 2
+					TALENT:衝動的 = 1
+				CASE 3
+					TALENT:ヤンデレ = 1
+			ENDSELECT
+		;プライド高い、プライド低い
+		CASE 3
+			SELECTCASE RAND:2
+				CASE 0
+					TALENT:プライド高い = 1
+				CASE 1
+					TALENT:プライド低い = 1
+			ENDSELECT
+		;ハイテンション、大人しい
+		CASE 4
+			SELECTCASE RAND:2
+				CASE 0
+					TALENT:ハイテンション = 1
+				CASE 1
+					TALENT:大人しい = 1
+			ENDSELECT
+		;自制心、無関心、感情乏しい、好奇心
+		CASE 5
+			SELECTCASE RAND:4
+				CASE 0
+					TALENT:自制心 = 1
+				CASE 1
+					TALENT:無関心 = 1
+				CASE 2
+					TALENT:感情乏しい = 1
+				CASE 3
+					TALENT:好奇心 = 1
+			ENDSELECT
+		;保守的、楽観的、悲観的
+		CASE 6
+			SELECTCASE RAND:3
+				CASE 0
+					TALENT:保守的 = 1
+				CASE 1
+					TALENT:楽観的 = 1
+				CASE 2
+					TALENT:悲観的 = 1
+			ENDSELECT
+		;貞操観念、貞操無頓着
+		CASE 7
+			SELECTCASE RAND:2
+				CASE 0
+					TALENT:貞操観念 = 1
+				CASE 1
+					TALENT:貞操無頓着 = 1
+			ENDSELECT
+		;恥じらい、恥薄い、寂しがり屋
+		CASE 8
+			SELECTCASE RAND:3
+				CASE 0
+					TALENT:恥じらい = 1
+				CASE 1
+					TALENT:恥薄い = 1
+				CASE 2
+					TALENT:寂しがり屋 = 1
+			ENDSELECT
+		;痛みに弱い、痛みに強い
+		CASE 9
+			SELECTCASE RAND:2
+				CASE 0
+					TALENT:痛みに弱い = 1
+				CASE 1
+					TALENT:痛みに強い = 1
+			ENDSELECT
+		;濡れやすい、濡れにくい、勃ちやすい、勃ちにくい
+		CASE 10
+			SELECTCASE TALENT:性別
+				CASE 1
+					SELECTCASE RAND:2
+						CASE 0
+							TALENT:勃ちやすい = 1
+						CASE 1
+							TALENT:勃ちにくい = 1
+					ENDSELECT
+				CASE 2
+					SELECTCASE RAND:2
+						CASE 0
+							TALENT:濡れやすい = 1
+						CASE 1
+							TALENT:濡れにくい = 1
+					ENDSELECT
+			ENDSELECT
+		;習得早い、習得遅い
+		CASE 11
+			SELECTCASE RAND:3
+				CASE 0
+					TALENT:習得早い = 1
+				CASE 1
+					TALENT:習得遅い = 1
+			ENDSELECT
+		;汚臭鈍感、汚臭敏感
+		CASE 12
+			SELECTCASE RAND:2
+				CASE 0
+					TALENT:汚臭鈍感 = 1
+				CASE 1
+					TALENT:汚臭敏感 = 1
+			ENDSELECT
+		;汚れ無視、潔癖症
+		CASE 13
+			SELECTCASE RAND:2
+				CASE 0
+					TALENT:汚れ無視 = 1
+				CASE 1
+					TALENT:潔癖症 = 1
+			ENDSELECT
+		;快感に素直、快感の否定
+		CASE 14
+			SELECTCASE RAND:2
+				CASE 0
+					TALENT:快感に素直 = 1
+				CASE 1
+					TALENT:快感の否定 = 1
+			ENDSELECT
+		;両刀、男好き、女好き、男嫌い、女嫌い、同族嫌悪
+		CASE 15
+			SELECTCASE RAND:6
+				CASE 0
+					TALENT:両刀 = 1
+				CASE 1
+					TALENT:男好き = 1
+				CASE 2
+					TALENT:女好き = 1
+				CASE 3
+					TALENT:男嫌い = 1
+				CASE 4
+					TALENT:女嫌い = 1
+				CASE 5
+					TALENT:同族嫌悪 = 1
+			ENDSELECT
+		;サド、マゾ
+		CASE 16
+			SELECTCASE RAND:2
+				CASE 0
+					TALENT:サド = 1
+				CASE 1
+					TALENT:マゾ = 1
+			ENDSELECT
+		;Ｖ敏感鈍感
+		CASE 17
+			;男ならやり直し
+			SIF TALENT:性別 == 1
+				CONTINUE
+			SELECTCASE RAND:2
+				CASE 0
+					TALENT:Ｖ敏感 = 1
+				CASE 1
+					TALENT:Ｖ鈍感 = 1
+			ENDSELECT
+		;Ｃ敏感鈍感
+		CASE 18
+			SELECTCASE RAND:2
+				CASE 0
+					TALENT:Ｃ敏感 = 1
+				CASE 1
+					TALENT:Ｃ鈍感 = 1
+			ENDSELECT
+		;Ａ敏感鈍感
+		CASE 19
+			SELECTCASE RAND:2
+				CASE 0
+					TALENT:Ａ敏感 = 1
+				CASE 0
+					TALENT:Ａ鈍感 = 1
+			ENDSELECT
+		;Ｂ敏感鈍感
+		CASE 20
+			SELECTCASE RAND:2
+				CASE 0
+					TALENT:Ｂ敏感 = 1
+				CASE 1
+					TALENT:Ｂ鈍感 = 1
+			ENDSELECT
+		;回復早い、回復遅い、暑さに弱い、寒さに弱い
+		CASE 21
+			SELECTCASE RAND:4
+				CASE 0
+					TALENT:回復早い = 1
+				CASE 1
+					TALENT:回復遅い = 1
+				CASE 2
+					TALENT:暑さに弱い = 1
+				CASE 3
+					TALENT:寒さに弱い = 1
+			ENDSELECT
+		;酒豪、下戸、食欲皆伝、
+		CASE 22
+			SELECTCASE RAND:3
+				CASE 0
+					TALENT:酒豪 = 1
+				CASE 1
+					TALENT:下戸 = 1
+				CASE 2
+					TALENT:食欲皆伝 = 1
+			ENDSELECT
+	ENDSELECT
+	素質付与判定:テーブル = 1
+	素質数++
+LOOP 素質上限 != 素質数
+
+;種族によって固定素質
+SELECTCASE CSTR:種族
+	CASE "獣人", "獣"
+		TALENT:動物耳 = 1
+		TALENT:尻尾 = 1
+	CASE "天使"
+		TALENT:羽 = 1
+	CASE "機械"
+		TALENT:無機物 = 1
+ENDSELECT
+
+;人体錬成では能力ABL共にまっさらな状態
+IF !人体錬成
+	SELECTCASE RAND:3
+		CASE 0
+			VARSET EXP:0, 0
+		CASE 1
+			EXP:絶頂経験 = 0
+			IF VAGINA(TARGET)
+				EXP:Ｖ経験 = RAND(10, 31)
+				EXP:膣射経験 = RAND(0, 6)
+				EXP:絶頂経験 += RAND(10, 21)
+				EXP:精液経験 = RAND(20, 51)+EXP:膣射経験
+			ENDIF
+			IF PENIS(TARGET)
+				EXP:射精経験 = RAND(50, 101)
+				EXP:絶頂経験 += EXP:射精経験
+			ENDIF
+			IF SEX(TARGET) == 2
+				EXP:パイズリ経験 = RAND(3, 11)
+				EXP:フェラ経験 = RAND(5, 21)
+			ENDIF
+			EXP:性交経験 = RAND(5, 11)
+			EXP:自慰経験 = RAND(10, 31)
+		CASE 2
+			IF VAGINA(TARGET)
+				EXP:Ｖ経験 = RAND(500, 1001)
+				EXP:膣射経験 = RAND(300, 501)
+				EXP:出産経験 = RAND(1, 4)
+				SIF RAND:5 == 0
+					EXP:流産経験 = 1
+			ENDIF
+			SIF PENIS(TARGET)
+				EXP:射精経験 = RAND(2000, 5001)
+			SELECTCASE SEX(TARGET)
+				CASE 1
+					EXP:ゲイ経験 = RAND(500, 1001)
+				CASE 2
+					EXP:レズ経験 = RAND(500, 1001)
+					EXP:パイズリ経験 = RAND(200, 301)
+			ENDSELECT
+			EXP:Ａ経験 = RAND(500, 1001)
+			EXP:性交経験 = RAND(300, 501)
+			EXP:自慰経験 = RAND(1000, 2001)
+			EXP:フェラ経験 = RAND(500, 1001)
+			EXP:絶頂経験 = RAND(500, 1001)+EXP:射精経験
+			EXP:精液経験 = RAND(2000, 5001)+EXP:膣射経験
+	ENDSELECT
+
+	;経験に応じて感度とかいろいろ上がる
+	ABL:Ｃ感覚 = MAX(ABL:Ｃ感覚, LIMIT(EXP:絶頂経験/50, 0, 10))
+	ABL:Ｂ感覚 = MAX(ABL:Ｂ感覚, LIMIT(EXP:絶頂経験/50, 0, 10))
+	ABL:Ｖ感覚 = MAX(ABL:Ｖ感覚, LIMIT(EXP:Ｖ経験/100, 0, 10))
+	ABL:Ａ感覚 = MAX(ABL:Ａ感覚, LIMIT(EXP:Ａ経験/100, 0, 10))
+	ABL:精液中毒 = MAX(ABL:精液中毒, LIMIT(EXP:精液経験/300, 0, 10))
+	ABL:ゲイ中毒 = MAX(ABL:ゲイ中毒, LIMIT(EXP:ゲイ経験/300, 0, 10))
+	ABL:レズ中毒 = MAX(ABL:レズ中毒, LIMIT(EXP:レズ経験/300, 0, 10))
+	ABL:自慰中毒 = MAX(ABL:自慰中毒, LIMIT(EXP:自慰経験/300, 0, 10))
+	ABL:奉仕精神 = MAX(ABL:奉仕精神, LIMIT(EXP:奉仕快楽経験/200, 0, 10))
+	ABL:性交中毒 = MAX(ABL:性交中毒, LIMIT(EXP:性交経験/300, 0, 10))
+	ABL:マゾっ気 = MAX(ABL:マゾっ気, LIMIT(EXP:苦痛快楽経験/300, 0, 10))
+ENDIF
+
+SIF VAGINA(TARGET) && !EXP:Ｖ経験
+	TALENT:処女 = 1
+SIF PENIS(TARGET) && !EXP:性交経験
+	TALENT:童貞 = 1
+
+SIF !人体錬成
+	CALL ADD_ランダムキャラ_STATUS, TARGET
+
+SIF !RESULT
+	TARGET = LTARGET
+
+@ADD_ランダムキャラ_STATUS, 対象, 人体錬成
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC 人体錬成
+#DIM DYNAMIC 表示数
+#DIM DYNAMIC 対象
+
+DRAWLINE
+IF LANGUAGE == "ENG"
+	PRINTL 【Basic】
+	PRINTFORM 　Name:%NAMEDISP(対象)% 
+
+	PRINT Gender:
+	SELECTCASE SEX(対象)
+		CASE 1
+			PRINT Male
+		CASE 2
+			PRINT Female
+	ENDSELECT
+	SIF TALENT:対象:ふたなり
+		PRINT (Futanari)
+	PRINTPLAIN  
+
+	PRINTFORML Race:%I18N(CSTR:対象:種族, "RACE")% 
+
+	PRINTL 【容姿】
+	PRINTFORM 　Physical:\@ TALENT:対象:小人体型 ? Fairy # %体格(TALENT:対象:体格)%\@ 
+	SIF TALENT:バストサイズ
+		PRINTFORM BreastSize:%バストサイズ(TALENT:対象:バストサイズ)%
+	PRINTL 
+
+	PRINTFORMLC 　Animal Ear:\@ TALENT:対象:動物耳 ? Have # None\@
+	PRINTFORMLC Tail:\@ TALENT:対象:尻尾 ? Have # None\@
+	PRINTFORMLC Wings:\@ TALENT:対象:羽 ? Have # None\@
+	PRINTL 
+	PRINTFORMLC 　Farry:\@ TALENT:対象:ファーリー ? Have # None\@
+	PRINTFORMLC Life:\@ !TALENT:対象:ゾンビ ? Have # None\@
+	PRINTL 
+	PRINTL 【Sexual Experience】
+ELSE
+	PRINTL 【基礎】
+	PRINTFORM 　名前:%NAME:対象% 
+
+	PRINT 性別:
+	SELECTCASE SEX(対象)
+		CASE 1
+			PRINT 男性
+		CASE 2
+			PRINT 女性
+	ENDSELECT
+	SIF TALENT:対象:ふたなり
+		PRINT (ふたなり)
+	PRINTPLAIN  
+
+	PRINTFORML 種族:%CSTR:対象:種族%
+
+	PRINTL 【容姿】
+	PRINTFORM 　体格:\@ TALENT:対象:小人体型 ? 小人 # %体格(TALENT:対象:体格)%\@ 
+	SIF TALENT:バストサイズ
+		PRINTFORM バストサイズ:%バストサイズ(TALENT:対象:バストサイズ)%
+	PRINTL 
+
+	IF !人体錬成
+		PRINTFORMLC 　動物耳:\@ TALENT:対象:動物耳 ? 有り # 無し\@
+		PRINTFORMLC 尻尾:\@ TALENT:対象:尻尾 ? 有り # 無し\@
+		PRINTFORMLC 羽:\@ TALENT:対象:羽 ? 有り # 無し\@
+		PRINTL 
+		PRINTFORMLC 　もふもふ:\@ TALENT:対象:ファーリー ? 有り # 無し\@
+		PRINTFORMLC 生命活動:\@ !TALENT:対象:ゾンビ ? 有り # 無し\@
+		PRINTL 
+		PRINTL 【能力・性経験】
+	ENDIF
+ENDIF
+表示数 = 0
+IF !人体錬成
+	FOR LCOUNT, 0, VARSIZE("ABL")
+		SELECTCASE ABLNAME:LCOUNT
+			CASE "Ｖ感覚"
+				SIF !VAGINA(対象)
+					CONTINUE
+			CASE "ゲイ中毒"
+				SIF SEX(対象) != 1
+					CONTINUE
+			CASE "レズ中毒"
+				SIF SEX(対象) != 2
+					CONTINUE
+			CASE "Ｃ感覚", "Ｂ感覚", "Ａ感覚", "精液中毒", "自慰中毒", "奉仕精神", "性交中毒", "マゾっ気"
+			CASEELSE
+				CONTINUE
+		ENDSELECT
+		SIF 表示数 == 0
+			PRINT 　
+		PRINTFORMLC %I18N(ABLNAME:LCOUNT, "ABL")%:{ABL:対象:LCOUNT}
+		PRINTPLAIN  
+		表示数++
+		IF 表示数%3 == 0 && 表示数 != 0
+			PRINTL 
+			表示数 = 0
+		ENDIF
+	NEXT
+	CALL NEWLINE
+
+	PRINTL 
+	表示数 = 0
+	FOR LCOUNT, 0, 100
+		SELECTCASE EXPNAME:LCOUNT
+			CASE "Ｖ経験", "膣射経験", "出産経験", "流産経験"
+				SIF !VAGINA(対象)
+					CONTINUE
+			CASE "射精経験"
+				SIF !PENIS(対象)
+					CONTINUE
+			CASE "レズ経験", "パイズリ経験"
+				SIF SEX(対象) != 2
+					CONTINUE
+			CASE "ゲイ経験"
+				SIF SEX(対象) != 1
+					CONTINUE
+			CASE "Ａ経験", "絶頂経験", "性交経験", "精液経験", "フェラ経験", "自慰経験"
+			CASEELSE
+				CONTINUE
+		ENDSELECT
+		SIF 表示数 == 0
+			PRINT 　
+		PRINTFORMLC %I18N(EXPNAME:LCOUNT, "EXP")%:{EXP:対象:LCOUNT}
+		PRINTPLAIN  
+		表示数++
+		IF 表示数%3 == 0 && 表示数 != 0
+			PRINTL 
+			表示数 = 0
+		ENDIF
+	NEXT
+	CALL NEWLINE
+ENDIF
+IF LANGUAGE == "ENG"
+	PRINT 【Talents】
+ELSE
+	PRINT 【素質】
+ENDIF
+IF 人体錬成
+	CALL SHOW_INFO_TALENT_人体錬成, 対象
+	RETURN
+ELSE
+	CALL SHOW_INFO_TALENT, 対象
+ENDIF
+DRAWLINE
+PRINTPLAIN 　PLAYER CUSTOM　
+IF LANGUAGE == "ENG"
+	PRINTL [0] - Add this character [1] - Reroll [2] - Return
+ELSE
+	PRINTL [0] - このキャラを追加 [1] - 再生成する [2] - 戻る
+ENDIF
+BINPUT
+SELECTCASE RESULT
+	CASE 0
+		IF TALENT:対象:性別 == 0
+			IF LANGUAGE == "ENG"
+				PRINTW Please select gender
+			ELSE
+				PRINTW 性別を選択してください
+			ENDIF
+			RESTART
+		ENDIF
+		VARLINE = 0
+		TARGET = 対象
+		CALL プレイログ記録, @"キャラクター「%NAME:TARGET%」を錬成"
+		RETURN 1
+	CASE 1
+		DELCHARA 対象
+		JUMP ADD_ランダムキャラ, 2, -1
+	CASE 2
+		DELCHARA 対象
+		RETURN 0
+ENDSELECT
+RESTART
+
+@SHOW_INFO_TALENT_人体錬成, 対象
+#DIMS DYNAMIC 素質名
+#DIM DYNAMIC LCOUNT
+#DIMS 文字色
+#DIMS DYNAMIC 文字列表示用, 6
+#DIM DYNAMIC 表示数
+#DIM DYNAMIC 対象
+
+IF MATCH(HIDE_TALENT, 1) == 0 && !CFLAG:対象:複製
+	FOR LCOUNT, 0, 200
+		SELECTCASE TALENTNAME:LCOUNT
+			{
+			CASE "処女", "童貞", "バストサイズ", "性別", "恋心", "既婚者", "体格", "ファーリー", 
+				 "尻尾", "動物耳", "羽", "無機物", "小人体型", "アニマル", "足使用不可",
+				 "ゾンビ", "スライム", "溶ける快", "ふたなり", "犬", "猫",
+			}
+			CASEELSE
+				HIDE_TALENT:LCOUNT = RANDPER(50)
+		ENDSELECT
+	NEXT
+ENDIF
+
+表示数 = 0
+VARSET 文字列表示用
+FOR LCOUNT, 0, VARSIZE("TALENT")
+	SELECTCASE TALENTNAME:LCOUNT
+		CASE "性別"
+			CONTINUE
+		CASE "恋心", "既婚者"
+			SIF 陥落(対象)
+				CONTINUE
+	ENDSELECT
+	IF LCOUNT == VARSIZE("TALENT")-1
+		HTML_PRINT STRJOIN(文字列表示用, "")
+		BREAK
+	ELSEIF TALENT:対象:LCOUNT == 0
+		CONTINUE
+	ENDIF
+
+	IF TALENTNAME:LCOUNT == "バストサイズ"
+		IF LANGUAGE == "ENG"
+			素質名 = [%バストサイズ(TALENT:対象:バストサイズ)%Breast]
+		ELSE
+			素質名 = [%バストサイズ(TALENT:対象:バストサイズ)%]
+		ENDIF
+	ELSEIF TALENTNAME:LCOUNT == "体格"
+		IF TALENT:対象:小人体型
+			CONTINUE
+		ELSE
+			IF LANGUAGE == "ENG"
+				素質名 = [%体格(TALENT:対象:体格)%]
+			ELSE
+				素質名 = [%体格(TALENT:対象:体格)%体型]
+			ENDIF
+		ENDIF
+	ELSE
+		IF HIDE_TALENT:LCOUNT
+			素質名 = [？？？]
+		ELSE
+			素質名 = [%I18N(TALENTNAME:LCOUNT, "TALENT")%]
+		ENDIF
+	ENDIF
+
+	SIF 表示数%6 == 0
+		文字列表示用 = 　
+
+	;アイテムで付与できる素質は青くする
+	IF !CFLAG:対象:複製
+		SELECTCASE TALENTNAME:LCOUNT
+			CASE "動物耳", "羽", "足使用不可", "尻尾"
+				文字色 = deepskyblue
+			CASEELSE
+				文字色 = 
+		ENDSELECT
+	ENDIF
+	IF HIDE_TALENT:LCOUNT
+		文字列表示用:(表示数%6) += @"%SET_TOOLTIP(素質名, "不明な素質です", 0, "gray")%"
+	ELSE
+		文字列表示用:(表示数%6) += @"%SET_TOOLTIP(素質名, TALENT_COMMENT(TALENTNAME:LCOUNT, 対象), 0, 文字色)%"
+	ENDIF
+
+	表示数++
+
+	;改行するのか？ 続けて出力するのか？
+	IF 表示数%6 == 0 && 表示数 != 0
+		HTML_PRINT STRJOIN(文字列表示用, "")
+		VARSET 文字列表示用
+	ENDIF
+NEXT
+
+CALL NEWLINE

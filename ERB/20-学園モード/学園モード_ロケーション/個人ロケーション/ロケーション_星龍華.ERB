@@ -1,0 +1,168 @@
+﻿@ロケーション条件_星龍華
+#DIM DYNAMIC LCOUNT
+;出現条件のキャラをフルネーム(NAME)で入れる
+{
+#DIMS DYNAMIC 条件用キャラ = 
+"ナイア",
+"シア"
+}
+
+FOR LCOUNT, 0, VARSIZE("条件用キャラ")
+	IF GETCHARANAME(条件用キャラ:LCOUNT) > 0
+		SIF 好感度合計(GETCHARANAME(条件用キャラ:LCOUNT)) >= 100
+			RETURN GETCHARANAME(条件用キャラ:LCOUNT)
+	ENDIF
+NEXT
+
+RETURN 0
+
+@ロケーション可否_星龍華
+SIF ターン == "朝"
+	ロケーション可否 = 営業準備中
+
+@バイト条件_星龍華
+バイト要項 = 昼、夜の時間帯で募集中
+SIF GROUPMATCH(ターン, "昼", "夜")
+	バイト可能 = 1
+;ロケーション解禁済みで可能
+SIF FINDELEMENTF(解禁済みロケーション, "星龍華") >= 0
+	RETURN GETCHARANAME("ナイア")
+
+RETURN 0
+
+;バイト時に好感度が上がるキャラ
+@職場出現キャラ_星龍華, キャラ取得
+#DIM DYNAMIC 対象
+{
+#DIMS DYNAMIC 出現キャラ =
+"ナイア",
+"シア"
+}
+#DIM DYNAMIC キャラ取得
+
+対象 = GETCHARANAME(出現キャラ:(RAND:VARSIZE("出現キャラ")))
+
+SIF !キャラ取得
+	CALL EXPUP, "料理経験", 2, PLAYER
+
+SIF 対象 > 0 && CSTR:対象:現在地 == ""
+	RETURN 対象
+
+RETURN 0
+
+@出現キャラ_星龍華
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC グループ数
+#DIM DYNAMIC 始点
+#DIM DYNAMIC 終点
+
+;NOではなく登録番号で指定する
+IF データベース参照中
+	始点 = データベース参照中
+	終点 = データベース参照中+1
+ELSE
+	IF 始点
+		終点 = 始点
+		始点 = 1
+	ELSE
+		始点 = RAND(1, CHARANUM)
+		終点 = CHARANUM
+	ENDIF
+ENDIF
+
+FOR LCOUNT, 始点, 終点
+	;学校などに行ってるキャラは居ない
+	SIF CSTR:LCOUNT:現在地 != "" && !データベース参照中
+		CONTINUE
+	;出現率:LCOUNT = {出現率(100分率)} で指定できる
+	SELECTCASE CHARANAMEF(LCOUNT)
+		;ナイアとシアが確定
+		CASE "ナイア", "シア"
+			SIF 出現率:LCOUNT >= 0
+				出現率:LCOUNT = 100
+		;高確率で冬夜とジルチも居る
+		CASE "菱宮 春一", "ジルチ"
+			SIF 出現率:LCOUNT >= 0
+				出現率:LCOUNT = 50
+		;チャイナなキャラたちなど
+		{
+		CASE "ヒメル", "虎 大和", "鳳凰 鈴火", "おいわちゃん", "椿", "福龍", "パンデス", "ハラ＝ヘッタ",
+			 "サン", "鈴花", "大牙", "アリス・イップ", "ヤンヤン", "グリム・ヤンヤン", "チャオ", "ドゥイさん"
+		}
+			SIF 出現率:LCOUNT >= 0
+				出現率:LCOUNT = 30
+		;休日や放課後に集団で来ているグループとかがある
+		CASEELSE
+			IF RANDPER(2) && グループ数 < 10
+				;相性の良いキャラと2～4人で行動している
+				CALL グループキャラ選出, LCOUNT, "相性"
+				;2人以上揃わなかったら無かったことにする
+				SIF RESULT:0 == 0
+					CONTINUE
+				;2～4人のグループ
+				集団行動:グループ数:0 = LCOUNT
+				集団行動:グループ数:1 = RESULT:0
+				IF RANDPER(30)
+					集団行動:グループ数:2 = RESULT:1
+					SIF RANDPER(30)
+						集団行動:グループ数:3 = RESULT:2
+				ENDIF
+				グループ数++
+			ELSE
+				IF TALENT:LCOUNT:食欲皆伝
+					SIF 出現率:LCOUNT >= 0
+						出現率:LCOUNT = 20
+				ENDIF
+			ENDIF
+	ENDSELECT
+NEXT
+
+SIF 始点 == 1
+	RETURN
+SIF !データベース参照中
+	RESTART
+
+
+@星龍華_専用コマンド
+IF 同行者
+	IF MONEY < 2000
+		CALL COLUMNPRINTL, 0, @"　[---] - %CALLNAME:同行者%と食事する(2000＄)", "gray"
+	ELSE
+		CALL COLUMNPRINTL, 0, @"　[  1] - %CALLNAME:同行者%と食事する(2000＄)"
+	ENDIF
+ELSE
+	IF MONEY < 1000
+		CALL COLUMNPRINTL, 0, "　[---] - 中華料理を注文する(1000＄)", "gray"
+	ELSE
+		CALL COLUMNPRINTL, 0, "　[  0] - 中華料理を注文する(1000＄)"
+	ENDIF
+ENDIF
+
+@星龍華_専用コマンド_INPUT
+#DIM DYNAMIC 対象
+
+選択肢 = CRESULT:1
+CALL 職場出現キャラ_星龍華, 1
+対象 = RESULT
+SELECTCASE CRESULT:1
+	CASE 0
+		IF 対象
+			CALL SCHOOL_KOJO, 対象, "星龍華で注文"
+			CALL 好感度上昇, 対象, "友情", 15
+		ELSE
+			PRINTL 星龍華で美味しい中華料理を頂いた
+		ENDIF
+		MONEY -= 1000
+	CASE 1
+		CALL SCHOOL_KOJO, 同行者, "星龍華でお茶する"
+		CALL 好感度上昇, 同行者, "友情", 30
+		MONEY -= 2000
+ENDSELECT
+WAIT
+RETURN 1
+
+@SCHOOL_MESSAGE_星龍華で注文
+PRINTFORML 料理を注文して、持ってきてくれた%CALLNAME:TARGET%と談笑した
+
+@SCHOOL_MESSAGE_星龍華で食事する
+PRINTFORML 星龍華で%CALLNAME:TARGET%と美味しい中華料理を食べながら談笑した

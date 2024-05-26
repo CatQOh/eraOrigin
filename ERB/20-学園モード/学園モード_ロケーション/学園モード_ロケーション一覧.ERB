@@ -1,0 +1,245 @@
+﻿@ロケーション選択, 散策
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC LCOUNT2
+#DIM DYNAMIC LRESULT
+#DIM DYNAMIC LTARGET
+#DIM DYNAMIC ロケーション判定, 100
+#DIMS DYNAMIC 名称抜き取り用, 2
+#DIMS DYNAMIC 目的地
+#DIM DYNAMIC 会話候補, 1010
+#DIM DYNAMIC 散策
+#DIM DYNAMIC 倫理観加算済み
+#DIM DYNAMIC LVARLINE
+
+VARSET ロケーション判定
+
+IF 散策
+	SPLIT CSTR:PLAYER:現在地, "/", 名称抜き取り用
+	;分割されてたらスラッシュより後の部分だけを使用する
+	IF RESULT >= 2
+		目的地 = %名称抜き取り用:1%
+	ELSE
+		目的地 = %CSTR:PLAYER:現在地%
+	ENDIF
+	GOTO 散策
+ENDIF
+
+DRAWLINE
+PRINTL □目的地を選択してください
+
+CALL ロケーション一覧
+
+DRAWLINE
+PRINTPLAIN 　ロケーション選択　
+PRINTL [10000] - 戻る
+
+BINPUT
+
+LRESULT = RESULT
+SELECTCASE LRESULT
+	CASE 0 TO VARSIZE("ロケーション")-1
+		SPLIT ロケーション:LRESULT, "/", 名称抜き取り用
+		;分割されてたらスラッシュより後の部分だけを使用する
+		IF RESULT >= 2
+			目的地 = %名称抜き取り用:1%
+		ELSE
+			目的地 = %ロケーション:LRESULT%
+		ENDIF
+
+		PRINTFORML %CALLNAME:PLAYER%は%目的地%に向かった
+		SIF 同行者
+			CALL SCHOOL_KOJO, 同行者, @"一緒に%目的地%に行く"
+		CSTR:PLAYER:現在地 = %目的地%
+		RETURN 0
+	CASE 10000
+		RETURN 0
+ENDSELECT
+
+$散策
+
+;関数でロケーションごとに出現するキャラを設定する
+;「出現キャラ」フラグの数値は1～100 出現する確率
+VARSET 出現率
+VARSET 集団行動
+TRYCALLFORM 出現キャラ_%RPS(目的地)%
+
+;口上による出現率設定 既にグループに入っていたら無視
+IF OPTION:口上表示
+	LTARGET = TARGET
+	FOR LCOUNT, 0, CHARANUM
+		SIF 出現率:LCOUNT == -1
+			CONTINUE
+		SIF CFLAG:LCOUNT:口上非表示 || !EXISTFUNCTION(@"SCHOOL_%CSVNAMERPS(NO:LCOUNT)%_出現率設定")
+			CONTINUE
+		TARGET = LCOUNT
+		CALLFORM SCHOOL_%CSVNAMERPS(NO:LCOUNT)%_出現率設定, 目的地
+		IF RESULT < 0
+			出現率:LCOUNT = 0
+		ELSEIF RESULT > 0
+			出現率:LCOUNT = LIMIT(RESULT, 0, 100)
+		ENDIF
+	NEXT
+	TARGET = LTARGET
+ENDIF
+
+DRAWLINE
+;ロケーション専用のコマンドがあるならそれを優先
+TRYCCALLFORM ロケーション_%RPS(目的地)%
+;無ければ会話コマンド
+CATCH
+	$リロード
+	IF 散策
+		PRINTFORML □%CALLNAME:PLAYER%は%目的地%を散策してみた
+	ELSE
+		PRINTFORML □%目的地%に着いた 何をしよう？
+	ENDIF
+	VARSET 会話候補
+	FOR LCOUNT, 1, CHARANUM
+		IF 出現率:LCOUNT > 0
+			SIF 運命の人 == NAME:LCOUNT && 出現率:LCOUNT < 50
+				出現率:LCOUNT = 50
+			IF RANDPER(出現率:LCOUNT)
+				PRINTFORM 　[{LCOUNT}] - 
+				CALL SNAME(LCOUNT)
+				PRINTL に話しかける
+				会話候補:LCOUNT = 1
+			ENDIF
+		ENDIF
+	NEXT
+	SIF !倫理観加算済み
+		CALL グループ_倫理観計算
+	倫理観加算済み = 1
+	FOR LCOUNT, 0, 10
+		IF 集団行動:LCOUNT:0 > 0
+			PRINTFORM 　[{1000+LCOUNT}] - 
+			FOR LCOUNT2, 0, 5
+				CALL SNAME(集団行動:LCOUNT:LCOUNT2)
+				IF LCOUNT2 != 4 && 集団行動:LCOUNT:(LCOUNT2+1) > 0
+					PRINT 、
+				ELSE
+					BREAK
+				ENDIF
+			NEXT
+			PRINTL のグループ
+			会話候補:(1000+LCOUNT) = 1
+		ENDIF
+	NEXT
+	IF MAXARRAY(会話候補) == 0
+		PRINTL 
+		PRINTL 　----------誰も居ないようだ----------
+		PRINTL 
+	ENDIF
+	DRAWLINE
+	PRINTPLAINFORM 　%目的地%　
+	PRINTFORML [0] - 帰る [-1] - %目的地%に留まる [-2] - もう少し周りを見てみる
+	BINPUT
+	LRESULT = RESULT
+	SELECTCASE LRESULT
+		CASE 0
+			CSTR:PLAYER:現在地 = 自宅
+			RETURN 1
+		CASE -1
+			RETURN 1
+		CASE -2
+			GOTO リロード
+		CASE 1 TO CHARANUM
+			CALL 学園モード_汎用会話, LRESULT
+			SIF !RESULT
+				GOTO リロード
+		CASE 1000 TO 1009
+			SIF 集団行動:(LRESULT-1000):0 == 0
+				CONTINUE
+			グループ会話人数 = 0
+			FOR LCOUNT, 0, 5
+				グループ会話人数++
+				PRINTFORM %NAME:(集団行動:(LRESULT-1000):LCOUNT)%
+				IF LCOUNT != 4 && 集団行動:(LRESULT-1000):(LCOUNT+1) > 0
+					PRINT 、
+				ELSE
+					BREAK
+				ENDIF
+			NEXT
+			PRINTL のグループと会話した
+			FOR LCOUNT, 0, 5
+				グループ会話_口上用:LCOUNT = 集団行動:(LRESULT-1000):LCOUNT
+			NEXT
+			;口上表示と好感度表示は分けたい
+			LVARLINE = LINECOUNT
+			FOR LCOUNT, 0, 5
+				SIF 集団行動:(LRESULT-1000):LCOUNT > 0
+					CALL SCHOOL_KOJO, 集団行動:(LRESULT-1000):LCOUNT, "グループ会話"
+				SIF LINECOUNT > LVARLINE
+					BREAK
+			NEXT
+			FOR LCOUNT, 0, 5
+				SIF 集団行動:(LRESULT-1000):LCOUNT > 0
+					CALL 好感度上昇, 集団行動:(LRESULT-1000):LCOUNT, "友情", 10
+			NEXT
+	ENDSELECT
+ENDCATCH
+
+RETURN 1
+
+@ロケーション一覧
+#DIM DYNAMIC LCOUNT
+#DIMS DYNAMIC 名称抜き取り用, 2
+#DIM DYNAMIC 表示数
+#DIM DYNAMIC 選択可能
+
+FOR LCOUNT, 0, VARSIZE("ロケーション")
+	;条件判定用関数でロケーションごとの出現条件を設定する
+	SPLIT ロケーション:LCOUNT, "/", 名称抜き取り用
+	;分割されてたらスラッシュより後の部分だけを使用する
+	IF RESULT >= 2
+		RESULT = 0
+		;既に現在地の場合は無効
+		SIF CSTR:PLAYER:現在地 == 名称抜き取り用:1
+			CONTINUE
+		TRYCALLFORM ロケーション条件_%RPS(名称抜き取り用:1)%
+		選択可能 = RESULT
+		ロケーション可否 =
+		TRYCALLFORM ロケーション可否_%RPS(名称抜き取り用:1)%
+	ELSE
+		RESULT = 0
+		;既に現在地の場合は無効
+		SIF CSTR:PLAYER:現在地 == ロケーション:LCOUNT
+			CONTINUE
+		TRYCALLFORM ロケーション条件_%RPS(ロケーション:LCOUNT)%
+		選択可能 = RESULT
+		ロケーション可否 =
+		TRYCALLFORM ロケーション可否_%RPS(ロケーション:LCOUNT)%
+	ENDIF
+	;RETURN 1で返されたら条件を満たしている
+	SIF !選択可能
+		CONTINUE
+	;ただしRESULTSに何か入っていれば行けない
+	IF ロケーション可否 != ""
+		SETCOLORBYNAME gray
+		PRINTPLAINFORM 　[---] %@"%ロケーション:LCOUNT%(%ロケーション可否%)", 40, LEFT%
+		RESETCOLOR
+	ELSE
+		PRINTFORM 　[{LCOUNT, 3}] %ロケーション:LCOUNT, 40, LEFT%
+	ENDIF
+	表示数++
+	IF 表示数 == 3
+		PRINTL 
+		表示数 = 0
+	ENDIF
+NEXT
+CALL NEWLINE
+
+
+@学園_カフェ系キャラ, 名前
+#FUNCTION
+#DIMS DYNAMIC 名前
+;喫茶店を必要としている人たち（漠然すぎる概要）
+{
+SIF GROUPMATCH(名前, "英利", "大犬のお姉さん", "マモニス", "夜々祇", "クリープ", "ドゥイさん", "Dr.φ", "エクレメス", "マタン・カトルセ",
+"タルト", "タフィ", "ショルキー", "ムラサキ", "ハニー", "モモコさん", "サトウさん", "ウーノ", "フォクシー", "浅見 文彦",
+"アルフォンス・ミシェル", "アルビレオ", "愛子", "ヴィルヘルム", "いずみさん", "アン", "エミーリオ", "一条司令", "チク・タク",
+"シェリー", "ハーピア", "スミス氏", "パステルくん", "おしゃれずきん", "埴仁 虎子", "ソルト", "ラズ", "シャロン", "リエル", "シフォン", 
+"グリム・シャロン", "ココ", "黒須 紘", "しゃま", "みるく", "タルタ", "トリフォリ", "おいわちゃん", "チョコプラちゃん", "赤のリピカ", "黄のラピカ",)
+}
+	RETURNF 1
+RETURNF 0
+

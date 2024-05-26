@@ -1,0 +1,167 @@
+﻿@ロケーション条件_おコンの団子屋
+#DIM DYNAMIC LCOUNT
+;出現条件のキャラをフルネーム(NAME)で入れる
+{
+#DIMS DYNAMIC 条件用キャラ = 
+"エス・エイト・タロウ",
+"おコン"
+}
+
+FOR LCOUNT, 0, VARSIZE("条件用キャラ")
+	IF GETCHARANAME(条件用キャラ:LCOUNT) > 0
+		SIF 好感度合計(GETCHARANAME(条件用キャラ:LCOUNT)) >= 100
+			RETURN GETCHARANAME(条件用キャラ:LCOUNT)
+	ENDIF
+NEXT
+
+RETURN 0
+
+@ロケーション可否_おコンの団子屋
+;時間帯などで使えない場合は理由を書く
+SIF ターン == "夜"
+	ロケーション可否 = 営業終了
+
+@バイト条件_おコンの団子屋
+;バイトの時間帯などを書く
+バイト要項 = 朝～夕方のシフトで募集中
+;バイト可能かどうかの条件式
+SIF GROUPMATCH(ターン, "朝", "昼", "夕")
+	バイト可能 = 1
+;ロケーション解禁済みで可能
+;返り値はその店の責任者で、面接官扱いになる。居なければ-1でOK
+SIF FINDELEMENTF(解禁済みロケーション, "おコンの団子屋") >= 0
+	RETURN GETCHARANAME("おコン")
+
+RETURN 0
+
+;バイト時に好感度が上がるキャラ
+@職場出現キャラ_おコンの団子屋
+#DIM DYNAMIC 対象
+{
+#DIMS DYNAMIC 出現キャラ =
+"おコン",
+}
+
+対象 = GETCHARANAME(出現キャラ:(RAND:VARSIZE("出現キャラ")))
+
+CALL EXPUP, "料理経験", 2, PLAYER
+
+SIF 対象 > 0 && CSTR:対象:現在地 == ""
+	RETURN 対象
+
+RETURN 0
+
+@出現キャラ_おコンの団子屋
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC グループ数
+#DIM DYNAMIC 始点
+#DIM DYNAMIC 終点
+
+;NOではなく登録番号で指定する
+IF データベース参照中
+	始点 = データベース参照中
+	終点 = データベース参照中+1
+ELSE
+	IF 始点
+		終点 = 始点
+		始点 = 1
+	ELSE
+		始点 = RAND(1, CHARANUM)
+		終点 = CHARANUM
+	ENDIF
+ENDIF
+
+FOR LCOUNT, 始点, 終点
+	;学校などに行ってるキャラは居ない
+	SIF CSTR:LCOUNT:現在地 != "" && !データベース参照中
+		CONTINUE
+	;出現率:LCOUNT = {出現率(100分率)} で指定できる
+	SELECTCASE CHARANAMEF(LCOUNT)
+		;店員と旦那
+		CASE "おコン", "エス・エイト・タロウ"
+			SIF 出現率:LCOUNT >= 0
+				出現率:LCOUNT = 100
+		;和菓子好きとか和風な人とか一部狐繋がり
+		{
+		CASE "菱宮 津軽", "梅桐 緋浮美", "梅桐 天土", "鳳凰 鈴火", "青のルピカ", "夜兎姫", "焔極の鬼", "傍丹 桜子", "雨人形壱ノ妙",
+			 "花緒", "愛子", "鹿ノ子", "若さん", "あやめ", "寿々姫", "たぬちよ", "雷蔵", "てまり", "茜", "揚羽", "たまき", "ヨミ", "アメ",
+			 "知雲 ひばり", "伊賀崎ノ 楠子", "天稲荷 コテツ", "広瀬川 ミヤコ", "青葉城 晩翠", "キビ", "ワン", "チョコプラちゃん", "サツキ", "どすえ",
+			 "山吹"
+		}
+			SIF 出現率:LCOUNT >= 0
+				出現率:LCOUNT = 20
+		;休日や放課後に集団で来ているグループとかがある
+		CASEELSE
+			IF RANDPER(2) && グループ数 < 10
+				;相性の良いキャラと2～3人で行動している
+				CALL グループキャラ選出, LCOUNT, "相性"
+				;2人以上揃わなかったら無かったことにする
+				SIF RESULT:0 == 0
+					CONTINUE
+				;2～4人のグループ
+				集団行動:グループ数:0 = LCOUNT
+				集団行動:グループ数:1 = RESULT:0
+				IF RANDPER(30)
+					集団行動:グループ数:2 = RESULT:1
+					SIF RANDPER(30)
+						集団行動:グループ数:3 = RESULT:2
+				ENDIF
+				グループ数++
+			ELSE
+				IF TALENT:LCOUNT:食欲皆伝
+					SIF 出現率:LCOUNT >= 0
+						出現率:LCOUNT = 10
+				ENDIF
+			ENDIF
+	ENDSELECT
+NEXT
+
+SIF 始点 == 1
+	RETURN
+SIF !データベース参照中
+	RESTART
+
+@おコンの団子屋_専用コマンド
+IF 同行者
+	IF MONEY < 1000
+		CALL COLUMNPRINTL, 0, @"　[---] - %CALLNAME:同行者%とお茶する(1000＄)", "gray"
+	ELSE
+		CALL COLUMNPRINTL, 0, @"　[  1] - %CALLNAME:同行者%とお茶する(1000＄)"
+	ENDIF
+ELSE
+	IF MONEY < 500
+		CALL COLUMNPRINTL, 0, "　[---] - 団子を注文する(500＄)", "gray"
+	ELSE
+		CALL COLUMNPRINTL, 0, "　[  0] - 団子を注文する(500＄)"
+	ENDIF
+ENDIF
+
+@おコンの団子屋_専用コマンド_INPUT
+#DIM DYNAMIC 対象
+
+選択肢 = CRESULT:1
+対象 = 0
+SIF CSTR:GETCHARANAME("おコン"):現在地 == ""
+	対象 = GETCHARANAME("おコン")
+SELECTCASE CRESULT:1
+	CASE 0
+		IF 対象
+			CALL SCHOOL_KOJO, 対象, "おコンの団子屋で注文"
+			CALL 好感度上昇, 対象, "友情", 15
+		ELSE
+			PRINTL おコンの団子屋で美味しい団子を食べた
+		ENDIF
+		MONEY -= 500
+	CASE 1
+		CALL SCHOOL_KOJO, 同行者, "おコンの団子屋でお茶する"
+		CALL 好感度上昇, 同行者, "友情", 30
+		MONEY -= 1000
+ENDSELECT
+WAIT
+RETURN 1
+
+@SCHOOL_MESSAGE_おコンの団子屋で注文
+PRINTFORML 団子を注文して、持ってきてくれた%CALLNAME:TARGET%と談笑した
+
+@SCHOOL_MESSAGE_おコンの団子屋でお茶する
+PRINTFORML おコンの団子屋で%CALLNAME:TARGET%と楽しいティータイムの時間を過ごした

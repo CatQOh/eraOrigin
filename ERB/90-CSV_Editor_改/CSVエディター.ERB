@@ -1,0 +1,955 @@
+﻿@CSV_EDITOR
+#DIMS DYNAMIC 経験名
+#DIMS DYNAMIC 素質名
+#DIM DYNAMIC LCOUNT
+#DIM 素質数値指定
+#DIM DYNAMIC 表示数
+#DIMS DYNAMIC 表示用変数, 6
+#DIM DYNAMIC LRESULT
+#DIMS DYNAMIC 種族名, 100
+#DIM DYNAMIC 種族ナンバー
+#DIM DYNAMIC 服装プリセット = 1
+#DIMS DYNAMIC 選択文字列
+#DIM DYNAMIC 付随番号
+
+ADDVOIDCHARA
+ADDVOIDCHARA
+NAME:0 = 主人
+CALLNAME:0 = 主人
+TARGET = 1
+TALENT:MASTER:体格 = 3
+TALENT:体格 = 3
+
+PRINTL 作成するキャラの性別を選んでください
+PRINTL [1] - 男
+PRINTL [2] - 女
+PRINTL [3] - 性別不明
+PRINTL [0] - キャンセル
+BINPUT
+IF RESULT == 0
+	DELALLCHARA
+	RETURN
+ENDIF
+
+SIF GROUPMATCH(RESULT, 1, 2)
+	TALENT:性別 = RESULT
+
+$RESTART
+DRAWLINE
+PRINTL □ 基本情報
+PRINTBUTTON @"[キャラ番号] {NOF(TARGET)} ", "キャラ番号"
+PRINTBUTTON @"[価格] {CFLAG:価格} ", "価格"
+PRINTBUTTON @"[誕生日] \@ CFLAG:誕生日 ? {CFLAG:誕生日/100}月{CFLAG:誕生日%100}日 # 未設定 \@", "誕生日"
+PRINTL 
+PRINTBUTTON @"[名前] %NAME:TARGET% ", "名前"
+PRINTBUTTON @"[呼び名] %CALLNAME:TARGET%", "呼び名"
+PRINTL 
+IF TALENT:性別
+	PRINTBUTTON @"[性別] \@ SEX(TARGET) == 1 ? 男 # 女 \@ ", "性別"
+ELSE
+	PRINTBUTTON @"[性別] 不明 ", "性別"
+ENDIF
+PRINTBUTTON @"[種族] %CSTR:種族%", "種族"
+PRINTL 
+PRINTL 体力=一般的な男性の場合は1800程度、女性なら1700程度が標準値 気力は一律1800程度が標準値
+PRINTBUTTON @"[体力] {MAXBASE:体力} ", "体力"
+PRINTBUTTON @"[気力] {MAXBASE:気力}", "気力"
+PRINTL 
+DRAWLINE
+PRINTL □ 経験
+
+PRINTBUTTON "　[経験無し]", "経験無し"
+PRINTBUTTON "[経験ランダム]", "経験ランダム"
+PRINTBUTTON "[経験ランダム(すごい)]", "経験ランダム(すごい)"
+PRINTL 
+
+VARSET 表示用変数
+表示数 = 0
+FOR LCOUNT, 0, VARSIZE("EXP")
+	IF LCOUNT == VARSIZE("EXP")-1
+		HTML_PRINT STRJOIN(表示用変数, "")
+		BREAK
+	ELSEIF EXPNAME:LCOUNT == ""
+		CONTINUE
+	ENDIF
+
+	;改行するのか？ 続けて出力するのか？
+	IF 表示数%6 == 0 && 表示数 != 0
+		HTML_PRINT STRJOIN(表示用変数, "")
+		VARSET 表示用変数
+	ENDIF
+
+	RESETCOLOR
+	SIF EXP:LCOUNT < 0
+		EXP:LCOUNT = 0
+	SIF EXP:LCOUNT == 0
+		SETCOLORBYNAME gray
+
+	SIF EXPNAME:LCOUNT == "排便経験" && !MOD:SCAT
+		CONTINUE
+	経験名 = %短縮経験名(EXPNAME:LCOUNT)%
+	表示用変数:(表示数%6) = %SET_TOOLTIP(@"　[%経験名, 8%]:{EXP:LCOUNT, 4, LEFT}", EXP_COMMENT(EXPNAME:LCOUNT, TARGET))%
+	RESETCOLOR
+	表示数++
+NEXT
+CALL NEWLINE
+
+DRAWLINE
+PRINTL □ 能力
+表示数 = 0
+VARSET 表示用変数 
+FOR LCOUNT, 0, VARSIZE("ABL")
+	IF LCOUNT == VARSIZE("ABL")-1
+		HTML_PRINT STRJOIN(表示用変数, "")
+		BREAK
+	ELSEIF ABLNAME:LCOUNT == ""
+		CONTINUE
+	ENDIF
+
+	;改行するのか？ 続けて出力するのか？
+	IF 表示数%6 == 0 && 表示数 != 0
+		HTML_PRINT STRJOIN(表示用変数, "")
+		VARSET 表示用変数
+	ENDIF
+
+	RESETCOLOR
+	SIF ABL:LCOUNT < 0
+		ABL:LCOUNT = 0
+	SIF ABL:LCOUNT == 0
+		SETCOLORBYNAME gray
+
+	表示用変数:(表示数%6) = %SET_TOOLTIP(@"　[%ABLNAME:LCOUNT, 8%]:LV{ABL:LCOUNT, 4, LEFT}", ABL_COMMENT(ABLNAME:LCOUNT, TARGET))%
+	RESETCOLOR
+	表示数++
+NEXT
+CALL NEWLINE
+
+DRAWLINE
+PRINTPLAIN □ 素質 
+SIF 素質数値指定
+	PRINT (数値指定モード) 
+PRINTBUTTON "[変更する] ", "素質を変更する"
+PRINTBUTTON "[素質を数値指定する]", "素質を数値指定する"
+PRINTL 
+表示数 = 0
+VARSET 表示用変数 
+FOR LCOUNT, 0, VARSIZE("TALENT")
+	SELECTCASE TALENTNAME:LCOUNT
+		CASE "性別"
+			CONTINUE
+	ENDSELECT
+	SIF TALENT:LCOUNT < 0
+		TALENT:LCOUNT = 0
+	IF LCOUNT == VARSIZE("TALENT")-1
+		HTML_PRINT STRJOIN(表示用変数, "")
+		BREAK
+	ELSEIF SEX(TARGET) == 2 && GETNUM(TALENT, "バストサイズ") == LCOUNT
+	ELSEIF TALENT:LCOUNT == 0
+		CONTINUE
+	ENDIF
+
+	IF TALENTNAME:LCOUNT == "バストサイズ"
+		SELECTCASE TALENT:バストサイズ
+			CASE 0
+				SIF SEX(TARGET) == 2
+					素質名 = [胸の大きさを設定してください]
+			CASEELSE
+				素質名 = [%バストサイズ(TALENT:バストサイズ)%]
+		ENDSELECT
+	ELSEIF TALENTNAME:LCOUNT == "体格"
+		SIF TALENT:小人体型 || TALENT:アニマル
+			CONTINUE
+		素質名 = [%体格(TALENT:体格)%体型]
+	ELSE
+		素質名 = [%TALENTNAME:LCOUNT%]
+	ENDIF
+
+	SIF 表示数%6 == 0
+		表示用変数 = 　
+
+	IF 素質数値指定
+		表示用変数:(表示数%6) += @"%SET_TOOLTIP(@"%素質名%={TALENT:LCOUNT} ", TALENT_COMMENT(TALENTNAME:LCOUNT, TARGET))%"
+	ELSE
+		表示用変数:(表示数%6) += @"%SET_TOOLTIP(素質名, TALENT_COMMENT(TALENTNAME:LCOUNT, TARGET))%"
+	ENDIF
+
+	表示数++
+
+	;改行するのか？ 続けて出力するのか？
+	IF 表示数%6 == 0 && 表示数 != 0
+		HTML_PRINT STRJOIN(表示用変数, "")
+		VARSET 表示用変数
+	ENDIF
+NEXT
+CALL NEWLINE
+
+DRAWLINE
+PRINT □ 服装 
+FOR LCOUNT, 1, 11
+	SIF 服装プリセット == LCOUNT
+		SETCOLORBYNAME deepskyblue
+	PRINTBUTTON @"[{LCOUNT}]", @"服装プリセット{LCOUNT}"
+	RESETCOLOR
+NEXT
+PRINTL 
+FOR LCOUNT, 0, VARSIZE("CSTR")
+	SELECTCASE CSTRNAME:LCOUNT
+		CASE "特殊", "上半身上着", "下半身上着", "全身上着", "上半身下着", "下半身下着", "足元"
+			IF CFLAG:(CSTRNAME:LCOUNT+"着衣不可")
+				表示用変数 = 着衣不可
+			ELSE
+				IF 服装プリセット > 1
+					表示用変数 = %CSTR:@"%CSTRNAME:LCOUNT%{服装プリセット}"%
+				ELSE
+					表示用変数 = %CSTR:LCOUNT%
+				ENDIF
+			ENDIF
+			PRINTBUTTON @"%@"　[%CSTRNAME:LCOUNT%]", 14, LEFT%:%表示用変数% ", @"%CSTRNAME:LCOUNT%{服装プリセット}"
+			IF 表示用変数 != "着衣不可"
+				SELECTCASE CSTRNAME:LCOUNT
+					CASE "下半身上着"
+						IF 服装プリセット > 1
+							PRINTBUTTON @"[挿入可フラグ]:上着を着たまま挿入\@ CFLAG:@"挿入可{服装プリセット}" == 1 ? 可能 # 不可能 \@", @"挿入可{服装プリセット}"
+						ELSE
+							PRINTBUTTON @"[挿入可フラグ]:上着を着たまま挿入\@ CFLAG:挿入可 == 1 ? 可能 # 不可能 \@", @"挿入可{服装プリセット}"
+						ENDIF
+						PRINTS " "
+					CASE "全身上着"
+						SELECTCASE CFLAG:@"着衣併用\@ 服装プリセット > 1 ? {服装プリセット} #\@"
+							CASE 0
+								表示用変数 = フラグ無し
+							CASE 1
+								表示用変数 = 通常上着との併用可能
+							CASE 2
+								表示用変数 = 下着との併用不可能
+						ENDSELECT
+						PRINTBUTTON @"[着衣併用フラグ]:%表示用変数%", @"着衣併用{服装プリセット}"
+						PRINTS " "
+				ENDSELECT
+				SELECTCASE CSTRNAME:LCOUNT
+					CASE "全身上着", "上半身上着", "上半身下着"
+						IF CSTRNAME:LCOUNT == "全身上着"
+							表示用変数 '= "全身上着"
+						ELSE
+							表示用変数 '= SUBSTRINGU(CSTRNAME:LCOUNT,3, 2)
+						ENDIF
+						SELECTCASE CFLAG:@"%表示用変数%パイズリ\@ 服装プリセット > 1 ? {服装プリセット} #\@"
+							CASE 0
+								表示用変数 = 着衣パイズリ不可
+							CASE 1
+								表示用変数 = パイズリのみ可（下に穴）
+							CASE 2
+								表示用変数 = パイズリ、パイズリフェラ可（上下に穴）
+							CASE 3
+								表示用変数 = 縦パイズリのみ可
+							CASE 4
+								表示用変数 = すべて可
+							CASE 5
+								表示用変数 = たくし上げてパイズリ可（Pフェラ不可）
+							CASE 6
+								表示用変数 = はだけさせてパイズリ可（和服など）
+							CASE 10
+								表示用変数 = スク水・競泳水着等
+							CASE 11
+								表示用変数 = スク水・競泳水着等（下に穴）
+							CASE 12
+								表示用変数 = スク水・競泳水着等（下に穴＋上からペニスが出る）
+							CASE 13
+								表示用変数 = スク水・競泳水着等（前面穴）
+							CASE 14
+								表示用変数 = スク水・競泳水着等（スリット）
+						ENDSELECT
+						IF CSTRNAME:LCOUNT == "全身上着"
+							PRINTBUTTON @"[着衣パイズリフラグ]:%表示用変数%", @"%CSTRNAME:LCOUNT%パイズリ{服装プリセット}"
+						ELSE
+							PRINTBUTTON @"[着衣パイズリフラグ]:%表示用変数%", @"%SUBSTRINGU(CSTRNAME:LCOUNT,3, 2)%パイズリ{服装プリセット}"
+						ENDIF
+						PRINTS " "
+				ENDSELECT
+			ENDIF
+			PRINTL 
+	ENDSELECT
+NEXT
+
+DRAWLINE
+PRINTPLAIN □ 相性 
+PRINTBUTTON "[変更する]", "相性を変更する"
+PRINTL 
+表示数 = 0
+FOR LCOUNT, 0, 10000
+	IF EXISTCSV(LCOUNT)
+		表示用変数 = 
+		SIF RELATION:LCOUNT
+			表示用変数 = 　%CSVNAMEF(LCOUNT)%×{RELATION:LCOUNT}\%
+		IF 表示用変数 != ""
+			PRINTFORMLC %表示用変数%
+			表示数++
+		ENDIF
+		IF 表示数 == 4
+			CALL NEWLINE
+			表示数 = 0
+		ENDIF
+	ENDIF
+NEXT
+CALL NEWLINE
+
+DRAWLINE
+PRINTPLAIN □ キャラマニュアル 
+PRINTBUTTON "[変更する]", "マニュアルを変更する"
+PRINTL 
+FOR LCOUNT, 0, 100
+	SIF CSTR:LCOUNT == ""
+		BREAK
+	PRINTFORML 　%CSTR:LCOUNT%
+NEXT
+
+DRAWLINE
+PRINTL □ 登場作品、キャラデザイナー
+PRINT 　登場作品 
+PRINTBUTTON @"[1] %CSTR:登場作品% ", "登場作品"
+PRINTBUTTON @"[2] %CSTR:登場作品２% ", "登場作品２"
+PRINTBUTTON @"[3] %CSTR:登場作品３%", "登場作品３"
+PRINTL 
+IF !ORIGIN
+	PRINT 　キャラデザ 
+	PRINTBUTTON @"[1] %CSTR:キャラデザ% ", "キャラデザ"
+	PRINTBUTTON @"[2] %CSTR:キャラデザ２%", "キャラデザ２"
+	PRINTL 
+ENDIF
+DRAWLINE
+PRINTBUTTON @"　[詳細な性経験を設定する]", "性経験設定"
+PRINTL
+
+DRAWLINE
+PRINTBUTTON "　[0] CSVを出力する ", "0"
+PRINTBUTTON "[2] CSV作成をやめる ", "2"
+PRINTBUTTON "[3] 既存のCSVを呼び出す ", "3"
+PRINTBUTTON "[4] プロジェクトを初期化する", "4"
+
+$LOOP
+INPUTS
+CLEARLINE 1
+選択文字列 = %RESULTS%
+IF STRFIND(選択文字列, "挿入可") >= 0
+	選択文字列 = 挿入可
+	付随番号 = DIG_SEP(RESULTS)
+ELSEIF STRFIND(選択文字列, "着衣併用") >= 0
+	選択文字列 = 着衣併用
+	付随番号 = DIG_SEP(RESULTS)
+ELSEIF STRFIND(選択文字列, "全身上着パイズリ") >= 0
+	選択文字列 = 全身上着パイズリ
+	付随番号 = DIG_SEP(RESULTS)
+ELSEIF STRFIND(選択文字列, "上着パイズリ") >= 0
+	選択文字列 = 上着パイズリ
+	付随番号 = DIG_SEP(RESULTS)
+ELSEIF STRFIND(選択文字列, "下着パイズリ") >= 0
+	選択文字列 = 下着パイズリ
+	付随番号 = DIG_SEP(RESULTS)
+ELSEIF STRFIND(選択文字列, "特殊") >= 0
+	選択文字列 = 特殊
+	付随番号 = DIG_SEP(RESULTS)
+ELSEIF STRFIND(選択文字列, "上半身上着") >= 0
+	選択文字列 = 上半身上着
+	付随番号 = DIG_SEP(RESULTS)
+ELSEIF STRFIND(選択文字列, "下半身上着") >= 0
+	選択文字列 = 下半身上着
+	付随番号 = DIG_SEP(RESULTS)
+ELSEIF STRFIND(選択文字列, "全身上着") >= 0
+	選択文字列 = 全身上着
+	付随番号 = DIG_SEP(RESULTS)
+ELSEIF STRFIND(選択文字列, "上半身下着") >= 0
+	選択文字列 = 上半身下着
+	付随番号 = DIG_SEP(RESULTS)
+ELSEIF STRFIND(選択文字列, "下半身下着") >= 0
+	選択文字列 = 下半身下着
+	付随番号 = DIG_SEP(RESULTS)
+ELSEIF STRFIND(選択文字列, "足元") >= 0
+	選択文字列 = 足元
+	付随番号 = DIG_SEP(RESULTS)
+ELSEIF STRFIND(選択文字列, "服装プリセット") >= 0
+	選択文字列 = 服装プリセット
+	付随番号 = DIG_SEP(RESULTS)
+ENDIF
+
+SELECTCASE 選択文字列
+	CASE "0"
+		PRINTL 現在の作業状況のCSVをログに出力します。よろしいですか？
+		PRINTL [0] - はい
+		PRINTL [1] - いいえ
+		BINPUT
+
+		IF RESULT == 0
+			;別関数に以降
+			CALL CSV出力
+		ENDIF
+		GOTO RESTART
+	CASE "2"
+		PRINTL 現在の作業状況を破棄してタイトル画面に戻ります。よろしいですか？
+		PRINTL [0] - はい
+		PRINTL [1] - いいえ
+		BINPUT
+		IF RESULT == 0
+			DELALLCHARA
+			RETURN
+		ENDIF
+		GOTO RESTART
+	CASE "3"
+		PRINTL 現在の作業状況を破棄して既存のCSVを呼び出します。よろしいですか？
+		PRINTL [0] - はい
+		PRINTL [1] - いいえ
+		BINPUT
+		IF RESULT == 0
+			CALL CHARA_LIST, "全キャラ表示"
+			IF EXISTCSV(RESULT)
+				DELALLCHARA
+				ADDVOIDCHARA
+				NAME:0 = 主人
+				CALLNAME:0 = 主人
+				LRESULT = RESULT
+				TALENT:0:体格 = 3
+				SKIPDISP 1
+				CALL CHARA_ADD, LRESULT
+				CCB:LRESULT = 0
+				SKIPDISP 0
+				TARGET = 1
+			ENDIF
+		ENDIF
+		GOTO RESTART
+	CASE "4"
+		PRINTL 現在の作業状況を破棄してCSVを作り直します。よろしいですか？
+		PRINTL [0] - はい
+		PRINTL [1] - いいえ
+		BINPUT
+		IF RESULT == 0
+			DELALLCHARA
+			RESTART
+		ENDIF
+		GOTO RESTART
+	CASE "キャラ番号"
+		PRINTL キャラ番号を入力してください
+		INPUT
+		NO:TARGET = RESULT
+		GOTO RESTART
+	CASE "価格"
+		PRINTL 価格を入力してください
+		INPUT
+		CFLAG:価格 = RESULT
+		GOTO RESTART
+	CASE "誕生日"
+		PRINTL 誕生日を4桁で入力してください(例:6月24日→0624)
+		DO
+			INPUT
+		LOOP !INRANGE(RESULT/100, 1, 12) || !INRANGE(RESULT%100, 1, 31)
+		CFLAG:誕生日 = RESULT
+		GOTO RESTART
+	CASE "名前"
+		PRINTL フルネームを入力してください
+		INPUTS
+		NAME:TARGET = %RESULTS%
+		GOTO RESTART
+	CASE "呼び名"
+		PRINTL 呼び名を入力してください
+		INPUTS
+		CALLNAME:TARGET = %RESULTS%
+		GOTO RESTART
+	CASE "性別"
+		PRINTL 性別を選んでください
+		PRINTL [1] - 男
+		PRINTL [2] - 女
+		PRINTL [0] - 不明
+		BINPUT
+		TALENT:性別 = RESULT
+	CASE "体力"
+		PRINTL 体力の数値を入力してください
+		INPUT
+		MAXBASE:体力 = RESULT
+		GOTO RESTART
+	CASE "気力"
+		PRINTL 気力の数値を入力してください
+		INPUT
+		MAXBASE:気力 = RESULT
+		GOTO RESTART
+	CASE "種族"
+		PRINTL 種族を選択してください
+		VARSET 種族名
+
+		種族ナンバー = GETNUM(CSTR, "種族")
+
+		FOR LCOUNT, 1, 10000
+			SIF !EXISTCSV(LCOUNT)
+				CONTINUE
+			;変数「種族名」の配列に該当種族名がまだ入ってない場合は入れる
+			IF CSVCSTR(LCOUNT, 種族ナンバー) != ""
+				SIF FINDELEMENT(種族名, ESCAPE(CSVCSTR(LCOUNT, 種族ナンバー)), 0, VARSIZE("種族名"), 1) == -1
+					種族名:FINDELEMENT(種族名, "", 0, VARSIZE("種族名"), 1) = %CSVCSTR(LCOUNT, 種族ナンバー)%
+			ENDIF
+		NEXT
+
+		;追加の特殊種族
+		種族名:FINDELEMENT(種族名, "", 0, VARSIZE("種族名"), 1) = スライム
+
+		FOR LCOUNT, 0, VARSIZE("種族名")
+			SIF 種族名:LCOUNT == ""
+				BREAK
+			PRINTFORMLC [{LCOUNT}] %I18N(種族名:LCOUNT)%
+		NEXT
+		CALL NEWLINE
+		BINPUT
+		CSTR:種族 = %種族名:RESULT%
+		GOTO RESTART
+	CASE "素質を変更する"
+		CALL TALENT_CHANGE, 素質数値指定, 1
+		GOTO RESTART
+	CASE "素質を数値指定する"
+		INVERTBIT 素質数値指定, 0
+		GOTO RESTART
+	CASE "特殊", "上半身上着", "下半身上着", "全身上着", "上半身下着", "下半身下着", "足元"
+		表示用変数 = %選択文字列%
+		PRINTFORML %表示用変数%の名前を入力してください
+		PRINTBUTTON "[着衣不可にする]", "着衣不可にする"
+		PRINTBUTTON "[着衣可にする]", "着衣可にする"
+		PRINTL 
+		INPUTS
+		SELECTCASE RESULTS
+			CASE "着衣不可にする"
+				CFLAG:(表示用変数+"着衣不可") = 1
+				CSTR:表示用変数 = 
+			CASE "着衣可にする"
+				CFLAG:(表示用変数+"着衣不可") = 0
+			CASEELSE
+				CSTR:@"%表示用変数%\@ 付随番号 > 1 ? {付随番号} #\@" = %RESULTS%
+		ENDSELECT
+		GOTO RESTART
+	CASE "挿入可"
+		PRINTL 挿入可能フラグを設定してください
+		PRINTL [0] - フラグ無し
+		PRINTL [1] - 下半身上着、もしくは全身上着を着たまま性交可能
+		BINPUT
+		CFLAG:@"挿入可\@ 付随番号 > 1 ? {付随番号} #\@" = RESULT
+		GOTO RESTART
+	CASE "着衣併用"
+		PRINTL 全身上着の着衣併用フラグを設定してください
+		PRINTL [0] - フラグ無し
+		PRINTL [1] - 上半身上着及び下半身上着との併用可能
+		PRINTL [2] - 上半身下着及び下半身下着との併用不可能
+		BINPUT
+		CFLAG:@"着衣併用\@ 付随番号 > 1 ? {付随番号} #\@" = RESULT
+		GOTO RESTART
+	CASE "全身上着パイズリ", "上着パイズリ", "下着パイズリ"
+		表示用変数 '= SUBSTRINGU(選択文字列,0, STRLENSU(選択文字列)-4)
+		PRINTFORML %表示用変数%の着衣パイズリフラグを設定してください
+		PRINTFORML [ 0] - \@表示用変数=="下着" ? 下着 # 上着\@を付けたままパイズリできない
+		PRINTL [ 1] - 下方向だけ穴が空いていてパイズリのみ可(パイズリフェラは不可) 
+		PRINTL [ 2] - 上下に穴が空いていてパイズリフェラが可能
+		PRINTL [ 3] - 縦パイズリなら可
+		PRINTL [ 4] - すべて可能
+		PRINTL [ 5] - 服を少したくし上げてパイズリ可(フェラが入るパイズリフェラができない)
+		PRINTL [ 6] - 服を少しはだけさせてパイズリ可(和服、正面がボタン・ジッパーになっている服等)
+		PRINTL [10] - スク水・競泳水着等(はだけさせてパイズリだが、爆乳以上で谷間に生地を挟む)
+		PRINTL [11] - スク水・競泳水着等+下だけ穴あき
+		PRINTL [12] - スク水・競泳水着等+下だけ穴あきで上からペニスが出る
+		PRINTL [13] - スク水・競泳水着等+前面だけ穴あき
+		PRINTL [14] - スク水・競泳水着等+スリットのようになってる
+		BINPUT
+		CFLAG:@"%表示用変数%パイズリ\@ 付随番号 > 1 ? {付随番号} #\@" = RESULT
+		GOTO RESTART
+	CASE "服装プリセット"
+		服装プリセット = 付随番号
+		GOTO RESTART
+	CASE "相性を変更する"
+		PRINTL 相手の番号を入力してください
+		PRINT [10000] 一覧表示 
+		PRINTL [10001] 全部既定値に戻す
+		INPUT
+		IF RESULT == 10000
+			PRINTL □ 一覧表示
+			CALL CHARA_LIST, "全キャラ表示"
+		ELSEIF RESULT == 10001
+			VARSET RELATION:TARGET:0, 0
+			GOTO RESTART
+		ELSEIF !EXISTCSV(RESULT)
+			PRINTFORMW {RESULT}にはキャラが登録されていません
+			GOTO RESTART
+		ENDIF
+		LRESULT = RESULT
+		SIF RESULT == 10000
+			GOTO RESTART
+		PRINTFORML %CSVNAME(LRESULT)%との相性値を入力してください
+		INPUT
+		RELATION:LRESULT = RESULT
+		GOTO RESTART
+	CASE "マニュアルを変更する"
+		$MANUAL
+		PRINTL 変更する行を選んでください
+		FOR LCOUNT, 0, 100
+			IF CSTR:LCOUNT == ""
+				表示数 = LCOUNT
+				BREAK
+			ENDIF
+			PRINTFORML [{LCOUNT}]%CSTR:LCOUNT%
+		NEXT
+		DRAWLINE
+		PRINT  [100] 完了 
+		PRINTL [101] 行を追加
+		DO
+			INPUT
+			SELECTCASE RESULT
+				CASE 100
+					GOTO RESTART
+				CASE 101
+					PRINTL 追加する行のマニュアルを入力してください
+					INPUTS
+					CSTR:表示数 = %RESULTS%
+					GOTO MANUAL
+				CASEELSE
+					IF CSTR:RESULT != ""
+						PRINTFORML {RESULT}行目のマニュアルを入力してください
+						PRINTBUTTON "[この行を削除]", "この行を削除"
+						PRINTL 
+						INPUTS %CSTR:RESULT%
+						IF RESULTS == "この行を削除"
+							FOR LCOUNT, RESULT, 表示数
+								CSTR:LCOUNT = %CSTR:(LCOUNT+1)%
+							NEXT
+							GOTO MANUAL
+						ENDIF
+						CSTR:RESULT = %RESULTS%
+						GOTO MANUAL
+					ENDIF
+			ENDSELECT
+		LOOP 1
+	CASE "登場作品"
+		PRINTL 登場作品名を入力してください
+		INPUTS
+		CSTR:登場作品 = %RESULTS%
+		GOTO RESTART
+	CASE "登場作品２"
+		PRINTL 登場作品名を入力してください
+		INPUTS
+		CSTR:登場作品２ = %RESULTS%
+		GOTO RESTART
+	CASE "登場作品３"
+		PRINTL 登場作品名を入力してください
+		INPUTS
+		CSTR:登場作品３ = %RESULTS%
+		GOTO RESTART
+	CASE "キャラデザ"
+		PRINTL キャラデザイナー名を入力してください
+		INPUTS
+		CSTR:キャラデザ = %RESULTS%
+		GOTO RESTART
+	CASE "キャラデザ２"
+		PRINTL キャラデザイナー名を入力してください
+		INPUTS
+		CSTR:キャラデザ２ = %RESULTS%
+		GOTO RESTART
+	CASE "性経験設定"
+		CALL 性経験履歴, 1
+		GOTO RESTART
+	CASE "経験無し"
+		SIF PENIS(TARGET)
+			TALENT:童貞 = 1
+		SIF VAGINA(TARGET)
+			TALENT:処女 = 1
+		VARSET EXP, 0
+	CASE "経験ランダム"
+		TALENT:童貞 = 0
+		TALENT:処女 = 0
+		VARSET EXP, 0
+		IF VAGINA(TARGET)
+			EXP:Ｖ経験 = RAND(10, 31)
+			EXP:膣射経験 = RAND(0, 6)
+			EXP:絶頂経験 += RAND(10, 21)
+			EXP:精液経験 = RAND(20, 51)+EXP:膣射経験
+		ENDIF
+		IF PENIS(TARGET)
+			EXP:射精経験 = RAND(50, 101)
+			EXP:絶頂経験 += EXP:射精経験
+		ENDIF
+		IF SEX(TARGET) == 2
+			EXP:パイズリ経験 = RAND(3, 11)
+			EXP:フェラ経験 = RAND(5, 21)
+		ENDIF
+		EXP:性交経験 = RAND(5, 11)
+		EXP:自慰経験 = RAND(10, 31)
+	CASE "経験ランダム(すごい)"
+		TALENT:童貞 = 0
+		TALENT:処女 = 0
+		VARSET EXP, 0
+		IF VAGINA(TARGET)
+			EXP:Ｖ経験 = RAND(500, 1001)
+			EXP:膣射経験 = RAND(300, 501)
+			EXP:出産経験 = RAND(1, 4)
+			SIF RAND:5 == 0
+				EXP:流産経験 = 1
+		ENDIF
+		SIF PENIS(TARGET)
+			EXP:射精経験 = RAND(2000, 5001)
+		SELECTCASE SEX(TARGET)
+			CASE 1
+				EXP:ゲイ経験 = RAND(500, 1001)
+			CASE 2
+				EXP:レズ経験 = RAND(500, 1001)
+				EXP:パイズリ経験 = RAND(200, 301)
+		ENDSELECT
+		EXP:Ａ経験 = RAND(500, 1001)
+		EXP:性交経験 = RAND(300, 501)
+		EXP:自慰経験 = RAND(1000, 2001)
+		EXP:フェラ経験 = RAND(500, 1001)
+		EXP:絶頂経験 = RAND(500, 1001)+EXP:射精経験
+		EXP:精液経験 = RAND(2000, 5001)+EXP:膣射経験
+	CASE "胸の大きさを設定してください", "絶壁", "貧乳", "並乳", "巨乳", "豊乳", "爆乳"
+		SIF SEX(TARGET) == 1
+			RESTART
+		PRINTL 　[1] 絶壁にする
+		PRINTL 　[2] 貧乳にする
+		PRINTL 　[3] 並乳にする
+		PRINTL 　[4] 巨乳にする
+		PRINTL 　[5] 豊乳にする
+		PRINTL 　[6] 爆乳にする
+		BINPUT
+		TALENT:バストサイズ = RESULT
+	CASE "幼児体型", "小柄体系", "普通体型", "長身体系"
+		PRINTL 　[1] 幼児にする
+		PRINTL 　[2] 小柄にする
+		PRINTL 　[3] 普通にする
+		PRINTL 　[4] 長身にする
+		BINPUT
+		TALENT:体格 = RESULT
+	CASEELSE
+		RESULTS = %REPLACE(RESULTS, " ", "")%
+		SIF RESULTS == ""
+			GOTO RESTART
+		;経験名は短縮されているので復元する
+		RESULTS = %短縮経験名(RESULTS, 1)%
+		FOR LCOUNT, 0, VARSIZE("EXP")
+			IF EXPNAME:LCOUNT == RESULTS
+				PRINTFORML %EXPNAME:LCOUNT%の数値を入力してください
+				INPUT
+				EXP:LCOUNT = RESULT
+			ENDIF
+		NEXT
+		FOR LCOUNT, 0, VARSIZE("ABL")
+			IF ABLNAME:LCOUNT == RESULTS
+				PRINTFORML %ABLNAME:LCOUNT%の数値を入力してください
+				INPUT
+				ABL:LCOUNT = RESULT
+			ENDIF
+		NEXT
+		GOTO RESTART
+ENDSELECT
+
+GOTO RESTART
+
+@CSV出力, 再整形
+#DIM DYNAMIC 再整形
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC 服装プリセット
+#DIM DYNAMIC PREVLINE
+#DIMS DYNAMIC SPLITVAR, 500
+
+;TARGETが対象
+CLEARLINE LINECOUNT
+PRINTFORML 番号,{NOF(TARGET)}
+PRINTFORML 名前,%NAME:TARGET%
+IF CALLNAME:TARGET == ""
+	PRINTFORML 呼び名,%NAME:TARGET%
+ELSE
+	PRINTFORML 呼び名,%CALLNAME:TARGET%
+ENDIF
+SIF CSTR:英語名 != ""
+	PRINTFORML CSTR,英語名,%CSTR:英語名%
+SIF CSTR:英語呼び名 != ""
+	PRINTFORML CSTR,英語呼び名,%CSTR:英語呼び名%
+
+PRINTL 
+PRINTFORML フラグ,価格,{CFLAG:価格}
+SIF CFLAG:誕生日
+	PRINTFORML フラグ,誕生日,{CFLAG:誕生日}
+SIF CFLAG:血縁コード
+	PRINTFORML フラグ,血縁コード,{CFLAG:血縁コード}
+SIF CFLAG:続柄
+	PRINTFORML フラグ,続柄,{CFLAG:続柄}
+SIF CFLAG:兄弟
+	PRINTFORML フラグ,兄弟,{CFLAG:兄弟}
+SIF CFLAG:姉妹
+	PRINTFORML フラグ,姉妹,{CFLAG:姉妹}
+	
+PRINTL 
+PRINTFORML 基礎,体力,{MAXBASE:体力}
+PRINTFORML 基礎,気力,{MAXBASE:気力}
+FOR LCOUNT, 0, VARSIZE("EXP")
+	SIF EXP:LCOUNT != 0
+		PRINTFORML 経験,%EXPNAME:LCOUNT%,{EXP:LCOUNT}
+NEXT
+FOR LCOUNT, 0, VARSIZE("ABL")
+	SIF ABL:LCOUNT != 0
+		PRINTFORML 能力,%ABLNAME:LCOUNT%,{ABL:LCOUNT}
+NEXT
+SIF TALENT:恋心
+	PRINTFORML CSTR,恋心,%CSTR:恋心%
+SIF TALENT:既婚者
+	PRINTFORML CSTR,既婚者,%CSTR:既婚者%
+PRINTFORML 素質,性別,{TALENT:性別}
+SIF SEX(TARGET) == 2
+	PRINTFORML 素質,バストサイズ,{TALENT:バストサイズ}
+SIF TALENT:体格 != 3
+	PRINTFORML 素質,体格,{TALENT:体格}
+FOR LCOUNT, 0, VARSIZE("TALENT")
+	SELECTCASE TALENTNAME:LCOUNT
+		CASE "性別", "バストサイズ", "恋心", "既婚者", "体格"
+		CASEELSE
+			SIF TALENT:LCOUNT > 0
+				PRINTFORML 素質,%TALENTNAME:LCOUNT%
+	ENDSELECT
+NEXT
+IF MAXARRAY(RELATION) != 0 || MINARRAY(RELATION) != 0
+	PRINTL {
+	PRINTL CSTR,相性,
+	FOR LCOUNT, 0, 10000
+		SIF RELATION:LCOUNT
+			PRINTFORML %CSVNAME(LCOUNT)%*{RELATION:LCOUNT}/
+	NEXT
+	PRINTL }
+ENDIF
+IF CSTR:担当曲 != ""
+	SPLIT CSTR:担当曲, "|", SPLITVAR
+	PRINTL {
+	PRINTL CSTR,担当曲,
+	FOR LCOUNT, 0, RESULT
+		;先頭の半角スペースを詰める
+		SIF SUBSTRINGU(SPLITVAR:LCOUNT, 0, 1) == " "
+			SPLITVAR:LCOUNT = %SUBSTRINGU(SPLITVAR:LCOUNT, 1, -1)%
+		SIF SPLITVAR:LCOUNT == ""
+			CONTINUE
+		PRINTFORML %SPLITVAR:LCOUNT%|
+	NEXT
+	PRINTL }
+ENDIF
+IF MAX(モブ経験人数:TARGET:0, モブパイズリ人数:TARGET:0, MAXARRAY(経験回数), MAXARRAY(パイズリ回数)) > 0
+	PRINTL {
+	PRINTL CSTR,性経験,
+	SIF モブ経験人数:0
+		PRINTFORML モブ経験人数/{モブ経験人数}/
+	SIF モブ経験回数:0
+		PRINTFORML モブ経験回数/{モブ経験回数}/
+	SIF モブ中出し回数:0
+		PRINTFORML モブ中出し回数/{モブ中出し回数}/
+	SIF モブアナル中出し回数:0
+		PRINTFORML モブアナル中出し回数/{モブアナル中出し回数}/
+	SIF モブ中出され回数:0
+		PRINTFORML モブ中出され回数/{モブ中出され回数}/
+	SIF モブアナル中出され回数:0
+		PRINTFORML モブアナル中出され回数/{モブアナル中出され回数}/
+	SIF モブ孕み回数:0
+		PRINTFORML モブ孕み回数/{モブ孕み回数}/
+	SIF モブ孕ませ回数:0
+		PRINTFORML モブ孕ませ回数/{モブ孕ませ回数}/
+	SIF モブパイズリ人数:0
+		PRINTFORML モブパイズリ人数/{モブパイズリ人数}/
+	SIF モブパイズリ回数:0
+		PRINTFORML モブパイズリ回数/{モブパイズリ回数}/
+	SIF モブ挟射回数:0
+		PRINTFORML モブ挟射回数/{モブ挟射回数}/
+	FOR LCOUNT, 0, 10000
+		SIF 経験回数:LCOUNT
+			PRINTFORML 経験回数/%CSVNAME(LCOUNT)%*{経験回数:LCOUNT}/
+		SIF 中出し回数:LCOUNT
+			PRINTFORML 中出し回数/%CSVNAME(LCOUNT)%*{中出し回数:LCOUNT}/
+		SIF アナル中出し回数:LCOUNT
+			PRINTFORML アナル中出し回数/%CSVNAME(LCOUNT)%*{アナル中出し回数:LCOUNT}/
+		SIF 中出され回数:LCOUNT
+			PRINTFORML 中出され回数/%CSVNAME(LCOUNT)%*{中出され回数:LCOUNT}/
+		SIF アナル中出され回数:LCOUNT
+			PRINTFORML アナル中出され回数/%CSVNAME(LCOUNT)%*{アナル中出され回数:LCOUNT}/
+		SIF 孕み回数:LCOUNT
+			PRINTFORML 孕み回数/%CSVNAME(LCOUNT)%*{孕み回数:LCOUNT}/
+		SIF 孕ませ回数:LCOUNT
+			PRINTFORML 孕ませ回数/%CSVNAME(LCOUNT)%*{孕ませ回数:LCOUNT}/
+		SIF パイズリ回数:LCOUNT
+			PRINTFORML パイズリ回数/%CSVNAME(LCOUNT)%*{パイズリ回数:LCOUNT}/
+		SIF 挟射回数:LCOUNT
+			PRINTFORML 挟射回数/%CSVNAME(LCOUNT)%*{挟射回数:LCOUNT}/
+	NEXT
+	PRINTL }
+ENDIF
+SIF CSTR:童貞 != ""
+	PRINTFORML CSTR,童貞,%CSTR:童貞%
+SIF CSTR:処女 != ""
+	PRINTFORML CSTR,処女,%CSTR:処女%
+PRINTL 
+
+FOR LCOUNT, 0, 100
+	IF CSTR:LCOUNT != ""
+		PRINTFORML CSTR,{LCOUNT},%CSTR:LCOUNT%
+	ELSE
+		BREAK
+	ENDIF
+NEXT
+
+PRINTL 
+
+PRINTL ;服装
+PREVLINE = LINECOUNT
+FOR 服装プリセット, 1, 11
+	FOR LCOUNT, 0, VARSIZE("CSTR")
+		SELECTCASE CSTRNAME:LCOUNT
+			CASE "特殊", "上半身上着", "下半身上着", "全身上着", "上半身下着", "下半身下着", "足元"
+				IF CFLAG:(CSTRNAME:LCOUNT+"着衣不可") && 服装プリセット == 1
+					PRINTFORML フラグ,%CSTRNAME:LCOUNT%着衣不可
+				ELSEIF CSTR:@"%CSTRNAME:LCOUNT%\@ 服装プリセット > 1 ? {服装プリセット} #\@" != ""
+					PRINTFORML CSTR,%CSTRNAME:LCOUNT%\@ 服装プリセット > 1 ? {服装プリセット} #\@,%CSTR:@"%CSTRNAME:LCOUNT%\@ 服装プリセット > 1 ? {服装プリセット} #\@"%
+				ENDIF
+		ENDSELECT
+	NEXT
+	SIF CFLAG:@"挿入可\@ 服装プリセット > 1 ? {服装プリセット} #\@"
+		PRINTFORML フラグ,挿入可\@ 服装プリセット > 1 ? {服装プリセット} #\@
+	SIF CFLAG:@"着衣併用\@ 服装プリセット > 1 ? {服装プリセット} #\@" != 0
+		PRINTFORML フラグ,着衣併用\@ 服装プリセット > 1 ? {服装プリセット} #\@,{CFLAG:@"着衣併用\@ 服装プリセット > 1 ? {服装プリセット} #\@"}
+	SIF CFLAG:@"上着パイズリ\@ 服装プリセット > 1 ? {服装プリセット} #\@" != 0
+		PRINTFORML フラグ,上着パイズリ\@ 服装プリセット > 1 ? {服装プリセット} #\@,{CFLAG:@"上着パイズリ\@ 服装プリセット > 1 ? {服装プリセット} #\@"}
+	SIF CFLAG:@"下着パイズリ\@ 服装プリセット > 1 ? {服装プリセット} #\@" != 0
+		PRINTFORML フラグ,下着パイズリ\@ 服装プリセット > 1 ? {服装プリセット} #\@,{CFLAG:@"下着パイズリ\@ 服装プリセット > 1 ? {服装プリセット} #\@"}
+	SIF CFLAG:@"全身上着パイズリ\@ 服装プリセット > 1 ? {服装プリセット} #\@" != 0
+		PRINTFORML フラグ,全身上着パイズリ\@ 服装プリセット > 1 ? {服装プリセット} #\@,{CFLAG:@"全身上着パイズリ\@ 服装プリセット > 1 ? {服装プリセット} #\@"}
+	SIF CFLAG:@"耐水\@ 服装プリセット > 1 ? {服装プリセット} #\@" != 0
+		PRINTFORML フラグ,耐水\@ 服装プリセット > 1 ? {服装プリセット} #\@,{CFLAG:@"耐水\@ 服装プリセット > 1 ? {服装プリセット} #\@"}
+	SIF PREVLINE != LINECOUNT
+		PRINTL 
+	PREVLINE = LINECOUNT
+NEXT
+
+PRINTFORML CSTR,種族,%CSTR:種族%
+IF CFLAG:グリム
+	PRINTL 
+	PRINTL フラグ,グリム
+ENDIF
+
+SIF CSTR:登場作品 != ""
+	PRINTFORML CSTR,登場作品,%CSTR:登場作品%
+SIF CSTR:登場作品２ != ""
+	PRINTFORML CSTR,登場作品２,%CSTR:登場作品２%
+SIF CSTR:登場作品３ != ""
+	PRINTFORML CSTR,登場作品３,%CSTR:登場作品３%
+SIF CSTR:キャラデザ != ""
+	PRINTFORML CSTR,キャラデザ,%CSTR:キャラデザ%
+SIF CSTR:キャラデザ２ != ""
+	PRINTFORML CSTR,キャラデザ２,%CSTR:キャラデザ２%
+PRINTL 
+SIF CFLAG:倫理観
+	PRINTFORML フラグ,倫理観,{CFLAG:倫理観}
+SIF CFLAG:トップバスト
+	PRINTFORML フラグ,トップバスト,{CFLAG:トップバスト}
+SIF CFLAG:アンダーバスト
+	PRINTFORML フラグ,アンダーバスト,{CFLAG:アンダーバスト}
+PRINTL 
+IF SP
+	OUTPUTLOG
+ELSE
+	OUTPUTLOG @"CreatedCSV/Chara{NOF(TARGET)}_%CALLNAME:TARGET%.csv"
+ENDIF
+IF 再整形
+	PRINTFORML No.{NOF(TARGET)} %NAME:TARGET% CSV出力完了
+ELSE
+	PRINTW CreatedCSVフォルダに出力しました。CSV/Charaフォルダに移動orコピーして再起動してください
+ENDIF

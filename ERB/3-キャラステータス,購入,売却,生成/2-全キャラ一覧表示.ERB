@@ -1,0 +1,1244 @@
+﻿@CHARA_BUY
+#DIM LRESULT
+
+CALL TUTORIAL
+
+VARLINE = LINECOUNT
+
+CALL CHARA_LIST, "購入"
+
+SIF RESULT == 10000
+	RETURN 0
+
+LRESULT = RESULT
+
+CALL CHARA_MANUAL, LRESULT, 1
+SIF RESULT
+	RESTART
+CALL CHARA_BUY_CHECK, LRESULT
+
+IF RESULT == 0
+	CALL TUTORIAL, "調教開始"
+	RETURN 0
+ELSE
+	RESTART
+ENDIF
+
+;2017/07/11に、表示～選択までの全てを関数内で行うように
+;;;第1引数=表示場面(購入,全キャラ表示,主人選択,パートナー選択,段位エディット)
+;;;第2引数がTRUEなら無条件で選択可能
+@CHARA_LIST, 表示場面, 無条件選択, 全キャラ検索
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC 単位文字数
+#DIM DYNAMIC 価格上限
+#DIM DYNAMIC 選択可能, 10000
+#DIM 表示上限 = 30
+;#DIMS 登場作品フィルタ
+#DIMS キャラデザフィルタ
+#DIMS 種族フィルタ
+#DIM DYNAMIC 表示数
+#DIM DYNAMIC 次ページあり
+#DIM DYNAMIC 飛ばした数
+#DIMS DYNAMIC 文字列表示用
+#DIM DYNAMIC ランセレ, 10000
+#DIM DYNAMIC LRESULT
+#DIMS DYNAMIC 表示場面
+#DIM DYNAMIC 無条件選択
+#DIM フィルタ有効 = 1
+#DIM DYNAMIC 検索機能
+#DIM DYNAMIC 検索ワード
+#DIMS DYNAMIC マウスオーバー
+#DIM DYNAMIC 全キャラ検索
+
+検索機能 = 全キャラ検索
+
+;選択可能キャラのフラグを立てる
+FOR LCOUNT, 0, 10000
+	SIF LCOUNT == 0 && 表示場面 != "全キャラ表示"
+		CONTINUE
+	SIF !EXISTCSV(LCOUNT)
+		CONTINUE
+	;学園のキャラ検索の場合セーブが古いとNAME:-1でエラー落ちする事がある
+	SIF 全キャラ検索 && GETCHARA(LCOUNT) == -1
+		CONTINUE
+	;隠しキャラは選べない
+	SIF CSVTALENT(LCOUNT, GETNUM(TALENT, "隠しキャラ")) && 表示場面 != "全キャラ表示"
+		CONTINUE
+	;アニマルは主人にできない
+	SIF 表示場面 == "主人選択" && CSVTALENT(LCOUNT, GETNUM(TALENT, "アニマル"))
+		CONTINUE
+	;以上を抜けると選択可能
+	;すなわちキーボードの直接入力によるフィルタの無視は仕様とする
+	選択可能:LCOUNT = 1
+NEXT
+
+$リスト表示
+
+CALL LOOP_CLEARLINE
+DRAWLINE
+
+IF 表示場面 == "購入"
+	PRINT 　
+	PRINTFORM %日付表示()%
+	CALL PASELI, @"%I18N("所持金")%:{MONEY}＄"
+	PRINTFORM  %I18N("難易度")%:%難易度()% 
+	PRINTFORM %I18N("主人")%:%NAMEDISP(MASTER)% 
+	SIF TARGET >= 0
+		PRINTFORM %I18N("奴隷")%:%NAMEDISP(TARGET)% 
+	SIF ASSI >= 0
+		PRINTFORM %I18N("助手")%:%NAMEDISP(ASSI)% %NAMEDISP(ASSI:1)%
+	PRINTL 
+	DRAWLINE 
+ENDIF
+
+SIF GROUPMATCH(表示場面, "購入", "主人選択", "パートナー選択")
+	CALL SHOW_MODS
+
+IF OPTION:価格フィルタ所持金依存
+	価格上限 = MONEY
+ELSE
+	価格上限 = OPTION:価格フィルタ上限
+ENDIF
+飛ばした数 = 0
+次ページあり = 0
+表示数 = 0
+FOR LCOUNT, 0, 10000
+	;選択可能じゃないキャラは非表示
+	SIF !選択可能:LCOUNT
+		CONTINUE
+	;フィルタによる除外
+	IF 検索機能
+		SIF GETTEXTBOX() != "" && STRFIND(TOUPPER(CSVNAME(LCOUNT)), TOUPPER(GETTEXTBOX())) == -1 && STRFIND(TOUPPER(CSVCSTR(LCOUNT, GETNUM(CSTR, "英語名"))), TOUPPER(GETTEXTBOX())) == -1
+			CONTINUE
+	ELSEIF フィルタ有効
+		SIF GROUPMATCH(表示場面, "購入", "段位エディット") && LCOUNT == NOF(MASTER)
+			CONTINUE
+		SIF CCB:LCOUNT
+			CONTINUE
+		SIF OPTION:男女フィルタ != CSVTALENT(LCOUNT , GETNUM(TALENT, "性別")) && OPTION:男女フィルタ
+			CONTINUE
+		;一致するキャラだけ表示
+		IF OPTION:フィルタスイッチ１ == 1
+			SELECTCASE TALENTNAME:(OPTION:カスタムフィルタ１)
+				CASE "恋心"
+					SIF CSVCSTR(LCOUNT, GETNUM(CSTR, "恋心")) == ""
+						CONTINUE
+				CASE "既婚者"
+					SIF CSVCSTR(LCOUNT, GETNUM(CSTR, "既婚者")) == ""
+						CONTINUE
+				CASEELSE
+					SIF CSVTALENT(LCOUNT, OPTION:カスタムフィルタ１) == 0
+						CONTINUE
+			ENDSELECT
+		ENDIF
+		;一致するキャラを除外
+		IF OPTION:フィルタスイッチ１ == 2
+			SELECTCASE TALENTNAME:(OPTION:カスタムフィルタ１)
+				CASE "恋心"
+					SIF CSVCSTR(LCOUNT, GETNUM(CSTR, "恋心")) != ""
+						CONTINUE
+				CASE "既婚者"
+					SIF CSVCSTR(LCOUNT, GETNUM(CSTR, "既婚者")) != ""
+						CONTINUE
+				CASEELSE
+					SIF CSVTALENT(LCOUNT, OPTION:カスタムフィルタ１) == 1
+						CONTINUE
+			ENDSELECT
+		ENDIF
+		;一致するキャラだけ表示
+		IF OPTION:フィルタスイッチ２ == 1
+			SELECTCASE TALENTNAME:(OPTION:カスタムフィルタ２)
+				CASE "恋心"
+					SIF CSVCSTR(LCOUNT, GETNUM(CSTR, "恋心")) == ""
+						CONTINUE
+				CASE "既婚者"
+					SIF CSVCSTR(LCOUNT, GETNUM(CSTR, "既婚者")) == ""
+						CONTINUE
+				CASEELSE
+					SIF CSVTALENT(LCOUNT, OPTION:カスタムフィルタ２) == 0
+						CONTINUE
+			ENDSELECT
+		ENDIF
+		;一致するキャラを除外
+		IF OPTION:フィルタスイッチ２ == 2
+			SELECTCASE TALENTNAME:(OPTION:カスタムフィルタ２)
+				CASE "恋心"
+					SIF CSVCSTR(LCOUNT, GETNUM(CSTR, "恋心")) != ""
+						CONTINUE
+				CASE "既婚者"
+					SIF CSVCSTR(LCOUNT, GETNUM(CSTR, "既婚者")) != ""
+						CONTINUE
+				CASEELSE
+					SIF CSVTALENT(LCOUNT, OPTION:カスタムフィルタ２) == 1
+						CONTINUE
+			ENDSELECT
+		ENDIF
+		IF OPTION:バストサイズフィルタ
+			SELECTCASE OPTION:バストサイズフィルタ
+				CASE 1 TO 6
+					SIF OPTION:バストサイズフィルタ != CSVTALENT(LCOUNT, GETNUM(TALENT, "バストサイズ"))
+						CONTINUE
+				CASE 12 TO 15
+					SIF OPTION:バストサイズフィルタ-10 > CSVTALENT(LCOUNT, GETNUM(TALENT, "バストサイズ"))
+						CONTINUE
+				CASE 22 TO 25
+					SIF OPTION:バストサイズフィルタ-20 < CSVTALENT(LCOUNT, GETNUM(TALENT, "バストサイズ"))
+						CONTINUE
+			ENDSELECT
+		ENDIF
+		IF OPTION:体格フィルタ
+			SELECTCASE OPTION:体格フィルタ
+				CASE 1 TO 4
+					SIF OPTION:体格フィルタ != CSVTALENT(LCOUNT, GETNUM(TALENT, "体格"))
+						CONTINUE
+				CASE 12, 13
+					SIF OPTION:体格フィルタ-10 > CSVTALENT(LCOUNT, GETNUM(TALENT, "体格")) && CSVTALENT(LCOUNT, GETNUM(TALENT, "体格")) != 0
+						CONTINUE
+				CASE 22, 23
+					SIF OPTION:体格フィルタ-20 < CSVTALENT(LCOUNT, GETNUM(TALENT, "体格")) || (OPTION:体格フィルタ == 22 && !CSVTALENT(LCOUNT, GETNUM(TALENT, "体格")) == 0)
+						CONTINUE
+			ENDSELECT
+		ENDIF
+		SIF 登場作品フィルタ != "" && GROUPMATCH(登場作品フィルタ, CSVCSTR(LCOUNT, GETNUM(CSTR, "登場作品")), CSVCSTR(LCOUNT, GETNUM(CSTR, "登場作品２")), CSVCSTR(LCOUNT, GETNUM(CSTR, "登場作品３"))) == 0
+			CONTINUE
+		SIF キャラデザフィルタ != "" && GROUPMATCH(キャラデザフィルタ, CSVCSTR(LCOUNT, GETNUM(CSTR, "キャラデザ")), CSVCSTR(LCOUNT, GETNUM(CSTR, "キャラデザ２"))) == 0
+			CONTINUE
+		SIF 種族フィルタ != "" && 種族フィルタ != CSVCSTR(LCOUNT, GETNUM(CSTR, "種族"))
+			CONTINUE
+		IF OPTION:口上キャラフィルタ
+			SIF !EXISTFUNCTION(@"EXIST_KOJO_%CSVNAMERPS(LCOUNT)%")
+				CONTINUE
+		ENDIF
+
+		SELECTCASE CSVCFLAG(LCOUNT, GETNUM(CFLAG, "価格"))
+			CASE OPTION:価格フィルタ下限 TO 価格上限
+				SIF OPTION:価格フィルタ == 2
+					CONTINUE
+			CASEELSE
+				SIF OPTION:価格フィルタ == 1
+					CONTINUE
+		ENDSELECT
+
+		SIF OPTION:開発難易度フィルタ && !INRANGE(LIMIT(開発難易度PT計算(LCOUNT)+50, 1, 100), OPTION:開発難易度フィルタ%1000, OPTION:開発難易度フィルタ/1000)
+			CONTINUE
+		SIF OPTION:屈服難易度フィルタ && !INRANGE(LIMIT(屈服難易度PT計算(LCOUNT)+50, 1, 100), OPTION:屈服難易度フィルタ%1000, OPTION:屈服難易度フィルタ/1000)
+			CONTINUE
+		CALL 売却額PT計算, LCOUNT
+		SIF OPTION:売却額フィルタ && !INRANGE(LIMIT(RESULT, 1, 100), OPTION:売却額フィルタ%1000, OPTION:売却額フィルタ/1000)
+			CONTINUE
+		SIF OPTION:性経験フィルタ && !INRANGE(LIMIT(開発難易度PT計算(LCOUNT), 1, 100), OPTION:性経験フィルタ%1000, OPTION:性経験フィルタ/1000)
+			CONTINUE
+		SIF LCOUNT == NOF(MASTER)
+			CONTINUE
+	ENDIF
+
+	;表示上限(デフォルト30人)表示したら次ページフラグ立ててBREAK
+	IF 表示数 >= 表示上限
+		次ページあり = 1
+		BREAK
+	ENDIF
+
+	;ページ数に該当するカウントまでスキップ
+	飛ばした数++
+	SIF 飛ばした数 <= (TFLAG:ページ数*表示上限)
+		CONTINUE
+
+	;3人表示したら改行
+	SIF 表示数%3 == 0 && 表示数 != 0
+		PRINTL 
+
+	IF 表示場面 != "購入"
+		文字列表示用 = [{LCOUNT, 4}] %CSVNAMEDISP(LCOUNT)%
+	ELSE
+		文字列表示用 = [{LCOUNT, 4}] %CSVNAMEDISP(LCOUNT)% 
+		SELECTCASE 数値表示設定
+			CASE "3桁区切り"
+				文字列表示用 += @"(%TODIGSEP(CSVCFLAG(LCOUNT, GETNUM(CFLAG, "価格")))%＄)"
+			CASE "漢字桁表示"
+				文字列表示用 += @"(%TO漢字(CSVCFLAG(LCOUNT, GETNUM(CFLAG, "価格")))%＄)"
+			CASEELSE
+				文字列表示用 += @"({CSVCFLAG(LCOUNT, GETNUM(CFLAG, "価格"))}＄)"
+		ENDSELECT
+	ENDIF
+	
+	;口上表示設定、かつ口上の存在するキャラは青文字表示
+	IF OPTION:口上表示
+		SELECTCASE 表示場面
+			CASE "購入"
+				SIF EXISTFUNCTION(@"EXIST_KOJO_%CSVNAMERPS(LCOUNT)%")
+					SETCOLOR 100, 150, 200
+			CASE "全キャラ表示"
+				IF ゲームモード() == "新婚モード"
+					SIF EXISTFUNCTION(@"EXIST_WEDDING_KOJO_%CSVNAMERPS(LCOUNT)%")
+						SETCOLOR 100, 150, 200
+				ENDIF
+			CASE "主人選択"
+				IF ゲームモード() == "新婚モード"
+					SIF EXISTFUNCTION(@"EXIST_WEDDING_MASTER_KOJO_%CSVNAMERPS(LCOUNT)%")
+						SETCOLOR 100, 150, 200
+				ELSE
+					SIF EXISTFUNCTION(@"EXIST_MASTER_KOJO_%CSVNAMERPS(LCOUNT)%")
+						SETCOLOR 100, 150, 200
+				ENDIF
+			CASE "パートナー選択"
+				SIF EXISTFUNCTION(@"EXIST_STRATEGY_KOJO_%CSVNAMERPS(LCOUNT)%")
+					SETCOLOR 100, 150, 200
+		ENDSELECT
+	ENDIF
+	IF 表示場面 == "全キャラ表示"
+		IF 検索機能
+			SIF TOINT(マウスオーバー) == LCOUNT
+				SETCOLORBYNAME yellow
+		ENDIF
+		PRINTFORM %文字列表示用 , 38 , LEFT%
+	ELSE
+		IF 検索機能
+			SIF TOINT(マウスオーバー) == LCOUNT
+				SETCOLORBYNAME yellow
+		ENDIF
+		CALL PASELI, 文字列表示用, 1
+		;3人目は空白埋めしない
+		IF 表示数%3 != 2
+			;PRINT_IMGでPRINTC系命令使うとエラーになるので疑似再現
+			IF OPTION:パセリ表示
+				単位文字数 = 2
+			ELSEIF 通貨単位 != ""
+				単位文字数 = STRLENS(通貨単位)
+			ELSE
+				単位文字数 = 1
+			ENDIF
+			;＄の分2文字と通貨単位分
+			PRINTFORM %SPACES(44-(STRLENS(文字列表示用)-2)-単位文字数)%
+		ENDIF
+	ENDIF
+	RESETCOLOR
+	
+	表示数++
+NEXT
+
+PRINTL 
+
+DRAWLINE
+IF 検索機能
+	IF !全キャラ検索
+		PRINTPLAIN 　CHARA  FILTER　
+		CALL PRINTCOLORL, "[20030] 検索機能をオフにする", @"\@ TOINT(マウスオーバー) == 20030 ? yellow # silver \@"
+	ENDIF
+ELSEIF !フィルタ有効
+	PRINTFORML 　[30000] %I18N("フィルタを有効にする")%
+	DRAWLINE
+ELSE
+	PRINTPLAIN 　CHARA  FILTER　
+	PRINTFORM [20000] %I18N("フィルタ設定")%
+	PRINTPLAIN 　
+
+	SIF !OPTION:男女フィルタ
+		SETCOLORBYNAME gray
+	PRINTFORM [20001] %I18N("男女フィルタ")%：
+	SELECTCASE OPTION:男女フィルタ
+		CASE 0
+			PRINTFORM %I18N("切")%
+		CASE 1
+			PRINTFORM %I18N("男性を表示")%
+		CASE 2
+			PRINTFORM %I18N("女性を表示")%
+	ENDSELECT
+	PRINTPLAIN 　
+	RESETCOLOR
+
+	CALL PRINTCOLORL, @"[20002] %I18N("口上キャラフィルタ")%：\@ OPTION:口上キャラフィルタ ? %I18N("オン")% # %I18N("オフ")% \@", @"\@ !OPTION:口上キャラフィルタ ? gray #\@"
+
+	PRINTPLAIN 　CUSTOM FILTER　
+
+	SIF !OPTION:フィルタスイッチ１
+		SETCOLORBYNAME gray
+	PRINTFORM [20003] %I18N("素質フィルタ")%1：
+	IF OPTION:カスタムフィルタ１ >= 0 && OPTION:フィルタスイッチ１
+		PRINTFORM %I18N(TALENTNAME:(OPTION:カスタムフィルタ１))%
+		SELECTCASE OPTION:フィルタスイッチ１
+			CASE 1
+				PRINTFORM (%I18N("表示")%)
+			CASE 2
+				PRINTFORM (%I18N("除外")%)
+		ENDSELECT
+	ELSE
+		PRINTFORM %I18N("切")%
+	ENDIF
+	PRINTPLAIN 　
+	RESETCOLOR
+
+	SIF !OPTION:フィルタスイッチ２
+		SETCOLORBYNAME gray
+	PRINTFORM [20005] %I18N("素質フィルタ")%2：
+	IF OPTION:カスタムフィルタ２ >= 0 && OPTION:フィルタスイッチ２
+		PRINTFORM %I18N(TALENTNAME:(OPTION:カスタムフィルタ２))%
+		SELECTCASE OPTION:フィルタスイッチ２
+			CASE 1
+				PRINTFORM (%I18N("表示")%)
+			CASE 2
+				PRINTFORM (%I18N("除外")%)
+		ENDSELECT
+	ELSE
+		PRINTFORM %I18N("切")%
+	ENDIF
+	PRINTL 
+	RESETCOLOR
+
+	PRINTPLAIN 　PRICE  FILTER　
+	SIF !OPTION:価格フィルタ
+		SETCOLORBYNAME gray
+	PRINTFORM [20007] %I18N("価格フィルタ")%：
+	IF OPTION:価格フィルタ != 0
+		IF OPTION:価格フィルタ所持金依存
+			CALL PASELI, @"{OPTION:価格フィルタ下限}＄ ～ %I18N("所持金")%"
+		ELSE
+			CALL PASELI, @"{OPTION:価格フィルタ下限}＄ ～ {OPTION:価格フィルタ上限}＄"
+		ENDIF
+		SELECTCASE OPTION:価格フィルタ
+			CASE 1
+				PRINTFORM (%I18N("表示")%)
+			CASE 2
+				PRINTFORM (%I18N("除外")%)
+		ENDSELECT
+	ELSE
+		PRINTFORM %I18N("切")%
+	ENDIF
+	PRINTPLAIN 　
+	RESETCOLOR
+
+	SIF !OPTION:バストサイズフィルタ
+		SETCOLORBYNAME gray
+	PRINTFORM [20008] %I18N("バストサイズフィルタ")%：
+	SELECTCASE OPTION:バストサイズフィルタ
+		CASE 0
+			PRINTFORM %I18N("切")%
+		CASE 1
+			PRINTFORM %I18N("絶壁キャラを表示")%
+		CASE 2
+			PRINTFORM %I18N("貧乳キャラを表示")%
+		CASE 3
+			PRINTFORM %I18N("並乳キャラを表示")%
+		CASE 4
+			PRINTFORM %I18N("巨乳キャラを表示")%
+		CASE 5
+			PRINTFORM %I18N("豊乳キャラを表示")%
+		CASE 6
+			PRINTFORM %I18N("爆乳キャラを表示")%
+		CASE 12
+			PRINTFORM %I18N("貧乳以上のキャラを表示")%
+		CASE 13
+			PRINTFORM %I18N("並乳以上のキャラを表示")%
+		CASE 14
+			PRINTFORM %I18N("巨乳以上のキャラを表示")%
+		CASE 15
+			PRINTFORM %I18N("豊乳以上のキャラを表示")%
+		CASE 22
+			PRINTFORM %I18N("貧乳以下のキャラを表示")%
+		CASE 23
+			PRINTFORM %I18N("並乳以下のキャラを表示")%
+		CASE 24
+			PRINTFORM %I18N("巨乳以下のキャラを表示")%
+		CASE 25
+			PRINTFORM %I18N("豊乳以下のキャラを表示")%
+	ENDSELECT
+	PRINTPLAIN 　
+	RESETCOLOR
+
+	SIF !OPTION:体格フィルタ
+		SETCOLORBYNAME gray
+	PRINTFORM [20009] %I18N("体格フィルタ")%：
+	SELECTCASE OPTION:体格フィルタ
+		CASE 0
+			PRINTFORML %I18N("切")%
+		CASE 1
+			PRINTFORML %I18N("幼児キャラを表示")%
+		CASE 2
+			PRINTFORML %I18N("小柄キャラを表示")%
+		CASE 3
+			PRINTFORML %I18N("普通キャラを表示")%
+		CASE 4
+			PRINTFORML %I18N("長身キャラを表示")%
+		CASE 12
+			PRINTFORML %I18N("小柄以上のキャラを表示")%
+		CASE 13
+			PRINTFORML %I18N("普通以上のキャラを表示")%
+		CASE 22
+			PRINTFORML %I18N("小柄以下のキャラを表示")%
+		CASE 23
+			PRINTFORML %I18N("普通以下のキャラを表示")%
+	ENDSELECT
+	RESETCOLOR
+
+	PRINTPLAIN 　EXTRA  FILTER　
+	SIF 登場作品フィルタ == ""
+		SETCOLORBYNAME gray
+	PRINTFORM [20010] %I18N("原作別カテゴリ")%：
+	IF 登場作品フィルタ != ""
+		PRINTFORM %登場作品フィルタ%
+	ELSE
+		PRINTFORM %I18N("切")%
+	ENDIF
+	PRINTPLAIN 　
+	RESETCOLOR
+
+	SIF キャラデザフィルタ == ""
+		SETCOLORBYNAME gray
+	PRINTFORM [20011] %I18N("キャラデザイナー別カテゴリ")%：
+	IF キャラデザフィルタ != ""
+		PRINTFORM %キャラデザフィルタ%
+	ELSE
+		PRINTFORM %I18N("切")%
+	ENDIF
+	PRINTPLAIN 　
+	RESETCOLOR
+
+	SIF 種族フィルタ == ""
+		SETCOLORBYNAME gray
+	PRINTFORM [20012] %I18N("種族別カテゴリ")%：
+	IF 種族フィルタ != ""
+		PRINTFORML %種族フィルタ%
+	ELSE
+		PRINTFORML %I18N("切")%
+	ENDIF
+	RESETCOLOR
+
+	PRINTPLAIN　　RADOR　FILTER　
+	SIF !OPTION:開発難易度フィルタ
+		SETCOLORBYNAME gray
+	PRINTFORM [20013] %I18N("開発難易度フィルタ")%：
+	IF OPTION:開発難易度フィルタ
+		PRINTFORM {OPTION:開発難易度フィルタ%1000}～{OPTION:開発難易度フィルタ/1000}
+	ELSE
+		PRINTFORM %I18N("切")%
+	ENDIF
+	PRINTPLAIN 　
+	RESETCOLOR
+
+	SIF !OPTION:屈服難易度フィルタ
+		SETCOLORBYNAME gray
+	PRINTFORM [20014] %I18N("屈服難易度フィルタ")%：
+	IF OPTION:屈服難易度フィルタ
+		PRINTFORM {OPTION:屈服難易度フィルタ%1000}～{OPTION:屈服難易度フィルタ/1000}
+	ELSE
+		PRINTFORM %I18N("切")%
+	ENDIF
+	PRINTPLAIN 　
+	RESETCOLOR
+
+	SIF !OPTION:売却額フィルタ
+		SETCOLORBYNAME gray
+	PRINTFORM [20015] %I18N("売却額フィルタ")%：
+	IF OPTION:売却額フィルタ
+		PRINTFORM {OPTION:売却額フィルタ%1000}～{OPTION:売却額フィルタ/1000}
+	ELSE
+		PRINTFORM %I18N("切")%
+	ENDIF
+	PRINTPLAIN 　
+	RESETCOLOR
+
+	SIF !OPTION:性経験フィルタ
+		SETCOLORBYNAME gray
+	PRINTFORM [20016] %I18N("性経験フィルタ")%：
+	IF OPTION:性経験フィルタ
+		PRINTFORM {OPTION:性経験フィルタ%1000}～{OPTION:性経験フィルタ/1000}
+	ELSE
+		PRINTFORM %I18N("切")%
+	ENDIF
+	RESETCOLOR
+	PRINTL 
+
+	PRINTPLAINFORM %SPACESLENS("　CUSTOM FILTER　")%
+	PRINTFORML [20020] %I18N("表示キャラを増やす")%　[20021] %I18N("表示キャラを減らす")%
+	PRINTPLAINFORM %SPACESLENS("　CUSTOM FILTER　")%
+	PRINTFORML [20030] %I18N("キャラ名で検索する(ローマ字も有効)")%
+	DRAWLINE
+	PRINTFORML 　[30000] %I18N("フィルタを無効にする")%
+	DRAWLINE
+ENDIF
+
+PRINTPLAINFORM 　PAGE.{TFLAG:ページ数+1, 2, LEFT}　
+SIF 検索機能 && TOINT(マウスオーバー) == 10001
+	SETCOLORBYNAME yellow
+CALL PRINTSPACE, TFLAG:ページ数, @"[10001] %I18N("前ページ")% "
+RESETCOLOR
+SIF 検索機能 && TOINT(マウスオーバー) == 10000
+	SETCOLORBYNAME yellow
+SELECTCASE 表示場面
+	CASE "購入"
+		PRINTFORM [10000] %I18N("購入しない")% 
+	CASE "主人選択"
+		PRINTFORM [10000] %I18N("変更しない")% 
+	CASE "段位エディット"
+		PRINTFORM [10000] %I18N("最初から設定する")% 
+	CASEELSE
+		SIF CSVEDITOR
+			PRINTFORM [10000] %I18N("戻る")% 
+ENDSELECT
+RESETCOLOR
+SIF 検索機能 && TOINT(マウスオーバー) == 10009
+	SETCOLORBYNAME yellow
+CALL PRINTSPACE, 次ページあり, @"[10009] %I18N("次ページ")% "
+RESETCOLOR
+SIF 表示場面 == "購入" && !検索機能
+	PRINTFORM [10010] %I18N("ランダムセレクト")%
+PRINTL 
+
+IF 検索機能
+	AWAIT 1
+	IF GETKEYTRIGGERED(0x01) && ISNUMERIC(マウスオーバー)
+		RESULT = TOINT(マウスオーバー)
+		GOTO BREAK
+	ENDIF
+	IF MOUSEB() != ""
+		マウスオーバー = %MOUSEB()%
+	ELSE
+		マウスオーバー = -1
+	ENDIF
+	GOTO リスト表示
+ELSE
+	INPUT
+ENDIF
+$BREAK
+SELECTCASE RESULT
+	CASE 10000
+		SELECTCASE 表示場面
+			CASE "購入", "主人選択", "段位エディット"
+				VARLINE = 0
+				RETURN 10000
+			CASEELSE
+				IF CSVEDITOR
+					VARLINE = 0
+					RETURN 10000
+				ENDIF
+		ENDSELECT
+	CASE 10001
+		SIF TFLAG:ページ数
+			TFLAG:ページ数--
+	CASE 10009
+		SIF 次ページあり
+			TFLAG:ページ数++
+	CASE 10010
+		;RAND:10000でやると各機種先頭キャラに偏るので一度別変数に入れてから決める
+		VARSET ランセレ
+		FOR LCOUNT, 0, 10000
+			SIF EXISTCSV(LCOUNT) && 選択可能:LCOUNT && !CCB:LCOUNT && GETCHARA(LCOUNT) < 0
+				ランセレ:FINDELEMENT(ランセレ, 0) = LCOUNT
+		NEXT
+		SIF ランセレ:0 == 0
+			CONTINUE
+		RETURN ランセレ:(RAND:FINDELEMENT(ランセレ, 0))
+	CASE 20000
+		CALL CHARA_FILTER
+	CASE 20001, 20003, 20005, 20007, 20008, 20009
+		CALL CHARA_FILTER2, (RESULT-20000)
+		TFLAG:ページ数 = 0
+	CASE 20002
+		INVERTBIT OPTION:口上キャラフィルタ, 0
+	CASE 20010
+		CALL 登場作品フィルタ設定
+		TFLAG:ページ数 = 0
+	CASE 20011
+		CALL キャラデザフィルタ設定, キャラデザフィルタ
+		TFLAG:ページ数 = 0
+	CASE 20012
+		CALL 種族フィルタ設定, 種族フィルタ
+		TFLAG:ページ数 = 0
+	CASE 20013
+		CALL レーダーフィルタ, "開発難易度"
+	CASE 20014
+		CALL レーダーフィルタ, "屈服難易度"
+	CASE 20015
+		CALL レーダーフィルタ, "売却額"
+	CASE 20016
+		CALL レーダーフィルタ, "性経験"
+	CASE 20020
+		表示上限 += 30
+	CASE 20021
+		SIF 表示上限 > 30
+			表示上限 -= 30
+	CASE 20030
+		INVERTBIT 検索機能, 0
+		マウスオーバー =
+	CASE 30000
+		INVERTBIT フィルタ有効, 0
+	CASE 0 TO 9999
+		IF EXISTCSV(RESULT) && 選択可能:RESULT
+			VARLINE = 0
+			DRAWLINE
+			RETURN RESULT
+		ELSEIF 無条件選択
+			VARLINE = 0
+			DRAWLINE
+			RETURN RESULT
+		ENDIF
+ENDSELECT
+
+GOTO リスト表示
+
+@CHARA_FILTER
+TFLAG:ページ数 = 0
+DRAWLINE
+PRINTFORML %I18N("キャラ購入画面にフィルタをかけることができます")%
+PRINTL 
+SELECTCASE OPTION:男女フィルタ
+	CASE 0
+		PRINTFORML [1] %I18N("男性キャラだけ表示する")%
+	CASE 1
+		PRINTFORML [1] %I18N("女性キャラだけ表示する")%
+	CASE 2
+		PRINTFORML [1] %I18N("全キャラ表示する")%
+ENDSELECT
+
+PRINTFORM [2] %I18N("カスタムフィルタ|0|を設定する(現在:",, "1")%
+IF OPTION:カスタムフィルタ１ >= 0
+	PRINTFORML 【%I18N(TALENTNAME:(OPTION:カスタムフィルタ１), "TALENT")%】%I18N("のフィルタ")%)
+ELSE
+	PRINTFORML %I18N("フィルタは設定されていません)")%
+ENDIF
+
+PRINTFORM [3] %I18N("カスタムフィルタ|0|の切り替え(現在:",, "1")%
+SELECTCASE OPTION:フィルタスイッチ１
+	CASE 0
+		PRINTFORML %I18N("オフ")%)
+	CASE 1
+		PRINTFORML %I18N("表示")%）
+	CASE 2
+		PRINTFORML %I18N("除外")%)
+ENDSELECT
+
+PRINTFORM [4] %I18N("カスタムフィルタ|0|を設定する(現在:",, "2")%
+IF OPTION:カスタムフィルタ１ >= 0
+	PRINTFORML 【%I18N(TALENTNAME:(OPTION:カスタムフィルタ２), "TALENT")%】%I18N("のフィルタ")%)
+ELSE
+	PRINTFORML %I18N("フィルタは設定されていません)")%
+ENDIF
+
+PRINTFORM [5] %I18N("カスタムフィルタ|0|の切り替え(現在:",, "2")%
+SELECTCASE OPTION:フィルタスイッチ２
+	CASE 0
+		PRINTFORML %I18N("オフ")%)
+	CASE 1
+		PRINTFORML %I18N("表示")%）
+	CASE 2
+		PRINTFORML %I18N("除外")%)
+ENDSELECT
+
+IF LANGUAGE == "ENG"
+	PRINT [6] Set price filter(Now
+	SELECTCASE OPTION:価格フィルタ
+		CASE 0
+			PRINTL :None)
+		CASEELSE
+			IF OPTION:価格フィルタ所持金依存
+				CALL PASELIL, @"【{OPTION:価格フィルタ下限}＄ ～ Money】)"
+			ELSE
+				CALL PASELIL, @"【{OPTION:価格フィルタ下限}＄ ～ {OPTION:価格フィルタ上限}＄】)"
+			ENDIF
+	ENDSELECT
+ELSE
+	PRINTFORM [6] %I18N("価格フィルタを設定する(現在:")%
+	SELECTCASE OPTION:価格フィルタ
+		CASE 0
+			PRINTFORML %I18N("オフ")%)
+		CASEELSE
+			IF OPTION:価格フィルタ所持金依存
+				CALL PASELIL, @"【{OPTION:価格フィルタ下限}＄ ～ %I18N("所持金】のフィルタ")%)"
+			ELSE
+				CALL PASELIL, @"【{OPTION:価格フィルタ下限}＄ ～ {OPTION:価格フィルタ上限}＄%I18N("】のフィルタ")%)"
+			ENDIF
+	ENDSELECT
+ENDIF
+
+PRINTFORM [7] %I18N("価格フィルタの切り替え(現在:")%
+SELECTCASE OPTION:価格フィルタ
+	CASE 0
+		PRINTFORML %I18N("オフ")%)
+	CASE 1
+		PRINTFORML %I18N("表示")%）
+	CASE 2
+		PRINTFORML %I18N("除外")%)
+ENDSELECT
+
+PRINTFORM [8] %I18N("バストサイズフィルタの切り替え(現在:")%
+SELECTCASE OPTION:バストサイズフィルタ
+	CASE 0
+		PRINTFORM %I18N("切")%
+	CASE 1
+		PRINTFORM %I18N("絶壁キャラを表示")%
+	CASE 2
+		PRINTFORM %I18N("貧乳キャラを表示")%
+	CASE 3
+		PRINTFORM %I18N("並乳キャラを表示")%
+	CASE 4
+		PRINTFORM %I18N("巨乳キャラを表示")%
+	CASE 5
+		PRINTFORM %I18N("豊乳キャラを表示")%
+	CASE 6
+		PRINTFORM %I18N("爆乳キャラを表示")%
+	CASE 12
+		PRINTFORM %I18N("貧乳以上のキャラを表示")%
+	CASE 13
+		PRINTFORM %I18N("並乳以上のキャラを表示")%
+	CASE 14
+		PRINTFORM %I18N("巨乳以上のキャラを表示")%
+	CASE 15
+		PRINTFORM %I18N("豊乳以上のキャラを表示")%
+	CASE 22
+		PRINTFORM %I18N("貧乳以下のキャラを表示")%
+	CASE 23
+		PRINTFORM %I18N("並乳以下のキャラを表示")%
+	CASE 24
+		PRINTFORM %I18N("巨乳以下のキャラを表示")%
+	CASE 25
+		PRINTFORM %I18N("豊乳以下のキャラを表示")%
+ENDSELECT
+PRINTL )
+
+PRINTFORM [9] %I18N("体格フィルタの切り替え(現在:")%
+SELECTCASE OPTION:体格フィルタ
+	CASE 0
+		PRINTFORM %I18N("切")%
+	CASE 1
+		PRINTFORM %I18N("幼児キャラを表示")%
+	CASE 2
+		PRINTFORM %I18N("小柄キャラを表示")%
+	CASE 3
+		PRINTFORM %I18N("普通キャラを表示")%
+	CASE 4
+		PRINTFORM %I18N("長身キャラを表示")%
+	CASE 12
+		PRINTFORM %I18N("小柄以上のキャラを表示")%
+	CASE 13
+		PRINTFORM %I18N("普通以上のキャラを表示")%
+	CASE 22
+		PRINTFORM %I18N("小柄以下のキャラを表示")%
+	CASE 23
+		PRINTFORM %I18N("普通以下のキャラを表示")%
+ENDSELECT
+PRINTL )
+
+PRINTFORML [0] %I18N("戻る")%
+BINPUT
+SIF !RESULT
+	RETURN 0
+
+CALL CHARA_FILTER2, RESULT
+TFLAG:ページ数 = 0
+RESTART
+
+@CHARA_FILTER2, フィルタ番号
+#DIM DYNAMIC フィルタ番号
+TFLAG:ページ数 = 0
+SELECTCASE フィルタ番号
+	CASE 1
+		SELECTCASE OPTION:男女フィルタ
+			CASE 0
+				PRINTFORMW %I18N("男性キャラのみ表示します")%
+				OPTION:男女フィルタ = 1
+			CASE 1
+				PRINTFORMW %I18N("女性キャラのみ表示します")%
+				OPTION:男女フィルタ = 2
+			CASE 2
+				PRINTFORMW %I18N("全キャラ表示します")%
+				OPTION:男女フィルタ = 0
+		ENDSELECT
+	CASE 2
+		DO
+			CALL TALENT_PRINT
+			DRAWLINE
+			PRINTFORML [1000] %I18N("戻る")% [1001] %I18N("フィルタをリセット")%
+			BINPUT
+			SELECTCASE RESULT
+				CASE 1000
+					RETURN
+				CASE 1001
+					PRINTFORMW %I18N("フィルタをリセットしました")%
+					OPTION:フィルタスイッチ１ = 0
+				CASEELSE
+					OPTION:カスタムフィルタ１ = RESULT
+					SIF OPTION:フィルタスイッチ１ == 0
+						OPTION:フィルタスイッチ１ = 1
+					PRINTFORMW %I18N("素質「|0|」にフィルタをかけました",, I18N(TALENTNAME:(OPTION:カスタムフィルタ１)))%
+			ENDSELECT
+			RETURN
+		LOOP 1
+	CASE 3
+		SELECTCASE OPTION:フィルタスイッチ１
+			CASE 0
+				PRINTFORMW %I18N("条件にマッチするキャラのみ表示します")%
+				OPTION:フィルタスイッチ１ = 1
+			CASE 1
+				PRINTFORMW %I18N("条件にマッチするキャラを除外します")%
+				OPTION:フィルタスイッチ１ = 2
+			CASE 2
+				PRINTFORMW %I18N("カスタムフィルタ|0|をオフにしました",, "1")%
+				OPTION:フィルタスイッチ１ = 0
+		ENDSELECT
+	CASE 4
+		DO
+			CALL TALENT_PRINT
+			DRAWLINE
+			PRINTFORML [1000] %I18N("戻る")% [1001] %I18N("フィルタをリセット")%
+			BINPUT
+			SELECTCASE RESULT
+				CASE 1000
+					RETURN
+				CASE 1001
+					PRINTFORMW %I18N("フィルタをリセットしました")%
+					OPTION:フィルタスイッチ２ = 0
+				CASEELSE
+					OPTION:カスタムフィルタ２ = RESULT
+					SIF OPTION:フィルタスイッチ２ == 0
+						OPTION:フィルタスイッチ２ = 1
+					PRINTFORMW %I18N("素質「|0|」にフィルタをかけました",, I18N(TALENTNAME:(OPTION:カスタムフィルタ２)))%
+			ENDSELECT
+			RETURN
+		LOOP 1
+	CASE 5
+		SELECTCASE OPTION:フィルタスイッチ２
+			CASE 0
+				PRINTFORMW %I18N("条件にマッチするキャラのみ表示します")%
+				OPTION:フィルタスイッチ２ = 1
+			CASE 1
+				PRINTFORMW %I18N("条件にマッチするキャラを除外します")%
+				OPTION:フィルタスイッチ２ = 2
+			CASE 2
+				PRINTFORMW %I18N("カスタムフィルタ|0|をオフにしました",, "2")%
+				OPTION:フィルタスイッチ２ = 0
+		ENDSELECT
+	CASE 6
+		DO
+			IF LANGUAGE == "ENG"
+				PRINTFORML You can filter for price.
+				CALL PASELIL, @"[101] Set price the min(Now:{OPTION:価格フィルタ下限}＄)"
+				IF OPTION:価格フィルタ所持金依存
+					PRINTL [102] Set price your money
+				ELSE
+					CALL PASELIL, @"[102] Set price the max(Now:{OPTION:価格フィルタ上限}＄)"
+				ENDIF
+				SIF !OPTION:価格フィルタ所持金依存
+					PRINTL [103] Set price the max(Your money)
+				IF OPTION:価格フィルタ所持金依存
+					CALL PASELIL, @"Now:{OPTION:価格フィルタ下限}＄ ～ {MONEY}"
+				ELSE
+					CALL PASELIL, @"Now:{OPTION:価格フィルタ下限}＄ ～ {OPTION:価格フィルタ上限}＄"
+				ENDIF
+				DRAWLINE
+				PRINTL [100] Back
+			ELSE
+				PRINTFORML %I18N("価格でフィルタをかけることができます")%
+				CALL PASELIL, @"[101] %I18N("下限を設定する(現在:")%{OPTION:価格フィルタ下限}＄)"
+				IF OPTION:価格フィルタ所持金依存
+					PRINTFORML [102] %I18N("上限を設定する(現在所持金まで)")%
+				ELSE
+					CALL PASELIL, @"[102] %I18N("上限を設定する(現在:")%{OPTION:価格フィルタ上限}＄)"
+				ENDIF
+				SIF !OPTION:価格フィルタ所持金依存
+					PRINTFORML [103] %I18N("上限を所持金にする")%
+				IF OPTION:価格フィルタ所持金依存
+					CALL PASELIL, @"%I18N("現在の設定:")%{OPTION:価格フィルタ下限}＄ ～ {MONEY}(所持金)"
+				ELSE
+					CALL PASELIL, @"%I18N("現在の設定:")%{OPTION:価格フィルタ下限}＄ ～ {OPTION:価格フィルタ上限}＄"
+				ENDIF
+				DRAWLINE
+				PRINTFORML [100] %I18N("戻る")%
+			ENDIF
+			BINPUT
+			SELECTCASE RESULT
+				CASE 100
+					RETURN
+				CASE 101
+					PRINTFORML %I18N("下限を入力してください")%
+					DO
+						INPUT
+						IF RESULT > OPTION:価格フィルタ上限 && !OPTION:価格フィルタ所持金依存
+							PRINTFORML %I18N("上限より高い値を設定することはできません")%
+						ELSE
+							OPTION:価格フィルタ下限 = RESULT
+							BREAK
+						ENDIF
+					LOOP 1
+				CASE 102
+					OPTION:価格フィルタ所持金依存 = 0
+					PRINTFORML %I18N("上限を入力してください")%
+					DO
+						INPUT
+						IF RESULT < OPTION:価格フィルタ下限
+							PRINTFORML %I18N("下限より低い値を設定することはできません")%
+						ELSE
+							OPTION:価格フィルタ上限 = RESULT
+							BREAK
+						ENDIF
+					LOOP 1
+				CASE 103
+					OPTION:価格フィルタ所持金依存 = 1
+			ENDSELECT
+		LOOP 1
+	CASE 7
+		SELECTCASE OPTION:価格フィルタ
+			CASE 0
+				PRINTFORMW %I18N("設定範囲内のキャラのみ表示します")%
+				OPTION:価格フィルタ = 1
+			CASE 1
+				PRINTFORMW %I18N("指定範囲内のキャラを除外します")%
+				OPTION:価格フィルタ = 2
+			CASE 2
+				PRINTFORMW %I18N("価格フィルタをオフにしました")%
+				OPTION:価格フィルタ = 0
+		ENDSELECT
+	CASE 8
+		PRINTFORML %I18N("表示したいキャラの胸のサイズを選んでください")%
+		PRINTFORML [1] %I18N("絶壁")%
+		PRINTFORML [2] %I18N("貧乳")%  [12] %I18N("貧乳以上")%  [22] %I18N("貧乳以下")%
+		PRINTFORML [3] %I18N("並乳")%  [13] %I18N("並乳以上")%  [23] %I18N("並乳以下")%
+		PRINTFORML [4] %I18N("巨乳")%  [14] %I18N("巨乳以上")%  [24] %I18N("巨乳以下")%
+		PRINTFORML [5] %I18N("豊乳")%  [15] %I18N("豊乳以上")%  [25] %I18N("豊乳以下")%
+		PRINTFORML [6] %I18N("爆乳")%
+		PRINTFORML [0] %I18N("フィルタオフ")%
+		BINPUT
+		OPTION:バストサイズフィルタ = RESULT
+	CASE 9
+		PRINTFORML %I18N("表示したいキャラの体格を選んでください")%
+		PRINTFORML [1] %I18N("幼児")%
+		PRINTFORML [2] %I18N("小柄")%  [12] %I18N("小柄体型以上")%  [22] %I18N("小柄体型以下")%
+		PRINTFORML [3] %I18N("普通")%  [13] %I18N("普通体型以上")%  [23] %I18N("普通体型以下")%
+		PRINTFORML [4] %I18N("長身")%
+		PRINTFORML [0] %I18N("フィルタオフ")%
+		BINPUT
+		OPTION:体格フィルタ = RESULT
+ENDSELECT
+
+RETURN 0
+
+@TALENT_PRINT
+#DIM DYNAMIC LCOUNT
+FOR LCOUNT, 0, VARSIZE("TALENT")
+	SELECTCASE TALENTNAME:LCOUNT
+		CASE "性別", "バストサイズ", "隠しキャラ", "体格", ""
+			CONTINUE
+	ENDSELECT
+	PRINTFORMLC [{LCOUNT}] %I18N(TALENTNAME:LCOUNT, "TALENT")%
+NEXT
+PRINTL 
+
+@登場作品フィルタ設定
+;#DIMS REF 登場作品フィルタ
+#DIMS DYNAMIC 原作, 300
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC 登場作品
+#DIM DYNAMIC 登場作品２
+#DIM DYNAMIC 登場作品３
+#DIM DYNAMIC 始点
+#DIM DYNAMIC 終点
+
+;動的変数だけど一応初期化しておく
+VARSET 原作
+
+;GETNUMの記述を省略
+登場作品 = GETNUM(CSTR, "登場作品")
+登場作品２ = GETNUM(CSTR, "登場作品２")
+登場作品３ = GETNUM(CSTR, "登場作品３")
+
+FOR LCOUNT, 1, 10000
+	SIF !EXISTCSV(LCOUNT)
+		CONTINUE
+	;変数「原作」の配列に該当作品がまだ入ってない場合は入れる
+	IF CSVCSTR(LCOUNT, 登場作品) != ""
+		SIF FINDELEMENT(原作, ESCAPE(CSVCSTR(LCOUNT, 登場作品)), 0, 99, 1) == -1
+			原作:FINDELEMENT(原作, "", 0, 99, 1) = %CSVCSTR(LCOUNT, 登場作品)%
+	ENDIF
+	;登場作品２は原作:100～199の範囲に入れる
+	IF CSVCSTR(LCOUNT, 登場作品２) != ""
+		SIF FINDELEMENT(原作, ESCAPE(CSVCSTR(LCOUNT, 登場作品２)), 100, 199, 1) == -1
+			原作:FINDELEMENT(原作, "", 100, 199, 1) = %CSVCSTR(LCOUNT, 登場作品２)%
+	ENDIF
+	;登場作品３は原作:200～299の範囲に入れる
+	IF CSVCSTR(LCOUNT, 登場作品３) != ""
+		SIF FINDELEMENT(原作, ESCAPE(CSVCSTR(LCOUNT, 登場作品３)), 200, 299, 1) == -1
+			原作:FINDELEMENT(原作, "", 200, 299, 1) = %CSVCSTR(LCOUNT, 登場作品３)%
+	ENDIF
+NEXT
+
+DO
+	;配列の使っていない範囲を検索してARRAYREMOVEで前詰めする
+	始点 = FINDELEMENTF(原作, "")
+	FOR LCOUNT, 始点, VARSIZE("原作")
+		IF 原作:LCOUNT != ""
+			終点 = LCOUNT
+			BREAK
+		ENDIF
+		;配列の終端にたどり着いたら前詰め処理終了
+		SIF LCOUNT == VARSIZE("原作")-1
+			GOTO BREAK
+	NEXT
+	ARRAYREMOVE 原作, 始点, 終点-始点
+LOOP 1
+$BREAK
+FOR LCOUNT, FINDELEMENTF(原作, "")-1, -1, -1
+	IF FINDELEMENT(原作, ESCAPE(原作:LCOUNT), 0, LCOUNT, 1) != -1
+		DEBUGPRINTFORML %原作:LCOUNT%は{FINDELEMENTF(原作, ESCAPE(原作:LCOUNT))}にある
+		ARRAYREMOVE 原作, LCOUNT, 1
+	ENDIF
+NEXT
+
+PRINTL □表示したいキャラの登場作品を選んでください
+FOR LCOUNT, 0, VARSIZE("原作")
+	SIF 原作:LCOUNT == ""
+		BREAK
+	PRINTFORMLC [{LCOUNT}] %原作:LCOUNT%
+NEXT
+CALL NEWLINE
+
+DRAWLINE
+PRINTPLAINFORM 　%I18N("原作別カテゴリ")%　
+PRINTFORML [-1] %I18N("戻る")% [-2] %I18N("フィルタを無効にする")%
+
+BINPUT
+SELECTCASE RESULT
+	CASE 0 TO VARSIZE("原作")
+		;参照型変数でフィルタを返す
+		登場作品フィルタ = %原作:RESULT%
+	CASE -2
+		登場作品フィルタ = 
+ENDSELECT
+
+@キャラデザフィルタ設定, キャラデザフィルタ
+#DIMS REF キャラデザフィルタ
+#DIMS DYNAMIC 作画, 1000
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC キャラデザ
+#DIM DYNAMIC キャラデザ２
+#DIM DYNAMIC 始点
+#DIM DYNAMIC 終点
+
+;動的変数だけど一応初期化しておく
+VARSET 作画
+
+;GETNUMの記述を省略
+キャラデザ = GETNUM(CSTR, "キャラデザ")
+キャラデザ２ = GETNUM(CSTR, "キャラデザ２")
+
+FOR LCOUNT, 1, 10000
+	SIF !EXISTCSV(LCOUNT)
+		CONTINUE
+	;変数「作画」の配列に該当デザイナーがまだ入ってない場合は入れる
+	IF CSVCSTR(LCOUNT, キャラデザ) != ""
+		SIF FINDELEMENTF(作画, ESCAPE(CSVCSTR(LCOUNT, キャラデザ))) == -1
+			作画:FINDELEMENT(作画, "", 0, 499, 1) = %CSVCSTR(LCOUNT, キャラデザ)%
+	ENDIF
+	;キャラデザ２は作画:500～999の範囲に入れる
+	IF CSVCSTR(LCOUNT, キャラデザ２) != ""
+		SIF FINDELEMENTF(作画, ESCAPE(CSVCSTR(LCOUNT, キャラデザ２))) == -1
+			作画:FINDELEMENT(作画, "", 500, 999, 1) = %CSVCSTR(LCOUNT, キャラデザ２)%
+	ENDIF
+NEXT
+
+DO
+	;配列の使っていない範囲を検索してARRAYREMOVEで前詰めする
+	始点 = FINDELEMENTF(作画, "")
+	FOR LCOUNT, 始点, VARSIZE("作画")
+		IF 作画:LCOUNT != ""
+			終点 = LCOUNT
+			BREAK
+		ENDIF
+		;配列の終端にたどり着いたら前詰め処理終了
+		SIF LCOUNT == VARSIZE("作画")-1
+			GOTO BREAK
+	NEXT
+	ARRAYREMOVE 作画, 始点, 終点-始点
+LOOP 1
+$BREAK
+
+PRINTFORML □%I18N("表示したいキャラのデザイナーを選んでください")%
+FOR LCOUNT, 0, VARSIZE("作画")
+	SIF 作画:LCOUNT == ""
+		BREAK
+	PRINTFORMLC [{LCOUNT}] %作画:LCOUNT%
+NEXT
+CALL NEWLINE
+
+DRAWLINE
+PRINTPLAINFORM 　%I18N("キャラデザイナー別カテゴリ")%　
+PRINTFORML [-1] %I18N("戻る")% [-2] %I18N("フィルタをリセットする")%
+
+BINPUT
+SELECTCASE RESULT
+	CASE 0 TO VARSIZE("作画")
+		;参照型変数でフィルタを返す
+		キャラデザフィルタ = %作画:RESULT%
+	CASE -2
+		キャラデザフィルタ = 
+ENDSELECT
+
+@種族フィルタ設定, 種族フィルタ
+#DIMS REF 種族フィルタ
+#DIMS DYNAMIC 種族名, 50
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC 種族
+#DIM DYNAMIC 始点
+#DIM DYNAMIC 終点
+
+VARSET 種族名
+
+種族 = GETNUM(CSTR, "種族")
+
+FOR LCOUNT, 1, 10000
+	SIF !EXISTCSV(LCOUNT)
+		CONTINUE
+	;変数「種族名」の配列に該当種族名がまだ入ってない場合は入れる
+	IF CSVCSTR(LCOUNT, 種族) != ""
+		SIF FINDELEMENTF(種族名, ESCAPE(CSVCSTR(LCOUNT, 種族))) == -1
+			種族名:FINDELEMENT(種族名, "", 0, VARSIZE("種族名"), 1) = %CSVCSTR(LCOUNT, 種族)%
+	ENDIF
+NEXT
+
+PRINTFORML □%I18N("表示したいキャラの種族を選んでください")%
+FOR LCOUNT, 0, VARSIZE("種族名")
+	SIF 種族名:LCOUNT == ""
+		BREAK
+	PRINTFORMLC [{LCOUNT}] %種族名:LCOUNT%
+NEXT
+CALL NEWLINE
+
+DRAWLINE
+PRINTPLAINFORM 　%I18N("種族別カテゴリ")%　
+PRINTFORML [-1] %I18N("戻る")% [-2] %I18N("フィルタをリセットする")%
+
+BINPUT
+SELECTCASE RESULT
+	CASE 0 TO VARSIZE("種族名")
+		;参照型変数でフィルタを返す
+		種族フィルタ = %種族名:RESULT%
+	CASE -2
+		種族フィルタ = 
+ENDSELECT
+
+@レーダーフィルタ, フィルタ対象
+#DIMS DYNAMIC フィルタ対象
+#DIM DYNAMIC 現在値
+
+現在値 = GETVAR(@"OPTION:%フィルタ対象%フィルタ")
+
+DRAWLINE
+PRINTFORML %I18N("|0|の下限(0)～上限(100)を指定します(現在:",, I18N(@"%フィルタ対象%フィルタ"))%\@ !現在値 ? %I18N("フィルタオフ")% # {現在値%1000}～{現在値/1000}\@)
+PRINTFORML [1] %I18N("上限を設定する")%
+PRINTFORML [2] %I18N("下限を設定する")%
+PRINTFORML [3] %I18N("オフにする")%
+PRINTFORML [0] %I18N("戻る")%
+BINPUT
+SELECTCASE RESULT
+	CASE 0
+		RETURN
+	CASE 1
+		PRINTFORML %I18N("上限を入力してください")%
+		INPUT
+		SETVAR @"OPTION:%フィルタ対象%フィルタ", 現在値%1000+LIMIT(RESULT, 0, 100)*1000
+	CASE 2
+		PRINTFORML %I18N("下限を入力してください")%
+		INPUT
+		SETVAR @"OPTION:%フィルタ対象%フィルタ", 現在値/1000*1000+LIMIT(RESULT, 0, 100)
+	CASE 3
+		SETVAR @"OPTION:%フィルタ対象%フィルタ", 0
+ENDSELECT
+
+RESTART

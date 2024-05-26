@@ -1,0 +1,272 @@
+﻿;-------------------------------------------------
+;コンドーム
+;-------------------------------------------------
+@USERCOM_ABLE_コンドーム
+#FUNCTION
+#DIM DYNAMIC 条件確定
+
+;ゲーセンに居る場合はトイレじゃないとできない
+コマンド実行条件 += "ゲーセンではトイレじゃないと実行できない/"
+SIF TEQUIP:ゲームセンター && !TEQUIP:トイレ
+	COMRESULT = 0
+;上級売春中はアイテム無いとダメ
+コマンド実行条件 += "アイテム[コンドーム]が必要"
+IF 上級売春中
+	SIF !BRITEM:コンドーム
+		COMRESULT = 0
+ELSE
+	;アイテムを持っていないとダメ
+	SIF !ITEM:コンドーム
+		COMRESULT = 0
+ENDIF
+
+;主人か助手が竿ありならOK
+コマンド実行条件 += "主人、助手、対象に男性器があれば実行可能"
+SIF ((PENIS(TMASTER) && !Ｐ使用不可(TMASTER)) || (PENIS(ASSI) && !Ｐ使用不可(ASSI)) || (PENIS(TARGET) && !Ｐ使用不可(TARGET))) && COMRESULT
+	条件確定 = 1
+
+;解除はいつでも可能
+SIF TEQUIP:コンドーム && COMRESULT
+	条件確定 = 1
+
+;奴隷は条件で判定する
+コマンド実行条件 += "対象の場合は/"
+IF !TEQUIP:コンドーム
+	;触手調教中はダメ
+	コマンド実行条件 += "　触手召喚中は実行できない/"
+	SIF TEQUIP:触手
+		COMRESULT = 0
+	;少なくとも半立ち状態じゃないとダメ
+	コマンド実行条件 += @"　勃起{PALAMLV:2}未満だと実行できない/"
+	SIF PALAM:勃起 < PALAMLV:2
+		COMRESULT = 0
+	;性器が露出してないとダメ
+	コマンド実行条件 += "　性器が露出していないと実行できない/"
+	SIF !性器露出(TARGET)
+		COMRESULT = 0
+	;オナホール及び搾精コンドーム使用中は不可
+	コマンド実行条件 += "　男性期に道具使用中は実行できない"
+	SIF Ｐ使用中(TARGET) || TEQUIP:搾精コンドーム
+		COMRESULT = 0
+ENDIF
+
+IF 条件確定
+	COMRESULT = 1
+	RETURNF 1
+ENDIF
+RETURNF COMRESULT
+
+@COM_コンドーム
+PRINTL コンドームを脱着する対象を選択してください
+SIF PENIS(TMASTER)
+	PRINTFORML [0] %CALLNAME:TMASTER%
+SIF PENIS(ASSI)
+	PRINTFORML [1] %CALLNAME:ASSI%
+IF PENIS(TARGET) && !TEQUIP:触手 && !TEQUIP:搾精コンドーム && !TEQUIP:オナホール
+	;下半身下着穿いてる場合は不可
+	SIF !TEQUIP:下半身下着 && ((!TEQUIP:下半身上着 && !TEQUIP:全身上着) || CFLAG:挿入可)
+		PRINTFORML [2] %CALLNAME:TARGET%
+ENDIF
+PRINTL [3] やめる
+PRINTL [4] コンドーム自動装着設定
+SIF ISSKIP()
+	RETURN
+BINPUT
+SELECTCASE RESULT
+	CASE 0
+		SIF !TEQUIP:TMASTER:コンドーム && !上級売春中
+			ITEM:コンドーム--
+		INVERTBIT TEQUIP:TMASTER:コンドーム, 0
+		TFLAG:避妊具着用者 = TMASTER
+	CASE 1
+		SIF !TEQUIP:ASSI:コンドーム && !上級売春中
+			ITEM:コンドーム--
+		INVERTBIT TEQUIP:ASSI:コンドーム, 0
+		TFLAG:避妊具着用者 = ASSI
+	CASE 2
+		SIF !TEQUIP:コンドーム && !上級売春中
+			ITEM:コンドーム--
+		INVERTBIT TEQUIP:コンドーム, 0
+		TFLAG:避妊具着用者 = TARGET
+	CASE 3
+		RETURN 0
+	CASE 4
+		CALL CONDOM_SETTING
+		RETURN 0
+ENDSELECT
+
+CALL KOJO_MESSAGE_COM
+
+;-------------------------------------------------
+;ソース追加処理
+;-------------------------------------------------
+;消費体力、気力
+LOSEBASE:体力 += 0
+LOSEBASE:気力 += 5
+
+DOWNBASE:MASTER:体力 += 10
+DOWNBASE:MASTER:気力 += 10
+
+;-------------------------------------------------
+;特殊ソース処理
+;-------------------------------------------------
+;抑圧、抵抗持ちには、抑鬱ソース追加
+SIF TALENT:抑圧 || TALENT:抵抗
+	SOURCE:鬱屈 += 10
+
+;-------------------------------------------------
+;絶頂チェック
+;-------------------------------------------------
+CALL SOURCE_CHECK_CVAB
+
+;-------------------------------------------------
+;射精チェック
+;-------------------------------------------------
+CALL SAMEN_CHECK_T, 0
+
+CALL SAMEN_SHOOT_T, 0, NOWEX:射精
+
+;-------------------------------------------------
+;経験の処理
+;-------------------------------------------------
+RETURN 1
+
+;-------------------------------------------------
+;装着継続の処理 呼んでない
+;-------------------------------------------------
+@EQUIP_COM_コンドーム
+;コンドーム装備中
+PRINTL ＜コンドーム装備中＞
+
+RETURN 1
+
+@CONDOM_SETTING
+SIF ITEM:コンドーム == 0
+	RETURN 0
+DRAWLINE
+PRINTL コンドームの設定を行う対象を選択してください
+PRINTL  
+IF PENIS(TMASTER)
+	PRINTFORM [0] - %CALLNAME:TMASTER%
+	IF TEQUIP:TMASTER:コンドーム && GETBIT(FLAG:避妊具設定, 0)
+		PRINTL (装着済み、常備)
+	ELSEIF TEQUIP:TMASTER:コンドーム
+		PRINTL (装着済み)
+	ELSE
+		PRINTL (未装着)
+	ENDIF
+ENDIF
+
+IF ASSI >= 0
+	IF PENIS(ASSI)
+		PRINTFORM [1] - %CALLNAME:ASSI%
+		IF TEQUIP:ASSI:コンドーム && GETBIT(FLAG:避妊具設定, 1)
+			PRINTL (装着済み、常備)
+		ELSEIF TEQUIP:ASSI:コンドーム
+			PRINTL (装着済み)
+		ELSE
+			PRINTL (未装着)
+		ENDIF
+	ENDIF
+ENDIF
+
+IF PENIS(TARGET)
+	PRINTFORM [2] - %CALLNAME:TARGET%
+	IF TEQUIP:コンドーム && GETBIT(FLAG:避妊具設定, 2)
+		PRINTL (装着済み、常備)
+	ELSEIF TEQUIP:コンドーム
+		PRINTL (装着済み)
+	ELSEIF TEQUIP:搾精コンドーム && GETBIT(FLAG:避妊具設定, 3)
+		PRINTL (搾精コンドーム装着済み、常備)
+	ELSEIF TEQUIP:搾精コンドーム
+		PRINTL (搾精コンドーム装着済み)
+	ELSE
+		PRINTL (未装着)
+	ENDIF
+ENDIF
+
+PRINTL [3] - 戻る
+
+BINPUT
+SELECTCASE RESULT
+	CASE 0
+		PRINTL 避妊具の設定をしてください
+		PRINTL  
+		IF GETBIT(FLAG:避妊具設定, 0)
+			PRINTL [0] 常に避妊しない
+		ELSE
+			PRINTL [0] 常に避妊する
+		ENDIF
+		PRINTL [1] 戻る
+		BINPUT
+		IF RESULT == 0
+			INVERTBIT FLAG:避妊具設定, 0
+			SELECTCASE GETBIT(FLAG:避妊具設定, 0)
+				CASE 0
+					TEQUIP:TMASTER:コンドーム = 0
+				CASE 1
+					TEQUIP:TMASTER:コンドーム = 1
+					SIF !上級売春中
+						ITEM:コンドーム--
+			ENDSELECT
+		ENDIF
+		RESTART
+	CASE 1
+		PRINTL 避妊具の設定をしてください
+		PRINTL  
+		IF GETBIT(FLAG:避妊具設定, 1)
+			PRINTL [0] 常に避妊しない
+		ELSE
+			PRINTL [0] 常に避妊する
+		ENDIF
+		PRINTL [1] 戻る
+		BINPUT
+		IF RESULT == 0
+			INVERTBIT FLAG:避妊具設定, 1
+			SELECTCASE GETBIT(FLAG:避妊具設定, 1)
+				CASE 0
+					TEQUIP:ASSI:コンドーム = 0
+				CASE 1
+					TEQUIP:ASSI:コンドーム = 1
+					SIF !上級売春中
+						ITEM:コンドーム--
+			ENDSELECT
+		ENDIF
+		RESTART
+	CASE 2
+		PRINTL 避妊具の設定をしてください
+		PRINTL  
+		IF GETBIT(FLAG:避妊具設定, 2) || GETBIT(FLAG:避妊具設定, 3)
+			PRINTL [0] 常に何も付けない
+		ELSE 
+			PRINTL [0] 常に避妊する
+			SIF !上級売春中 && ITEM:搾精コンドーム
+				PRINTL [1] 常に搾精コンドームを付ける
+		ENDIF
+		PRINTL [2] 戻る
+		BINPUT
+		SELECTCASE RESULT
+			CASE 0
+				IF GETBIT(FLAG:避妊具設定, 2) || GETBIT(FLAG:避妊具設定, 3)
+					CLEARBIT FLAG:避妊具設定, 2, 3
+					TEQUIP:コンドーム = 0
+					TEQUIP:搾精コンドーム = 0
+				ELSE
+					SETBIT FLAG:避妊具設定, 2
+					TEQUIP:コンドーム = 1
+					SIF !上級売春中
+						ITEM:コンドーム--
+				ENDIF
+			CASE 1
+				IF !GETBIT(FLAG:避妊具設定, 2) && !GETBIT(FLAG:避妊具設定, 3)
+					SETBIT FLAG:避妊具設定, 3
+					TEQUIP:搾精コンドーム = 1
+					ITEM:搾精コンドーム--
+				ENDIF
+		ENDSELECT
+		RESTART
+	CASE 3
+		RETURN 0
+ENDSELECT
+
+RETURN 0

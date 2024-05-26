@@ -1,0 +1,1696 @@
+﻿@SHOW_USERCOM
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC 始点
+#DIM DYNAMIC 終点
+#DIMS DYNAMIC 文字数計算用
+#DIMS DYNAMIC コマンド表示用, 6
+#DIM DYNAMIC 表示数
+#DIM DYNAMIC カテゴリ表示済み, 20
+#DIM DYNAMIC カテゴリナンバー
+#DIMS DYNAMIC カテゴリ先頭
+#DIM DYNAMIC LRESULT
+#DIM DYNAMIC ABLBONUS, 3
+#DIMS DYNAMIC SELECTCOMS退避用
+#DIM DYNAMIC 数珠繋ぎ退避
+
+VARSET コマンド選択可能, 1000
+
+FOR LCOUNT, 0, 900
+	;コマンドが無ければCONTINUE
+	SIF TRAINNAME:LCOUNT == ""
+		CONTINUE
+	IF OPTION:コマンド段落非表示 != 2
+		SELECTCASE TRAINNAME:LCOUNT
+			{
+			CASE "愛撫", "キスする", "ローター", "正常位", "正常位アナル", "正常位させる", "手淫", "スパンキング",
+				"腹パン", "助手を犯させる", "触手召喚", "キス（ドラゴン）", "野外プレイ", "IIDXをプレイする", "シックスナイン"
+			}
+				カテゴリナンバー++
+				カテゴリ先頭 = %TRAINNAME:LCOUNT%
+				IF STRJOIN(コマンド表示用, "", 1) != ""
+					HTML_PRINT STRJOIN(コマンド表示用, "", 1)
+					VARSET コマンド表示用
+					表示数 = 0
+					SIF !OPTION:コマンド段落非表示
+						PRINTL 
+				ELSEIF カテゴリ表示済み:(カテゴリナンバー-1)
+					SIF !OPTION:コマンド段落非表示
+						PRINTL 
+				ENDIF
+		ENDSELECT
+	ENDIF
+	;フィルタでの表示/非表示はここで一元管理する
+	IF FLAG:愛撫コマンドフィルタ
+		SELECTCASE TRAINNAME:LCOUNT
+			;愛撫コマンドフィルタの対象
+			{
+			CASE "愛撫", "臍愛撫", "クンニ", "指挿入れ",
+				 "フェラする", "足扱きする", "下着扱きする" ,"手淫する", "パイズリする", "パイズリフェラする", "射精寸止め", "お掃除フェラする", 
+				 "アナル舐め", "アナル愛撫", "胸揉み", "乳首責め", "胸愛撫", 
+				 "スキンシップ", "排卵マッサージ", "尻尾を撫でる",
+				 "乳の揉み合い",
+				 "シックスナイン", "69パイズリ", "岩清水", "Gスポット刺激", "搾乳", "前立腺刺激",  
+			}
+				CONTINUE
+		ENDSELECT
+	ENDIF
+	IF FLAG:道具コマンドフィルタ
+		SELECTCASE TRAINNAME:LCOUNT
+			;道具コマンドフィルタの対象
+			{
+			CASE "お酒を飲ませる", "ジュースを飲ませる", 
+				 "ローター", "電気按摩", "クリキャップ", "バイブ", "ペニスバンド",
+				 "オナホール", "搾精コンドーム", "コンドーム", "搾精機", "貞操帯", 
+				 "アナルバイブ", "アナルビーズ", "浣腸器", "空気浣腸", "拡張バルーン", "アナル電極", "電動エネマグラ", 
+				 "ニプルキャップ", "乳首ローター", "搾乳器", "乳房電極", "ローション", "媚薬", "利尿剤", "強精神薬", "ローション注入", "ミッドナイトスペシャル", "魅惑の粘液", 
+				 "ビデオカメラ", "写真撮影", 
+				 "バイブ被挿入", "ローター愛撫させる", "電気按摩愛撫させる", 
+				 "鞭", "蝋燭", "針", "アイマスク", "縄", "ボールギャグ", "鞭打ちしてもらう", "尿道カテーテル", 
+				 "異物挿入", "採血", 
+				 "野外プレイ", "羞恥プレイ", "", "", ""
+
+			}
+				CONTINUE
+		ENDSELECT
+	ENDIF
+	IF FLAG:奉仕コマンドフィルタ
+		SELECTCASE TRAINNAME:LCOUNT
+			;奉仕コマンドフィルタの対象
+			{
+			CASE "キスする", "キスしてもらう", 
+				 "正常位させる", "後背位させる", "正常位アナルさせる", "後背位アナルさせる", "スライム姦させる",
+				 "手淫", "フェラチオ", "イラマチオ", "足扱き", "下着扱き", "オナホ扱き",
+				 "素股", "パイズリ", "パイズリフェラ", "縦パイズリ", "乳ファック", 
+				 "クンニさせる", "顔面騎乗する", "バイブ被挿入", "アナル愛撫させる", "アナルを舐めさせる", "アナルバイブ被挿入", 
+				 "泡踊り", "足を舐めさせる", "ローター愛撫させる", "電気按摩愛撫させる", 
+				 "フィストファックさせる", "アナルフィストさせる", 
+				 "助手を犯させる", "ダブルフェラ", "ダブルフェラ", "ダブルパイズリ", "アナル双頭ディルド", "双頭ディルド",
+				 "フェラさせる（ドラゴン）",
+				 "シックスナイン", "69パイズリ", "授乳手コキ", "オナフェラ",
+				 "二本フェラ", 
+			}
+				CONTINUE
+		ENDSELECT
+	ENDIF
+	IF FLAG:獣姦コマンドフィルタ
+		SELECTCASE TRAINNAME:LCOUNT
+			;愛撫コマンドフィルタの対象
+			{
+			CASE "触手召喚", "触手挿入", "アナル触手", "触手クリ責め", "触手乳首責め", "触手緊縛", "触手浣腸",
+				 "触手口辱", "触手搾精", "触手射精止め", "触手強制搾精", "触手強制放尿", 
+				 "キス（ドラゴン）", "フェラさせる（ドラゴン）", "舐め回す（ドラゴン）", "睨みつける（ドラゴン）", "膣を犯す（ドラゴン）", "アナルを犯す（ドラゴン）",
+				 "ペットに舐めさせる", "ペットに犯させる", "触手臍挿入", "触手乳管挿入",
+			}
+				CONTINUE
+		ENDSELECT
+	ENDIF
+	IF FLAG:Ｖ系コマンドフィルタ
+		SELECTCASE TRAINNAME:LCOUNT
+			;Ｖ系コマンドフィルタの対象
+			{
+			CASE "指挿入れ", "バイブ", "正常位", "後背位", "騎乗位", "対面座位", "背面座位", "下着ずらし挿入", "フィストファック",
+				 "両穴フィスト", "異物挿入", "触手挿入", "膣を犯す（ドラゴン）", "ペットに犯させる",
+				 "双頭ディルド",
+				 "Gスポット刺激", "乱れ牡丹", "騎乗乳房自慰", "挿入Gスポ責め", "挿入子宮口責め",
+				 "正常位キス", "騎乗位キス", "対面座位キス", "後背位手淫", "騎乗位手淫", 
+				 "対面座位吸血", "背面座位吸血", "スライム姦",
+				 "3P", "数珠繋ぎ",
+				 "正常位首絞め", "後背位首絞め", "二輪挿し"
+			}
+				CONTINUE
+		ENDSELECT
+	ENDIF
+	IF FLAG:Ａ系コマンドフィルタ
+		SELECTCASE TRAINNAME:LCOUNT
+			;Ａ系コマンドフィルタの対象
+			{
+			CASE "アナル舐め", "アナル愛撫", "アナルバイブ", "アナルビーズ", "浣腸器", "空気浣腸", "拡張バルーン", "アナル電極",
+				 "ローション注入", "正常位アナル", "後背位アナル", "騎乗位アナル", "対面座位アナル", "背面座位アナル", "下着ずらし挿入アナル",
+				 "アナルフィスト", "両穴フィスト", "異物挿入", "アナル触手", "触手浣腸", "アナルを犯す（ドラゴン）", "ペットに犯させる",
+				 "腸洗浄", "電動エネマグラ", "アナル双頭ディルド", 
+				 "前立腺刺激", "騎乗乳房自慰",
+				 "正常位アナルキス", "騎乗位アナルキス", "対面座位アナルキス", "後背位アナル手淫", "騎乗位アナル手淫",
+				 "対面座位吸血", "背面座位吸血", "スライム姦",
+				 "3P", "数珠繋ぎ", 
+				 "正常位アナル首絞め", "後背位アナル首絞め", "アナル二輪挿し"
+			}
+			 	CONTINUE
+		ENDSELECT
+	ENDIF
+	IF FLAG:暴力コマンドフィルタ
+		;暴力コマンドフィルタの対象
+		SELECTCASE TRAINNAME:LCOUNT
+			{
+			CASE "臍愛撫", "罵倒する", "スパンキング", "乳スパンキング", "鞭", "蝋燭", "針", "アイマスク", "縄", "ボールギャグ", "叩いてもらう",
+				 "踏んでもらう", "鞭打ちしてもらう", "腹パン", "踏む", "裸締め", "首を絞める", "ビンタ", "フィストファック",
+				 "アナルフィスト", "両穴フィスト", "異物挿入", "フィストファックさせる", "アナルフィストさせる",
+				 "正常位首絞め", "後背位首絞め", "正常位アナル首絞め", "後背位アナル首絞め", "逆レイプ首絞め", "首絞め愛撫",
+				 "尿道挿入", "尿道ポッキー", "スライム尿道責め", "臍挿入", "乳管挿入", "臍フィスト", "尿道針挿入", "臍針挿入", "乳管針挿入"
+			}
+				CONTINUE
+		ENDSELECT
+	ENDIF
+	IF FLAG:スカ系コマンドフィルタ
+		SELECTCASE TRAINNAME:LCOUNT
+			{
+			CASE "浣腸器", "空気浣腸", "放尿", "尿道カテーテル", "尿道挿入", "尿道ポッキー", "スライム尿道責め",
+				 "尿道針挿入", "触手強制放尿", 
+			}
+			CONTINUE
+		ENDSELECT
+	ENDIF
+	;各コマンドのフィルタ
+	IF USINGFILTERG
+		SIF COMFILTERG:LCOUNT
+			CONTINUE
+	ELSE
+		SIF COMFILTER:LCOUNT
+			CONTINUE
+	ENDIF
+	;CALLF系命令では返り値が無いのでCOMRESULTに結果を入れている 1で始まる
+	COMRESULT = 1
+	コマンド実行条件 = 
+	CALLFORMF USERCOM_ABLE_%TRAINNAME:LCOUNT%()
+	;口上側でのコマンド制御
+	;多分両方呼んだほうがいいと思ってそうした（不都合あれば修正）
+	CALLFORM DISABLE, TRAINNAME:LCOUNT, TARGET
+	CALLFORM DISABLE, "MASTER_" + TRAINNAME:LCOUNT, MASTER
+	;上記を一つの関数で対応できるように 対象が-1でもエラーは出ない
+	CALL DISABLECOM, TARGET, TRAINNAME:LCOUNT
+	SIF RESULT
+		COMRESULT = 0
+	CALL DISABLECOM, MASTER, TRAINNAME:LCOUNT
+	SIF RESULT
+		COMRESULT = 0
+	CALL DISABLECOM, ASSI, TRAINNAME:LCOUNT
+	SIF RESULT
+		COMRESULT = 0
+	;Girls vs Tentacles in eraBEMANI挑戦中は触手と一部コマンドのみ可能
+	IF 受験段位名 == "Girls vs Tentacles in eraBEMANI"
+		SELECTCASE TRAINNAME:LCOUNT
+			{
+			CASE "愛撫", "クンニ", "指挿入れ", "アナル舐め", "アナル愛撫", "胸揉み", "乳首責め", "胸愛撫", "自慰見せつけ",
+				 "キスする", "何もしない", "情欲を煽る", "媚薬", "利尿剤",
+				 "触手召喚", "触手挿入", "アナル触手", "触手クリ責め", "触手乳首責め", "触手搾乳","触手緊縛",
+				 "触手浣腸", "触手口辱", "触手搾精", "触手射精止め", "触手強制搾精", "触手強制放尿", "触手臍挿入", "触手乳管挿入"
+			}
+			CASEELSE
+				COMRESULT = 0
+		ENDSELECT
+	ENDIF
+	;TARGETが霊体でPLAYERに霊感orネクロマンサーが無ければ選べるコマンドが限られる
+	IF TALENT:霊体 && !TALENT:PLAYER:霊感 && !TALENT:PLAYER:ネクロマンサー
+		SELECTCASE TRAINNAME:LCOUNT
+			{
+			CASE "自慰", "胸自慰", "秘貝開帳", "自慰見せつけ", "秘貝開帳見せつけ", "何もしない",
+				 "罵倒", "情欲を煽る", "魔法詠唱", "会話", "まったりする", "ビデオ鑑賞", "歌の練習",
+				 "機械の勉強", "魔法の練習", "ビデオカメラ", "写真撮影", "ライブ配信", "野外プレイ",
+				 "羞恥プレイ", "お風呂場プレイ", "ゲームセンター", "トイレに行く",
+				 "IIDXをプレイする", "ポップンをプレイする", "DDRをプレイする", "ギタドラをプレイする",
+				 "jubeatをプレイする", "リフレクをプレイする", "ボルテをプレイする", "ダンエボをプレイする",
+				 "QMAをプレイする", "maimaiをプレイする", "CHUNITHMをプレイする", "ビデオポーカーで遊ぶ",
+				 "モンテカルロで遊ぶ", "ブラックジャックで遊ぶ", "メダルを借りる", "オンゲキをプレイする"
+			}
+			CASEELSE
+				COMRESULT = 0
+		ENDSELECT
+	ENDIF
+	IF COMRESULT
+		;実行判定の表示をSKIPDISPで飛ばして結果だけ出す
+		IF !ISSKIP()
+			SKIPDISP 1
+			SELECTCOMS退避用 = %SELECTCOMS%
+			SELECTCOMS = %TRAINNAME:LCOUNT%
+			TRYCCALLFORM 実行判定_%TRAINNAME:LCOUNT%
+				;実行不可なら灰色表示、可能ならデフォ色表示
+				IF RESULT == 0 && TFLAG:実行判定無視 == 0
+					SETCOLORBYNAME gray
+				ELSE
+					SETCOLORBYNAME silver
+				ENDIF
+			CATCH
+				;そもそも実行判定が不要ならデフォ色表示
+				SETCOLORBYNAME silver
+			ENDCATCH
+			SELECTCOMS = %SELECTCOMS退避用%
+			SKIPDISP 0
+		ENDIF
+
+		;TEQUIP系コマンドは使用時と解除時でコマンド名を変える
+		SELECTCASE TRAINNAME:LCOUNT
+			CASE "触手召喚"
+				IF LANGUAGE == "ENG"
+					コマンド表示用 '= @"%\@ TEQUIP:触手 ? AbjurationTentacles # SummonTentacles \@%"
+				ELSE
+					コマンド表示用 '= @"%\@ TEQUIP:触手 ? 触手送還 # 触手召喚 \@%"
+				ENDIF
+			CASE "ゲームセンター"
+				IF LANGUAGE == "ENG"
+					IF TEQUIP:ゲームセンター
+						コマンド表示用 = GoToHome
+					ELSE
+						コマンド表示用 = GoToGamecenter
+					ENDIF
+				ELSE
+					IF TEQUIP:ゲームセンター
+						コマンド表示用 = ゲームセンターを後にする
+					ELSE
+						コマンド表示用 = ゲームセンターに行く
+					ENDIF
+				ENDIF
+			CASE "トイレに行く"
+				IF LANGUAGE == "ENG"
+					IF TEQUIP:トイレ
+						コマンド表示用 = GoToToilet
+					ELSE
+						コマンド表示用 = OutToHall
+					ENDIF
+				ELSE
+					IF TEQUIP:トイレ
+						コマンド表示用 = トイレを出る
+					ELSE
+						コマンド表示用 = トイレに行く
+					ENDIF
+				ENDIF
+			CASE "女装させる"
+				IF LANGUAGE == "ENG"
+					IF TEQUIP:女装
+						コマンド表示用 = Finish Crossdressing
+					ELSE
+						コマンド表示用 = Crossdressing
+					ENDIF
+				ELSE
+					IF TEQUIP:女装
+						コマンド表示用 = 元の服に戻す
+					ELSE
+						コマンド表示用 = 女装させる
+					ENDIF
+				ENDIF
+			CASE "ライブ配信"
+				IF LANGUAGE == "ENG"
+					IF TEQUIP:ライブ配信
+						コマンド表示用 = End Stream
+					ELSE
+						コマンド表示用 = LIVE Stream
+					ENDIF
+				ELSE
+					IF TEQUIP:ライブ配信
+						コマンド表示用 = ライブ配信終了
+					ELSE
+						コマンド表示用 = ライブ配信
+					ENDIF
+				ENDIF
+			CASE "裸体盛り"
+				IF LANGUAGE == "ENG"
+					コマンド表示用 = Human Platter
+				ELSE
+					SELECTCASE SEX(TARGET)
+						CASE 1
+							コマンド表示用 = 男体盛り
+						CASE 2
+							コマンド表示用 = 女体盛り
+					ENDSELECT
+				ENDIF
+			CASE "体内放尿する"
+				SELECTCASE PREVCOMS
+					CASE "正常位", "後背位", "騎乗位", "対面座位", "背面座位", "下着ずらし挿入"
+						コマンド表示用 = 膣内放尿する
+					CASE "正常位アナル", "後背位アナル", "騎乗位アナル", "対面座位アナル", "背面座位アナル", "下着ずらし挿入アナル"
+						コマンド表示用 = 腸内放尿する
+					CASE "臍挿入"
+						コマンド表示用 = 臍内放尿する
+					CASE "乳管挿入"
+						コマンド表示用 = 乳管内放尿する
+					CASE "尿道挿入"
+						コマンド表示用 = 尿道内放尿する
+				ENDSELECT
+			CASE "体内放尿させる"
+				SELECTCASE PREVCOMS
+					CASE "正常位させる", "後背位させる"
+						コマンド表示用 = 膣内放尿させる
+					CASE "正常位アナルさせる", "後背位アナルさせる"
+						コマンド表示用 = 腸内放尿させる
+				ENDSELECT
+			CASEELSE
+				コマンド表示用 = %I18N(TRAINNAME:LCOUNT, "TRAIN")%
+		ENDSELECT
+
+		IF LANGUAGE == "ENG"
+			SELECTCASE TRAINNAME:LCOUNT
+				CASE "クリキャップ", "オナホール", "ニプルキャップ", "搾乳器", "搾精コンドーム", "アイマスク", "アナル電極", "乳房電極", "搾精機"
+					コマンド表示用 += @"\@ TEQUIP:(TRAINNAME:LCOUNT) ? (Remove) # (Wear) \@"
+				CASE "貞操帯"
+					コマンド表示用 += @"\@ CFLAG:貞操帯 ? (Remove) # (Wear) \@"
+				CASE "バイブ", "アナルバイブ", "アナルビーズ", "電動エネマグラ", "尿道カテーテル", "触手臍挿入", "触手乳管挿入"
+					コマンド表示用 += @"\@ TEQUIP:(TRAINNAME:LCOUNT) ? (Remove) # (Insert) \@"
+				CASE "ペニスバンド"
+					コマンド表示用 += @"\@ FINDCHARA(TEQUIP:ペニスバンド, 1) >= 0 ? (Remove) # (Wear) \@"
+				CASE "触手クリ責め"
+					コマンド表示用 += @"\@ TEQUIP:クリキャップ ? (Stop) # (Start) \@"
+				CASE "触手ペニス責め"
+					コマンド表示用 += @"\@ TEQUIP:オナホール ? (Stop) # (Start) \@"
+				CASE "触手挿入"
+					コマンド表示用 += @"\@ TEQUIP:バイブ ? (Stop) # (Start) \@"
+				CASE "アナル触手"
+					コマンド表示用 += @"\@ TEQUIP:アナルバイブ ? (Stop) # (Start) \@"
+				CASE "触手乳首責め"
+					コマンド表示用 += @"\@ TEQUIP:ニプルキャップ ? (Stop) # (Start) \@"
+				CASE "触手搾精"
+					コマンド表示用 += @"\@ TEQUIP:搾精コンドーム ? (Stop) # (Start) \@"
+				CASE "縄", "触手緊縛"
+					コマンド表示用 += @"\@ TEQUIP:縄 ? (Stop) # (Start) \@"
+				CASE "ボールギャグ"
+					コマンド表示用 += @"\@ TEQUIP:ボールギャグ ? (Remove) # (Wear) \@"
+				CASE "浣腸器"
+					コマンド表示用 += @"\@ TEQUIP:浣腸器 ? (Remove) # (Insert) \@"
+				CASE "拡張バルーン"
+					コマンド表示用 += @"\@ TEQUIP:拡張バルーン ? (Remove) # (Insert) \@"
+				CASE "触手口辱"
+					コマンド表示用 += @"\@ TEQUIP:触手口辱 ? (Stop) # (Start) \@"
+				CASE "ビデオカメラ", "野外プレイ", "羞恥プレイ", "採血"
+					コマンド表示用 += @"\@ TEQUIP:(TRAINNAME:LCOUNT) ? (End) # (Start) \@"
+				CASE "お風呂場プレイ"
+					コマンド表示用 += @"\@ TEQUIP:お風呂場 ? (End) # (Start) \@"
+				CASE "シャワー"
+					コマンド表示用 += @"\@ TEQUIP:シャワー ? (Stop) # (Start) \@"
+				CASE "新妻プレイ"
+					コマンド表示用 += @"\@ TEQUIP:エプロン ? (End) # (Start) \@"
+				CASE "触手射精止め"
+					コマンド表示用 += @"\@ TEQUIP:射精止め ? (Remove) # (Start) \@"
+				CASE "料理を作る"
+					IF !ORIGIN
+						IF OPTION:パセリ表示
+							コマンド表示用 += "(1000PASELI)"
+						ELSEIF 通貨単位 != ""
+							コマンド表示用 += @"(1000%通貨単位%)"
+						ELSE
+							コマンド表示用 += "(1000$)"
+						ENDIF
+					ENDIF
+				CASE "お菓子を作る"
+					IF !ORIGIN
+						IF OPTION:パセリ表示
+							コマンド表示用 += "(200PASELI)"
+						ELSEIF 通貨単位 != ""
+							コマンド表示用 += @"(200%通貨単位%)"
+						ELSE
+							コマンド表示用 += "(200$)"
+						ENDIF
+					ENDIF
+				CASE "甘出し"
+					始点 = STRFIND(PREVCOMS, "(")+1
+					終点 = STRFIND(PREVCOMS, ")")-1
+					コマンド表示用 += @"(%SUBSTRING(PREVCOMS, 始点, 終点-始点)%)"
+			ENDSELECT
+		ELSE
+			SELECTCASE TRAINNAME:LCOUNT
+				CASE "クリキャップ", "オナホール", "ニプルキャップ", "搾乳器", "搾精コンドーム", "アイマスク", "アナル電極", "乳房電極", "搾精機"
+					コマンド表示用 += @"\@ TEQUIP:(TRAINNAME:LCOUNT) ? (解除) # (装着) \@"
+				CASE "貞操帯"
+					コマンド表示用 += @"\@ CFLAG:貞操帯 ? (解除) # (装着) \@"
+				CASE "バイブ", "アナルバイブ", "アナルビーズ", "電動エネマグラ", "尿道カテーテル", "触手臍挿入", "触手乳管挿入"
+					コマンド表示用 += @"\@ TEQUIP:(TRAINNAME:LCOUNT) ? (解除) # (挿入) \@"
+				CASE "ペニスバンド"
+					コマンド表示用 += @"\@ FINDCHARA(TEQUIP:ペニスバンド, 1) >= 0 ? (解除) # (装着) \@"
+				CASE "触手クリ責め"
+					コマンド表示用 += @"\@ TEQUIP:クリキャップ ? (解除) # (実行) \@"
+				CASE "触手ペニス責め"
+					コマンド表示用 += @"\@ TEQUIP:オナホール ? (解除) # (実行) \@"
+				CASE "触手挿入"
+					コマンド表示用 += @"\@ TEQUIP:バイブ ? (解除) # (実行) \@"
+				CASE "アナル触手"
+					コマンド表示用 += @"\@ TEQUIP:アナルバイブ ? (解除) # (実行) \@"
+				CASE "触手乳首責め"
+					コマンド表示用 += @"\@ TEQUIP:ニプルキャップ ? (解除) # (実行) \@"
+				CASE "触手搾精"
+					コマンド表示用 += @"\@ TEQUIP:搾精コンドーム ? (解除) # (実行) \@"
+				CASE "縄", "触手緊縛"
+					コマンド表示用 += @"\@ TEQUIP:縄 ? (解除) # (実行) \@"
+				CASE "ボールギャグ"
+					コマンド表示用 += @"\@ TEQUIP:ボールギャグ ? (解除) # (実行) \@"
+				CASE "浣腸器"
+					コマンド表示用 += @"\@ TEQUIP:浣腸器 ? (解除) # (使用) \@"
+				CASE "拡張バルーン"
+					コマンド表示用 += @"\@ TEQUIP:拡張バルーン ? (解除) # (使用) \@"
+				CASE "触手口辱"
+					コマンド表示用 += @"\@ TEQUIP:触手口辱 ? (解除) # (実行) \@"
+				CASE "ビデオカメラ", "野外プレイ", "羞恥プレイ", "採血"
+					コマンド表示用 += @"\@ TEQUIP:(TRAINNAME:LCOUNT) ? (終了) # (開始) \@"
+				CASE "お風呂場プレイ"
+					コマンド表示用 += @"\@ TEQUIP:お風呂場 ? (終了) # (開始) \@"
+				CASE "シャワー"
+					コマンド表示用 += @"\@ TEQUIP:シャワー ? (停止) # (使用) \@"
+				CASE "新妻プレイ"
+					コマンド表示用 += @"\@ TEQUIP:エプロン ? (終了) # (開始) \@"
+				CASE "触手射精止め"
+					コマンド表示用 += @"\@ TEQUIP:射精止め ? (解放) # (実行) \@"
+				CASE "料理を作る"
+					IF !ORIGIN
+						IF OPTION:パセリ表示
+							コマンド表示用 += "(1000パセリ)"
+						ELSEIF 通貨単位 != ""
+							コマンド表示用 += @"(1000%通貨単位%)"
+						ELSE
+							コマンド表示用 += "(1000$)"
+						ENDIF
+					ENDIF
+				CASE "お菓子を作る"
+					IF !ORIGIN
+						IF OPTION:パセリ表示
+							コマンド表示用 += "(200パセリ)"
+						ELSEIF 通貨単位 != ""
+							コマンド表示用 += @"(200%通貨単位%)"
+						ELSE
+							コマンド表示用 += "(200$)"
+						ENDIF
+					ENDIF
+				CASE "甘出し"
+					始点 = STRFIND(PREVCOMS, "(")+1
+					終点 = STRFIND(PREVCOMS, ")")-1
+					コマンド表示用 += @"(%SUBSTRING(PREVCOMS, 始点, 終点-始点)%)"
+			ENDSELECT
+		ENDIF
+		コマンド表示用:(表示数%5+1) = %SET_TOOLTIP(@"%コマンド表示用, 25%[{LCOUNT, 3}]", TRAIN_COMMENT(TRAINNAME:LCOUNT))%
+		コマンド選択可能:LCOUNT = 1
+		IF !カテゴリ表示済み:カテゴリナンバー && OPTION:コマンド段落非表示 != 2
+			RESETCOLOR
+			SELECTCASE カテゴリ先頭
+				CASE "愛撫"
+					PRINTSINGLEFORM □愛撫系%GETLINESTR("-")%
+				CASE "キスする"
+					PRINTSINGLEFORM □コミュニケーション系%GETLINESTR("-")%
+				CASE "ローター"
+					PRINTSINGLEFORM □道具系%GETLINESTR("-")%
+				CASE "正常位"
+					PRINTSINGLEFORM □Ｖ性交系%GETLINESTR("-")%
+				CASE "正常位アナル"
+					PRINTSINGLEFORM □Ａ性交系%GETLINESTR("-")%
+				CASE "正常位させる"
+					PRINTSINGLEFORM □その他性交系%GETLINESTR("-")%
+				CASE "手淫"
+					PRINTSINGLEFORM □奉仕系%GETLINESTR("-")%
+				CASE "スパンキング"
+					PRINTSINGLEFORM □SM系%GETLINESTR("-")%
+				CASE "腹パン"
+					PRINTSINGLEFORM □拷問系%GETLINESTR("-")%
+				CASE "助手を犯させる"
+					PRINTSINGLEFORM □助手・同性愛系%GETLINESTR("-")%
+				CASE "触手召喚"
+					PRINTSINGLEFORM □触手系%GETLINESTR("-")%
+				CASE "キス（ドラゴン）"
+					PRINTSINGLEFORM □獣姦・龍姦系%GETLINESTR("-")%
+				CASE "野外プレイ"
+					PRINTSINGLEFORM □ロケーション・シチュエーション系%GETLINESTR("-")%
+				CASE "IIDXをプレイする"
+					PRINTSINGLEFORM □ゲームコマンド%GETLINESTR("-")%
+				CASE "シックスナイン"
+					PRINTSINGLEFORM □派生コマンド%GETLINESTR("-")%
+			ENDSELECT
+			カテゴリ表示済み:カテゴリナンバー = 1
+		ENDIF
+
+		表示数++
+		IF 表示数%5 == 0
+			HTML_PRINT STRJOIN(コマンド表示用, "", 1)
+			VARSET コマンド表示用
+			表示数 = 0
+		ENDIF
+	ENDIF
+NEXT
+
+SIF 表示数
+	HTML_PRINT STRJOIN(コマンド表示用, "", 1)
+
+CALL NEWLINE
+
+RESETCOLOR
+
+DRAWLINE
+IF 受験段位名 == "ワガママ姫たちの接待調教プログラム"
+	PRINTFORMC %CALLNAME:TARGET%の今日の気分
+	PRINT 　
+	FOR LCOUNT, GETNUM(FLAG, "愛撫コマンドフィルタ"), GETNUM(FLAG, "暴力コマンドフィルタ")+1
+		SELECTCASE FLAGNAME:LCOUNT
+			;「暴力」は直球すぎるのでSMに
+			CASE "暴力コマンドフィルタ"
+				PRINTFORM ＳＭ:\@ FLAG:LCOUNT ? × # ○ \@　
+			CASEELSE
+				PRINTFORM %SUBSTRINGU(FLAGNAME:LCOUNT, 0, 2)%:\@ FLAG:LCOUNT ? × # ○ \@　
+		ENDSELECT
+	NEXT
+	PRINTL
+	DRAWLINE
+ENDIF
+IF TEQUIP:ライブ配信 >= 2
+	PRINTFORML □視聴者数:{視聴者数} 👍:{LIKE} 👎:{DISLIKE} チャンネル登録者数:{チャンネル登録者数}
+	PRINT 　皆さんのコメント:
+	文字数計算用 = 　皆さんのコメント:
+	FOR LCOUNT, 0, 10
+		IF STRLENS(@"%文字数計算用%%視聴コメント:LCOUNT% ") > 130
+			PRINTL 
+			PRINT 　　　　　　　　　 
+			文字数計算用 = 　　　　　　　　　 
+		ENDIF
+		PRINTFORM %視聴コメント:LCOUNT% 
+		文字数計算用 += @"%視聴コメント:LCOUNT% "
+	NEXT
+	PRINTL 
+	PRINTFORML 　総コメント数:{コメント数}
+	DRAWLINE
+ENDIF
+IF LANGUAGE == "ENG"
+	PRINTC History Log[900]
+	PRINTC Show Dirtiness[901]
+	PRINTC Show Abilities[902]
+
+	;新妻プレイ、お風呂場プレイ時、触手召喚時、ゲーセンで遊んでる時は除く
+	SIF !TEQUIP:エプロン && !TEQUIP:お風呂場 && !TEQUIP:触手 && !(TEQUIP:ゲームセンター && !TEQUIP:トイレ)
+		PRINTC Clothes[903]
+	;お風呂場プレイ時。ゲーセンで遊んでる時は除く
+	IF !TEQUIP:お風呂場 && !(TEQUIP:ゲームセンター && !TEQUIP:トイレ)
+		IF ゲームモード() == "新婚モード"
+			PRINTFORMC Clothes(%CALLNAMEDISP(MASTER)%)[904]
+		ELSE
+			PRINTC Clothes(Player)[904]
+		ENDIF
+	ENDIF
+	IF ASSIPLAY
+		PRINTC Show Abilities(Assi)[906]
+	ELSE
+		IF ゲームモード() == "新婚モード"
+			PRINTFORMC Show Abilities(%CALLNAMEDISP(MASTER)%)[906]
+		ELSE
+			PRINTC Show Abilities(Master)[906]
+		ENDIF
+	ENDIF
+	PRINTC MANUAL[910]
+	IF ASSI > 0 && !TEQUIP:触手 && !TALENT:ASSI:アニマル
+		IF ASSIPLAY
+			PRINTC Change Master[950]
+		ELSE
+			PRINTC Change Assistant[950]
+		ENDIF
+	ENDIF
+	PRINTC Set CommandList1[951]
+	SIF SELECTCOM:1 >= 0
+		PRINTC Do CommandList1[952]
+	PRINTC Set CommandList2[953]
+	SIF SELECTCOM:11 >= 0
+		PRINTC Do CommandList2[954]
+	PRINTC Set CommandFilter[960]
+	IF 上級売春中
+		PRINTC End Prostitution[999]
+	ELSE
+		PRINTC End Training[999]
+	ENDIF
+	IF PREVCOMS != ""
+		PRINTL 
+		PRINTFORM ＜Previous Command:%PREVCOMS%
+		SIF TFLAG:前コマンド実行者 == ASSI
+			PRINT (Assi)
+		PRINTL ＞
+	ENDIF
+ELSE
+	PRINTC 履歴表示[900]
+	PRINTC 汚れ表示[901]
+	PRINTC 能力表示[902]
+
+	;新妻プレイ、お風呂場プレイ時、触手召喚時、ゲーセンで遊んでる時は除く
+	SIF !TEQUIP:エプロン && !TEQUIP:お風呂場 && !TEQUIP:触手 && !(TEQUIP:ゲームセンター && !TEQUIP:トイレ)
+		PRINTC 着衣設定[903]
+	;お風呂場プレイ時。ゲーセンで遊んでる時は除く
+	IF !TEQUIP:お風呂場 && !(TEQUIP:ゲームセンター && !TEQUIP:トイレ)
+		IF GROUPMATCH(ゲームモード(), "新婚モード", "学園モード")
+			PRINTFORMC 着衣設定(%CALLNAME:MASTER%)[904]
+		ELSE
+			PRINTC 着衣設定(調教者)[904]
+		ENDIF
+	ENDIF
+	SELECTCASE PLAYER
+		CASE MASTER
+			IF GROUPMATCH(ゲームモード(), "新婚モード", "学園モード")
+				PRINTFORMC 能力表示(%CALLNAME:MASTER%)[906]
+			ELSE
+				PRINTC 能力表示(主人)[906]
+			ENDIF
+		CASE ASSI
+			PRINTFORMC 能力表示(助手\@ ASSI:1 > 0 ? 1 #\@)[906]
+		CASE ASSI:1
+			PRINTFORMC 能力表示(助手2)[906]
+	ENDSELECT
+	PRINTC MANUAL[910]
+	IF !TEQUIP:触手
+		IF ASSI:1 > 0
+			IF PLAYER == ASSI
+				PRINTFORMC %CALLNAMEDISP(TMASTER)%と交代[940]
+			ELSE
+				SIF !TALENT:ASSI:アニマル
+					PRINTFORMC %CALLNAMEDISP(ASSI)%と交代[940]
+			ENDIF
+			IF TMASTER != MASTER
+				PRINTFORMC %CALLNAMEDISP(MASTER)%と交代[941]
+			ELSE
+				PRINTFORMC %CALLNAMEDISP(ASSI:1)%と交代[941]
+			ENDIF
+		ELSEIF ASSI > 0 && !TALENT:ASSI:アニマル
+			IF PLAYER == ASSI
+				PRINTC 主人と交代[940]
+			ELSE
+				PRINTC 助手と交代[940]
+			ENDIF
+		ENDIF
+	ENDIF
+	IF ゲームモード() != "学園モード"
+		PRINTC コマンドセット1の設定[951]
+		SIF SELECTCOM:1 >= 0
+			PRINTC コマンドセット1の実行[952]
+		PRINTC コマンドセット2の設定[953]
+		SIF SELECTCOM:11 >= 0
+			PRINTC コマンドセット2の実行[954]
+		SIF 受験段位名 != "ワガママ姫たちの接待調教プログラム"
+			PRINTC コマンドフィルタの設定[960]
+	ENDIF
+	PRINTC コマンド段落表示変更[961]
+	SIF !OPTION:汎用喘ぎ口上
+		PRINTC 汎用喘ぎ設定[970]
+	SIF TEQUIP:ライブ配信
+		PRINTC ライブ情報の表示/非表示[990]
+	IF 上級売春中
+		PRINTC 売春終了[999]
+	ELSEIF GROUPMATCH(ゲームモード(), "新婚モード", "学園モード")
+		PRINTC 情事終了[999]
+	ELSE
+		PRINTC 調教終了[999]
+	ENDIF
+	IF PREVCOMS != ""
+		PRINTL 
+		PRINTFORML ＜前回調教コマンド:%PREVCOMS%\@ GROUPMATCH(TFLAG:前コマンド実行者, ASSI:0, ASSI:1) ? (助手) #\@＞
+	ENDIF
+ENDIF
+
+;Emueraのフローに則りUP、DOWN、LOSEBASE及びDOWNBASEを初期化する
+VARSET UP
+VARSET DOWN
+VARSET LOSEBASE
+VARSET DOWNBASE:MASTER:0, 0
+SIF ASSI >= 0
+	VARSET DOWNBASE:ASSI:0
+
+CALL TUTORIAL, "調教_1"
+CALL TUTORIAL
+
+;コマンド強制を使ってる場合はそれを実行する
+IF コマンド強制 >= 0
+	RESULT = コマンド強制
+	COMRESULT = 0
+	コマンド強制 = -1
+	GOTO USERCOM
+ENDIF
+
+;統一
+;@USERCOM
+BINPUT
+$USERCOM
+LRESULT = RESULT
+SELECTCASE RESULT
+	CASE 0 TO 899
+		COMRESULT = 1
+		コマンド実行条件 = 
+		;天使の技巧ボーナス
+		;欲情と屈服のPALAMLVだけ技巧に加算する
+		IF CSTR:種族 == "天使"
+			ABLBONUS:0 = GETPALAMLV(PALAM:欲情, 10)
+			ABLBONUS:1 = GETPALAMLV(PALAM:屈服, 10)
+			ABLBONUS:2 = ABL:技巧
+			ABL:技巧 = ABLBONUS:0*ABLBONUS:1+ABLBONUS:2
+		ENDIF
+		;NOWEX、TFLAG変数リセット
+		数珠繋ぎ退避 = TFLAG:数珠繋ぎ
+		CALL TVAR_RESET
+		SELECTCOM = LRESULT
+		SELECTCOMS = %TRAINNAME:SELECTCOM%
+		SIF PREVCOMS == "数珠繋ぎ"
+			TFLAG:数珠繋ぎ = 数珠繋ぎ退避
+		SIF OPTION:調教時テキストスキップ
+			SKIPLOG 1
+		TRYCALLFORM COM_%SELECTCOMS%
+		IF RESULT == 0
+			;終わったら技巧を元に戻す
+			SIF CSTR:種族 == "天使"
+				ABL:技巧 = ABLBONUS:2
+			SIF OPTION:調教時テキストスキップ
+				FORCEWAIT
+			RETURN 1
+		ELSE
+			CALL コマンド実績判定
+			CALL SOURCE_CHECK
+			VARSET SOURCE, 0
+			TRYCALL EVENTUSERCOMEND
+			FCOMT:SELECTCOM++
+			WAIT
+			SIF OPTION:調教時テキストスキップ
+				FORCEWAIT
+			;終わったら技巧を元に戻す
+			SIF CSTR:種族 == "天使"
+				ABL:技巧 = ABLBONUS:2
+		ENDIF
+	;履歴表示
+	CASE 900
+		CALL SHOW_LOG
+		RETURN 1
+	;汚れ表示
+	CASE 901
+		CALL 汚れ表示, MASTER
+		CALL 汚れ表示, TARGET
+		SIF ASSI > 0
+			CALL 汚れ表示, ASSI
+		SIF ASSI:1 > 0
+			CALL 汚れ表示, ASSI:1
+		WAIT
+		RETURN 1
+	;能力表示
+	CASE 902
+		CALL SHOW_INFO, TARGET, 1
+		WAIT
+		RETURN 1
+	;着衣設定
+	CASE 903
+		CALL CLOTHES_CHANGE, TARGET
+		RETURN 1
+	;着衣設定(PLAYER)
+	CASE 904
+		CALL CLOTHES_CHANGE, PLAYER
+		RETURN 1
+	;PLAYERの能力表示
+	CASE 906
+		CALL SHOW_INFO, PLAYER, 1
+		WAIT
+		RETURN 1
+	;マニュアル
+	CASE 910
+		CALL GAME_MANUAL
+		RETURN 1
+	;助手と交代
+	CASE 940
+		IF PLAYER == ASSI
+			PLAYER = TMASTER
+		ELSE
+			PLAYER = ASSI
+		ENDIF
+		ASSIPLAY = PLAYER == ASSI
+		CALL KOJO_MESSAGE_USERCOM, "助手と交代"
+		RETURN 1
+	;助手2と交代
+	CASE 941
+		IF TMASTER == MASTER
+			TMASTER = ASSI:1
+		ELSE
+			TMASTER = MASTER
+		ENDIF
+		PLAYER = TMASTER
+		ASSIPLAY = 0
+	;コマンドセットは引数増やすだけで簡単に拡張可能
+	CASE 951
+		CALL COMMENU_SETTING, 0
+		RETURN 1
+	CASE 952
+		CALL COMMENU_START, 0
+		RETURN 1
+	CASE 953
+		CALL COMMENU_SETTING, 1
+		RETURN 1
+	CASE 954
+		CALL COMMENU_START, 1
+		RETURN 1
+	;コマンドフィルタ設定
+	CASE 960
+		$コマンドフィルタ
+		PRINTFORML [1] 愛撫(口を含む)コマンドフィルタ(現在:\@ FLAG:愛撫コマンドフィルタ ? オン # オフ \@)
+		PRINTFORML [2] 道具コマンドフィルタ(現在:\@ FLAG:道具コマンドフィルタ ? オン # オフ \@)
+		PRINTFORML [3] 奉仕コマンドフィルタ(現在:\@ FLAG:奉仕コマンドフィルタ ? オン # オフ \@)
+		PRINTFORML [4] 触手・獣姦コマンドフィルタ(現在:\@ FLAG:獣姦コマンドフィルタ ? オン # オフ \@)
+		PRINTFORML [5] Ｖ系コマンドフィルタ(現在:\@ FLAG:Ｖ系コマンドフィルタ ? オン # オフ \@)
+		PRINTFORML [6] Ａ系コマンドフィルタ(現在:\@ FLAG:Ａ系コマンドフィルタ ? オン # オフ \@)
+		PRINTFORML [7] 暴力系コマンドフィルタ(現在:\@ FLAG:暴力コマンドフィルタ ? オン # オフ \@)
+		PRINTFORML [100] コマンドごとにフィルタを設定する
+		PRINTL [0] 戻る
+		BINPUT
+		SELECTCASE RESULT
+			CASE 0
+				RETURN 1
+			CASE 1
+				INVERTBIT FLAG:愛撫コマンドフィルタ, 0
+			CASE 2
+				INVERTBIT FLAG:道具コマンドフィルタ, 0
+			CASE 3
+				INVERTBIT FLAG:奉仕コマンドフィルタ, 0
+			CASE 4
+				INVERTBIT FLAG:獣姦コマンドフィルタ, 0
+			CASE 5
+				INVERTBIT FLAG:Ｖ系コマンドフィルタ, 0
+			CASE 6
+				INVERTBIT FLAG:Ａ系コマンドフィルタ, 0
+			CASE 7
+				INVERTBIT FLAG:暴力コマンドフィルタ, 0
+			CASE 100
+				VARLINE = 0
+				CALL コマンドフィルタ設定
+		ENDSELECT
+		GOTO コマンドフィルタ
+	CASE 961
+		OPTION:コマンド段落非表示++
+		SIF OPTION:コマンド段落非表示 > 2
+			OPTION:コマンド段落非表示 = 0
+	CASE 970
+		CALL 汎用喘ぎ設定
+	CASE 990
+		INVERTBIT TEQUIP:ライブ配信, 1
+	;調教終了
+	CASE 999
+		CALL TUTORIAL, "調教終了無効_2"
+		SIF RESULT != 999
+			RETURN 0
+		IF 上級売春中
+			IF 上級売春中 == 2
+				上級売春中 = 4
+			ELSE
+				上級売春中 = 3
+			ENDIF
+			RETURN 1
+		ELSEIF ゲームモード() == "学園モード"
+			TFLAG:調教終了 = 1
+			RETURN 1
+		ELSE
+			IF TEQUIP:仮死薬
+				PRINTFORML %CALLNAME:TARGET%に仮死薬が作用したままです。蘇生薬を投与せずに放置すると死亡します。よろしいですか？
+				PRINTL [0] - はい
+				PRINTL [1] - いいえ
+				BINPUT
+				SIF RESULT
+					RETURN 0
+			ENDIF
+			TFLAG:調教終了 = 1
+			RETURN 1
+		ENDIF
+ENDSELECT
+RETURN 0
+
+@SHOW_LOG
+#DIM DYNAMIC PREG_PER, 4, 4;0,1,2は主人,助手,助手2,奴隷に対応
+#DIM DYNAMIC LCOUNT
+DRAWLINE
+PRINTL □ 珠
+CALL SHOW_INFO_JUEL, TARGET
+PRINTL 
+
+IF PREVCOMS != ""
+	PRINTL □ 前回調教コマンド
+	PRINTFORM 　%PREVCOMS%
+	SIF TFLAG:前コマンド実行者 == ASSI
+		PRINT (助手)
+	PRINTL 
+ENDIF
+;PRINTL □ 状態
+;CALL SHOW_STATE
+
+PRINTL □ 状態・調教道具
+CALL SHOW_EQUIP
+PRINTL 
+
+PRINTL □ 服装
+FOR LCOUNT, GETNUM(CSTR, "特殊"), GETNUM(CSTR, "足元")+1
+	IF CSTR:LCOUNT == ""
+		IF LCOUNT == GETNUM(CSTR, "足元")
+			PRINTL 　全裸
+			GOTO 全裸
+		ENDIF
+	ELSE
+		BREAK
+	ENDIF
+NEXT
+FOR LCOUNT, GETNUM(CSTR, "特殊"), GETNUM(CSTR, "足元")+1
+	IF CSTR:LCOUNT != ""
+		SELECTCASE CSTRNAME:LCOUNT
+			CASE "特殊"
+				PRINT 　特殊　　　:
+			CASE "上半身上着"
+				PRINT 　上半身上着:
+			CASE "下半身上着"
+				PRINT 　下半身上着:
+			CASE "全身上着"
+				PRINT 　全身上着　:
+			CASE "上半身下着"
+				PRINT 　上半身下着:
+			CASE "下半身下着"
+				PRINT 　下半身下着:
+			CASE "足元"
+				PRINT 　足元　　　:
+		ENDSELECT
+		SIF !TEQUIP:TARGET:(LCOUNT-100)
+			SETCOLORBYNAME gray
+		PRINTFORML %CSTR:LCOUNT%
+	ENDIF
+	RESETCOLOR
+NEXT
+$全裸
+PRINTL 
+
+PRINTL □絶頂回数
+IF PENIS(TARGET)
+	PRINTFORML 　潮噴き:{EX:潮噴き}回
+ELSE
+	PRINTFORML 　Ｃ絶頂:{EX:Ｃ絶頂}回
+ENDIF
+SIF VAGINA(TARGET)
+	PRINTFORML 　Ｖ絶頂:{EX:Ｖ絶頂}回
+PRINTFORML 　Ａ絶頂:{EX:Ａ絶頂}回
+PRINTFORML 　Ｂ絶頂:{EX:Ｂ絶頂}回
+SIF TALENT:母乳体質
+	PRINTFORML 　噴乳:{EX:噴乳}回
+SIF PENIS(TARGET)
+	PRINTFORML 　射精:{EX:射精}回
+SIF MOD:SCAT2
+	PRINTFORML 　放尿:{EX:放尿}回
+PRINTL 
+SIF PENIS(MASTER)
+	PRINTFORML 　%CALLNAME:MASTER%の射精:{EX:MASTER:射精}回
+SIF ASSI > 0 && PENIS(ASSI)
+	PRINTFORML 　%CALLNAME:ASSI%の射精:{EX:ASSI:射精}回
+SIF ASSI:1 > 0 && PENIS(ASSI:1)
+	PRINTFORML 　%CALLNAME:(ASSI:1)%の射精:{EX:(ASSI:1):射精}回
+SIF TALENT:MASTER:ドラゴン使い
+	PRINTFORML 　%CSTR:MASTER:ドラゴン%の射精:{EX:MASTER:ドラゴン射精}回
+SIF ASSI > 0 && TALENT:ASSI:ドラゴン使い
+	PRINTFORML 　%CSTR:ASSI:ドラゴン%の射精:{EX:ASSI:ドラゴン射精}回
+SIF ASSI:1 > 0 && TALENT:(ASSI:1):ドラゴン使い
+	PRINTFORML 　%CSTR:(ASSI:1):ドラゴン%の射精:{EX:(ASSI:1):ドラゴン射精}回
+
+[IF_DEBUG]
+	PRINTL 
+	PRINTL □中出し回数・妊娠確率
+	;主人→奴隷
+	;助手→奴隷
+	PRINTFORM 　%CALLNAME:MASTER%→%CALLNAME:TARGET%:{TFLAG:主人から奴隷への膣内射精回数}回(射精量:{PREG:TARGET:主人膣内射精}) ………… 妊娠確率
+	CALL NAKADASHI_CHECK, TARGET, MASTER, 1
+	PREG_PER:0:3 = RESULT
+	IF PREG_PER:0:3
+		CALL 確率表示, PREG_PER:0:3, 1000000, TEQUIP:TARGET:妊娠確率分子, TEQUIP:TARGET:妊娠確率分母
+		PRINTL
+	ELSE
+		PRINTL 0
+	ENDIF
+	IF ASSI > -1
+		PRINTFORM 　%CALLNAME:ASSI%→%CALLNAME:TARGET%:{TFLAG:助手から奴隷への膣内射精回数}回(射精量:{PREG:TARGET:助手膣内射精}) ………… 妊娠確率
+		CALL NAKADASHI_CHECK, TARGET, ASSI, 1
+		PREG_PER:1:3 = RESULT
+		IF PREG_PER:1:3
+			CALL 確率表示, PREG_PER:1:3, 1000000, TEQUIP:TARGET:妊娠確率分子, TEQUIP:TARGET:妊娠確率分母
+			PRINTL
+		ELSE
+			PRINTL 0
+		ENDIF
+	ENDIF
+	IF ASSI:1 > -1
+		PRINTFORM 　%CALLNAME:(ASSI:1)%→%CALLNAME:TARGET%:{TFLAG:助手2から奴隷への膣内射精回数}回(射精量:{PREG:TARGET:助手2膣内射精}) ………… 妊娠確率
+		CALL NAKADASHI_CHECK, TARGET, (ASSI:1), 1
+		PREG_PER:2:3 = RESULT
+		IF PREG_PER:2:3
+			CALL 確率表示, PREG_PER:2:3, 1000000, TEQUIP:TARGET:妊娠確率分子, TEQUIP:TARGET:妊娠確率分母
+			PRINTL
+		ELSE
+			PRINTL 0
+		ENDIF
+
+	ENDIF
+	IF (PREG_PER:0:3 > 0) + (PREG_PER:1:3 > 0) + (PREG_PER:2:3 > 0) > 1
+		PRINTFORM 　　%CALLNAME:TARGET%の妊娠確率
+		CALL 確率表示3, PREG_PER:0:3, PREG_PER:1:3, PREG_PER:2:3, 1000000, 1000000, 1000000, TEQUIP:TARGET:妊娠確率分子, TEQUIP:TARGET:妊娠確率分母
+		PRINTL 
+	ENDIF
+	;主人→助手
+	;奴隷→助手
+	IF ASSI > -1
+		PRINTFORM 　%CALLNAME:MASTER%→%CALLNAME:ASSI%:{TFLAG:主人から助手への膣内射精回数}回(射精量:{PREG:ASSI:主人膣内射精}) ………… 妊娠確率
+		CALL NAKADASHI_CHECK, ASSI, MASTER, 1
+		PREG_PER:0:1 = RESULT
+		IF PREG_PER:0:1
+			CALL 確率表示, PREG_PER:0:1, 1000000, TEQUIP:ASSI:妊娠確率分子, TEQUIP:ASSI:妊娠確率分母
+			PRINTL
+		ELSE
+			PRINTL 0
+		ENDIF
+		IF ASSI:1 > -1
+			PRINTFORM 　%CALLNAME:(ASSI:1)%→%CALLNAME:ASSI%:{TFLAG:助手2から助手への膣内射精回数}回(射精量:{PREG:ASSI:助手2膣内射精}) ………… 妊娠確率
+			CALL NAKADASHI_CHECK, ASSI, (ASSI:1), 1
+			PREG_PER:2:1 = RESULT
+			IF PREG_PER:2:1
+				CALL 確率表示, PREG_PER:2:1, 1000000, TEQUIP:ASSI:妊娠確率分子, TEQUIP:ASSI:妊娠確率分母
+				PRINTL
+			ELSE
+				PRINTL 0
+			ENDIF
+		ENDIF
+		PRINTFORM 　%CALLNAME:TARGET%→%CALLNAME:ASSI%:{TFLAG:奴隷から助手への膣内射精回数}回(射精量:{PREG:ASSI:奴隷膣内射精}) ………… 妊娠確率
+		CALL NAKADASHI_CHECK, ASSI, TARGET, 1
+		PREG_PER:3:1 = RESULT
+		IF PREG_PER:3:1
+			CALL 確率表示, PREG_PER:3:1, 1000000, TEQUIP:ASSI:妊娠確率分子, TEQUIP:ASSI:妊娠確率分母
+			PRINTL
+		ELSE
+			PRINTL 0
+		ENDIF
+		IF (PREG_PER:0:1 > 0) + (PREG_PER:2:1 > 0) + (PREG_PER:3:1 > 0) > 1
+			PRINTFORM 　　%CALLNAME:ASSI%の妊娠確率
+			CALL 確率表示3, PREG_PER:0:1, PREG_PER:2:1, PREG_PER:3:1, 1000000, 1000000, 1000000, TEQUIP:ASSI:妊娠確率分子, TEQUIP:ASSI:妊娠確率分母
+			PRINTL 
+		ENDIF
+	ENDIF
+	IF (ASSI:1) > -1
+		PRINTFORM 　%CALLNAME:MASTER%→%CALLNAME:(ASSI:1)%:{TFLAG:主人から助手2への膣内射精回数}回(射精量:{PREG:(ASSI:1):主人膣内射精}) ………… 妊娠確率
+		CALL NAKADASHI_CHECK, (ASSI:1), MASTER, 1
+		PREG_PER:0:2 = RESULT
+		IF PREG_PER:0:2
+			CALL 確率表示, PREG_PER:0:2, 1000000, TEQUIP:(ASSI:1):妊娠確率分子, TEQUIP:(ASSI:1):妊娠確率分母
+			PRINTL
+		ELSE
+			PRINTL 0
+		ENDIF
+		IF ASSI > -1
+			PRINTFORM 　%CALLNAME:ASSI%→%CALLNAME:(ASSI:1)%:{TFLAG:助手から助手2への膣内射精回数}回(射精量:{PREG:(ASSI:1):助手膣内射精}) ………… 妊娠確率
+			CALL NAKADASHI_CHECK, (ASSI:1), ASSI, 1
+			PREG_PER:1:2 = RESULT
+			IF PREG_PER:1:2
+				CALL 確率表示, PREG_PER:1:2, 1000000, TEQUIP:(ASSI:1):妊娠確率分子, TEQUIP:(ASSI:1):妊娠確率分母
+				PRINTL
+			ELSE
+				PRINTL 0
+			ENDIF
+		ENDIF
+		PRINTFORM 　%CALLNAME:TARGET%→%CALLNAME:(ASSI:1)%:{TFLAG:奴隷から助手2への膣内射精回数}回(射精量:{PREG:(ASSI:1):奴隷膣内射精}) ………… 妊娠確率
+		CALL NAKADASHI_CHECK, (ASSI:1), TARGET, 1
+		PREG_PER:3:2 = RESULT
+		IF PREG_PER:3:2
+			CALL 確率表示, PREG_PER:3:2, 1000000, TEQUIP:(ASSI:1):妊娠確率分子, TEQUIP:(ASSI:1):妊娠確率分母
+			PRINTL
+		ELSE
+			PRINTL 0
+		ENDIF
+		IF (PREG_PER:0:2 > 0) + (PREG_PER:1:2 > 0) + (PREG_PER:3:2 > 0) > 1
+			PRINTFORM 　　%CALLNAME:(ASSI:1)%の妊娠確率
+			CALL 確率表示3, PREG_PER:0:2, PREG_PER:1:2, PREG_PER:3:2, 1000000, 1000000, 1000000, TEQUIP:(ASSI:1):妊娠確率分子, TEQUIP:(ASSI:1):妊娠確率分母
+			PRINTL 
+		ENDIF
+	ENDIF
+	;奴隷→主人
+	PRINTFORM 　%CALLNAME:TARGET%→%CALLNAME:MASTER%:{TFLAG:奴隷から主人への膣内射精回数}回(射精量:{PREG:TARGET:主人への膣内射精}) ………… 妊娠確率
+	CALL NAKADASHI_CHECK_MASTER, TARGET, 1
+	PREG_PER:3:0 = RESULT
+	IF PREG_PER:3:0
+		CALL 確率表示, PREG_PER:3:0, 1000000, TEQUIP:MASTER:妊娠確率分子, TEQUIP:MASTER:妊娠確率分母
+		PRINTL
+	ELSE
+		PRINTL 0
+	ENDIF
+[ENDIF]
+
+WAIT
+
+;-------------------------------------------------
+;調教中の着衣変更
+;-------------------------------------------------
+@CLOTHES_CHANGE, 対象
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC LRESULT
+#DIM DYNAMIC 対象
+#DIM DYNAMIC 字数
+
+DRAWLINE
+PRINTL 着衣について設定します
+
+;位置調整用の字数カウント
+FOR LCOUNT, GETNUM(CSTR, "特殊"), GETNUM(CSTR, "足元")+1
+	LIMIT STRLENS(CSTR:対象:LCOUNT), 字数, STRLENS(CSTR:対象:LCOUNT)
+	字数 = RESULT
+NEXT
+
+;現在来ている服を表示、PRINTLは改行用
+PRINTFORML □%CALLNAME:対象%の着衣
+FOR LCOUNT, GETNUM(CSTR, "特殊"), GETNUM(CSTR, "足元")+1
+	IF CSTR:対象:LCOUNT != ""
+		IF TEQUIP:対象:(CSTRNAME:LCOUNT)
+			PRINT 　(着)
+		ELSEIF !TEQUIP:対象:(CSTRNAME:LCOUNT)
+			SETCOLORBYNAME gray
+			PRINT 　(脱)
+		ENDIF
+		PRINTFORM %CSTR:対象:LCOUNT, 字数, LEFT%
+		RESETCOLOR
+
+		PRINTFORM  - [{LCOUNT-100, 2}] 
+		IF TEQUIP:対象:(CSTRNAME:LCOUNT)
+			SELECTCASE CSTRNAME:LCOUNT
+				CASE "特殊"
+					PRINTFORML \@ 対象 == TARGET ? 奪う # 取る \@
+				CASEELSE
+					PRINTFORML \@ 対象 == TARGET ? 脱がす # 脱ぐ \@
+			ENDSELECT
+		ELSEIF !TEQUIP:対象:(CSTRNAME:LCOUNT)
+			SELECTCASE CSTRNAME:LCOUNT
+				CASE "特殊"
+					PRINTFORML \@ 対象 == TARGET ? 返す # 身につける \@
+				CASE "下半身下着", "足元"
+					PRINTFORML \@ 対象 == TARGET ? 穿かせる # 穿く \@
+				CASEELSE
+					PRINTFORML \@ 対象 == TARGET ? 着せる # 着る \@
+			ENDSELECT
+		ENDIF
+	ENDIF
+NEXT
+
+;何か着てたらすべて脱がすコマンド表示
+FOR LCOUNT, GETNUM(TEQUIP, "特殊"), GETNUM(TEQUIP, "足元")+1
+	IF TEQUIP:対象:LCOUNT
+		PRINTFORM 　[10] すべて\@ 対象 == TARGET ? 脱がす # 脱ぐ \@
+		BREAK
+	ENDIF
+NEXT
+
+;何か着てないものがあったらすべて着せるコマンド表示
+FOR LCOUNT, GETNUM(TEQUIP, "特殊"), GETNUM(TEQUIP, "足元")+1
+	IF !TEQUIP:対象:LCOUNT && CSTR:(LCOUNT+100) != ""
+		PRINTFORM 　[11] すべて\@ 対象 == TARGET ? 着せる # 着る \@
+		BREAK
+	ENDIF
+NEXT
+
+PRINTL 
+DRAWLINE
+PRINTPLAIN 　COORDINATE　
+PRINTFORML [100] 戻る　[101] 着脱の簡略化(現在:\@ OPTION:服着脱ウェイト無 ? オン # オフ \@)
+
+BINPUT
+SELECTCASE RESULT
+	CASE GETNUM(TEQUIP, "特殊") TO GETNUM(TEQUIP, "足元")
+		IF TEQUIP:対象:RESULT
+			PRINTFORM %CSTR:対象:(RESULT+100)%を
+			SELECTCASE TEQUIPNAME:RESULT
+				CASE "特殊"
+					PRINTFORML \@ 対象 == TARGET ? 奪った # 取った \@
+				CASEELSE
+					PRINTFORML \@ 対象 == TARGET ? 脱がした # 脱いだ \@
+			ENDSELECT
+			TEQUIP:対象:RESULT = 0
+		ELSEIF !TEQUIP:対象:RESULT
+			PRINTFORM %CSTR:対象:(RESULT+100)%を
+			SELECTCASE TEQUIPNAME:RESULT
+				CASE "特殊"
+					PRINTFORML \@ 対象 == TARGET ? 返した # 身につけた \@
+				CASE "下半身下着", "足元"
+					PRINTFORML \@ 対象 == TARGET ? 穿かせた # 穿いた \@
+				CASEELSE
+					PRINTFORML \@ 対象 == TARGET ? 着せた # 着た \@
+			ENDSELECT
+			TEQUIP:対象:RESULT = 1
+		ENDIF
+		SIF !OPTION:服着脱ウェイト無
+			WAIT
+	;服を脱がせる場合
+	CASE 10
+		FOR LCOUNT, GETNUM(TEQUIP, "特殊"), GETNUM(TEQUIP, "足元")+1
+			TEQUIP:対象:LCOUNT = 0
+		NEXT
+		PRINTFORML 服をすべて\@ 対象 == TARGET ? 脱がせました # 脱ぎました \@
+		SIF !OPTION:服着脱ウェイト無
+			WAIT
+	;服を着せる場合
+	CASE 11
+		FOR LCOUNT, GETNUM(TEQUIP, "特殊"), GETNUM(TEQUIP, "足元")+1
+			SIF CSTR:対象:(TEQUIPNAME:LCOUNT) != ""
+				TEQUIP:対象:LCOUNT = 1
+		NEXT
+		PRINTFORML 服をすべて\@ 対象 == TARGET ? 着せました # 着ました \@
+		SIF !OPTION:服着脱ウェイト無
+			WAIT
+	CASE 100
+		RETURN 0
+	CASE 101
+		INVERTBIT OPTION:服着脱ウェイト無, 0
+		RESTART
+ENDSELECT
+
+TFLAG:服着脱 = RESULT
+;PLAYERに表示する事ある？暴発しそうなので一旦TARGETだけにしておく
+SIF 対象 == TARGET
+	CALL KOJO_MESSAGE_USERCOM, "服の着脱"
+
+RESTART
+
+@服着脱部位
+#FUNCTIONS
+SELECTCASE TFLAG:服着脱
+	CASE 10
+		RETURNF "全部脱ぐ"
+	CASE 11
+		RETURNF "全部着る"
+	CASE 0 TO 6
+		RETURNF CSTRNAME:(TFLAG:服着脱+GETNUM(CSTR, "特殊"))
+ENDSELECT
+RETURNF ""
+
+@COMMENU_SETTING, コマンドセット番号
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC コマンド数
+#DIM DYNAMIC 選択コマンド
+#DIM DYNAMIC コマンドセット
+#DIM DYNAMIC 最長文字数
+#DIM DYNAMIC カテゴリ表示済み, 20
+#DIM DYNAMIC カテゴリナンバー
+#DIMS DYNAMIC カテゴリ先頭
+#DIM DYNAMIC コマンドセット番号
+
+CALL LOOP_CLEARLINE
+
+CALL TUTORIAL, "コマンドセット"
+
+コマンドセット = コマンドセット番号*10
+DRAWLINE
+コマンド数 = 0
+;編集中のコマンドセットのコマンド数を計算
+FOR LCOUNT, コマンドセット+1, コマンドセット+11
+	SIF SELECTCOM:LCOUNT >= 0
+		コマンド数++
+NEXT
+
+;コマンド数10まで設定可能
+IF コマンド数 < 10
+	VARSET カテゴリ表示済み
+	カテゴリナンバー = 0
+	;800～は派生コマンドなので除外
+	FOR LCOUNT, 0, 799
+		COMRESULT = 1
+		コマンド実行条件 = 
+		SIF TRAINNAME:LCOUNT == ""
+			CONTINUE
+		SELECTCASE TRAINNAME:LCOUNT
+			{
+			CASE "愛撫", "キスする", "ローター", "正常位", "正常位アナル", "正常位させる", "手淫", "スパンキング",
+				"腹パン", "助手を犯させる", "触手召喚", "キス（ドラゴン）", "野外プレイ", "IIDXをプレイする", "シックスナイン"
+			}
+				カテゴリナンバー++
+				カテゴリ先頭 = %TRAINNAME:LCOUNT%
+				CALL NEWLINE
+				SIF カテゴリ表示済み:(カテゴリナンバー-1)
+					PRINTL 
+		ENDSELECT
+		CALLFORMF USERCOM_ABLE_%TRAINNAME:LCOUNT%
+		;Girls vs Tentacles in eraBEMANI挑戦中は触手と一部コマンドのみ可能
+		IF 受験段位名 == "Girls vs Tentacles in eraBEMANI"
+			SELECTCASE TRAINNAME:LCOUNT
+				{
+				CASE "愛撫", "クンニ", "指挿入れ", "アナル舐め", "アナル愛撫", "胸揉み", "乳首責め", "胸愛撫", "自慰見せつけ",
+					 "キスする", "何もしない", "情欲を煽る", "媚薬", "利尿剤",
+					 "触手召喚", "触手挿入", "アナル触手", "触手クリ責め", "触手乳首責め", "触手搾乳","触手緊縛",
+					 "触手浣腸", "触手口辱", "触手搾精", "触手射精止め", "触手強制搾精", "触手強制放尿",
+				}
+				CASEELSE
+					COMRESULT = 0
+			ENDSELECT
+		ENDIF
+		IF COMRESULT == 1
+			IF !カテゴリ表示済み:カテゴリナンバー
+				RESETCOLOR
+				SELECTCASE カテゴリ先頭
+					CASE "愛撫"
+						PRINTSINGLEFORM □愛撫系%GETLINESTR("-")%
+					CASE "キスする"
+						PRINTSINGLEFORM □コミュニケーション系%GETLINESTR("-")%
+					CASE "ローター"
+						PRINTSINGLEFORM □道具系%GETLINESTR("-")%
+					CASE "正常位"
+						PRINTSINGLEFORM □Ｖ性交系%GETLINESTR("-")%
+					CASE "正常位アナル"
+						PRINTSINGLEFORM □Ａ性交系%GETLINESTR("-")%
+					CASE "正常位させる"
+						PRINTSINGLEFORM □その他性交系%GETLINESTR("-")%
+					CASE "手淫"
+						PRINTSINGLEFORM □奉仕系%GETLINESTR("-")%
+					CASE "スパンキング"
+						PRINTSINGLEFORM □SM系%GETLINESTR("-")%
+					CASE "腹パン"
+						PRINTSINGLEFORM □拷問系%GETLINESTR("-")%
+					CASE "助手を犯させる"
+						PRINTSINGLEFORM □助手・同性愛系%GETLINESTR("-")%
+					CASE "触手召喚"
+						PRINTSINGLEFORM □触手系%GETLINESTR("-")%
+					CASE "キス（ドラゴン）"
+						PRINTSINGLEFORM □獣姦・龍姦系%GETLINESTR("-")%
+					CASE "野外プレイ"
+						PRINTSINGLEFORM □ロケーション・シチュエーション系%GETLINESTR("-")%
+					CASE "IIDXをプレイする"
+						PRINTSINGLEFORM □ゲームコマンド%GETLINESTR("-")%
+					CASE "シックスナイン"
+						PRINTSINGLEFORM □派生コマンド%GETLINESTR("-")%
+				ENDSELECT
+				カテゴリ表示済み:カテゴリナンバー = 1
+			ENDIF
+			PRINTFORMC %TRAINNAME:(LCOUNT)%[{LCOUNT, 3, RIGHT}]
+		ENDIF
+	NEXT
+ELSE
+	PRINTL これ以上追加できません
+ENDIF
+
+CALL NEWLINE
+
+IF SELECTCOM:(コマンドセット+1) >= 0
+	DRAWLINE
+	PRINTL 設定されている連続実行は以下の通りです
+	最長文字数 = 0
+	FOR LCOUNT, コマンドセット+1, コマンドセット+11
+		SIF SELECTCOM:LCOUNT < 0
+			BREAK
+		SIF STRLENS(TRAINNAME:(SELECTCOM:LCOUNT)) > 最長文字数
+			最長文字数 = STRLENS(TRAINNAME:(SELECTCOM:LCOUNT))
+	NEXT
+	FOR LCOUNT, コマンドセット+1, コマンドセット+11
+		IF SELECTCOM:LCOUNT >= 0
+			SIF LCOUNT%10 != 1
+				PRINTL ↓
+			PRINTFORM 　{LCOUNT-コマンドセット, 2}.%TRAINNAME:(SELECTCOM:LCOUNT), 最長文字数, LEFT%
+		ELSE
+			BREAK
+		ENDIF
+	NEXT
+	PRINTL 
+ENDIF
+DRAWLINE
+PRINTPLAIN 　COM MENU　
+PRINT [998] 繰り返し 
+PRINT [999] 初期化 
+PRINTL [1000] 戻る
+
+CALL TUTORIAL
+
+INPUT
+
+SELECTCASE RESULT
+	CASE 0 TO 799
+		SIF コマンド数 >= 10
+			RESTART
+		選択コマンド = RESULT
+		SIF TRAINNAME:選択コマンド == ""
+			RESTART
+		COMRESULT = 1
+		コマンド実行条件 = 
+		CALLFORMF USERCOM_ABLE_%TRAINNAME:選択コマンド%
+		SIF COMRESULT == 0
+			RESTART
+		SELECTCOM:(コマンド数+(コマンドセット+1)) = 選択コマンド
+		RESTART
+	CASE 998
+		SIF !コマンド数
+			RETURN 0
+		FOR LCOUNT, コマンドセット+1, コマンドセット+11
+			IF LCOUNT > コマンド数+コマンドセット
+				IF (LCOUNT-コマンドセット)%コマンド数 == 0
+					SELECTCOM:LCOUNT = SELECTCOM:(コマンド数+コマンドセット)
+				ELSE
+					SELECTCOM:LCOUNT = SELECTCOM:((LCOUNT-コマンドセット)%コマンド数+コマンドセット)
+				ENDIF
+			ENDIF
+		NEXT
+	CASE 999
+		VARSET SELECTCOM, -1, コマンドセット+1, コマンドセット+11
+	CASE 1000
+		CALL TUTORIAL, "調教_4"
+		RETURN 0
+ENDSELECT
+
+RESTART
+
+@COMMENU_START, コマンドセット番号
+#DIM DYNAMIC COM_GO
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC コマンド数
+#DIM DYNAMIC コマンドセット
+#DIM DYNAMIC コマンドセット番号
+#DIM DYNAMIC 数珠繋ぎ退避
+
+コマンドセット = コマンドセット番号*10
+FOR LCOUNT, コマンドセット+1, コマンドセット+11
+	SIF SELECTCOM:LCOUNT >= 0
+		コマンド数++
+NEXT
+
+FOR LCOUNT, コマンドセット+1, (コマンド数+コマンドセット+1)
+	COMRESULT = 1
+	コマンド実行条件 = 
+	CALLFORMF USERCOM_ABLE_%TRAINNAME:(SELECTCOM:LCOUNT)%
+	;Girls vs Tentacles in eraBEMANI挑戦中は触手と一部コマンドのみ可能
+	IF 受験段位名 == "Girls vs Tentacles in eraBEMANI"
+		SELECTCASE TRAINNAME:LCOUNT
+			{
+			CASE "愛撫", "クンニ", "指挿入れ", "アナル舐め", "アナル愛撫", "胸揉み", "乳首責め", "胸愛撫", "自慰見せつけ",
+				 "キスする", "何もしない", "情欲を煽る", "媚薬", "利尿剤",
+				 "触手召喚", "触手挿入", "アナル触手", "触手クリ責め", "触手乳首責め", "触手搾乳","触手緊縛",
+				 "触手浣腸", "触手口辱", "触手搾精", "触手射精止め", "触手強制搾精", "触手強制放尿",
+			}
+			CASEELSE
+				COMRESULT = 0
+		ENDSELECT
+	ENDIF
+	IF COMRESULT == 0
+		PRINTFORMW {LCOUNT}.%TRAINNAME:(SELECTCOM:LCOUNT)%が実行できないため、連続実行を開始できません
+		BREAK
+	ELSEIF COMRESULT == 1
+		SIF LCOUNT == コマンド数+コマンドセット
+			COM_GO = 1
+	ENDIF
+NEXT
+
+
+IF COM_GO == 1
+	FOR LCOUNT, コマンドセット+1, (コマンド数+コマンドセット+1)
+		DRAWLINE
+		COMRESULT = 1
+		コマンド実行条件 = 
+		CALLFORMF USERCOM_ABLE_%TRAINNAME:(SELECTCOM:LCOUNT)%
+		IF COMRESULT == 0
+			PRINTFORMW {LCOUNT}.%TRAINNAME:(SELECTCOM:LCOUNT)%が実行できないため、連続実行を中止しました
+			BREAK
+		ENDIF
+		PRINTFORML コマンド連続実行({LCOUNT-コマンドセット}/{コマンド数})
+		PRINTFORML □%CALLNAME:TARGET%のステータス
+		SIF !上級売春中
+			CALL SHOW_INFO_HEALTH
+		IF PENIS(TARGET)
+			PRINT 　射精
+			PRINTFORM %BARBASE("射精")%
+			SIF CFLAG:残数 == 0
+				PRINT ※打ち止め※
+			PRINTL 
+		ENDIF
+		CALL SHOW_INFO_PALAM
+		SIF PENIS(MASTER) || PENIS(ASSI) || TEQUIP:触手
+			PRINTL □主人と助手のステータス
+		IF 上級売春中
+			CALL SHOW_INFO_HEALTH, MASTER
+		ENDIF
+		IF PENIS(MASTER)
+			PRINT 　射精(主人)
+			PRINTFORM %BARBASE("射精", MASTER)%
+			SIF CFLAG:MASTER:残数 == 0
+				PRINT ※打ち止め※
+			PRINTL 
+		ENDIF
+		IF ASSI >= 0 && PENIS(ASSI)
+			PRINT 　射精(助手)
+			PRINTFORM %BARBASE("射精", ASSI)%
+			SIF CFLAG:ASSI:残数 == 0
+				PRINT ※打ち止め※
+			PRINTL 
+		ENDIF
+		SIF TEQUIP:触手
+			PRINTFORML 　射精(触手)%BARBASE("触手射精", MASTER)%
+		IF TALENT:MASTER:ドラゴン使い
+			PRINTFORML □%CSTR:MASTER:ドラゴン%のステータス
+			PRINTFORML 　射精　　　%BARBASE("ドラゴン射精", MASTER)%
+		ENDIF
+		IF ASSI > 0 && TALENT:ASSI:ドラゴン使い
+			PRINTFORML □%CSTR:ASSI:ドラゴン%のステータス
+			PRINTFORML 　射精　　　%BARBASE("ドラゴン射精", ASSI)%
+		ENDIF
+		DRAWLINE
+		;NOWEX、TFLAGリセット
+		数珠繋ぎ退避 = TFLAG:数珠繋ぎ
+		CALL TVAR_RESET
+		SELECTCOM = SELECTCOM:LCOUNT
+		SELECTCOMS = %TRAINNAME:SELECTCOM%
+		SIF PREVCOMS == "数珠繋ぎ"
+			TFLAG:数珠繋ぎ = 数珠繋ぎ退避
+		TRYCALLFORM COM_%TRAINNAME:(SELECTCOM:LCOUNT)%
+		IF RESULT == 0
+			CONTINUE
+		ELSE
+			CALL SOURCE_CHECK
+			VARSET SOURCE, 0
+			TRYCALL EVENTUSERCOMEND
+			VARSET LOSEBASE, 0
+			VARSET DOWNBASE:MASTER:0, 0
+			IF 上級売春中
+				CALL 上級売春コマンド結果
+				IF TFLAG:満足度 >= 1000 && 上級売春中 == 1
+					DRAWLINE
+					PRINTFORML %CALLNAME:TARGET%は%CALLNAME:PLAYER%との行為に十分満足したようだ
+					PRINTFORML このまま帰ろうとする%CALLNAME:TARGET%を……
+					PRINTL [0] - 愛想良く見送る
+					PRINTL [1] - 行為を続けるべく引き止める
+					BINPUT
+					SELECTCASE RESULT
+						CASE 0
+							上級売春中 = 4
+							BREAK
+						CASE 1
+							上級売春中 = 2
+					ENDSELECT
+				ENDIF
+				SIF BASE:MASTER:体力 < 500
+					RETURN 0
+			ELSE
+				SIF (BASE:体力 < 500 && !特質("無理強い")) || TFLAG:流産
+					RETURN 0
+				SIF BASE:体力 <= 1
+					RETURN 0
+				SIF TFLAG:気絶
+					RETURN 0
+			ENDIF
+			SIF TFLAG:調教終了
+				BREAK
+			PRINTL [-1] - 連続実行を終了する
+			INPUT 0, 1, 1
+			SIF RESULT == -1
+				BREAK
+			SIF RESULT:1 == 2
+				SKIPLOG 1
+		ENDIF
+	NEXT
+ELSE
+	RETURN 0
+ENDIF
+
+@コマンドフィルタ設定
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC ページ数
+#DIM DYNAMIC 処理数
+#DIM DYNAMIC 次ページあり
+
+CALL LOOP_CLEARLINE
+
+DRAWLINE
+PRINTL □コマンドフィルタを設定します
+処理数 = 0
+次ページあり = 0
+FOR LCOUNT, 0, VARSIZE("TRAINNAME")
+	SIF TRAINNAME:LCOUNT == ""
+		CONTINUE
+	IF 処理数 < ページ数*60
+		処理数++
+		CONTINUE
+	ENDIF
+	IF USINGFILTERG
+		PRINTFORMC %I18N(TRAINNAME:LCOUNT, "TRAIN")%[{LCOUNT, 3}]\@ COMFILTERG:LCOUNT ? × # ○ \@
+	ELSE
+		PRINTFORMC %I18N(TRAINNAME:LCOUNT, "TRAIN")%[{LCOUNT, 3}]\@ COMFILTER:LCOUNT ? × # ○ \@
+	ENDIF
+	処理数++
+	IF 処理数 >= ページ数*60+60
+		次ページあり = 1
+		BREAK
+	ENDIF
+NEXT
+CALL NEWLINE
+
+DRAWLINE
+PRINTPLAIN 　FILTER　
+CALL PRINTSPACE, ページ数, "[1001] 前ページ "
+PRINT [1000] 戻る 
+CALL PRINTSPACE, 次ページあり, "[1009] 次ページ "
+PRINTFORML [1010] \@ USINGFILTERG ? このセーブデータ専用のフィルタに変更 # セーブデータ間共通のフィルタに変更 \@
+
+BINPUT
+SELECTCASE RESULT
+	CASE 0 TO VARSIZE("TRAINNAME")-1
+		IF USINGFILTERG
+			INVERTBIT COMFILTERG:RESULT, 0
+		ELSE
+			INVERTBIT COMFILTER:RESULT, 0
+		ENDIF
+		RESTART
+	CASE 1000
+		SAVEGLOBAL
+		RETURN
+	CASE 1001
+		ページ数--
+		RESTART
+	CASE 1009
+		ページ数++
+		RESTART
+	CASE 1010
+		INVERTBIT USINGFILTERG, 0
+		RESTART
+ENDSELECT
+
+@汎用喘ぎ設定
+#DIM DYNAMIC LCOUNT
+
+DRAWLINE
+
+PRINTFORML □%CALLNAME:TARGET%の汎用喘ぎ設定
+PRINTFORML 　[1] - 口調:%汎用喘ぎ_口調:(汎用喘ぎ:口調)%
+PRINTFORML 　[2] - 頻度:{汎用喘ぎ:頻度指定}
+PRINTFORML 　[3] - 種類:%汎用喘ぎ_種類:(汎用喘ぎ:種類指定)%(指定すると感度や素質に関わらず指定したパターンで表示)
+
+PRINTFORML 　[7] - 絶叫禁止(\@ 汎用喘ぎ:絶叫禁止 ? オン # オフ \@)
+PRINTFORML 　[8] - みさくら語(\@ 汎用喘ぎ:みさくら語 ? オン # オフ \@)
+PRINTFORML 　[9] - 淫語(\@ 汎用喘ぎ:淫語 ? オン # オフ \@)
+PRINTL 　[0] - 戻る
+
+BINPUT
+
+SELECTCASE RESULT
+	CASE 0
+		RETURN
+	CASE 1
+		PRINTL □口調を選んでください
+		FOR LCOUNT, 0, VARSIZE("汎用喘ぎ_口調")
+			PRINTFORML [{LCOUNT}] - %汎用喘ぎ_口調:LCOUNT%
+		NEXT
+		INPUT
+		SIF INRANGE(RESULT, 0, VARSIZE("汎用喘ぎ_口調"))
+			汎用喘ぎ:口調 = RESULT
+	CASE 2
+		PRINTL □反復回数を入力してください(1～10)
+		FOR LCOUNT, 1, 10
+			PRINTFORM [{LCOUNT}]
+		NEXT
+		PRINTL
+		INPUT
+		SIF INRANGE(RESULT, 1, 10)
+			汎用喘ぎ:頻度指定 = RESULT
+	CASE 3
+		PRINTL □種類を選んでください
+		FOR LCOUNT, 0, VARSIZE("汎用喘ぎ_種類")
+			PRINTFORML [{LCOUNT}] - %汎用喘ぎ_種類:LCOUNT%
+		NEXT
+		INPUT
+		SIF INRANGE(RESULT, 0, VARSIZE("汎用喘ぎ_種類"))
+			汎用喘ぎ:種類指定 = RESULT
+	CASE 7
+		INVERTBIT 汎用喘ぎ:絶叫禁止, 0
+	CASE 8
+		INVERTBIT 汎用喘ぎ:みさくら語, 0
+	CASE 9
+		INVERTBIT 汎用喘ぎ:淫語, 0
+ENDSELECT
+
+RESTART

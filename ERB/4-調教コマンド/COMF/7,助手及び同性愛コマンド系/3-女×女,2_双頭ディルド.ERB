@@ -1,0 +1,217 @@
+﻿;-------------------------------------------------
+;双頭ディルド
+;-------------------------------------------------
+@USERCOM_ABLE_双頭ディルド
+#FUNCTION
+;ゲーセンに居る場合はできない
+コマンド実行条件 += "ゲーセンでは実行不可/"
+SIF TEQUIP:ゲームセンター
+	COMRESULT = 0
+;上級売春中はダメ
+コマンド実行条件 += "上級売春中は実行不可/"
+SIF 上級売春中
+	COMRESULT = 0
+;アイテムを持っていないとダメ
+コマンド実行条件 += "アイテム[双頭ディルド]が必要/"
+SIF ITEM:双頭ディルド <= 0
+	COMRESULT = 0
+;触手調教中はダメ
+コマンド実行条件 += "触手召喚中は実行できない/"
+SIF TEQUIP:触手
+	COMRESULT = 0
+;性器が露出してないとダメ
+コマンド実行条件 += "性器が露出していないと実行できない/"
+SIF !性器露出(TARGET)
+	COMRESULT = 0
+;アイテム使用中は不可
+コマンド実行条件 += "対象がV使用中は実行できない/"
+SIF Ｖ使用中(TARGET)
+	COMRESULT = 0
+コマンド実行条件 += "実行者がV使用中は実行できない/"
+SIF Ｖ使用中(PLAYER)
+	COMRESULT = 0
+;アニマルだと無理
+コマンド実行条件 += "対象が[アニマル]の場合は実行できない/"
+SIF TALENT:アニマル
+	COMRESULT = 0
+;ヴァギナ無いとダメ
+コマンド実行条件 += "対象に女性器が必要/"
+SIF !VAGINA(TARGET)
+	COMRESULT = 0
+;調教者が膣無いとダメ
+コマンド実行条件 += "実行者に女性器が必要/"
+SIF !VAGINA(PLAYER)
+	COMRESULT = 0
+;調教対象が小人体型の場合は主人が禁断の知識持ちじゃないとダメ
+コマンド実行条件 += "対象が[小人体型]の場合、主人に[禁断の知識]が必要/"
+SIF TALENT:小人体型 && !TALENT:MASTER:禁断の知識
+	COMRESULT = 0
+
+;処女で、従順4以下・レズっ気4以下の女性ASSIの場合はできない（サドならＯＫ）
+コマンド実行条件 += "実行者が助手で対象が処女の場合、助手に[サド]or従順とレズっ気LV5以上が必要/"
+IF TALENT:処女 && PLAYER != MASTER
+	SIF SEX(PLAYER) == 2 && (ABL:PLAYER:従順 <= 4 || ABL:PLAYER:レズっ気 <= 4) && !TALENT:PLAYER:サド
+		COMRESULT = 0
+ENDIF
+;潤滑不足で、従順3以下のASSIの場合はできない（サドならＯＫ）
+コマンド実行条件 += @"実行者が助手で対象の潤滑{PALAMLV:2}未満の場合、助手に[サド]or従順LV4以上が必要/"
+IF PALAM:潤滑 < PALAMLV:2 && PLAYER != MASTER
+	SIF ABL:PLAYER:従順 <= 3 && !TALENT:PLAYER:サド
+		COMRESULT = 0
+ENDIF
+コマンド実行条件 += "睡眠中は実行できない/"
+SIF TEQUIP:睡眠
+	COMRESULT = 0
+IF MOD:STS
+	コマンド実行条件 += "屍姦中は実行できない/"
+	SIF CFLAG:死亡
+		COMRESULT = 0
+ENDIF
+
+RETURNF COMRESULT
+
+@COM_双頭ディルド
+#DIM DYNAMIC 増加量
+
+PRINTL 双頭ディルド
+CALL KOJO_MESSAGE_COM
+
+;V経験を伴うコマンドのフラグ(処女膜再生対応)
+TFLAG:膣コマンド = 1
+
+;-------------------------------------------------
+;脱衣
+;-------------------------------------------------
+IF CFLAG:挿入可
+	TEQUIP:下半身下着 = 0
+ELSE
+	TEQUIP:下半身下着 = 0
+	TEQUIP:下半身上着 = 0
+	TEQUIP:全身上着 = 0
+ENDIF
+
+;-------------------------------------------------
+;射精ゲージチェック（奴隷）
+;-------------------------------------------------
+CALL 射精ゲージ増加, 射精ゲージ計算_Ｖ道具(100), TARGET
+
+;-------------------------------------------------
+;射精ゲージチェック
+;-------------------------------------------------
+TFLAG:奴隷挿入箇所 = 1
+増加量 = 射精ゲージ計算_実行者受け(300)
+
+;ABL:技巧をみる
+増加量 += 増加量/10*4*ABL:技巧
+
+CALL 射精ゲージ増加, 増加量, PLAYER
+
+;-------------------------------------------------
+;ソース追加処理
+;-------------------------------------------------
+;消費体力、気力
+LOSEBASE:体力 += 60
+LOSEBASE:気力 += 100
+
+SOURCE:快V = 300
+SOURCE:性行動 = 200
+SOURCE:苦痛 = 50
+SOURCE:達成 = 100
+SOURCE:屈従 = 100
+SOURCE:恭順 = 250
+SOURCE:露出 = 20
+SOURCE:逸脱 = 40
+SOURCE:反感 = 100
+
+;-------------------------------------------------
+;特殊ソース処理
+;-------------------------------------------------
+;抑圧、抵抗持ちには、抑鬱ソース追加
+SIF TALENT:抑圧 || TALENT:抵抗
+	SOURCE:鬱屈 += 40
+
+;処女だった場合は、苦痛のソースと反発のソースを追加する
+IF TALENT:処女
+	SOURCE:苦痛 += 2000
+	SOURCE:反感 += 3000
+ENDIF
+
+;再生処女だった場合は、苦痛のソースと反発のソースを追加する
+IF TALENT:再生処女
+	SOURCE:苦痛 += 500
+	SOURCE:反感 += 1000
+ENDIF
+
+CALL 特殊ソース処理_Ｖ
+SIF SOURCE:V拡張
+	CALL 特殊ソース処理_Ｖ拡張
+
+IF TALENT:PLAYER:処女
+	IF TALENT:PLAYER:性転換済
+		IF PLAYER != MASTER
+			IF 陥落(PLAYER)
+				CFLAG:PLAYER:性転換処女の奪われ方 = 2
+			ELSEIF 相性値(PLAYER, TARGET)
+				CFLAG:PLAYER:性転換処女の奪われ方 = 3
+			ELSE
+				CFLAG:PLAYER:性転換処女の奪われ方 = 1
+			ENDIF
+		ENDIF
+		CSTR:PLAYER:性転換処女 = %NAME:TARGET%
+	ELSE
+		IF PLAYER != MASTER
+			IF 陥落(PLAYER)
+				CFLAG:PLAYER:処女の奪われ方 = 2
+			ELSEIF 相性値(PLAYER, TARGET)
+				CFLAG:PLAYER:処女の奪われ方 = 3
+			ELSE
+				CFLAG:PLAYER:処女の奪われ方 = 1
+			ENDIF
+		ENDIF
+		CSTR:PLAYER:処女 = %NAME:TARGET%
+	ENDIF
+ENDIF
+
+IF TALENT:PLAYER:処女 || TALENT:PLAYER:再生処女
+	PRINTFORMW %CALLNAME:PLAYER%処女喪失
+	SETBIT STAIN:PLAYER:膣内, 6
+ENDIF
+
+TALENT:PLAYER:処女 = 0
+TALENT:PLAYER:再生処女 = 0
+
+;[衝動的]持ちは3分の1でアイテム破壊する（調教終了後に修復）
+IF ((TALENT:衝動的 && !特質("しつけ")) || (TALENT:PLAYER:衝動的 && !特質("しつけ", PLAYER))) && RAND:3 == 0 && !TEQUIP:触手
+	TFLAG:アイテム破壊 = 1
+	ITEM:双頭ディルド = -1
+ENDIF
+
+;-------------------------------------------------
+;絶頂チェック
+;-------------------------------------------------
+CALL SOURCE_CHECK_CVAB
+
+;-------------------------------------------------
+;射精チェック
+;-------------------------------------------------
+CALL SAMEN_CHECK, 6
+CALL SAMEN_CHECK_T, 4
+
+CALL SAMEN_SHOOT, 6, NOWEX:PLAYER:射精
+CALL SAMEN_SHOOT_T, 4, NOWEX:射精
+
+;-------------------------------------------------
+;経験の処理
+;-------------------------------------------------
+CALL EXPUP_BASE, 4, 1
+
+CALL EXPUP, "Ｖ経験", 1
+CALL EXPUP, "Ｖ経験", 1, PLAYER
+
+;異常経験
+IF TALENT:処女
+	PRINTL ＜ディルド処女喪失＞
+	CALL EXPUP, "異常経験", 1
+ENDIF
+
+RETURN 1

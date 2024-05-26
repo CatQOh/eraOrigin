@@ -1,4 +1,4 @@
-﻿eraOrigin Ver.2.16 作者:Enter◆jp5YHyRfi6 ベースバリアント:eraBEMANI+α
+﻿eraOrigin Ver.2.24 作者:Enter◆jp5YHyRfi6 ベースバリアント:eraBEMANI+α
 
 【ライセンス】
 当バリアントの改変&再配布→許可
@@ -54,9 +54,6 @@ eraBEMANIのソースコードを保ちながらフラグ切り替えで別バ�
 題してeraOrigin_custom 旧eraOriginと同等にしたい
 
 【連絡先・リンク】
-IRC([irc.friend-chat.jp] ほぼ年中無休で接続中)
-└!eraEVENT_KXX
-
 Discordサーバー（eraBEMANI鯖と共用）
 └https://discord.gg/p5rb5uK
 

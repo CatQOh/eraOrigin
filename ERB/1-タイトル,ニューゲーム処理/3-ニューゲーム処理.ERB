@@ -1,0 +1,1154 @@
+﻿@ゲーム開始
+#DIMS DYNAMIC HTML用, 4
+#DIM DYNAMIC LCOUNT
+
+TARGET = -1
+ASSI = -1
+ASSI:1 = -1
+
+VARLINE = 0
+
+LOADGLOBAL
+
+;周回数を1に
+FLAG:周回数 = 1
+
+;コンフィグ初期設定
+OPTION:地の文表示 = 1
+OPTION:口上表示 = 1
+
+;データIDを設定
+データID = GETSECOND()
+
+;経営モードフラグの初期化
+CALL CLEAR_STRATEGY_FLAG
+
+;ORIGINはPFREEモード
+IF ORIGIN
+	FLAG:ゲームモード = 10
+	GOTO ORIGIN
+ENDIF
+
+;チュートリアルならPFREE固定
+IF TUTORIAL == "FIRST"
+	FLAG:ゲームモード = 9
+	CALL TUTORIAL
+	GOTO ORIGIN
+ENDIF
+
+;モード選択
+DRAWLINE
+IF SP
+	PRINTL ★★モードを選択してください★★
+	CALL PASELIL, @"[0] - STANDARD (100日期限 目標金額1,000,000＄ 経営使用不可 クリア後は可能)"
+	CALL PASELIL, @"[1] - STRATEGY (300日期限 目標金額100,000,000＄ 経営使用可能)"
+	PRINTL [7] - 新婚モード (期限なし 好きなキャラと好きなだけイチャイチャする)
+	PRINTL [8] - 段位認定 (期限あり 特定の4人を攻略)
+	PRINTL [9] - PREMIUM FREE (期限なし エンドレス)
+	GOTO INPUTWAIT
+ENDIF
+
+PRINT 　
+FONTBOLD
+PRINT M
+FONTREGULAR
+PRINTL ODE SELECT　　　　　　　　　　　　　　　　　＼ＳＰ／
+PRINT 　
+CALL PRINTSPACE, LANGUAGE == "JP", "クリックで選択 価格はすべて税込みとなります"
+PRINTL 　　＼／DP＼
+
+FOR LCOUNT, 0, 7
+	GCREATEFROMFILE LCOUNT, "MODE.png"
+	GCREATEFROMFILE LCOUNT+10, "MODEB.png"
+	GSETBRUSH LCOUNT, 0xFF000000
+	GSETBRUSH LCOUNT+10, 0xFF000000
+NEXT
+FOR LCOUNT, 0, 17
+	SELECTCASE LCOUNT%10
+		CASE 0
+			GSETFONT LCOUNT, "Arial", 25, 1
+			GDRAWTEXT LCOUNT, "WE", 75, 25
+			GSETBRUSH LCOUNT, 0xFF000000+(COLOR_FROMNAME("hotpink"))
+			GDRAWTEXT LCOUNT, "DD", 125, 25
+			GSETBRUSH LCOUNT, 0xFF000000
+			GDRAWTEXT LCOUNT, "ING", 170, 25
+			SIF LANGUAGE == "JP"
+				GDRAWTEXT LCOUNT, "新婚モード", 75, 65
+			GSETFONT LCOUNT, "Arial", 25, 0
+			GDRAWTEXT LCOUNT, @"%I18N("期限無し")%", 75, 105
+			GDRAWTEXT LCOUNT, @"%I18N("所持金3億$")%", 75, 145
+		CASE 1
+			GSETFONT LCOUNT, "Arial", 25, 1
+			GDRAWTEXT LCOUNT, "CLA", 75, 25
+			GSETBRUSH LCOUNT, 0xFF000000+(COLOR_FROMNAME("darkseagreen"))
+			GDRAWTEXT LCOUNT, "SS", 135, 25
+			GSETBRUSH LCOUNT, 0xFF000000
+			SIF LANGUAGE == "JP"
+				GDRAWTEXT LCOUNT, "段位認定", 75, 65
+			GSETFONT LCOUNT, "Arial", 25, 0
+			GDRAWTEXT LCOUNT, @"%I18N("期限あり")%", 75, 105
+			GDRAWTEXT LCOUNT, @"%I18N("特定の4人を攻略")%", 75, 145
+		CASE 2
+			GSETFONT LCOUNT, "Arial", 25, 1
+			GDRAWTEXT LCOUNT, "PRE", 75, 25
+			GSETBRUSH LCOUNT, 0xFF000000+(COLOR_FROMNAME("green"))
+			GDRAWTEXT LCOUNT, "M", 135, 25
+			GSETBRUSH LCOUNT, 0xFF000000
+			GDRAWTEXT LCOUNT, "IU", 160, 25
+			GSETBRUSH LCOUNT, 0xFF000000+(COLOR_FROMNAME("green"))
+			GDRAWTEXT LCOUNT, "M", 190, 25
+			GSETBRUSH LCOUNT, 0xFF000000
+			GDRAWTEXT LCOUNT, "FREE", 75, 65
+			GSETFONT LCOUNT, "Arial", 25, 0
+			GDRAWTEXT LCOUNT, @"%I18N("期限無し")%", 75, 145
+		CASE 3
+			GSETFONT LCOUNT, "Arial", 25, 1
+			GDRAWTEXT LCOUNT, "School Mode", 75, 25
+			SIF LANGUAGE == "JP"
+				GDRAWTEXT LCOUNT, "学園モード", 75, 65
+			GSETFONT LCOUNT, "Arial", 25, 0
+			GDRAWTEXT LCOUNT, @"%I18N("期限無し")%", 75, 145
+		CASE 4
+			GSETFONT LCOUNT, "Arial", 25, 1
+			GDRAWTEXT LCOUNT, "STAN", 75, 25
+			GSETBRUSH LCOUNT, 0xFF000000+(COLOR_FROMNAME("darkorange"))
+			GDRAWTEXT LCOUNT, "D", 155, 25
+			GSETBRUSH LCOUNT, 0xFF000000
+			GDRAWTEXT LCOUNT, "AR", 180, 25
+			GSETBRUSH LCOUNT, 0xFF000000+(COLOR_FROMNAME("darkorange"))
+			GDRAWTEXT LCOUNT, "D", 225, 25
+			GSETBRUSH LCOUNT, 0xFF000000
+			SIF LANGUAGE == "JP"
+				GDRAWTEXT LCOUNT, "通常モード", 75, 65
+			GSETFONT LCOUNT, "Arial", 25, 0
+			GDRAWTEXT LCOUNT, @"%I18N("目標:1,000,000$")%", 75, 105
+			GDRAWTEXT LCOUNT, @"%I18N("期限:100日")%", 75, 145
+		CASE 5
+			GSETFONT LCOUNT, "Arial", 25, 1
+			GDRAWTEXT LCOUNT, "S", 75, 25
+			GSETBRUSH LCOUNT, 0xFF000000+(COLOR_FROMNAME("royalblue"))
+			GDRAWTEXT LCOUNT, "T", 95, 25
+			GSETBRUSH LCOUNT, 0xFF000000
+			GDRAWTEXT LCOUNT, "RA", 115, 25
+			GSETBRUSH LCOUNT, 0xFF000000+(COLOR_FROMNAME("royalblue"))
+			GDRAWTEXT LCOUNT, "T", 160, 25
+			GSETBRUSH LCOUNT, 0xFF000000
+			GDRAWTEXT LCOUNT, "EGY", 180, 25
+			SIF LANGUAGE == "JP"
+				GDRAWTEXT LCOUNT, "経営モード", 75, 65
+			GSETFONT LCOUNT, "Arial", 25, 0
+			GDRAWTEXT LCOUNT, @"%I18N("目標:100,000,000$")%", 75, 105
+			GDRAWTEXT LCOUNT, @"%I18N("期限:300日")%", 75, 145
+		CASE 6
+			GSETFONT LCOUNT, "Arial", 25, 1
+			GDRAWTEXT LCOUNT, "Origin Mode", 75, 25
+			GSETFONT LCOUNT, "Arial", 25, 0
+			GDRAWTEXT LCOUNT, @"%I18N("期限無し")%", 75, 105
+			GDRAWTEXT LCOUNT, @"%I18N("全キャラ解放済み")%", 75, 145
+	ENDSELECT
+NEXT
+
+
+SPRITECREATE "WEDDING", 0
+SPRITECREATE "WEDDINGB", 10
+
+SPRITECREATE "CLASS", 1
+SPRITECREATE "CLASSB", 11
+
+SPRITECREATE "PFREE", 2
+SPRITECREATE "PFREEB", 12
+
+SPRITECREATE "SCHOOL", 3
+SPRITECREATE "SCHOOLB", 13
+
+SPRITECREATE "STANDARD", 4
+SPRITECREATE "STANDARDB", 14
+
+SPRITECREATE "STRATEGY", 5
+SPRITECREATE "STRATEGYB", 15
+
+SPRITECREATE "ORIGIN", 6
+SPRITECREATE "ORIGINB", 16
+
+HTML用 =<nobr><button value='7' pos='100'> <img src='WEDDING' srcb='WEDDINGB' height='700'></button>
+HTML用:1 =<button value='8' pos='1700'> <img src='CLASS' srcb='CLASSB' height='700'></button>
+HTML用:2 =<button value='9' pos='3300'> <img src='PFREE' srcb='PFREEB' height='700'></button>
+HTML用:3 =<button value='2' pos='4900'> <img src='SCHOOL' srcb='SCHOOLB' height='700'></button>
+
+HTML_PRINT STRJOIN(HTML用, "")
+
+FOR LCOUNT, 0, 6
+	PRINTL 
+NEXT
+
+VARSET HTML用
+
+HTML用 =<nobr><button value='0' pos='900'> <img src='STANDARD' srcb='STANDARDB' height='700'></button>
+HTML用:1 =<button value='1' pos='2500'> <img src='STRATEGY' srcb='STRATEGYB' height='700'></button>
+HTML用:2 =<button value='10' pos='4100'> <img src='ORIGIN' srcb='ORIGINB' height='700'></button>
+
+HTML_PRINT STRJOIN(HTML用, "")
+
+FOR LCOUNT, 0, 6
+	PRINTL 
+NEXT
+
+PRINTL CREDIT:1　　　　　　　　　　　　　　　　　┏━━━━━━┓　　　　　　　　　　　　　　　　　　CREDIT:0
+PRINTL PASELI:NO ACCOUNT　　　　　　　　　　　　 ┃EFFECTOR OFF┃　　　　　　　　　　　　　　　　　　PASELI:NO ACCOUNT
+
+;各ゲームモードごとの初期設定
+$INPUTWAIT
+BINPUT
+FLAG:ゲームモード = RESULT
+
+IF ゲームモード() == "学園モード"
+	LOOP_BREAK = 1
+	RETURN
+ENDIF
+
+$ORIGIN
+;「あなた」の追加と暦の算出、所持金初期設定など
+CALL CHARA_ADD, 0
+MASTER = 0
+CALL SETUP_GAMESTART
+
+;10はORIGIN
+IF FLAG:ゲームモード == 10
+	ORIGIN = 1
+	FLAG:ゲームモード = 9
+ENDIF
+
+SELECTCASE ゲームモード()
+	CASE "通常モード", "経営モード"
+		CALL PLAYER_CUSTOM, 0
+		CALL SELECT_DIFFICULT
+	CASE "新婚モード"
+		CALL START_CHARA_SELECT
+	CASE "段位認定"
+		CALL 段位認定
+		SELECTCASE 受験段位名
+			CASE "EDIT"
+				CALL SELECT_DIFFICULT
+			CASE "裏七級"
+				FLAG:難易度 = 3
+			CASEELSE
+				FLAG:難易度 = 1
+		ENDSELECT
+	CASE "フリーモード"
+		CALL START_CHARA_SELECT
+		CALL SELECT_DIFFICULT
+		;チュートリアルならいろいろ飛ばす
+		IF TUTORIAL == "キャラクリ終了"
+			OPTION:パセリ表示 = 1
+			GOTO TUTORIAL_SKIP
+		ENDIF
+		;originなら音ゲーマー素質は抜く
+		SIF ORIGIN && NOF(MASTER) == 0
+			TALENT:MASTER:音ゲーマー = 0
+ENDSELECT
+
+;オープニング表示
+SELECTCASE ゲームモード()
+	CASE "通常モード"
+		IF DOPTION:有効 && DOPTION:チュートリアル && LANGUAGE == "JP"
+			DRAWLINE
+			PRINTL オープニングストーリーを表示しますか？
+			PRINTL [0] - 表示する
+			PRINTL [1] - 表示しない
+			BINPUT
+			IF RESULT == 0
+				DRAWLINE
+				CALL OPENING
+			ENDIF
+		ENDIF
+	;STRATEGYモード専用処理
+	CASE "経営モード"
+		CALL 口上表示設定
+		DRAWLINE
+		TFLAG:ページ数 = 0
+		PRINTFORML □%I18N("パートナーを選択してください")%
+		CALL CHARA_LIST, "パートナー選択"
+		CALL CHARA_ADD, RESULT
+		ASSI = 1
+		TARGET = -1
+		;MOD適用されてるかもしれないので陥落素質を一度消す
+		TALENT:ASSI:恋慕 = 0
+		TALENT:ASSI:淫乱 = 0
+		TALENT:ASSI:服従 = 0
+		RESULT = 0
+		IF OPTION:口上表示 && EXISTFUNCTION(@"PARTNER_%CSVNAMERPS(NOF(ASSI))%")
+			CALLFORM PARTNER_%CSVNAMERPS(NOF(ASSI))%
+		ELSE
+			PRINTFORMW %I18N("|0|をパートナーに選択しました",, NAMEDISP(ASSI))%
+			RESULT = 0
+		ENDIF
+		IF RESULT
+			RESULT = RESULT-1
+		ELSE
+			PRINTFORML %I18N("陥落状態を選択してください",, CALLNAMEDISP(ASSI))%
+			PRINTFORML [0] - %I18N("恋慕")%
+			PRINTFORML [1] - %I18N("淫乱")%
+			PRINTFORML [2] - %I18N("服従")%
+			BINPUT
+		ENDIF
+		SELECTCASE RESULT
+			CASE 0
+				TALENT:ASSI:恋慕 = 1
+				FLAG:累計恋慕++
+				SIF LANGUAGE == "JP"
+					PRINTL 恋慕に設定しました
+			CASE 1
+				TALENT:ASSI:淫乱 = 1
+				FLAG:累計淫乱++
+				SIF LANGUAGE == "JP"
+					PRINTL 淫乱に設定しました
+			CASE 2
+				TALENT:ASSI:服従 = 1
+				FLAG:累計服従++
+				SIF LANGUAGE == "JP"
+					PRINTL 服従に設定しました
+		ENDSELECT
+		CFLAG:ASSI:売却不可 = 1
+		CFLAG:ASSI:売却可能 = 1
+		CFLAG:ASSI:助手可能 = 1
+		MARK:ASSI:屈服刻印 = 3
+		;FLAG:パートナー = NOF(ASSI)
+		パートナー = %NAME:ASSI%
+		SIF 相性値(ASSI, MASTER) < 200
+			RELATION:ASSI:(NOF(MASTER)) = 200
+		SIF 相性値(MASTER, ASSI) < 200
+			RELATION:MASTER:(NOF(ASSI)) = 200
+		キャラ未購入 = 1
+		バンめし = 1
+ENDSELECT
+
+IF ゲームモード() != "新婚モード"
+	;チュートリアル表示
+	IF DOPTION:有効 &&  DOPTION:チュートリアル && LANGUAGE == "JP" && !ORIGIN
+		DRAWLINE
+		PRINTL チュートリアルを表示しますか？（オプションからでも確認できます）
+		PRINTL [0] - 表示する
+		PRINTL [1] - 表示しない
+		BINPUT
+		IF RESULT == 0
+			DRAWLINE
+			IF ゲームモード() == "段位認定"
+				CALL TEST_TUTORIAL
+			ELSE
+				CALL MANUAL_TUTORIAL
+			ENDIF
+		ENDIF
+	ENDIF
+ENDIF
+
+IF QMA
+	通貨単位 = マジカ
+ELSEIF DOPTION:有効
+	OPTION:パセリ表示 = DOPTION:パセリ表示
+ELSEIF ORIGIN
+	通貨単位 = $
+ELSE
+	DRAWLINE
+	PRINTFORML %I18N("PASELI表示をオンにしますか？(オプションからでも変更できます)")%
+	PRINTFORML [0] - %I18N("オンにしない")%
+	PRINTFORML [1] - %I18N("オンにする")%
+	BINPUT
+	OPTION:パセリ表示 = RESULT
+ENDIF
+
+IF DOPTION:有効
+	SIF DOPTION:着衣オプション
+		FLAG:着衣設定 = 3
+ELSE
+	DRAWLINE
+	PRINTFORML %I18N("キャラの着衣設定を変更しますか？(オプションでも変更できます)")%
+	PRINTFORML [0] - %I18N("服を着たままでいい")%
+	PRINTFORML [1] - %I18N("面倒だから脱がせてから調教始める")%
+	BINPUT
+	SIF RESULT == 1
+		FLAG:着衣設定 = 3
+ENDIF
+
+$TUTORIAL_SKIP
+
+CALL TUTORIAL
+
+;プレイログに記録する
+SELECTCASE ゲームモード()
+	CASE "通常モード"
+		CALL プレイログ記録, "通常モードを開始"
+	CASE "経営モード"
+		CALL プレイログ記録, @"「%NAME:ASSI%」パートナーで経営モードを開始"
+	CASE "新婚モード"
+		CALL プレイログ記録, @"「%NAME:MASTER%」と「%NAME:TARGET%」の新婚生活が始まる"
+	CASE "段位認定"
+		CALL プレイログ記録, @"\@ SEX(MASTER) == 1 ? 男性 # 女性\@主人公で段位認定「%受験段位名%」を開始"
+	CASE "フリーモード"
+		IF ORIGIN
+			CALL プレイログ記録, @"「%NAME:MASTER%」主人公でORIGINモードを開始"
+		ELSE
+			CALL プレイログ記録, @"「%NAME:MASTER%」主人公でフリーモードを開始"
+		ENDIF
+ENDSELECT
+
+;天気の決定
+CALL WEATHER
+
+CFLAG:MASTER:憑依 = -1
+
+IF ゲームモード() == "フリーモード" && NAME:MASTER == "BEATFREE"
+	FLAG:実績解除不可 = 1
+	CALL DEBUG_SAVEDATA, 2
+ENDIF
+
+TRYCALLFORM ゲーム開始_%CSVNAMERPS(NOF(MASTER))%
+
+CALL SYSTEM_AUTOSAVE
+JUMP SHOP画面
+
+;ここまでがメインとなる@EVENTFIRST
+;以下@EVENTFIRST内で処理される関数
+@SETUP_GAMESTART
+#DIM DYNAMIC 日数, 2
+#DIM DYNAMIC 初期資金
+
+;ORIGINでは仕様を説明する
+IF ORIGIN
+	PRINTL eraOrigin、及びOriginモードでは所持金の概念はありません 収入・支出の表示は全てフレーバー要素です
+	PRINTW また、難易度はNORMAL(最低難易度)固定となります
+ENDIF
+
+DAY = 1
+SELECTCASE ゲームモード()
+	CASE "通常モード"
+		初期資金 = 3000
+		OPTION:価格フィルタ上限 = 3000
+		ITEM:医務室 = 1
+		ITEM:図書室 = 1
+		TARGET = -1
+	CASE "経営モード"
+		初期資金 = TONUM("100万")
+		ITEM:風俗店営業許可証 = 1
+		TARGET = -1
+	CASE "新婚モード"
+		初期資金 = TONUM("3億")
+	CASE "段位認定"
+		初期資金 = 0
+		TARGET = -1
+	CASE "フリーモード"
+		CALL PASELIL, @"%I18N("フリーモードでは初期資金として3億＄受け取る事ができます(不要な場合30000＄で開始します)")%"
+		CALL PASELIL, @"[0] %I18N("もらっちゃう")%"
+		CALL PASELIL, @"[1] %I18N("いらない")%"
+		BINPUT
+		IF RESULT == 0
+			初期資金 = TONUM("3億")
+			OPTION:価格フィルタ上限 = TONUM("3億")
+		ELSE
+			初期資金 = 30000
+			OPTION:価格フィルタ上限 = 30000
+		ENDIF
+		ITEM:風俗店営業許可証 = 1
+		TARGET = -1
+	CASE "学園モード"
+		CALL PASELIW, "入学祝い金として10000＄を貰った！"
+		初期資金 = 10000
+ENDSELECT
+
+OPTION:カスタムフィルタ１ = 1
+OPTION:カスタムフィルタ２ = 3
+OPTION:色仕掛け = 1
+OPTION:お誘い = 1
+LASTMONEY = 初期資金
+購入人数 = 0
+;リアルタイム計算処理 変数REALTIMEも残しておくこと
+;リアルタイム(文字列式)からリアル西暦を抜き出して数値型に変換して代入する
+REALTIME:年 = TOINT(SUBSTRING(GETTIMES(), 0, 4))
+REALTIME:月 = TOINT(SUBSTRING(GETTIMES(), 5, 2))
+REALTIME:日 = TOINT(SUBSTRING(GETTIMES(), 8, 2))
+
+SELECTCASE ゲームモード()
+	CASE "学園モード"
+		YEAR = REALTIME:年
+		MONTH = 4
+		DAYS = 1
+		WHILE 休日() | ISHOLIDAY_SCHOOL()
+			DAYS++
+		WEND
+	CASEELSE
+		YEAR = REALTIME:年
+		MONTH = REALTIME:月
+		DAYS = REALTIME:日
+ENDSELECT
+
+;日付が確定してから出納帳に記録
+SIF 初期資金 > 0
+	CALL PAYMENT, 初期資金, "ゲーム開始"
+
+ターン = 昼
+
+;曜日計算
+FLAG:曜日 = ZELLER(YEAR, MONTH, DAYS)
+
+;月齢計算
+CALL 月齢逆算, 30, -1
+
+;過去19年の午前0時で最も新月に近いと思われる日と現在の日付の日数差を調べる
+日数 = GETDAYS(YEAR, MONTH, DAYS) - GETDAYS(RESULT, RESULT:1, RESULT:2)
+
+SELECTCASE 日数
+	CASE IS <= 30
+		月齢 = 日数*100
+	CASEELSE
+		日数:1 = 日数-(日数%30)
+		月齢 = ((日数:1*100000)%2953059)/1000
+		月齢 += (日数%30)*100
+ENDSELECT
+
+月齢 %= 3000
+
+VARSET SELECTCOM, -1
+SELECTCOM = 0
+CALL FADEOUTBGM
+
+;気温の算出
+CALL TEMPERATURE
+
+OPTION:TSBランダム = 1
+
+@START_CHARA_SELECT
+#DIM DYNAMIC LRESULT
+
+;チュートリアルならあなた固定
+SIF TUTORIAL == "キャラクリ"
+	GOTO CUSTOM
+
+DRAWLINE
+PRINTFORML □%I18N("プレイヤーを変更できます")%
+PRINTFORML 　%I18N("キャラを選択してください")%
+
+CALL CHARA_LIST, "主人選択"
+
+SELECTCASE RESULT
+	CASE 10000
+		PRINTFORMW %I18N("プレイヤーを変更しませんでした")%
+		$CUSTOM
+		CALL PLAYER_CUSTOM, 0
+	CASEELSE
+		CALL CHARA_ADD, RESULT
+		CALL CLEAR_CHARA, 0, 1
+		MASTER = 0
+		PRINTFORMW %I18N("プレイヤーを「|0|」に設定します",, NAMEDISP(MASTER))%
+		DRAWLINE
+		IF ゲームモード() == "フリーモード"
+			PRINTFORML %I18N("|0|に調教されたい人向けに奴隷としてあなたを追加しますか？",, CALLNAMEDISP(MASTER))%
+			PRINTFORML [0] - %I18N("調教されたい！")%
+			PRINTFORML [1] - %I18N("いらん")%
+			BINPUT
+			IF RESULT == 0
+				CALL CHARA_ADD, 0
+				TARGET = 1
+				CALL PLAYER_CUSTOM, TARGET
+			ENDIF
+		ENDIF
+ENDSELECT
+
+;新婚モード専用処理
+IF ゲームモード() == "新婚モード"
+	FLAG:難易度 = 1
+	TFLAG:ページ数 = 0
+	PRINTFORML □%I18N("嫁、もしくは婿を選択してください")%
+	CALL CHARA_LIST, "全キャラ表示"
+	CALL CHARA_ADD, RESULT
+	TARGET = 1
+	SIF NOF(TARGET) == 0
+		CALL PLAYER_CUSTOM, TARGET
+	RESULT = 0
+	TRYCALLFORM WEDDING_%CSVNAMERPS(NOF(TARGET))%
+	LRESULT = RESULT
+	PRINTFORMW %I18N("|0|とのご成婚おめでとうございます",, NAMEDISP(TARGET))%
+	;MODがあるかもしれないので消しておく
+	TALENT:恋慕 = 0
+	TALENT:淫乱 = 0
+	TALENT:服従 = 0
+	CFLAG:嫁 = 1
+	TALENT:恋心 = 0
+	TALENT:親愛 = 1
+	TALENT:MASTER:恋心 = 0
+	TALENT:既婚者 = 1
+	CSTR:既婚者 = %NAME:MASTER%
+	TALENT:MASTER:既婚者 = 1
+	CSTR:MASTER:既婚者 = %NAME:TARGET%
+	MARK:屈服刻印 = 3
+	MARK:MASTER:屈服刻印 = 3
+	CFLAG:依存度 = 5000
+	CFLAG:MASTER:依存度 = 5000
+	;経営、施設、設備アイテム
+	ITEM:医務室 = 1
+	ITEM:図書室 = 1
+	;SKIPDISPで農業用アイテムを全解禁しておく
+	SKIPDISP 1
+	CALL 栽培解禁
+	SKIPDISP 0
+	ITEM:田んぼ = 2
+	ITEM:畑 = 8
+	ITEM:プランター = 4
+	田んぼの作物:1 = 米
+	田んぼの作物:2 = 麦
+	ITEM:牧場 = 1
+	ITEM:畜舎 = 1
+	ITEM:養蜂場 = 1
+	ITEM:生け簀 = 1
+	家畜:牛 = 100
+	家畜:馬 = 100
+	家畜:羊 = 100
+	家畜:豚 = 100
+	家畜:鶏 = 100
+	家畜:蜂 = 100
+	リソース:牧場の予算 = 1000000
+	リソース:畜舎の予算 = 1000000
+	リソース:養蜂場の予算 = 100000
+	リソース:生け簀の予算 = 1000000
+	ITEM:風俗店営業許可証 = 1
+	ITEM:楽器セット一式 = 1
+	ITEM:事業開発オフィス = 1
+	SIF 相性値(TARGET, MASTER) < 300
+		RELATION:(NOF(MASTER)) = 300
+	SIF 相性値(MASTER, TARGET) < 300
+		RELATION:MASTER:(NOF(TARGET)) = 300
+	;WEDDING口上の返り値による
+	SELECTCASE LRESULT
+		CASE 0
+			PRINTFORML %I18N("ご結婚前からいろいろ経験なさりましたよね？",, CALLNAMEDISP(TARGET))%
+			PRINTFORML [0] - %I18N("そりゃまぁ")%
+			PRINTFORML [1] - %I18N("純潔を保ってきた")%
+			PRINTFORML [2] - %I18N("ご想像にお任せします")%
+		CASE 1
+			GOTO 経験あり
+		CASE 2
+			GOTO 経験無し
+		CASEELSE
+			RETURN 0
+	ENDSELECT
+	BINPUT
+	SELECTCASE RESULT
+		CASE 0
+			$経験あり
+			SELECTCASE SEX(MASTER)
+				CASE 1
+					EXP:MASTER:射精経験 += 10
+					EXP:絶頂経験 += 10
+					EXP:MASTER:性交経験 += 10
+					TALENT:MASTER:童貞 = 0
+					EXP:性交経験 += 10
+					CSTR:MASTER:童貞 = %NAME:TARGET%
+					SELECTCASE SEX(TARGET)
+						CASE 1
+							EXP:MASTER:Ａ経験 += 10
+							EXP:射精経験 += 10
+							EXP:絶頂経験 += 10
+							TALENT:童貞 = 0
+							CSTR:童貞 = %NAME:MASTER%
+						CASE 2
+							EXP:膣射経験 += 10
+							EXP:Ｖ経験 += 10
+							TALENT:処女 = 0
+							CSTR:処女 = %NAME:MASTER%
+							CFLAG:処女の奪われ方 = 2
+					ENDSELECT
+				CASE 2
+					EXP:MASTER:Ｖ経験 += 10
+					TALENT:MASTER:処女 = 0
+					EXP:MASTER:性交経験 += 10
+					CSTR:MASTER:処女 = %NAME:TARGET%
+					CFLAG:MASTER:処女の奪われ方 = 2
+					SELECTCASE SEX(TARGET)
+						CASE 1
+							EXP:MASTER:膣射経験 += 10
+							EXP:射精経験 += 10
+							EXP:絶頂経験 += 10
+							TALENT:童貞 = 0
+							CSTR:童貞 = %NAME:MASTER%
+						CASE 2
+							EXP:Ｖ経験 += 10
+							TALENT:処女 = 0
+							CSTR:処女 = %NAME:MASTER%
+							CFLAG:処女の奪われ方 = 2
+					ENDSELECT
+			ENDSELECT
+		CASE 1
+			$経験無し
+			SELECTCASE SEX(MASTER)
+				CASE 1
+					TALENT:MASTER:童貞 = 1
+					EXP:MASTER:性交経験 = 0
+				CASE 2
+					TALENT:MASTER:処女 = 1
+					EXP:MASTER:性交経験 = 0
+					EXP:MASTER:Ｖ経験 = 0
+					EXP:MASTER:膣射経験 = 0
+			ENDSELECT
+			SELECTCASE SEX(TARGET)
+				CASE 1
+					TALENT:童貞 = 1
+					EXP:性交経験 = 0
+				CASE 2
+					TALENT:処女 = 1
+					EXP:性交経験 = 0
+					EXP:Ｖ経験 = 0
+					EXP:膣射経験 = 0
+			ENDSELECT
+	ENDSELECT
+ENDIF
+
+RETURN 0
+
+@口上表示設定
+DRAWLINE
+IF DOPTION:有効
+	OPTION:地の文表示 = DOPTION:地の文
+	OPTION:口上表示 = DOPTION:口上
+ELSE
+	PRINTFORML %I18N("口上を表示しますか？(オプションでも変更できます)")%
+	PRINTFORML [0] - %I18N("口上+地の文を表示する")%
+	PRINTFORML [1] - %I18N("口上のみ表示する")%
+	PRINTFORML [2] - %I18N("地の文のみ表示する")%
+	PRINTFORML [3] - %I18N("口上も地の文も表示しない")%
+
+	BINPUT
+	SELECTCASE RESULT
+		CASE 0
+			OPTION:地の文表示 = 1
+			OPTION:口上表示 = 1
+		CASE 1
+			OPTION:地の文表示 = 0
+			OPTION:口上表示 = 1
+		CASE 2
+			OPTION:地の文表示 = 1
+			OPTION:口上表示 = 0
+		CASE 3
+			OPTION:地の文表示 = 0
+			OPTION:口上表示 = 0
+	ENDSELECT
+ENDIF
+
+
+@PLAYER_CUSTOM, 対象 = -1
+#DIM DYNAMIC LCOUNT
+#DIMS DYNAMIC 種族名, 50
+#DIM CONST 種族 = GETNUM(CSTR, "種族")
+#DIM DYNAMIC 始点
+#DIM DYNAMIC 終点
+#DIM DYNAMIC 表示数
+#DIM DYNAMIC LRESULT
+#DIM DYNAMIC 年
+#DIM DYNAMIC 月
+#DIM DYNAMIC 日
+#DIM DYNAMIC ロード済み
+#DIM DYNAMIC 対象
+
+CALL TUTORIAL
+
+CALL LOOP_CLEARLINE
+
+SIF 対象 == -1
+	対象 = MASTER
+SIF CSTR:対象:種族 == ""
+	CSTR:対象:種族 = 人間
+
+IF !ロード済み && CHKCHARADATA(@"CUSTOMPLAYER_{キャラメイクデフォルト}") == 0
+	DELCHARA 対象
+	LOADCHARA @"CUSTOMPLAYER_{キャラメイクデフォルト}"
+ENDIF
+ロード済み = 1
+
+DRAWLINE
+PRINTPLAINFORM %I18N("【基礎】")%
+SIF ゲームモード() == "学園モード"
+	PRINTFORM [15] - %I18N("名無しフラグを設定する(現在:")%\@ プレイヤー名無しフラグ ? %I18N("オン")% # %I18N("オフ")% \@)
+PRINTL 
+CALL PRINTCOLOR, @"　%I18N("名前")%:%NAME:対象% [1] - %I18N("名前を変更する")%", "lightskyblue"
+PRINTPLAIN  
+
+CALL PRINTCOLOR, @"%I18N("性別")%:", "lightcoral"
+SELECTCASE SEX(対象)
+	CASE 1
+		CALL PRINTCOLOR, @"%I18N("男性")%", "lightcoral"
+	CASE 2
+		CALL PRINTCOLOR, @"%I18N("女性")%", "lightcoral"
+	CASEELSE
+		CALL PRINTCOLOR, @"%I18N("未選択")%", "lightcoral"
+ENDSELECT
+SIF TALENT:対象:ふたなり
+	PRINTFORM (%I18N("ふたなり")%)
+CALL PRINTCOLOR, @" [2] - %I18N("性別を変更する")%", "lightcoral"
+
+PRINTPLAIN  
+CALL PRINTCOLORL, @"%I18N("種族")%:%I18N(CSTR:対象:種族, "RACE")% [3] - %I18N("種族を変更する")%", "lightskyblue"
+
+
+PRINTFORML %I18N("【容姿】")%
+CALL PRINTCOLOR, @"　%I18N("体格")%:%体格(TALENT:対象:体格)% [4] - %I18N("体格を変更する")%", "lightskyblue"
+PRINTPLAIN  
+SIF SEX(対象) == 2 || MOD:バストサイズ男性対象
+	CALL PRINTCOLOR, @"%I18N("バストサイズ")%:%バストサイズ(TALENT:対象:バストサイズ)% [5] - %I18N("バストサイズを変更する")%", "lightcoral"
+PRINTL 
+
+CALL PRINTCOLORLC, @"　%I18N("動物耳")%:\@ TALENT:対象:動物耳 ? %I18N("有り")% # %I18N("無し")%\@ [6] - %I18N("変更")%", "lightskyblue"
+PRINTPLAIN  
+CALL PRINTCOLORLC, @"%I18N("尻尾")%:\@ TALENT:対象:尻尾 ? %I18N("有り")% # %I18N("無し")%\@ [7] - %I18N("変更")%", "lightcoral"
+PRINTPLAIN  
+CALL PRINTCOLORLC, @"%I18N("羽")%:\@ TALENT:対象:羽 ? %I18N("有り")% # %I18N("無し")%\@ [8] - %I18N("変更")%", "lightskyblue"
+PRINTL 
+
+CALL PRINTCOLORLC, @"　%I18N("もふもふ")%:\@ TALENT:対象:ファーリー ? %I18N("有り")% # %I18N("無し")%\@ [9] - %I18N("変更")%", "lightskyblue"
+PRINTPLAIN 
+CALL PRINTCOLORLC, @"%I18N("生命活動")%:\@ !TALENT:対象:ゾンビ ? %I18N("有り")% # %I18N("無し")%\@ [10] - %I18N("変更")%", "lightcoral"
+PRINTL 
+
+
+PRINTFORML %I18N("【性経験】")%
+PRINTFORML 　[11] - %I18N("無し")% [12] - %I18N("普通")% [13] - %I18N("すごい")%
+
+表示数 = 0
+FOR LCOUNT, 0, 100
+	SELECTCASE EXPNAME:LCOUNT
+		CASE "Ｖ経験", "膣射経験", "出産経験", "流産経験"
+			SIF !VAGINA(対象)
+				CONTINUE
+		CASE "射精経験"
+			SIF !PENIS(対象)
+				CONTINUE
+		CASE "レズ経験", "パイズリ経験"
+			SIF SEX(対象) != 2
+				CONTINUE
+		CASE "ゲイ経験"
+			SIF SEX(対象) != 1
+				CONTINUE
+		CASE "Ａ経験", "絶頂経験", "性交経験", "精液経験", "フェラ経験", "自慰経験"
+		CASEELSE
+			CONTINUE
+	ENDSELECT
+	SIF 表示数 == 0
+		PRINT 　
+	IF 表示数%2 == 0
+		SETCOLORBYNAME lightskyblue
+	ELSE
+		SETCOLORBYNAME lightcoral
+	ENDIF
+
+	PRINTFORMLC %I18N(EXPNAME:LCOUNT, "EXP")%:{EXP:対象:LCOUNT} [{LCOUNT+20}] - %I18N("変更")%
+	PRINTPLAIN  
+	表示数++
+	IF 表示数%3 == 0 && 表示数 != 0
+		PRINTL 
+		表示数 = 0
+	ENDIF
+NEXT
+RESETCOLOR
+CALL NEWLINE
+
+DRAWLINE
+PRINTPLAIN 　PLAYER CUSTOM　
+PRINTFORML [0] - %I18N("完了")% [100] - %I18N("キャラデータを保存")% [101] - %I18N("キャラデータをロード")% [102] - %I18N("キャラメイク時のデフォルトのデータを選ぶ(現在:|0|番のキャラデータ)",, @"{キャラメイクデフォルト}")%
+
+BINPUT
+SELECTCASE RESULT
+	CASE 0
+		IF TALENT:対象:性別 == 0
+			PRINTFORMW %I18N("性別を選択してください")%
+			RESTART
+		ENDIF
+		SIF VAGINA(対象) && !EXP:対象:Ｖ経験
+			TALENT:対象:処女 = 1
+		SIF PENIS(対象) && !EXP:対象:性交経験
+			TALENT:対象:童貞 = 1
+		SELECTCASE CSTR:対象:種族
+			CASE "スライム"
+				CALL スライム度増加, 1, 対象, 30
+				TALENT:対象:スライム = 1
+			CASE "ヴァンパイア"
+				TALENT:対象:吸血鬼 = 1
+		ENDSELECT
+		EXP:対象:音ゲー経験 = 1000
+		VARLINE = 0
+		主人初期種族 = %CSTR:対象:種族%
+		CALL TUTORIAL, "キャラクリ終了"
+		RETURN
+	CASE 1
+		CALL INPUT_NAME, 対象
+	CASE 2
+		CALL SELECT_GENDER, 対象
+	CASE 3
+		VARSET 種族名
+
+		FOR LCOUNT, 1, 10000
+			SIF !EXISTCSV(LCOUNT)
+				CONTINUE
+			;変数「種族名」の配列に該当種族名がまだ入ってない場合は入れる
+			IF CSVCSTR(LCOUNT, 種族) != ""
+				SIF FINDELEMENT(種族名, ESCAPE(CSVCSTR(LCOUNT, 種族)), 0, VARSIZE("種族名"), 1) == -1
+					種族名:FINDELEMENT(種族名, "", 0, VARSIZE("種族名"), 1) = %CSVCSTR(LCOUNT, 種族)%
+			ENDIF
+		NEXT
+
+		;追加の特殊種族
+		種族名:FINDELEMENT(種族名, "", 0, VARSIZE("種族名"), 1) = スライム
+
+		FOR LCOUNT, 0, VARSIZE("種族名")
+			SIF 種族名:LCOUNT == ""
+				BREAK
+			PRINTFORMLC [{LCOUNT}] %I18N(種族名:LCOUNT)%
+		NEXT
+		CALL NEWLINE
+		BINPUT
+		CSTR:対象:種族 = %種族名:RESULT%
+	CASE 4
+		;幼児体型/小柄体型/普通体型/長身体型
+		FOR LCOUNT, 1, 5
+			PRINTFORML [{LCOUNT}] - %体格(LCOUNT)%
+		NEXT
+		BINPUT
+		TALENT:対象:体格 = RESULT
+	CASE 5
+		;絶壁/貧乳/並乳/巨乳/豊乳/爆乳
+		FOR LCOUNT, 1, 7
+			PRINTFORML [{LCOUNT}] - %バストサイズ(LCOUNT)%
+		NEXT
+		BINPUT
+		TALENT:対象:バストサイズ = RESULT
+	CASE 6
+		INVERTBIT TALENT:対象:動物耳, 0
+	CASE 7
+		INVERTBIT TALENT:対象:尻尾, 0
+	CASE 8
+		INVERTBIT TALENT:対象:羽, 0
+	CASE 9
+		INVERTBIT TALENT:対象:ファーリー, 0
+	CASE 10
+		INVERTBIT TALENT:対象:ゾンビ, 0
+	CASE 11
+		VARSET EXP:対象:0, 0
+	CASE 12
+		VARSET EXP:対象:0, 0
+		IF VAGINA(対象)
+			EXP:対象:Ｖ経験 = RAND(10, 31)
+			EXP:対象:膣射経験 = RAND(0, 6)
+			EXP:対象:絶頂経験 += RAND(10, 21)
+			EXP:対象:精液経験 = RAND(20, 51)+EXP:対象:膣射経験
+		ENDIF
+		IF PENIS(対象)
+			EXP:対象:射精経験 = RAND(50, 101)
+			EXP:対象:絶頂経験 += EXP:対象:射精経験
+		ENDIF
+		IF SEX(対象) == 2
+			EXP:対象:パイズリ経験 = RAND(3, 11)
+			EXP:対象:フェラ経験 = RAND(5, 21)
+		ENDIF
+		EXP:対象:性交経験 = RAND(5, 11)
+		EXP:対象:自慰経験 = RAND(10, 31)
+	CASE 13
+		VARSET EXP:対象:0, 0
+		IF VAGINA(対象)
+			EXP:対象:Ｖ経験 = RAND(500, 1001)
+			EXP:対象:膣射経験 = RAND(300, 501)
+			EXP:対象:出産経験 = RAND(1, 4)
+			SIF RAND:5 == 0
+				EXP:対象:流産経験 = 1
+		ENDIF
+		SIF PENIS(対象)
+			EXP:対象:射精経験 = RAND(2000, 5001)
+		SELECTCASE SEX(対象)
+			CASE 1
+				EXP:対象:ゲイ経験 = RAND(500, 1001)
+			CASE 2
+				EXP:対象:レズ経験 = RAND(500, 1001)
+				EXP:対象:パイズリ経験 = RAND(200, 301)
+		ENDSELECT
+		EXP:対象:Ａ経験 = RAND(500, 1001)
+		EXP:対象:性交経験 = RAND(300, 501)
+		EXP:対象:自慰経験 = RAND(1000, 2001)
+		EXP:対象:フェラ経験 = RAND(500, 1001)
+		EXP:対象:絶頂経験 = RAND(500, 1001)+EXP:対象:射精経験
+		EXP:対象:精液経験 = RAND(2000, 5001)+EXP:対象:膣射経験
+	CASE 15
+		INVERTBIT プレイヤー名無しフラグ, 0
+	CASE 20 TO 85
+		LRESULT = RESULT-20
+		IF EXPNAME:(LRESULT) != ""
+			PRINTFORML %I18N("|0|の数値を入力してください", , I18N(EXPNAME:LRESULT, "EXP"))%
+			INPUT
+			SIF RESULT < 0
+				RESULT = 0
+			EXP:対象:(LRESULT) = RESULT
+		ENDIF
+	CASE 100
+		FOR LCOUNT, 0, 10
+			IF CHKCHARADATA(@"CUSTOMPLAYER_{LCOUNT}") == 0
+				PRINTFORML [{LCOUNT}] - %RESULTS%
+			ELSE
+				SETCOLORBYNAME gray
+				PRINTFORML [{LCOUNT}] - %I18N("空きスロット")%
+				RESETCOLOR
+			ENDIF
+		NEXT
+		DRAWLINE
+		PRINTPLAIN 　PC SAVE　
+		PRINTFORML [10] - %I18N("戻る")%
+		BINPUT
+		SELECTCASE RESULT
+			CASE 0 TO 9
+				LRESULT = RESULT
+				IF CHKCHARADATA(@"CUSTOMPLAYER_{RESULT}") == 0
+					PRINTFORML %I18N("既にカスタムデータが存在します。上書きしてもよろしいですか？")%
+					PRINTFORML [0] - %I18N("はい")%
+					PRINTFORML [1] - %I18N("いいえ")%
+					BINPUT
+					SIF RESULT == 1
+						RESTART
+				ENDIF
+				年 = TOINT(SUBSTRING(GETTIMES(), 0, 4))
+				月 = TOINT(SUBSTRING(GETTIMES(), 5, 2))
+				日 = TOINT(SUBSTRING(GETTIMES(), 8, 2))
+				IF LANGUAGE == "ENG"
+					SAVECHARA @"CUSTOMPLAYER_{LRESULT}", @"%NAME:対象% Created in {年}/{月}/{日}", 対象
+				ELSE
+					SAVECHARA @"CUSTOMPLAYER_{LRESULT}", @"%NAME:対象% {年}/{月}/{日}に作成", 対象
+				ENDIF
+		ENDSELECT
+	CASE 101, 102
+		LRESULT = RESULT
+		FOR LCOUNT, 0, 10
+			IF CHKCHARADATA(@"CUSTOMPLAYER_{LCOUNT}") == 0
+				PRINTFORML [{LCOUNT}] - %RESULTS%
+			ELSE
+				SETCOLORBYNAME gray
+				PRINTFORML [{LCOUNT}] - %I18N("空きスロット")%
+				RESETCOLOR
+			ENDIF
+		NEXT
+		DRAWLINE
+		PRINTPLAIN 　PC LOAD　
+		PRINTFORML [10] - %I18N("戻る")%
+		BINPUT
+		SELECTCASE RESULT
+			CASE 0 TO 9
+				IF CHKCHARADATA(@"CUSTOMPLAYER_{RESULT}") == 0
+					IF LRESULT == 101
+						DELCHARA 対象
+						LOADCHARA @"CUSTOMPLAYER_{RESULT}"
+					ELSEIF LRESULT == 102
+						キャラメイクデフォルト = RESULT
+					ENDIF
+				ENDIF
+		ENDSELECT
+ENDSELECT
+
+RESTART
+
+@SELECT_GENDER, 対象 = -1
+#DIM DYNAMIC 対象
+SIF 対象 == -1
+	対象 = MASTER
+DRAWLINE
+
+PRINTFORML %I18N("性別を選択してください")%
+PRINTFORML [0] - %I18N("男性")%
+PRINTFORML [1] - %I18N("女性")%
+SELECTCASE ゲームモード()
+	CASE "通常モード", "経営モード"
+	CASEELSE
+		PRINTFORML [2] - %I18N("男性")%(%I18N("ふたなり", "TALENT")%)
+		PRINTFORML [3] - %I18N("女性")%(%I18N("ふたなり", "TALENT")%)
+ENDSELECT
+
+BINPUT
+SELECTCASE RESULT
+	CASE 0, 2
+		TALENT:対象:性別 = 1
+		TALENT:対象:バストサイズ = 0
+		CSTR:対象:上半身上着 = シャツ
+		CSTR:対象:下半身上着 = ズボン
+		CSTR:対象:全身上着 = 
+		CSTR:対象:上半身下着 =
+		CSTR:対象:下半身下着 = トランクス
+		CFLAG:対象:挿入可 = 0
+	CASE 1, 3
+		TALENT:対象:性別 = 2
+		TALENT:対象:バストサイズ = 3
+		CSTR:対象:上半身上着 = 
+		CSTR:対象:下半身上着 = 
+		CSTR:対象:全身上着 = ワンピース
+		CSTR:対象:上半身下着 = ブラジャー
+		CSTR:対象:下半身下着 = パンティ
+		CFLAG:対象:挿入可 = 1
+ENDSELECT
+SIF GROUPMATCH(RESULT, 2, 3)
+	TALENT:対象:ふたなり = 1
+
+@INPUT_NAME, 対象 = -1
+#DIM DYNAMIC 対象
+
+SIF 対象 == -1
+	対象 = MASTER
+DRAWLINE
+DO
+	PRINTFORM %I18N("名前を入力してください(何も入力しない場合は「")%
+	PRINTBUTTON @"%CSVNAMEDISP(0)%", @"%CSVNAMEDISP(0)%"
+	PRINTFORML %I18N("」になります)")%
+	INPUTS
+	SELECTCASE RESULTS
+		CASE ""
+			CALLNAME:対象 = あなた
+			NAME:対象 = あなた
+			CSTR:対象:英語名 = You
+			CSTR:対象:英語呼び名 = You
+		CASEELSE
+			CALLNAME:対象 = %RESULTS%
+			NAME:対象 = %RESULTS%
+			CSTR:対象:英語名 = %RESULTS%
+			CSTR:対象:英語呼び名 = %RESULTS%
+	ENDSELECT
+	PRINTFORML %I18N("「|0|」でよろしいですか？",, CALLNAMEDISP(対象))%
+	PRINTFORML [0] - %I18N("はい")%
+	PRINTFORML [1] - %I18N("いいえ")%
+	BINPUT
+	SIF !RESULT
+		BREAK
+LOOP 1
+
+@SELECT_DIFFICULT
+;ORIGINとチュートリアルはNORMAL固定(暫定)
+IF ORIGIN || TUTORIAL == "キャラクリ終了"
+	FLAG:難易度 = 1
+	RETURN
+ENDIF
+
+DRAWLINE
+
+PRINTFORML □%I18N("難易度を選択してください")%
+IF QMA && LANGUAGE == "JP"
+	SETCOLORBYNAME lime
+	PRINTL 　[-1] - ビギナー級(周回不可、実績解除不可)
+	SETCOLORBYNAME deepskyblue
+	PRINTL 　[ 1] - フェアリー級(初心者でも安心)
+	SETCOLORBYNAME yellow
+	PRINTL 　[ 2] - ミノフェニ級(それなりに)
+	SETCOLORBYNAME coral
+	PRINTL 　[ 3] - ドラゴン級(ようこそ廃人の入口へ)
+	SETCOLORBYNAME violet
+	PRINTL 　[ 4] - レジェンダリア級
+ELSE
+	SETCOLORBYNAME lime
+	PRINTFORML 　[-1] - BEGINNER(%I18N("周回不可、実績解除不可")%)
+	SETCOLORBYNAME deepskyblue
+	PRINTFORML 　[ 1] - NORMAL
+	SETCOLORBYNAME yellow
+	PRINTFORML 　[ 2] - HYPER
+	SETCOLORBYNAME coral
+	PRINTFORML 　[ 3] - ANOTHER
+	SETCOLORBYNAME violet
+	PRINTFORML 　[ 4] - LEGGENDARIA
+ENDIF
+RESETCOLOR
+BINPUT
+FLAG:難易度 = RESULT

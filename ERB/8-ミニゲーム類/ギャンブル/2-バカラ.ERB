@@ -1,0 +1,287 @@
+﻿;バカラは裏カジノ専用なので「カジノの種類」は使わない
+@バカラ, カジノの種類
+#DIM DYNAMIC ゲーム数 = 16
+#DIM DYNAMIC 賭け金上限 = 2000000
+#DIM DYNAMIC デッキ数 = 6
+#DIM DYNAMIC カード数
+#DIMS DYNAMIC ベット
+#DIM DYNAMIC 賭け金
+#DIM DYNAMIC フェイズ
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC 配当
+#DIMS DYNAMIC SIDE_ENG
+#DIM DYNAMIC カジノの種類
+
+
+#DIM DYNAMIC B_CARD, 2, 3;カードを記録(0はプレイヤー,1はバンカー)
+
+CALL SE再生, トランプシャッフル
+CALL SHUFFLE, 52 * デッキ数
+
+;カード数 = 0;使用カード数
+DO
+	;ここからゲーム開始
+	IF 8*(52*デッキ数-カード数) / (52*デッキ数) < 1;デッキの残りが1/8を切るとシャッフル
+		CALL SHUFFLE, 52*デッキ数
+		カード数 = 0;使用カード数
+		CALL SE再生, トランプシャッフル
+		IF LANGUAGE == "ENG"
+			PRINTW The deck was runnning low, shuffled deck.
+		ELSE
+			PRINTW デッキの残りが少なくなったのでシャッフルしました。
+		ENDIF
+	ENDIF
+	VARSET B_CARD, -1
+	B_CARD:0:0 = CARD:カード数
+	カード数++
+	B_CARD:1:0 = CARD:カード数
+	カード数++
+	B_CARD:0:1 = CARD:カード数
+	カード数++
+	B_CARD:1:1 = CARD:カード数
+	カード数++
+	PRINTL 
+	DRAWLINE
+	IF LANGUAGE == "ENG"
+		CALL PASELIL, @"<残り{ゲーム数}ゲーム MAXBET:{賭け金上限}＄>"
+	ELSE
+		CALL PASELIL, @"<Remaining games:{ゲーム数} MAXBET:{賭け金上限}＄>"
+	ENDIF
+	$BACCARAT_INPUT
+	PRINTL 
+	IF LANGUAGE == "ENG"
+		PRINTL [1]Player(2x) [2]Banker(1.95x) [3]Tie(9x) [9]Finish the Game
+	ELSE
+		PRINTL [1]プレイヤー(2倍) [2]バンカー(1.95倍) [3]タイ(9倍) [9]もうやめる
+	ENDIF
+	BINPUT
+	SELECTCASE RESULT
+		CASE 9
+			PRINTL 
+			IF LANGUAGE == "ENG"
+				PRINTL Do you finish the Game?
+				PRINTL [0]Continue
+				PRINTL [1]Yes
+			ELSE
+				PRINTL もうやめますか？
+				PRINTL [0]やっぱり続ける
+				PRINTL [1]本当にやめる
+			ENDIF
+			BINPUT
+			SELECTCASE RESULT
+				CASE 0
+					GOTO BACCARAT_INPUT
+				CASE 1
+					RETURN
+			ENDSELECT
+	ENDSELECT
+	SELECTCASE RESULT
+		CASE 1
+			ベット = プレイヤー
+			SIDE_ENG = Player
+		CASE 2
+			ベット = バンカー
+			SIDE_ENG = Banker
+		CASE 3
+			ベット= タイ
+			SIDE_ENG = Tie
+	ENDSELECT
+	PRINTL 
+	CALL STAKE, 賭け金上限, 2
+	賭け金 = RESULT
+	MONEY -= 賭け金
+	フェイズ = 0;プレイの段階
+	CALL SE再生, トランプ配布
+	$BACCARAT_PLAY
+	PRINTL 
+	IF LANGUAGE == "ENG"
+		CALL PASELIL, @"<Remaining games:{ゲーム数} MAXBET:{賭け金上限}＄>"
+		CALL PASELIL, @" Your BET:{賭け金}(%SIDE_ENG%)＄"
+	ELSE
+		CALL PASELIL, @"<残り{ゲーム数}ゲーム MAXBET:{賭け金上限}＄>"
+		CALL PASELIL, @" ベット:{賭け金}(%ベット%)＄"
+	ENDIF
+	PRINTL 
+
+	FOR LCOUNT, 0, 2
+		SELECTCASE LCOUNT
+			CASE 0
+				IF LANGUAGE == "ENG"
+					PRINTFORM Player:{B_SUM(B_CARD:0:0, B_CARD:0:1, B_CARD:0:2)} 
+				ELSE
+					PRINTFORM プレイヤー:{B_SUM(B_CARD:0:0, B_CARD:0:1, B_CARD:0:2)} 
+				ENDIF
+			CASE 1
+				IF LANGUAGE == "ENG"
+					PRINTFORM 　Banker:{B_SUM(B_CARD:1:0, B_CARD:1:1, B_CARD:1:2)} 
+				ELSE
+					PRINTFORM 　バンカー:{B_SUM(B_CARD:1:0, B_CARD:1:1, B_CARD:1:2)} 
+				ENDIF
+		ENDSELECT
+		CALL PRTCARD, B_CARD:LCOUNT:0
+		PRINT  
+		CALL PRTCARD, B_CARD:LCOUNT:1
+		IF B_CARD:LCOUNT:2 != -1
+			PRINT  
+			CALL PRTCARD, B_CARD:LCOUNT:2
+		ELSEIF B_SUM(B_CARD:LCOUNT:0, B_CARD:LCOUNT:1, 0) == 8
+			IF LANGUAGE == "ENG"
+				PRINT  (Natural 8)
+			ELSE
+				PRINT  (ナチュラル8)
+			ENDIF
+		ELSEIF B_SUM(B_CARD:LCOUNT:0, B_CARD:LCOUNT:1, 0) == 9
+			IF LANGUAGE == "ENG"
+				PRINT  (Natural 9)
+			ELSE
+				PRINT  (ナチュラル9)
+			ENDIF
+		ENDIF
+		SELECTCASE LCOUNT
+			CASE 0
+				PRINTL 
+			CASE 1
+				WAIT
+		ENDSELECT
+	NEXT
+	;プレイヤーのターン
+	IF フェイズ == 0 
+		;どちらかが8以上だったらゲーム終了
+		IF B_SUM(B_CARD:0:0, B_CARD:0:1, B_CARD:0:2) >= 8 || B_SUM(B_CARD:1:0, B_CARD:1:1, B_CARD:1:2) >= 8
+		;双方が6以上だったらゲーム終了
+		ELSEIF B_SUM(B_CARD:0:0, B_CARD:0:1, B_CARD:0:2) >= 6 && B_SUM(B_CARD:1:0, B_CARD:1:1, B_CARD:1:2) >= 6
+		;そうでなければカードを引いてフェイズを進める
+		ELSEIF B_SUM(B_CARD:0:0, B_CARD:0:1, B_CARD:0:2) <= 5
+			CALL SE再生, トランプドロー
+			B_CARD:0:2 = CARD:カード数
+			カード数++
+			フェイズ++
+			GOTO BACCARAT_PLAY
+		;その他（？）
+		ELSE
+			フェイズ++
+			GOTO BACCARAT_PLAY
+		ENDIF
+	;バンカーのターン
+	ELSEIF フェイズ == 1
+		;プレイヤーの3枚目のカードに応じてバンカー側に配られるかどうかが決まる
+		IF B_SUM(B_CARD:1:0, B_CARD:1:1, B_CARD:1:2) <= 2
+			CALL SE再生, トランプドロー
+			B_CARD:1:2 = CARD:カード数
+			カード数++
+			フェイズ++
+			GOTO BACCARAT_PLAY
+		ELSEIF B_SUM(B_CARD:1:0, B_CARD:1:1, B_CARD:1:2) == 3
+			IF B_SUM(0,0,B_CARD:0:2) != 8
+				CALL SE再生, トランプドロー
+				B_CARD:1:2 = CARD:カード数
+				カード数++
+				フェイズ++
+				GOTO BACCARAT_PLAY
+			ENDIF
+		ELSEIF B_SUM(B_CARD:1:0, B_CARD:1:1, B_CARD:1:2) == 4
+			IF B_CARD:0:2 == -1 || INRANGE(B_SUM(0,0,B_CARD:0:2), 2, 7)
+				CALL SE再生, トランプドロー
+				B_CARD:1:2 = CARD:カード数
+				カード数++
+				フェイズ++
+				GOTO BACCARAT_PLAY
+			ENDIF
+		ELSEIF B_SUM(B_CARD:1:0, B_CARD:1:1, B_CARD:1:2) == 5
+			IF B_CARD:0:2 == -1 || INRANGE(B_SUM(0,0,B_CARD:0:2), 4, 7)
+				CALL SE再生, トランプドロー
+				B_CARD:1:2 = CARD:カード数
+				カード数++
+				フェイズ++
+				GOTO BACCARAT_PLAY
+			ENDIF
+		ELSEIF B_SUM(B_CARD:1:0, B_CARD:1:1, B_CARD:1:2) == 6
+			IF INRANGE(B_SUM(0,0,B_CARD:0:2), 6, 7)
+				CALL SE再生, トランプドロー
+				B_CARD:1:2 = CARD:カード数
+				カード数++
+				フェイズ++
+				GOTO BACCARAT_PLAY
+			ENDIF
+		ENDIF
+	ENDIF
+	配当 = 0
+	PRINTL 
+	IF B_SUM(B_CARD:0:0, B_CARD:0:1, B_CARD:0:2) > B_SUM(B_CARD:1:0, B_CARD:1:1, B_CARD:1:2)
+		IF LANGUAGE == "ENG"
+			PRINTL Player's win.
+		ELSE
+			PRINTL プレイヤーの勝ちです。
+		ENDIF
+		IF ベット == "プレイヤー"
+			配当 = 2*賭け金
+			CALL SE再生, カジノコイン
+			IF LANGUAGE == "ENG"
+				CALL PASELIL,  @"You got reward:{賭け金}＄×2＝{配当}＄"
+			ELSE
+				CALL PASELIL,  @"配当:{賭け金}＄×2＝{配当}＄"
+			ENDIF
+		ENDIF
+	ELSEIF B_SUM(B_CARD:0:0, B_CARD:0:1, B_CARD:0:2) < B_SUM(B_CARD:1:0, B_CARD:1:1, B_CARD:1:2)
+		PRINTL バンカーの勝ちです。
+		IF ベット == "バンカー"
+			配当 = 39*賭け金/20
+			CALL SE再生, カジノコイン
+			IF LANGUAGE == "ENG"
+				CALL PASELIL, @"You got reward:{賭け金}＄×1.95＝{配当}＄"
+			ELSE
+				CALL PASELIL, @"配当:{賭け金}＄×1.95＝{配当}＄"
+			ENDIF
+		ENDIF
+	ELSE
+		PRINTL タイです。
+		IF ベット == "タイ"
+			配当 = 9*賭け金
+			CALL SE再生, カジノコイン
+			IF LANGUAGE == "ENG"
+				CALL PASELIL, @"You got reward:{賭け金}＄×9＝{配当}＄"
+			ELSE
+				CALL PASELIL, @"配当:{賭け金}＄×9＝{配当}＄"
+			ENDIF
+		ELSE
+			CALL SE再生, カジノコイン
+			配当 = 賭け金
+			IF LANGUAGE == "ENG"
+				CALL PASELIL, @"You got reward:{賭け金}＄×1＝{配当}＄"
+			ELSE
+				CALL PASELIL, @"配当:{賭け金}＄×1＝{配当}＄"
+			ENDIF
+		ENDIF
+	ENDIF
+	MONEY += 配当
+	SIF 配当 > 0
+		TATSUJIN++
+	SAVEGLOBAL
+	WAIT
+	ゲーム数--
+LOOP ゲーム数 > 0
+
+@B_SUM(バカラ計算用, バカラ計算用:1, バカラ計算用:2)
+#FUNCTION
+#DIM DYNAMIC バカラ計算用, 3
+;カードが配られていないとき-1が代入されている
+
+;1枚目
+SIF バカラ計算用 < 0
+	バカラ計算用 = 0
+バカラ計算用 %= 13
+SIF バカラ計算用 > 9
+	バカラ計算用 = 0
+;2枚目
+SIF バカラ計算用:1 < 0
+	バカラ計算用:1 = 0
+バカラ計算用:1 %= 13
+SIF バカラ計算用:1 > 9
+	バカラ計算用:1 = 0
+;3枚目
+SIF バカラ計算用:2 < 0
+	バカラ計算用:2 = 0
+バカラ計算用:2 %= 13
+SIF バカラ計算用:2 > 9
+	バカラ計算用:2 = 0
+RETURNF (バカラ計算用 + バカラ計算用:1 + バカラ計算用:2) % 10

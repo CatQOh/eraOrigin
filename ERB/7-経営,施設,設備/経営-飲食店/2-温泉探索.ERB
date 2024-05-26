@@ -1,0 +1,671 @@
+﻿@温泉探索
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC 名前文字数
+
+CALL CHECKDRAWLINE
+PRINTFORML □温泉探索班(現在:{CMATCH(CSTR:配属, "温泉探索")}/3人) 本日の残り魔法使用回数:{MS魔法ストック}回
+IF CMATCH(CSTR:配属, "温泉探索") == 0
+	PRINTL 　[配属無し]
+ELSE
+	FOR LCOUNT, 0, CHARANUM
+		SIF CSTR:LCOUNT:配属 == "温泉探索"
+			CALL SETMAX(名前文字数, STRLENS(NAME:LCOUNT))
+	NEXT
+	FOR LCOUNT, 0, CHARANUM
+		IF CSTR:LCOUNT:配属 == "温泉探索"
+			IF CFLAG:LCOUNT:配属完了
+				PRINTFORM 　%NAME:LCOUNT, 名前文字数, LEFT% 工作技能:{ABL:LCOUNT:工作技能, 2, LEFT} 魔法技能:{ABL:LCOUNT:魔法技能, 2, LEFT} 実務経験:{EXP:LCOUNT:実務経験, 2, LEFT}
+				SIF 統率者("温泉探索") && !TALENT:LCOUNT:統率
+					PRINT  統率者ボーナス+1 
+				CALL ISTALENT, LCOUNT, "地質学"
+				CALL ISTALENT, LCOUNT, "統率"
+				SIF ワーカホリックレベル(LCOUNT)
+					PRINTFORM [ワーカホリック+{ワーカホリックレベル(LCOUNT)}]
+				PRINTL 
+			ELSE
+				PRINTFORML 　%NAME:LCOUNT, 名前文字数, LEFT%(配属準備中)
+			ENDIF
+		ENDIF
+	NEXT
+ENDIF
+PRINTL 
+PRINTL □温泉を探します
+FOR LCOUNT, 1, 4
+	IF MS広さ:LCOUNT == ""
+		CALL PRINTCOLORL, "　[-] - 発掘現場が保存されていません", "gray"
+	ELSE
+		PRINTFORML 　[{LCOUNT}] - 広さ:%MS広さ:LCOUNT% 難易度:{MS難易度:LCOUNT}の発掘現場
+	ENDIF
+NEXT
+PRINTL 　[10] - 新しく温泉を探す
+PRINTL 　[11] - 温泉探索班を編成する
+DRAWLINE
+PRINTPLAIN 　温泉探索　
+PRINTL [0] - 戻る
+
+BINPUT
+
+SELECTCASE RESULT
+	CASE 0
+		RETURN
+	CASE 1 TO 3
+		SIF MS広さ:RESULT == ""
+			RESTART
+		CALL マインスイーパ, RESULT
+	CASE 10
+		CALL 温泉探索_候補
+	CASE 11
+		CALL STRATEGY_PERSONAL, "温泉探索"
+ENDSELECT
+
+RESTART
+
+@マインスイーパ, マップ
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC LCOUNTX
+#DIM DYNAMIC LCOUNTY
+#DIM DYNAMIC 隣接爆弾数
+#DIM DYNAMIC X幅
+#DIM DYNAMIC Y幅
+#DIM DYNAMIC X座標
+#DIM DYNAMIC Y座標
+#DIM DYNAMIC X開放
+#DIM DYNAMIC Y開放
+#DIM DYNAMIC 失敗
+#DIM DYNAMIC マーク画面
+#DIM DYNAMIC 未解明マス
+#DIM DYNAMIC 解明マス
+#DIM DYNAMIC 温泉マス
+#DIM DYNAMIC 目印マス
+#DIM DYNAMIC 総温泉数
+#DIM DYNAMIC ログ表示 = 1
+#DIM DYNAMIC ログ削除用
+#DIM DYNAMIC 発掘費用
+#DIMS DYNAMIC 分割用, 2
+#DIM DYNAMIC 魔法判定, 2
+#DIM DYNAMIC 総発掘費用
+#DIM DYNAMIC 地質学人数
+#DIM DYNAMIC LTARGET
+#DIM DYNAMIC 必要素材数
+#DIM DYNAMIC マップ
+
+VARSET MS
+
+必要素材数 = (7-MS難易度:マップ)*100
+
+;保存してあるやつを呼び出す
+SELECTCASE マップ
+	CASE 1
+		ARRAYCOPY "MS1", "MS"
+	CASE 2
+		ARRAYCOPY "MS2", "MS"
+	CASE 3
+		ARRAYCOPY "MS3", "MS"
+ENDSELECT
+
+SPLIT MS広さ:マップ, "/", 分割用
+
+X幅 = TOINT(分割用:0)
+Y幅 = TOINT(分割用:1)
+
+発掘費用 = X幅*Y幅*(MS難易度:マップ)/2
+
+FOR LCOUNT, 0, CHARANUM
+	SIF CSTR:LCOUNT:配属 == "温泉探索" && TALENT:LCOUNT:地質学
+		地質学人数++
+NEXT
+
+VARLINE = 0
+ログ削除用 = LINECOUNT
+
+$RESTART
+SIF !ログ表示
+	CALL LOOP_CLEARLINE
+
+DRAWLINE
+IF マーク画面
+	PRINTPLAIN □任意の場所に目印を付けます 
+ELSE
+	PRINTPLAINFORM □温泉を探します 広さ:%MS広さ:マップ% 難易度:{MS難易度:マップ} 
+ENDIF
+PRINTBUTTON @"[10] - \@ ログ表示 ? ログを表示しない # ログを表示する \@ ", "10"
+PRINTBUTTON "[11] - ログを消す", "11"
+PRINTL 
+SIF !ORIGIN
+	CALL PASELIL, @"　現在の所持金:{MONEY}＄÷発掘費用:{発掘費用}＄=発掘可能回数:{MONEY/発掘費用}回"
+
+;カウント用変数リセット
+未解明マス = 0
+解明マス = 0
+温泉マス = 0
+目印マス = 0
+総温泉数 = 0
+
+;マテリアルに変換
+リソース:マテリアル += 素材変換/必要素材数
+素材変換 %= 必要素材数
+
+FOR LCOUNTY, 0, Y幅
+	PRINT 　
+	FOR LCOUNTX, 0, X幅
+		;変数内訳は0=未解明 1=解明 2=温泉ありかつ未解明 3=温泉ありかつ解明 4=爆弾ありかつ未解明 5=爆弾ありかつ解明 6~=マーク
+		SELECTCASE MS:LCOUNTX:LCOUNTY
+			;未解明
+			CASE 0, 2, 4
+				PRINTBUTTON "■", @"{LCOUNTX}/{LCOUNTY}"
+				未解明マス++
+				SIF MS:LCOUNTX:LCOUNTY == 2
+					総温泉数++
+			;解明
+			CASE 1
+				;周囲8方向にある爆弾をカウント
+				隣接爆弾数 = 0
+				FOR LCOUNT, -1, 2
+					SIF !INRANGE(LCOUNTY+LCOUNT, 0, Y幅-1)
+						CONTINUE
+					SIF INRANGE(LCOUNTX-1, 0, X幅-1) && GROUPMATCH(MS:(LCOUNTX-1):(LCOUNTY+LCOUNT), 4, 5, 10)
+						隣接爆弾数++
+					SIF GROUPMATCH(MS:LCOUNTX:(LCOUNTY+LCOUNT), 4, 5, 10)
+						隣接爆弾数++
+					SIF INRANGE(LCOUNTX+1, 0, X幅-1) && GROUPMATCH(MS:(LCOUNTX+1):(LCOUNTY+LCOUNT), 4, 5, 10)
+						隣接爆弾数++
+				NEXT
+				;あれば数字を表示
+				IF 隣接爆弾数
+					SELECTCASE 隣接爆弾数
+						CASE 1
+							SETCOLORBYNAME deepskyblue
+						CASE 2
+							SETCOLORBYNAME lime
+						CASE 3
+							SETCOLORBYNAME yellow
+						CASE IS >= 4
+							SETCOLORBYNAME coral
+					ENDSELECT
+					PRINTFORM %TOFULL(TOSTR(隣接爆弾数))%
+					RESETCOLOR
+				ELSE
+					PRINT □
+				ENDIF
+				解明マス++
+			;♨
+			CASE 3
+				PRINT ♨
+				温泉マス++
+				総温泉数++
+			;爆弾 これが開けられていたら失敗
+			CASE 5
+				PRINT 💣
+				失敗 = 1
+			;マーク済み
+			CASE 6, 8, 10
+				SETCOLORBYNAME red
+				IF マーク画面
+					PRINTBUTTON "危", @"{LCOUNTX}/{LCOUNTY}"
+				ELSE
+					PRINT 危
+				ENDIF
+				RESETCOLOR
+				目印マス++
+				SIF MS:LCOUNTX:LCOUNTY == 8
+					総温泉数++
+		ENDSELECT
+	NEXT
+	PRINTL
+NEXT
+
+IF 失敗
+	FONTBOLD
+	PRINTW 爆弾を掘り当ててしまった！逃げろ！
+	FONTREGULAR
+	DRAWLINE
+	PRINTW ………………
+	PRINTW …………
+	PRINTW ……
+	PRINTW 温泉の発掘に失敗しました
+	CALL MS消去, マップ
+	CALL PAYMENT, -総発掘費用, "温泉発掘費用"
+	IF パートナー != ""
+		IF OPTION:口上表示 && !CFLAG:GETCHARANAME(パートナー):口上非表示
+			LTARGET = TARGET
+			TARGET = GETCHARANAME(パートナー)
+			TRYCALLFORM 温泉発掘失敗_%CSVNAMERPS(GETNO(パートナー))%
+			TARGET = LTARGET
+		ENDIF
+	ENDIF
+	RETURN
+ENDIF
+
+PRINTFORML 　・総マス数:{(X幅)*(Y幅)} ■=未解明({未解明マス}) □=解明({解明マス}) 数字=隣接する爆弾の数 ♨=見事掘り当てた温泉({温泉マス}/{総温泉数}) 危=マーク済み({目印マス})
+PRINTFORML 　　マテリアル変換:{素材変換}/{必要素材数}→1マスごとに{地質学人数+1}個の素材入手（地質学の人数依存） 現在:{リソース:マテリアル}個（ロボット製作に使用可能）
+DRAWLINE
+PRINTPLAIN 　温泉発掘　
+;すべての温泉見つけた場合は完了のみ
+IF 温泉マス >= 総温泉数
+	PRINTBUTTON @"[4] - 全ての温泉を掘り当てた！採掘を完了する(温泉レベル:{温泉マス})", "4"
+ELSE
+	PRINTBUTTON "[1] - 休憩 ", "1"
+	IF マーク画面
+		PRINTBUTTON "[2] - 採掘に戻る ", "2"
+	ELSE
+		PRINTBUTTON "[2] - 目印を付ける ", "2"
+	ENDIF
+	SIF MS魔法ストック
+		PRINTBUTTON @"[3] - 透視魔法(ランダムで安全マス開放 残り{MS魔法ストック}回) ", "3"
+	PRINTBUTTON @"[4] - 採掘を完了する(温泉レベル:{温泉マス})", "4"
+ENDIF
+PRINTL
+
+DO
+	INPUTS
+	SELECTCASE RESULTS
+		CASE "1"
+			SELECTCASE マップ
+				CASE 1
+					ARRAYCOPY "MS", "MS1"
+				CASE 2
+					ARRAYCOPY "MS", "MS2"
+				CASE 3
+					ARRAYCOPY "MS", "MS3"
+			ENDSELECT
+			CALL PAYMENT, -総発掘費用, "温泉発掘費用"
+			RETURN
+		CASE "2"
+			INVERTBIT マーク画面, 0
+			GOTO RESTART
+		CASE "3"
+			IF MS魔法ストック && 温泉マス < 総温泉数
+				IF 発掘費用 > MONEY-総発掘費用 && !ORIGIN
+					PRINTW 所持金が足りません
+					GOTO RESTART
+				ENDIF
+				魔法判定:0 = 0
+				X開放 = 0
+				Y開放 = 0
+				DO
+					SELECTCASE MS:X開放:Y開放
+						CASE 0, 2, 6, 8
+							魔法判定:0++
+					ENDSELECT
+					X開放++
+					IF X開放 >= X幅
+						X開放 = 0
+						Y開放++
+					ENDIF
+					SIF Y開放 >= Y幅
+						BREAK
+				LOOP 1
+				魔法判定:1 = RAND:(魔法判定:0)
+				X開放 = 0
+				Y開放 = 0
+				DO
+					SELECTCASE MS:X開放:Y開放
+						CASE 0, 2, 6, 8
+							SIF 魔法判定:1 == 0
+								BREAK
+							魔法判定:1--
+					ENDSELECT
+					X開放++
+					IF X開放 >= X幅
+						X開放 = 0
+						Y開放++
+					ENDIF
+				LOOP 1
+				SELECTCASE MS:X開放:Y開放
+					CASE 0, 2
+						MS:X開放:Y開放++
+					CASE 6, 8
+						MS:X開放:Y開放 -= 5
+				ENDSELECT
+				素材変換 += 地質学人数+1
+				CALL マス目開放, X開放, Y開放, X幅, Y幅
+				MS魔法ストック--
+				総発掘費用 += 発掘費用
+				GOTO RESTART
+			ENDIF
+			GOTO RESTART
+		CASE "4"
+			PRINTPLAINFORM 温泉レベル[{温泉マス}]で採掘を完了します。よろしいですか？(現在の温泉レベル:{INN:温泉レベル})
+			PRINTL 
+			PRINTL [0] - はい
+			PRINTL [1] - いいえ
+			BINPUT
+			SIF RESULT == 1
+				GOTO RESTART
+			PRINTL 無事に採掘を終えた！
+			CALL PAYMENT, -総発掘費用, "温泉発掘費用"
+			TATSUJIN++
+			SAVEGLOBAL
+			CALL 実績解除, "徳川の埋蔵金まだー？"
+			;実績:ミニゲーム100回クリアまたは勝利
+			SIF TATSUJIN >= 100
+				CALL 実績解除, "ゲームの達人"
+			IF 温泉マス > INN:温泉レベル
+				PRINTFORML 温泉レベルが{温泉マス}に上がった！
+				INN:温泉レベル = 温泉マス
+			ENDIF
+			WAIT
+			CALL MS消去, マップ
+			IF パートナー != ""
+				SIF OPTION:口上表示 && !CFLAG:GETCHARANAME(パートナー):口上非表示
+					TRYCALLFORM 温泉発掘_%CSVNAMERPS(GETNO(パートナー))%
+			ENDIF
+			RETURN
+		CASE "10"
+			INVERTBIT ログ表示, 0
+			GOTO RESTART
+		CASE "11"
+			CLEARLINE LINECOUNT-ログ削除用
+			GOTO RESTART
+		CASEELSE
+			SIF RESULTS == ""
+				CONTINUE
+			IF 発掘費用 > MONEY-総発掘費用
+				PRINTW 所持金が足りません
+				GOTO RESTART
+			ENDIF
+			SPLIT RESULTS, "/", 分割用
+			X座標 = TOINT(分割用:0)
+			SIF X座標 > X幅
+				CONTINUE
+			Y座標 = TOINT(分割用:1)
+			SIF Y座標 > Y幅
+				CONTINUE
+			SIF !GROUPMATCH(MS:X座標:Y座標, 0, 2, 4, 6, 8, 10)
+				CONTINUE
+			IF マーク画面
+				IF MS:X座標:Y座標 >= 6
+					MS:X座標:Y座標 -= 6
+				ELSE
+					MS:X座標:Y座標 += 6
+				ENDIF
+			ELSE
+				;自動開放では費用がかからない
+				総発掘費用 += 発掘費用
+				素材変換 += 地質学人数+1
+				SELECTCASE MS:X座標:Y座標
+					CASE 0, 2, 4
+						MS:X座標:Y座標 += 1
+						;爆弾以外だったら安全圏を開放する
+						SIF MS:X座標:Y座標 != 5
+							CALL マス目開放, X座標, Y座標, X幅, Y幅
+				ENDSELECT
+			ENDIF
+			GOTO RESTART
+	ENDSELECT
+LOOP 1
+
+@マス目開放, X座標, Y座標, X幅, Y幅
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC X座標
+#DIM DYNAMIC Y座標
+#DIM DYNAMIC X幅
+#DIM DYNAMIC Y幅
+#DIM DYNAMIC 隣接爆弾数
+#DIM DYNAMIC 地質学人数
+
+FOR LCOUNT, 0, CHARANUM
+	SIF CSTR:LCOUNT:配属 == "温泉探索" && TALENT:LCOUNT:地質学
+		地質学人数++
+NEXT
+
+FOR LCOUNT, -1, 2
+	;周囲8マスに爆弾があるか確認
+	SIF !INRANGE(Y座標+LCOUNT, 0, Y幅-1)
+		CONTINUE
+	SIF INRANGE(X座標-1, 0, X幅-1) && GROUPMATCH(MS:(X座標-1):(Y座標+LCOUNT), 4, 10)
+		隣接爆弾数++
+	SIF GROUPMATCH(MS:X座標:(Y座標+LCOUNT), 4, 10)
+		隣接爆弾数++
+	SIF INRANGE(X座標+1, 0, X幅-1) && GROUPMATCH(MS:(X座標+1):(Y座標+LCOUNT), 4, 10)
+		隣接爆弾数++
+NEXT
+
+;無かった場合は周囲8マスを解放しつつ再帰
+IF 隣接爆弾数 == 0
+	FOR LCOUNT, -1, 2
+		SIF !INRANGE(Y座標+LCOUNT, 0, Y幅-1)
+			CONTINUE
+		IF INRANGE(X座標-1, 0, X幅-1)
+			SELECTCASE MS:(X座標-1):(Y座標+LCOUNT)
+				CASE 0, 2
+					MS:(X座標-1):(Y座標+LCOUNT)++
+					素材変換 += 地質学人数+1
+					CALL マス目開放, X座標-1, Y座標+LCOUNT, X幅, Y幅
+				CASE 6, 8
+					MS:(X座標-1):(Y座標+LCOUNT) -= 5
+					素材変換 += 地質学人数+1
+					CALL マス目開放, X座標-1, Y座標+LCOUNT, X幅, Y幅
+			ENDSELECT
+		ENDIF
+		SELECTCASE MS:(X座標):(Y座標+LCOUNT)
+			CASE 0, 2
+				MS:(X座標):(Y座標+LCOUNT)++
+				素材変換 += 地質学人数+1
+				CALL マス目開放, X座標, Y座標+LCOUNT, X幅, Y幅
+			CASE 6, 8
+				MS:(X座標):(Y座標+LCOUNT) -= 5
+				素材変換 += 地質学人数+1
+				CALL マス目開放, X座標, Y座標+LCOUNT, X幅, Y幅
+		ENDSELECT
+		IF INRANGE(X座標+1, 0, X幅-1)
+			SELECTCASE MS:(X座標+1):(Y座標+LCOUNT)
+				CASE 0, 2
+					MS:(X座標+1):(Y座標+LCOUNT)++
+					素材変換 += 地質学人数+1
+					CALL マス目開放, X座標+1, Y座標+LCOUNT, X幅, Y幅
+				CASE 6, 8
+					MS:(X座標+1):(Y座標+LCOUNT) -= 5
+					素材変換 += 地質学人数+1
+					CALL マス目開放, X座標+1, Y座標+LCOUNT, X幅, Y幅
+			ENDSELECT
+		ENDIF
+	NEXT
+ENDIF
+
+@温泉探索_候補
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC 広さ上限X
+#DIM DYNAMIC 広さ上限Y
+#DIM DYNAMIC 難易度上限
+#DIM DYNAMIC X指定 = 10
+#DIM DYNAMIC Y指定 = 10
+#DIM DYNAMIC 難易度指定 = 1
+#DIM DYNAMIC 探索費用
+#DIM DYNAMIC 発掘費用
+#DIM DYNAMIC 総温泉数
+#DIM DYNAMIC LRESULT
+
+広さ上限X = 10
+広さ上限Y = 10
+難易度上限 = 1
+
+;広さ上限は実務経験で、難易度上限は工作技能で、各地質学の有無でポイント付く
+FOR LCOUNT, 0, CHARANUM
+	SIF CSTR:LCOUNT:配属 != "温泉探索"
+		CONTINUE
+	IF TALENT:LCOUNT:地質学
+		広さ上限X += (EXP:LCOUNT:実務経験/10)+2
+		広さ上限Y += (EXP:LCOUNT:実務経験/20)+2
+		難易度上限 += ABL:LCOUNT:工作技能/2+ワーカホリックレベル(LCOUNT)
+	ELSE
+		広さ上限X += (EXP:LCOUNT:実務経験/20)+1
+		広さ上限Y += (EXP:LCOUNT:実務経験/40)+1
+		難易度上限 += ABL:LCOUNT:工作技能/3+ワーカホリックレベル(LCOUNT)
+	ENDIF
+NEXT
+
+CALL SETMIN, 広さ上限X, 60
+CALL SETMIN, 広さ上限Y, 30
+CALL SETMIN, 難易度上限, 6
+
+CALL PASELIL, @"□温泉を探します。条件を指定してください\@ !ORIGIN ? 　現在の所持金:{MONEY}＄#\@"
+PRINTPLAINFORM 　広さ:{X指定}×{Y指定}(最大:{広さ上限X}×{広さ上限Y}) 
+PRINTL [1]広さの横幅を変更 [2]広さの縦幅を変更
+PRINTFORML 　難易度:{難易度指定}(最大:{難易度上限}) [3]難易度を変更
+総温泉数 = (X指定*Y指定*難易度指定)/20
+探索費用 = X指定*Y指定*難易度指定*100
+発掘費用 = 総温泉数*10
+SIF !ORIGIN
+	CALL PASELIL, @"　探索費用:横幅{X指定}×縦幅{Y指定}×難易度{難易度指定*100}={探索費用}＄ 発掘費用:{発掘費用}＄(1マスあたり)"
+PRINTL 
+PRINTFORML 　[5] - この条件で探す(最大温泉レベル:{総温泉数})
+PRINTL 　[0] - 戻る
+
+BINPUT
+
+SELECTCASE RESULT
+	CASE 0
+		RETURN
+	CASE 1
+		PRINTL 広さの横幅を指定してください
+		CALL TWO_DIGIT, 広さ上限X, "", 10
+		X指定 = LIMIT(RESULT, 10, 広さ上限X)
+	CASE 2
+		PRINTL 広さの縦幅を指定してください
+		CALL TWO_DIGIT, 広さ上限Y, "", 10
+		Y指定 = LIMIT(RESULT, 10, 広さ上限Y)
+	CASE 3
+		PRINTL 難易度を選択してください
+		CALL TWO_DIGIT, 難易度上限, "", 1
+		難易度指定 = LIMIT(RESULT, 1, 難易度上限)
+	CASE 5
+		IF 探索費用 > MONEY && !ORIGIN
+			PRINTW 所持金が足りません
+			RESTART
+		ENDIF
+		PRINTL 発掘現場を保存するスロットを選んでください
+		FOR LCOUNT, 1, 4
+			IF MS広さ:LCOUNT == ""
+				PRINTFORML [{LCOUNT}] - 空きスロット
+			ELSE
+				PRINTFORML [{LCOUNT}] - 広さ:%MS広さ:LCOUNT% 難易度:{MS難易度:LCOUNT}の発掘現場 が保存されています
+			ENDIF
+		NEXT
+		BINPUT
+		LRESULT = RESULT
+		IF MS広さ:RESULT != ""
+			PRINTL 既に発掘現場が保存されています。上書きしますか？
+			PRINTL [0] - はい
+			PRINTL [1] - いいえ
+			BINPUT
+			SIF RESULT == 1
+				RESTART
+		ENDIF
+		CALL マインスイーパ生成, @"{X指定}/{Y指定}", 難易度指定, LRESULT
+		CALL PAYMENT, -探索費用, "温泉探索費用"
+		RETURN
+ENDSELECT
+
+RESTART
+
+@マインスイーパ生成, 広さ, 難易度, マップ
+#DIM DYNAMIC LCOUNTX
+#DIM DYNAMIC LCOUNTY
+#DIM DYNAMIC LCOUNT
+#DIMS DYNAMIC 広さ
+#DIM DYNAMIC X幅
+#DIM DYNAMIC Y幅
+#DIM DYNAMIC X候補
+#DIM DYNAMIC Y候補
+#DIM DYNAMIC 難易度
+#DIM DYNAMIC 爆弾数
+#DIM DYNAMIC 温泉数
+#DIMS DYNAMIC 分割用, 2
+#DIM DYNAMIC マップ
+
+;60*30は最大の広さ 廃人用
+VARSET MS
+
+;広さはXX/XXなのでSPLIT
+MS広さ:マップ = %広さ%
+SPLIT 広さ, "/", 分割用
+X幅 = TOINT(分割用:0)
+Y幅 = TOINT(分割用:1)
+
+;難易度は6段階(暫定) 1ごとにマップの5%が爆弾と温泉マークになる
+爆弾数 = (X幅*Y幅*難易度)/20
+温泉数 = (X幅*Y幅*難易度)/20
+
+;ランダムで爆弾と温泉を設置
+;変数内訳は0=未解明 1=解明 2=温泉ありかつ未解明 3=温泉ありかつ解明 4=爆弾ありかつ未解明 5=爆弾ありかつ解明
+;乱数次第では少し時間がかかるかもしれない
+DO
+	X候補 = RAND:X幅
+	Y候補 = RAND:Y幅
+	SIF MS:X候補:Y候補 >= 2
+		CONTINUE
+	;爆弾を設置(物騒)
+	MS:X候補:Y候補 = 4
+	;デクリメントからループ確認
+	爆弾数--
+LOOP 爆弾数 != 0
+
+;爆弾の置いてない場所に温泉を配置
+DO
+	X候補 = RAND:X幅
+	Y候補 = RAND:Y幅
+	;温泉か爆弾入ってたら再選定
+	SIF MS:X候補:Y候補 >= 2
+		CONTINUE
+	;温泉を設置
+	MS:X候補:Y候補 = 2
+	;デクリメントからループ確認
+	温泉数--
+LOOP 温泉数 != 0
+
+;デバッグ用
+;#;FOR LCOUNTY, 0, Y幅
+;#;	FOR LCOUNTX, 0, X幅
+;#;		PRINTFORM {MS:LCOUNTX:LCOUNTY}
+;#;	NEXT
+;#;	PRINTL
+;#;NEXT
+;#;WAIT
+
+;変数マップで指定されたセーブデータ変数に結果をコピーする
+SELECTCASE マップ
+	CASE 1
+		MS広さ:1 = %広さ%
+		MS難易度:1 = 難易度
+		ARRAYCOPY "MS", "MS1"
+	CASE 2
+		MS広さ:2 = %広さ%
+		MS難易度:2 = 難易度
+		ARRAYCOPY "MS", "MS2"
+	CASE 3
+		MS広さ:3 = %広さ%
+		MS難易度:3 = 難易度
+		ARRAYCOPY "MS", "MS3"
+ENDSELECT
+
+VARSET MS
+
+RETURN
+
+@MS消去, マップ
+#DIM DYNAMIC マップ
+
+MS広さ:マップ = 
+MS難易度:マップ = 0
+SELECTCASE マップ
+	CASE 1
+		VARSET MS1
+	CASE 2
+		VARSET MS2
+	CASE 3
+		VARSET MS3
+ENDSELECT
+
+@TURNEND_温泉探索
+#DIM DYNAMIC LCOUNT
+
+MS魔法ストック = 0
+
+FOR LCOUNT, 0, CHARANUM
+	SIF CSTR:LCOUNT:配属 != "温泉探索"
+		CONTINUE
+	SIF CFLAG:LCOUNT:配属完了
+		MS魔法ストック += ABL:LCOUNT:魔法技能
+	CFLAG:LCOUNT:配属完了 = 1
+NEXT

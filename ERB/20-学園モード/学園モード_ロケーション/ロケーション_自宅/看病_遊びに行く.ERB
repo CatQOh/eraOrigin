@@ -1,0 +1,15 @@
+﻿@看病_遊びに行く
+
+SIF !同行者
+	RETURN 0
+
+TARGET = 同行者
+
+CALL SCHOOL_KOJO, TARGET, "看病_遊びに行く"
+CALL ロケーション選択
+
+SIF RESULT
+	RETURN 1
+
+@SCHOOL_MESSAGE_看病_遊びに行く
+PRINTFORMW 突然元気になって遊びに行こうとする%CALLNAME:PLAYER%に%CALLNAME:TARGET%は呆れるが、一緒についてきてくれるようだ

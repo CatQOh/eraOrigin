@@ -1,0 +1,694 @@
+﻿;;;ラッパー関数
+@カラム生成, カラム, カラムメニュー:0, カラムメニュー:1, カラムメニュー:2, カラムメニュー:3, カラムメニュー:4, カラムメニュー:5, カラムメニュー:6, カラムメニュー:7, カラムメニュー:8, カラムメニュー:9, カラムメニュー:10, カラムメニュー:11, カラムメニュー:12, カラムメニュー:13, カラムメニュー:14
+#DIMS カラム
+#DIMS DYNAMIC カラムメニュー, 15
+#DIMS ロケーション保存用
+
+IF ゲームモード() == "学園モード" && CHARANUM
+	SIF ロケーション保存用 == ""
+		ロケーション保存用 = %CSTR:PLAYER:現在地%
+ENDIF
+
+VARLINE = LINECOUNT
+
+DO
+	CALL カラム生成2, カラム, カラムメニュー:0, カラムメニュー:1, カラムメニュー:2, カラムメニュー:3, カラムメニュー:4, カラムメニュー:5, カラムメニュー:6, カラムメニュー:7, カラムメニュー:8, カラムメニュー:9, カラムメニュー:10, カラムメニュー:11, カラムメニュー:12, カラムメニュー:13, カラムメニュー:14
+	CALL GIDDEL
+	;ロケーションが変わってたらBREAKする
+	IF ゲームモード() == "学園モード" && CHARANUM
+		SIF CSTR:PLAYER:現在地 != ロケーション保存用
+			LOOP_BREAK = 1
+		ロケーション保存用 = %CSTR:PLAYER:現在地%
+	ENDIF
+	IF LOOP_BREAK
+		選択カラム = 選択カラム指定
+		選択カラム指定 = 0
+		CRESULT:0 = 0
+		BREAK
+	ENDIF
+LOOP 1
+
+@カラム生成2, カラム, カラムメニュー:0, カラムメニュー:1, カラムメニュー:2, カラムメニュー:3, カラムメニュー:4, カラムメニュー:5, カラムメニュー:6, カラムメニュー:7, カラムメニュー:8, カラムメニュー:9, カラムメニュー:10, カラムメニュー:11, カラムメニュー:12, カラムメニュー:13, カラムメニュー:14
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC LINE
+;MAX_LINEは可変にしてみる
+;#DIM CONST MAX_LINE = 30
+#DIM 表示カラム
+#DIM DYNAMIC 文字数計算用
+#DIM DYNAMIC 行文字数 = STRLENSU(GETLINESTR("─"))
+;#DIM DYNAMIC 選択カラム = 0
+#DIM DYNAMIC 平文文字数
+#DIMS DYNAMIC カラムメニュー, 15
+#DIM DYNAMIC カラム数
+#DIMS カラム
+#DIMS DYNAMIC SPLITVAR, 2
+#DIM DYNAMIC 生成時間
+
+REDRAW 0
+CALL LOOP_CLEARLINE
+
+LOOP_BREAK = 0
+
+ARRAYCOPY "カラムメニュー", "カラム名"
+
+FOR LCOUNT, VARSIZE("カラムメニュー")-1, -1, -1
+	SIF カラムメニュー:LCOUNT == ""
+		ARRAYREMOVE カラムメニュー, LCOUNT, 1
+NEXT
+
+FOR LCOUNT, 0, VARSIZE("カラムメニュー")
+	IF カラムメニュー:LCOUNT == ""
+		カラム数 = LCOUNT
+		BREAK
+	ENDIF
+NEXT
+
+CALL CHECKDRAWLINE
+
+FOR LCOUNT, 0, VARSIZE("カラムメニュー")
+	;学園用セーブ＆ロードは特殊
+	IF GROUPMATCH(カラムメニュー:LCOUNT, "学園用_セーブカラム", "学園用_ロードカラム")
+		文字数計算用 = MAX(4+4, 文字数計算用)
+	ELSE
+		;/で区切られていれば表示と関数を分ける
+		SPLIT カラムメニュー:LCOUNT, "/", SPLITVAR
+		IF RESULT == 2
+			文字数計算用 = MAX(STRLENSU(SPLITVAR:0)+4, 文字数計算用)
+		ELSE
+			文字数計算用 = MAX(STRLENSU(カラムメニュー:LCOUNT)+4, 文字数計算用)
+		ENDIF
+	ENDIF
+NEXT
+
+;罫線3つ分引いてSTRLENSU→STRLENS変換で2倍
+平文文字数 = (行文字数-文字数計算用-3)*2
+
+;VARSET カラム行
+VARSET COLUMNLOG
+FOR LCOUNT, 0, VARSIZE("COLUMN", 1)
+	COLUMN:LCOUNT:9 = 0
+NEXT
+
+CALL COLUMNRESIZE, 0, (行文字数-文字数計算用-3)*100, MAX_LINE*100
+CALL COLUMNMOVE, 0, (文字数計算用+2)*100, MAX_LINE*100
+
+COLUMNDRAW = (行文字数-文字数計算用-3)*2
+
+;学園用セーブ＆ロードは特殊
+IF GROUPMATCH(カラムメニュー:選択カラム, "学園用_セーブカラム", "学園用_ロードカラム")
+	TRYCALLFORM %カラムメニュー:選択カラム%
+ELSE
+	;/で区切られていれば表示と関数を分ける
+	SPLIT カラムメニュー:選択カラム, "/", SPLITVAR
+	IF RESULT == 2
+		TRYCALLFORM %カラム%_%SPLITVAR:1%
+	ELSE
+		TRYCALLFORM %カラム%_%カラムメニュー:選択カラム%
+	ENDIF
+ENDIF
+
+FOR LINE, 0, MAX_LINE+2
+	FOR LCOUNT, 0, 行文字数
+		SELECTCASE LINE
+			CASE 0
+				SELECTCASE LCOUNT
+					CASE 0
+						PRINT ┌
+					CASE 行文字数-1
+						PRINT ┐
+					CASEELSE
+						IF LCOUNT == 文字数計算用+1 && 選択カラム != 0
+							PRINT ┬
+						ELSE
+							PRINT ─
+						ENDIF
+				ENDSELECT
+			CASE MAX_LINE+1
+				SELECTCASE LCOUNT
+					CASE IS < 文字数計算用+1
+						PRINT 　
+					CASE 文字数計算用+1
+						PRINT └
+					CASE 行文字数-1
+						PRINT ┘
+					CASEELSE
+						PRINT ─
+				ENDSELECT
+			CASEELSE
+				IF LINE/2 < カラム数
+					IF LINE%2
+						SELECTCASE LCOUNT
+							CASE 0
+								;学園用セーブ＆ロードは特殊
+								IF カラムメニュー:(LINE/2) == "学園用_セーブカラム"
+									PRINTFORM │[{LINE/2+10000}] %"セーブ", (文字数計算用-4)*2, LEFT%
+								ELSEIF カラムメニュー:(LINE/2) == "学園用_ロードカラム"
+									PRINTFORM │[{LINE/2+10000}] %"ロード", (文字数計算用-4)*2, LEFT%
+								ELSE
+									;/で区切られてれば関数と表示を分ける
+									SPLIT カラムメニュー:(LINE/2), "/", SPLITVAR
+									IF RESULT == 2
+										PRINTFORM │[{LINE/2+10000}] %SPLITVAR:0, (文字数計算用-4)*2, LEFT%
+									ELSE
+										PRINTFORM │[{LINE/2+10000}] %カラムメニュー:(LINE/2), (文字数計算用-4)*2, LEFT%
+									ENDIF
+								ENDIF
+							CASE 行文字数-1
+								PRINT │
+							CASE IS > 文字数計算用
+								IF LCOUNT == 文字数計算用+1
+									IF 選択カラム != LINE/2
+										PRINTPLAIN │
+									ELSE
+										PRINTPLAIN 　
+									ENDIF
+								ELSEIF LCOUNT == 文字数計算用+2
+									PRINTFORM %" ", 平文文字数, LEFT%
+								ENDIF
+						ENDSELECT
+					ELSE
+						SELECTCASE LCOUNT
+							CASE 0
+								PRINT ├
+							CASE IS <= 文字数計算用
+								PRINT ─
+							CASE 文字数計算用+1
+								IF 選択カラム < LINE/2
+									IF LINE == (選択カラム*2)+2
+										PRINTPLAIN ┐
+									ELSE
+										PRINTPLAIN ┤
+									ENDIF
+								ELSE
+									IF LINE == (選択カラム*2)
+										PRINTPLAIN ┘
+									ELSE
+										PRINTPLAIN ┤
+									ENDIF
+								ENDIF
+							CASE 行文字数-1
+								PRINTPLAIN │
+							CASE 文字数計算用+2
+								PRINTFORM %" ", 平文文字数, LEFT%
+						ENDSELECT
+					ENDIF
+				ELSEIF LINE/2 == カラム数 && LINE%2 == 0
+					SELECTCASE LCOUNT
+						CASE 0
+							PRINT └
+						CASE IS <= 文字数計算用
+							PRINT ─
+						CASE 文字数計算用+1
+							IF LINE == (選択カラム*2)+2
+								PRINTPLAIN ┐
+							ELSE
+								PRINTPLAIN ┤
+							ENDIF
+						CASE 行文字数-1
+							PRINTPLAIN │
+						CASE 文字数計算用+2
+							PRINTFORM %" ", 平文文字数, LEFT%
+					ENDSELECT
+				ELSE
+					SELECTCASE LCOUNT
+						CASE IS < 文字数計算用+1
+							PRINT 　
+						CASE 文字数計算用+1
+							PRINTPLAIN │
+						CASE 行文字数-1
+							PRINTPLAIN │
+						CASE 文字数計算用+2
+							PRINTFORM %" ", 平文文字数, LEFT%
+					ENDSELECT
+				ENDIF
+		ENDSELECT
+	NEXT
+	;生成時間 = GETMILLISECOND()
+	IF LINE == MAX_LINE+1
+		CALL COLUMNSHOW
+	ELSE
+		PRINTL 
+	ENDIF
+	;DEBUGPRINTFORML {LINE}行目:{GETMILLISECOND()-生成時間}ミリ秒
+NEXT
+
+IF カラム入力無視
+	カラム入力無視 = 0
+	LOOP_BREAK = 1
+	RETURN
+ELSE
+	CALL TUTORIAL
+	BINPUT
+ENDIF
+
+SELECTCASE RESULT
+	CASE 10000 TO 10010
+		選択カラム = RESULT-10000
+		CRESULT:1 = -1
+		CALL GIDDEL
+		RESTART
+	CASEELSE
+		CRESULT:0 = 選択カラム
+		CRESULT:1 = RESULT
+		;学園用セーブ＆ロードは特殊
+		IF GROUPMATCH(カラムメニュー:選択カラム, "学園用_セーブカラム", "学園用_ロードカラム")
+			TRYCALLFORM %カラムメニュー:選択カラム%_INPUT
+		ELSE
+			;/で区切られてれば関数と表示を分ける
+			SPLIT カラムメニュー:選択カラム, "/", SPLITVAR
+			IF RESULT == 2
+				TRYCALLFORM %カラム%_%SPLITVAR:1%_INPUT
+			ELSE
+				TRYCALLFORM %カラム%_%カラムメニュー:選択カラム%_INPUT
+			ENDIF
+		ENDIF
+		REDRAW 1
+		RETURN
+ENDSELECT
+
+;;;(カラム番号) カラム生成
+@COLUMNCREATE, カラム番号
+#DIM DYNAMIC カラム番号
+
+SIF COLUMN:カラム番号:CREATED
+	RETURN 0
+
+COLUMN:カラム番号:CREATED = 1
+RETURN 1
+
+;;;(カラム番号) カラム破棄
+@COLUMNDISPOSE, カラム番号
+#DIM DYNAMIC カラム番号
+
+SIF !COLUMN:カラム番号:CREATED
+	RETURN 0
+
+COLUMN:カラム番号:CREATED = 0
+RETURN 1
+
+;;;(カラム番号, 幅, 高さ) カラムサイズ変更
+@COLUMNRESIZE, カラム番号, 幅, 高さ
+#DIM DYNAMIC カラム番号
+#DIM DYNAMIC 幅
+#DIM DYNAMIC 高さ
+
+COLUMN:カラム番号:WIDTH = 幅
+COLUMN:カラム番号:HEIGHT = 高さ/100*GETCONFIG("一行の高さ")
+
+;;;(カラム番号, XPOS, YPOS) カラム移動
+@COLUMNMOVE, カラム番号, X軸, Y軸
+#DIM DYNAMIC カラム番号
+#DIM DYNAMIC X軸
+#DIM DYNAMIC Y軸
+
+COLUMN:カラム番号:XPOS = X軸
+COLUMN:カラム番号:YPOS = -(Y軸/100*GETCONFIG("一行の高さ"))
+
+;;;(カラム番号, 16進数カラーコードor色名) カラム背景色変更
+@COLUMNBGCOLOR, カラム番号, 色
+#DIM DYNAMIC カラム番号
+#DIMS DYNAMIC 色
+
+IF ISNUMERIC(色)
+	COLUMN:カラム番号:BGCOLOR = TOINT(色)
+ELSE
+	COLUMN:カラム番号:BGCOLOR = COLOR_FROMNAME(色)
+ENDIF
+
+;;;Main Column PRINT 0の入力省略だけ
+@MCOLUMNPRINT, 本文, 色, エスケープ
+#DIMS DYNAMIC 本文
+#DIMS DYNAMIC 色
+#DIM DYNAMIC エスケープ
+
+CALL COLUMNSHIFT(0, 本文, 色, "", エスケープ)
+
+;;;(カラム番号, 本文, 色) 改行しない本文追加
+@COLUMNPRINT, カラム番号, 本文, 色, エスケープ
+#DIM DYNAMIC カラム番号
+#DIMS DYNAMIC 本文
+#DIMS DYNAMIC 色
+#DIM DYNAMIC エスケープ
+
+CALL COLUMNSHIFT(カラム番号, 本文, 色, "", エスケープ)
+
+;;;Main Column PRINTL 0の入力省略だけ
+@MCOLUMNPRINTL, 本文, 色, エスケープ
+#DIM DYNAMIC カラム番号
+#DIMS DYNAMIC 本文
+#DIMS DYNAMIC 色
+#DIM DYNAMIC エスケープ
+
+;空行の場合は専用の識別子入れる
+IF COLUMNLOG:カラム番号:(COLUMN:カラム番号:LINE) == "" && 本文 == ""
+	COLUMNLOG:カラム番号:(COLUMN:カラム番号:LINE) = [THIS_IS_EMPTY]
+ELSE
+	CALL COLUMNSHIFT(カラム番号, 本文, 色, "", エスケープ)
+ENDIF
+COLUMN:カラム番号:LINE++
+
+;;;(カラム番号, 本文, 色) 改行する本文追加
+@COLUMNPRINTL, カラム番号, 本文, 色, エスケープ
+#DIM DYNAMIC カラム番号
+#DIMS DYNAMIC 本文
+#DIMS DYNAMIC 色
+#DIM DYNAMIC エスケープ
+
+;空行の場合は専用の識別子入れる
+IF COLUMNLOG:カラム番号:(COLUMN:カラム番号:LINE) == "" && 本文 == ""
+	COLUMNLOG:カラム番号:(COLUMN:カラム番号:LINE) = [THIS_IS_EMPTY]
+ELSE
+	CALL COLUMNSHIFT(カラム番号, 本文, 色, "", エスケープ)
+ENDIF
+COLUMN:カラム番号:LINE++
+
+;;;(カラム番号, 本文) INSERTは整形済みのタグを入れるだけ
+@COLUMNINSERT, カラム番号, 本文
+#DIM DYNAMIC カラム番号
+#DIMS DYNAMIC 本文
+
+COLUMNLOG:カラム番号:(COLUMN:カラム番号:LINE) += 本文
+
+;;;(カラム番号, 本文) INSERTは整形済みのタグを入れるだけ
+@COLUMNINSERTL, カラム番号, 本文
+#DIM DYNAMIC カラム番号
+#DIMS DYNAMIC 本文
+
+COLUMNLOG:カラム番号:(COLUMN:カラム番号:LINE) += 本文
+COLUMN:カラム番号:LINE++
+
+;;;(カラム番号, スプライト名, 幅, 高さ) 現時点のカラム位置に画像描写
+@COLUMNIMG, カラム番号, スプライト名, 幅, 高さ
+#DIM DYNAMIC カラム番号
+#DIMS DYNAMIC スプライト名
+#DIM DYNAMIC 幅
+#DIM DYNAMIC 高さ
+
+CALL GCREATESTACK, スプライト名
+COLUMNLOG:カラム番号:(COLUMN:カラム番号:LINE) += @"<img src='%ESCAPE(スプライト名)%' srcb='' width='{幅}' height='{高さ}'>"
+
+;;;(カラム番号, 本文, ツールチップ, 16進数カラーコードor色名) ツールチップ付きのカラム文
+@MCOLUMNTOOLTIP, 本文, ツールチップ, 色
+#DIM DYNAMIC カラム番号
+#DIMS DYNAMIC 本文
+#DIMS DYNAMIC ツールチップ
+#DIMS DYNAMIC 色
+
+CALL COLUMNSHIFT(カラム番号, 本文, 色, ツールチップ)
+
+;;;(カラム番号, 本文, ツールチップ, 16進数カラーコードor色名) ツールチップ付きのカラム文
+@MCOLUMNTOOLTIPL, 本文, ツールチップ, 色
+#DIM DYNAMIC カラム番号
+#DIMS DYNAMIC 本文
+#DIMS DYNAMIC ツールチップ
+#DIMS DYNAMIC 色
+
+CALL COLUMNSHIFT(カラム番号, 本文, 色, ツールチップ)
+COLUMN:カラム番号:LINE++
+
+;;;(カラム番号, 本文, ツールチップ, 16進数カラーコードor色名) ツールチップ付きのカラム文
+@COLUMNTOOLTIP, カラム番号, 本文, ツールチップ, 色
+#DIM DYNAMIC カラム番号
+#DIMS DYNAMIC 本文
+#DIMS DYNAMIC ツールチップ
+#DIMS DYNAMIC 色
+
+CALL COLUMNSHIFT(カラム番号, 本文, 色, ツールチップ)
+
+;;;(カラム番号, 本文, ツールチップ, 16進数カラーコードor色名) ツールチップ付きのカラム文
+@COLUMNTOOLTIPL, カラム番号, 本文, ツールチップ, 色
+#DIM DYNAMIC カラム番号
+#DIMS DYNAMIC 本文
+#DIMS DYNAMIC ツールチップ
+#DIMS DYNAMIC 色
+
+CALL COLUMNSHIFT(カラム番号, 本文, 色, ツールチップ)
+COLUMN:カラム番号:LINE++
+
+;;;(本文, 色) F付きはタグ文字を返す
+@COLUMNPRINTF, 本文, 色
+#FUNCTIONS
+#DIMS DYNAMIC 本文
+#DIMS DYNAMIC 色
+
+RETURNF COLUMNSHIFTF(本文, 色)
+
+@COLUMNBAR, カラム番号, 数値, 最大値, 長さ
+#DIM DYNAMIC GID
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC LCOUNT2
+#DIM DYNAMIC 数値
+#DIM DYNAMIC 最大値
+#DIM DYNAMIC 長さ
+#DIM DYNAMIC 割合
+#DIM DYNAMIC ピクセル
+#DIM DYNAMIC カラム番号
+
+ピクセル = (長さ/100)*GETCONFIG("フォントサイズ")
+
+CALL GCREATESTACKVOID, ピクセル, GETCONFIG("一行の高さ")
+GID = RESULT
+
+割合 = (数値*100)/最大値
+
+FOR LCOUNT, 0, GWIDTH(GID)
+	FOR LCOUNT2, 0, GHEIGHT(GID)
+		IF ピクセル*割合/100 >= LCOUNT
+			GSETCOLOR GID, 0xFF000000+COLOR_FROMRGB(255, 0, 0), LCOUNT, LCOUNT2
+		ELSE
+			GSETCOLOR GID, 0xFF000000+COLOR_FROMRGB(150, 0, 0), LCOUNT, LCOUNT2
+		ENDIF
+	NEXT
+NEXT
+
+SPRITECREATE @"BAR{GID}", GID
+
+COLUMNLOG:カラム番号:(COLUMN:カラム番号:LINE) += @"<img src='BAR{GID}' srcb='' width='{長さ}' height='100'>"
+
+;;;カラム機能外での呼び出し非推奨
+@COLUMNSHIFT, カラム番号, 本文, ETC, TOOLTIP, エスケープ
+#DIM DYNAMIC LCOUNT
+#DIMS DYNAMIC ETC
+#DIMS DYNAMIC TOOLTIP
+#DIMS DYNAMIC 文字列ボタン
+#DIM DYNAMIC ボタン = -3189415
+#DIM DYNAMIC 括弧, 2
+#DIMS DYNAMIC HTML
+#DIMS DYNAMIC 本文
+#DIM DYNAMIC カラム番号
+#DIM DYNAMIC エスケープ
+
+SIF 本文 == ""
+	RETURN
+
+IF COLOR_FROMNAME(ETC) >= 0
+	本文 = <font color='%ETC%'>\@ エスケープ ? %HTML_ESCAPE(本文)% # %本文% \@</font>
+ELSEIF ISNUMERIC(ETC) && TOINT(ETC) >= 0
+	本文 = <font color='#%CONVERT(TOINT(ETC), 16)%'>\@ エスケープ ? %HTML_ESCAPE(本文)% # %本文% \@</font>
+ELSE
+	本文 = <font color='#%CONVERT(GETCOLOR(), 16)%'>\@ エスケープ ? %HTML_ESCAPE(本文)% # %本文% \@</font>
+ENDIF
+
+SIF GETBIT(GETSTYLE(), 0)
+	本文 = <b>%本文%
+SIF GETBIT(GETSTYLE(), 1)
+	本文 = <i>%本文%
+SIF GETBIT(GETSTYLE(), 2)
+	本文 = <s>%本文%
+SIF GETBIT(GETSTYLE(), 3)
+	本文 = <u>%本文%
+
+;パセリに対応
+IF OPTION:パセリ表示
+	本文 = %REPLACE(本文, "＄", "<img src='PASELI' srcb='' width='100' height='100'>")%
+ELSE
+	本文 = %REPLACE(本文, "＄", 通貨単位)%
+ENDIF
+
+;ボタン化処理はここでツールチップと同時に行うことにした
+括弧 = STRFINDU(本文, "[")
+括弧:1 = STRFINDU(本文, "]")
+
+IF 括弧 != -1 && 括弧:1 != -1
+	;STRFIND系使うと"[～]"の範囲を取得してるので"["と"]"を省くために+1と-1する
+	文字列ボタン = %SUBSTRINGU(本文, 括弧+1, 括弧:1-括弧-1)%
+	SIF ISNUMERIC(文字列ボタン)
+		ボタン = TOINT(文字列ボタン)
+ENDIF
+
+;DEBUGPRINTFORML %本文:LCOUNT3% {ボタン:LCOUNT3}
+IF ボタン != -3189415
+	HTML += @"<button value ='{ボタン}' "
+	SIF TOOLTIP != ""
+		HTML += @"title='%TOOLTIP%'"
+	HTML += @">%本文%</button>"
+ELSEIF 文字列ボタン != ""
+	;ただし括弧内が"-"のみで構成されてるものはボタン扱いしない
+	SIF STRCOUNT(文字列ボタン, "-") == STRLENS(文字列ボタン)
+		GOTO NONBUTTON
+	HTML += @"<button value ='%文字列ボタン%' "
+	SIF TOOLTIP != ""
+		HTML += @"title='%TOOLTIP%'"
+	HTML += @">%本文%</button>"
+ELSE
+	$NONBUTTON
+	HTML += @"<nonbutton "
+	SIF TOOLTIP != ""
+		HTML += @"title='%TOOLTIP%'"
+	HTML += @">%本文%</nonbutton>"
+ENDIF
+
+SIF GETBIT(GETSTYLE(), 0)
+	HTML += "</b>"
+SIF GETBIT(GETSTYLE(), 1)
+	HTML += "</i>"
+SIF GETBIT(GETSTYLE(), 2)
+	HTML += "</s>"
+SIF GETBIT(GETSTYLE(), 3)
+	HTML += "</u>"
+
+COLUMNLOG:カラム番号:(COLUMN:カラム番号:LINE) += HTML
+
+;;;後でまとめてボタン化するための関数なのでボタン属性は付けない
+;;;いろいろと不具合が起こりそうなコードではある
+@COLUMNSHIFTF, 本文, ETC
+#FUNCTIONS
+#DIM DYNAMIC LCOUNT
+#DIMS DYNAMIC ETC
+#DIMS DYNAMIC 本文
+
+SIF 本文 == ""
+	RETURNF ""
+
+IF COLOR_FROMNAME(ETC) >= 0
+	本文 = <font color='%ETC%'>%本文%</font>
+ELSEIF ISNUMERIC(ETC) && TOINT(ETC) >= 0
+	本文 = <font color='#%CONVERT(TOINT(ETC), 16)%'>%本文%</font>
+ELSE
+	本文 = <font color='#%CONVERT(GETCOLOR(), 16)%'>%本文%</font>
+ENDIF
+
+;パセリに対応
+IF OPTION:パセリ表示
+	本文 = %REPLACE(本文, "＄", "<img src='PASELI' srcb='' width='100' height='100'>")%
+ELSE
+	本文 = %REPLACE(本文, "＄", 通貨単位)%
+ENDIF
+
+RETURNF 本文
+
+[SKIPSTART]
+@COLUMNBORDER, ARG, ARG:1
+COLUMN:ARG:BORDER = ARG:1
+
+@COLUMNBCOLOR, ARG, ARG:1
+COLUMN:ARG:BCOLOR = ARG:1
+
+@COLUMNRADIUS, ARG, ARG:1
+COLUMN:ARG:RADIUS = ARG:1
+[SKIPEND]
+
+@MCOLUMNDRAWLINE
+CALL COLUMNDRAWLINE, 0
+
+@MCOLUMNDRAWLINEIF, カラム
+#DIM DYNAMIC カラム
+IF カラム
+	CALL COLUMNDRAWLINE, 0
+ELSE
+	DRAWLINE
+ENDIF
+
+;;;(カラム番号) DRAWLINE
+@COLUMNDRAWLINE, カラム番号
+#DIM DYNAMIC カラム番号
+
+CALL COLUMNPRINTL, カラム番号, "-"*COLUMNDRAW
+
+;;;指定のカラム番号を指定した行まで詰める
+@COLUMNSETLINE, カラム番号, 指定行
+#DIM DYNAMIC カラム番号
+#DIM DYNAMIC 指定行
+
+WHILE 指定行 > COLUMN:カラム番号:LINE
+	CALL COLUMNPRINTL, カラム番号, ""
+WEND
+
+@MCOLUMNSETLINE, 指定行
+#DIM DYNAMIC 指定行
+
+CALL COLUMNSETLINE, 0, 指定行
+
+@COLUMNSHOW
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC LCOUNT2
+#DIMS DYNAMIC HTML
+
+CLEARLINE 1
+
+;CALL エフェクト生成
+
+HTML += "<nobr>"
+
+FOR LCOUNT, 0, 10
+	SIF COLUMN:LCOUNT:CREATED == 0
+		CONTINUE
+	;0のみカラムの左上で固定 1以降は0からの相対位置で表示
+	IF LCOUNT == 0
+		HTML += @"<div rect='{COLUMN:LCOUNT:XPOS}, {COLUMN:LCOUNT:YPOS}px, {COLUMN:LCOUNT:WIDTH}, {COLUMN:LCOUNT:HEIGHT}px'"
+	ELSE
+		HTML += @"<div rect='{COLUMN:0:XPOS+COLUMN:LCOUNT:XPOS}, {COLUMN:0:YPOS+COLUMN:LCOUNT:YPOS}px, {COLUMN:LCOUNT:WIDTH}, {COLUMN:LCOUNT:HEIGHT}px'"
+		; depth='-{LCOUNT}'>"
+	ENDIF
+	
+	SIF COLUMN:LCOUNT:BGCOLOR
+		HTML += @"color='#%CONVERT(COLUMN:LCOUNT:BGCOLOR, 16)%' "
+	SIF COLUMN:LCOUNT:BORDER
+		HTML += @"border='{COLUMN:LCOUNT:BORDER}px' "
+	SIF COLUMN:LCOUNT:BCOLOR
+		HTML += @"bcolor='#%CONVERT(COLUMN:LCOUNT:BCOLOR, 16)%' "
+	SIF COLUMN:LCOUNT:RADIUS
+		HTML += @"radius='{COLUMN:LCOUNT:RADIUS}px' "
+	
+	HTML += "><nobr>"
+
+	FOR LCOUNT2, 0, COLUMN:LCOUNT:LINE
+		SIF MAX_LINE <= LCOUNT2
+			BREAK
+		SELECTCASE COLUMNLOG:LCOUNT:LCOUNT2
+			CASE ""
+				CONTINUE
+			CASE IS != "[THIS_IS_EMPTY]"
+				HTML += @"%COLUMNLOG:LCOUNT:LCOUNT2%"
+		ENDSELECT
+		HTML += "<br>"
+	NEXT
+	COLUMN:LCOUNT:LINE = 0
+	HTML += "</nobr></div>"
+NEXT
+
+HTML += "</nobr>"
+
+HTML_PRINT HTML
+
+@GCREATESTACK, ファイル名
+#DIMS DYNAMIC ファイル名
+
+GCREATEFROMFILE GCOUNT, ファイル名
+SPRITECREATE ファイル名, GCOUNT
+GCOUNT++
+
+@GCREATESTACKVOID, 幅, 高さ
+#DIM DYNAMIC 幅
+#DIM DYNAMIC 高さ
+
+GCREATE GCOUNT, 幅, 高さ
+GCOUNT++
+RETURN GCOUNT-1
+
+@GDISPOSEALL
+#DIM DYNAMIC LCOUNT
+
+FOR LCOUNT, 0, GCOUNT
+	GDISPOSE LCOUNT
+NEXT

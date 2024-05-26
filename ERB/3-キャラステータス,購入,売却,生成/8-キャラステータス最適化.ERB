@@ -1,0 +1,239 @@
+﻿@キャラステータス最適化, 対象 = -1
+#DIM DYNAMIC 対象
+#DIM DYNAMIC 始点
+#DIM DYNAMIC 終点
+#DIM DYNAMIC LCOUNT
+
+;ロストしたキャラは後ろに追いやる
+;SIF 対象 != -1
+;	SORTCHARA CFLAG:キャラロスト
+
+IF 対象 == -1
+	始点 = 0
+	終点 = CHARANUM
+ELSE
+	始点 = 対象
+	終点 = 対象+1
+ENDIF
+
+FOR LCOUNT, 始点, 終点
+	;CSVを確認する
+	SIF !EXISTCSV(NOF(LCOUNT)) && NOF(LCOUNT) < 10000
+		PRINTFORMW %NAME:LCOUNT%のCSVが存在しません。ゲームを続行するとエラーが起こる場合があります
+	;ジェントルストレスの発動中はストレスが上がらない
+	IF ジェントルストレス:LCOUNT:0
+		ジェントルストレス:LCOUNT:1 = MIN(CFLAG:LCOUNT:ストレス値, ジェントルストレス:LCOUNT:1)
+		CFLAG:LCOUNT:ストレス値 = ジェントルストレス:LCOUNT:1
+	ENDIF
+	;グリムキャラの接頭語
+	IF CFLAG:LCOUNT:グリム
+		SELECTCASE FLAG:グリムコンフィグ
+			CASE 0
+				CALLNAME:LCOUNT = %CSVCALLNAME(NOF(LCOUNT))%
+				CSTR:LCOUNT:英語呼び名 = %CSVCSTR(NOF(LCOUNT), GETNUM(CSTR, "英語呼び名"))%
+			CASE 1
+				CALLNAME:LCOUNT = グリム・%CSVCALLNAME(NOF(LCOUNT))%
+				CSTR:LCOUNT:英語呼び名 = Grim %CSVCSTR(NOF(LCOUNT), GETNUM(CSTR, "英語呼び名"))%
+		ENDSELECT
+	ENDIF
+	;魔法使いは魔法技能3が必須
+	IF TALENT:LCOUNT:魔法使い
+		SIF ABL:LCOUNT:魔法技能 < 3
+			ABL:LCOUNT:魔法技能 = 3
+		MAXBASE:LCOUNT:魔力 = ABL:LCOUNT:魔法技能*1000
+		BASE:LCOUNT:魔力 = LIMIT(BASE:LCOUNT:魔力, 0, MAXBASE:LCOUNT:魔力)
+	ENDIF
+	;なんらかの原因で鳳凰じゃないキャラに鳳凰用ステータスが設定されていた場合
+	IF CSTR:LCOUNT:種族 != "鳳凰" && MAXBASE:LCOUNT:鳳凰基礎体力
+		MAXBASE:LCOUNT:体力 = MAXBASE:LCOUNT:鳳凰基礎体力
+		MAXBASE:LCOUNT:気力 = MAXBASE:LCOUNT:鳳凰基礎気力
+		MAXBASE:LCOUNT:鳳凰基礎体力 = 0
+		MAXBASE:LCOUNT:鳳凰基礎気力 = 0
+	ENDIF
+NEXT
+
+@初期経験セット(ID)
+#DIM DYNAMIC ID;登録番号
+#DIM DYNAMIC LCOUNT
+;50個もあれば大丈夫か？
+#DIMS DYNAMIC 性経験設定用,100
+#DIMS DYNAMIC 相手, 2
+
+IF CSTR:ID:恋心 != ""
+	TALENT:ID:恋心 = 1
+	;IF CSTR:ID:恋心 == "不明"
+	;	TALENT:ID:恋心 = 10000
+	;ELSE
+	;	TALENT:ID:恋心 = GETNO(CSTR:ID:恋心)
+	;ENDIF
+ENDIF
+IF CSTR:ID:既婚者 != ""
+	TALENT:ID:既婚者 = 1
+	;IF CSTR:ID:既婚者 == "不明"
+	;	TALENT:ID:既婚者 = 10000
+	;ELSE
+	;	TALENT:ID:既婚者 = GETNO(CSTR:ID:既婚者)
+	;ENDIF
+ENDIF
+
+SPLIT CSTR:ID:性経験, "/", 性経験設定用
+FOR LCOUNT, 0, RESULT, 2
+	SIF 性経験設定用:LCOUNT == ""
+		BREAK
+	;なぜか行連結で行頭にスペースが入るので削る
+	性経験設定用:LCOUNT = %SUBSTRINGU(性経験設定用:LCOUNT, 1)%
+	SELECTCASE 性経験設定用:LCOUNT
+		CASE "モブ経験人数"
+			モブ経験人数:ID:0 = TOINT(性経験設定用:(LCOUNT+1))
+		CASE "モブ経験回数"
+			モブ経験回数:ID:0 = TOINT(性経験設定用:(LCOUNT+1))
+		CASE "モブ中出し回数"
+			モブ中出し回数:ID:0 = TOINT(性経験設定用:(LCOUNT+1))
+		CASE "モブアナル中出し回数"
+			モブアナル中出し回数:ID:0 = TOINT(性経験設定用:(LCOUNT+1))
+		CASE "モブ中出され回数"
+			モブ中出され回数:ID:0 = TOINT(性経験設定用:(LCOUNT+1))
+		CASE "モブアナル中出され回数"
+			モブアナル中出され回数:ID:0 = TOINT(性経験設定用:(LCOUNT+1))
+		CASE "モブ孕み回数"
+			モブ孕み回数:ID:0 = TOINT(性経験設定用:(LCOUNT+1))
+		CASE "モブ孕ませ回数"
+			モブ孕ませ回数:ID:0 = TOINT(性経験設定用:(LCOUNT+1))
+		CASE "モブパイズリ人数"
+			モブパイズリ人数:ID:0 = TOINT(性経験設定用:(LCOUNT+1))
+		CASE "モブパイズリ回数"
+			モブパイズリ回数:ID:0 = TOINT(性経験設定用:(LCOUNT+1))
+		CASE "モブ挟射回数"
+			モブ挟射回数:ID:0 = TOINT(性経験設定用:(LCOUNT+1))
+		;以下
+		;相手:0 = 相手のNAME
+		;相手:1 = 回数
+		CASE "経験回数"
+			SPLIT 性経験設定用:(LCOUNT+1), "*", 相手
+			経験回数:ID:GETNO(相手) = TOINT(相手:1)
+		CASE "中出し回数"
+			SPLIT 性経験設定用:(LCOUNT+1), "*", 相手
+			中出し回数:ID:GETNO(相手) = TOINT(相手:1)
+		CASE "アナル中出し回数"
+			SPLIT 性経験設定用:(LCOUNT+1), "*", 相手
+			アナル中出し回数:ID:GETNO(相手) = TOINT(相手:1)
+		CASE "中出され回数"
+			SPLIT 性経験設定用:(LCOUNT+1), "*", 相手
+			中出され回数:ID:GETNO(相手) = TOINT(相手:1)
+		CASE "アナル中出され回数"
+			SPLIT 性経験設定用:(LCOUNT+1), "*", 相手
+			アナル中出され回数:ID:GETNO(相手) = TOINT(相手:1)
+		CASE "孕み回数"
+			SPLIT 性経験設定用:(LCOUNT+1), "*", 相手
+			孕み回数:ID:GETNO(相手) = TOINT(相手:1)
+		CASE "孕ませ回数"
+			SPLIT 性経験設定用:(LCOUNT+1), "*", 相手
+			孕ませ回数:ID:GETNO(相手) = TOINT(相手:1)
+		CASE "パイズリ回数"
+			SPLIT 性経験設定用:(LCOUNT+1), "*", 相手
+			パイズリ回数:ID:GETNO(相手) = TOINT(相手:1)
+		CASE "挟射回数"
+			SPLIT 性経験設定用:(LCOUNT+1), "*", 相手
+			挟射回数:ID:GETNO(相手) = TOINT(相手:1)
+	ENDSELECT
+NEXT
+
+@初期経験リセット(ID)
+#DIM DYNAMIC ID;登録番号
+
+;全ての値を0にする
+;引数IDは登録番号(購入・売却などで0から順番に付けられる方)
+
+VARSET 経験回数:ID:0
+VARSET 中出し回数:ID:0
+VARSET アナル中出し回数:ID:0
+VARSET 孕ませ回数:ID:0
+VARSET 中出され回数:ID:0
+VARSET アナル中出され回数:ID:0
+VARSET 孕み回数:ID:0
+VARSET パイズリ回数:ID:0
+
+VARSET モブ経験人数:ID:0
+VARSET モブ経験回数:ID:0
+VARSET モブ中出し回数:ID:0
+VARSET モブアナル中出し回数:ID:0
+VARSET モブ孕ませ回数:ID:0
+VARSET モブ中出され回数:ID:0
+VARSET モブアナル中出され回数:ID:0
+VARSET モブ孕み回数:ID:0
+VARSET モブパイズリ人数:ID:0
+VARSET モブパイズリ回数:ID:0
+
+
+@経験人数(ID)
+#FUNCTION
+#DIM DYNAMIC ID;登録番号
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC 経験人数
+
+FOR LCOUNT, 0, 20000
+	SIF 経験回数:ID:LCOUNT
+		経験人数 += 1
+NEXT
+経験人数 += モブ経験人数:ID:0
+
+RETURNF 経験人数
+
+@パイズリ経験人数(ID)
+#FUNCTION
+#DIM DYNAMIC ID;登録番号
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC パイズリ経験人数
+
+FOR LCOUNT, 0, 20000
+	SIF パイズリ回数:ID:LCOUNT
+		パイズリ経験人数 += 1
+NEXT
+パイズリ経験人数 += モブパイズリ人数:ID:0
+
+RETURNF パイズリ経験人数
+
+@総挟射回数(ID)
+#FUNCTION
+#DIM DYNAMIC ID;登録番号
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC 総挟射回数
+
+FOR LCOUNT, 0, 20000
+	総挟射回数 += 挟射回数:ID:LCOUNT
+NEXT
+総挟射回数 += モブ挟射回数
+
+RETURNF 総挟射回数
+
+@経験回数増加, 対象, 対象:1, 回数, 行為
+#DIM DYNAMIC 対象, 2
+#DIM DYNAMIC 回数
+#DIMS DYNAMIC 行為
+
+経験回数:対象:NOF(対象:1) += 回数
+経験回数:(対象:1):NOF(対象) += 回数
+
+;中出し系は対象→対象:1の場合となる
+SELECTCASE 行為
+	CASE "中出し"
+		中出し回数:対象:NOF(対象:1) += 回数
+		中出され回数:(対象:1):NOF(対象) += 回数
+	CASE "アナル中出し"
+		アナル中出し回数:対象:NOF(対象:1) += 回数
+		アナル中出され回数:(対象:1):NOF(対象) += 回数
+ENDSELECT
+
+@総中出し回数, 対象, 部位
+#FUNCTION
+#DIM DYNAMIC 対象
+#DIMS DYNAMIC 部位
+
+SELECTCASE 部位
+	CASE "Ｖ"
+		RETURNF SUMARRAY(中出し回数:対象:0)+モブ中出し回数:対象:0
+	CASE "Ａ"
+		RETURNF SUMARRAY(アナル中出し回数:対象:0)+モブアナル中出し回数:対象:0
+	CASEELSE
+		RETURNF SUMARRAY(中出し回数:対象:0)+SUMARRAY(アナル中出し回数:対象:0)+モブ中出し回数:対象:0+モブアナル中出し回数:対象:0
+ENDSELECT

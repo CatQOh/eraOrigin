@@ -1,0 +1,9 @@
+﻿#DIM SAVEDATA ナンプレ, 10, 10
+#DIM SAVEDATA ナンプレ初期配置, 10, 10
+#DIM SAVEDATA ナンプレプレイ中
+#DIM SAVEDATA ナンプレ完成
+
+#DIM SAVEDATA ナンプレハイライト機能
+#DIM SAVEDATA ナンプレメモ機能
+#DIM SAVEDATA ナンプレ数字メモ, 10, 10
+#DIM SAVEDATA ナンプレ空欄オプション

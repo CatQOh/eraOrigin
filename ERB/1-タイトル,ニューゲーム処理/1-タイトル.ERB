@@ -1,0 +1,785 @@
+﻿@SYSTEM_TITLE
+#DIM DYNAMIC LCOUNT
+#DIMS DYNAMIC HTML用, 3
+
+LOADGLOBAL
+
+ADDVOIDCHARA
+ADDVOIDCHARA
+MASTER = 0
+TARGET = 1
+
+
+;eraOriginとしてリリースする場合は別途.ERHに「#DEFINE RELEASE_ORIGIN」を記載すること
+[IF RELEASE_ORIGIN]
+    ORIGIN = 1
+[ENDIF]
+
+
+;SP(スマホ版)でリリースするならコメントアウトを外す
+;SP = 1
+;SAVEGLOBAL
+
+;各チェックを行う
+CALL 更新チェック
+CALL グローバルバージョンチェック
+CALL CSVチェック
+CALL 起動時オプションチェック
+CALL BARCOLOR初期設定
+
+CALL I18N_SETTING
+
+;コマンドの属性を記録する
+CALL MANUAL_各経験が上昇するコマンド一覧, 1
+SKIPDISP 0
+
+CALLF メモリ解放, "SYSTEM_TITLE"
+
+IF LANGUAGE == ""
+	ALIGNMENT CENTER
+	PRINTL 言語を選択してください
+	PRINTL Please select a language
+	PRINTL [0] - 日本語(Japanese)
+	PRINTL [1] - 英語(English)
+	BINPUT
+	SELECTCASE RESULT
+		CASE 0
+			LANGUAGE = JP
+		CASE 1
+			LANGUAGE = ENG
+	ENDSELECT
+ENDIF
+
+SAVEGLOBAL
+ALIGNMENT LEFT
+
+IF LICENSE == 0 && LANGUAGE == "JP" && !ORIGIN && !SP
+	実績メッセージ = 1
+	HTML用 = <shape type='rect' param='1000,75,4500,575' color='white'>
+	HTML用:1 = <font color='black' bcolor='red'><button value='1'>　　　　　　　　　　[1] - 次へ</button></font>
+	HTML用:2 = <font color='black' bcolor='red'><button value='8'>　　　　　　　　　　[8] - ライセンスに同意する</button></font>　<font color='black' bcolor='red'><button value='9'>[9] - ライセンスに同意しない</button></font>
+	DRAWLINE
+	HTML_PRINT HTML用
+	SETCOLOR 0, 0, 0
+	PRINTL 　　　　　　　　　　【LICENSE】
+	PRINTL 　　　　　　　　　　eraBEMANIをDLしていただき、誠にありがとうございます
+	PRINTL 　　　　　　　　　　プレイの前に、改造や再配布のライセンスについて簡単に説明させていただきます
+	PRINTL 
+	HTML_PRINT HTML用:1
+	PRINTL 
+	BINPUT
+	CLEARLINE 1
+
+	HTML用 = <shape type='rect' param='1000,75,4500,2075' color='white'>
+	HTML_PRINT HTML用
+	PRINTL 　　　　　　　　　　【eraBEMANIの一部、もしくは全部を商用利用→不許可】
+	PRINTL 　　　　　　　　　　当バリアントの文章の一部や本体全部を、営利目的の作品に組み込むことを禁じます。
+	PRINTL 
+	PRINTL 　　　　　　　　　　【eraBEMANIを改変して再配布→許可】
+	PRINTL 　　　　　　　　　　eraBEMANIをベースにして新規バリアントを作った場合等に、再配布する行為を許可します。
+	PRINTL 
+	PRINTL 　　　　　　　　　　【ERBの一部を他バリアントに引用→許可】
+	PRINTL 　　　　　　　　　　eraBEMANIの処理や地の文等を、他バリアントに引用する行為を許可します。
+	PRINTL 
+	PRINTL 　　　　　　　　　　【CSVの一部を他バリアントに引用→要相談】
+	PRINTL 　　　　　　　　　　eraBEMANIのキャラクターCSVを他バリアントに使用する場合、
+	PRINTL 　　　　　　　　　　後述の連絡先にてご確認ください。
+	PRINTL 
+	PRINTL 　　　　　　　　　　【eraBEMANIで使用している音声素材の再配布→禁止】
+	PRINTL 　　　　　　　　　　当ゲームの音声のほとんどは、フリー素材として公開されているものを使用していますが、
+	PRINTL 　　　　　　　　　　各素材には配布元にて利用規約が明記されています。
+	PRINTL 　　　　　　　　　　同梱の「使用素材のクレジット.txt」に記載されている配布元のリンクをご確認ください。
+	PRINTL 
+	HTML_PRINT HTML用:1
+	PRINTL 
+	BINPUT
+	CLEARLINE 1
+
+	HTML用 = <shape type='rect' param='1000,75,4500,1775' color='white'>
+	HTML_PRINT HTML用
+	PRINTL 　　　　　　　　　　【eraBEMANIを他のアップローダーで配布→不許可】
+	PRINTL 　　　　　　　　　　本来、eraBEMANIはDropboxの「eraBEMANI_USERFOLDER」及び
+	PRINTL 　　　　　　　　　　「BOOTH」「GitHub」「eraBEMANIのDiscordサーバー」「パチュロダ」にて配布されています。
+	PRINTL 　　　　　　　　　　各アップロード先は作者:Enterが管理しているので、
+	PRINTL 　　　　　　　　　　管理の行き届かない他の場所で当バリアントを扱うことを禁じます。
+	PRINTL 
+	PRINTL 　　　　　　　　　　例外として、何らかの理由により「eraBEMANI_USERFOLDER」及び
+	PRINTL 　　　　　　　　　　「BOOTH」「GitHub」「eraBEMANIのDiscordサーバー」へのアクセスが不可能になり、
+	PRINTL 　　　　　　　　　　後述の連絡先にて作者:Enterとの連絡も取れなくなった場合には、
+	PRINTL 　　　　　　　　　　その経緯と事情をテキストファイルにまとめて同梱してのアップロードを許可します。
+	PRINTL 
+	PRINTL 　　　　　　　　　　上記の配布元以外で当バリアントをDLされた場合、
+	PRINTL 　　　　　　　　　　該当の文書があることをご確認ください。
+	PRINTL 　　　　　　　　　　それが無い当バリアントは不具合があっても対処出来ない場合があるのでご了承ください。
+	PRINTL 
+	HTML_PRINT HTML用:1
+	PRINTL 
+	BINPUT
+	CLEARLINE 1
+
+	HTML用 = <shape type='rect' param='1000,75,4500,2375' color='white'>
+	HTML_PRINT HTML用
+	PRINTL 　　　　　　　　　　【連絡先】
+	PRINTL 　　　　　　　　　　eraBEMANI開発スレ(リンクが古い場合は次スレを追ってください)
+	PRINTL 　　　　　　　　　　└http://jbbs.shitaraba.net/bbs/read.cgi/otaku/18072/1542303021/
+	PRINTL 
+	PRINTL 　　　　　　　　　　eraBEMANI_USERFOLDER
+	PRINTL 　　　　　　　　　　└https://www.dropbox.com/sh/ps1a4o62hs25k4r/vG_tytAzqY
+	PRINTL 
+	PRINTL 　　　　　　　　　　eraBEMANI専用ページ(seesaawiki)
+	PRINTL 　　　　　　　　　　└http://seesaawiki.jp/eraseries/d/eraBEMANI
+	PRINTL 
+	PRINTL 　　　　　　　　　　Twitter
+	PRINTL 　　　　　　　　　　└@eraBEMANI
+	PRINTL 
+	PRINTL 　　　　　　　　　　BOOTH
+	PRINTL 　　　　　　　　　　└https://erabemani.booth.pm/items/2217690
+	PRINTL 
+	PRINTL 　　　　　　　　　　Discordサーバー
+	PRINTL 　　　　　　　　　　└https://discord.gg/p5rb5uK
+	PRINTL 
+	PRINTL 　　　　　　　　　　当ライセンス・連絡先は同梱の「read me from Enter」でも確認できます。
+	PRINTL 
+	HTML_PRINT HTML用:2
+	PRINTL 
+	RESETCOLOR
+	BINPUT
+	IF RESULT == 9
+		CLEARLINE 1
+		PRINTL 　　　　　　　　　　ライセンスに同意いただけないのであれば、当ゲームを終了します
+		QUIT
+	ENDIF
+	CLEARLINE 1
+	PRINTW 　　　　　　　　　　それでは引き続きeraBEMANIお楽しみください
+	CLEARLINE LINECOUNT-1
+	LICENSE = 1
+	SAVEGLOBAL
+	ALIGNMENT LEFT
+ENDIF
+
+起動回数++
+SAVEGLOBAL
+
+CALL 実績解除, "Welcome to eraBEMANI!!"
+
+SIF 起動回数 >= 100
+	CALL 実績解除, "他にすることは無いのか まったく"
+
+VARLINE = LINECOUNT
+
+;最後にセーブしたモードによってBGMを変えてみる
+SELECTCASE LASTSAVEMODE
+	CASE "新婚モード"
+		CALL BGM再生, タイトルBGM2
+	CASEELSE
+		SELECTCASE RAND:2
+			CASE 0
+				CALL BGM再生, タイトルBGM1_1
+			CASE 1
+				CALL BGM再生, タイトルBGM1_2
+		ENDSELECT
+ENDSELECT
+
+MAX_LINE = 32
+
+CALL COLUMNCREATE, 0
+
+IF LANGUAGE == "ENG"
+	WINDOW_TITLE = %GAMEBASE_TITLE% {GAMEBASE_VERSION/1000}.{GAMEBASE_VERSION%1000/10} English Version
+	CALL カラム生成, "タイトル", "INFO/インフォメーション", "Load Game/セーブデータのロード", "Editor/エディター", "Settings/設定", "MOD", "Achievement/実績", "Database,etc/データベース・その他"
+ELSE
+	WINDOW_TITLE = %GAMEBASE_TITLE% {GAMEBASE_VERSION/1000}.{GAMEBASE_VERSION%1000/10}
+	CALL カラム生成, "タイトル", "インフォメーション", "セーブデータのロード", "エディター", "設定", "エクストラMOD/MOD", "実績", "データベース・その他"
+ENDIF
+
+SIF ゲームモード() == "学園モード"
+	CALL 学園モード開始
+
+@タイトル_インフォメーション
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC LMONTH
+#DIM DYNAMIC LDAYS
+#DIMS DYNAMIC HTML用, 3
+#DIM DYNAMIC 誕生日人数
+#DIM CONST 最大文字数 = 34
+
+IF ORIGIN
+	CALL COLUMNPRINTL, 0, "eraOrigin (2013-2024)"
+ELSE
+	CALL COLUMNPRINTL, 0, "eraBEMANI+α (2013-2024)"
+	CALL COLUMNPRINTL, 0, "DJ Walt-heR vs DJ Enter with DJ QhrTea"
+ENDIF
+CALL COLUMNPRINTL, 0, @"Ver.2024/05/26"
+CALL COLUMNPRINTL, 0, @"TOTAL CHARA {CSVCOUNT}"
+;CALL COLUMNPRINTL, 0, ""
+
+SIF LANGUAGE == "ENG"
+	WINDOW_TITLE = %GAMEBASE_TITLE% {GAMEBASE_VERSION/1000}.{GAMEBASE_VERSION%1000/10} English Version
+
+;経営要素をオミットするのももったいないので注意書きを載せつつ使えるようにしてみる
+IF ORIGIN
+	SIF LANGUAGE == "JP"
+		CALL COLUMNPRINTL, 0, "※eraOrigin中で表示される収入・支出は全てフレーバー要素です ゲームプレイに影響はありません"
+ELSE
+	CALL COLUMNPRINT, 0, @"%I18N("現在の段位:")%"
+	CALL GRADE, 段位
+	CALL COLUMNPRINTL, 0, "" 
+	CALL COLUMNPRINTL, 0, TITLECOMMENT()
+ENDIF
+CALL COLUMNDRAWLINE, 0
+
+;誕生日処理
+LMONTH = TOINT(SUBSTRING(GETTIMES(), 5, 2))
+LDAYS = TOINT(SUBSTRING(GETTIMES(), 8, 2))
+誕生日人数 = 0
+;グリムキャラが全員誕生日2月21日なのでUI破壊対策
+IF LMONTH == 2 && LDAYS == 21
+	CALL COLUMNPRINTL, 0, @"%I18N("今日はグリムキャラ（QMA）の誕生日です")%"
+	誕生日人数++
+ENDIF
+FOR LCOUNT, 0, 10000
+	SIF !EXISTCSV(LCOUNT)
+		CONTINUE
+	IF CSVCFLAG(LCOUNT, GETNUM(CFLAG, "誕生日"))/100 == LMONTH && CSVCFLAG(LCOUNT, 0)%100 == LDAYS && !CSVCFLAG(LCOUNT, GETNUM(CFLAG, "グリム"))
+		CALL COLUMNPRINTL, 0, @"%I18N("今日は|0|の誕生日です",, CSVNAMEDISP(LCOUNT))%"
+		誕生日人数++
+	ENDIF
+NEXT
+IF 誕生日人数
+	CALL COLUMNPRINTL, 0, @"%I18N("ハッピーバースデー！")%"
+	CALL COLUMNDRAWLINE, 0
+ENDIF
+誕生日人数 = 0
+
+CALL COLUMNPRINTL, 0, ""
+CALL COLUMNPRINTL, 0, @"[0] %I18N("最初から始める")%"
+SIF !ORIGIN
+	CALL COLUMNPRINTL, 0, @"[1] %I18N("チュートリアルを受ける")%"
+
+@タイトル_インフォメーション_INPUT
+SELECTCASE CRESULT:1
+	CASE 0
+		;ORIGINフラグだけは維持する
+		ISORIGIN = ORIGIN
+		CALL RESET_DATA
+		ORIGIN = ISORIGIN
+		ISORIGIN = 0
+		JUMP ゲーム開始
+	CASE 1
+		CALL RESET_DATA
+		TUTORIAL = FIRST
+		JUMP ゲーム開始
+ENDSELECT
+
+;USERLOADを流用
+@タイトル_セーブデータのロード
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC 最新セーブ, 2
+#DIMS DYNAMIC SPLITVAR, 2
+CALL COLUMNPRINTL, 0, @"%I18N("□何番をロードしますか？")%"
+CALL COLUMNPRINTL, 0, @"　[--]　　　 %I18N("現実の時間")%　　　　|　　　%I18N("ゲーム内の時間")%"
+
+FOR LCOUNT, SHOP_セーブページ*20, SHOP_セーブページ*20+20
+	SELECTCASE CHKDATA(LCOUNT)
+		CASE 0
+			CALL COLUMNPRINTL, 0, @"　[{LCOUNT, 2}] %RESULTS%"
+		CASE 1
+			CALL COLUMNPRINTL, 0, @"　[--] ----　　　　　　　　　　|", "gray"
+		CASE 2
+			CALL COLUMNPRINTL, 0, @"　[--] %I18N("別バリアントのセーブデータです")%", "gray"
+		CASE 3
+			CALL COLUMNPRINTL, 0, @"　[--] %I18N("互換性の無いセーブデータです")%", "gray"
+		CASE 4
+			CALL COLUMNPRINTL, 0, @"　[--] %I18N("ロードできないセーブデータです")%", "gray"
+	ENDSELECT
+NEXT
+CALL COLUMNDRAWLINE, 0
+FOR LCOUNT, 94, 100
+	SELECTCASE CHKDATA(LCOUNT)
+		CASE 0
+			SPLIT RESULTS, "|", SPLITVAR
+			REPLACE SPLITVAR, "[^0-9]", ""
+			IF TOINT(RESULTS) > 最新セーブ:1
+				最新セーブ:0 = LCOUNT
+				最新セーブ:1 = TOINT(RESULTS)
+			ENDIF
+	ENDSELECT
+NEXT
+FOR LCOUNT, 94, 100
+	SELECTCASE CHKDATA(LCOUNT)
+		CASE 0
+			CALL COLUMNPRINTL, 0, @"　[{LCOUNT, 2}] %RESULTS% \@ LCOUNT == 最新セーブ:0 ? 【最新】#\@"
+	ENDSELECT
+NEXT
+CALL COLUMNDRAWLINE, 0
+
+CALL COLUMNPRINT, 0, @"%RETURNSPACE(SHOP_セーブページ > 0, @"[101] %I18N("前ページ")% ")%"
+CALL COLUMNPRINT, 0, @"%RETURNSPACE(SHOP_セーブページ < 3, @"[109] %I18N("次ページ")%")%"
+CALL COLUMNPRINTL, 0, ""
+
+@タイトル_セーブデータのロード_INPUT
+
+;[戻る]対策にORIGINフラグを維持する
+;ISORIGIN = ORIGIN
+;CALL RESET_DATA
+;CALL USERLOAD
+;ORIGIN = ISORIGIN
+;ISORIGIN = 0
+
+SELECTCASE CRESULT:1
+	CASE 0 TO 79, 94 TO 99
+		CALL FADEOUTBGM
+		LOOP_BREAK = 1
+		LOADDATA CRESULT:1
+	CASE 101
+		SHOP_セーブページ--
+	CASE 109
+		SHOP_セーブページ++
+ENDSELECT
+
+@タイトル_エディター
+CALL COLUMNPRINTL, 0, @"[0] %I18N("CSVエディターを開く")%"
+SIF !SP
+	CALL COLUMNPRINTL, 0, @"[1] %I18N("口上エディタ")%"
+
+@タイトル_エディター_INPUT
+SELECTCASE CRESULT:1
+	CASE 0
+		CSVEDITOR = 1
+		CALL CSV_EDITOR
+		CSVEDITOR = 0
+	CASE 1
+		CALL 口上エディタ_プロジェクト選択
+ENDSELECT
+
+@タイトル_設定
+CALL COLUMNPRINTL, 0, @"[0] %I18N("オプションの初期設定を変更する")%"
+	CALL COLUMNPRINTL, 0, @"[1] %I18N("サウンド再生機能(現在:")%\@ サウンド ? %I18N("オン")% # %I18N("オフ")% \@)"
+CALL COLUMNPRINTL, 0, @"[2] %I18N("言語変更 - Change Language")%"
+SIF !SP
+	CALL COLUMNPRINTL, 0, @"[3] %I18N("アップデートをチェックする")%"
+IF QMA
+	CALL COLUMNPRINTL, 0, @"[4] %I18N("eraBEMANI仕様に戻す")%"
+ELSE
+	CALL COLUMNPRINTL, 0, @"[4] %I18N("eraQMA仕様にする")%"
+ENDIF
+CALL COLUMNPRINTL, 0, @"[5] %I18N("GUIを有効にする(現在:")%\@ GUI ? %I18N("オン")% # %I18N("オフ")% \@)"
+CALL COLUMNPRINTL, 0, @"　　[6] %I18N("GUIの色変更")%"
+CALL COLUMNPRINTL, 0, @"[7] %I18N("学園モードの開始処理を高速化")%"
+CALL MCOLUMNPRINTL, @"[8] %I18N("性別不明キャラの性別自動選択")%"
+
+@タイトル_設定_INPUT
+SELECTCASE CRESULT:1
+	CASE 0
+		CALL DEFAULT_OPTION
+	CASE 1
+		CALL 音声切り替え
+	CASE 2
+		IF LANGUAGE == "ENG"
+			LANGUAGE = JP
+		ELSE
+			LANGUAGE = ENG
+		ENDIF
+		SAVEGLOBAL
+	CASE 3
+		UPDATECHECK
+		SELECTCASE RESULT
+			CASE 0
+				PRINTW このバージョンは最新です
+			CASE 1
+				PRINTW 快適なプレイのために常に最新版にしておくことを推奨します
+			CASE 2
+				PRINTL 最新版をDLいただきありがとうございます
+				PRINTW 「CreatedCSV」「CreatedDialogue」「dat」「sav」フォルダを最新版にコピーして引き継いでください
+			CASE 3, 5
+				PRINTW アップデートのチェックに失敗しました。ネットワークがオフでない場合、報告いただけると助かります
+			CASE 4
+				PRINTW UPDATECHECK機能が無効になっています。最新版をチェックする場合はオプションからコンフィグをオフにしてください
+		ENDSELECT
+	CASE 4
+		INVERTBIT QMA, 0
+		SAVEGLOBAL
+	CASE 5
+		INVERTBIT GUI, 0
+		SAVEGLOBAL
+	CASE 6
+		CALL GUI_COLOR
+	CASE 7
+		CALL 入学処理高速化設定
+	CASE 8
+		CALL 性別自動選択
+ENDSELECT
+
+;MOD関連はエクストラMOD.ERBにて
+
+@入学処理高速化設定
+LOADGLOBAL
+PRINTFORML □一部の処理をスキップすることで学園モードを開始した時の入学処理を少し軽くします
+PRINTFORML [0] 高速化しない\@ OPTION:学園入学処理高速化 == 0 ? (現在の設定) #\@
+PRINTFORML [1] ABL自動上昇処理をスキップ\@ OPTION:学園入学処理高速化 == 1 ? (現在の設定) #\@
+PRINTFORML [2] キャラ追加時に適用されるMODの判定を行わない\@ OPTION:学園入学処理高速化 == 2 ? (現在の設定) #\@
+PRINTFORML [3] ABL自動上昇処理をスキップ+キャラ追加時に適用されるMODの判定を行わない\@ OPTION:学園入学処理高速化 == 3 ? (現在の設定) #\@
+BINPUT
+OPTION:学園入学処理高速化 = RESULT
+PRINTFORMW 設定しました
+SAVEGLOBAL
+
+@タイトル_データベース・その他
+IF !ORIGIN
+	;CALL COLUMNPRINTL, 0, "[0] アチーブメントを確認する"
+	SIF MAXARRAY(ENDING, 1, 100) > 0
+		CALL COLUMNPRINTL, 0, @"[1] %I18N("エンディングを見る")%"
+ENDIF
+CALL COLUMNPRINTL, 0, @"[2] %I18N("ゲーム内マニュアルを読む")%"
+SIF ORIGIN
+	CALL COLUMNPRINTL, 0, "[3] eraOrigin旧バージョンのCSVを再整形する"
+;	SIF !ORIGIN
+;		CALL COLUMNPRINTL, 0, "[4] 学園モードデバッグ"
+;#;SIF !ORIGIN
+;#;	CALL COLUMNPRINTL, 0, "[5] SLGモードデバッグ"
+;#;CALL COLUMNPRINTL, 0, "[6] レーダーチャートデバッグ"
+
+@タイトル_データベース・その他_INPUT
+SELECTCASE CRESULT:1
+	;CASE 0
+	;	SIF !ORIGIN
+	;		CALL ACHIEVEMENT
+	CASE 1
+		SIF MAXARRAY(ENDING, 1, 100) > 0
+			CALL ENDING_LIST
+	CASE 2
+		ADDCHARA 0
+		MASTER = 0
+		CALL GAME_MANUAL
+		DELALLCHARA
+	CASE 3
+		CALL CSV再整形
+	CASE 4
+		FLAG:ゲームモード = 2
+		LOOP_BREAK = 1
+	CASE 5
+		;#;	FLAG:ゲームモード = 3
+		;#;	LOOP_BREAK = 1
+		;#;	JUMP 学園モード開始
+	CASE 6
+		CALL レーダーチャートデバッグ
+ENDSELECT
+
+@ENDING_LIST
+#DIM DYNAMIC LCOUNT
+CALL FADEOUTBGM
+CALL CHARA_ADD, 0
+ADDVOIDCHARA
+MASTER = 0
+TARGET = 1
+TALENT:体格 = 3
+CALLNAME:1 = 奴隷
+DO
+	DRAWLINE
+	PRINTL 今まで見たエンディングを鑑賞します
+	PRINTFORML 主人:%CALLNAME:MASTER% 奴隷:%CALLNAME:TARGET%
+	PRINTL [ 0] 主人、奴隷を変更する
+	FOR LCOUNT, 1, ENDING+1
+		IF ENDING:LCOUNT
+			PRINTFORM [{LCOUNT, 2}] Ending No.{LCOUNT} 
+			SELECTCASE LCOUNT
+				CASE 1
+					PRINT ノーマルエンド
+				CASE 2
+					PRINT 親愛単体エンド
+				CASE 3
+					PRINT 淫魔単体エンド
+				CASE 4
+					PRINT 隷属単体エンド
+				CASE 5
+					PRINT ハーレムエンド
+				CASE 6
+					PRINT 菱宮家エンド
+				CASE 7
+					PRINT 菱宮姉妹エンド
+				CASE 8
+					PRINT 神崎家エンド
+				CASE 9
+					PRINT 神崎兄妹エンド
+				CASE 10
+					PRINT 梅桐家エンド
+				CASE 11
+					PRINT Lincle Kingdomエンド
+			ENDSELECT
+			SIF ENDING:LCOUNT == 1
+				PRINT  New!
+			PRINTL 
+		ENDIF
+	NEXT
+	DRAWLINE
+	PRINTPLAIN 　ENDING　
+	PRINTL [100] タイトルに戻る
+	BINPUT
+	SELECTCASE RESULT
+		CASE 100
+			SAVEGLOBAL
+			DELALLCHARA
+			RETURN 0
+		CASE 0
+			PRINTL [0] 主人の名前を変更する
+			PRINTL [1] 奴隷の名前を変更する
+			PRINTL [2] 変更しない
+			BINPUT
+			SELECTCASE RESULT
+				CASE 0
+					PRINTL 名前を入力してください
+					INPUTS
+					CALLNAME:MASTER = %RESULTS%
+					PRINTFORMW 主人の名前を「%CALLNAME:MASTER%」に変更しました
+				CASE 1
+					PRINTL 名前を入力してください
+					INPUTS
+					CALLNAME:TARGET = %RESULTS%
+					PRINTFORMW 奴隷の名前を「%CALLNAME:TARGET%」に変更しました
+			ENDSELECT
+		CASE 1
+			TRYCALLFORM ENDING_ノーマルエンド, 1
+		CASE 2
+			TRYCALLFORM ENDING_親愛エンド, 1
+		CASE 3
+			TRYCALLFORM ENDING_淫魔エンド, 1
+		CASE 4
+			TRYCALLFORM ENDING_隷属エンド, 1
+		CASE 5 TO ENDING
+			TRYCALLFORM ENDING_{RESULT}, 1
+	ENDSELECT
+LOOP 1
+
+@TITLECOMMENT
+#FUNCTIONS
+#DIMS DYNAMIC 称号, 2
+#DIMS DYNAMIC 返り値
+
+SELECTCASE RAND:5
+	CASE 0
+		称号 = 爆炎の
+	CASE 1
+		称号 = 氷点の
+	CASE 2
+		称号 = 混沌の
+	CASE 3
+		称号 = 激流の
+	CASE 4
+		称号 = 大空の
+ENDSELECT
+SELECTCASE RAND:4
+	CASE 0
+		称号:1 = 姫はじめ
+	CASE 1
+		称号:1 = 足扱き
+	CASE 2
+		称号:1 = 足紳士
+	CASE 3
+		称号:1 = 足淑女
+ENDSELECT
+
+STRDATA 返り値
+	DATA 時代を震わす刻印を刻め!!
+	DATA The next variant
+	DATA 恋慕(ハート)の向こうへ駆け抜けろ。
+	DATA WELCOME TO THE CYBER-era-BEMANI
+	DATA TRIP THE DEEP KISS
+	DATA eraBEMANI OF THE NEW CENTURY
+	DATA 艶 ～ THE PRIMARY VIVID eraBEMANI
+	DATA LOTION SHOWER
+	DATA Break the Virgin!
+	DATA 「十」代重ねる快楽の血脈。「重」く響き渡る痛み。「充」たされるLIBIDO。
+	DATA 快楽に、染まりな。
+	DATA Just Got Splash Milk!
+	DATA 轟響
+	DATA Are You Ready Come on! It's Party Time!
+	DATA 「初手(トリガー)」は引かない。「焦燥」を打て。
+	DATA 超、腸、潮、煌く―。
+	DATA 嬌声の響、光悦の輝。
+	DATA Blaze through the resort party!
+	DATA 官能(ラブリー)×調教(ドライブ)=新境地(ニューリンクル)。
+	DATA 輪音転想(Next Link Various Tunes Change The World [TRI] For The Future !!!)。
+	DATA 紳士とは、孕ませることと　みつけたり。
+	DATA 竿、挿れ交う。弐つの心音
+	DATA 毎日が、喘ぐ自分への始発駅。
+	DATA この夜這 君を偲BUZZ。
+	DATA 『快』感に乗れ！享『楽』のシックスナイン！
+	DATA ギラつく男で超えてイけ！
+	DATA さぁ、HなEROになる時間だ。
+	DATA 孕ませ、全人類。
+	DATA シコれる文で、興に乗れ。
+	DATA 卌(四重)絶頂。BEMANIのeraは、進化を止めない。
+	DATA 滾る近未来ゲーム。遊べ新バリアント。 LEWD EROGE PLAY THE NEW ERABEMANI
+	DATA キミのハートにレインボー　カラフルハッピーエクスタシー！
+	DATA パパパヤ～「発情ストリップ大作戦」　ビデオカメラはそのまま！！
+	DATA 奴隷対抗イベント「傅け！ シャクハチZ」
+	DATA 奴隷対抗イベント「ご主人様におねだり！」
+	DATA 奴隷対抗イベント「ポップン秘伝房中術帖」
+	DATA 奴隷対抗イベント「エクスタシー戦士 ポップン69」
+	DATA 個人ヤりこみイベント「わくわくミミニャミ発情隊」
+	DATA 個人ヤりこみイベント「あつまれ！セックスパーティー♪」
+	DATA 個人ヤりこみイベント「第１回ポップン春画祭」
+	DATA 個人ヤりこみイベント「めざせ天下統一！ポップン遊郭録」
+	DATA 個人ヤりこみイベント「それイけ！セックスクエスト」
+	DATA キミたちが作る究極の調教ゲーム
+	DATA Z Eights Line Sin C ～絶倫紳士～
+	DATA -infinite erection-
+	DATA The Lovemaking Paradise
+	DATA 性欲の塔
+	DATA 天空の夜伽明け
+	DATA ただいまダブルプレーの料金で3Pを遊ぶことができます
+	DATA わ～いアナルビーズで調教らくち～ん
+	DATA eraBEMANI赤色イベント「LEGEND ELOS」
+	DATA 店舗対抗イベント「SEXの乱」
+	DATA eraBEMANI青色イベント「Ω-ATTACK（クリトリス-アタック）」
+	DATA eraBEMANI黄色イベント「ぼくらのご奉仕戦争」
+	DATA 連動イベント「主人と奴隷のRUNRUNエキベン」
+	DATA 調教するのが怖いって？ばっかお前……奴隷商人がついてるだろ
+	DATA お風呂上りはeraBEMANI！
+	DATA 喘ぐよタッチだ気持ちいい
+	DATA このままじゃｳｨｻﾞｳﾁｭﾅｲ……
+	DATA 主人は奴隷に精を放った――
+	DATA era(ANOTHER)
+	DATA ・∀・
+	DATA おーっほっほっほ！わたしよ！わたしこそ、最強究極の公衆肉便器よ！
+	DATA サキバシリ☆ザーメンビヤクオオメ
+	DATA オレはアナルバイブかな 亀頭の部分アナルに当てたら前立腺ぶっ壊れそうｗ
+	DATA 今何部？アナルバイ部
+	DATA めうめうおむねぺったんたん！！
+	DATA オトコルンバ♪
+	DATA mura mura twins
+	DATA 其の喘ぎこそ、我の糧也。
+	DATA 子宮へと、帰れ。
+	DATA じゃあ調教後は部屋に集合な まあ一人部屋だけど！
+	DATA オ～イ、そこの新人奴隷！俺がてほどきするぜ！？
+	DATA おはよう！君、新人？僕が助手やるで！
+	DATA さぁ、「あなた」のチート性について、僕と語ろうか…
+	DATA 調教後、能力上昇やるから観に来てもいいよ。
+	DATA 君の心の「一線越えない」を、打ち消してごらん…？
+	DATA 今夜もチョメチョメ、俺とメリーゴーランデヴーしようぜ！
+	DATA コナミのみんなには内緒だよ！
+	DATA はやくこいよ、ほら…ね
+	DATA 我が名は「あなた」 背徳と絶望の最後の番人
+	DATA 奴隷の買い手だよ(*'v'*) 犯しができたらおこしてね(*'i'*)
+	DATA 今何度？アナルディル度
+	DATA 絶頂感２００％！！　究極のセックスデバイスを体感せよ。
+	DATA 弾く恥けるミュージック
+	DATA セフレの君に挿れてもらいたいんだけど　さあ、僕と一緒に快楽を貪ろうか…。
+	DATA さあ喘ぎたまえ…よがりたまえ…。
+	DATA 性交の気持ち良いやり方、そして性交をすることによるその効果。
+	DATA キミの膣口がひろがる
+	DATA 君のチンポ、とっても強いんだね！負ける気がしないね！
+	DATA 君の奴隷、とってもエロいんだね！イけない気がしないね！
+	DATA いでよ～！俺の精子～！
+	DATAFORM ハメられ%UNICODE(0x2764)%恋はモ～モク
+	DATA aa'an
+	DATA SPEED BLADE(早漏的な意味で)
+	DATA 貞操ディストピア
+	DATA セックスを知らなくてもヤれるよ！
+	DATA 「自分が大腸の中に入っていくんだなあ、肛門を探訪してるんだなあ」と感じられ、性技を彩るeraにふさわしいバリアント
+	DATA SOUND VOLSEX Ⅲ GLAMOROUS WOMANS
+	DATA 快盗BisCoの風俗嬢！！
+	DATA eraBEMANI SEXUAL DIARY 2015
+	DATA Pants Pants Revolution単独イベント「デリバーヘルスproject」
+	DATA 初めてのヒカイに、いれてみて。
+	DATA PLEASURE WITH VAGINA!!
+	DATA 作者が変態だってすぐわかったわ
+	DATA ヤりきった時の気分はサイコー！さぁ、今からセックスを始めよう！
+	DATA あの日から行為に堕ちた僕は……
+	DATA Rape*it!! Rape*it!!
+	DATA Vibration
+	DATA AM-3P -"RANKO" Special-
+	DATAFORM %称号%%称号:1%
+	DATA 男子高生のメスイキ、再び！！
+	DATA きっとシコれる！腰はモット動く！
+	DATA タチとネコとカプ厨の夢
+	DATA eraBEMANIは何故大おっぱいしたのか
+	DATA The Rise of a New eraBEMANI
+	DATA エクラルオーガズムフェスティバル
+	DATA Emuera / P●N meets EDM!
+	DATA あなたの好きな子、見つかります。
+	DATA 人気クリエイターの新たな口上を体感せよ！
+	DATA ひとつひとつのセーブデータに、物語がある。
+	DATA ペニスバンド挿入シミュレーションの爽快感がパワーアップ！
+	DATA 口上シノバズ伝
+	DATA 犯っちゃうよぉ～☆
+	DATA 今日こそ俺たちは童貞卒業します！！ウオオオオーーーーッッ！！
+	DATA ジャガー人間の受精
+	DATA ECCHIDANAA
+	DATA 精通！しこしこライン！
+	DATA 少年ニップルズ
+	DATA いつでも%CALLNAME:MASTER%あいらびゅー
+	DATA 超新星eraBEMANI、世界を濡らす！
+	DATA うおぁー！これはこれは大先パイ！おひとつよろしくパイズリお願いしまぁ～す！
+	DATA EROISM 440
+	DATA 深まる愛情が 新たな嫁を紡ぎ出す
+	DATA 自慰とは想像 自慰とは爽快
+	DATA 賢者タイムの扉
+	DATA ゼッチョーグリモワール
+	DATA 奇跡的な技巧が織り成すヘヴンリーな快感を体感せよ
+	DATA かわいくて最高に新しいキャラCSV登場！
+	DATA 世界のすべてが…性的（エロティック）になる。
+	DATA 君の棲む襠。
+	DATA わたしですまたする？
+	DATA BEMANI Samen Timpo "謎の精力"
+	DATA ペニスバンドでメスを食べるのは大変なこと。
+	DATA 烈風刀のメスイキ野菜農園
+	DATA ワタシチンコワタスカラァ
+	DATA Sikkusu9 -Clitoris-
+	DATA エコ自慰 伝えてイきたい
+	DATA Show me your penis
+	DATA 圧・倒・的・背・徳・感
+	DATA FUCK女
+	DATA S字を超えたその先へ
+	DATA eraBEMANIをプレイするときは部屋を明るくして画面から離れてプレイしてください
+	DATA New EraBEMANI
+	DATA 十二星座の性癖
+	DATA ？？？？に入る言葉を解明せよ ママ→ナモマ→竿コキ→？？？
+	DATA イロハとリリスのアダルト研究活動
+	DATA なるがちゃんなぎに色々えろい目にあわされる話
+	DATA 人間共よ、聞いてくれ。狂ったネズミの喘ぎ声を
+	DATA ひなビタ♪ Sweet Sex Collection
+	DATA 遊んじゃいなよ、禁断の貶ゲー
+	DATA 処女膜を切り開く新感覚貶ゲー
+	DATA ニンゲンどもーッ！新しい調教対象が追加されたぞ！
+	DATA 反発刻印がトップギアだぜ！！
+	DATA eraBEMANI第1話「青・春・経・営」
+	DATA eraBEMANI第2話「調教者はあくまで悪いやつ！？」
+	DATA eraBEMANI第3話「性癖ガールドロップ」
+	DATA eraBEMANI第4話「恐怖の殺人博物館」
+	DATA 淫乱共と同じ部屋に居られるか！俺はゲーセンの様子を見に行くからな！
+	DATA 「俺の口上だけ、セリフが入ってねぇ！！」というクレームすら一つも入らない、どん底アンダーグラウンド。
+	DATA いいか！この世は犯すか、犯されるかだ！おい%CALLNAME:MASTER%くん聞いているのか！！
+	DATA 混浴戦隊ババンバーン
+	DATA eraBEMANI第5話「学園生活に刺激を求めているのは間違っているだろうか」
+	DATA eraBEMANI第6話「音ゲーショタのおちんちんランド開廷」
+	DATA eraBEMANI第7話「警告Lv2:99-口上\モブゲーマー口上\COM_モブゲーマー.ERB:1919行目:式が異常です ABL:連絡先交換頻度 ＞＿＜」
+	DATA eraBEMANI最終話？……ないよ、そんなもの
+ENDDATA
+
+RETURNF 返り値
+
+@CSV再整形
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC 出力数
+
+PRINTL 旧バージョンのeraOriginで作成されたCSVを最新版用に再整形します
+PRINTL CSV/Charaフォルダ内の全てのキャラのCSVがEmueraと同じフォルダに出力されます
+PRINTL 出力後はそのままフォルダ内にコピー、上書きで使用できます
+PRINTL 再整形を行いますか？
+PRINTL [0] - はい
+PRINTL [1] - いいえ
+BINPUT
+SIF RESULT == 1
+	RETURN
+
+FOR LCOUNT, 0, 10000
+	IF EXISTCSV(LCOUNT)
+		CALL CHARA_ADD, LCOUNT
+		CALL CSV出力, 1
+		DELCHARA TARGET
+		出力数++
+		SIF 出力数%30 == 0
+			AWAIT
+	ENDIF
+NEXT

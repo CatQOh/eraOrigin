@@ -1,0 +1,218 @@
+﻿;----------------------------------------------------------------
+;段位認定システム　チュートリアル
+;----------------------------------------------------------------
+@TEST_TUTORIAL
+DRAWLINE
+PRINTL 段位認定システムへようこそ。
+PRINTL 当モードは「beatmaniaIIDX」の段位認定試験を参考に作られたものです
+PRINTL 
+PRINTL [1] 段位システムの基本的な概要
+PRINTL [2] クリア条件と失敗条件
+PRINTL [3] 段位システム独自要素の説明
+PRINTL [4] 段位エディット機能について
+DRAWLINE
+PRINTL [0] チュートリアルを終了する 
+
+BINPUT
+SELECTCASE RESULT
+	CASE 0
+		RETURN 0
+	CASE 1
+		PRINTL 段位システムは段位ごとに決められた「四人」のキャラを攻略するモードです。
+		PRINTL 当システムは従来の通貨とは異なり「段位ゲージ」が様々な鍵になります。
+		PRINTL 段位ゲージが0になるとゲームオーバーで、アイテムを購入するにも段位ゲージを消費します。
+		PRINTW 段位ゲージが0になる前に、その四人のキャラを「売却可能」にするとクリアです。
+	CASE 2
+		PRINTL クリア条件は決められた四人のキャラを「売却可能」または「助手可能」にすることで、一日の終了時にクリア判定がされます。
+		PRINTL キャラを売却した場合も、そのキャラは「売却条件を満たした」として、クリアすることができます。
+		PRINTW 逆にゲームオーバーになる条件は、当モードの独自システムである「段位ゲージ」が0になることでゲームオーバー扱いになります。
+	CASE 3
+		PRINTL 当モードでは「段位ゲージ」が重要になります。
+		PRINTL 段位ゲージとは、それを消費してアイテムを購入したり、0になるとゲームオーバーになるゲージです。
+		CALL PASELIL, @"初期値は「100\%」で、キャラを売却することで得た所持金を「4000＄ × 2\%」でゲージに換算して回復出来ます。"
+		PRINTL 所持金の割合がゲージ最大量を超えた場合は、金額は減りますがゲージは回復しません。
+		PRINTW また、アイテムを購入する際にも、物によって必要なゲージが違うので計画的に購入しましょう。
+	CASE 4
+		PRINTL 自分で好きなキャラを4人選んで段位を作るモードです。
+		PRINTW 通常、段位認定モードは難易度NORMALで進行しますが、EDITでは難易度も選ぶことができます。
+ENDSELECT
+
+RESTART
+
+;----------------------------------------------------------------
+;段位認定　受験段位選択
+;----------------------------------------------------------------
+@段位認定
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC LVARLINE
+#DIMS DYNAMIC 段位ページ
+
+SIF 段位ページ == ""
+	段位ページ = 緑段位
+LVARLINE = LINECOUNT
+
+DRAWLINE
+PRINTL □遊びたいモードを選んでください
+
+SELECTCASE 段位ページ
+	CASE "緑段位"
+		FOR LCOUNT, GETNUM(段位名, "七級"), GETNUM(段位名, "一級")+1
+			PRINTFORML \@ 段位名:LCOUNT ? ★ # 　 \@[{LCOUNT}] %ERDNAME(段位名, LCOUNT)%
+		NEXT
+	CASE "青段位"
+		FOR LCOUNT, GETNUM(段位名, "初段"), GETNUM(段位名, "八段")+1
+			PRINTFORML \@ 段位名:LCOUNT ? ★ # 　 \@[{LCOUNT}] %ERDNAME(段位名, LCOUNT)%
+		NEXT
+	CASE "赤段位"
+		PRINTL 
+		PRINTL 
+		PRINTFORML \@ 段位名:GETNUM(段位名, "九段") ? ★ # 　 \@[{GETNUM(段位名, "九段")}] 九段
+		PRINTL 
+		PRINTFORML \@ 段位名:GETNUM(段位名, "十段") ? ★ # 　 \@[{GETNUM(段位名, "十段")}] 十段
+		PRINTL 
+		PRINTL 
+	CASE "金段位"
+		PRINTL 
+		PRINTFORML \@ 段位名:GETNUM(段位名, "中伝") ? ★ # 　 \@[{GETNUM(段位名, "中伝")}] 中伝
+		PRINTL 
+		;中伝以上で表示
+		SIF 段位 >= GETNUM(段位名, "中伝")
+			PRINTFORM \@ 段位名:GETNUM(段位名, "皆伝") ? ★ # 　 \@[{GETNUM(段位名, "皆伝")}] 皆伝
+		PRINTL 
+		PRINTL 
+		;皆伝以上で表示
+		SIF 段位 >= GETNUM(段位名, "皆伝")
+			PRINTFORM \@ 段位名:GETNUM(段位名, "overjoy") ? ★ # 　 \@[{GETNUM(段位名, "overjoy")}] overjoy
+		PRINTL 
+		PRINTL 
+ENDSELECT
+
+DRAWLINE
+PRINTL 　[98] オリジナルコース　[99] EDIT　[100] チュートリアル
+DRAWLINE
+
+SIF 段位ページ == "緑段位"
+	SETCOLORBYNAME lime
+SIF 段位ページ == "青段位"
+	SETCOLORBYNAME blue
+SIF 段位ページ == "赤段位"
+	SETCOLORBYNAME red
+SIF 段位ページ == "金段位"
+	SETCOLORBYNAME gold
+PRINTPLAINFORM 　%段位ページ%　　
+RESETCOLOR
+CALL PRINTSPACE, 段位ページ != "緑段位", "[44] 緑段位 "
+CALL PRINTSPACE, 段位ページ != "青段位" && 段位 >= 7, "[55] 青段位 "
+CALL PRINTSPACE, 段位ページ != "赤段位" && 段位 >= 18, "[66] 赤段位 "
+CALL PRINTSPACE, 段位ページ != "金段位" && 段位 >= 20, "[77] 金段位 "
+PRINTL 
+
+BINPUT
+FLAG:選択段位 = RESULT
+SELECTCASE RESULT
+	CASE 44
+		CLEARLINE LINECOUNT-LVARLINE
+		段位ページ = 緑段位
+	CASE 55
+		CLEARLINE LINECOUNT-LVARLINE
+		段位ページ = 青段位
+	CASE 66
+		CLEARLINE LINECOUNT-LVARLINE
+		段位ページ = 赤段位
+	CASE 77
+		CLEARLINE LINECOUNT-LVARLINE
+		段位ページ = 金段位
+	CASE 98
+		CALL ORIGINAL_COURSE
+		SIF RESULT
+			RETURN 0
+	CASE 100
+		CALL TEST_TUTORIAL
+	CASEELSE
+		CALL 段位内容, RESULT
+		SIF RESULT
+			RETURN 0
+ENDSELECT
+RESTART
+
+@ORIGINAL_COURSE
+#DIM DYNAMIC ページ数
+#DIM CONST 最大ページ数 = 1
+#DIM DYNAMIC LVARLINE
+LVARLINE = LINECOUNT
+
+PRINTL □遊びたいコースを選んでください
+SETCOLOR GETBGCOLOR()
+PRINTFORML 　[ 0] 段位認定 裏七級
+RESETCOLOR
+
+SELECTCASE ページ数
+	CASE 0
+		PRINTL 　[ 1] ドキッ！淫乱ピンクだらけの調教大会！
+		PRINTL 　[ 2] 九尾狐夜行
+		PRINTL 　[ 3] TWINS
+		PRINTL 　[ 4] アダルトゲーム「日向美ビタースイーツ♪」
+		PRINTL 　[ 5] FOXHOUND
+		PRINTL 　[ 6] ぅゎょぅι゛ょェﾛぃ
+		PRINTL 　[ 7] Robotics Expert Course
+		PRINTL 　[ 8] ツンデレ五人斬り
+		PRINTL 　[ 9] えっちなお姉さんたちが教えてア・ゲ・ル♪
+		PRINTL 　[10] 貧乳はステータスだ 希少価値だ
+		PRINTL 　[11] INSANIO
+		PRINTL 　[12] 神よ、ニャンコを与えたまえ!
+		PRINTL 　[13] 戦う誇りを胸に Natus Vincere
+		PRINTL 　[14] Roll on spring!
+		PRINTL 　[15] 少女達の芳香は艶やかに、猛き賓客を癒し惑わす。
+		PRINTL 　[16] 魅惑のサバト
+		PRINTL 　[17] くノ一忍法帖
+		PRINTL 　[18] シュレーディンガーのネコ
+		PRINTL 　[19] HELL CHARGE NOTES
+		PRINTL 　[20] アダルトゲーム「忍々七鍵伝」
+	CASE 1
+		PRINTL 　[21] メスガキわからせる
+		PRINTL 　[22] 炎の孕ませポップン学園
+		PRINTL 　[23] BisCoのEX-HARD☆大作戦
+		PRINTL 　[24] えっちなお姉さんたちが教えてア・ゲ・ル♪ ～Girl's Side～
+		PRINTL 　[25] Girls vs Tentacles in eraBEMANI
+		PRINTL 　[26] 重婚烈風刀くん
+		PRINTL 　[27] わくわく乳搾り
+		PRINTL 　[28] THE 房中術
+		PRINTL 　[29] 何かを間違えた房中術
+		CALL PRINTCOLORL, "　[30] ヤンデレの音ゲーキャラに死ぬほど愛されて眠れないコース", "red"
+		PRINTL 　[31] いちかのアダルトチャンネル
+		PRINTL 　[32] よく躾けられたメイドさんは要りませんか？
+		PRINTL 　[33] ワガママ姫たちの接待調教プログラム
+ENDSELECT
+
+DRAWLINE
+PRINT 　
+CALL PRINTSPACE, ページ数 > 0, "[101] 前ページ "
+CALL PRINTSPACE, ページ数 < 最大ページ数, "[109] 次ページ "
+PRINTL [98] 段位コース [99] EDIT [100] チュートリアル 
+DRAWLINE
+PRINTPLAIN 　オリジナルコース　
+PRINTL
+
+BINPUT
+SELECTCASE RESULT
+	CASE 101
+		CLEARLINE LINECOUNT-LVARLINE
+		ページ数--
+	CASE 109
+		CLEARLINE LINECOUNT-LVARLINE
+		ページ数++
+	CASE 98
+		RETURN
+	CASE 99
+		CALL 段位内容, RESULT
+		SIF RESULT
+			RETURN 1
+	CASE 100
+		CALL TEST_TUTORIAL
+	CASEELSE
+		FLAG:選択段位 = RESULT+50
+		CALL 段位内容, FLAG:選択段位
+		SIF RESULT
+			RETURN 1
+ENDSELECT
+RESTART

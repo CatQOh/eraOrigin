@@ -1,0 +1,237 @@
+﻿@ポーカーソリティア, カジノの種類
+#DIM DYNAMIC ゲーム数 = 4
+#DIM DYNAMIC 参加料
+#DIM DYNAMIC クリアライン
+#DIM DYNAMIC 賞金
+#DIM DYNAMIC X座標
+#DIM DYNAMIC Y座標
+#DIM DYNAMIC PS_CARD, 6, 6
+#DIM DYNAMIC カード枚数
+#DIM DYNAMIC 役, 12
+#DIM DYNAMIC 総合点
+#DIM DYNAMIC カジノの種類
+#DIM DYNAMIC ハッキング残数
+
+;参加料、賞金、クリアライン 1=表カジノ 2=裏カジノ 3=ゲーセン
+SELECTCASE カジノの種類
+	CASE 1
+		参加料 = 10000
+		賞金 = 2000
+		クリアライン = 30
+	CASE 2
+		参加料 = 100000
+		賞金 = 40000
+		クリアライン = 35
+	CASE 3
+		;コイン1枚
+		参加料 = 1
+		賞金 = 1
+		クリアライン = 30
+ENDSELECT
+
+;パートナー(TARGET)もしくはMASTERの工作技能に応じてハッキング可能
+ハッキング残数 = MIN(ABL:MASTER:工作技能, 10)
+SIF TARGET > 0
+	ハッキング残数 += MIN(ABL:工作技能, 10)
+
+PRINTL 
+IF LANGUAGE == "ENG"
+	PRINTL ◆Poker Square◆
+	PRINTL One Pair:1P Two Pair:3P Three of a kind:6P Straight:12P Flush:5P
+	PRINTL Full House:10P Four of a kind:16P Straight Flush:30P
+	CALL PASELIL, @"Stake:{参加料}＄ If point is higher than border({クリアライン}), You get {賞金}＄ per point"
+	PRINTL 
+	CALL PASELIL, @"Do you play Poker Square?(Money:{MONEY}＄)"
+	PRINTL [0]Yes [1]No
+ELSE
+	PRINTL ◆ポーカーソリティアのルール◆
+	PRINTL カードが1枚ずつ配られますので、それを5×5のマス目に配置します。
+	PRINTL 縦・横・斜めの12列それぞれについて役が完成すると得点が得られます。
+	PRINTL 得点は次の通りになります。
+	PRINTL ワンペア:1点 ツーペア:3点 スリーカード:6点 ストレート:12点 フラッシュ:5点
+	PRINTL フルハウス:10点 フォーカード:16点 ストレートフラッシュ:30点
+	CALL PASELIL, @"なお、参加料は{参加料}＄で、{クリアライン}点を超えると、1点につき{賞金}＄がもらえます。"
+	PRINTL 
+	CALL PASELIL, @"プレイしますか？ (所持金:{MONEY}＄)"
+	PRINTL [0]はい [1]いいえ
+ENDIF
+BINPUT
+SIF RESULT == 1
+	RETURN 0
+
+;ここからゲーム開始
+$PS_START
+MONEY -= 参加料
+VARSET PS_CARD:0:0, -1
+VARSET 役
+CALL SHUFFLE, 52
+カード枚数 = 0
+VARLINE = 0
+DO
+	$TOP
+	CALL LOOP_CLEARLINE
+	PRINTL 
+	IF LANGUAGE == "ENG"
+		CALL PASELIL, @"<Round:{ゲーム数}/4 (Stake:{参加料}＄)>"
+		CALL PASELIL, @"Border:{クリアライン} Reward:{賞金}＄ per point"
+		PRINTL 【Point】
+		PRINTL One Pair:1P Two Pair:3P Three of a kind:6P Straight:12P Flush:5P
+		PRINTL Full House:10P Four of a kind:16P Straight Flush:30P Broadway Straight:20P Royal Flush:50P
+	ELSE
+		CALL PASELIL, @"<残り{ゲーム数}ゲーム (参加料:{参加料}＄)>"
+		CALL PASELIL, @"{クリアライン}点を超えると1点につき{賞金}＄"
+		PRINTL 【得点表】
+		PRINTL ワンペア:1点 ツーペア:3点 スリーカード:6点 ストレート:12点 フラッシュ:5点
+		PRINTL フルハウス:10点 フォーカード:16点 ストレートフラッシュ:30点 ロイヤルストレート:20点 ロイヤルストレートフラッシュ:50点
+	ENDIF
+	PRINT 　　　　　　　　　　　　 
+	;Y
+	;1□□□□□
+	;2□□□□□
+	;3□□□□□
+	;4□□□□□
+	;5□□□□□
+	; 1 2 3 4 5 X
+	;左下→右上の斜めの役を判定(役:0)
+	CALL PRT_PS_SCORE, PS_CARD:1:5, PS_CARD:2:4, PS_CARD:3:3, PS_CARD:4:2, PS_CARD:5:1
+	役:0 = RESULT
+	PRINTL 
+	;場札の描写
+	FOR Y座標, 1, 6
+		FOR X座標, 1, 6
+			IF PS_CARD:X座標:Y座標 != -1
+				PRINTPLAIN  
+				CALL PRTCARD, PS_CARD:X座標:Y座標
+				PRINTPLAIN  
+			ELSE
+				PRINTFORM [{Y座標}{X座標}]
+				PRINTPLAIN  
+			ENDIF
+		NEXT
+		;Y軸の役を判定(上から役:1～5)
+		CALL PRT_PS_SCORE, PS_CARD:1:Y座標, PS_CARD:2:Y座標, PS_CARD:3:Y座標, PS_CARD:4:Y座標, PS_CARD:5:Y座標
+		役:Y座標 = RESULT
+		PRINTL 
+	NEXT
+	FOR X座標, 1, 6
+		PRINT  
+		;X軸の役を判定(左から役:6～10)
+		CALL PRT_PS_SCORE, PS_CARD:X座標:1, PS_CARD:X座標:2, PS_CARD:X座標:3, PS_CARD:X座標:4, PS_CARD:X座標:5
+		役:(X座標+5) = RESULT
+		PRINT   
+	NEXT
+	;左上→右下の斜めの役を判定(役:11)
+	CALL PRT_PS_SCORE, PS_CARD:1:1, PS_CARD:2:2, PS_CARD:3:3, PS_CARD:4:4, PS_CARD:5:5
+	役:11 = RESULT
+	PRINTL 
+	PRINT TOTAL:
+	SETCOLORBYNAME yellow
+	総合点 = SUMARRAY(役)
+	PRINTFORM {総合点} 
+	RESETCOLOR
+	IF カード枚数 == 25
+		PRINTW 
+		BREAK
+	ENDIF
+	CALL SE再生, トランプドロー
+	PRINT NEXT:
+	CALL PRTCARD, CARD:カード枚数
+	IF ハッキング残数 > 0
+		PRINTPLAIN  
+		IF LANGUAGE == "ENG"
+			PRINTFORM [0] Do Hacking(Remaining:{ハッキング残数} Skip next card)
+		ELSE
+			PRINTFORM [0] ハッキングする(残り{ハッキング残数}回 NEXTカードをスキップする)
+		ENDIF
+	ENDIF
+	DO
+		INPUT
+		IF RESULT == 0
+			ARRAYSHIFT CARD, -1, CARD:カード枚数, カード枚数
+			ハッキング残数--
+			GOTO TOP
+		ENDIF
+		SIF INRANGE(RESULT/10, 1, 5) && INRANGE(RESULT%10, 1, 5)
+			CONTINUE
+	LOOP 0
+	PS_CARD:(RESULT%10):(RESULT/10) = CARD:カード枚数
+	カード枚数++
+LOOP カード枚数 <= 25
+VARLINE = 0
+IF 総合点 > クリアライン
+	MONEY += 賞金*(総合点-クリアライン)
+	CALL SE再生, カジノコイン
+	IF LANGUAGE == "ENG"
+		CALL PASELIW, @"You got {賞金*(総合点-クリアライン)}＄."
+	ELSE
+		CALL PASELIW, @"{賞金*(総合点-クリアライン)}＄手に入れた。"
+	ENDIF
+	TATSUJIN++
+	SAVEGLOBAL
+ENDIF
+ゲーム数 -= 1
+IF ゲーム数 > 0
+	PRINTL 
+	IF LANGUAGE == "ENG"
+		CALL PASELIL, @"Do you want to play more?(Remaining:{ゲーム数}Game / Money:{MONEY}＄)"
+		PRINTL [0]Yes [1]No
+	ELSE
+		CALL PASELIL, @"もう一度プレイしますか？(残り{ゲーム数}ゲーム / 所持金:{MONEY}＄)"
+		PRINTL [0]はい [1]いいえ
+	ENDIF
+	BINPUT
+	SIF RESULT == 0
+		GOTO PS_START
+ENDIF
+
+;スコアを表示・スコアをRETURNで返す
+@PRT_PS_SCORE, LCARD, LCARD:1, LCARD:2, LCARD:3, LCARD:4
+#DIM DYNAMIC LCARD, 5
+#DIM DYNAMIC 点数
+
+SETCOLORBYNAME lime
+IF MINARRAY(LCARD) == -1
+	PRINT --
+ELSE
+	点数 = PS_SCORE(LCARD, LCARD:1, LCARD:2, LCARD:3, LCARD:4)
+	PRINTFORM {点数, 2}
+ENDIF
+RESETCOLOR
+RETURN 点数
+
+;ポーカーソリティアのスコアをイギリス式で計算
+;Ver.2.15でロイヤルにボーナススコアを設定
+@PS_SCORE(LCARD, LCARD:1, LCARD:2, LCARD:3, LCARD:4)
+#FUNCTION
+#DIM DYNAMIC LCARD, 5
+
+;ロイヤルストレートの場合
+IF STRAIGHT(LCARD, LCARD:1, LCARD:2, LCARD:3, LCARD:4) == 14
+	;フラッシュも付けば50点
+	IF FLUSH(LCARD, LCARD:1, LCARD:2, LCARD:3, LCARD:4)
+		RETURNF 50
+	;フラッシュつかなければ20点
+	ELSE
+		RETURNF 20
+	ENDIF
+ELSEIF STRAIGHT(LCARD, LCARD:1, LCARD:2, LCARD:3, LCARD:4)
+	IF FLUSH(LCARD, LCARD:1, LCARD:2, LCARD:3, LCARD:4)
+		RETURNF 30
+	ELSE
+		RETURNF 12
+	ENDIF
+ELSEIF FLUSH(LCARD, LCARD:1, LCARD:2, LCARD:3, LCARD:4)
+	RETURNF 5
+ELSEIF FOUR_OF_A_KIND(LCARD, LCARD:1, LCARD:2, LCARD:3, LCARD:4)
+	RETURNF 16
+ELSEIF FH_OR_THREE(LCARD, LCARD:1, LCARD:2, LCARD:3, LCARD:4) > 1000000
+	RETURNF 10
+ELSEIF FH_OR_THREE(LCARD, LCARD:1, LCARD:2, LCARD:3, LCARD:4)
+	RETURNF 6
+ELSEIF TWO_PAIR(LCARD, LCARD:1, LCARD:2, LCARD:3, LCARD:4)
+	RETURNF 3
+ELSEIF ONE_PAIR(LCARD, LCARD:1, LCARD:2, LCARD:3, LCARD:4)
+	RETURNF 1
+ELSE
+	RETURNF 0
+ENDIF

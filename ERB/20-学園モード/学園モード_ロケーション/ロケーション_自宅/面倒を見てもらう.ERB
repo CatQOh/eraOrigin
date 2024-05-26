@@ -1,0 +1,24 @@
+﻿@面倒を見てもらう
+
+SIF !同行者
+	RETURN 0
+
+TARGET = 同行者
+
+IF EXISTFUNCTION(@"SCHOOL_%CSVNAMERPS(NO:TARGET)%_コマンド_面倒を見てもらう")
+	CALL SCHOOL_KOJO, TARGET, "コマンド_面倒を見てもらう"
+	RETURN RESULT
+ENDIF
+
+CALL SCHOOL_KOJO, TARGET, "面倒を見てもらう"
+CALL 好感度上昇, TARGET, "舎弟", 20
+WAIT
+CALL SCHOOL_KOJO, TARGET, "面倒を見てもらった後"
+同行者 = 0
+RETURN 1
+
+@SCHOOL_MESSAGE_面倒を見てもらう
+PRINTFORMW %CALLNAME:TARGET%に面倒を見てもらった
+
+@SCHOOL_MESSAGE_面倒を見てもらった後
+PRINTFORMW 一通りの看病を終えた%CALLNAME:TARGET%は帰っていった

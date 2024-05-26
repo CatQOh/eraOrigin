@@ -1,0 +1,73 @@
+﻿@学校へ行く
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC 候補人数
+#DIM DYNAMIC 合流者
+
+;好感度の高いキャラが合流することがある（他の学校でも）
+;複数人居る場合はランダム ただし教師陣は例外
+FOR LCOUNT, 1, CHARANUM
+	SIF 好感度合計(LCOUNT) < 100
+		CONTINUE
+	SIF CSTR:LCOUNT:在任 != ""
+		CONTINUE
+	SIF CFLAG:LCOUNT:特殊在校
+		CONTINUE
+	候補人数++
+	IF !合流者
+		合流者 = LCOUNT
+	ELSE
+		IF 運命の人 == NAME:LCOUNT
+			合流者 = LCOUNT
+			CONTINUE
+		ENDIF
+		SIF 運命の人 == NAME:合流者
+			CONTINUE
+		SIF RAND:候補人数 == 0
+			合流者 = LCOUNT
+	ENDIF
+NEXT
+
+IF !合流者
+	PRINTFORMW 何事もなく%CSTR:PLAYER:在校%に到着した
+	CSTR:PLAYER:現在地 = %CSTR:PLAYER:在校%
+	RETURN 0
+ENDIF
+
+IF EXISTFUNCTION(@"SCHOOL_%CSVNAMERPS(NO:合流者)%_コマンド_学校へ行く")
+	CALL SCHOOL_KOJO, 合流者, "コマンド_学校へ行く"
+	RETURN RESULT
+ENDIF
+
+IF CSTR:合流者:在校 == CSTR:PLAYER:在校
+	CALL SCHOOL_KOJO, 合流者, "登校中に会話"
+	CALL 好感度上昇, 合流者, "友情", 20
+ELSE
+	IF CSTR:合流者:在校 != ""
+		CALL SCHOOL_KOJO, 合流者, "登校中に会話"
+		CALL 好感度上昇, 合流者, "友情", 10
+	ELSE
+		CALL SCHOOL_KOJO, 合流者, "登校中に会話"
+		CALL 好感度上昇, 合流者, "友情", 10
+	ENDIF
+ENDIF
+
+WAIT
+
+CSTR:PLAYER:現在地 = %CSTR:PLAYER:在校%
+
+;登校はターン消費しない
+RETURN 0
+
+@SCHOOL_MESSAGE_登校中に会話
+IF CSTR:在校 == CSTR:PLAYER:在校
+	PRINTFORML 同じ学校の%CALLNAME:TARGET%が登校中に話しかけてきた
+	PRINTFORMW %CALLNAME:PLAYER%と%CALLNAME:TARGET%は一緒に学校まで登校した
+ELSE
+	IF CSTR:在校 != ""
+		PRINTFORML %CSTR:在校%の%CALLNAME:TARGET%が登校中に話しかけてきた
+		PRINTFORMW %CALLNAME:PLAYER%と%CALLNAME:TARGET%は途中までの通学路を共にした
+	ELSE
+		PRINTFORML 偶然出会った%CALLNAME:TARGET%が登校中に話しかけてきた
+		PRINTFORMW %CALLNAME:TARGET%は途中までの通学路を共にし、学校の手前で%CALLNAME:PLAYER%と別れた
+	ENDIF
+ENDIF

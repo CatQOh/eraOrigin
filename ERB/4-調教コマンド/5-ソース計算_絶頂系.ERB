@@ -1,0 +1,705 @@
+﻿@SOURCE_CHECK_CVAB
+#DIM DYNAMIC 欲情計算用
+#DIM DYNAMIC 苦痛計算用
+#DIM DYNAMIC 増加量, 2
+#DIM DYNAMIC 補正
+
+;SELECTCOMSにコマンド名を代入
+SIF TRAINNAME:SELECTCOM != ""
+	SELECTCOMS = %TRAINNAME:SELECTCOM%
+
+;悪魔の感度ボーナスを計算
+欲情計算用 = GETPALAMLV(PALAM:欲情, 10)
+苦痛計算用 = GETPALAMLV(PALAM:苦痛, 10)
+
+SIF CSTR:種族 == "悪魔"
+	TFLAG:悪魔の感度ボーナス = 欲情計算用*苦痛計算用
+
+;-------------------------------------------------
+;バイブなど付けっぱなしアイテムのチェック
+;-------------------------------------------------
+CALL EQUIP_CHECK
+
+;-------------------------------------------------
+;同性の場合の処理
+;-------------------------------------------------
+CALL SOURCE_SEX_CHECK
+
+;-------------------------------------------------
+;実行者の素質補正
+;-------------------------------------------------
+CALL PLAYER_SKILL_CHECK
+
+;-------------------------------------------------
+;処女・童貞喪失の処理
+;-------------------------------------------------
+CALL LOST_VIRGIN_FEMALE
+CALL LOST_VIRGIN_MALE
+
+;-------------------------------------------------
+;技巧のチェック
+;-------------------------------------------------
+CALL TECHNIQUE_CHECK
+
+;-------------------------------------------------
+;酔のチェック
+;-------------------------------------------------
+CALL ALC_CHECK
+
+;-------------------------------------------------
+;共通のソース増加処理
+;-------------------------------------------------
+;鈍感と敏感は先に処理しておく
+SIF TALENT:Ｃ鈍感
+	TIMES SOURCE:快C, 0.50
+SIF TALENT:Ｖ鈍感
+	TIMES SOURCE:快V, 0.50
+SIF TALENT:Ａ鈍感
+	TIMES SOURCE:快A, 0.50
+SIF TALENT:Ｂ鈍感
+	TIMES SOURCE:快B, 0.50
+SIF TALENT:Ｃ敏感
+	TIMES SOURCE:快C, 2.00
+SIF TALENT:Ｖ敏感
+	TIMES SOURCE:快V, 2.00
+SIF TALENT:Ａ敏感
+	TIMES SOURCE:快A, 2.00
+SIF TALENT:Ｂ敏感
+	TIMES SOURCE:快B, 2.00
+
+;以下種族補正 霊体はネクロマンサーと霊感でも緩和できない
+SIF TALENT:ゾンビ && !TALENT:PLAYER:ネクロマンサー
+	CALL TIMESCVAB, 70
+SIF TALENT:霊体
+	CALL TIMESCVAB, 10
+
+SIF TFLAG:天使の感度ボーナス
+	SOURCE:快C += SOURCE:快C/10*TFLAG:天使の感度ボーナス
+SIF TFLAG:悪魔の感度ボーナス
+	SOURCE:快C += SOURCE:快C/10*TFLAG:悪魔の感度ボーナス
+
+SIF CSTR:種族 == "精霊" && 天気() == "雷雨"
+	CALL TIMESCVAB, 50
+
+;-------------------------------------------------
+;快Ｃのソース
+;-------------------------------------------------
+;去勢済みは快Ｃ上がらない
+SIF TALENT:去勢済み
+	SOURCE:快C = 0
+
+SELECTCASE ABL:Ｃ感覚
+	CASE 0
+		TIMES SOURCE:快C, 0.50
+	CASE 1
+		TIMES SOURCE:快C, 2.50
+	CASE 2
+		TIMES SOURCE:快C, 4.60
+	CASE 3
+		TIMES SOURCE:快C, 6.80
+	CASE 4
+		TIMES SOURCE:快C, 9.10
+	CASE 5
+		TIMES SOURCE:快C, 11.50
+	CASE 6
+		TIMES SOURCE:快C, 14.00
+	CASE 7
+		TIMES SOURCE:快C, 16.60
+	CASE 8
+		TIMES SOURCE:快C, 19.30
+	CASE 9
+		TIMES SOURCE:快C, 22.10
+	CASE 10
+		TIMES SOURCE:快C, 25.00
+	CASE IS >= 11
+		SOURCE:快C *= (ABL:Ｃ感覚*3 - 5)
+ENDSELECT
+
+増加量 = SOURCE:快C
+SELECTCASE GETPALAMLV(PALAM:欲情, 4)
+	CASE 0
+		TIMES 増加量, 0.80
+	CASE 1
+		TIMES 増加量, 1.00
+	CASE 2
+		TIMES 増加量, 1.20
+	CASE 3
+		TIMES 増加量, 1.50
+	CASE 4
+		TIMES 増加量, 2.00
+ENDSELECT
+UP:快Ｃ += 増加量
+
+増加量 = SOURCE:快C
+SELECTCASE ABL:欲望
+	CASE 0
+		TIMES 増加量, 0.50
+	CASE 1
+		TIMES 増加量, 0.60
+	CASE 2
+		TIMES 増加量, 0.70
+	CASE 3
+		TIMES 増加量, 0.80
+	CASE 4
+		TIMES 増加量, 0.90
+	CASE 5
+		TIMES 増加量, 1.00
+	CASE 6
+		TIMES 増加量, 1.05
+	CASE 7
+		TIMES 増加量, 1.10
+	CASE 8
+		TIMES 増加量, 1.15
+	CASE 9
+		TIMES 増加量, 1.20
+	CASE IS >= 10
+		増加量 += (増加量/10) * (ABL:欲望-7)
+ENDSELECT
+UP:欲情 += 増加量
+
+;-------------------------------------------------
+;快Ｖのソース
+;-------------------------------------------------
+SELECTCASE ABL:Ｖ感覚
+	CASE 0
+		TIMES SOURCE:快V, 0.50
+	CASE 1
+		TIMES SOURCE:快V, 2.50
+	CASE 2
+		TIMES SOURCE:快V, 4.60
+	CASE 3
+		TIMES SOURCE:快V, 6.80
+	CASE 4
+		TIMES SOURCE:快V, 9.10
+	CASE 5
+		TIMES SOURCE:快V, 11.50
+	CASE 6
+		TIMES SOURCE:快V, 14.00
+	CASE 7
+		TIMES SOURCE:快V, 16.60
+	CASE 8
+		TIMES SOURCE:快V, 19.30
+	CASE 9
+		TIMES SOURCE:快V, 22.10
+	CASE 10
+		TIMES SOURCE:快V, 25.00
+	CASE IS >= 11
+		SOURCE:快V *= (ABL:Ｖ感覚*3 - 5)
+ENDSELECT
+
+;ＶとＡは経験と潤滑の影響を受ける
+SELECTCASE GETEXPLV(EXP:Ｖ経験, 5)
+	CASE 0
+		TIMES SOURCE:快V, 0.40
+	CASE 1
+		TIMES SOURCE:快V, 0.80
+	CASE 2
+		TIMES SOURCE:快V, 1.20
+	CASE 3
+		TIMES SOURCE:快V, 1.60
+	CASE 4
+		TIMES SOURCE:快V, 2.00
+	CASE 5
+		TIMES SOURCE:快V, 2.40
+ENDSELECT
+SELECTCASE GETPALAMLV(PALAM:潤滑, 4)
+	CASE 0
+		TIMES SOURCE:快V, 0.20
+	CASE 1
+		TIMES SOURCE:快V, 0.50
+	CASE 2
+		TIMES SOURCE:快V, 0.80
+	CASE 3
+		TIMES SOURCE:快V, 1.00
+	CASE 4
+		TIMES SOURCE:快V, 1.20
+ENDSELECT
+
+増加量 = SOURCE:快V
+SELECTCASE GETPALAMLV(PALAM:欲情, 4)
+	CASE 0
+		TIMES 増加量, 0.70
+	CASE 1
+		TIMES 増加量, 1.00
+	CASE 2
+		TIMES 増加量, 1.40
+	CASE 3
+		TIMES 増加量, 1.90
+	CASE 4
+		TIMES 増加量, 2.50
+ENDSELECT
+
+増加量:1 = SOURCE:快V
+SELECTCASE ABL:欲望
+	CASE 0
+		TIMES 増加量:1, 0.50
+	CASE 1
+		TIMES 増加量:1, 0.60
+	CASE 2
+		TIMES 増加量:1, 0.70
+	CASE 3
+		TIMES 増加量:1, 0.80
+	CASE 4
+		TIMES 増加量:1, 0.90
+	CASE 5
+		TIMES 増加量:1, 1.00
+	CASE 6
+		TIMES 増加量:1, 1.05
+	CASE 7
+		TIMES 増加量:1, 1.10
+	CASE 8
+		TIMES 増加量:1, 1.15
+	CASE 9
+		TIMES 増加量:1, 1.20
+	CASE IS >= 10
+		増加量:1 += (増加量:1/10) * (ABL:欲望-7)
+ENDSELECT
+
+IF TALENT:小人体型
+	TIMES 増加量, 0.80
+	TIMES 増加量:1, 1.20
+	UP:習得 += 増加量:1/2
+ENDIF
+;メス度1につき快Ｖ1割増
+増加量 += 増加量*MIN(ABL:メス度, 10)/10
+
+UP:快Ｖ += 増加量
+UP:欲情 += 増加量:1
+UP:恭順 += (増加量+増加量:1)/10
+
+;-------------------------------------------------
+;快Ａのソース
+;-------------------------------------------------
+;腸洗浄済みだと感度上がる
+SIF TFLAG:腸洗浄済み
+	TIMES SOURCE:快A, 1.20
+
+SELECTCASE ABL:Ａ感覚
+	CASE 0
+		TIMES SOURCE:快A, 0.50
+	CASE 1
+		TIMES SOURCE:快A, 2.50
+	CASE 2
+		TIMES SOURCE:快A, 4.60
+	CASE 3
+		TIMES SOURCE:快A, 6.80
+	CASE 4
+		TIMES SOURCE:快A, 9.10
+	CASE 5
+		TIMES SOURCE:快A, 11.50
+	CASE 6
+		TIMES SOURCE:快A, 14.00
+	CASE 7
+		TIMES SOURCE:快A, 16.60
+	CASE 8
+		TIMES SOURCE:快A, 19.30
+	CASE 9
+		TIMES SOURCE:快A, 22.10
+	CASE 10
+		TIMES SOURCE:快A, 25.00
+	CASE IS >= 11
+		SOURCE:快A *= (ABL:Ａ感覚*3 - 5)
+ENDSELECT
+
+SELECTCASE GETEXPLV(EXP:Ａ経験, 5)
+	CASE 0
+		TIMES SOURCE:快A, 0.20
+	CASE 1
+		TIMES SOURCE:快A, 0.50
+	CASE 2
+		TIMES SOURCE:快A, 0.90
+	CASE 3
+		TIMES SOURCE:快A, 1.40
+	CASE 4
+		TIMES SOURCE:快A, 2.00
+	CASE 5
+		TIMES SOURCE:快A, 2.70
+ENDSELECT
+SELECTCASE GETPALAMLV(PALAM:潤滑, 4)
+	CASE 0
+		TIMES SOURCE:快A, 0.20
+	CASE 1
+		TIMES SOURCE:快A, 0.50
+	CASE 2
+		TIMES SOURCE:快A, 0.80
+	CASE 3
+		TIMES SOURCE:快A, 1.00
+	CASE 4
+		TIMES SOURCE:快A, 1.20
+ENDSELECT
+
+;快ＡはあまりPALAM:欲情では差が出ない
+増加量 = SOURCE:快A
+SELECTCASE GETPALAMLV(PALAM:欲情, 4)
+	CASE 0
+		TIMES 増加量, 1.00
+	CASE 1
+		TIMES 増加量, 1.10
+	CASE 2
+		TIMES 増加量, 1.20
+	CASE 3
+		TIMES 増加量, 1.30
+	CASE 4
+		TIMES 増加量, 1.40
+ENDSELECT
+
+増加量:1 = SOURCE:快A
+SELECTCASE ABL:欲望
+	CASE 0
+		TIMES 増加量:1, 0.50
+	CASE 1
+		TIMES 増加量:1, 0.60
+	CASE 2
+		TIMES 増加量:1, 0.70
+	CASE 3
+		TIMES 増加量:1, 0.80
+	CASE 4
+		TIMES 増加量:1, 0.90
+	CASE 5
+		TIMES 増加量:1, 1.00
+	CASE 6
+		TIMES 増加量:1, 1.05
+	CASE 7
+		TIMES 増加量:1, 1.10
+	CASE 8
+		TIMES 増加量:1, 1.15
+	CASE 9
+		TIMES 増加量:1, 1.20
+	CASE IS >= 10
+		増加量:1 += (増加量:1/10) * (ABL:欲望-7)
+ENDSELECT
+
+IF TALENT:小人体型
+	TIMES 増加量 , 0.50
+	TIMES 増加量:1 , 1.50
+ENDIF
+;メス度1につき快Ａ1割増
+増加量 += 増加量*MIN(ABL:メス度, 10)/10
+
+;アナル未経験で貞操観念のとき
+SIF !EXP:Ａ経験 && TALENT:貞操観念 && SOURCE:快A > 0
+	SOURCE:屈従 /= 3
+
+;去勢済みだと快Ａが上がりやすい
+SIF TALENT:去勢済み
+	TIMES UP:快Ａ, 1.20
+
+UP:快Ａ += 増加量
+UP:欲情 += 増加量:1
+UP:恭順 += (増加量+増加量:1)/10
+
+;-------------------------------------------------
+;快Ｂのソース
+;-------------------------------------------------
+SELECTCASE ABL:Ｂ感覚
+	CASE 0
+		TIMES SOURCE:快B, 0.50
+	CASE 1
+		TIMES SOURCE:快B, 2.50
+	CASE 2
+		TIMES SOURCE:快B, 4.60
+	CASE 3
+		TIMES SOURCE:快B, 6.80
+	CASE 4
+		TIMES SOURCE:快B, 9.10
+	CASE 5
+		TIMES SOURCE:快B, 11.50
+	CASE 6
+		TIMES SOURCE:快B, 14.00
+	CASE 7
+		TIMES SOURCE:快B, 16.60
+	CASE 8
+		TIMES SOURCE:快B, 19.30
+	CASE 9
+		TIMES SOURCE:快B, 22.10
+	CASE 10
+		TIMES SOURCE:快B, 25.00
+	CASE IS >= 11
+		SOURCE:快B *= (ABL:Ｂ感覚*3 - 5)
+ENDSELECT
+
+;バストサイズによる補正
+SELECTCASE TALENT:バストサイズ
+	CASE 0, 1
+		TIMES SOURCE:快B, 1.11
+	CASE 2
+		TIMES SOURCE:快B, 1.05
+	CASE 3
+		TIMES SOURCE:快B, 1.00
+	CASE 4
+		TIMES SOURCE:快B, 0.96
+	CASE 5
+		TIMES SOURCE:快B, 0.93
+	CASE 6
+		TIMES SOURCE:快B, 0.91
+	CASE 7 TO 46
+		SOURCE:快B *= (97-TALENT:バストサイズ)
+		SOURCE:快B /= 100
+	CASE IS >= 47
+		TIMES SOURCE:快B, 0.50
+ENDSELECT
+
+増加量 = SOURCE:快B
+SELECTCASE GETPALAMLV(PALAM:欲情, 4)
+	CASE 0
+		TIMES 増加量, 0.80
+	CASE 1
+		TIMES 増加量, 1.00
+	CASE 2
+		TIMES 増加量, 1.20
+	CASE 3
+		TIMES 増加量, 1.40
+	CASE 4
+		TIMES 増加量, 1.60
+ENDSELECT
+
+増加量:1 = SOURCE:快B
+SELECTCASE ABL:欲望
+	CASE 0
+		TIMES 増加量:1, 0.50
+	CASE 1
+		TIMES 増加量:1, 0.60
+	CASE 2
+		TIMES 増加量:1, 0.70
+	CASE 3
+		TIMES 増加量:1, 0.80
+	CASE 4
+		TIMES 増加量:1, 0.90
+	CASE 5
+		TIMES 増加量:1, 1.00
+	CASE 6
+		TIMES 増加量:1, 1.05
+	CASE 7
+		TIMES 増加量:1, 1.10
+	CASE 8
+		TIMES 増加量:1, 1.15
+	CASE 9
+		TIMES 増加量:1, 1.20
+	CASE IS >= 10
+		増加量:1 += (増加量:1/10) * (ABL:欲望-7)
+ENDSELECT
+
+IF TALENT:小人体型
+	TIMES 増加量, 1.50
+	TIMES 増加量:1, 1.20
+	UP:潤滑 += 増加量:1/2
+ENDIF
+
+;メス度1につき快Ｂ5%増
+増加量 += 増加量*MIN(ABL:メス度, 10)/20
+
+UP:快Ｂ += 増加量
+UP:欲情 += 増加量:1
+
+;-------------------------------------------------
+;リビドー絶頂カウントによる補正(1回につき10%)
+;-------------------------------------------------
+UP:快Ｃ += UP:快Ｃ*TFLAG:リビドー絶頂カウント/10
+UP:快Ｖ += UP:快Ｖ*TFLAG:リビドー絶頂カウント/10
+UP:快Ａ += UP:快Ａ*TFLAG:リビドー絶頂カウント/10
+UP:快Ｂ += UP:快Ｂ*TFLAG:リビドー絶頂カウント/10
+
+;-------------------------------------------------
+;同じコマンドの連続実行による減少（快楽系）
+;-------------------------------------------------
+SIF SELECTCOMS == PREVCOMS && !TFLAG:リカーシブファンクション
+	CALL TIMESUPCVAB, 50
+
+;-------------------------------------------------
+;気力０による減少（快楽系）
+;-------------------------------------------------
+SIF BASE:気力 <= 0 && !TFLAG:ゴーバーサーク
+	CALL TIMESUPCVAB, 70
+
+;-------------------------------------------------
+;相性による補正（快楽系）
+;-------------------------------------------------
+補正 = (相性値(TARGET, PLAYER)-100)/10
+IF 相性値(TARGET, PLAYER) != 100
+	UP:快Ｃ += (UP:快Ｃ/100)*補正
+	UP:快Ｖ += (UP:快Ｖ/100)*補正
+	UP:快Ａ += (UP:快Ａ/100)*補正
+	UP:快Ｂ += (UP:快Ｂ/100)*補正
+ENDIF
+
+;-------------------------------------------------
+;快感の否定は、快ソースの数値に応じて、抑鬱、反感増加（淫乱系で無効）
+;-------------------------------------------------
+IF TALENT:快感の否定 && FALLTYPE(TARGET) != 2
+	補正 = ABL:従順+ABL:欲望+ABL:奉仕精神
+	SIF CFLAG:依存度 > 0
+		補正 += CFLAG:依存度/100
+	補正 += 10
+	SOURCE:鬱屈 += (UP:快Ｃ+UP:快Ｖ+UP:快Ａ+UP:快Ｂ)/補正
+	SOURCE:反感 += (UP:快Ｃ+UP:快Ｖ+UP:快Ａ+UP:快Ｂ)/補正
+ENDIF
+
+;-------------------------------------------------
+;アイテム・素質などによる上下の処理（快楽系）
+;-------------------------------------------------
+IF CFLAG:媚薬
+	UP:快Ｃ += UP:快Ｃ/10*CFLAG:媚薬
+	UP:快Ｖ += UP:快Ｖ/10*CFLAG:媚薬
+	UP:快Ａ += UP:快Ａ/10*CFLAG:媚薬
+	UP:快Ｂ += UP:快Ｂ/10*CFLAG:媚薬
+ENDIF
+IF TEQUIP:利尿剤
+	TIMES UP:快Ｃ, 1.50
+	TIMES UP:快Ｖ, 0.70
+	TIMES UP:快Ａ, 0.70
+	TIMES UP:快Ｂ, 0.70
+ENDIF
+
+;-------------------------------------------------
+;陥落素質
+;-------------------------------------------------
+SIF TALENT:淫乱
+	CALL TIMESUPCVAB, 120
+SIF TALENT:淫魔
+	CALL TIMESUPCVAB, 150
+
+;-------------------------------------------------
+;素質
+;-------------------------------------------------
+IF TALENT:自制心
+	TIMES UP:快Ｃ , 0.70
+	TIMES UP:快Ｖ , 0.90
+	TIMES UP:快Ａ , 1.00
+	TIMES UP:快Ｂ , 0.70
+ENDIF
+SIF TALENT:即落ち
+	CALL TIMESUPCVAB, 500
+
+SIF TALENT:淫核
+	TIMES UP:快Ｃ, 2.00
+SIF TALENT:淫膣
+	TIMES UP:快Ｖ, 2.00
+SIF TALENT:淫尻
+	TIMES UP:快Ａ, 2.00
+SIF TALENT:淫乳
+	TIMES UP:快Ｂ, 2.00
+
+SELECTCASE CFLAG:スライム度
+	CASE 1 TO 10
+		CALL TIMESUPCVAB, 110
+	CASE 11 TO 20
+		CALL TIMESUPCVAB, 120
+	CASE 21 TO 1499
+		CALL TIMESUPCVAB, 130
+	CASE IS >= 1500
+		CALL TIMESUPCVAB, 150
+ENDSELECT
+
+SELECTCASE SEX(TARGET)
+	CASE 1
+		TIMES UP:快Ａ, 1.30
+		SIF TALENT:ふたなり
+			TIMES UP:快Ｖ, 1.20
+	CASE 2
+		SIF TALENT:ふたなり
+			TIMES UP:快Ｃ, 1.30
+ENDSELECT
+
+IF TALENT:性器破損
+	UP:苦痛 += UP:快Ｖ/5*3
+	TIMES UP:快Ｖ, 0.40
+ENDIF
+
+;-------------------------------------------------
+;難易度による上下の処理（快楽系）
+;-------------------------------------------------
+SELECTCASE FLAG:難易度
+	CASE -1
+		;BEGINNER
+		CALL TIMESUPCVAB, 300
+	CASE 1
+		;NORMALは変動なし
+	CASE 2
+		;HYPER
+		CALL TIMESUPCVAB, 80
+	CASE 3
+		;ANOTHER
+		CALL TIMESUPCVAB, 60
+	CASE 4
+		;LEGGENDARIA
+		CALL TIMESUPCVAB, 10
+ENDSELECT
+
+;指挿入れの慣らしギミック用処理、処女もしくは再生処女の時は快Vは99で最大にする
+;ただしハッキングは例外で処女のままでもイかせることができる
+IF !(SELECTCOMS == "ハッキング" && ハッキング命令 == "Ｖ絶頂")
+	IF (UP:快Ｖ+PALAM:快Ｖ) >= 100 && (TALENT:処女 || TALENT:再生処女)
+		UP:快Ｖ = 0
+		PALAM:快Ｖ = 99
+	ENDIF
+ENDIF
+
+;ペニス持ちは快Ｃが20% 賢者タイム中じゃないと快Ｃ3000以上にはならない
+SIF PENIS(TARGET)
+	UP:快Ｃ /= 5
+IF (UP:快Ｃ+PALAM:快Ｃ) >= 3000 && PENIS(TARGET) && (CFLAG:賢者タイム == 0 || NOWEX:射精)
+	IF UP:快Ｃ+PALAM:快Ｃ > 3000
+		PALAM:快Ｃ = 3000
+		UP:快Ｃ = 0
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;愛液処理
+;-------------------------------------------------
+補正 = UP:快Ｃ+UP:快Ｖ+UP:快Ａ+UP:快Ｂ
+;快Ｃ＋快Ｖ＋快Ａ＋快Ｂが合わせて100以上上昇ならその20%の液体のソースが加わる
+IF 補正 > 100 && (VAGINA(TARGET) || 特質("過剰分泌"))
+	;濡れやすいと濡れにくいはここで処理
+	SIF TALENT:濡れやすい
+		TIMES 補正, 3.00
+	SIF TALENT:濡れにくい
+		TIMES 補正, 0.40
+	;種族が精霊で雨が降ってると濡れやすくなる
+	SELECTCASE 天気()
+		CASE "雨", "大雨", "雷雨"
+			SIF CSTR:種族 == "精霊"
+				補正 *= 2
+	ENDSELECT
+	SOURCE:液体 += 補正 / 5
+ENDIF
+
+;-------------------------------------------------
+;屍姦・睡眠の補正
+;-------------------------------------------------
+;仮死薬による屍姦は全て5%（ガチで死んでれば全部0）睡眠中は10%
+IF CFLAG:死亡
+	IF TEQUIP:仮死薬
+		CALL TIMESUPCVAB, 5
+	ELSE
+		CALL TIMESUPCVAB, 0
+	ENDIF
+ELSEIF TEQUIP:睡眠
+	CALL TIMESUPCVAB, 10
+ENDIF
+
+;-------------------------------------------------
+;潮噴き処理
+;-------------------------------------------------
+IF PENIS(TARGET) && CFLAG:賢者タイム > 0 && TFLAG:ラブキャンセーブユー <= 1
+	CALL SQUIRT_CHECK
+ELSEIF TALENT:去勢済み
+	CALL SQUIRT_CHECK
+ENDIF
+
+;-------------------------------------------------
+;強精神薬による絶頂キャンセル
+;-------------------------------------------------
+SIF TEQUIP:強精神薬 > 1
+	CALL ECST_CANCEL
+
+;-------------------------------------------------
+;ラブキャンセーブユーによる絶頂キャンセル
+;-------------------------------------------------
+SIF TFLAG:ラブキャンセーブユー > 1
+	CALL ECST_CANCEL
+
+;-------------------------------------------------
+;リビドー
+;-------------------------------------------------
+CALL リビドー計算

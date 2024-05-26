@@ -1,0 +1,1093 @@
+﻿;デバッグ用関数です。スレの>>8が作ってくれました
+@DEBUG
+
+CALL 実績解除, "俺はチートマニア！お前は何マニア？"
+
+SIF TARGET == -1
+	TARGET = 0
+
+PRINTFORML なにをしますか？ 対象：%NAMEDISP(TARGET)%
+PRINTLC [0] - デバッグコマンドの対象を主人にする
+PRINTLC [1] - 素質操作
+PRINTLC [2] - ABL操作
+PRINTLC [3] - 経験操作
+PRINTLC [4] - 刻印操作
+PRINTLC [5] - ITEM操作
+PRINTLC [6] - その他
+PRINTLC [7] - カジノ テストプレイ
+PRINTLC [8] - デバッグ用セーブデータの作成
+PRINTLC [9] - 全キャラの売却補正・獲得経験値確認
+PRINTLC [10] - コマンドのツールチップ、ビデオ、写真の設定確認
+PRINTLC [11] - 引き継ぎデバッグ
+;PRINTLC [10] - コードのデバッグ
+PRINTL 
+PRINTL [-1] 戻る
+
+DO
+	INPUT
+	SELECTCASE RESULT
+		CASE -1
+			SIF TARGET == 0
+				TARGET = -1
+			RETURN
+		CASE 0
+			CALL ASSIGN_TARGET, 0
+		CASE 1
+			CALL TALENT_CHANGE
+		CASE 2
+			CALL ABL_CHANGE
+		CASE 3
+			CALL EXP_CHANGE
+		CASE 4
+			CALL MARK_CHANGE
+		CASE 5
+			CALL ITEM_CHANGE
+		CASE 6
+			CALL EXTRA_CHANGE
+		CASE 7
+			CALL GAMBLE
+		CASE 8
+			CALL DEBUG_SAVEDATA
+		CASE 9
+			CALL DEBUG_SHOW_CHARADATA
+		CASE 10
+			CALL COMMAND_CHECK
+		CASE 11
+			JUMP SUCCESSION
+		;CASE 10
+		;	CALL CODE_DEBUG
+		CASEELSE
+			CONTINUE
+	ENDSELECT
+LOOP 0
+
+RESTART
+
+;[1] - 素質操作  --------------------------------
+@TALENT_CHANGE, 数値指定, CSVエディター
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC 表示数
+#DIM DYNAMIC 数値指定
+#DIM DYNAMIC 指定素質
+#DIM DYNAMIC CSVエディター
+表示数 = 0
+DRAWLINE
+FOR LCOUNT, 0,VARSIZE("TALENT")
+	SIF TALENTNAME:LCOUNT == ""
+		CONTINUE
+	IF CSVエディター
+		SELECTCASE TALENTNAME:LCOUNT
+			{
+			CASE "再生処女", "改造済み", "隠しキャラ", "片思い", "恋慕", "淫乱", "服従",
+				 "親愛", "淫魔", "隷属", "崩壊", "淫膣", "淫核", "淫尻", "淫乳", "妊娠", "妊娠確定"
+			}
+				CONTINUE
+		ENDSELECT
+	ENDIF
+	SELECTCASE TALENTNAME:LCOUNT
+		;0
+		CASE "性別"
+			CALL NEWLINE
+			PRINTL □基本素質
+			表示数 = 0
+		;20
+		CASE "恋慕"
+			CALL NEWLINE
+			PRINTL □陥落素質
+			表示数 = 0
+		;40
+		CASE "生意気"
+			CALL NEWLINE
+			PRINTL □性格
+			表示数 = 0
+		;70
+		CASE "自制心"
+			CALL NEWLINE
+			PRINTL □性への関心
+			表示数 = 0
+		;100
+		CASE "貞操観念"
+			CALL NEWLINE
+			PRINTL □コンプライアンス
+			表示数 = 0
+		;130
+		CASE "痛みに弱い"
+			CALL NEWLINE
+			PRINTL □体質
+			表示数 = 0
+		;160
+		CASE "習得早い"
+			CALL NEWLINE
+			PRINTL □技術
+			表示数 = 0
+		;250
+		CASE "自慰しやすい"
+			CALL NEWLINE
+			PRINTL □潔癖度
+			表示数 = 0
+		;280
+		CASE "倒錯的"
+			CALL NEWLINE
+			PRINTL □性愛性
+			表示数 = 0
+		;310
+		CASE "妖狐"
+			CALL NEWLINE
+			PRINTL □魅了
+			表示数 = 0
+		;340
+		CASE "体格"
+			CALL NEWLINE
+			PRINTL □先天的身体特徴
+			表示数 = 0
+		;370
+		CASE "性器破損"
+			CALL NEWLINE
+			PRINTL □後天的身体特徴
+			表示数 = 0
+		;500
+		CASE "妊娠"
+			CALL NEWLINE
+			PRINTL □特殊
+			表示数 = 0
+	ENDSELECT
+	SIF 表示数%6 == 0
+		PRINT 　
+	;素質数値指定
+	IF 数値指定
+		PRINTFORM [{LCOUNT, 3}] %I18N(TALENTNAME:LCOUNT, "TALENT"), 14, LEFT%({TALENT:LCOUNT})
+		表示数++
+	ELSE
+		PRINTFORM [{LCOUNT, 3}] %I18N(TALENTNAME:LCOUNT, "TALENT"), 14, LEFT% 
+		SELECTCASE TALENTNAME:LCOUNT
+			CASE "性別"
+				SELECTCASE SEX(TARGET)
+					CASE 1
+						PRINT ♂
+					CASE 2
+						PRINT ♀
+				ENDSELECT
+			CASE "バストサイズ", "体格"
+				PRINTFORM {TALENT:LCOUNT, 2}
+			CASEELSE
+				IF !TALENT:LCOUNT
+					PRINT ×
+				ELSE
+					PRINT ◯
+				ENDIF
+		ENDSELECT
+		表示数++
+	ENDIF
+	PRINT 　
+	SIF 表示数%6 == 0
+		PRINTL 
+NEXT
+CALL NEWLINE
+
+DRAWLINE
+PRINTPLAIN 　CHANGE TALENT　
+PRINTL [-1] - 戻る
+
+DO
+	INPUT
+	SIF RESULT == -1
+		RETURN
+	SIF TALENTNAME:RESULT == ""
+		CONTINUE
+	SELECTCASE TALENTNAME:RESULT
+		CASE "性別"
+			PRINTL [1] - 男にする
+			PRINTL [2] - 女にする
+			PRINTL [-1] - 戻る
+			BINPUT
+			SELECTCASE RESULT
+				CASE -1
+					RESTART
+				CASE 1, 2
+					TALENT:性別 = RESULT
+			ENDSELECT
+			RESTART
+		CASE "バストサイズ"
+			SIF SEX(TARGET) == 1
+				RESTART
+			PRINTL [1] 絶壁にする
+			PRINTL [2] 貧乳にする
+			PRINTL [3] 並乳にする
+			PRINTL [4] 巨乳にする
+			PRINTL [5] 豊乳にする
+			PRINTL [6] 爆乳にする
+			PRINTL [7] 爆乳+1にする
+			PRINTL [8] 爆乳+2にする
+			PRINTL [9] 爆乳+3にする
+			BINPUT
+			TALENT:バストサイズ = RESULT
+			RESTART
+		CASE "体格"
+			PRINTL [1] 幼児にする
+			PRINTL [2] 小柄にする
+			PRINTL [3] 普通にする
+			PRINTL [4] 長身にする
+			BINPUT
+			TALENT:体格 = RESULT
+			RESTART
+		CASE "恋心"
+			PRINT 相手のキャラ番号を入力してください（未実装・不明の場合は
+			PRINTBUTTON "[10000]", 10000
+			PRINTL ）
+			DO
+				INPUT
+				SELECTCASE RESULT
+					CASE 0 TO 9999
+						IF EXISTCSV(RESULT)
+							TALENT:恋心 = 1
+							CSTR:恋心 = %CSVNAME(RESULT)%
+						ELSE
+							PRINTFORMW {RESULT}にはキャラが登録されていません
+							CONTINUE
+						ENDIF
+					CASE 10000
+						TALENT:恋心 = 1
+						CSTR:恋心 = 不明
+					CASEELSE
+						CONTINUE
+				ENDSELECT
+			LOOP 0
+			RESTART
+		CASE "既婚者"
+			PRINT 相手のキャラ番号を入力してください（未実装・不明の場合は
+			PRINTBUTTON "[10000]", 10000
+			PRINTL ）
+			DO
+				INPUT
+				SELECTCASE RESULT
+					CASE 0 TO 9999
+						IF EXISTCSV(RESULT)
+							TALENT:既婚者 = 1
+							CSTR:既婚者 = %CSVNAME(RESULT)%
+						ELSE
+							PRINTFORMW {RESULT}にはキャラが登録されていません
+							CONTINUE
+						ENDIF
+					CASE 10000
+						TALENT:既婚者 = 1
+						CSTR:既婚者 = 不明
+					CASEELSE
+						CONTINUE
+				ENDSELECT
+			LOOP 0
+			RESTART
+		CASEELSE
+			;数値指定
+			IF 数値指定
+				指定素質 = RESULT
+				PRINTFORML %I18N(TALENTNAME:指定素質, "TALENT")%の数値を入力してください
+				INPUT
+				TALENT:指定素質 = RESULT
+				RESTART
+			ELSE
+				INVERTBIT TALENT:RESULT, 0
+				RESTART
+			ENDIF
+	ENDSELECT
+LOOP 1
+
+;[2] - ABL操作  --------------------------------
+@ABL_CHANGE
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC 指定能力
+DRAWLINE
+
+FOR LCOUNT, 0, VARSIZE("ABL")
+	SIF ABLNAME:LCOUNT == ""
+		CONTINUE
+	PRINTFORMLC [{LCOUNT}] %I18N(ABLNAME:LCOUNT, "ABL")% Lv{ABL:LCOUNT}
+NEXT
+CALL NEWLINE
+
+DRAWLINE
+PRINTPLAIN 　CHANGE ABL　
+PRINTFORML [-1] - 戻る [{VARSIZE("ABL")}] - 一括変更
+DRAWLINE
+
+DO
+	INPUT
+	SELECTCASE RESULT
+		CASE -1
+			RETURN
+		CASEELSE
+			IF RESULT == VARSIZE("ABL")
+			ELSEIF RESULT > VARSIZE("ABL") || ABLNAME:RESULT == ""
+				CONTINUE
+			ENDIF
+			指定能力 = RESULT
+			IF 指定能力 == VARSIZE("ABL")
+				PRINTL 数値を入力してください
+			ELSE
+				PRINTFORML %I18N(ABLNAME:指定能力, "ABL")%をいくつにしますか？
+			ENDIF
+			PRINTL [0][1][2][3][4]
+			PRINTL [5][6][7][8][9][10]
+			PRINTL [-1] - 戻る
+			DO
+				INPUT
+				SELECTCASE RESULT
+					CASE -1
+						RESTART
+					CASEELSE
+						IF 指定能力 == VARSIZE("ABL")
+							FOR LCOUNT, 0, VARSIZE("ABL")
+								SIF ABLNAME:LCOUNT == ""
+									CONTINUE
+								ABL:LCOUNT = LIMIT(RESULT, 0, __INT_MAX__)
+							NEXT
+							PRINTFORML 全てのABLをLv{LIMIT(RESULT, 0, __INT_MAX__)}にしました
+						ELSE
+							ABL:指定能力 = LIMIT(RESULT, 0, __INT_MAX__)
+							PRINTFORML %NAMEDISP(TARGET)%の%I18N(ABLNAME:指定能力, "ABL")%をLv{MAX(RESULT, 0)}にしました
+						ENDIF
+						RESTART
+				ENDSELECT
+			LOOP 1
+	ENDSELECT
+LOOP 1
+
+;[3] - 経験操作  --------------------------------
+@EXP_CHANGE
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC 指定経験
+DRAWLINE
+
+FOR LCOUNT, 0, VARSIZE("EXP")
+	SIF EXPNAME:LCOUNT == ""
+		CONTINUE
+	PRINTFORMLC [{LCOUNT}] %I18N(EXPNAME:LCOUNT, "EXP")%（{EXP:LCOUNT}）
+NEXT
+CALL NEWLINE
+
+DRAWLINE
+PRINTPLAIN 　CHANGE EXP　
+PRINTFORML [-1] - 戻る [{VARSIZE("EXP")}] - 一括変更
+
+DO
+	INPUT
+	SELECTCASE RESULT
+		CASE -1
+			RETURN
+		CASEELSE
+			IF RESULT == VARSIZE("EXP")
+			ELSEIF RESULT > VARSIZE("EXP") || EXPNAME:RESULT == ""
+				CONTINUE
+			ENDIF
+			指定経験 = RESULT
+			IF 指定経験 == VARSIZE("EXP")
+				PRINTL 数値を入力してください
+			ELSE
+				PRINTFORML %I18N(EXPNAME:指定経験, "EXP")%をいくつにしますか？
+			ENDIF
+			PRINTL [0][1][9][99][999][9999][99999][999999][9999999]
+			PRINTL [-1] - 戻る
+			DO
+				INPUT
+				SELECTCASE RESULT
+					CASE -1
+						RESTART
+					CASEELSE
+						IF 指定経験 == VARSIZE("EXP")
+							FOR LCOUNT, 0, VARSIZE("EXP")
+								SIF EXPNAME:LCOUNT == ""
+									CONTINUE
+								EXP:LCOUNT = LIMIT(RESULT, 0, __INT_MAX__)
+							NEXT
+							PRINTFORML 全てのEXPを{LIMIT(RESULT, 0, __INT_MAX__)}にしました
+						ELSE
+							EXP:指定経験 = LIMIT(RESULT, 0, __INT_MAX__)
+							PRINTFORML %NAMEDISP(TARGET)%の%I18N(EXPNAME:指定経験, "EXP")%を{MAX(RESULT, 0)}にしました
+						ENDIF
+						RESTART
+				ENDSELECT
+			LOOP 1
+	ENDSELECT
+LOOP 1
+
+;[4] - 刻印操作  --------------------------------
+@MARK_CHANGE
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC 指定刻印
+DRAWLINE
+
+FOR LCOUNT, 0, VARSIZE("MARK")
+	SIF MARKNAME:LCOUNT == ""
+		CONTINUE
+	PRINTFORMLC [{LCOUNT}] %I18N(MARKNAME:LCOUNT, "MARK")% Lv{MARK:LCOUNT}
+NEXT
+CALL NEWLINE
+
+DRAWLINE
+PRINTPLAIN 　CHANGE MARK　
+PRINTL [-1] - 戻る
+
+DO
+	INPUT
+	SELECTCASE RESULT
+		CASE -1
+			RETURN
+		CASEELSE
+			SIF RESULT >= VARSIZE("MARK") || MARKNAME:RESULT == ""
+				CONTINUE
+			指定刻印 = RESULT
+			PRINTFORML %I18N(MARKNAME:指定刻印, "MARK")%をいくつにしますか？
+			PRINTL [0][1][2][3]
+			PRINTL [-1] - 戻る
+			DO
+				INPUT
+				SELECTCASE RESULT
+					CASE -1
+						RESTART
+					CASEELSE
+						MARK:指定刻印 = LIMIT(RESULT, 0, 3)
+						PRINTFORML %NAMEDISP(TARGET)%の%I18N(MARKNAME:指定刻印, "MARK")%をLv{LIMIT(RESULT, 0, 3)}にしました
+						RESTART
+				ENDSELECT
+			LOOP 1
+	ENDSELECT
+LOOP 1
+
+;[5] - ITEM操作  --------------------------------
+@ITEM_CHANGE
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC 指定アイテム
+DRAWLINE
+
+FOR LCOUNT, 0, 200
+	SIF ITEMNAME:LCOUNT == ""
+		CONTINUE
+	IF LCOUNT >= 100
+		PRINTFORMLC [{LCOUNT}] %ITEMNAME:LCOUNT% {ITEM:LCOUNT}個
+	ELSE
+		PRINTFORMLC [{LCOUNT}] %ITEMNAME:LCOUNT% \@ ITEM:LCOUNT ? ◯ # × \@
+	ENDIF
+NEXT
+CALL NEWLINE
+
+PRINTL
+PRINTL [999] - 全部所持 
+PRINTL [-1] - 戻る
+DRAWLINE
+
+DO
+	INPUT
+	SELECTCASE RESULT
+		CASE -1
+			RETURN
+		CASE 999
+			;いじれるのは調教アイテムと消費アイテムだけ
+			FOR LCOUNT, 0, 200
+				SIF ITEMNAME:LCOUNT == ""
+					CONTINUE
+				SELECTCASE LCOUNT
+					CASE 0 TO 99
+						ITEM:LCOUNT = 1
+					CASE 100 TO 200
+						IF ITEMNAME:LCOUNT == "監禁室"
+							ITEM:LCOUNT = 10
+						ELSE
+							ITEM:LCOUNT = 99
+						ENDIF
+				ENDSELECT
+			NEXT
+			RESTART
+		CASEELSE
+			SIF ITEMNAME:RESULT == ""
+				CONTINUE
+			指定アイテム = RESULT
+			SELECTCASE 指定アイテム
+				CASE 0 TO 99
+					INVERTBIT ITEM:指定アイテム, 0
+					RESTART
+				CASE 100 TO 199
+					PRINTFORML %ITEMNAME:指定アイテム%をいくつにしますか？
+					IF ITEMNAME:指定アイテム == "監禁室"
+						PRINTL [0][1][10]
+					ELSE
+						PRINTL [0][1][10][50][99]
+					ENDIF
+					PRINTL [-1] 戻る
+					DO
+						INPUT
+						SELECTCASE RESULT
+							CASE -1
+								RESTART
+							CASEELSE
+								ITEM:指定アイテム = LIMIT(RESULT, 0, 99)
+								PRINTFORML %ITEMNAME:指定アイテム%を{LIMIT(RESULT, 0, 99)}個にしました
+								RESTART
+						ENDSELECT
+					LOOP 1
+			ENDSELECT
+	ENDSELECT
+LOOP 1
+
+
+;[6] - その他  --------------------------------
+@EXTRA_CHANGE
+#DIM DYNAMIC 日付計算用
+DRAWLINE
+PRINTLC [0] - 日数
+PRINTLC [1] - 日付
+PRINTLC [2] - 時間帯
+PRINTL
+PRINTLC [3] - 所持金
+PRINTLC [4] - 気温
+PRINTLC [5] - MASTERに孔雀の瞳
+PRINTFORMLC [6] - 依存度(%NAME:TARGET%の依存度:{CFLAG:依存度})
+PRINTL
+PRINTLC [-1] - 戻る
+
+BINPUT
+
+DRAWLINE
+SELECTCASE RESULT
+	CASE -1
+		RETURN
+	CASE 0
+		PRINTFORML 何日にしますか？　　現在の日数：{DAY}
+		PRINTL [1][9][99][999][9999][99999][999999]
+		PRINTL [-1] 戻る
+		INPUT
+		SIF RESULT == -1
+			RESTART
+		DAY = LIMIT(RESULT, 0, __INT_MAX__)
+		PRINTFORMW {DAY}日目に変更しました
+	CASE 1
+		DO
+			PRINTFORM どれを変更しますか？　　現在の日付：
+			IF YEAR > 0
+				PRINTFORM {YEAR}
+			ELSE
+				PRINTFORM BC{ABS(YEAR)+1}
+			ENDIF
+			PRINTFORML 年{MONTH}月{DAYS}日(%DOW(ZELLER(YEAR,MONTH,DAYS))%)
+			PRINTL [0] - 年
+			PRINTL [1] - 月
+			PRINTL [2] - 日
+			PRINTL [3] - 現在の日時を取得
+			PRINTL [-1] - 戻る
+			BINPUT
+			SELECTCASE RESULT
+				CASE -1
+					RETURN
+				CASE 0
+					PRINTL 何年に変更しますか？値を入力してください
+					CALL INPUT_YEAR
+					YEAR = RESULT
+					PRINTL
+					IF YEAR > 0
+						PRINTFORM {YEAR}
+					ELSE
+						PRINTFORM BC{ABS(YEAR)+1}
+					ENDIF
+					PRINTFORML 年に変更しました
+					PRINTL
+				CASE 1
+					PRINTL 何月に変更しますか？
+					PRINTL [ 1]１月 [ 2]２月 [ 3]３月 [ 4]４月 [ 5]５月 [ 6]６月
+					PRINTL [ 7]７月 [ 8]８月 [ 9]９月 [10]10月 [11]11月 [12]12月
+					DO
+						INPUT
+						SELECTCASE RESULT
+							CASE 1 TO 12
+								MONTH = RESULT
+								PRINTL
+								PRINTFORML {MONTH}月に変更しました
+								PRINTL
+							CASEELSE
+								CONTINUE
+						ENDSELECT
+					LOOP 0
+				CASE 2
+					PRINTL 何日に変更しますか？値を入力してください
+					CALL TWO_DIGIT, 31, "日"
+					DAYS = RESULT
+					SIF DAYS < 0
+						DAYS = 1
+					PRINTL
+					PRINTFORML {DAYS}日に変更しました
+					PRINTL
+				CASE 3
+					日付計算用 = GETTIME()
+					;年月日だけの桁に減らす
+					日付計算用 /= POWER(10,9)
+					YEAR = 日付計算用/10000
+					MONTH = 日付計算用/100%100
+					DAYS = 日付計算用%100
+					PRINTL
+					PRINTFORML {YEAR}年{MONTH}月{DAYS}日に変更しました
+					PRINTL
+			ENDSELECT
+			;不正な値の修正
+			SIF DAYS <= 0
+				DAYS = 1
+			SELECTCASE MONTH
+				CASE 1, 3, 5, 7, 8, 10, 12
+					SIF DAYS > 31
+						DAYS = 31
+				CASE 4, 6, 9, 11
+					SIF DAYS > 30
+						DAYS = 30
+				CASE 2
+					;うるう年かどうかで場合分け
+					SELECTCASE YEAR
+						;グレゴリオ暦
+						CASE IS > 1582
+							IF (YEAR%4 == 0 && YEAR%100 != 0) || YEAR%400 == 0
+								SIF DAYS > 29
+									DAYS = 29
+							ELSE
+								SIF DAYS > 28
+									DAYS = 28
+							ENDIF
+						;間違った運用がされていた頃のユリウス暦
+						CASE -44 TO -5
+							IF ABS(YEAR)%3 == 1
+								SIF DAYS > 29
+									DAYS = 29
+							ELSE
+								SIF DAYS > 28
+									DAYS = 28
+							ENDIF
+						;上の間違った運用のシワ寄せ期間
+						CASE -4 TO 4
+							SIF DAYS > 28
+								DAYS = 28
+						;(紀元前46年以前を含め)残りの期間すべてをユリウス暦とする
+						CASEELSE
+							IF ABS(YEAR)%4 == 0
+								SIF DAYS > 29
+									DAYS = 29
+							ELSE
+								SIF DAYS > 28
+									DAYS = 28
+							ENDIF
+					ENDSELECT
+			ENDSELECT
+			;1582年10月5日～1582年10月14日は存在しないのでその期間の日付はすべて10月15日にする
+			IF YEAR == 1582 && MONTH == 10
+				IF 5 <= DAYS && DAYS <= 14
+					DAYS = 15
+				ENDIF
+			ENDIF
+		LOOP 1
+	CASE 2
+		PRINTFORML いつにしますか？ 現在の時間帯:%ターン%
+		PRINTL [0] - 昼
+		PRINTL [1] - 夜
+		PRINTL [-1] - 戻る
+		BINPUT
+		SELECTCASE RESULT
+			CASE -1
+				RESTART
+			CASE 0
+				ターン = 昼
+			CASE 1
+				ターン = 夜
+		ENDSELECT
+		PRINTFORMW 現在の時間帯を%ターン%に変更しました
+	CASE 3
+		CALL PASELIL, @"いくらにしますか？　　現在の所持金：{MONEY}＄"
+		PRINTLC [0] 無一文
+		PRINTLC [10000] 1万
+		PRINTLC [1000000] 100万
+		PRINTLC [1000000000] 10億
+		PRINTLC [1000000000000] 1兆
+		PRINTLC [10000000000000000] 1京
+		PRINTLC [-1] 戻る
+		INPUTS
+		IF RESULTS == "BEMANI学円"
+			CALL 実績解除, "-5pt"
+		ELSEIF ISNUMERIC(RESULTS)
+			SIF TOINT(RESULTS) == -1
+				RESTART
+			CALL PAYMENT, TOINT(RESULTS)-MONEY, "チート"
+		ENDIF
+		PRINTFORMW 所持金を{MONEY}に変更しました
+	CASE 4
+		;今何度？ とか書こうとした
+		PRINTL 何度にしますか？　※10倍した値で入力してください
+		PRINTFORML 現在の気温：%DIV10(FLAG:気温)%℃
+		PRINTLC [-50] -5℃
+		PRINTLC [  0] 0℃
+		PRINTLC [ 50] 5℃
+		PRINTLC [100] 10℃
+		PRINTLC [150] 15℃
+		PRINTLC [200] 20℃
+		PRINTLC [250] 25℃
+		PRINTLC [300] 30℃
+		INPUTS
+		IF RESULTS == "アペン度" || RESULTS == "So Goo度" || RESULTS == "New Deca度" || RESULTS == "TECH-NOI度"
+			CALL 実績解除, "-5pt"
+		ELSEIF ISNUMERIC(RESULTS)
+			FLAG:気温 = TOINT(RESULTS)
+			PRINTFORMW 気温を%DIV10(FLAG:気温)%℃に変更しました
+		ENDIF
+	CASE 5
+		TALENT:MASTER:孔雀の瞳 = 1
+		PRINTW 孔雀の瞳を付与しました
+	CASE 6
+		PRINTFORML %NAME:TARGET%の依存度を入力してください（-5000～5000）
+		INPUT
+		CFLAG:依存度 = LIMIT(RESULT, -5000, 5000)
+ENDSELECT
+
+RESTART
+
+;年を入力するための関数
+@INPUT_YEAR
+#DIM DYNAMIC 表示年
+#DIM DYNAMIC 紀元前
+#DIM DYNAMIC 設定年
+#DIM DYNAMIC 桁数
+#DIM DYNAMIC 入力桁数
+
+
+表示年 = YEAR
+IF 表示年 > 0
+	紀元前 = 0
+ELSE
+	表示年 = ABS(表示年) + 1
+	紀元前 = 1
+ENDIF
+
+VARLINE = 0
+DO
+	CALL LOOP_CLEARLINE
+	PRINTL
+	PRINT 【
+	SIF 紀元前
+		PRINT 紀元前
+	PRINTFORML %TOFULL(TOSTR(表示年))%年】
+	PRINTBUTTON "[+1]", "+1"
+	PRINTPLAIN  
+	PRINTBUTTON "[+10]", "+10"
+	PRINTPLAIN  
+	PRINTBUTTON "[+100]", "+100"
+	PRINTPLAIN  
+	PRINTBUTTON "[+1000]", "+1000"
+	PRINTL
+	PRINTBUTTON "[-1]", "-1"
+	PRINTPLAIN  
+	PRINTBUTTON "[-10]", "-10"
+	PRINTPLAIN  
+	PRINTBUTTON "[-100]", "-100"
+	PRINTPLAIN  
+	PRINTBUTTON "[-1000]", "-1000"
+	PRINTL
+	PRINTL [ 0 ][ 1 ][ 2 ][ 3 ][ 4 ]
+	PRINTL [ 5 ][ 6 ][ 7 ][ 8 ][ 9 ]
+	IF 紀元前
+		PRINTBUTTON "[ AD/BC ]", "AD"
+	ELSE
+		PRINTBUTTON "[ AD/BC ]", "BC"
+	ENDIF
+	PRINTBUTTON "[  AC  ]", "AC"
+	PRINTBUTTON "[  OK  ]", "OK"
+	INPUTS
+	
+	IF RESULTS == "" || RESULTS == "OK"
+		IF 紀元前
+			RETURN 1-表示年
+		ELSE
+			RETURN 表示年
+		ENDIF
+	ENDIF
+	
+	SIF RESULTS == "AC"
+		表示年 = 0
+	SIF RESULTS == "AD"
+		紀元前 = 0
+	SIF RESULTS == "BC"
+		紀元前 = 1
+	SIF RESULTS == "AD/BC"
+		INVERTBIT 紀元前, 0
+	
+	SELECTCASE CHARATU(RESULTS, 0)
+		CASE "+"
+			REPLACE RESULTS, ESCAPE("+"), ""
+			IF TOINT(RESULTS) != 0
+				設定年 = TOINT(RESULTS)
+				IF 紀元前
+					表示年 -= 設定年
+					IF 表示年 <= 0
+						紀元前 = 0
+						表示年 = ABS(表示年) + 1
+					ENDIF
+				ELSE
+					表示年 += 設定年
+				ENDIF
+			ENDIF
+			CONTINUE
+		CASE "-"
+			REPLACE RESULTS, ESCAPE("-"), ""
+			IF TOINT(RESULTS) != 0
+				設定年 = TOINT(RESULTS)
+				IF 紀元前
+					表示年 += 設定年
+				ELSE
+					表示年 -= 設定年
+					IF 表示年 <= 0
+						紀元前 = 1
+						表示年 = ABS(表示年) + 1
+					ENDIF
+				ENDIF
+			ENDIF
+			CONTINUE
+	ENDSELECT
+	
+	SIF !ISNUMERIC(RESULTS)
+		CONTINUE
+	設定年 = TOINT(RESULTS)
+	SIF ABS(設定年) == -1
+		CONTINUE
+	
+	;入力値の桁数を計算
+	入力桁数 = STRLENS(TOSTR(設定年))
+
+	;表示されている値の桁数を計算
+	桁数 = STRLENS(TOSTR(表示年))
+
+	;18桁に抑える
+	SIF 入力桁数+桁数 > 18
+		CONTINUE
+	表示年 = 表示年 * POWER(10,入力桁数) + 設定年
+	
+LOOP 1
+
+;[8] - デバッグ用セーブデータの作成  --------------------------------
+@DEBUG_SAVEDATA, コードデバッグ,
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC コードデバッグ
+SIF コードデバッグ == 1
+	GOTO 追加
+SIF コードデバッグ == 2
+	GOTO NOTLOG
+
+PRINTL このデータをデバッグ用セーブデータ（大量の所持金、全キャラ購入済み、全アイテム解禁済み）にします。よろしいですか？
+PRINTL [0] - はい
+PRINTL [1] - はい（ログを表示する）
+PRINTL [2] - いいえ
+BINPUT
+SELECTCASE RESULT
+	CASE 0
+		$NOTLOG
+		FOR LCOUNT, 0, 10000
+			SIF EXISTCSV(LCOUNT) && NOF(MASTER) != LCOUNT && GETCHARA(LCOUNT) == -1
+				CALL CHARA_ADD, LCOUNT
+		NEXT
+	CASE 1
+		$追加
+		FOR LCOUNT, 0, 10000
+			IF EXISTCSV(LCOUNT) && NOF(MASTER) != LCOUNT && GETCHARA(LCOUNT) == -1
+				PRINTFORML ＜%CSVNAME(LCOUNT)%を追加中...＞
+				CALL CHARA_ADD, LCOUNT
+			ENDIF
+		NEXT
+	CASE 2
+		RETURN
+ENDSELECT
+
+MONEY = __INT_MAX__/2
+
+FOR LCOUNT, 0, VARSIZE("ITEM")
+	SIF ITEMNAME:LCOUNT == ""
+		CONTINUE
+	SELECTCASE LCOUNT
+		CASE 0 TO 199
+			ITEM:LCOUNT = 1
+		CASE 200 TO 299
+			ITEM:LCOUNT = 99
+		CASE 600 TO 850
+			SIF ITEM:LCOUNT == 0
+				ITEM:LCOUNT = 1
+		CASEELSE
+			SELECTCASE ITEMNAME:LCOUNT
+				CASE "田んぼ"
+					ITEM:LCOUNT = 2
+				CASE "畑"
+					ITEM:LCOUNT = 8
+				CASE "プランター"
+					ITEM:LCOUNT = 4
+				CASE "牧場", "畜舎", "養蜂場", "生け簀"
+					ITEM:LCOUNT = 1
+			ENDSELECT
+	ENDSELECT
+NEXT
+
+RETURN
+
+@DEBUG_SHOW_CHARADATA
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC 売却額補正
+
+FOR LCOUNT, 0, 10000
+	SIF !EXISTCSV(LCOUNT)
+		CONTINUE
+	SKIPDISP 1
+	ADDCHARA LCOUNT
+	TARGET = CHARANUM-1
+	CALL 売却額補正計算
+	売却額補正 = RESULT
+	SKIPDISP 0
+	PRINTFORML %NAMEDISP(TARGET), 30, LEFT% 売却額補正:{売却額補正}\% 獲得経験値:{経験値計算(TARGET)}
+	DELCHARA TARGET
+NEXT
+
+TARGET = 0
+
+@COMMAND_CHECK
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC LASSI
+#DIM DYNAMIC LTARGET
+#DIMS DYNAMIC LLANG
+
+LTARGET = TARGET
+LASSI = ASSI
+TARGET = 0
+ASSI = 0
+
+;問題点をファイルごとにまとめるため数回に分ける
+FOR LCOUNT, 0, 900
+	SIF TRAINNAME:LCOUNT == ""
+		CONTINUE
+	SELECTCOMS = %TRAINNAME:LCOUNT%
+	CALLFORMF TRAIN_COMMENT, SELECTCOMS
+NEXT
+FOR LCOUNT, 0, 900
+	SIF TRAINNAME:LCOUNT == ""
+		CONTINUE
+	SELECTCOMS = %TRAINNAME:LCOUNT%
+	;ゲーセン、上級売春では実行不可
+	SELECTCASE SELECTCOMS
+		{
+		CASE "ビデオカメラ", "ゲームセンター", "トイレに行く", "名刺を渡す", "IIDXをプレイする", "ポップンをプレイする",
+			 "DDRをプレイする", "ギタドラをプレイする", "jubeatをプレイする", "リフレクをプレイする", "ボルテをプレイする",
+			 "ダンエボをプレイする", "QMAをプレイする", "maimaiをプレイする", "CHUNITHMをプレイする", "ビデオポーカーで遊ぶ",
+			 "ポーカーソリティアで遊ぶ", "モンテカルロで遊ぶ", "ブラックジャックで遊ぶ", "メダルを借りる", "オンゲキをプレイする"
+		}
+			CONTINUE
+	ENDSELECT
+	CALLFORMF ビデオポイント, SELECTCOMS
+NEXT
+FOR LCOUNT, 0, 900
+	SIF TRAINNAME:LCOUNT == ""
+		CONTINUE
+	SELECTCOMS = %TRAINNAME:LCOUNT%
+	;写真撮影が実行できないコマンド群
+	SELECTCASE SELECTCOMS
+		{
+		CASE "コンドーム", "触手召喚", "ローション", "媚薬", "利尿剤", "ビデオカメラ", "野外プレイ", "助手を犯す",
+			 "羞恥プレイ", "お風呂場プレイ", "シャワー", "新妻プレイ", "写真撮影", "強精神薬", "コンドーム精飲（助手）",
+			 "料理を作る", "お菓子を作る", "ふたなり化", "ペニスバンド", "ミッドナイトスペシャル", "バストサイズ変更",
+			 "ビデオカメラ", "ゲームセンター", "トイレに行く", "名刺を渡す", "IIDXをプレイする", "ポップンをプレイする",
+			 "DDRをプレイする", "ギタドラをプレイする", "jubeatをプレイする", "リフレクをプレイする", "ボルテをプレイする",
+			 "ダンエボをプレイする", "QMAをプレイする", "maimaiをプレイする", "CHUNITHMをプレイする", "ビデオポーカーで遊ぶ",
+			 "ポーカーソリティアで遊ぶ", "モンテカルロで遊ぶ", "ブラックジャックで遊ぶ", "メダルを借りる", "オンゲキをプレイする",
+			 "蘇生薬投与"
+		}
+			CONTINUE
+	ENDSELECT
+	CALL CREATE_PICTURE
+NEXT
+LLANG = %LANGUAGE%
+LANGUAGE = ENG
+FOR LCOUNT, 0, 900
+	SIF TRAINNAME:LCOUNT == ""
+		CONTINUE
+	CALLF I18N(TRAINNAME:LCOUNT, "TRAIN")
+NEXT
+TARGET = LTARGET
+ASSI = LASSI
+LANGUAGE = LLANG
+PRINTW 詳細はデバッグウィンドウを参照
+SELECTCOMS =
+
+;実行したらPCがフリーズしたので凍結
+[SKIPSTART]
+@CODE_DEBUG
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC LCHARA
+PRINTL デバッグ用データを作成し、全キャラに様々な処理を通すことで
+PRINTL コードのバグを解析します。よろしいですか？（この処理には時間がかかります）
+PRINTL [0] - はい
+PRINTL [1] - いいえ
+
+INPUT
+
+SIF RESULT
+	RETURN
+
+CALL DEBUG_SAVEDATA, 1
+VARSET ITEM, 99
+
+FOR LCHARA, 1, CHARANUM
+	SIF LCHARA%5 == 0
+		AWAIT
+	CALL ASSIGN_TARGET, LCHARA
+	CALL ASSIGN_ASSI, LCHARA+1
+	SIF LCHARA+1 == CHARANUM
+		CALL ASSIGN_ASSI, 1
+	SKIPDISP 1
+	CALL EVENTUSERTRAIN
+	SKIPDISP 0
+	PRINTFORML %NAME:LCHARA%にコマンドを実行
+	FOR LCOUNT, 0, VARSIZE("TRAINNAME")
+		SIF TRAINNAME:LCOUNT == ""
+			CONTINUE
+		SKIPDISP 1
+		CALL SHOW_STATUS
+		CALL SHOW_USERCOM
+		BASE:体力 = 10000000
+		BASE:気力 = 10000000
+		RESULT = LCOUNT
+		CALL USERCOM
+		SKIPDISP 0
+	NEXT
+NEXT
+
+PRINTW デバッグ終了
+
+[SKIPEND]
+
+@各作品のキャラ数
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC LCOUNT2
+#DIM DYNAMIC キャラ数, 100
+#DIMS DYNAMIC 作品名, 100
+#DIMS DYNAMIC STRING
+
+FOR LCOUNT, 0, 10000
+	SIF !EXISTCSV(LCOUNT)
+		CONTINUE
+	FOR LCOUNT2, 0, 3
+		SELECTCASE LCOUNT2
+			CASE 0
+				STRING = %CSVCSTR(LCOUNT, GETNUM(CSTR, "登場作品"))%
+			CASE 1
+				STRING = %CSVCSTR(LCOUNT, GETNUM(CSTR, "登場作品２"))%
+			CASE 2
+				STRING = %CSVCSTR(LCOUNT, GETNUM(CSTR, "登場作品３"))%
+		ENDSELECT
+		IF STRING != ""
+			SIF FINDELEMENTF(作品名, STRING) == -1
+				作品名:FINDELEMENTF(作品名, "") = %STRING%
+			キャラ数:FINDELEMENTF(作品名, STRING)++
+		ENDIF
+	NEXT
+NEXT
+
+PRINTL □作品ごとのキャラ数
+
+FOR LCOUNT, 0, 100
+	SIF !キャラ数:LCOUNT
+		CONTINUE
+	PRINTFORML 　%作品名:LCOUNT, 26%:{キャラ数:LCOUNT}人
+NEXT
+WAIT

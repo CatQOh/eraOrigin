@@ -1,0 +1,1768 @@
+;-------------------------------------------------
+;KX1×X2の子供口上（キャラクターの名前を入れる、下にコンセプトなど一言あれば入れる）
+;
+;-------------------------------------------------
+;eraBEMANI及びeraBEMANI系列専用口上テンプレート
+;KX1を父親のキャラ名に、X2を母親のキャラ名に置換してください
+;そしてコマンド内の適当な条件の下のPRINTFORMWの後に半角スペースを置いてセリフを追加してください
+;口上を追加しないコマンドは無記入でも構いませんが、関数名をKX1×X2に差し戻すなりすれば変にWAIT入るのを防げます
+;エキストラ構文など、コメントアウトされている構文を使う際には、『;』を外してコメントアウトを解除する必要があります
+;最後にread meにも目を通しておくことをお勧めします
+;--------------------------------------------------
+;調教開始時 FEVE:0
+;-------------------------------------------------
+@CHILD_START_KX1×X2
+SIF OPTION:口上表示 == 0
+	RETURN 0
+DRAWLINE
+;初調教時
+IF FEVE:0 == 0
+	PRINTFORMW 
+	FEVE:0 = 1
+;陥落済
+ELSEIF 陥落(TARGET)
+	;陥落後、初の調教
+	IF FEVE:0 <= 1
+		PRINTFORMW 
+		FEVE:0 = 2
+	;2回目以降
+	ELSE
+		PRINTFORMW 
+	ENDIF
+;未陥落
+ELSE
+	PRINTFORMW 
+ENDIF
+
+RETURN 0
+
+;-------------------------------------------------
+;調教終了時
+;-------------------------------------------------
+@CHILD_TURNEND_KX1×X2
+DRAWLINE
+;通常終了時
+IF BASE:体力 >= 500
+	;陥落済み
+	IF 陥落(TARGET)
+		PRINTFORMW 
+	;その他
+	ELSE
+		PRINTFORMW 
+	ENDIF
+;体力500未満での強制終了時
+ELSEIF BASE:体力 < 500
+	;陥落済み
+	IF 陥落(TARGET)
+		PRINTFORMW 
+	;その他
+	ELSE
+		PRINTFORMW 
+	ENDIF
+ENDIF
+
+RETURN 0
+
+;--------------------------------------------------
+;@KOJO_MESSAGE_COM関係
+;コマンド実行時に出力されます
+;--------------------------------------------------
+@CHILD_COM_KX1×X2
+;助手が調教した時に口上をスキップする（好みに応じて使う、行頭の;を消すとスキップするようになる）
+;SIF PLAYER != MASTER
+;	RETURN 0
+
+;地の文表示関数 地の文を表示させたくないコマンドがあれば除外すると良い
+TRYCALLFORM MESSAGE_COM_%SELECTCOMS%
+
+;ボールギャグ着用時には地の文を表示して口上をスキップする
+SIF TEQUIP:ボールギャグ &&  SELECTCOMS != "ボールギャグ"
+	RETURN 0
+SIF OPTION:口上表示 == 0
+	RETURN 0
+
+TRYCALLFORM COM_%SELECTCOMS%_KX1×X2
+
+;-------------------------------------------------
+;@KOJO_MESSAGE_USERCOM
+;調教コマンド以外のコマンド口上
+;-------------------------------------------------
+@KOJO_MESSAGE_USERCOM_KX1×X2, コマンド番号
+#DIM DYNAMIC コマンド番号
+
+;地の文表示関数 地の文を表示させたくない場合はコメントアウト
+;現在は地の文対応してないのでどちらでも
+TRYCALLFORM MESSAGE_USERCOM_{コマンド番号}
+
+TRYCALLFORM USERCOM{コマンド番号}_KX1×X2
+
+;-------------------------------------------------
+;服装の着脱時
+;-------------------------------------------------
+@USERCOM_着脱_KX1×X2
+SELECTCASE TFLAG:服着脱
+	;特殊枠を
+	CASE 0
+		;返した時
+		IF TEQUIP:特殊
+			PRINTFORMW 
+		;奪った時
+		ELSE
+			PRINTFORMW 
+		ENDIF
+	;上半身上着を
+	CASE 1
+		;着せた時
+		IF TEQUIP:特殊
+			PRINTFORMW 
+		;脱がした時
+		ELSE
+			PRINTFORMW 
+		ENDIF
+	;下半身上着を
+	CASE 2
+		;着せた時
+		IF TEQUIP:特殊
+			PRINTFORMW 
+		;脱がした時
+		ELSE
+			PRINTFORMW 
+		ENDIF
+	;全身上着を
+	CASE 3
+		;着せた時
+		IF TEQUIP:特殊
+			PRINTFORMW 
+		;脱がした時
+		ELSE
+			PRINTFORMW 
+		ENDIF
+	;上半身下着を
+	CASE 4
+		;着せた時
+		IF TEQUIP:特殊
+			PRINTFORMW 
+		;脱がした時
+		ELSE
+			PRINTFORMW 
+		ENDIF
+	;下半身下着を
+	CASE 5
+		;着せた時
+		IF TEQUIP:特殊
+			PRINTFORMW 
+		;脱がした時
+		ELSE
+			PRINTFORMW 
+		ENDIF
+	;足元枠を
+	CASE 6
+		;着せた時
+		IF TEQUIP:特殊
+			PRINTFORMW 
+		;脱がした時
+		ELSE
+			PRINTFORMW 
+		ENDIF
+	;全部脱がせた時
+	CASE 10
+		PRINTFORMW 
+	;全部着せた時
+	CASE 11
+		PRINTFORMW 
+ENDSELECT
+
+;-------------------------------------------------
+;調教者が交代した時
+;-------------------------------------------------
+@USERCOM_交代_KX1×X2
+;主人が助手と交代した時
+IF PLAYER == ASSI
+	;陥落済
+	IF 陥落(TARGET)
+		PRINTFORMW 
+	;それ以外
+	ELSE
+		PRINTFORMW 
+	ENDIF
+;助手が主人と交代した時
+ELSEIF PLAYER == MASTER
+	;陥落済
+	IF 陥落(TARGET)
+		PRINTFORMW 
+	;それ以外
+	ELSE
+		PRINTFORMW 
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;@KOJO_MESSAGE_SHOOT
+;調教者の射精をトリガーにした口上
+;-------------------------------------------------
+@CHILD_SHOOT_KX1×X2
+;助手が調教した時に口上をスキップする（好みに応じて使う、行頭の;を消すとスキップするようになる）
+;SIF PLAYER != MASTER
+;	RETURN 0 
+
+;地の文表示関数 地の文を表示させたくない場合はコメントアウト
+TRYCALL SHOOT_MESSAGE
+
+;ボールギャグ着用時にはスキップする
+SIF TEQUIP:ボールギャグ &&  SELECTCOMS != "ボールギャグ"
+	RETURN 0
+SIF OPTION:口上表示 == 0
+	RETURN 0
+
+;-------------------------------------------------
+;調教者の射精時のテキスト
+;どこに射精した、という変数を削除したため、コマンドで分岐するのが確実で安心です
+;分からない場合は既存の口上を参考にするとわかりやすいかもです
+;SELECTCOMS = "実行したコマンド名"
+;-------------------------------------------------
+IF NOWEX:PLAYER:射精
+	;陥落済み
+	IF 陥落(TARGET)
+		PRINTFORMW 
+	;屈服刻印Lv3
+	ELSEIF MARK:屈服刻印 == 3
+		PRINTFORMW 
+	;それ以外
+	ELSE
+		PRINTFORMW 
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;@KOJO_MESSAGE_TSHOOT（X1×X2をキャラ番号に置換）
+;触手の射精をトリガーにした口上
+;-------------------------------------------------
+@KOJO_MESSAGE_TSHOOT_KX1×X2
+;助手が調教した時に口上をスキップする（好みに応じて使う、行頭の;を消すとスキップするようになる）
+;SIF PLAYER != MASTER
+;	RETURN 0 
+
+;地の文表示関数 表示させたくない場合はコメントアウト
+TRYCALL TSHOOT_MESSAGE
+
+;ボールギャグ着用時にはスキップする
+SIF TEQUIP:ボールギャグ &&  SELECTCOMS != "ボールギャグ"
+	RETURN 0
+SIF OPTION:口上表示 == 0
+	RETURN 0
+;-------------------------------------------------
+;触手の射精時のテキスト
+;-------------------------------------------------
+;-------------------------------------------------
+;触手が射精
+;-------------------------------------------------
+IF NOWEX:MASTER:触手射精
+	;陥落済み
+	IF 陥落(TARGET)
+		PRINTFORMW 
+	;屈服刻印Lv3
+	ELSEIF MARK:屈服刻印 == 3
+		PRINTFORMW 
+	;それ以外
+	ELSE
+		PRINTFORMW 
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;@KOJO_MESSAGE_EX関係（X1×X2をキャラ番号に置換）
+;奴隷の絶頂をトリガーにした口上
+;-------------------------------------------------
+@KOJO_MESSAGE_EX_KX1×X2
+;助手が調教した時に口上をスキップする（好みに応じて使う、行頭の;を消すとスキップするようになる）
+;SIF PLAYER != MASTER
+;	RETURN 0 
+
+;地の文表示関数 地の文表示させたくない場合はコメントアウト
+TRYCALL EX_MESSAGE
+
+;ボールギャグ着用時には地の文を表示して口上をスキップする
+SIF TEQUIP:ボールギャグ &&  SELECTCOMS != "ボールギャグ"
+	RETURN 0
+SIF OPTION:口上表示 == 0
+	RETURN 0
+;-------------------------------------------------
+;奴隷の絶頂時のテキスト FEXを使用
+;-------------------------------------------------
+;-------------------------------------------------
+;C絶頂
+;-------------------------------------------------
+IF NOWEX:Ｃ絶頂
+	;初めて
+	IF FEX:0 == 0
+		PRINTFORMW 
+		FEX:0 = 1
+	;二回目以降
+	ELSE
+		PRINTFORMW 
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;V絶頂
+;-------------------------------------------------
+IF NOWEX:Ｖ絶頂
+	;初めて
+	IF FEX:1 == 0
+		PRINTFORMW 
+		FEX:1 = 1
+	;二回目以降
+	ELSE
+		PRINTFORMW 
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;A絶頂
+;-------------------------------------------------
+IF NOWEX:Ａ絶頂
+	;初めて
+	IF FEX:2 == 0
+		PRINTFORMW 
+		FEX:2 = 1
+	;二回目以降
+	ELSE
+		PRINTFORMW 
+	ENDIF
+ENDIF
+
+
+;-------------------------------------------------
+;B絶頂
+;-------------------------------------------------
+IF NOWEX:Ｂ絶頂
+	;初めて
+	IF FEX:3 == 0
+		PRINTFORMW 
+		FEX:3 = 1
+	;二回目以降
+	ELSE
+		PRINTFORMW 
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;噴乳
+;-------------------------------------------------
+;噴乳している
+IF NOWEX:噴乳
+	;陥落済み
+	IF 陥落(TARGET)
+		PRINTFORMW 
+	;屈服刻印Lv3
+	ELSEIF MARK:屈服刻印 == 3
+		PRINTFORMW 
+	;それ以外
+	ELSE
+		PRINTFORMW 
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;射精 大量射精時にはNOWEX:射精に2以上が代入される
+;-------------------------------------------------
+;射精している
+IF NOWEX:射精
+	;陥落済み
+	IF 陥落(TARGET)
+		PRINTFORMW 
+	;屈服刻印Lv3
+	ELSEIF MARK:屈服刻印 == 3
+		PRINTFORMW 
+	;それ以外
+	ELSE
+		PRINTFORMW 
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;潮噴き 調教対象にペニスがある場合のみ
+;-------------------------------------------------
+IF NOWEX:潮噴き
+	;陥落済み
+	IF 陥落(TARGET)
+		PRINTFORMW 
+	;屈服刻印Lv3
+	ELSEIF MARK:屈服刻印 == 3
+		PRINTFORMW 
+	;それ以外
+	ELSE
+		PRINTFORMW 
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;放尿 ふたなりじゃない女性がおもらし癖を持っている、もしくは利尿剤発動時に絶頂で漏らす
+;-------------------------------------------------
+;放尿している
+IF NOWEX:放尿 && (TEQUIP:利尿剤 || TALENT:おもらし癖) && SEX(TARGET) == 2
+	;陥落済み
+	IF 陥落(TARGET)
+		PRINTFORMW 
+	;屈服刻印Lv3
+	ELSEIF MARK:屈服刻印 == 3
+		PRINTFORMW 
+	;それ以外
+	ELSE
+		PRINTFORMW 
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;@KOJO_MESSAGE_AFTER関係（X1×X2をキャラ番号に置換）
+;調教後の変化をトリガーにした口上
+;-------------------------------------------------
+@KOJO_MESSAGE_AFTER_KX1×X2
+;助手が調教した時に口上をスキップする（好みに応じて使う、行頭の;を消すとスキップするようになる）
+;SIF PLAYER != MASTER
+;	RETURN 0 
+
+;地の文表示関数 地の文表示させたくない場合はコメントアウト
+TRYCALL AFTER_MESSAGE
+
+;ボールギャグ着用時にはスキップする
+SIF TEQUIP:ボールギャグ &&  SELECTCOMS != "ボールギャグ"
+	RETURN 0
+SIF OPTION:口上表示 == 0
+	RETURN 0
+;-------------------------------------------------
+;調教後のテキスト
+;-------------------------------------------------
+;-------------------------------------------------
+;処女喪失(処女のみ)
+;-------------------------------------------------
+IF TFLAG:コマンド破瓜
+	;恋慕・親愛かつ主人のセックスによる処女喪失
+	IF TFLAG:恋慕処女
+		PRINTFORMW 
+	;それ以外の時に処女喪失
+	ELSE
+		;陥落済み
+		IF 陥落(TARGET)
+			PRINTFORMW 
+		;屈服刻印Lv3
+		ELSEIF MARK:屈服刻印 == 3
+			PRINTFORMW 
+		;それ以外
+		ELSE
+			PRINTFORMW 
+		ENDIF
+	ENDIF
+ENDIF
+
+;-------------------------------------------------
+;@KOJO_MESSAGE_PALAM関係（X1×X2をキャラ番号に置換）
+;パラメータ変化をトリガーにした口上
+;-------------------------------------------------
+@KOJO_MESSAGE_PALAM_KX1×X2
+;助手が調教した時に口上をスキップする（好みに応じて使う、行頭の;を消すとスキップするようになる）
+;SIF PLAYER != MASTER
+;	RETURN 0 
+
+;地の文表示関数 地の文表示させたくない場合はコメントアウト
+TRYCALL PALAM_MESSAGE
+
+;ボールギャグ着用時にはスキップする
+SIF TEQUIP:ボールギャグ &&  SELECTCOMS != "ボールギャグ"
+	RETURN 0
+SIF OPTION:口上表示 == 0
+	RETURN 0
+;-------------------------------------------------
+;パラメータ変化時のテキスト
+;-------------------------------------------------
+;-------------------------------------------------
+;初めて潤滑がLV4になった
+;-------------------------------------------------
+IF PALAM:潤滑+UP:潤滑 > PALAMLV:4 && FPALAM:0 == 0
+	;ローションを使った場合
+	IF SELECTCOMS == "ローション"
+		PRINTFORMW 
+	;それ以外
+	ELSE
+		PRINTFORMW 
+	ENDIF
+	FPALAM:0 = 1
+ENDIF
+
+;-------------------------------------------------
+;初めて欲情がLV3になった
+;-------------------------------------------------
+IF PALAM:欲情+UP:欲情 > PALAMLV:3 && FPALAM:1 == 0
+	;媚薬を使った場合
+	IF SELECTCOMS == "媚薬"
+		PRINTFORMW 
+	;それ以外
+	ELSE
+		PRINTFORMW 
+	ENDIF
+	FPALAM:1 = 1
+ENDIF
+
+;-------------------------------------------------
+;初めて屈服がLV3になった
+;-------------------------------------------------
+IF PALAM:屈服+UP:屈服 > PALAMLV:3 && FPALAM:2 == 0
+	;陥落済み
+	IF 陥落(TARGET)
+		PRINTFORMW 
+	;それ以外
+	ELSE
+		PRINTFORMW 
+	ENDIF
+	FPALAM:2 = 1
+ENDIF
+
+;-------------------------------------------------
+;初めて恭順がLV3になった
+;-------------------------------------------------
+IF PALAM:恭順+UP:恭順 > PALAMLV:3 && FPALAM:3 == 0
+	;陥落済み
+	IF 陥落(TARGET)
+		PRINTFORMW 
+	;それ以外
+	ELSE
+		PRINTFORMW 
+	ENDIF
+	FPALAM:3 = 1
+ENDIF
+
+;-------------------------------------------------
+;初めて恐怖がLV3になった
+;-------------------------------------------------
+IF PALAM:恐怖+UP:恐怖 > PALAMLV:3 && FPALAM:4 == 0
+	;陥落済み
+	IF 陥落(TARGET)
+		PRINTFORMW 
+	;それ以外
+	ELSE
+		PRINTFORMW 
+	ENDIF
+	FPALAM:4 = 1
+ENDIF
+
+;-------------------------------------------------
+;@KOJO_MESSAGE_MARK関係（X1×X2をキャラ番号に置換）
+;刻印変動をトリガーにした口上
+;刻印変動後に口上を発動します
+;-------------------------------------------------
+@KOJO_MESSAGE_MARK_KX1×X2, 刻印番号
+#DIM DYNAMIC 刻印番号
+;助手が調教した時に口上をスキップする（好みに応じて使う、行頭の;を消すとスキップするようになる）
+;SIF PLAYER != MASTER
+;	RETURN 0 
+
+;地の文表示関数 地の文表示させたくない場合はコメントアウト
+TRYCALLFORM MARK_MESSAGE_{刻印番号}
+
+;ボールギャグ着用時にはスキップする
+SIF TEQUIP:ボールギャグ &&  SELECTCOMS != "ボールギャグ"
+	RETURN 0
+SIF OPTION:口上表示 == 0
+	RETURN 0
+
+TRYCALLFORM MARK{刻印番号}_KX1×X2
+
+;-------------------------------------------------
+;苦痛刻印Lv3
+;-------------------------------------------------
+@MARK1_KX1×X2
+SELECTCASE FALLTYPE(TARGET)
+	;恋慕、親愛
+	CASE 1
+		PRINTFORMW 
+	;淫乱系
+	CASE 2
+		PRINTFORMW 
+	;服従、隷属
+	CASE 3
+		PRINTFORMW 
+	;未陥落
+	CASEELSE
+		PRINTFORMW 
+ENDSELECT
+
+;-------------------------------------------------
+;快楽刻印Lv3 淫乱系はこの刻印の取得が条件
+;-------------------------------------------------
+@MARK2_KX1×X2
+SELECTCASE FALLTYPE(TARGET)
+	;恋慕、親愛
+	CASE 1
+		PRINTFORMW 
+	;服従、隷属
+	CASE 3
+		PRINTFORMW 
+	;未陥落
+	CASEELSE
+		PRINTFORMW 
+ENDSELECT
+
+
+;-------------------------------------------------
+;服従、隷属は屈服刻印Lv3の取得が条件
+;-------------------------------------------------
+
+;-------------------------------------------------
+;快楽による屈服刻印Lv3
+;-------------------------------------------------
+@MARK3_KX1×X2
+SELECTCASE FALLTYPE(TARGET)
+	;恋慕、親愛
+	CASE 1
+		PRINTFORMW 
+	;淫乱系
+	CASE 2
+		PRINTFORMW 
+	;未陥落
+	CASEELSE
+		PRINTFORMW 
+ENDSELECT
+
+;-------------------------------------------------
+;苦痛、恐怖による屈服刻印Lv3
+;-------------------------------------------------
+@MARK4_KX1×X2
+SELECTCASE FALLTYPE(TARGET)
+	;恋慕、親愛
+	CASE 1
+		PRINTFORMW 
+	;淫乱系
+	CASE 2
+		PRINTFORMW 
+	;未陥落
+	CASEELSE
+		PRINTFORMW 
+ENDSELECT
+
+;-------------------------------------------------
+;屈服、恭順による屈服刻印Lv3
+;-------------------------------------------------
+@MARK5_KX1×X2
+SELECTCASE FALLTYPE(TARGET)
+	;恋慕、親愛
+	CASE 1
+		PRINTFORMW 
+	;淫乱系
+	CASE 2
+		PRINTFORMW 
+	;未陥落
+	CASEELSE
+		PRINTFORMW 
+ENDSELECT
+
+;-------------------------------------------------
+;反発刻印Lv3
+;-------------------------------------------------
+@MARK10_KX1×X2
+SELECTCASE FALLTYPE(TARGET)
+	;恋慕、親愛
+	CASE 1
+		PRINTFORMW 
+	;淫乱系
+	CASE 2
+		PRINTFORMW 
+	;服従、隷属
+	CASE 3
+		PRINTFORMW 
+	;未陥落
+	CASEELSE
+		PRINTFORMW 
+ENDSELECT
+
+;-------------------------------------------------
+;イベント口上集（X1×X2をキャラ番号に置換する） FEVEを使用
+;-------------------------------------------------
+@KOJO_EVENT_KX1×X2, イベント名
+#DIMS DYNAMIC イベント名
+;-------------------------------------------------
+;地の文呼び出し及び口上表示設定確認
+;-------------------------------------------------
+;地の文表示関数 地の文表示させたくない場合はコメントアウト
+TRYCALLFORM EVENT_MESSAGE_%イベント名%
+
+SIF OPTION:口上表示 == 0
+	RETURN 0
+
+TRYCALLFORM EVENT_%イベント名%_KX1×X2
+
+;-------------------------------------------------
+;朝フェラ 陥落していないと発生しない
+;-------------------------------------------------
+@EVENT_朝フェラ_KX1×X2
+SELECTCASE FALLTYPE(TARGET)
+	;恋慕、親愛
+	CASE 1
+		PRINTFORMW 
+	;淫乱系
+	CASE 2
+		PRINTFORMW 
+	;服従、隷属
+	CASE 3
+		PRINTFORMW 
+ENDSELECT
+
+;-------------------------------------------------
+;朝パイズリ 陥落していないと発生しない
+;-------------------------------------------------
+@EVENT_朝パイズリ_KX1×X2
+SELECTCASE FALLTYPE(TARGET)
+	;恋慕、親愛
+	CASE 1
+		PRINTFORMW 
+	;淫乱系
+	CASE 2
+		PRINTFORMW 
+	;服従、隷属
+	CASE 3
+		PRINTFORMW 
+ENDSELECT
+
+;-------------------------------------------------
+;朝騎乗位 陥落していないと発生しない
+;-------------------------------------------------
+@EVENT_朝騎乗位_KX1×X2
+SELECTCASE FALLTYPE(TARGET)
+	;恋慕、親愛
+	CASE 1
+		PRINTFORMW 
+	;淫乱系
+	CASE 2
+		PRINTFORMW 
+	;服従、隷属
+	CASE 3
+		PRINTFORMW 
+ENDSELECT
+
+;-------------------------------------------------
+;調教後3P 陥落していないと発生しない
+;-------------------------------------------------
+@EVENT_調教後3P_KX1×X2
+SELECTCASE FALLTYPE(TARGET)
+	;恋慕、親愛
+	CASE 1
+		PRINTFORMW 
+	;淫乱系
+	CASE 2
+		PRINTFORMW 
+	;服従、隷属
+	CASE 3
+		PRINTFORMW 
+ENDSELECT
+
+;-------------------------------------------------
+;調教後セックス 陥落していないと発生しない
+;-------------------------------------------------
+@EVENT_調教後セックス_KX1×X2
+;男同士でＡ感覚が足りない、もしくは奴隷が妊娠してるか処女なら口淫や手淫のソフトなプレイに
+IF (SEX(TARGET) == 1 && SEX(MASTER) == 1 && ABL:Ａ感覚 <= 3) || (SEX(TARGET) == 2 && (TALENT:妊娠 || TALENT:処女 || TALENT:再生処女))
+	SELECTCASE FALLTYPE(TARGET)
+		;恋慕、親愛
+		CASE 1
+			PRINTFORMW 
+		;淫乱系
+		CASE 2
+			PRINTFORMW 
+		;服従、隷属
+		CASE 3
+			PRINTFORMW 
+	ENDSELECT
+ELSE
+	SELECTCASE FALLTYPE(TARGET)
+		;恋慕、親愛
+		CASE 1
+			PRINTFORMW 
+		;淫乱系
+		CASE 2
+			PRINTFORMW 
+		;服従、隷属
+		CASE 3
+			PRINTFORMW 
+	ENDSELECT
+ENDIF
+
+;-------------------------------------------------
+;強精神薬の反動
+;-------------------------------------------------
+@EVENT_強精神薬の反動_KX1×X2
+SELECTCASE FALLTYPE(TARGET)
+	;恋慕、親愛
+	CASE 1
+		PRINTFORMW 
+	;淫乱系
+	CASE 2
+		PRINTFORMW 
+	;服従、隷属
+	CASE 3
+		PRINTFORMW 
+	;未陥落
+	CASEELSE
+		PRINTFORMW 
+ENDSELECT
+
+;-------------------------------------------------
+;調教後搾乳
+;-------------------------------------------------
+@EVENT_調教後搾乳_KX1×X2
+SELECTCASE FALLTYPE(TARGET)
+	;恋慕、親愛
+	CASE 1
+		PRINTFORMW 
+	;淫乱系
+	CASE 2
+		PRINTFORMW 
+	;服従、隷属
+	CASE 3
+		PRINTFORMW 
+	;未陥落
+	CASEELSE
+		PRINTFORMW 
+ENDSELECT
+
+;-------------------------------------------------
+;調教後自慰
+;-------------------------------------------------
+@EVENT_調教後自慰_KX1×X2
+SELECTCASE FALLTYPE(TARGET)
+	;恋慕、親愛
+	CASE 1
+		PRINTFORMW 
+	;淫乱系
+	CASE 2
+		PRINTFORMW 
+	;服従、隷属
+	CASE 3
+		PRINTFORMW 
+	;未陥落
+	CASEELSE
+		PRINTFORMW 
+ENDSELECT
+
+;-------------------------------------------------
+;調教後夜這い 陥落していないと発生しない
+;-------------------------------------------------
+@EVENT_調教後夜這い_KX1×X2
+;対象が男or対象が処女or主人にペニスが無いor射精残数が無いor体力500未満なら添い寝イベント
+IF SEX(TARGET) == 1 || TALENT:処女 || TALENT:再生処女 || !PENIS(MASTER) || !CFLAG:MASTER:残数 || BASE:体力 < 500
+	SELECTCASE FALLTYPE(TARGET)
+		;恋慕、親愛
+		CASE 1
+			PRINTFORMW 
+		;淫乱系
+		CASE 2
+			PRINTFORMW 
+		;服従、隷属
+		CASE 3
+			PRINTFORMW 
+	ENDSELECT
+ELSE
+	SELECTCASE FALLTYPE(TARGET)
+		;恋慕、親愛
+		CASE 1
+			PRINTFORMW 
+		;淫乱系
+		CASE 2
+			PRINTFORMW 
+		;服従、隷属
+		CASE 3
+			PRINTFORMW 
+	ENDSELECT
+ENDIF
+
+;-------------------------------------------------
+;産卵アイテム使用時
+;-------------------------------------------------
+@EVENT10_KX1×X2
+SELECTCASE FALLTYPE(TARGET)
+	;恋慕、親愛
+	CASE 1
+		PRINTFORMW 
+	;淫乱系
+	CASE 2
+		PRINTFORMW 
+	;服従、隷属
+	CASE 3
+		PRINTFORMW 
+	;未陥落
+	CASEELSE
+		PRINTFORMW 
+ENDSELECT
+
+;-------------------------------------------------
+;妊娠発覚時
+;-------------------------------------------------
+@EVENT_妊娠発覚時_KX1×X2
+SELECTCASE FALLTYPE(TARGET)
+	;恋慕、親愛
+	CASE 1
+		PRINTFORMW 
+	;淫乱系
+	CASE 2
+		PRINTFORMW 
+	;服従、隷属
+	CASE 3
+		PRINTFORMW 
+	;未陥落
+	CASEELSE
+		PRINTFORMW 
+ENDSELECT
+
+;-------------------------------------------------
+;出産時
+;-------------------------------------------------
+@EVENT_出産時_KX1×X2
+SELECTCASE FALLTYPE(TARGET)
+	;恋慕、親愛
+	CASE 1
+		PRINTFORMW 
+	;淫乱系
+	CASE 2
+		PRINTFORMW 
+	;服従、隷属
+	CASE 3
+		PRINTFORMW 
+	;未陥落
+	CASEELSE
+		PRINTFORMW 
+ENDSELECT
+
+;-------------------------------------------------
+;育児室
+;-------------------------------------------------
+@EVENT_育児室_KX1×X2
+SELECTCASE FALLTYPE(TARGET)
+	;恋慕、親愛
+	CASE 1
+		PRINTFORMW 
+	;淫乱系
+	CASE 2
+		PRINTFORMW 
+	;服従、隷属
+	CASE 3
+		PRINTFORMW 
+	;未陥落
+	CASEELSE
+		PRINTFORMW 
+ENDSELECT
+
+;-------------------------------------------------
+;子供が親離れ時
+;-------------------------------------------------
+@EVENT_親離れ_KX1×X2
+SELECTCASE FALLTYPE(TARGET)
+	;恋慕、親愛
+	CASE 1
+		PRINTFORMW 
+	;淫乱系
+	CASE 2
+		PRINTFORMW 
+	;服従、隷属
+	CASE 3
+		PRINTFORMW 
+	;未陥落
+	CASEELSE
+		PRINTFORMW 
+ENDSELECT
+
+;-------------------------------------------------
+;売却時
+;-------------------------------------------------
+@EVENT_売却時_KX1×X2
+SELECTCASE FALLTYPE(TARGET)
+	;恋慕、親愛
+	CASE 1
+		PRINTFORMW 
+	;淫乱系
+	CASE 2
+		PRINTFORMW 
+	;服従、隷属
+	CASE 3
+		PRINTFORMW 
+	;未陥落
+	CASEELSE
+		PRINTFORMW 
+ENDSELECT
+
+;-------------------------------------------------
+;ビデオ売却時
+;-------------------------------------------------
+@EVENT_ビデオ売却時_KX1×X2
+SELECTCASE FALLTYPE(TARGET)
+	;恋慕、親愛
+	CASE 1
+		PRINTFORMW 
+	;淫乱系
+	CASE 2
+		PRINTFORMW 
+	;服従、隷属
+	CASE 3
+		PRINTFORMW 
+	;未陥落
+	CASEELSE
+		PRINTFORMW 
+ENDSELECT
+
+;-------------------------------------------------
+;写真売却時
+;-------------------------------------------------
+@EVENT_写真売却時_KX1×X2
+SELECTCASE FALLTYPE(TARGET)
+	;恋慕、親愛
+	CASE 1
+		PRINTFORMW 
+	;淫乱系
+	CASE 2
+		PRINTFORMW 
+	;服従、隷属
+	CASE 3
+		PRINTFORMW 
+	;未陥落
+	CASEELSE
+		PRINTFORMW 
+ENDSELECT
+
+;-------------------------------------------------
+;ビデオ保管時 撮影したビデオを保存した時
+;-------------------------------------------------
+@EVENT_ビデオ保管時_KX1×X2
+SELECTCASE FALLTYPE(TARGET)
+	;恋慕、親愛
+	CASE 1
+		PRINTFORMW 
+	;淫乱系
+	CASE 2
+		PRINTFORMW 
+	;服従、隷属
+	CASE 3
+		PRINTFORMW 
+	;未陥落
+	CASEELSE
+		PRINTFORMW 
+ENDSELECT
+
+;-------------------------------------------------
+;調教対象に選んだ時
+;-------------------------------------------------
+@EVENT_調教対象指定_KX1×X2
+SELECTCASE FALLTYPE(TARGET)
+	;恋慕、親愛
+	CASE 1
+		PRINTFORMW 
+	;淫乱系
+	CASE 2
+		PRINTFORMW 
+	;服従、隷属
+	CASE 3
+		PRINTFORMW 
+	;未陥落
+	CASEELSE
+		PRINTFORMW 
+ENDSELECT
+
+;-------------------------------------------------
+;助手に選んだ時
+;-------------------------------------------------
+@EVENT_助手指定_KX1×X2
+SELECTCASE FALLTYPE(TARGET)
+	;恋慕、親愛
+	CASE 1
+		PRINTFORMW 
+	;淫乱系
+	CASE 2
+		PRINTFORMW 
+	;服従、隷属
+	CASE 3
+		PRINTFORMW 
+	;未陥落
+	CASEELSE
+		PRINTFORMW 
+ENDSELECT
+
+;-------------------------------------------------
+;主人による吸血イベント 貞操守ってるなら吸血鬼に、そうでなければゾンビになる
+;ちなみにTARGETが人間じゃないと発生しない
+;-------------------------------------------------
+@EVENT_主人吸血_KX1×X2
+SELECTCASE FALLTYPE(TARGET)
+	;恋慕、親愛
+	CASE 1
+		PRINTFORMW 
+	;淫乱系
+	CASE 2
+		PRINTFORMW 
+	;服従、隷属
+	CASE 3
+		PRINTFORMW 
+	;未陥落
+	CASEELSE
+		PRINTFORMW 
+ENDSELECT
+
+;-------------------------------------------------
+;助手による吸血イベント 条件は同上
+;-------------------------------------------------
+@EVENT_助手吸血_KX1×X2
+SELECTCASE FALLTYPE(TARGET)
+	;恋慕、親愛
+	CASE 1
+		PRINTFORMW 
+	;淫乱系
+	CASE 2
+		PRINTFORMW 
+	;服従、隷属
+	CASE 3
+		PRINTFORMW 
+	;未陥落
+	CASEELSE
+		PRINTFORMW 
+ENDSELECT
+
+;-------------------------------------------------
+;[恋慕]取得時
+;-------------------------------------------------
+@EVENT_恋慕_KX1×X2
+PRINTFORMW 
+
+;-------------------------------------------------
+;[淫乱]取得時
+;-------------------------------------------------
+@EVENT_淫乱_KX1×X2
+PRINTFORMW 
+
+;-------------------------------------------------
+;[服従]取得時
+;-------------------------------------------------
+@EVENT_服従_KX1×X2
+PRINTFORMW 
+
+;-------------------------------------------------
+;[親愛]取得時 取得するときは必ず[恋慕]持ち
+;-------------------------------------------------
+@EVENT_親愛_KX1×X2
+PRINTFORMW 
+
+;-------------------------------------------------
+;[淫魔]取得時 取得するときは必ず[淫乱]持ち
+;-------------------------------------------------
+@EVENT_淫魔_KX1×X2
+PRINTFORMW 
+
+;-------------------------------------------------
+;[隷属]取得時 取得するときは必ず[服従]持ち
+;-------------------------------------------------
+@EVENT_隷属_KX1×X2
+PRINTFORMW 
+
+;-------------------------------------------------
+;[自慰狂い]取得時
+;-------------------------------------------------
+@EVENT_自慰狂い_KX1×X2
+SELECTCASE FALLTYPE(TARGET)
+	;恋慕、親愛
+	CASE 1
+		PRINTFORMW 
+	;淫乱系
+	CASE 2
+		PRINTFORMW 
+	;服従、隷属
+	CASE 3
+		PRINTFORMW 
+	;未陥落
+	CASEELSE
+		PRINTFORMW 
+ENDSELECT
+
+;-------------------------------------------------
+;[セックス狂]取得時
+;-------------------------------------------------
+@EVENT_セックス狂_KX1×X2
+SELECTCASE FALLTYPE(TARGET)
+	;恋慕、親愛
+	CASE 1
+		PRINTFORMW 
+	;淫乱系
+	CASE 2
+		PRINTFORMW 
+	;服従、隷属
+	CASE 3
+		PRINTFORMW 
+	;未陥落
+	CASEELSE
+		PRINTFORMW 
+ENDSELECT
+
+;-------------------------------------------------
+;[尻穴狂い]取得時
+;-------------------------------------------------
+@EVENT_尻穴狂い_KX1×X2
+SELECTCASE FALLTYPE(TARGET)
+	;恋慕、親愛
+	CASE 1
+		PRINTFORMW 
+	;淫乱系
+	CASE 2
+		PRINTFORMW 
+	;服従、隷属
+	CASE 3
+		PRINTFORMW 
+	;未陥落
+	CASEELSE
+		PRINTFORMW 
+ENDSELECT
+
+;-------------------------------------------------
+;[淫乳]取得時
+;-------------------------------------------------
+@EVENT_淫乳_KX1×X2
+SELECTCASE FALLTYPE(TARGET)
+	;恋慕、親愛
+	CASE 1
+		PRINTFORMW 
+	;淫乱系
+	CASE 2
+		PRINTFORMW 
+	;服従、隷属
+	CASE 3
+		PRINTFORMW 
+	;未陥落
+	CASEELSE
+		PRINTFORMW 
+ENDSELECT
+
+;-------------------------------------------------
+;[絶倫]取得時
+;-------------------------------------------------
+@EVENT_絶倫_KX1×X2
+SELECTCASE FALLTYPE(TARGET)
+	;恋慕、親愛
+	CASE 1
+		PRINTFORMW 
+	;淫乱系
+	CASE 2
+		PRINTFORMW 
+	;服従、隷属
+	CASE 3
+		PRINTFORMW 
+	;未陥落
+	CASEELSE
+		PRINTFORMW 
+ENDSELECT
+
+;-------------------------------------------------
+;[サド]取得時
+;-------------------------------------------------
+@EVENT_サド_KX1×X2
+SELECTCASE FALLTYPE(TARGET)
+	;恋慕、親愛
+	CASE 1
+		PRINTFORMW 
+	;淫乱系
+	CASE 2
+		PRINTFORMW 
+	;服従、隷属
+	CASE 3
+		PRINTFORMW 
+	;未陥落
+	CASEELSE
+		PRINTFORMW 
+ENDSELECT
+
+;-------------------------------------------------
+;[マゾ]取得時
+;-------------------------------------------------
+@EVENT_マゾ_KX1×X2
+SELECTCASE FALLTYPE(TARGET)
+	;恋慕、親愛
+	CASE 1
+		PRINTFORMW 
+	;淫乱系
+	CASE 2
+		PRINTFORMW 
+	;服従、隷属
+	CASE 3
+		PRINTFORMW 
+	;未陥落
+	CASEELSE
+		PRINTFORMW 
+ENDSELECT
+
+;-------------------------------------------------
+;流産時 流産した調教が終了した後に表示 つまり事後
+;-------------------------------------------------
+@EVENT_流産_KX1×X2
+SELECTCASE FALLTYPE(TARGET)
+	;恋慕、親愛
+	CASE 1
+		PRINTFORMW 
+	;淫乱系
+	CASE 2
+		PRINTFORMW 
+	;服従、隷属
+	CASE 3
+		PRINTFORMW 
+	;未陥落
+	CASEELSE
+		PRINTFORMW 
+ENDSELECT
+
+;-------------------------------------------------
+;[おもらし癖]取得時
+;-------------------------------------------------
+@EVENT_おもらし癖_KX1×X2
+SELECTCASE FALLTYPE(TARGET)
+	;恋慕、親愛
+	CASE 1
+		PRINTFORMW 
+	;淫乱系
+	CASE 2
+		PRINTFORMW 
+	;服従、隷属
+	CASE 3
+		PRINTFORMW 
+	;未陥落
+	CASEELSE
+		PRINTFORMW 
+ENDSELECT
+
+;-------------------------------------------------
+;幼児退行時
+;-------------------------------------------------
+@EVENT_幼児退行_KX1×X2
+SELECTCASE FALLTYPE(TARGET)
+	;恋慕、親愛
+	CASE 1
+		PRINTFORMW 
+	;淫乱系
+	CASE 2
+		PRINTFORMW 
+	;服従、隷属
+	CASE 3
+		PRINTFORMW 
+	;未陥落
+	CASEELSE
+		PRINTFORMW 
+ENDSELECT
+
+;-------------------------------------------------
+;調合知識伝授イベント
+;-------------------------------------------------
+@EVENT_調合知識伝授_KX1×X2
+SELECTCASE FALLTYPE(TARGET)
+	;恋慕、親愛
+	CASE 1
+		PRINTFORMW 
+	;淫乱系
+	CASE 2
+		PRINTFORMW 
+	;服従、隷属
+	CASE 3
+		PRINTFORMW 
+	;未陥落
+	CASEELSE
+		PRINTFORMW 
+ENDSELECT
+
+;-------------------------------------------------
+;料理を振る舞うイベント
+;TFLAG:料理にABL上昇前の料理レベルを記録 0の場合は-1になる
+;-------------------------------------------------
+@EVENT_料理_KX1×X2
+SELECTCASE FALLTYPE(TARGET)
+	;恋慕、親愛
+	CASE 1
+		PRINTFORMW 
+	;淫乱系
+	CASE 2
+		PRINTFORMW 
+	;服従、隷属
+	CASE 3
+		PRINTFORMW 
+	;未陥落
+	CASEELSE
+		PRINTFORMW 
+ENDSELECT
+
+;-------------------------------------------------
+;お菓子を振る舞うイベント
+;TFLAG:お菓子にABL上昇前の料理レベルを記録 0の場合は-1になる
+;-------------------------------------------------
+@EVENT_お菓子_KX1×X2
+SELECTCASE FALLTYPE(TARGET)
+	;恋慕、親愛
+	CASE 1
+		PRINTFORMW 
+	;淫乱系
+	CASE 2
+		PRINTFORMW 
+	;服従、隷属
+	CASE 3
+		PRINTFORMW 
+	;未陥落
+	CASEELSE
+		PRINTFORMW 
+ENDSELECT
+
+;-------------------------------------------------
+;体力回復薬使用時
+;-------------------------------------------------
+@EVENT_怪しげな栄養剤_KX1×X2
+SELECTCASE FALLTYPE(TARGET)
+	;恋慕、親愛
+	CASE 1
+		PRINTFORMW 
+	;淫乱系
+	CASE 2
+		PRINTFORMW 
+	;服従、隷属
+	CASE 3
+		PRINTFORMW 
+	;未陥落
+	CASEELSE
+		PRINTFORMW 
+ENDSELECT
+
+;-------------------------------------------------
+;ふたなり薬使用時
+;-------------------------------------------------
+@EVENT_ふたなり薬_KX1×X2
+SELECTCASE FALLTYPE(TARGET)
+	;恋慕、親愛
+	CASE 1
+		PRINTFORMW 
+	;淫乱系
+	CASE 2
+		PRINTFORMW 
+	;服従、隷属
+	CASE 3
+		PRINTFORMW 
+	;未陥落
+	CASEELSE
+		PRINTFORMW 
+ENDSELECT
+
+;-------------------------------------------------
+;ふたなり消去薬使用時
+;-------------------------------------------------
+@EVENT_ふたなり消去薬_KX1×X2
+SELECTCASE FALLTYPE(TARGET)
+	;恋慕、親愛
+	CASE 1
+		PRINTFORMW 
+	;淫乱系
+	CASE 2
+		PRINTFORMW 
+	;服従、隷属
+	CASE 3
+		PRINTFORMW 
+	;未陥落
+	CASEELSE
+		PRINTFORMW 
+ENDSELECT
+
+;-------------------------------------------------
+;母乳体質にする薬使用時
+;-------------------------------------------------
+@EVENT_天使のミルク_KX1×X2
+SELECTCASE FALLTYPE(TARGET)
+	;恋慕、親愛
+	CASE 1
+		PRINTFORMW 
+	;淫乱系
+	CASE 2
+		PRINTFORMW 
+	;服従、隷属
+	CASE 3
+		PRINTFORMW 
+	;未陥落
+	CASEELSE
+		PRINTFORMW 
+ENDSELECT
+
+;-------------------------------------------------
+;処女膜再生時
+;-------------------------------------------------
+@EVENT_ユニコーンテイル_KX1×X2
+SELECTCASE FALLTYPE(TARGET)
+	;恋慕、親愛
+	CASE 1
+		PRINTFORMW 
+	;淫乱系
+	CASE 2
+		PRINTFORMW 
+	;服従、隷属
+	CASE 3
+		PRINTFORMW 
+	;未陥落
+	CASEELSE
+		PRINTFORMW 
+ENDSELECT
+
+;-------------------------------------------------
+;豊乳化
+;-------------------------------------------------
+@EVENT_豊胸剤_KX1×X2
+SELECTCASE FALLTYPE(TARGET)
+	;恋慕、親愛
+	CASE 1
+		PRINTFORMW 
+	;淫乱系
+	CASE 2
+		PRINTFORMW 
+	;服従、隷属
+	CASE 3
+		PRINTFORMW 
+	;未陥落
+	CASEELSE
+		PRINTFORMW 
+ENDSELECT
+
+;-------------------------------------------------
+;縮乳化
+;-------------------------------------------------
+@EVENT_縮胸剤_KX1×X2
+SELECTCASE FALLTYPE(TARGET)
+	;恋慕、親愛
+	CASE 1
+		PRINTFORMW 
+	;淫乱系
+	CASE 2
+		PRINTFORMW 
+	;服従、隷属
+	CASE 3
+		PRINTFORMW 
+	;未陥落
+	CASEELSE
+		PRINTFORMW 
+ENDSELECT
+
+;-------------------------------------------------
+;母乳体質治療時
+;-------------------------------------------------
+@EVENT_止乳剤_KX1×X2
+SELECTCASE FALLTYPE(TARGET)
+	;恋慕、親愛
+	CASE 1
+		PRINTFORMW 
+	;淫乱系
+	CASE 2
+		PRINTFORMW 
+	;服従、隷属
+	CASE 3
+		PRINTFORMW 
+	;未陥落
+	CASEELSE
+		PRINTFORMW 
+ENDSELECT
+
+;-------------------------------------------------
+;おもらし癖治療時
+;-------------------------------------------------
+@EVENT_夜尿症改善薬_KX1×X2
+SELECTCASE FALLTYPE(TARGET)
+	;恋慕、親愛
+	CASE 1
+		PRINTFORMW 
+	;淫乱系
+	CASE 2
+		PRINTFORMW 
+	;服従、隷属
+	CASE 3
+		PRINTFORMW 
+	;未陥落
+	CASEELSE
+		PRINTFORMW 
+ENDSELECT
+
+;-------------------------------------------------
+;ゾンビ化時
+;-------------------------------------------------
+@EVENT_ゾンビパウダー_KX1×X2
+SELECTCASE FALLTYPE(TARGET)
+	;恋慕、親愛
+	CASE 1
+		PRINTFORMW 
+	;淫乱系
+	CASE 2
+		PRINTFORMW 
+	;服従、隷属
+	CASE 3
+		PRINTFORMW 
+	;未陥落
+	CASEELSE
+		PRINTFORMW 
+ENDSELECT
+
+;-------------------------------------------------
+;ゾンビ治療時
+;-------------------------------------------------
+@EVENT_聖水_KX1×X2
+SELECTCASE FALLTYPE(TARGET)
+	;恋慕、親愛
+	CASE 1
+		PRINTFORMW 
+	;淫乱系
+	CASE 2
+		PRINTFORMW 
+	;服従、隷属
+	CASE 3
+		PRINTFORMW 
+	;未陥落
+	CASEELSE
+		PRINTFORMW 
+ENDSELECT
+
+;-------------------------------------------------
+;性転換時
+;-------------------------------------------------
+@EVENT_性転換薬_KX1×X2
+SELECTCASE FALLTYPE(TARGET)
+	;恋慕、親愛
+	CASE 1
+		PRINTFORMW 
+	;淫乱系
+	CASE 2
+		PRINTFORMW 
+	;服従、隷属
+	CASE 3
+		PRINTFORMW 
+	;未陥落
+	CASEELSE
+		PRINTFORMW 
+ENDSELECT
+
+;-------------------------------------------------
+;ロリ化、大人化時
+;-------------------------------------------------
+@EVENT_時の砂時計_KX1×X2
+;大人化
+IF TALENT:体格 <= 2
+	SELECTCASE FALLTYPE(TARGET)
+		;恋慕、親愛
+		CASE 1
+			PRINTFORMW 
+		;淫乱系
+		CASE 2
+			PRINTFORMW 
+		;服従、隷属
+		CASE 3
+			PRINTFORMW 
+		;未陥落
+		CASEELSE
+			PRINTFORMW 
+	ENDSELECT
+;子供化
+ELSE
+	SELECTCASE FALLTYPE(TARGET)
+		;恋慕、親愛
+		CASE 1
+			PRINTFORMW 
+		;淫乱系
+		CASE 2
+			PRINTFORMW 
+		;服従、隷属
+		CASE 3
+			PRINTFORMW 
+		;未陥落
+		CASEELSE
+			PRINTFORMW 
+	ENDSELECT
+ENDIF
+
+;-------------------------------------------------
+;おもらし癖付加時
+;-------------------------------------------------
+@EVENT_永続的利尿剤_KX1×X2
+SELECTCASE FALLTYPE(TARGET)
+	;恋慕、親愛
+	CASE 1
+		PRINTFORMW 
+	;淫乱系
+	CASE 2
+		PRINTFORMW 
+	;服従、隷属
+	CASE 3
+		PRINTFORMW 
+	;未陥落
+	CASEELSE
+		PRINTFORMW 
+ENDSELECT
+
+;-------------------------------------------------
+;ビースティースターター使用時 ケモミミと尻尾が生える どの動物のものかは想像におまかせ
+;-------------------------------------------------
+@EVENT_ビースティースターター_KX1×X2
+SELECTCASE FALLTYPE(TARGET)
+	;恋慕、親愛
+	CASE 1
+		PRINTFORMW 
+	;淫乱系
+	CASE 2
+		PRINTFORMW 
+	;服従、隷属
+	CASE 3
+		PRINTFORMW 
+	;未陥落
+	CASEELSE
+		PRINTFORMW 
+ENDSELECT
+
+;-------------------------------------------------
+;魔剤使用時
+;-------------------------------------------------
+@EVENT_魔剤_KX1×X2
+SELECTCASE FALLTYPE(TARGET)
+	;恋慕、親愛
+	CASE 1
+		PRINTFORMW 
+	;淫乱系
+	CASE 2
+		PRINTFORMW 
+	;服従、隷属
+	CASE 3
+		PRINTFORMW 
+	;未陥落
+	CASEELSE
+		PRINTFORMW 
+ENDSELECT
+
+;-------------------------------------------------
+;排卵誘発剤使用時
+;-------------------------------------------------
+@EVENT_排卵誘発剤_KX1×X2
+SELECTCASE FALLTYPE(TARGET)
+	;恋慕、親愛
+	CASE 1
+		PRINTFORMW 
+	;淫乱系
+	CASE 2
+		PRINTFORMW 
+	;服従、隷属
+	CASE 3
+		PRINTFORMW 
+	;未陥落
+	CASEELSE
+		PRINTFORMW 
+ENDSELECT
+
+;-------------------------------------------------
+;コマンドを拒否した時
+;-------------------------------------------------
+@EVENT_コマンド拒否時_KX1×X2
+SELECTCASE FALLTYPE(TARGET)
+	;恋慕、親愛
+	CASE 1
+		PRINTFORMW 
+	;淫乱系
+	CASE 2
+		PRINTFORMW 
+	;服従、隷属
+	CASE 3
+		PRINTFORMW 
+	;未陥落
+	CASEELSE
+		PRINTFORMW 
+ENDSELECT

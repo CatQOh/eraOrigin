@@ -1,0 +1,127 @@
+﻿@ABL_CHECK_欲望
+SELECTCASE ABL:欲望
+	CASE 0
+		ABLUP:欲情 = 1
+	CASE 1
+		ABLUP:欲情 = 20
+	CASE 2
+		ABLUP:欲情 = 1000
+	CASE 3
+		ABLUP:欲情 = 8000
+	CASE 4
+		ABLUP:欲情 = 24000
+	CASE 5
+		ABLUP:欲情 = 30000
+	CASE 6
+		ABLUP:欲情 = 36000
+	CASE 7
+		ABLUP:欲情 = 45000
+	CASE 8
+		ABLUP:欲情 = 55000
+	CASE 9
+		ABLUP:欲情 = 70000
+	CASE IS >= 10
+		ABLUP:欲情 = 800 * POWER(ABL:欲望, 2)
+ENDSELECT
+
+;LV4からは異常経験もしくは快楽刻印LV3必要 LV7からは異常経験3以上必要（陥落済みもしくは[快感に素直]なら無視できる）
+IF !陥落(TARGET) && !TALENT:快感に素直
+	IF ABL:欲望 >= 7
+		ABLUPEXP:異常経験 = 3
+	ELSEIF ABL:欲望 >= 4
+		ABLUPEXP:異常経験 = 1
+	ENDIF
+ENDIF
+
+;素質での補正
+;淫乱
+SIF TALENT:淫乱
+	TIMES ABLUP:欲情 , 0.70
+;淫魔
+SIF TALENT:淫魔
+	TIMES ABLUP:欲情 , 0.50
+;快感に素直
+SIF TALENT:快感に素直
+	TIMES ABLUP:欲情 , 0.70
+;感情乏しい、無関心
+SIF TALENT:感情乏しい || TALENT:無関心
+	TIMES ABLUP:欲情 , 1.30
+;快感の否定
+SIF TALENT:快感の否定
+	TIMES ABLUP:欲情 , 2.00
+;ツンデレ
+SIF TALENT:ツンデレ
+	TIMES ABLUP:欲情 , 0.80
+;サドマゾ
+SIF TALENT:サド || TALENT:マゾ
+	TIMES ABLUP:欲情 , 0.90
+;去勢済み
+SIF TALENT:去勢済み
+	TIMES ABLUP:欲情 , 2.00
+;快楽刻印 1ごとに10%引き 最大30%オフ！
+ABLUP:欲情 -= ABLUP:欲情/10*MARK:快楽刻印
+
+;@CHECK_JUEL_欲望
+SELECTCASE ABL:欲望
+	CASE 4
+		;異常経験もしくは快楽刻印LV3必要
+		SIF EXP:異常経験 < ABLUPEXP:異常経験 && MARK:快楽刻印 < 3
+			RETURN 0
+	CASE 7
+		;異常経験が規定値に満たないと上昇できない
+		SIF EXP:異常経験 < ABLUPEXP:異常経験
+			RETURN 0
+ENDSELECT
+
+;LV3からは快楽刻印LV1必要 LV5からは快楽刻印LV2必要 LV7からは快楽刻印LV3必要
+IF ABL:欲望 >= 7 && MARK:快楽刻印 < 3
+	RETURN 0
+ELSEIF ABL:欲望 >= 5 && MARK:快楽刻印 < 2
+	RETURN 0
+ELSEIF ABL:欲望 >= 3 && MARK:快楽刻印 < 1
+	RETURN 0
+ENDIF
+
+;欲情の珠が必要
+SIF JUEL:欲情 >= ABLUP:欲情
+	RETURN 1
+
+;上記の条件を満たせなかったら上げられない
+RETURN 0
+
+@ABLUP_MESSAGE_欲望
+;LV4からは異常経験必要 LV7からは異常経験3以上必要（陥落済みもしくは[快感に素直]なら無視できる）
+SELECTCASE ABL:欲望
+	CASE 4
+		SIF EXP:異常経験 == 0 && MARK:快楽刻印 < 3
+			SETCOLORBYNAME gray
+		SIF ABLUPEXP:異常経験
+			PRINT [異常経験1以上or快楽刻印LV3]
+		RESETCOLOR
+	CASE 7
+		SIF EXP:異常経験 < ABLUPEXP:異常経験
+			SETCOLORBYNAME gray
+		SIF ABLUPEXP:異常経験
+			PRINT [異常経験3以上]
+		RESETCOLOR
+ENDSELECT
+
+SELECTCASE ABL:欲望
+	CASE 3, 5, 7
+		SIF (ABL:欲望 >= 7 && MARK:快楽刻印 < 3) || (ABL:欲望 >= 5 && MARK:快楽刻印 < 2) || (ABL:欲望 >= 3 && MARK:快楽刻印 < 1)
+			SETCOLORBYNAME gray
+		;LV3からは快楽刻印LV1必要 LV5からは快楽刻印LV2必要 LV7からは快楽刻印LV3必要
+		IF ABL:欲望 >= 7
+			PRINT [快楽刻印LV3]
+		ELSEIF ABL:欲望 >= 5
+			PRINT [快楽刻印LV2以上]
+		ELSEIF ABL:欲望 >= 3
+			PRINT [快楽刻印あり]
+		ENDIF
+		RESETCOLOR
+ENDSELECT
+
+SIF JUEL:欲情 < ABLUP:欲情
+	SETCOLORBYNAME gray
+PRINTFORM [欲情の珠×{ABLUP:欲情}]
+RESETCOLOR

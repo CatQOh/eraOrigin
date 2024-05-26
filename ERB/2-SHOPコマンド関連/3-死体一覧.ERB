@@ -1,0 +1,53 @@
+﻿@霊安室
+#DIM DYNAMIC LCOUNT
+#DIM DYNAMIC 処理数
+#DIM DYNAMIC 次ページあり
+#DIM DYNAMIC ページ数
+#DIM DYNAMIC LTARGET
+
+CALL CHECKDRAWLINE
+
+処理数 = 0
+次ページあり = 0
+FOR LCOUNT, 1, CHARANUM
+	IF 処理数 >= ページ数*20+20
+		IF CFLAG:LCOUNT:死亡
+			次ページあり = 1
+			BREAK
+		ENDIF
+	ENDIF
+	IF CFLAG:LCOUNT:死亡
+		SIF ページ数*20 <= 処理数
+			PRINTFORML 　[{LCOUNT, 2}] - %NAME:LCOUNT%の死体
+		処理数++
+	ENDIF
+NEXT
+DRAWLINE
+PRINTPLAIN 　死体一覧　
+CALL PRINTSPACE, ページ数, "[-1] - 前ページ "
+PRINT [0] - 戻る
+CALL PRINTSPACE, 次ページあり, "[-9] - 次ページ "
+PRINTL 
+
+BINPUT
+SELECTCASE RESULT
+	CASE 0
+		RETURN 0
+	CASE -1
+		ページ数--
+	CASE -9
+		ページ数++
+	CASEELSE
+		LTARGET = TARGET
+		TARGET = RESULT
+
+		PRINTFORML □%NAME:TARGET%の死体です
+		PRINTL 　[0] - 霊安室に戻す
+		PRINTL 　[1] - 屍姦する
+		BINPUT
+		SIF RESULT
+			JUMP 調教開始
+		TARGET = -1
+ENDSELECT
+
+RESTART
